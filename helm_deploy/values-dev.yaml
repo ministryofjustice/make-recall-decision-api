@@ -5,7 +5,7 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: make-recall-decision-api-dev.hmpps.service.justice.gov.uk
+    host: make-recall-decision-api-dev.probation.service.justice.gov.uk
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
