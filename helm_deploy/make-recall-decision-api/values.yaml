@@ -12,7 +12,7 @@ generic-service:
   ingress:
     enabled: true
     host: app-hostname.local    # override per environment
-    tlsSecretName: make-recall-decision-api-cert
+    tlsSecretName: make-recall-decision-cert
     contextColour: green
 
   # Environment variables to load into the deployment
