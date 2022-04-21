@@ -18,7 +18,7 @@ The primary software client for this service is the related UI [make-recall-deci
 
 ### Running the Service Locally
 
-In order to spin up the service and it's related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
+In order to spin up the service, it's related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
 
 ```
 ./scripts/start-local-services.sh
@@ -39,7 +39,7 @@ To reload [make-recall-decision-ui] (i.e. following a code change), run the foll
 ./scripts/reload-local-service-ui.sh
 ```
 
-And to stop all everything, simply run the following:
+And to stop everything, simply run the following:
 
 ```
 ./scripts/stop-local-services.sh
