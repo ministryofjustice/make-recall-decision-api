@@ -1,6 +1,6 @@
 version: "3"
 services:
-  make-recall-decision-api:
+  app:
     build:
       context: .
     network_mode: "host"
