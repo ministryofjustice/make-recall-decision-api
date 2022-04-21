@@ -7,7 +7,7 @@ This is the backend service to help case officers make recommendations on recall
 
 ## Usage
 
-The primary software client for this service is the related UI `make-recalls-ui`.
+The primary software client for this service is the related UI [make-recall-decision-ui].
 
 ### Limitations
 
@@ -18,6 +18,36 @@ The primary software client for this service is the related UI `make-recalls-ui`
 
 ### Running the Service Locally
 
+In order to spin up the service and it's related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
+
+```
+./scripts/start-local-services.sh
+```
+
+- [make-recall-decision-api] will be running on port `8080` (http://localhost:8080)
+- [make-recall-decision-ui] will be running on port `3000` (http://localhost:3000)
+
+To reload [make-recall-decision-api] (i.e. following a code change), run the following:
+
+```
+./scripts/reload-local-service-api.sh
+```
+
+To reload [make-recall-decision-ui] (i.e. following a code change), run the following:
+
+```
+./scripts/reload-local-service-ui.sh
+```
+
+And to stop all everything, simply run the following:
+
+```
+./scripts/stop-local-services.sh
+```
+
 ### Running Tests
 
 ### Swagger UI
+
+[make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
+[make-recall-decision-ui]: https://github.com/ministryofjustice/make-recall-decision-ui
