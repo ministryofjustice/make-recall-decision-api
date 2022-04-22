@@ -15,9 +15,9 @@ pkill npm || true
 pkill node || true
 
 pushd "${UI_DIR}"
-docker compose pull
-docker compose build
-docker compose up -d --scale=app=0
+docker-compose pull
+docker-compose build
+docker-compose up -d --scale=app=0
 npm install
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
