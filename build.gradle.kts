@@ -9,6 +9,13 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+  "5.7.3".let { sentryVersion ->
+    implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
+    implementation("io.sentry:sentry-logback:$sentryVersion")
+  }
+
+  implementation("io.opentelemetry:opentelemetry-api:1.12.0")
 }
 
 java {

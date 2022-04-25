@@ -5,5 +5,8 @@ generic-service:
   ingress:
     host: make-recall-decision-api.hmpps.service.justice.gov.uk
 
+  env:
+    SENTRY_ENVIRONMENT: PROD
+
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-prod
