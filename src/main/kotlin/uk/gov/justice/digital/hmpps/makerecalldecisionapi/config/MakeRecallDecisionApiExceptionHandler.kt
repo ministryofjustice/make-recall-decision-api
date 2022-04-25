@@ -60,3 +60,15 @@ data class ErrorResponse(
   ) :
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
 }
+
+open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
+  override fun toString(): String {
+    return if (this.message == null) {
+      this.javaClass.simpleName
+    } else {
+      "${this.javaClass.simpleName}: ${this.message}"
+    }
+  }
+}
+
+class ClientTimeoutException(clientName: String, errorType: String) : MakeRecallDecisionException("$clientName: [$errorType]")

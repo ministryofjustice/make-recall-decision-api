@@ -62,6 +62,15 @@ workflows:
             - validate
             - build_docker
             - helm_lint
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_dev
+          sentry_project: make-recall-decision-api
+          sentry_environment: DEV
+          sentry_create_release: true
+          requires:
+            - deploy_dev
+          context:
+            - hmpps-common-vars
 
       - hmpps/deploy_env:
          name: deploy_preprod
@@ -71,6 +80,15 @@ workflows:
            - make-recall-decision-api-preprod
          requires:
            - deploy_dev
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_preprod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PRE-PROD
+          sentry_create_release: true
+          requires:
+            - deploy_preprod
+          context:
+            - hmpps-common-vars
 
       - hmpps/deploy_env:
          name: deploy_prod
@@ -82,6 +100,15 @@ workflows:
            - make-recall-decision-api-prod
          requires:
            - deploy_preprod
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_prod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PROD
+          sentry_create_release: true
+          requires:
+            - deploy_prod
+          context:
+            - hmpps-common-vars
 
   security:
     triggers:

@@ -9,6 +9,7 @@ generic-service:
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
+    SENTRY_ENVIRONMENT: DEV
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod
