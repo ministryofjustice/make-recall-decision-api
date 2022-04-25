@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
-import io.sentry.Sentry
 import io.opentelemetry.api.trace.Span
+import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.SentryOptions
 import org.slf4j.Logger
