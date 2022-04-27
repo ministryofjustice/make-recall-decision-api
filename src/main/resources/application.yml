@@ -21,6 +21,11 @@ spring:
             client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
             scope: read
+          community-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
         provider:
           hmpps-auth:
             token-uri: ${hmpps.auth.url:http://localhost:9090/auth}/oauth/token
@@ -76,3 +81,7 @@ management:
         time-to-live: 2000ms
     prometheus:
       enabled: true
+
+hmpps:
+  auth.url: http://localhost:8090/auth
+
