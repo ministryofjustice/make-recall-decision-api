@@ -33,6 +33,17 @@ jobs:
       - store_artifacts:
           path: build/reports/tests
 
+  e2e_test:
+    executor: hmpps/default
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Run E2E tests on '<< parameters.environment >>'
+          command: ./scripts/run-e2e-tests.sh -e << parameters.environment >>
+
 workflows:
   version: 2
   build-test-and-deploy:
@@ -71,6 +82,13 @@ workflows:
             - deploy_dev
           context:
             - hmpps-common-vars
+      - e2e_test:
+          name: e2e_test_dev
+          environment: dev
+          context:
+            - make-recall-decision-circleci-auth
+          requires:
+            - deploy_dev
 
       - hmpps/deploy_env:
          name: deploy_preprod
@@ -79,7 +97,7 @@ workflows:
            - hmpps-common-vars
            - make-recall-decision-api-preprod
          requires:
-           - deploy_dev
+           - e2e_test_dev
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
           sentry_project: make-recall-decision-api
@@ -89,6 +107,13 @@ workflows:
             - deploy_preprod
           context:
             - hmpps-common-vars
+      - e2e_test:
+          name: e2e_test_preprod
+          environment: preprod
+          context:
+            - make-recall-decision-circleci-auth
+          requires:
+            - deploy_preprod
 
       - hmpps/deploy_env:
          name: deploy_prod
@@ -99,7 +124,7 @@ workflows:
            - hmpps-common-vars
            - make-recall-decision-api-prod
          requires:
-           - deploy_preprod
+           - e2e_test_preprod
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_prod
           sentry_project: make-recall-decision-api
