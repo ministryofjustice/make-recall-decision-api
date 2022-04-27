@@ -7,6 +7,7 @@ generic-service:
 
   env:
     SENTRY_ENVIRONMENT: PROD
+    HMPPS_AUTH_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-prod
