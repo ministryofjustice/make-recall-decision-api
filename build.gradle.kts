@@ -1,29 +1,17 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.4"
   kotlin("plugin.spring") version "1.6.20"
-  kotlin("plugin.serialization") version "1.4.31"
-}
-
-repositories {
-  mavenCentral()
 }
 
 configurations {
-  testImplementation {
-    exclude(group = "org.junit.vintage")
-    exclude(group = "junit")
-  }
-}
-
-dependencyCheck {
-  suppressionFiles.add("$rootDir/owasp.suppression.xml")
+  testImplementation { exclude(group = "org.junit.vintage") }
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-  implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
   "5.7.3".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
@@ -31,22 +19,14 @@ dependencies {
   }
 
   implementation("io.opentelemetry:opentelemetry-api:1.12.0")
-  implementation("org.springframework.security:spring-security-oauth2-client")
 
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
+  implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.7")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.7")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.7")
 
-  implementation("dev.forkhandles:result4k:2.0.0.0")
-
-  "5.7.0".let { junitVersion ->
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-  }
-
-  testImplementation("io.mockk:mockk:1.12.3")
+  testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.0.31")
 }
 
 java {
