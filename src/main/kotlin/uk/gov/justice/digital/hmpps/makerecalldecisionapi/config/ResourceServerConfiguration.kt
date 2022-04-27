@@ -11,7 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
-
   override fun configure(http: HttpSecurity) {
     http
       .sessionManagement()
