@@ -24,6 +24,11 @@ spring:
             client-secret: ${system.client.secret}
             authorization-grant-type: client_credentials
             scope: read
+          community-api:
+            provider: hmpps-auth
+            client-id: ${oauth.client.id}
+            client-secret: ${oauth.client.secret}
+            authorization-grant-type: client_credentials
         provider:
           hmpps-auth:
             token-uri: ${hmpps.auth.url}/oauth/token
@@ -69,3 +74,6 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+hmpps:
+  auth.url: http://localhost:8090/auth

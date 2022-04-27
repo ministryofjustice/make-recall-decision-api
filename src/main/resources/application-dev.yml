@@ -1,1 +1,5 @@
 hmpps.auth.url: http://localhost:8090/auth
+
+community:
+  endpoint:
+    url: http://localhost:8092

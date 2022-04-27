@@ -16,6 +16,8 @@ dependencies {
   "5.7.3".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
     implementation("io.sentry:sentry-logback:$sentryVersion")
+
+    testImplementation("org.mock-server:mockserver-netty:5.13.2")
   }
 
   implementation("io.opentelemetry:opentelemetry-api:1.13.0")
