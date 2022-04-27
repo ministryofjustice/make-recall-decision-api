@@ -1,6 +1,6 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3"
-  kotlin("plugin.spring") version "1.6.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.5"
+  kotlin("plugin.spring") version "1.6.21"
 }
 
 configurations {
@@ -15,7 +15,7 @@ dependencies {
     implementation("io.sentry:sentry-logback:$sentryVersion")
   }
 
-  implementation("io.opentelemetry:opentelemetry-api:1.12.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.13.0")
 }
 
 java {
