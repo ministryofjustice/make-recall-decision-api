@@ -26,7 +26,7 @@ pushd "${API_DIR}"
 # TODO: uncomment the below when we have some dependency services to fire up...
 # docker compose pull
 # docker compose build
-# docker compose up -d --scale=app=0
+# docker compose up -d --scale=app=0 --scale=hmpps-auth=0
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
