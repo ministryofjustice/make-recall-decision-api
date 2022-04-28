@@ -21,12 +21,73 @@ class OverviewController {
   @PreAuthorize("hasRole('MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/overview")
   @Operation(summary = "WIP: Returns an overview of the case details")
-  fun overview(@PathVariable("crn") crn: Crn): OverviewResponse {
+  fun overview(@PathVariable("crn") crn: Crn): String {
     log.info("Overview endpoint hit for CRN: $crn")
-    return OverviewResponse(FullName("Johnny Test"))
+    return overviewResponse()
   }
 }
 
 data class OverviewResponse(
   val name: FullName
 )
+
+fun overviewResponse() = """
+{
+  "personDetails": {
+    "name": "Paula Smith",
+    "dateOfBirth": "2000-11-09",
+    "age": 21,
+    "gender": "Male",
+    "crn": "A12345"
+  },
+  "currentAddress": {
+    "line1": "5 Anderton Road",
+    "line2": "Newham",
+    "town": "London",
+    "postcode": "E15 1UJ"
+  },
+  "offenderManager": {
+    "name": "Jenny Eclair",
+    "phoneNumber": "07824637629",
+    "email": "jenny@probation.com",
+    "probationTeam": {
+      "code": "N07",
+      "label": "NPS London"
+    }
+  },
+  "risk": {
+    "riskFlags": [
+      {
+        "label": "Victim contact",
+        "colour": "bright-purple"
+      },
+      {
+        "label": "Mental health issues",
+        "colour": "red"
+      },
+      {
+        "label": "MAPPA",
+        "colour": "purple"
+      }
+    ],
+    "riskOfSeriousHarm": {
+      "overallRisk": "VERY_HIGH",
+      "riskToChildren": "LOW",
+      "riskToPublic": "VERY_HIGH",
+      "riskToKnownAdult": "MEDIUM",
+      "riskToStaff": "HIGH",
+      "lastUpdated": "2021-10-09"
+    }
+  },
+  "offences": [
+    {
+      "mainOffence": true,
+      "description": "Robbery (other than armed robbery)"
+    },
+    {
+      "mainOffence": false,
+      "description": "Shoplifting"
+    }
+  ]
+}
+""".trimIndent()
