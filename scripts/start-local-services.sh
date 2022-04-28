@@ -14,26 +14,33 @@ npx kill-port 3000 3001 8080
 pkill npm || true
 pkill node || true
 
-pushd "${UI_DIR}"
+pushd "${API_DIR}"
+printf "\n\nBuilding/starting API components...\n\n"
 docker compose pull
-docker compose build
 docker compose up -d --scale=app=0
+SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
+popd
+
+pushd "${UI_DIR}"
+printf "\n\nBuilding/starting UI components...\n\n"
+docker compose pull
+docker compose up -d --scale=app=0 --scale=hmpps-auth=0
 npm install
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
 
-pushd "${API_DIR}"
-# TODO: uncomment the below when we have some dependency services to fire up...
-# docker compose pull
-# docker compose build
-# docker compose up -d --scale=app=0 --scale=hmpps-auth=0
-SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
-popd
-
 function wait_for {
-  printf "\n\nWaiting for ${2} to be ready."
+  printf "\n\nWaiting for %s to be ready.\n\n" "${2}"
+  local TRIES=0
   until curl -s --fail "${1}"; do
     printf "."
+    ((TRIES++))
+
+    if [ $TRIES -gt 50 ]; then
+      printf "Failed to start %s after 50 tries." "${2}"
+      exit 1
+    fi
+
     sleep 2
   done
 }
