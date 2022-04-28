@@ -12,12 +12,14 @@ npx kill-port 3000 3001 8080
 pkill npm || true
 pkill node || true
 
-pushd "${UI_DIR}"
-docker compose down
-popd
-
 pushd "${API_DIR}"
+printf "\n\nStopping API components...\n\n"
+docker-compose down
+popd
+
+pushd "${UI_DIR}"
+printf "\n\nStopping UI components...\n\n"
 docker compose down
 popd
 
-echo "Done."
+printf "\n\nAll services are stopped.\n\n"
