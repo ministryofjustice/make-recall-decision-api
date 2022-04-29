@@ -8,6 +8,10 @@ configurations {
 }
 
 dependencies {
+
+  // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+  implementation("org.springframework.boot:spring-boot-starter-web")
+
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -26,6 +30,12 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.7")
   implementation("org.springdoc:springdoc-openapi-data-rest:1.6.7")
+
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+  testImplementation("io.projectreactor:reactor-test")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
