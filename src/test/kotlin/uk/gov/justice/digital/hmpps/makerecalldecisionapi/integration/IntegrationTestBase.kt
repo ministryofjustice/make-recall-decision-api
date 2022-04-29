@@ -37,7 +37,7 @@ abstract class IntegrationTestBase {
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
 
-  internal fun HttpHeaders.authToken(roles: List<String> = emptyList()) { // TODO click on and use as used in other proj!!
+  internal fun HttpHeaders.authToken(roles: List<String> = emptyList()) {
     this.setBearerAuth(
       jwtAuthHelper.createJwt(
         subject = "SOME_USER",

@@ -20,7 +20,7 @@ class CaseSummaryController {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-//  @PreAuthorize("hasRole('MAKE_RECALL_DECISION')")//TODO correct role?
+  @PreAuthorize("hasAuthority('MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/search")
   @Operation(summary = "WIP: Returns an overview of the case details")
   fun overview(@PathVariable("crn") crn: Crn): String {
