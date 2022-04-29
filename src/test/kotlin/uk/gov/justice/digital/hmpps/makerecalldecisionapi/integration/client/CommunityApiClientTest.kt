@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -62,8 +65,10 @@ class CommunityApiClientTest : IntegrationTestBase() {
     assertThat(actual, equalTo(expected))
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun `retrieves all offender details`() {
+  suspend fun `retrieves all offender details`() {
+    runBlockingTest {
     // given
     val crn = "X123456"
     allOffenderDetailsResponse(crn)
@@ -92,10 +97,10 @@ class CommunityApiClientTest : IntegrationTestBase() {
     )
 
     // when
-    val actual = communityApiClient.getAllOffenderDetails(crn).block()
+    val actual = communityApiClient.getAllOffenderDetails(crn).awaitFirst()//block()
 
     // then
-    assertThat(actual, equalTo(expected))
+    assertThat(actual, equalTo(expected))}
   }
 
 }
