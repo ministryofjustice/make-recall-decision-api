@@ -1,8 +1,10 @@
-version: "3"
+version: '3.9'
 services:
-  app:
+  make-recall-decision-api:
     build:
       context: .
+    networks:
+      - hmpps
     container_name: make-recall-decision-api
     ports:
       - "8080:8080"
@@ -11,20 +13,8 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
-      - HMPPS_AUTH_URL=http://localhost:8080/auth
-
-  hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
-    networks:
-      - hmpps
-    container_name: hmpps-auth
-    ports:
-      - "9090:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/ping"]
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
 
 networks:
   hmpps:
+    name: hmpps
