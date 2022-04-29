@@ -17,14 +17,14 @@ pkill node || true
 pushd "${API_DIR}"
 printf "\n\nBuilding/starting API components...\n\n"
 docker compose pull
-docker compose up -d --scale=app=0
+docker compose up -d --scale=${API_NAME}=0
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
 pushd "${UI_DIR}"
 printf "\n\nBuilding/starting UI components...\n\n"
 docker compose pull
-docker compose up -d --scale=app=0 --scale=hmpps-auth=0
+docker compose up -d --scale=${UI_NAME}=0
 npm install
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
