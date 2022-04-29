@@ -69,15 +69,7 @@ fun overviewResponse() = """
         "label": "MAPPA",
         "colour": "purple"
       }
-    ],
-    "riskOfSeriousHarm": {
-      "overallRisk": "VERY_HIGH",
-      "riskToChildren": "LOW",
-      "riskToPublic": "VERY_HIGH",
-      "riskToKnownAdult": "MEDIUM",
-      "riskToStaff": "HIGH",
-      "lastUpdated": "2021-10-09"
-    }
+    ]
   },
   "offences": [
     {
