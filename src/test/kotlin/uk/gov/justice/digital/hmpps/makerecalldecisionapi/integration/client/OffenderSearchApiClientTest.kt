@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.*
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -21,7 +22,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   fun `retrieves offender details`() {
     // given
     val crn = "X123456"
-    offenderSearchResponse(crn)
+//    offenderSearchResponse(crn)
 
     // and
     val expected = OffenderDetailsResponse(
@@ -35,7 +36,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
       matchAllTerms = false,
       phrase = crn,
       probationAreasFilter = listOf("N01", "N02")
-    )).block()!![0] //TODO ocnsider non-blocking!!
+    ))//.block()!![0] //TODO ocnsider non-blocking!!
 
     // then
     assertThat(actual, equalTo(expected))
