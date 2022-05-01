@@ -23,7 +23,7 @@ class CaseSummaryController {
   @PreAuthorize("hasAuthority('MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/search")
   @Operation(summary = "WIP: Returns an overview of the case details")
-  fun overview(@PathVariable("crn") crn: Crn): String {
+  suspend fun overview(@PathVariable("crn") crn: Crn): String {
     log.info("Overview endpoint hit for CRN: $crn")
     return "hello"
   }

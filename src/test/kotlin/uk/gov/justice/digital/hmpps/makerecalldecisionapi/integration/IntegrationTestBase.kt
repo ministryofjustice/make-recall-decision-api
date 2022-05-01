@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.offenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
 
@@ -74,6 +75,16 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(staffCode))
+    )
+  }
+
+  protected fun offenderSearchResponse(crn: String) {
+    val offenderSearchRequest =
+      request().withPath("/offender-search/searchByPhrase?paged=false")
+        .withBody(offenderSearchByPhraseRequest(crn))
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
     )
   }
 
