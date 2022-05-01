@@ -31,6 +31,7 @@ abstract class IntegrationTestBase {
   lateinit var webTestClient: WebTestClient
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
+//  var offenderSearchApi: ClientAndServer = startClientAndServer(8093) //TODO is this port ok?
 
   private var oauthMock: ClientAndServer = startClientAndServer(9090)
   private val gson: Gson = Gson()
@@ -50,12 +51,14 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
+//    offenderSearchApi.reset()
     communityApi.reset()
     setupOauth()
   }
 
   @AfterAll
   fun tearDownServer() {
+//    offenderSearchApi.stop()
     communityApi.stop()
     oauthMock.stop()
   }
@@ -78,15 +81,15 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun offenderSearchResponse(crn: String) {
-    val offenderSearchRequest =
-      request().withPath("/offender-search/searchByPhrase?paged=false")
-        .withBody(offenderSearchByPhraseRequest(crn))
-
-    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
-    )
-  }
+//  protected fun offenderSearchResponse(crn: String) {
+//    val offenderSearchRequest =
+//      request().withPath("/offender-search/searchByPhrase?paged=false")
+//        .withBody(offenderSearchByPhraseRequest(crn))
+//
+//    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+//      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+//    )
+//  }
 
   fun setupOauth() {
     val response = response().withContentType(APPLICATION_JSON)
