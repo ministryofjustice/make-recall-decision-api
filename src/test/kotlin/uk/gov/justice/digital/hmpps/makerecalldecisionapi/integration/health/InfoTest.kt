@@ -2,10 +2,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = ["management.server.port=9998", "server.port=9998"])
 class InfoTest : IntegrationTestBase() {
 
   @Test
