@@ -56,20 +56,7 @@ fun overviewResponse() = """
     }
   },
   "risk": {
-    "riskFlags": [
-      {
-        "label": "Victim contact",
-        "colour": "bright-purple"
-      },
-      {
-        "label": "Mental health issues",
-        "colour": "red"
-      },
-      {
-        "label": "MAPPA",
-        "colour": "purple"
-      }
-    ]
+    "flags": ["Victim contact", "Mental health issues", "MAPPA"]
   },
   "offences": [
     {
