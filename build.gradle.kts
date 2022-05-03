@@ -12,6 +12,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
 
   "5.7.3".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
