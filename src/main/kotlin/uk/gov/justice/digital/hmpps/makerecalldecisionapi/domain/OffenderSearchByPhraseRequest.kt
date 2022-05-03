@@ -6,9 +6,3 @@ data class OffenderSearchByPhraseRequest(
   val probationAreasFilter: List<String>
 
 )
-
-//{
-//  "matchAllTerms": false,
-//  "phrase": "$phrase",
-//  "probationAreasFilter": "[\"N01\",\"N02\"]"
-//}
