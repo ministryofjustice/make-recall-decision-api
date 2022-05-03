@@ -8,13 +8,23 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.hmppsallocations.domain.Offence
-import uk.gov.justice.digital.hmpps.hmppsallocations.domain.OffenceDetail
-import uk.gov.justice.digital.hmpps.hmppsallocations.domain.Sentence
-import uk.gov.justice.digital.hmpps.hmppsallocations.domain.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller.OverviewResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.*
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SentenceType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Custody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.AddressStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,7 +42,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     unallocatedConvictionResponse(crn, staffCode)
 
     // and
-    val expected = Conviction(
+    val expected = ConvictionResponse(
       convictionDate = LocalDate.parse("2021-06-10"),
       sentence = Sentence(
         startDate = LocalDate.parse("2022-04-26"),

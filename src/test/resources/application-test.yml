@@ -18,6 +18,12 @@ community:
   endpoint:
     url: http://localhost:8092
 
+offender:
+  search:
+    endpoint:
+      url: http://localhost:8093
+#TODO note this url is assumption, see other application-bla.ymls + postman
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth

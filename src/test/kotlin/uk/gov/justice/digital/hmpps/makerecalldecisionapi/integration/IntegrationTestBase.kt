@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.offenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -31,7 +32,7 @@ abstract class IntegrationTestBase {
   lateinit var webTestClient: WebTestClient
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
-//  var offenderSearchApi: ClientAndServer = startClientAndServer(8093) //TODO is this port ok?
+  var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
 
   private var oauthMock: ClientAndServer = startClientAndServer(9090)
   private val gson: Gson = Gson()
@@ -51,14 +52,14 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
-//    offenderSearchApi.reset()
+    offenderSearchApi.reset()
     communityApi.reset()
     setupOauth()
   }
 
   @AfterAll
   fun tearDownServer() {
-//    offenderSearchApi.stop()
+    offenderSearchApi.stop()
     communityApi.stop()
     oauthMock.stop()
   }
@@ -74,22 +75,24 @@ abstract class IntegrationTestBase {
 
   protected fun unallocatedConvictionResponse(crn: String, staffCode: String) {
     val convictionsRequest =
-      request().withPath("/offenders/crn/$crn/convictions")
+      request()
+        .withPath("/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(staffCode))
     )
   }
 
-//  protected fun offenderSearchResponse(crn: String) {
-//    val offenderSearchRequest =
-//      request().withPath("/offender-search/searchByPhrase?paged=false")
-//        .withBody(offenderSearchByPhraseRequest(crn))
-//
-//    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-//      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
-//    )
-//  }
+  protected fun unallocatedOffenderSearchResponse(crn: String) {
+    val offenderSearchRequest =
+      request()
+        .withPath("/phrase")
+        .withQueryStringParameter("paged", "false")
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+    )
+  }
 
   fun setupOauth() {
     val response = response().withContentType(APPLICATION_JSON)
