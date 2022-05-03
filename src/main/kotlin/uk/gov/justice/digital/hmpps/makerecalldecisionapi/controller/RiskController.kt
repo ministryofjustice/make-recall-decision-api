@@ -35,39 +35,94 @@ fun riskResponse() = """
     "gender": "Male",
     "crn": "A12345"
   },
-  "risk": {
-    "riskOfSeriousHarm": {
-      "overallRisk": "VERY_HIGH",
-      "riskToChildren": "LOW",
-      "riskToPublic": "VERY_HIGH",
-      "riskToKnownAdult": "MEDIUM",
-      "riskToStaff": "HIGH",
-      "lastUpdated": "2021-10-09"
+  "riskOfSeriousHarm": {
+    "overallRisk": "VERY_HIGH",
+    "riskToChildren": "LOW",
+    "riskToPublic": "VERY_HIGH",
+    "riskToKnownAdult": "MEDIUM",
+    "riskToStaff": "HIGH",
+    "lastUpdated": "2021-10-09"
+  },
+  "mappa": {
+    "level": "CAT 2/LEVEL 1",
+    "isNominal": false,
+    "lastUpdated": "10th October 2021"
+  },
+  "predictorScores": {
+    "current": {
+      "RSR": {
+        "level": "HIGH",
+        "score": 23,
+        "type": "RSR"
+      },
+      "OSPC": {
+        "level": "LOW",
+        "score": 3.45,
+        "type": "OSP/C"
+      },
+      "OSPI": {
+        "level": "MEDIUM",
+        "score": 5.3,
+        "type": "OSP/I"
+      },
+      "OGRS": {
+        "level": "LOW",
+        "score": 12,
+        "type": "RSR"
+      }
     },
-    "predictorScores": {
-      "current": {
-        "RSR": {
-          "level": "HIGH",
-          "score": 11.34,
-          "type": "RSR"
-        },
-        "OGRS": {
-          "level": "LOW",
-          "score": 3.45,
-          "type": "RSR"
-        },
-        "OGP": {
-          "level": "MEDIUM",
-          "score": 5.3,
-          "type": "RSR"
-        },
-        "OVP": {
-          "level": "HIGH",
-          "score": 2.8,
-          "type": "RSR"
+    "historical": [
+      {
+        "date": "14 May 2019 at 12:00",
+        "scores": {
+          "RSR": {
+            "level": "HIGH",
+            "score": 18,
+            "type": "RSR"
+          },
+          "OSPC": {
+            "level": "LOW",
+            "score": 6.8,
+            "type": "OSP/C"
+          },
+          "OSPI": {
+            "level": "MEDIUM",
+            "score": 8.1,
+            "type": "OSP/I"
+          },
+          "OGRS": {
+            "level": "LOW",
+            "score": 5.43,
+            "type": "OGRS"
+          }
+        }
+      },
+      {
+        "date": "12 September 2018 at 12:00",
+        "scores": {
+          "RSR": {
+            "level": "MEDIUM",
+            "score": 12,
+            "type": "RSR"
+          },
+          "OSPC": {
+            "level": "LOW",
+            "score": 6.2,
+            "type": "OSP/C"
+          },
+          "OSPI": {
+            "level": "MEDIUM",
+            "score": 8.6,
+            "type": "OSP/I"
+          },
+          "OGRS": {
+            "level": "MEDIUM",
+            "score": 40,
+            "type": "OGRS"
+          }
         }
       }
-    }
+    ]
   }
 }
 """.trimIndent()
