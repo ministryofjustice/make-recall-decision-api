@@ -13,20 +13,20 @@ spring:
     max-in-memory-size: 10MB
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
       client:
         registration:
           make-recall-decision-api:
             provider: hmpps-auth
-            client-id: ${system.client.id}
-            client-secret: ${system.client.secret}
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
             scope: read
         provider:
           hmpps-auth:
-            token-uri: ${hmpps.auth.url}/oauth/token
+            token-uri: ${hmpps.auth.url:http://localhost:9090/auth}/oauth/token
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${hmpps.auth.url:http://localhost:9090/auth}/.well-known/jwks.json
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"

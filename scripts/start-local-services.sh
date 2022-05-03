@@ -16,8 +16,9 @@ pkill node || true
 
 pushd "${API_DIR}"
 printf "\n\nBuilding/starting API components...\n\n"
-docker compose pull
-docker compose up -d --scale=${API_NAME}=0
+# TODO: uncomment the below when we have any dependencies to run
+# docker compose pull
+# docker compose up -d --scale=${API_NAME}=0
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
@@ -31,18 +32,7 @@ popd
 
 function wait_for {
   printf "\n\nWaiting for %s to be ready.\n\n" "${2}"
-  local TRIES=0
-  until curl -s --fail "${1}"; do
-    printf "."
-    ((TRIES++))
-
-    if [ $TRIES -gt 50 ]; then
-      printf "Failed to start %s after 50 tries." "${2}"
-      exit 1
-    fi
-
-    sleep 2
-  done
+  docker run --rm --network host docker.io/jwilder/dockerize -wait "${1}" -wait-retry-interval 2s -timeout 90s
 }
 
 wait_for "http://localhost:9090/auth/health/ping" "hmpps-auth"
