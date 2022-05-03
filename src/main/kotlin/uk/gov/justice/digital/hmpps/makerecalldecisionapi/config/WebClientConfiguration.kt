@@ -12,10 +12,12 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${community.endpoint.url}") private val communityApiRootUri: String
+  @Value("\${community.endpoint.url}") private val communityApiRootUri: String,
+  @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
 ) {
 
   @Bean
@@ -41,8 +43,21 @@ class WebClientConfiguration(
   }
 
   @Bean
+  fun offenderSearchWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManager, builder, offenderSearchApiRootUri, "offender-search-api")
+  }
+
+  @Bean
   fun communityApiClient(@Qualifier("communityWebClientAppScope") webClient: WebClient): CommunityApiClient {
     return CommunityApiClient(webClient)
+  }
+
+  @Bean
+  fun offenderSearchApiClient(@Qualifier("offenderSearchWebClientAppScope") webClient: WebClient): OffenderSearchApiClient {
+    return OffenderSearchApiClient(webClient)
   }
 
   private fun getOAuthWebClient(

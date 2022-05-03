@@ -19,24 +19,30 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   private lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
   @Test
-  fun `retrieves offender details`() {
+  fun `retrieves offender details by crn`() {
     // given
     val crn = "X123456"
-//    offenderSearchResponse(crn)
+    unallocatedOffenderSearchResponse(crn)
 
     // and
     val expected = OffenderDetailsResponse(
-      name = "Pontius Pilate",
-      dateOfBirth = LocalDate.parse("2000-04-26"),
-      crn = crn
+      content = listOf(
+        Content(
+          firstName = "Pontius",
+          surname = "Pilate",
+          dateOfBirth = LocalDate.parse("2000-11-09")
+        )
+      )
     )
 
     // when
-    val actual = offenderSearchApiClient.searchOffenderByPhrase(OffenderSearchByPhraseRequest(
-      matchAllTerms = false,
-      phrase = crn,
-      probationAreasFilter = listOf("N01", "N02")
-    ))//.block()!![0] //TODO ocnsider non-blocking!!
+    val actual = offenderSearchApiClient.searchOffenderByPhrase(
+      OffenderSearchByPhraseRequest(
+        matchAllTerms = false,
+        phrase = crn,
+        probationAreasFilter = listOf("N01", "N02")
+      )
+    ).block()
 
     // then
     assertThat(actual, equalTo(expected))
