@@ -14,11 +14,8 @@ SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
 function wait_for {
-  printf "\n\nWaiting for ${2} to be ready."
-  until curl -s --fail "${1}"; do
-    printf "."
-    sleep 2
-  done
+  printf "\n\nWaiting for %s to be ready.\n\n" "${2}"
+  docker run --rm --network host docker.io/jwilder/dockerize -wait "${1}" -wait-retry-interval 2s -timeout 90s
 }
 
 wait_for "http://localhost:8080/health/readiness" "${API_NAME}"
