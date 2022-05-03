@@ -8,5 +8,4 @@ offender:
   search:
     endpoint:
       url: http://localhost:8093
-#TODO is this on 8093 in dev? why not swagger uri? Ask Jon/Darren? scan other projects for such a client?
-#have made assumptions given lack of access
+#TODO is this availble on 8093 in dev?

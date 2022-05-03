@@ -9,22 +9,22 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ConvictionResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Sentence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Custody
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CustodyStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContactDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ProviderEmployee
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Staff
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AddressStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Custody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.SentenceType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -115,11 +115,10 @@ class CommunityApiClientTest : IntegrationTestBase() {
         )
       )
       // when
-      val actual = communityApiClient.getAllOffenderDetails(crn).awaitFirst()//block()
+      val actual = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
 
       // then
       assertThat(actual, equalTo(expected))
     }
   }
-
 }

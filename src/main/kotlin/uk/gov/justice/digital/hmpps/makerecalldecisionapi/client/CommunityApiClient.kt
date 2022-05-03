@@ -3,8 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ConvictionResponse
 
 class CommunityApiClient(private val webClient: WebClient) {
   fun getConvictions(crn: String): Mono<List<ConvictionResponse>> {
