@@ -1,6 +1,4 @@
 spring:
-#  main:
-#    web-application-type: reactive
   security:
     oauth2:
       resourceserver:
@@ -22,7 +20,6 @@ offender:
   search:
     endpoint:
       url: http://localhost:8093
-#TODO note this url is assumption, see other application-bla.ymls + postman
 
 oauth:
   endpoint:

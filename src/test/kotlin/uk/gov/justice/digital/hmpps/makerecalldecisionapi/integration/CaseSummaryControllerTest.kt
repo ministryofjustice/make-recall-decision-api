@@ -7,24 +7,35 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class CaseSummaryControllerTest(
-//  @Autowired private val objectMapper: ObjectMapper
-) : IntegrationTestBase() {
+class CaseSummaryControllerTest : IntegrationTestBase() {
 
   @Test
-  fun `retrieves stuff`() {//TODO start mockserver
+  fun `retrieves simple case summary details`() {
     runBlockingTest {
-      val crn = "1565"
+      val crn = "X123456"
+      unallocatedOffenderSearchResponse(crn)
       webTestClient.get()
-        .uri { builder ->
-          builder.path("/cases/${crn}/search").build()
-        }
-        .headers { it.authToken(roles = listOf("MAKE_RECALL_DECISION")) }
+        .uri("/cases/$crn/search")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.name").isEqualTo("Pontius Pilate")
+        .jsonPath("$.dateOfBirth").isEqualTo("2000-11-09")
+        .jsonPath("$.crn").isEqualTo(crn)
     }
   }
 
-  //TODO test for should not work with wrong role!
-
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runBlockingTest {
+      val crn = "X123456"
+      unallocatedOffenderSearchResponse(crn)
+      webTestClient.get()
+        .uri("/cases/$crn/search")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }

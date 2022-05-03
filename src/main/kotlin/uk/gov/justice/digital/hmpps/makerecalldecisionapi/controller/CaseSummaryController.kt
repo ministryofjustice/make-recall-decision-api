@@ -8,22 +8,24 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Crn
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SearchByCrnResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryService
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class CaseSummaryController {
+class CaseSummaryController(
+  private val caseSummaryService: CaseSummaryService
+) {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasAuthority('MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasAuthority('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/search")
-  @Operation(summary = "WIP: Returns an overview of the case details")
-  suspend fun overview(@PathVariable("crn") crn: Crn): String {
-    log.info("Overview endpoint hit for CRN: $crn")
-    return "hello"
+  @Operation(summary = "WIP: Returns a simple overview of the case summary")
+  suspend fun overview(@PathVariable("crn") crn: String): SearchByCrnResponse {
+    log.info("Case summary search endpoint hit for CRN: $crn")
+    return caseSummaryService.search(crn)
   }
-
 }
