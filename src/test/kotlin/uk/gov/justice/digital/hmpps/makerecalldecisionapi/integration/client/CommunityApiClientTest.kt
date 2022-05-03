@@ -30,6 +30,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ActiveProfiles("test")
+@ExperimentalCoroutinesApi
 class CommunityApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var communityApiClient: CommunityApiClient
@@ -48,24 +49,32 @@ class CommunityApiClientTest : IntegrationTestBase() {
         startDate = LocalDate.parse("2022-04-26"),
         terminationDate = LocalDate.parse("2022-04-26"),
         expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-        description = "string", originalLength = 0, originalLengthUnits = "string", sentenceType = SentenceType(code = "ABC123")
+        description = "string",
+        originalLength = 0,
+        originalLengthUnits = "string",
+        sentenceType = SentenceType(code = "ABC123")
       ),
       active = true,
       offences = listOf(
         Offence(
-          mainOffence = true, detail = OffenceDetail(
-            mainCategoryDescription = "string", subCategoryDescription = "string",
+          mainOffence = true,
+          detail = OffenceDetail(
+            mainCategoryDescription = "string",
+            subCategoryDescription = "string",
             description = "string"
           )
         )
       ),
-      convictionId = 2500000001, orderManagers =
-      listOf(
+      convictionId = 2500000001,
+      orderManagers = listOf(
         OrderManager(
           dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
-          name = "string", staffCode = "STFFCDEU", gradeCode = "string"
+          name = "string",
+          staffCode = "STFFCDEU",
+          gradeCode = "string"
         )
-      ), custody = Custody(status = CustodyStatus(code = "ABC123"))
+      ),
+      custody = Custody(status = CustodyStatus(code = "ABC123"))
     )
 
     // when
@@ -75,42 +84,42 @@ class CommunityApiClientTest : IntegrationTestBase() {
     assertThat(actual, equalTo(expected))
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   suspend fun `retrieves all offender details`() {
     runBlockingTest {
-    // given
-    val crn = "X123456"
-    allOffenderDetailsResponse(crn)
+      // given
+      val crn = "X123456"
+      allOffenderDetailsResponse(crn)
 
-    // and
-    val expected = AllOffenderDetailsResponse(
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      firstName = "John",
-      surname = "Smith",
-      contactDetails = ContactDetails(
-        addresses = listOf(
-          Address(
-            town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Some description")
+      // and
+      val expected = AllOffenderDetailsResponse(
+        dateOfBirth = LocalDate.parse("1982-10-24"),
+        firstName = "John",
+        surname = "Smith",
+        contactDetails = ContactDetails(
+          addresses = listOf(
+            Address(
+              town = "Sheffield",
+              county = "South Yorkshire",
+              status = AddressStatus(code = "ABC123", description = "Some description")
+            )
+          )
+        ),
+        offenderManagers = listOf(
+          OffenderManager(
+            active = true,
+            trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
+            staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
+            providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock")
           )
         )
-      ),
-      offenderManagers = listOf(
-        OffenderManager(
-          active = true,
-          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock")
-        )
       )
-    )
+      // when
+      val actual = communityApiClient.getAllOffenderDetails(crn).awaitFirst()//block()
 
-    // when
-    val actual = communityApiClient.getAllOffenderDetails(crn).awaitFirst()//block()
-
-    // then
-    assertThat(actual, equalTo(expected))}
+      // then
+      assertThat(actual, equalTo(expected))
+    }
   }
 
 }

@@ -17,7 +17,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.offenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse

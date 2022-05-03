@@ -8,7 +8,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenderSearchByPhraseRequest
 
 class OffenderSearchApiClient(private val webClient: WebClient) {
-
   fun searchOffenderByPhrase(request: OffenderSearchByPhraseRequest): Mono<OffenderDetailsResponse> {
     val responseType = object : ParameterizedTypeReference<OffenderDetailsResponse>() {}
     return webClient
@@ -20,5 +19,4 @@ class OffenderSearchApiClient(private val webClient: WebClient) {
       .retrieve()
       .bodyToMono(responseType)
   }
-
 }
