@@ -19,7 +19,7 @@ class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
       .and().csrf().disable()
       .authorizeRequests { auth ->
         auth.antMatchers(
-          "/health/**", "/info",
+          "/health/**", "/info", "/prometheus",
           "/v3/api-docs/**",
           "/swagger-ui/**", "/swagger-ui.html",
           "/swagger-resources",

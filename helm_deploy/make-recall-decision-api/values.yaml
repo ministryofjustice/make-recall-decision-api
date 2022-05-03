@@ -15,6 +15,15 @@ generic-service:
     tlsSecretName: make-recall-decision-cert
     contextColour: green
 
+  livenessProbe:
+    httpGet:
+      path: /health/liveness
+      port: metrics
+  readinessProbe:
+    httpGet:
+      path: /health/readiness
+      port: metrics
+
   # Environment variables to load into the deployment
   env:
     JAVA_OPTS: "-Xmx512m"
@@ -44,6 +53,12 @@ generic-service:
     cloudplatform-live-1: "35.178.209.113/32"
     cloudplatform-live-2: "3.8.51.207/32"
     cloudplatform-live-3: "35.177.252.54/32"
+
+  custommetrics:
+    enabled: true
+    scrapeInterval: 15s
+    metricsPath: /prometheus
+    metricsPort: 8081
 
 generic-prometheus-alerts:
   targetApplication: make-recall-decision-api
