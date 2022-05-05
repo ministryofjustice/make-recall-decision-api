@@ -23,9 +23,9 @@ class OffenderSearchController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/search")
-  @Operation(summary = "WIP: Returns a simple overview of the case summary")
-  suspend fun overview(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
-    log.info("Case summary search endpoint hit for CRN: $crn")
+  @Operation(summary = "Returns a list of people on probation based on a given CRN")
+  suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
+    log.info("Offender search endpoint hit for CRN: $crn")
     return caseSummaryService.search(crn)
   }
 }
