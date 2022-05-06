@@ -85,4 +85,4 @@ management:
 offender:
   search:
     endpoint:
-      url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
+      url: ${probation.offender.search.endpoint.url}
