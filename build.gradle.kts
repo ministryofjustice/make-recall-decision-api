@@ -8,6 +8,8 @@ configurations {
 }
 
 dependencies {
+
+  implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -18,6 +20,8 @@ dependencies {
   "5.7.3".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
     implementation("io.sentry:sentry-logback:$sentryVersion")
+
+    testImplementation("org.mock-server:mockserver-netty:5.13.2")
   }
 
   implementation("io.opentelemetry:opentelemetry-api:1.13.0")
@@ -26,6 +30,12 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.7")
   implementation("org.springdoc:springdoc-openapi-data-rest:1.6.7")
+
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+  testImplementation("io.projectreactor:reactor-test")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")

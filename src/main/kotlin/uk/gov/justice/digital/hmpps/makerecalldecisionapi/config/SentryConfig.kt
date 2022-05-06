@@ -19,7 +19,7 @@ class SentryContextAppender : HandlerInterceptor {
   override fun preHandle(
     request: HttpServletRequest,
     response: HttpServletResponse,
-    handler: Any?
+    handler: Any
   ): Boolean {
     val operationId: String = Span.current().spanContext.traceId
 
