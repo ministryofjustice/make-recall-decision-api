@@ -45,6 +45,16 @@ And to stop everything, simply run the following:
 ./scripts/stop-local-services.sh
 ```
 
+### Notes for M1 Mac Users
+
+If you're using an M1/arm based Mac, you'll need to also have a checkout of [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) alongside your checkouts of `make-recall-decision-ui` and `make-recall-decision-api`, and pass all of the start scripts the `-a` parameter:
+
+```
+./scripts/start-local-services.sh -a
+```
+
+This will build the `hmpps-auth` container image locally on your machine before starting things up. This is needed as the currently released container for `hmpps-auth` does not run properly on M1 macs.
+
 ### Running Tests
 
 ### Swagger UI
