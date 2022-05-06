@@ -81,3 +81,8 @@ management:
         time-to-live: 2000ms
     prometheus:
       enabled: true
+
+offender:
+  search:
+    endpoint:
+      url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
