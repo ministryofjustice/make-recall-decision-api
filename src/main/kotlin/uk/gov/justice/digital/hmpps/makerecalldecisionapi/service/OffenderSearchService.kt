@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearcha
 import kotlin.streams.toList
 
 @Service
-class CaseSummaryService(
+class OffenderSearchService(
   private val offenderSearchApiClient: OffenderSearchApiClient
 ) {
   suspend fun search(crn: String): List<SearchByCrnResponse> {
