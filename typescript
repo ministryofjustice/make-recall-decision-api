@@ -1,0 +1,241 @@
+Script started on 2022-05-08 18:46:00+0100
+ _____________________________________
+/ You recoil from the crude; you tend \
+\ naturally toward the exquisite.     /
+ -------------------------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m ./scripts/get-access-token.sh 
+
+Getting access token for dev environment...
+
+./scripts/get-access-token.sh: line 57: kubectl: command not found
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m cat ./scripts/get-access-token.sh 
+#!/bin/bash
+
+# This script gets the token that the 'make-recall-decision-api' uses to connect to other HMPPS services.
+# The token it generates can not be used to access the 'make-recall-decision-api' endpoints directly.
+
+set -euo pipefail
+
+ENV=dev
+
+instructions() {
+  echo "Usage: $0 <opts>" >&2
+  echo " -h --> show usage" >&2
+  echo " -e --> environment - allowed values are dev/preprod/prod (default=${ENV})"
+}
+
+while getopts :e:h option; do
+  case "${option}" in
+  h)
+    instructions
+    exit 0
+    ;;
+  e)
+    ENV=${OPTARG}
+    ;;
+  \?)
+    echo "Option '-$OPTARG' is not a valid option." >&2
+    instructions
+    exit 1
+    ;;
+  :)
+    echo "Option '-$OPTARG' needs an argument." >&2
+    instructions
+    exit 1
+    ;;
+  esac
+done
+
+# check for the ENV variable
+set +u
+if [[ ! "${ENV}" =~ ^(dev|preprod|prod)$ ]]; then
+  echo "Invalid environment: ${ENV}" >&2
+  instructions
+  exit 1
+fi
+set -u
+
+printf "\nGetting access token for ${ENV} environment...\n\n"
+
+readonly SECRET_NAME=make-recall-decision-api
+readonly NAMESPACE=make-recall-decision-$ENV
+
+HMPPS_AUTH_URL=https://sign-in-$ENV.hmpps.service.justice.gov.uk
+if [[ "${ENV}" == "prod" ]]; then
+  HMPPS_AUTH_URL=https://sign-in.hmpps.service.justice.gov.uk
+fi
+
+secret=$(kubectl -n "${NAMESPACE}" get secret "${SECRET_NAME}" -o json)
+client_id=$(jq -r '.data.SYSTEM_CLIENT_ID' <<<"${secret}" | base64 -d)
+client_secret=$(jq -r '.data.SYSTEM_CLIENT_SECRET' <<<"${secret}" | base64 -d)
+
+curl_command="
+curl -s -X POST \"${HMPPS_AUTH_URL}/auth/oauth/token?grant_type=client_credentials\" \
+  -H \"Content-Type: application/json\" \
+  -H \"Authorization: Basic $(echo -n ${client_id}:${client_secret} | base64)\"
+"
+
+pod=$(kubectl -n "${NAMESPACE}" get pods | grep ${SECRET_NAME} | awk '{print $1}' | head -n 1)
+
+kubectl -n "${NAMESPACE}" exec -it "${pod}" -- bash -c "${curl_command}" | jq -r '.access_token'
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m git[K[K[Kgco MRD-43_case-overview
+Switched to branch 'MRD-43_case-overview'
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m ./[Kgarde[K[K[K[K[K[K./gradlew dependencyCheckAnalyze
+
+
+[2A[1m<[0;1m-------------> 0% INITIALIZING [37ms][m[38D[1B[1m> Evaluating settings[m[21D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [137ms][m[38D[1B[1m> root project > Resolve files of :classpath[m[44D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [237ms][m[38D[1B[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [337ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [437ms][m[38D[2B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [537ms][m[40D[1B> IDLE[0K[6D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [638ms][m[0K[36D[1B[1m> :dependencyCheckAnalyze[m[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [737ms][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [837ms][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [937ms][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1s][m[0K[33D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Resolve files of :detachedConfiguration16[m[106D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Provisioning toolchain matching('adoptopenjdk')-17-x64-hotspot-linux.tar.gz > Unpacking toolchain archive[m[170D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [2s][m[33D[2B[2A[0K
+[1m> Task :dependencyCheckAnalyze[m[0K
+Verifying dependencies for project make-recall-decision-api
+[0K
+[0K
+[2A[1m<[0;1m-------------> 0% EXECUTING [2s][m[33D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Provisioning toolchain matching('adoptopenjdk')-17-x64-hotspot-linux.tar.gz > Unpacking toolchain archive[m[170D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [3s][m[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [4s][m[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [5s][m[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [6s][m[33D[2B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [7s][m[33D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration44[m[120D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath[m[0K[69D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration62[m[120D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath[m[0K[69D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [8s][m[33D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration97[m[120D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration121[m[121D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration148[m[121D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath[m[0K[69D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration175[m[121D[1B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [9s][m[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [10s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :implementationDependenciesMetadata[m[87D[1B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [11s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > Resolve dependencies of :detachedConfiguration193 > kotlin-klib-commonizer-embeddable-1.6.21.pom[m[181D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [12s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > Resolve dependencies of :detachedConfiguration193 > kotlin-klib-commonizer-embeddable-1.6.21.pom > 1.3 KiB/1.6 K[m[197D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath[m[0K[82D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 15.4 KiB/3.1 MiB downloaded[m[159D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [13s][m[34D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 127.4 KiB/3.1 MiB downloaded[m[160D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 943.4 KiB/3.1 MiB downloaded[m[160D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 1.7 MiB/3.1 MiB downloaded[m[0K[158D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 2.4 MiB/3.1 MiB downloaded[m[158D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath > kotlin-klib-commonizer-embeddable-1.6.21.jar > 2.7 MiB/3.1 MiB downloaded[m[158D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :kotlinKlibCommonizerClasspath[m[0K[82D[1B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210[m[131D[1B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [14s][m[34D[2B[2AChecking for updates and analyzing dependencies for vulnerabilities
+[1B[0K
+[2A[1m<[0;1m-------------> 0% EXECUTING [14s][m[34D[1B[1m> :dependencyCheckAnalyze[m[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [15s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [16s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [17s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [18s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [19s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [20s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [21s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [22s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [23s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [24s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [25s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [26s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [27s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [28s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [29s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [30s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [31s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [32s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [33s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [34s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [35s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [36s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [37s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [38s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [39s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [40s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [41s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [42s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [43s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [44s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [45s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [46s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [47s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [48s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [49s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [50s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [51s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [52s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [53s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [54s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [55s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [56s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [57s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [58s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [59s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m][m[0K[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 1s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 2s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 3s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 4s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 5s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 6s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 7s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 8s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 9s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 10s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 11s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 12s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 13s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 14s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 15s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 16s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 17s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 18s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 19s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 20s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 21s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 22s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 23s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 24s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 25s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 26s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 27s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 28s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 29s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 30s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 31s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 32s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 33s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 34s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 35s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 36s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 37s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 38s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 39s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 40s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 41s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 42s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 43s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 44s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 45s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 46s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 47s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 48s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 49s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 50s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 51s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 52s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 53s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 54s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 55s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 56s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 57s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 58s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [1m 59s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m][m[0K[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 1s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 2s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 3s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 4s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 5s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 6s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 7s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 8s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 9s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 10s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 11s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 12s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 13s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 14s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 15s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 16s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 17s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 18s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 19s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 20s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 21s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 22s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 23s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 24s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 25s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 26s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 27s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 28s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 29s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 30s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 31s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 32s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 33s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 34s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 35s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 36s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 37s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 38s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 39s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 40s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 41s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 42s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 43s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 44s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 45s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 46s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 47s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 48s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 49s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 50s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 51s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 52s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 53s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 54s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 55s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 56s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 57s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 58s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [2m 59s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m][m[0K[33D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 1s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 2s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 3s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 4s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 5s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 6s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 7s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 8s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 9s][m[36D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 10s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 11s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 12s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 13s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 14s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 15s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 16s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 17s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 18s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 19s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 20s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 21s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 22s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 23s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 24s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 25s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 26s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 27s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 28s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 29s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 30s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 31s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 32s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 33s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 34s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 35s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 36s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 37s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 38s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 39s][m[37D[2B[2AGenerating report for project make-recall-decision-api
+[1B[0K
+[2A[1m<[0;1m-------------> 0% EXECUTING [3m 39s][m[37D[1B[1m> :dependencyCheckAnalyze[m[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 40s][m[37D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [3m 41s][m[37D[2B[2AFound 1 vulnerabilities in project make-recall-decision-api
+[0K
+
+One or more dependencies were identified with known vulnerabilities in make-recall-decision-api:
+
+sarif4k-0.0.1.jar (pkg:maven/io.github.detekt.sarif4k/sarif4k@0.0.1, cpe:2.3:a:detekt:detekt:0.0.1:*:*:*:*:*:*:*) : CVE-2022-0272
+
+
+See the dependency-check report for more details.
+
+
+[0K
+[0K
+[2A[1m<[0;1m-------------> 0% EXECUTING [3m 41s][m[37D[1B[1m> :dependencyCheckAnalyze[m[25D[1B[2A[0K
+[31;1m> Task :dependencyCheckAnalyze[0;39m[31m FAILED[39m
+
+[31mFAILURE: [39m[31mBuild failed with an exception.[39m
+
+* What went wrong:
+Execution failed for task ':dependencyCheckAnalyze'.
+[33m> [39m
+  
+  Dependency-Analyze Failure:
+  One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '5.0': CVE-2022-0272
+  See the dependency-check report for more details.
+  
+
+
+* Try:
+[33m> [39mRun with [1m--stacktrace[m option to get the stack trace.
+[33m> [39mRun with [1m--info[m or [1m--debug[m option to get more log output.
+[33m> [39mRun with [1m--scan[m to get full insights.
+
+* Get more help at [1mhttps://help.gradle.org[m
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+See https://docs.gradle.org/7.4.2/userguide/command_line_interface.html#sec:command_line_warnings
+
+[31;1mBUILD FAILED[0;39m in 3m 42s
+1 actionable task: 1 executed
+[0K
+[0K
+[2A[1m<[0;31;1m=============[0;39;1m> 100% EXECUTING [3m 42s][m[39D[1B> IDLE[6D[1B[2A[1m<[0;1m-------------> 0% WAITING[m[0K[26D[2B[2A[2K[1B[2K[1A[0m[?12l[?25h]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m ./gradlew dependencyCheckAnalyze[8Pgco MRD-43_case-overview./gradlew dependencyCheckAnalyze
+
+
+[1A[1m> Connecting to Daemon[m[22D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [61ms][m[37D[1B[1m> Loading projects[m[0K[18D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [161ms][m[38D[1B[1m> root project > Compiling build file 'build.gradle.kts'[m[56D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [261ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [361ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [461ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [561ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [661ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [761ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [861ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [961ms][m[38D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [1s][m[0K[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [2s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [3s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [4s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [5s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [6s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [7s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [8s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [9s][m[35D[2B[1A[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [10s][m[36D[1B[1m> root project > Resolve dependencies of :classpath[m[51D[1B[1A[1m> root project > Resolve files of :classpath[m[0K[44D[1B[1A[1m> root project[m[0K[14D[1B[1A[1m> root project > Compiling build file 'build.gradle.kts'[m[56D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [11s][m[36D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [12s][m[36D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [13s][m[36D[2B[1A[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [13s][m[0K[34D[1B[1m> :dependencyCheckAnalyze[m[25D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps[m[62D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [14s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Resolve dependencies of :detachedConfiguration24[m[113D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps[m[0K[62D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Provisioning toolchain matching('adoptopenjdk')-17-x64-hotspot-linux.tar.gz > Unpacking toolchain archive[m[170D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [15s][m[34D[2B[2A[0K
+[1m> Task :dependencyCheckAnalyze[m[0K
+Verifying dependencies for project make-recall-decision-api
+[0K
+[0K
+[2A[1m<[0;1m-------------> 0% EXECUTING [15s][m[34D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :agentDeps > Provisioning toolchain matching('adoptopenjdk')-17-x64-hotspot-linux.tar.gz > Unpacking toolchain archive[m[170D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [16s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [17s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [18s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [19s][m[34D[2B[2A[1m<[0;1m-------------> 0% EXECUTING [20s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :apiDependenciesMetadata[m[0K[76D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration44[m[120D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve files of :detachedConfiguration45[m[0K[113D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath > Resolve dependencies of :detachedConfiguration55[m[120D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :compileClasspath[m[0K[69D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [21s][m[34D[2B[1A[1m> :dependencyCheckAnalyze[m[0K[25D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [22s][m[34D[2B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :ktlint > Resolve dependencies of :detachedConfiguration201[m[111D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-core-1.20.0.pom[m[156D[1B[1A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210[m[0K[131D[1B
+
+
+
+
+[6A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-parser-1.20.0.pom[m[158D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-tooling-1.20.0.pom[m[159D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-report-html-1.20.0.pom[m[163D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-psi-utils-1.20.0.pom[m[161D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-metrics-1.20.0.pom[m[159D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-api-1.20.0.module[m[158D[1B[6A> IDLE[0K[6D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-metrics-1.20.0.module[m[162D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-utils-1.20.0.module[m[0K[160D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-psi-utils-1.20.0.module[m[164D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > detekt-tooling-1.20.0.module[m[162D[1B> IDLE[0K[6D[1B[5A> IDLE[0K[6D[1B> IDLE[0K[6D[1B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > Resolve dependencies of :detachedConfiguration210 > kotlinx-html-jvm-0.7.5.pom[m[0K[160D[1B> IDLE[0K[6D[2B[3A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath[m[0K[79D[3B[3A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > detekt-metrics-1.20.0.jar[m[107D[3B[3A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > detekt-report-xml-1.20.0.jar[m[110D[3B[7A[1m<[0;1m-------------> 0% EXECUTING [23s][m[34D[4B[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > detekt-report-sarif-1.20.0.jar[m[112D[3B[3A[1m> :dependencyCheckAnalyze > Resolve dependencies of :productionRuntimeClasspath > kotlinx-html-jvm-0.7.5.jar > 271.4 KiB/781.8 KiB downloaded[m[141D[3B[3A[1m> :dependencyCheckAnalyze[m[0K[25D[3B[7AChecking for updates and analyzing dependencies for vulnerabilities
+[6B[0K
+[7A[1m<[0;1m-------------> 0% EXECUTING [23s][m[34D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[0K[6D[1B[1m> :dependencyCheckAnalyze[m[25D[1B> IDLE[6D[1B> IDLE[6D[1B[7A[1m<[0;1m-------------> 0% EXECUTING [24s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [25s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [26s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [27s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [28s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [29s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [30s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [31s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [32s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [33s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [34s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [35s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [36s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [37s][m[34D[7B[7A[1m<[0;1m-------------> 0% EXECUTING [38s][m[34D[7B[7AGenerating report for project make-recall-decision-api
+[6B[0K
+[7A[1m<[0;1m-------------> 0% EXECUTING [38s][m[34D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[0K[6D[1B[1m> :dependencyCheckAnalyze[m[25D[1B> IDLE[6D[1B> IDLE[6D[1B[7A[1m<[0;1m-------------> 0% EXECUTING [39s][m[34D[7B[7AFound 1 vulnerabilities in project make-recall-decision-api
+[0K
+[0K
+One or more dependencies were identified with known vulnerabilities in make-recall-decision-api:
+[0K
+sarif4k-0.0.1.jar (pkg:maven/io.github.detekt.sarif4k/sarif4k@0.0.1, cpe:2.3:a:detekt:detekt:0.0.1:*:*:*:*:*:*:*) : CVE-2022-0272
+[0K
+
+See the dependency-check report for more details.
+
+
+[0K
+[0K
+[0K
+[0K
+[0K
+[0K
+[0K
+[7A[1m<[0;1m-------------> 0% EXECUTING [39s][m[34D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[6D[1B[1m> :dependencyCheckAnalyze[m[25D[1B> IDLE[6D[1B> IDLE[6D[1B[7A[0K
+[31;1m> Task :dependencyCheckAnalyze[0;39m[31m FAILED[39m
+[0K
+[31mFAILURE: [39m[31mBuild failed with an exception.[39m
+[0K
+* What went wrong:
+Execution failed for task ':dependencyCheckAnalyze'.
+[33m> [39m
+  
+  Dependency-Analyze Failure:
+  One or more dependencies were identified with vulnerabilities that have a CVSS score greater than '5.0': CVE-2022-0272
+  See the dependency-check report for more details.
+  
+
+
+* Try:
+[33m> [39mRun with [1m--stacktrace[m option to get the stack trace.
+[33m> [39mRun with [1m--info[m or [1m--debug[m option to get more log output.
+[33m> [39mRun with [1m--scan[m to get full insights.
+
+* Get more help at [1mhttps://help.gradle.org[m
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+See https://docs.gradle.org/7.4.2/userguide/command_line_interface.html#sec:command_line_warnings
+
+[31;1mBUILD FAILED[0;39m in 40s
+1 actionable task: 1 executed
+[0K
+[0K
+[0K
+[0K
+[0K
+[0K
+[0K
+[7A[1m<[0;1m-------------> 0% WAITING[m[26D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[6D[1B> IDLE[6D[1B[7A[2K[1B[2K[1B[2K[1B[2K[1B[2K[1B[2K[1B[2K[6A[0m[?12l[?25h]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m 
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(MRD-43_case-overview) [01;34m$[00m gco main
+Switched to branch 'main'
+Your branch is up-to-date with 'origin/main'.
+]0; make-recall-decision-api[01;32mcharliejade@Loki-7281[01;34m ~/dev/apps/EE/make-recall-decision-api[31m(main) [01;34m$[00m git pull
+remote: Enumerating objects: 1, done.[K
+remote: Counting objects: 100% (1/1)[Kremote: Counting objects: 100% (1/1), done.[K
+remote: Total 1 (delta 0), reused 0 (delta 0), pack-reused 0[K
+Unpacking objects: 100% (1/1)   Unpacking objects: 100% (1/1), done.
+From https://github.com/ministryofjustice/make-recall-decision-api
+   9b090e6..9b12549  main       -> origin/main
+Updating 9b090e6..9b12549
+Fast-forward
+ helm_deploy/values-dev.yaml                                                                                                  |   1 [32m+[m
+ helm
