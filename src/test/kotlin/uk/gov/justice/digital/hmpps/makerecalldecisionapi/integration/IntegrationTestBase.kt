@@ -95,6 +95,6 @@ abstract class IntegrationTestBase {
   fun setupOauth() {
     val response = response().withContentType(APPLICATION_JSON)
       .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer")))
-    oauthMock.`when`(request().withPath("/auth/oauth/token")).respond(response)
+    oauthMock.`when`(request()).respond(response)
   }
 }
