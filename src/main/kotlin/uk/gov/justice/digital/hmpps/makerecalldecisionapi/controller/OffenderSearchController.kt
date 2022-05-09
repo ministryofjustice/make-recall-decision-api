@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SearchByCrnResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 class OffenderSearchController(
-  private val caseSummaryService: CaseSummaryService
+  private val offenderSearchService: OffenderSearchService
 ) {
 
   companion object {
@@ -26,6 +26,6 @@ class OffenderSearchController(
   @Operation(summary = "Returns a list of people on probation based on a given CRN")
   suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
     log.info("Offender search endpoint hit for CRN: $crn")
-    return caseSummaryService.search(crn)
+    return offenderSearchService.search(crn)
   }
 }
