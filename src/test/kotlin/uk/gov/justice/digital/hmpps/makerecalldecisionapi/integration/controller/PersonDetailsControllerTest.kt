@@ -18,7 +18,7 @@ class PersonDetailsControllerTest : IntegrationTestBase() {
       registrationsResponse(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/persondetails")
+        .uri("/cases/$crn/personal-details")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
