@@ -33,8 +33,8 @@ abstract class IntegrationTestBase {
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
+  var oauthMock: ClientAndServer = startClientAndServer(9090)
 
-  private var oauthMock: ClientAndServer = startClientAndServer(9090)
   private val gson: Gson = Gson()
 
   @Autowired
@@ -103,8 +103,20 @@ abstract class IntegrationTestBase {
   }
 
   fun setupOauth() {
-    val response = response().withContentType(APPLICATION_JSON)
-      .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer")))
-    oauthMock.`when`(request().withPath("/auth/oauth/token")).respond(response)
+    oauthMock
+      .`when`(request().withPath("/auth/oauth/token"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer")))
+      )
+
+    oauthMock
+      .`when`(request().withPath("/auth/health/ping"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("status" to "OK")))
+      )
   }
 }

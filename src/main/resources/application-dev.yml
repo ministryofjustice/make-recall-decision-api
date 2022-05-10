@@ -6,3 +6,7 @@ offender:
 community:
   endpoint:
     url: https://community-api-public.test.probation.service.justice.gov.uk
+
+hmpps:
+  auth:
+    url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
