@@ -18,8 +18,9 @@ offender:
       url: http://localhost:8093
 
 community:
-  endpoint:
-    url: http://localhost:8092
+  api:
+    endpoint:
+      url: http://localhost:8092
 
 oauth:
   endpoint:

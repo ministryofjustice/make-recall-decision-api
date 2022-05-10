@@ -4,8 +4,9 @@ offender:
       url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
 
 community:
-  endpoint:
-    url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
+  api:
+    endpoint:
+      url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
 
 hmpps:
   auth:
