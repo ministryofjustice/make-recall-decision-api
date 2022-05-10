@@ -8,5 +8,5 @@ import org.springframework.web.reactive.function.client.WebClient
 class HmppsAuthHealth(
   webClientNoAuthNoMetrics: WebClient,
   @Value("hmppsAuth") componentName: String,
-  @Value("\${oauth.endpoint.url}") hmppsAuthEndpointUrl: String
+  @Value("\${hmpps.auth.url}") hmppsAuthEndpointUrl: String
 ) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, "$hmppsAuthEndpointUrl/health/ping")

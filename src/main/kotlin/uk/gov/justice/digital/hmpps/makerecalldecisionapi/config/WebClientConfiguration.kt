@@ -43,6 +43,11 @@ class WebClientConfiguration(
   }
 
   @Bean
+  fun webClientNoAuthNoMetrics(): WebClient {
+    return WebClient.create()
+  }
+
+  @Bean
   fun offenderSearchApiClient(@Qualifier("offenderSearchWebClientAppScope") webClient: WebClient): OffenderSearchApiClient {
     return OffenderSearchApiClient(webClient)
   }
