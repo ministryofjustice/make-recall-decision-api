@@ -95,3 +95,7 @@ offender:
 community:
   endpoint:
     url: ${community.api.endpoint}
+
+gotenberg:
+  endpoint:
+    url: http://localhost:9091

@@ -10,3 +10,7 @@ community:
 hmpps:
   auth:
     url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
+gotenberg:
+  endpoint:
+    url: http://localhost:9091
