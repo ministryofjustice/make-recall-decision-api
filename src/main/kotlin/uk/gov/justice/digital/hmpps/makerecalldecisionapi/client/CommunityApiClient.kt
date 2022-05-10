@@ -13,7 +13,7 @@ class CommunityApiClient(private val webClient: WebClient) {
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     return webClient
       .get()
-      .uri("/offenders/crn/$crn/registrations")
+      .uri("/secure/offenders/crn/$crn/registrations")
       .retrieve()
       .bodyToMono(responseType)
   }
@@ -22,7 +22,7 @@ class CommunityApiClient(private val webClient: WebClient) {
     val responseType = object : ParameterizedTypeReference<List<ConvictionResponse>>() {}
     return webClient
       .get()
-      .uri("/offenders/crn/$crn/convictions")
+      .uri("/secure/offenders/crn/$crn/convictions")
       .retrieve()
       .bodyToMono(responseType)
   }
@@ -31,7 +31,7 @@ class CommunityApiClient(private val webClient: WebClient) {
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
     return webClient
       .get()
-      .uri("/offenders/crn/$crn/all")
+      .uri("/secure/offenders/crn/$crn/all")
       .retrieve()
       .bodyToMono(responseType)
   }
