@@ -16,7 +16,7 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
       - PROBATION_OFFENDER_SEARCH_ENDPOINT_URL=set-me # TODO: add a wiremock stub for this service
-      - COMMUNITY_API_ENDPOINT=set-me # TODO: add a wiremock stub for this service
+      - PROBATION_COMMUNITY_API_ENDPOINT_URL=set-me # TODO: add a wiremock stub for this service
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
       - SYSTEM_CLIENT_SECRET=clientsecret
