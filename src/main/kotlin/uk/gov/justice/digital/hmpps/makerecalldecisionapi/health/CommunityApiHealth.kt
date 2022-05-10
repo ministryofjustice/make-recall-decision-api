@@ -8,5 +8,5 @@ import org.springframework.web.reactive.function.client.WebClient
 class CommunityApiHealth(
   webClientNoAuthNoMetrics: WebClient,
   @Value("communityApi") componentName: String,
-  @Value("\${community.endpoint.url}") endpointUrl: String
+  @Value("\${community.api.endpoint.url}") endpointUrl: String
 ) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, "$endpointUrl/ping")
