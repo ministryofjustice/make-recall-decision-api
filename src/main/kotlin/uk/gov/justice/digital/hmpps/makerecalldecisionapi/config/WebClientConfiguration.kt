@@ -21,6 +21,11 @@ class WebClientConfiguration(
 ) {
 
   @Bean
+  fun webClientNoAuthNoMetrics(): WebClient {
+    return WebClient.create()
+  }
+
+  @Bean
   fun authorizedClientManagerAppScope(
     clientRegistrationRepository: ClientRegistrationRepository,
     oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
@@ -40,11 +45,6 @@ class WebClientConfiguration(
     builder: WebClient.Builder
   ): WebClient {
     return getOAuthWebClient(authorizedClientManager, builder, offenderSearchApiRootUri, "offender-search-api")
-  }
-
-  @Bean
-  fun webClientNoAuthNoMetrics(): WebClient {
-    return WebClient.create()
   }
 
   @Bean

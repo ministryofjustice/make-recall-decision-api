@@ -47,18 +47,28 @@ class HealthCheckTest : IntegrationTestBase() {
     healthCheckIsUpWith(
       "/health",
       "status" to "UP",
-      "components.hmppsAuth.status" to "UP"
+      "components.hmppsAuth.status" to "UP",
+      "components.communityApi.status" to "UP",
+      "components.offenderSearchApi.status" to "UP"
     )
   }
 
   @Test
-  fun `Health page reports if one of the component checks fails`() {
+  fun `Health page reports if the component checks fail`() {
     oauthMock.clear(request().withPath("/auth/health/ping"))
     oauthMock.`when`(request().withPath("/auth/health/ping")).error(HttpError.error())
 
+    communityApi.clear(request().withPath("/ping"))
+    communityApi.`when`(request().withPath("/ping")).error(HttpError.error())
+
+    offenderSearchApi.clear(request().withPath("/ping"))
+    offenderSearchApi.`when`(request().withPath("/ping")).error(HttpError.error())
+
     healthCheckIsUpWith(
       "/health",
-      "components.hmppsAuth.status" to "UNKNOWN"
+      "components.hmppsAuth.status" to "UNKNOWN",
+      "components.communityApi.status" to "UNKNOWN",
+      "components.offenderSearchApi.status" to "UNKNOWN"
     )
   }
 

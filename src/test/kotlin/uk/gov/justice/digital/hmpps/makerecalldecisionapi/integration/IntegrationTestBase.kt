@@ -55,6 +55,7 @@ abstract class IntegrationTestBase {
     communityApi.reset()
     offenderSearchApi.reset()
     setupOauth()
+    setupHealthChecks()
   }
 
   @AfterAll
@@ -66,7 +67,7 @@ abstract class IntegrationTestBase {
 
   protected fun allOffenderDetailsResponse(crn: String) {
     val allOffenderDetailsRequest =
-      request().withPath("/offenders/crn/$crn/all")
+      request().withPath("/secure/offenders/crn/$crn/all")
 
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
@@ -75,7 +76,7 @@ abstract class IntegrationTestBase {
 
   protected fun unallocatedConvictionResponse(crn: String, staffCode: String) {
     val convictionsRequest =
-      request().withPath("/offenders/crn/$crn/convictions")
+      request().withPath("/secure/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
@@ -84,7 +85,7 @@ abstract class IntegrationTestBase {
 
   protected fun registrationsResponse(crn: String) {
     val convictionsRequest =
-      request().withPath("/offenders/crn/$crn/registrations")
+      request().withPath("/secure/offenders/crn/$crn/registrations")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
@@ -110,9 +111,27 @@ abstract class IntegrationTestBase {
           .withContentType(APPLICATION_JSON)
           .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer")))
       )
+  }
 
+  fun setupHealthChecks() {
     oauthMock
       .`when`(request().withPath("/auth/health/ping"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("status" to "OK")))
+      )
+
+    communityApi
+      .`when`(request().withPath("/ping"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("status" to "OK")))
+      )
+
+    offenderSearchApi
+      .`when`(request().withPath("/ping"))
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
