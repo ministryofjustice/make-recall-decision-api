@@ -12,16 +12,19 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.util.concurrent.atomic.AtomicInteger
 
 abstract class PingHealthCheck(
   private val webClient: WebClient,
   private val componentName: String,
   private val healthUrl: String,
-  private val timeout: Duration = Duration.ofSeconds(1)
-) : HealthIndicator {
+  private val timeout: Duration = Duration.ofSeconds(1),
+  ) : HealthIndicator {
 
   @Autowired
   private val meterRegistry: MeterRegistry? = null
+
+  private val gaugeVal: AtomicInteger = AtomicInteger(0)
 
   override fun health(): Health? {
     val result = try {
@@ -30,29 +33,34 @@ abstract class PingHealthCheck(
         .retrieve()
         .toEntity(String::class.java)
         .flatMap { upWithStatus(it) }
-        .onErrorResume(WebClientResponseException::class.java) { downWithResponseBody(it) }
-        .onErrorResume(Exception::class.java) { downWithException(it) }
+        .onErrorResume(WebClientResponseException::class.java) { recordHealthMetricDown(); downWithResponseBody(it) }
+        .onErrorResume(Exception::class.java) { recordHealthMetricDown(); downWithException(it) }
         .block(timeout)
     } catch (ex: Exception) {
       Health.unknown().withBody(ex.toString()).build()
     }
 
-    recordHealthMetric(result)
+    meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), gaugeVal)
+
+    if (result?.status == Status.UP) {
+      recordHealthMetricUp()
+    } else {
+      recordHealthMetricDown()
+    }
 
     return result
   }
 
-  private fun recordHealthMetric(result: Health?) {
-    var gaugeVal = 0
-
-    if (result?.status == Status.UP) {
-      gaugeVal = 1
-    }
-
-    meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), gaugeVal)
+  private fun recordHealthMetricUp() {
+    gaugeVal.set(1)
   }
 
-  private fun downWithException(it: Exception) = Mono.just(Health.down(it).build())
+  private fun recordHealthMetricDown() {
+    gaugeVal.set(0)
+  }
+
+  private fun downWithException(it: Exception) =
+    Mono.just(Health.down(it).build())
 
   private fun downWithResponseBody(it: WebClientResponseException) =
     Mono.just(
