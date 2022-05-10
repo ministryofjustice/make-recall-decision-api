@@ -67,8 +67,7 @@ fi
 
 pushd "${API_DIR}"
 printf "\n\nBuilding/starting API components...\n\n"
-# TODO: uncomment the below when we have any dependencies to run
-# docker-compose up -d --scale=${API_NAME}=0
+docker-compose up -d --scale=${API_NAME}=0
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
@@ -87,6 +86,7 @@ function wait_for {
 wait_for "http://localhost:9090/auth/health/ping" "${AUTH_NAME}"
 wait_for "http://localhost:3000/ping" "${UI_NAME}"
 wait_for "http://localhost:8081/health/readiness" "${API_NAME}"
+wait_for "http://9091/health" "gotenberg"
 
 printf "\n\nAll services started.\n\n"
 printf "\n\nLogs for API and UI can be found by running:\n"

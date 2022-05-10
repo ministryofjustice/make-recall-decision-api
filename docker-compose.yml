@@ -15,8 +15,23 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
+      - PROBATION_OFFENDER_SEARCH_ENDPOINT_URL=set-me # TODO: add a wiremock stub for this service
+      - COMMUNITY_API_ENDPOINT=set-me # TODO: add a wiremock stub for this service
+      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
       - SYSTEM_CLIENT_SECRET=clientsecret
+
+  gotenberg:
+    image: gotenberg/gotenberg:7.5.2
+    networks:
+      - hmpps
+    container_name: gotenberg
+    ports:
+      - "9091:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+    environment:
+      - LOG_LEVEL=DEBUG
 
 networks:
   hmpps:
