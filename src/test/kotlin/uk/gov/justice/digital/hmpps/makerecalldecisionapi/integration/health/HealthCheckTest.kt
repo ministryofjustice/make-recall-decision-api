@@ -61,8 +61,8 @@ class HealthCheckTest : IntegrationTestBase() {
     communityApi.clear(request().withPath("/ping"))
     communityApi.`when`(request().withPath("/ping")).error(HttpError.error())
 
-    offenderSearchApi.clear(request().withPath("/ping"))
-    offenderSearchApi.`when`(request().withPath("/ping")).error(HttpError.error())
+    offenderSearchApi.clear(request().withPath("/health/ping"))
+    offenderSearchApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
 
     healthCheckIsUpWith(
       "/health",
