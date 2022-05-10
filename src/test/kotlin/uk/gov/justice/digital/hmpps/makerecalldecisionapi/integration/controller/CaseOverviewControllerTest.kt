@@ -8,23 +8,30 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class OffenderSearchControllerTest : IntegrationTestBase() {
+class CaseOverviewControllerTest : IntegrationTestBase() {
 
   @Test
-  fun `retrieves simple case summary details`() {
+  fun `retrieves case summary details`() {
     runBlockingTest {
-      val crn = "X123456"
-      unallocatedOffenderSearchResponse(crn)
+      val crn = "A12345"
+      val staffCode = "STFFCDEU"
+      allOffenderDetailsResponse(crn)
+      unallocatedConvictionResponse(crn, staffCode)
+
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/cases/$crn/overview")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
-        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
-        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$.personDetails.name").isEqualTo("John Smith")
+        .jsonPath("$.personDetails.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personDetails.age").isEqualTo("39")
+        .jsonPath("$.personDetails.gender").isEqualTo("Male")
+        .jsonPath("$.personDetails.crn").isEqualTo(crn)
+        .jsonPath("$.offences.length()").isEqualTo(1)
+        .jsonPath("$.offences[0].mainOffence").isEqualTo("true")
+        .jsonPath("$.offences[0].description").isEqualTo("Robbery (other than armed robbery)")
     }
   }
 
@@ -34,7 +41,7 @@ class OffenderSearchControllerTest : IntegrationTestBase() {
       val crn = "X123456"
       unallocatedOffenderSearchResponse(crn)
       webTestClient.get()
-        .uri("/cases/$crn/search")
+        .uri("/cases/$crn/overview")
         .exchange()
         .expectStatus()
         .isUnauthorized

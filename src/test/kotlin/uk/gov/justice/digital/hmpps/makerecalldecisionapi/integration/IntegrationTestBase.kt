@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -77,7 +78,16 @@ abstract class IntegrationTestBase {
       request().withPath("/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(staffCode))
+      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
+    )
+  }
+
+  protected fun registrationsResponse(crn: String) {
+    val convictionsRequest =
+      request().withPath("/offenders/crn/$crn/registrations")
+
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
     )
   }
 

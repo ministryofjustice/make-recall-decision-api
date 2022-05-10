@@ -7,16 +7,25 @@ data class AllOffenderDetailsResponse(
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val dateOfBirth: LocalDate?,
   val firstName: String?,
-  val surname: String?,
+  val surname: String? = null,
+  val gender: String? = null,
   val contactDetails: ContactDetails?,
   val offenderManagers: List<OffenderManager>?
 )
 
 data class OffenderManager(
-  val active: Boolean?,
+  val active: Boolean,
   val trustOfficer: TrustOfficer?,
   val staff: Staff?,
-  val providerEmployee: ProviderEmployee?
+  val providerEmployee: ProviderEmployee?,
+  val team: Team?
+)
+
+data class Team(
+  val telephone: String?,
+  val emailAddress: String?,
+  val code: String?,
+  val description: String?
 )
 
 data class TrustOfficer(
@@ -44,7 +53,11 @@ data class ContactDetails(
 )
 
 data class Address(
-  val town: String?,
-  val county: String?,
-  val status: AddressStatus?
+  val town: String? = null,
+  val county: String? = null,
+  val district: String? = null,
+  val status: AddressStatus? = null,
+  val postcode: String? = null,
+  val addressNumber: String? = null,
+  val buildingName: String? = null
 )
