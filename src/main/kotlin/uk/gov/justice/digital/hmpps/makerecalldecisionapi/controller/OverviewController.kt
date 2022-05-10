@@ -40,6 +40,24 @@ fun overviewResponse() = """
     "gender": "Male",
     "crn": "A12345"
   },
+  "currentAddress": {
+    "line1": "5 Anderton Road",
+    "line2": "Newham",
+    "town": "London",
+    "postcode": "E15 1UJ"
+  },
+  "offenderManager": {
+    "name": "Jenny Eclair",
+    "phoneNumber": "07824637629",
+    "email": "jenny@probation.com",
+    "probationTeam": {
+      "code": "N07",
+      "label": "NPS London"
+    }
+  },
+  "risk": {
+    "flags": ["Victim contact", "Mental health issues", "MAPPA"]
+  },
   "offences": [
     {
       "mainOffence": true,

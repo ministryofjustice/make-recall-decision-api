@@ -19,7 +19,7 @@ abstract class PingHealthCheck(
   private val componentName: String,
   private val healthUrl: String,
   private val timeout: Duration = Duration.ofSeconds(1),
-  ) : HealthIndicator {
+) : HealthIndicator {
 
   @Autowired
   private val meterRegistry: MeterRegistry? = null
