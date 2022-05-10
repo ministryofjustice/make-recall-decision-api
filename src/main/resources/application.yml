@@ -93,8 +93,9 @@ offender:
       url: ${probation.offender.search.endpoint.url}
 
 community:
-  endpoint:
-    url: ${community.api.endpoint}
+  api:
+    endpoint:
+      url: ${probation.community.api.endpoint.url}
 
 gotenberg:
   endpoint:

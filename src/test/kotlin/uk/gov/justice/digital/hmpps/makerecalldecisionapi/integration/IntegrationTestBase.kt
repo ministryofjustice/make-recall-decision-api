@@ -134,7 +134,7 @@ abstract class IntegrationTestBase {
       )
 
     offenderSearchApi
-      .`when`(request().withPath("/ping"))
+      .`when`(request().withPath("/health/ping"))
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
