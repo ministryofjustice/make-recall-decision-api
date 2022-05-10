@@ -21,7 +21,7 @@ generic-service:
       port: metrics
   readinessProbe:
     httpGet:
-      path: /health/readiness
+      path: /health
       port: metrics
 
   # Environment variables to load into the deployment
