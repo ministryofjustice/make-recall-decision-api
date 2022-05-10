@@ -5,7 +5,7 @@ offender:
 
 community:
   endpoint:
-    url: https://community-api-public.test.probation.service.justice.gov.uk
+    url: https://community-api-secure.test.delius.probation.hmpps.dsd.io/secure
 
 hmpps:
   auth:
