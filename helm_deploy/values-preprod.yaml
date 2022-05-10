@@ -10,7 +10,7 @@ generic-service:
     SENTRY_ENVIRONMENT: PRE-PROD
     HMPPS_AUTH_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
     PROBATION_OFFENDER_SEARCH_ENDPOINT_URL: https://probation-offender-search-preprod.hmpps.service.justice.gov.uk
-    COMMUNITY_API_ENDPOINT: https://community-api-public.test.probation.service.justice.gov.uk
+    COMMUNITY_API_ENDPOINT: https://community-api-secure.pre-prod.delius.probation.hmpps.dsd.io/secure
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod
