@@ -8,23 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CaseSummaryOverviewResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryOverviewService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PersonDetailsService
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class OverviewController(
-  private val caseSummaryOverviewService: CaseSummaryOverviewService
+class PersonDetailsController(
+  private val personDetailsService: PersonDetailsService
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/cases/{crn}/overview")
-  @Operation(summary = "WIP: Returns an overview of the case details")
-  suspend fun overview(@PathVariable("crn") crn: String): CaseSummaryOverviewResponse {
-    log.info("Overview endpoint hit for CRN: $crn")
-    return caseSummaryOverviewService.getOverview(crn)
+  @GetMapping("/cases/{crn}/personal-details")
+  @Operation(summary = "WIP: Returns an overview of the person details")
+  suspend fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
+    log.info("Person details endpoint hit for CRN: $crn")
+    return personDetailsService.getPersonDetails(crn)
   }
 }
