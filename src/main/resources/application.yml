@@ -28,8 +28,8 @@ spring:
             authorization-grant-type: client_credentials
           community-api:
             provider: hmpps-auth
-            client-id: ${oauth.client.id}
-            client-secret: ${oauth.client.secret}
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
         provider:
           hmpps-auth:
