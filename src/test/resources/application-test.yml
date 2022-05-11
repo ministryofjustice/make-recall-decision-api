@@ -4,6 +4,12 @@ spring:
       resourceserver:
         jwt:
           public-key-location: classpath:local-public-key.pub
+  datasource:
+    url: NOT_USED
+    username: NOT_USED
+    password: NOT_USED
+  flyway:
+    enabled: false
 
 server:
   shutdown: immediate

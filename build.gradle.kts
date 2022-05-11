@@ -16,15 +16,16 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
   implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
+  implementation("io.opentelemetry:opentelemetry-api:1.13.0")
+
+  implementation("org.springframework.boot:spring-boot-starter-jdbc")
+  implementation("org.flywaydb:flyway-core:8.5.4")
+  implementation("org.postgresql:postgresql:42.3.3")
 
   "5.7.3".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
     implementation("io.sentry:sentry-logback:$sentryVersion")
-
-    testImplementation("org.mock-server:mockserver-netty:5.13.2")
   }
-
-  implementation("io.opentelemetry:opentelemetry-api:1.13.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.7")
   implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
@@ -34,11 +35,15 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+  testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
+  testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
+  testImplementation("io.zonky.test:embedded-database-spring-test:2.1.1")
+  testImplementation("io.zonky.test:embedded-postgres:1.3.1")
 }
 
 java {
