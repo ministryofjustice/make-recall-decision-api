@@ -19,13 +19,13 @@ class OffenderSearchService(
       .awaitFirst().content
 
     return apiResponse
-      .stream()
-      .map {
+      ?.stream()
+      ?.map {
         SearchByCrnResponse(
           name = "${it.firstName} ${it.surname}",
           dateOfBirth = it.dateOfBirth,
           crn = crn
         )
-      }.toList()
+      }?.toList() ?: emptyList()
   }
 }
