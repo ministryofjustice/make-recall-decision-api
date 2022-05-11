@@ -10,5 +10,9 @@ generic-service:
     HMPPS_AUTH_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
     PROBATION_OFFENDER_SEARCH_ENDPOINT_URL: https://probation-offender-search.hmpps.service.justice.gov.uk
     PROBATION_COMMUNITY_API_ENDPOINT_URL: https://community-api-secure.probation.service.justice.gov.uk
+
 generic-prometheus-alerts:
+  alertSeverity: make-recall-decision-prod
+
+gotenberg:
   alertSeverity: make-recall-decision-prod

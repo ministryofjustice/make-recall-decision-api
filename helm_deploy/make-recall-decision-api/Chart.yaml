@@ -4,6 +4,9 @@ description: A Helm chart for Kubernetes
 name: make-recall-decision-api
 version: 0.2.0
 dependencies:
+  - name: gotenberg
+    version: 0.1.0
+    repository: file://subcharts/gotenberg
   - name: generic-service
     version: 1.2.2
     repository: https://ministryofjustice.github.io/hmpps-helm-charts

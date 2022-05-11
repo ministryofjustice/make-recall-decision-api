@@ -32,6 +32,7 @@ generic-service:
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SENTRY_DSN: https://d51aaaaf56b547b8b0582ed0af80bdb7@o345774.ingest.sentry.io/6361157
+    GOTENBERG_ENDPOINT_URL: http://make-recall-decision-api-gotenberg
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

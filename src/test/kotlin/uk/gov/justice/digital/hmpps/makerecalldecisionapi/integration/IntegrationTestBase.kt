@@ -33,6 +33,7 @@ abstract class IntegrationTestBase {
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
+  var gotenbergMock: ClientAndServer = startClientAndServer(8094)
   var oauthMock: ClientAndServer = startClientAndServer(9090)
 
   private val gson: Gson = Gson()
@@ -54,6 +55,7 @@ abstract class IntegrationTestBase {
   fun startUpServer() {
     communityApi.reset()
     offenderSearchApi.reset()
+    gotenbergMock.reset()
     setupOauth()
     setupHealthChecks()
   }
@@ -62,6 +64,7 @@ abstract class IntegrationTestBase {
   fun tearDownServer() {
     communityApi.stop()
     offenderSearchApi.stop()
+    gotenbergMock.stop()
     oauthMock.stop()
   }
 
@@ -136,6 +139,14 @@ abstract class IntegrationTestBase {
         response()
           .withContentType(APPLICATION_JSON)
           .withBody(gson.toJson(mapOf("status" to "OK")))
+      )
+
+    gotenbergMock
+      .`when`(request().withPath("/health"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("status" to "up")))
       )
   }
 }

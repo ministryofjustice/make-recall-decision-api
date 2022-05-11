@@ -49,7 +49,8 @@ class HealthCheckTest : IntegrationTestBase() {
       "status" to "UP",
       "components.hmppsAuth.status" to "UP",
       "components.communityApi.status" to "UP",
-      "components.offenderSearchApi.status" to "UP"
+      "components.offenderSearchApi.status" to "UP",
+      "components.gotenberg.status" to "UP"
     )
   }
 
@@ -64,11 +65,15 @@ class HealthCheckTest : IntegrationTestBase() {
     offenderSearchApi.clear(request().withPath("/health/ping"))
     offenderSearchApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
 
+    gotenbergMock.clear(request().withPath("/health"))
+    gotenbergMock.`when`(request().withPath("/health")).error(HttpError.error())
+
     healthCheckIsUpWith(
       "/health",
       "components.hmppsAuth.status" to "UNKNOWN",
       "components.communityApi.status" to "UNKNOWN",
-      "components.offenderSearchApi.status" to "UNKNOWN"
+      "components.offenderSearchApi.status" to "UNKNOWN",
+      "components.gotenberg.status" to "UNKNOWN"
     )
   }
 

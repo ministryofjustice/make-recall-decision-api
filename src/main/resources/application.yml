@@ -96,3 +96,7 @@ community:
   api:
     endpoint:
       url: ${probation.community.api.endpoint.url}
+
+gotenberg:
+  endpoint:
+    url: http://localhost:9091

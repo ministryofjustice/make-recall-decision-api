@@ -70,3 +70,4 @@ sonar-project.properties
 
 #Helm
 **/Chart.lock
+helm_deploy/make-recall-decision-api/charts
