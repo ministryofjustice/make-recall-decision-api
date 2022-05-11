@@ -14,7 +14,7 @@ data class AllOffenderDetailsResponse(
 )
 
 data class OffenderManager(
-  val active: Boolean,
+  val active: Boolean?,
   val trustOfficer: TrustOfficer?,
   val staff: Staff?,
   val providerEmployee: ProviderEmployee?,
