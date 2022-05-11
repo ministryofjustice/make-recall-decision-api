@@ -16,3 +16,6 @@ generic-service:
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod
+
+gotenberg:
+  alertSeverity: make-recall-decision-nonprod

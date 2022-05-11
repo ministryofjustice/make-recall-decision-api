@@ -65,6 +65,11 @@ class WebClientConfiguration(
     return CommunityApiClient(webClient)
   }
 
+  @Bean
+  fun gotenbergClient(@Value("\${gotenberg.endpoint.url}") gotenbergEndpointUrl: String): WebClient {
+    return getPlainWebClient(WebClient.builder(), gotenbergEndpointUrl)
+  }
+
   private fun getOAuthWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
@@ -75,6 +80,14 @@ class WebClientConfiguration(
     oauth2Client.setDefaultClientRegistrationId(registrationId)
     return builder.baseUrl(rootUri)
       .apply(oauth2Client.oauth2Configuration())
+      .build()
+  }
+
+  private fun getPlainWebClient(
+    builder: WebClient.Builder,
+    rootUri: String,
+  ): WebClient {
+    return builder.baseUrl(rootUri)
       .build()
   }
 }

@@ -22,6 +22,10 @@ community:
     endpoint:
       url: http://localhost:8092
 
+gotenberg:
+  endpoint:
+    url: http://localhost:8094
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth
