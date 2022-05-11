@@ -22,5 +22,5 @@ data class OffenderManager(
 )
 
 data class Risk(
-  val flags: List<String>?
+  val flags: List<String?>?
 )

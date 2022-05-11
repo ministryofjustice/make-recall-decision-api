@@ -14,7 +14,7 @@ class CaseSummaryOverviewService(
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
     val convictions = communityApiClient.getConvictions(crn).awaitFirst()
-    val activeConviction = convictions.first { it.active }
+    val activeConviction = convictions.first { it.active ?: false }
     val offenderDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
     val age = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
@@ -26,8 +26,8 @@ class CaseSummaryOverviewService(
         gender = offenderDetails.gender,
         crn = crn
       ),
-      offences = activeConviction.offences.map {
-        Offence(mainOffence = it.mainOffence, description = it.detail.description)
+      offences = activeConviction.offences?.map {
+        Offence(mainOffence = it.mainOffence, description = it.detail?.description)
       }
     )
   }
