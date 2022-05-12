@@ -18,7 +18,7 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
       releaseSummaryResponse(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/licencehistory")
+        .uri("/cases/$crn/licence-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -44,7 +44,7 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
       val crn = "X123456"
       unallocatedOffenderSearchResponse(crn)
       webTestClient.get()
-        .uri("/cases/$crn/licencehistory")
+        .uri("/cases/$crn/licence-history")
         .exchange()
         .expectStatus()
         .isUnauthorized

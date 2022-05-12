@@ -21,7 +21,7 @@ class LicenceHistoryController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/cases/{crn}/licencehistory")
+  @GetMapping("/cases/{crn}/licence-history")
   @Operation(summary = "WIP: Returns an details of a case licence history")
   suspend fun licenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
     log.info("Licence history endpoint hit for CRN: $crn")
