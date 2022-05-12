@@ -4,6 +4,8 @@ spring:
       resourceserver:
         jwt:
           public-key-location: classpath:local-public-key.pub
+  flyway:
+    enabled: false
 
 server:
   shutdown: immediate

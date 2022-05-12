@@ -57,6 +57,12 @@ This will build the `hmpps-auth` container image locally on your machine before 
 
 ### Running Tests
 
+Run the following script to run all he tests locally (or to see how to run them):
+
+```
+./build.sh
+```
+
 ### Swagger UI
 
 [make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
