@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.14
+  hmpps: ministryofjustice/hmpps@5.0
 
 parameters:
   alerts-slack-channel:
@@ -34,7 +34,9 @@ jobs:
           path: build/reports/tests
 
   e2e_test:
-    executor: hmpps/default
+    executor:
+      name: hmpps/default
+      tag: "3.10"
     parameters:
       environment:
         type: string
@@ -54,12 +56,12 @@ workflows:
               ignore: /.*/
       - hmpps/helm_lint:
           name: helm_lint
-      - hmpps/build_docker:
+      - hmpps/build_multiplatform_docker:
           name: build_docker
-          filters:
-            branches:
-              only:
-                - main
+          # filters:
+          #   branches:
+          #     only:
+          #       - main
 
       - hmpps/deploy_env:
           name: deploy_dev
