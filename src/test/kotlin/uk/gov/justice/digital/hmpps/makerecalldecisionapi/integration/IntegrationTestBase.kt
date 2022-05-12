@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import org.flywaydb.test.annotation.FlywayTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
@@ -24,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
+@FlywayTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
 

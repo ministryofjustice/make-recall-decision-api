@@ -43,6 +43,12 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  datasource:
+    url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:make_recall_decision}
+    username: ${postgres.username:mrd_user}
+    password: ${postgres.password:secret}
+    driver-class-name: org.postgresql.Driver
+
   profiles:
     group:
       test:
