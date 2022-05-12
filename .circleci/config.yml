@@ -14,16 +14,18 @@ parameters:
 jobs:
   validate:
     executor:
-      name: hmpps/java
-      tag: "17.0"
-#      name: hmpps/java_postgres
-#      jdk_tag: "17.0"
-#      postgres_tag: 13-alpine
-#      postgres_username: mrd_user
-#      postgres_password: secret
-#      postgres_db: make_recall_decision
+#      name: hmpps/java
+#      tag: "17.0"
+      name: hmpps/java_postgres
+      jdk_tag: "17.0"
+      postgres_tag: 13-alpine
+      postgres_username: mrd_user
+      postgres_password: secret
+      postgres_db: make_recall_decision
     steps:
       - checkout
+#      - setup_remote_docker:
+#          version: 20.10.14
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
