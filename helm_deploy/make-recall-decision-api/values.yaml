@@ -44,7 +44,7 @@ generic-service:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
       SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
       SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
-    make-recall-decision-database:
+    make-recall-decision-api-database:
       POSTGRES_HOST: "host"
       POSTGRES_DBNAME: "name"
       POSTGRES_USERNAME: "username"
