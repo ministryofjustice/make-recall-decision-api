@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
+import org.flywaydb.test.annotation.FlywayTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
@@ -11,11 +13,8 @@ import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -27,6 +26,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
+@AutoConfigureEmbeddedDatabase
+@FlywayTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
 
@@ -69,16 +70,6 @@ abstract class IntegrationTestBase {
     offenderSearchApi.stop()
     gotenbergMock.stop()
     oauthMock.stop()
-  }
-
-  @Configuration
-  class TestConfig {
-    @Bean
-    fun cleanDatabase(): FlywayMigrationStrategy =
-      FlywayMigrationStrategy { flyway ->
-        flyway.clean()
-        flyway.migrate()
-      }
   }
 
   protected fun allOffenderDetailsResponse(crn: String) {
