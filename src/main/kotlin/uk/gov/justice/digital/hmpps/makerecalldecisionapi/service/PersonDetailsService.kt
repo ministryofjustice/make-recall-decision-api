@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -32,7 +31,7 @@ class PersonDetailsService(
     val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames
     val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname
 
-    val registrations = communityApiClient.getRegistrations(crn).awaitFirst().registrations
+    val registrations = communityApiClient.getRegistrations(crn).awaitFirstOrNull()?.registrations
     val activeRegistrations = registrations?.filter { it.active ?: false }
     val riskFlags = activeRegistrations?.map { it.type?.description }
 
