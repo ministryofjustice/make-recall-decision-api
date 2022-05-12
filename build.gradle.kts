@@ -42,8 +42,6 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
-  testImplementation("io.zonky.test:embedded-database-spring-test:2.1.1")
-  testImplementation("io.zonky.test:embedded-postgres:1.3.1")
 }
 
 java {
