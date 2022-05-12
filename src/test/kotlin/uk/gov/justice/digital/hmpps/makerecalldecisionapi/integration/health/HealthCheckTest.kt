@@ -4,11 +4,17 @@ import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
+import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.transaction.annotation.EnableTransactionManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
+import javax.sql.DataSource
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = ["management.server.port=9999", "server.port=9999"])
 class HealthCheckTest : IntegrationTestBase() {
@@ -112,4 +118,18 @@ class HealthCheckTest : IntegrationTestBase() {
 
   private fun WebTestClient.BodyContentSpec.hasJsonPath(jsonPath: String, equalTo: String) =
     jsonPath(jsonPath).isEqualTo(equalTo)
+}
+
+@Configuration
+@EnableTransactionManagement
+class JpaConfig(private val env: Environment) {
+  @Bean
+  fun dataSource(): DataSource {
+    val dataSource = DriverManagerDataSource()
+    dataSource.setDriverClassName("org.h2.Driver")
+    dataSource.url = "jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1"
+    dataSource.username = "mrd_user"
+    dataSource.password = "secret"
+    return dataSource
+  }
 }
