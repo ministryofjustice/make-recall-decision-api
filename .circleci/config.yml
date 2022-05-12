@@ -1,7 +1,8 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.14
+  hmpps: ministryofjustice/hmpps@5.1
+  gradle: circleci/gradle@2.2
 
 parameters:
   alerts-slack-channel:
@@ -14,8 +15,6 @@ parameters:
 jobs:
   validate:
     executor:
-#      name: hmpps/java
-#      tag: "17.0"
       name: hmpps/java_postgres
       jdk_tag: "17.0"
       postgres_tag: 13-alpine
@@ -24,25 +23,23 @@ jobs:
       postgres_db: make_recall_decision
     steps:
       - checkout
-#      - setup_remote_docker:
-#          version: 20.10.14
-      - restore_cache:
-          keys:
-            - gradle-{{ checksum "build.gradle.kts" }}
-            - gradle-
-      - run:
-          command: ./gradlew check
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: gradle-{{ checksum "build.gradle.kts" }}
+      - hmpps/wait_till_ready_postgres
+      - gradle/with_cache:
+          cache_checksum_file: "build.gradle.kts"
+          steps:
+            - run:
+                name: Run check
+                command: |
+                  ./gradlew check
       - store_test_results:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
 
   e2e_test:
-    executor: hmpps/default
+    executor:
+      name: hmpps/default
+      tag: "3.10"
     parameters:
       environment:
         type: string
