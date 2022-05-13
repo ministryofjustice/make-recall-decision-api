@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -13,6 +15,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
@@ -74,6 +77,23 @@ class PersonalDetailServiceTest {
     }
   }
 
+  @Test
+  fun `retrieve summary of person details`() {
+    runBlockingTest {
+
+      val crn = "12345"
+
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+
+      val response = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+
+      assertThat(response, equalTo(expectedPersonDetailsResponse()))
+    }
+  }
+
   // TODO should throw exception with registration only
 
   private fun allOffenderDetailsResponse(): AllOffenderDetailsResponse {
@@ -129,6 +149,18 @@ class PersonalDetailServiceTest {
           )
         )
       )
+    )
+  }
+
+  private fun expectedPersonDetailsResponse(): PersonDetails {
+    val dateOfBirth = LocalDate.parse("1982-10-24")
+
+    return PersonDetails(
+      name = "John Smith",
+      dateOfBirth = dateOfBirth,
+      age = dateOfBirth?.until(LocalDate.now())?.years,
+      gender = "Male",
+      crn = "12345"
     )
   }
 }
