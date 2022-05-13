@@ -23,11 +23,11 @@ class PersonDetailsControllerTest : IntegrationTestBase() {
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personDetails.name").isEqualTo("John Smith")
-        .jsonPath("$.personDetails.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personDetails.age").isEqualTo("39")
-        .jsonPath("$.personDetails.gender").isEqualTo("Male")
-        .jsonPath("$.personDetails.crn").isEqualTo(crn)
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.currentAddress.line1").isEqualTo("32 HMPPS Digital Studio")
         .jsonPath("$.currentAddress.line2").isEqualTo("Sheffield City Centre")
         .jsonPath("$.currentAddress.town").isEqualTo("Sheffield")
@@ -48,7 +48,7 @@ class PersonDetailsControllerTest : IntegrationTestBase() {
       val crn = "X123456"
       unallocatedOffenderSearchResponse(crn)
       webTestClient.get()
-        .uri("/cases/$crn/persondetails")
+        .uri("/cases/$crn/personalDetailsOverview")
         .exchange()
         .expectStatus()
         .isUnauthorized
