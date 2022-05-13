@@ -19,9 +19,11 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -105,6 +107,25 @@ abstract class IntegrationTestBase {
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+    )
+  }
+
+  protected fun contactSummaryResponse(crn: String) {
+    val contactSummaryRequest =
+      request().withPath("/secure/offenders/crn/$crn/contact-summary")
+        .withQueryStringParameter("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI")
+
+    communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(contactSummaryResponse())
+    )
+  }
+
+  protected fun releaseSummaryResponse(crn: String) {
+    val releaseSummaryRequest =
+      request().withPath("/secure/offenders/crn/$crn/release")
+
+    communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryResponse())
     )
   }
 

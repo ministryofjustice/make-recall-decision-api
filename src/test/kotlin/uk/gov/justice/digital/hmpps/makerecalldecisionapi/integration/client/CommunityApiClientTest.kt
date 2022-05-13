@@ -10,9 +10,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Ad
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactOutcome
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactSummaryResponseCommunity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Content
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.EnforcementAction
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.EnforcementActionType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.LastRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.LastRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
@@ -20,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Or
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
@@ -29,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Ty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @ActiveProfiles("test")
 class CommunityApiClientTest : IntegrationTestBase() {
@@ -174,6 +184,58 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getRegistrations(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves contact summaries`() {
+    // given
+    val crn = "X123456"
+    contactSummaryResponse(crn)
+
+    // and
+    val expected = ContactSummaryResponseCommunity(
+      content = listOf(
+        Content(
+          contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
+          type = ContactType(description = "Registration Review"),
+          outcome = null,
+          notes = "Comment added by John Smith on 05/05/2022",
+          enforcement = null,
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
+          type = ContactType(description = "Police Liaison"),
+          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
+          notes = "This is a test",
+          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+        )
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getContactSummary(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves release summaries`() {
+    // given
+    val crn = "X123456"
+    releaseSummaryResponse(crn)
+
+    // and
+    val expected = ReleaseSummaryResponse(
+      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15")),
+      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"))
+    )
+
+    // when
+    val actual = communityApiClient.getReleaseSummary(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
