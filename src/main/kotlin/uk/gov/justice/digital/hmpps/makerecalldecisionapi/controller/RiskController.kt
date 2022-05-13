@@ -28,7 +28,7 @@ class RiskController {
 
 fun riskResponse() = """
 {
-  "personDetails": {
+  "personalDetailsOverview": {
     "name": "Paula Smith",
     "dateOfBirth": "2000-11-09",
     "age": 21,
