@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
 
 data class PersonDetailsResponse(
-  val personDetails: PersonDetails?,
+  val personalDetailsOverview: PersonDetails?,
   val currentAddress: CurrentAddress?,
   val risk: Risk?,
   val offenderManager: OffenderManager?

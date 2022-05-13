@@ -34,7 +34,7 @@ class PersonDetailsService(
     val riskFlags = activeRegistrations?.map { it.type?.description }
 
     return PersonDetailsResponse(
-      personDetails = PersonDetails(
+      personalDetailsOverview = PersonDetails(
         name = "${offenderDetails.firstName} ${offenderDetails.surname}",
         dateOfBirth = offenderDetails.dateOfBirth,
         age = age(offenderDetails),

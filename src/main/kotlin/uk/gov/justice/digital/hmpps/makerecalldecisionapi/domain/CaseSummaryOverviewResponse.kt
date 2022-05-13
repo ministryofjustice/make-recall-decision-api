@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class CaseSummaryOverviewResponse(
-  val personDetails: PersonDetails?,
+  val personalDetailsOverview: PersonDetails?,
   val offences: List<Offence>?
 )
 
