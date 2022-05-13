@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -15,7 +16,10 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
-      contactSummaryResponse(crn)
+      contactSummaryResponse(
+        crn,
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
+      )
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -40,6 +44,31 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
         .jsonPath("$.contactSummary[1].outcome").isEqualTo("Test - Not Clean / Not Acceptable / Unsuitable")
         .jsonPath("$.contactSummary[1].notes").isEqualTo("This is a test")
         .jsonPath("$.contactSummary[1].enforcementAction").isEqualTo("Enforcement Letter Requested")
+    }
+  }
+
+  @Test
+  fun `given empty contact history then handle licence history response`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponse(crn)
+      contactSummaryResponse(crn, emptyContactSummaryResponse())
+      releaseSummaryResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-history")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.contactSummary").isArray()
+        .jsonPath("$.contactSummary.length()").isEqualTo("0")
     }
   }
 
