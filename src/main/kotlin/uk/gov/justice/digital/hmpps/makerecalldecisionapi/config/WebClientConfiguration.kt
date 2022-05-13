@@ -17,7 +17,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 @Configuration
 class WebClientConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
-  @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String
+  @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) {
 
   @Bean
@@ -49,7 +50,7 @@ class WebClientConfiguration(
 
   @Bean
   fun offenderSearchApiClient(@Qualifier("offenderSearchWebClientAppScope") webClient: WebClient): OffenderSearchApiClient {
-    return OffenderSearchApiClient(webClient)
+    return OffenderSearchApiClient(webClient, nDeliusTimeout)
   }
 
   @Bean
@@ -62,7 +63,7 @@ class WebClientConfiguration(
 
   @Bean
   fun communityApiClient(@Qualifier("communityWebClientAppScope") webClient: WebClient): CommunityApiClient {
-    return CommunityApiClient(webClient)
+    return CommunityApiClient(webClient, nDeliusTimeout)
   }
 
   @Bean

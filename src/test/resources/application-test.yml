@@ -37,3 +37,7 @@ oauth:
 
 hmpps:
   auth.url: http://localhost:9090/auth
+
+ndelius:
+  client:
+    timeout: 2

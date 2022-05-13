@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -8,9 +9,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Co
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import java.time.Duration
+import java.util.concurrent.TimeoutException
 
-class CommunityApiClient(private val webClient: WebClient) {
-
+class CommunityApiClient(
+  private val webClient: WebClient,
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+) {
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     return webClient
@@ -18,6 +24,13 @@ class CommunityApiClient(private val webClient: WebClient) {
       .uri("/secure/offenders/crn/$crn/registrations")
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "registrations"
+        )
+      }
   }
 
   fun getConvictions(crn: String): Mono<List<ConvictionResponse>> {
@@ -27,6 +40,13 @@ class CommunityApiClient(private val webClient: WebClient) {
       .uri("/secure/offenders/crn/$crn/convictions")
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "convictions"
+        )
+      }
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
@@ -36,6 +56,13 @@ class CommunityApiClient(private val webClient: WebClient) {
       .uri("/secure/offenders/crn/$crn/all")
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "all offenders"
+        )
+      }
   }
 
   fun getContactSummary(crn: String): Mono<ContactSummaryResponseCommunity> {
@@ -52,6 +79,13 @@ class CommunityApiClient(private val webClient: WebClient) {
       }
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "contact summary"
+        )
+      }
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
@@ -61,5 +95,26 @@ class CommunityApiClient(private val webClient: WebClient) {
       .uri("/secure/offenders/crn/$crn/release")
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "release summary"
+        )
+      }
+  }
+
+  private fun handleTimeoutException(
+    exception: Throwable?,
+    endPoint: String
+  ) {
+    when (exception) {
+      is TimeoutException -> {
+        throw ClientTimeoutException(
+          "Community API Client - $endPoint endpoint",
+          "No response within $nDeliusTimeout seconds"
+        )
+      }
+    }
   }
 }
