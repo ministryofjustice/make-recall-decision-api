@@ -16,6 +16,11 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.LicenceHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AddressStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactType
@@ -24,7 +29,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.En
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.EnforcementActionType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.LastRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
@@ -34,6 +44,8 @@ class LicenceHistoryServiceTest {
 
   private lateinit var licenceHistoryService: LicenceHistoryService
 
+  private lateinit var personDetailsService: PersonDetailsService
+
   @Mock
   private lateinit var communityApiClient: CommunityApiClient
 
@@ -41,7 +53,11 @@ class LicenceHistoryServiceTest {
 
   @BeforeEach
   fun setup() {
-    licenceHistoryService = LicenceHistoryService(communityApiClient)
+    personDetailsService = PersonDetailsService(communityApiClient)
+    licenceHistoryService = LicenceHistoryService(communityApiClient, personDetailsService)
+
+    given(communityApiClient.getAllOffenderDetails(anyString()))
+      .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
   }
 
   @Test
@@ -57,8 +73,9 @@ class LicenceHistoryServiceTest {
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
+      then(communityApiClient).should().getAllOffenderDetails(crn)
 
-      assertThat(LicenceHistoryResponse(expectedContactSummaryResponse(), allReleaseSummariesResponse()), equalTo(response))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), allReleaseSummariesResponse())))
     }
   }
 
@@ -76,7 +93,7 @@ class LicenceHistoryServiceTest {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(LicenceHistoryResponse(expectedContactSummaryResponse(), null), equalTo(response))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), null)))
     }
   }
 
@@ -94,7 +111,7 @@ class LicenceHistoryServiceTest {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(LicenceHistoryResponse(emptyList(), allReleaseSummariesResponse()), equalTo(response))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), allReleaseSummariesResponse())))
     }
   }
 
@@ -112,8 +129,20 @@ class LicenceHistoryServiceTest {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(LicenceHistoryResponse(emptyList(), null), equalTo(response))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), null)))
     }
+  }
+
+  private fun expectedPersonDetailsResponse(): PersonDetails {
+    val dateOfBirth = LocalDate.parse("1982-10-24")
+
+    return PersonDetails(
+      name = "John Smith",
+      dateOfBirth = dateOfBirth,
+      age = dateOfBirth?.until(LocalDate.now())?.years,
+      gender = "Male",
+      crn = "12345"
+    )
   }
 
   private fun expectedContactSummaryResponse(): List<ContactSummaryResponse> {
@@ -161,6 +190,62 @@ class LicenceHistoryServiceTest {
     return ReleaseSummaryResponse(
       lastRelease = LastRelease(date = LocalDate.parse("2017-09-15")),
       lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"))
+    )
+  }
+
+  private fun allOffenderDetailsResponse(): AllOffenderDetailsResponse {
+    return AllOffenderDetailsResponse(
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      firstName = "John",
+      surname = "Smith",
+      gender = "Male",
+      contactDetails = ContactDetails(
+        addresses = listOf(
+          Address(
+            postcode = "S3 7BS",
+            district = "Sheffield City Centre",
+            addressNumber = "32",
+            buildingName = "HMPPS Digital Studio",
+            town = "Sheffield",
+            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
+          ),
+          Address(
+            town = "Sheffield",
+            county = "South Yorkshire",
+            buildingName = "HMPPS Digital Studio",
+            district = "Sheffield City Centre",
+            status = AddressStatus(code = "ABC123", description = "Not Main"),
+            postcode = "S3 7BS",
+            addressNumber = "33"
+          )
+        )
+      ),
+      offenderManagers = listOf(
+        OffenderManager(
+          active = true,
+          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
+          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
+          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
+          team = Team(
+            telephone = "09056714321",
+            emailAddress = "first.last@digital.justice.gov.uk",
+            code = "C01T04",
+            description = "OMU A"
+          )
+        ),
+        OffenderManager(
+          active = false,
+          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
+          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
+          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
+          team = Team(
+            telephone = "123",
+            emailAddress = "dua.lipa@digital.justice.gov.uk",
+            code = "C01T04",
+            description = "OMU A"
+          )
+        )
+      )
     )
   }
 }

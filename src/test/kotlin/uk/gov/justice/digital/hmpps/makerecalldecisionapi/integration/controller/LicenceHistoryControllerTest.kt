@@ -14,6 +14,7 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
   fun `retrieves licence history details`() {
     runBlockingTest {
       val crn = "A12345"
+      allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn)
       releaseSummaryResponse(crn)
 
@@ -23,6 +24,10 @@ class LicenceHistoryControllerTest : IntegrationTestBase() {
         .exchange()
         .expectStatus().isOk
         .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
         .jsonPath("$.contactSummary[0].contactStartDate").isEqualTo("2022-06-03T07:00:00")
