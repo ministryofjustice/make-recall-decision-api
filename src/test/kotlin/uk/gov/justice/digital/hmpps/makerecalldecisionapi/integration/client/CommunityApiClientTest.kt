@@ -193,7 +193,10 @@ class CommunityApiClientTest : IntegrationTestBase() {
   fun `retrieves contact summaries`() {
     // given
     val crn = "X123456"
-    contactSummaryResponse(crn)
+    contactSummaryResponse(
+      crn,
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
+    )
 
     // and
     val expected = ContactSummaryResponseCommunity(
