@@ -9,16 +9,19 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Re
 
 @Service
 class LicenceHistoryService(
-  private val communityApiClient: CommunityApiClient
+  private val communityApiClient: CommunityApiClient,
+  private val personDetailsService: PersonDetailsService
 ) {
 
   suspend fun getLicenceHistory(crn: String): LicenceHistoryResponse {
+    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
     val contactSummary = getContactSummary(crn)
     val releaseSummary = getReleaseSummary(crn)
 
     return LicenceHistoryResponse(
+      personalDetailsOverview = personalDetailsOverview,
       contactSummary = contactSummary,
-      releaseSummary = releaseSummary
+      releaseSummary = releaseSummary,
     )
   }
 

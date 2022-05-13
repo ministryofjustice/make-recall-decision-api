@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Risk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
@@ -17,10 +18,7 @@ class PersonDetailsService(
   private val communityApiClient: CommunityApiClient
 ) {
   suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
-    val offenderDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirstOrNull()
-      ?: throw PersonNotFoundException("No details available for crn: $crn")
-
-    val age = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
+    val offenderDetails = getPersonalDetailsOverview(crn)
 
     val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
     val activeAddress = offenderDetails.contactDetails?.addresses
@@ -39,7 +37,7 @@ class PersonDetailsService(
       personDetails = PersonDetails(
         name = "${offenderDetails.firstName} ${offenderDetails.surname}",
         dateOfBirth = offenderDetails.dateOfBirth,
-        age = age,
+        age = age(offenderDetails),
         gender = offenderDetails.gender,
         crn = crn
       ),
@@ -61,4 +59,22 @@ class PersonDetailsService(
       risk = Risk(flags = riskFlags)
     )
   }
+
+  private suspend fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
+    return communityApiClient.getAllOffenderDetails(crn).awaitFirstOrNull()
+      ?: throw PersonNotFoundException("No details available for crn: $crn")
+  }
+
+  suspend fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
+    val offenderDetails = getPersonalDetailsOverview(crn)
+    return PersonDetails(
+      name = "${offenderDetails.firstName} ${offenderDetails.surname}",
+      dateOfBirth = offenderDetails.dateOfBirth,
+      age = age(offenderDetails),
+      gender = offenderDetails.gender,
+      crn = crn
+    )
+  }
+
+  fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 }

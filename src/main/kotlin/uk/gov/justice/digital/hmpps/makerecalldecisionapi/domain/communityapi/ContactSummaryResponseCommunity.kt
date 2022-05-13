@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi
 import java.time.OffsetDateTime
 
 data class ContactSummaryResponseCommunity(
-  val content: List<Content>
+  val content: List<Content>?
 )
 
 data class Content(
