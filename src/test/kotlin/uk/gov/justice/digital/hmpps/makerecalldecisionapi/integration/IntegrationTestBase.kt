@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
@@ -110,13 +109,13 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun contactSummaryResponse(crn: String) {
+  protected fun contactSummaryResponse(crn: String, contactSummary: String) {
     val contactSummaryRequest =
       request().withPath("/secure/offenders/crn/$crn/contact-summary")
         .withQueryStringParameter("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI")
 
     communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(contactSummaryResponse())
+      response().withContentType(APPLICATION_JSON).withBody(contactSummary)
     )
   }
 
