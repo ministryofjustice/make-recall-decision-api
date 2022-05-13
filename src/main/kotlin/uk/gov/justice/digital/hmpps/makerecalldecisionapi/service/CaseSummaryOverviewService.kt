@@ -19,7 +19,7 @@ class CaseSummaryOverviewService(
     val age = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
     return CaseSummaryOverviewResponse(
-      personDetails = PersonDetails(
+      personalDetailsOverview = PersonDetails(
         name = "${offenderDetails.firstName} ${offenderDetails.surname}",
         dateOfBirth = offenderDetails.dateOfBirth,
         age = age,
