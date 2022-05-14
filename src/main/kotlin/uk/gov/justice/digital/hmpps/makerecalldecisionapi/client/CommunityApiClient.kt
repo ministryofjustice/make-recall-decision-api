@@ -11,6 +11,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Co
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
@@ -39,10 +41,24 @@ class CommunityApiClient(
     val responseType = object : ParameterizedTypeReference<List<ConvictionResponse>>() {}
     return webClient
       .get()
-      .uri("/secure/offenders/crn/$crn/convictions")
+      .uri {
+        it.path("/secure/offenders/crn/$crn/convictions")
+          .queryParam("activeOnly", true)
+          .build()
+      }
       .retrieve()
+      .onStatus(
+        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
+        { throw NoActiveConvictionsException("No active convictions present for crn: $crn") }
+      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .onErrorResume { ex ->
+        when (ex) {
+          is NoActiveConvictionsException -> Mono.fromCallable { emptyList<ConvictionResponse>() }
+          else -> Mono.error(ex)
+        }
+      }
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
@@ -57,6 +73,10 @@ class CommunityApiClient(
       .get()
       .uri("/secure/offenders/crn/$crn/all")
       .retrieve()
+      .onStatus(
+        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
+        { throw PersonNotFoundException("No details available for crn: $crn") }
+      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { ex ->
