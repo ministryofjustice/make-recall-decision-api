@@ -64,14 +64,14 @@ class LicenceHistoryServiceTest {
   fun `given a contact summary and release summary then return these details in the response`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString()))
+      given(communityApiClient.getContactSummary(anyString(), true))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
-      val response = licenceHistoryService.getLicenceHistory(crn)
+      val response = licenceHistoryService.getLicenceHistory(crn, true)
 
-      then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
@@ -83,14 +83,14 @@ class LicenceHistoryServiceTest {
   fun `given no release summary details then still retrieve contact summary details`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString()))
+      given(communityApiClient.getContactSummary(anyString(), true))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
 
-      val response = licenceHistoryService.getLicenceHistory(crn)
+      val response = licenceHistoryService.getLicenceHistory(crn, true)
 
-      then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), null)))
@@ -101,14 +101,14 @@ class LicenceHistoryServiceTest {
   fun `given no contact summary details then still retrieve release summary details`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString()))
+      given(communityApiClient.getContactSummary(anyString(), true))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
-      val response = licenceHistoryService.getLicenceHistory(crn)
+      val response = licenceHistoryService.getLicenceHistory(crn, true)
 
-      then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), allReleaseSummariesResponse())))
@@ -119,14 +119,14 @@ class LicenceHistoryServiceTest {
   fun `given no contact summary details and no release summary details then still return an empty response`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString()))
+      given(communityApiClient.getContactSummary(anyString(), true))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
 
-      val response = licenceHistoryService.getLicenceHistory(crn)
+      val response = licenceHistoryService.getLicenceHistory(crn, true)
 
-      then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), null)))

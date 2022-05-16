@@ -190,12 +190,13 @@ class CommunityApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `retrieves contact summaries`() {
+  fun `given contact summary request with filter contact parameter true, retrieve contact summaries with request filtered`() {
     // given
     val crn = "X123456"
     contactSummaryResponse(
       crn,
-      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse(),
+      true
     )
 
     // and
@@ -219,7 +220,44 @@ class CommunityApiClientTest : IntegrationTestBase() {
     )
 
     // when
-    val actual = communityApiClient.getContactSummary(crn).block()
+    val actual = communityApiClient.getContactSummary(crn, true).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `given contact summary request with filter contact parameter false, retrieve contact summaries with no request filtered`() {
+    // given
+    val crn = "X123456"
+    contactSummaryResponse(
+      crn,
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse(),
+      false
+    )
+
+    // and
+    val expected = ContactSummaryResponseCommunity(
+      content = listOf(
+        Content(
+          contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
+          type = ContactType(description = "Registration Review"),
+          outcome = null,
+          notes = "Comment added by John Smith on 05/05/2022",
+          enforcement = null,
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
+          type = ContactType(description = "Police Liaison"),
+          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
+          notes = "This is a test",
+          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+        )
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getContactSummary(crn, true).block()
 
     // then
     assertThat(actual, equalTo(expected))
