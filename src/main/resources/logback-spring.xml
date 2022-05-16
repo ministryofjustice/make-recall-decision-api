@@ -33,10 +33,12 @@
 
     <logger name="uk.gov.justice.digital.hmpps" additivity="false" level="DEBUG">
         <appender-ref ref="logAppender"/>
+        <appender-ref ref="consoleAppender"/>
     </logger>
 
     <logger name="org.springframework" additivity="false" level="INFO">
         <appender-ref ref="logAppender"/>
+        <appender-ref ref="consoleAppender"/>
     </logger>
 
     <logger name="com.microsoft.applicationinsights" additivity="false" level="INFO">
@@ -55,6 +57,7 @@
 
     <root level="INFO">
         <appender-ref ref="logAppender"/>
+        <appender-ref ref="consoleAppender"/>
     </root>
 
 </configuration>
