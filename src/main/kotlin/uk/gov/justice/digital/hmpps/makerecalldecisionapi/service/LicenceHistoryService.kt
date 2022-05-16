@@ -13,9 +13,9 @@ class LicenceHistoryService(
   private val personDetailsService: PersonDetailsService
 ) {
 
-  suspend fun getLicenceHistory(crn: String): LicenceHistoryResponse {
+  suspend fun getLicenceHistory(crn: String, filterContacts: Boolean): LicenceHistoryResponse {
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val contactSummary = getContactSummary(crn)
+    val contactSummary = getContactSummary(crn, filterContacts)
     val releaseSummary = getReleaseSummary(crn)
 
     return LicenceHistoryResponse(
@@ -25,8 +25,8 @@ class LicenceHistoryService(
     )
   }
 
-  private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
-    val contactSummaryResponse = communityApiClient.getContactSummary(crn).awaitFirstOrNull()?.content
+  private suspend fun getContactSummary(crn: String, filterContacts: Boolean): List<ContactSummaryResponse> {
+    val contactSummaryResponse = communityApiClient.getContactSummary(crn, filterContacts).awaitFirstOrNull()?.content
 
     return contactSummaryResponse
       ?.stream()
@@ -37,6 +37,7 @@ class LicenceHistoryService(
           outcome = it.outcome?.description,
           notes = it.notes,
           enforcementAction = it.enforcement?.enforcementAction?.description,
+          systemGenerated = it.type?.systemGenerated
         )
       }?.toList() ?: emptyList()
   }

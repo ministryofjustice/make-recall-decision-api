@@ -22,9 +22,17 @@ class LicenceHistoryController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/licence-history")
-  @Operation(summary = "Returns details of a case licence history")
+  @Operation(summary = "Returns filtered details of a case licence history")
   suspend fun licenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
     log.info("Licence history endpoint hit for CRN: $crn")
-    return licenceHistoryService.getLicenceHistory(crn)
+    return licenceHistoryService.getLicenceHistory(crn, true)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/cases/{crn}/all-licence-history")
+  @Operation(summary = "Returns all details of a case licence history")
+  suspend fun allLicenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
+    log.info("Licence history endpoint hit for CRN: $crn")
+    return licenceHistoryService.getLicenceHistory(crn, false)
   }
 }
