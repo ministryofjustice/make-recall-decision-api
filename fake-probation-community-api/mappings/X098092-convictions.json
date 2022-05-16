@@ -5,6 +5,9 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-convictions.json"
+    "bodyFileName": "X098092-convictions.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
   }
 }

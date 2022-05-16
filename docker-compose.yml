@@ -13,7 +13,6 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8081/health/ping"]
     environment:
       - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
       - PROBATION_OFFENDER_SEARCH_ENDPOINT_URL=http://fake-probation-offender-search-api:8080
       - PROBATION_COMMUNITY_API_ENDPOINT_URL=http://fake-probation-community-api:8080
@@ -52,7 +51,7 @@ services:
       - POSTGRES_DB=make_recall_decision
 
   fake-probation-offender-search-api:
-    build: ./fake-probation-offender-search-api
+    image: wiremock/wiremock
     networks:
       - hmpps
     container_name: fake-probation-offender-search-api
@@ -61,9 +60,11 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     command: --verbose --local-response-templating
+    volumes:
+      - ./fake-probation-offender-search-api:/home/wiremock
 
   fake-probation-community-api:
-    build: ./fake-probation-community-api
+    image: wiremock/wiremock
     networks:
       - hmpps
     container_name: fake-probation-community-api
@@ -72,6 +73,8 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
     command: --verbose --local-response-templating
+    volumes:
+      - ./fake-probation-community-api:/home/wiremock
 
 networks:
   hmpps:

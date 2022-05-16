@@ -5,6 +5,9 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-contact-summary.json"
+    "bodyFileName": "X098092-contact-summary.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
   }
 }
