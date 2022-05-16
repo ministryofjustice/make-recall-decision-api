@@ -84,6 +84,24 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun registrationsResponse(crn: String, delaySeconds: Long = 0) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/registrations")
+
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noActiveConvictionResponse(crn: String) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/convictions")
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
   protected fun unallocatedConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
@@ -94,13 +112,11 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun registrationsResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun allOffenderDetailsResponseWithNoOffender(crn: String) {
     val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/registrations")
-
+      request().withPath("/cases/$crn/personal-details")
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+      response().withStatusCode(404)
     )
   }
 

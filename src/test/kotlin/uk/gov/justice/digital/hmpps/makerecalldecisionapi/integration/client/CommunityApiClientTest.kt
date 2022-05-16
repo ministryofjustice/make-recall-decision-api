@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -35,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.St
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -88,6 +92,98 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getConvictions(crn).block()!![0]
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves empty convictions list when no active convictions present`() {
+    // given
+    val crn = "X123456"
+    noActiveConvictionResponse(crn)
+
+    // and
+    val expected = emptyList<ConvictionResponse>()
+
+    // when
+    val actual = communityApiClient.getConvictions(crn).block()!!
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun `throws exception when no person matching crn exists`() {
+    val nonExistentCrn = "X123456"
+    allOffenderDetailsResponseWithNoOffender(nonExistentCrn)
+    assertThatThrownBy {
+      runBlockingTest {
+        communityApiClient.getAllOffenderDetails(nonExistentCrn).block()
+      }
+    }.isInstanceOf(PersonNotFoundException::class.java)
+      .hasMessage("No details available for crn: $nonExistentCrn")
+  }
+
+  @Test
+  fun `retrieves registrations`() {
+    // given
+    val crn = "X123456"
+    registrationsResponse(crn)
+
+    // and
+    val expected = RegistrationsResponse(
+      registrations = listOf(
+        Registration(
+          active = true,
+          type = Type(code = "ABC123", description = "Victim contact")
+        ),
+        Registration(
+          active = false,
+          type = Type(code = "ABC124", description = "Mental health issues")
+        )
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getRegistrations(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves contact summaries`() {
+    // given
+    val crn = "X123456"
+    contactSummaryResponse(
+      crn,
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
+    )
+
+    // and
+    val expected = ContactSummaryResponseCommunity(
+      content = listOf(
+        Content(
+          contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
+          type = ContactType(description = "Registration Review"),
+          outcome = null,
+          notes = "Comment added by John Smith on 05/05/2022",
+          enforcement = null,
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
+          type = ContactType(description = "Police Liaison"),
+          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
+          notes = "This is a test",
+          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+        )
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getContactSummary(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
@@ -157,69 +253,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getAllOffenderDetails(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
-
-  @Test
-  fun `retrieves registrations`() {
-    // given
-    val crn = "X123456"
-    registrationsResponse(crn)
-
-    // and
-    val expected = RegistrationsResponse(
-      registrations = listOf(
-        Registration(
-          active = true,
-          type = Type(code = "ABC123", description = "Victim contact")
-        ),
-        Registration(
-          active = false,
-          type = Type(code = "ABC124", description = "Mental health issues")
-        )
-      )
-    )
-
-    // when
-    val actual = communityApiClient.getRegistrations(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
-
-  @Test
-  fun `retrieves contact summaries`() {
-    // given
-    val crn = "X123456"
-    contactSummaryResponse(
-      crn,
-      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
-    )
-
-    // and
-    val expected = ContactSummaryResponseCommunity(
-      content = listOf(
-        Content(
-          contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review"),
-          outcome = null,
-          notes = "Comment added by John Smith on 05/05/2022",
-          enforcement = null,
-        ),
-        Content(
-          contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison"),
-          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
-          notes = "This is a test",
-          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-        )
-      )
-    )
-
-    // when
-    val actual = communityApiClient.getContactSummary(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

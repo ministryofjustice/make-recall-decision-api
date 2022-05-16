@@ -49,10 +49,10 @@ class PersonalDetailServiceTest {
   @Test
   fun `throws exception when no person details available`() {
     runBlockingTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.empty())
-
       val nonExistentCrn = "this person doesn't exist"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
+
       assertThatThrownBy {
         runBlockingTest {
           personDetailsService.getPersonDetails(nonExistentCrn)
