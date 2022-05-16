@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/secure/offenders/crn/X098092/registrations"
+    "urlPath": "/secure/offenders/crn/X098092/registrations"
   },
   "response": {
     "status": 200,

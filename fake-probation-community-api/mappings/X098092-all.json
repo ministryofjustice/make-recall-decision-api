@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/X098092/convictions"
+    "urlPath": "/secure/offenders/crn/X098092/all"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-convictions.json",
+    "bodyFileName": "X098092-all.json",
     "headers": {
       "Content-Type": "application/json"
     }
