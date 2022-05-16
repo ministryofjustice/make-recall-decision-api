@@ -137,6 +137,15 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun releaseSummaryResponseWithStatusCode(crn: String, releaseSummary: String, statusCode: Int) {
+    val releaseSummaryRequest =
+      request().withPath("/secure/offenders/crn/$crn/release")
+
+    communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
+    )
+  }
+
   fun setupOauth() {
     oauthMock
       .`when`(request().withPath("/auth/oauth/token"))

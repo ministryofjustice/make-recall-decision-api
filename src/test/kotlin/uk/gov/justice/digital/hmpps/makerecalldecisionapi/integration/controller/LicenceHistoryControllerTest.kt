@@ -78,6 +78,38 @@ class LicenceHistoryControllerTest(
   }
 
   @Test
+  fun `given no custody release response 400 error then handle licence history response`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponse(crn)
+      contactSummaryResponse(
+        crn,
+        contactSummaryResponse()
+      )
+      releaseSummaryResponseWithStatusCode(
+        crn,
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse(),
+        400
+      )
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-history")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.releaseSummary.lastRelease").isEmpty()
+        .jsonPath("$.releaseSummary.lastRecall").isEmpty()
+        .jsonPath("$.contactSummary").isArray()
+        .jsonPath("$.contactSummary.length()").isEqualTo("2")
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
     runBlockingTest {
       val crn = "A12345"
