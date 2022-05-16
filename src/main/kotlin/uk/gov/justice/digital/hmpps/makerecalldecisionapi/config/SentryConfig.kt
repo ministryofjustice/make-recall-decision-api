@@ -24,7 +24,9 @@ class SentryContextAppender : HandlerInterceptor {
   ): Boolean {
     val operationId: String = Span.current().spanContext.traceId
 
-    log.info("[preHandle] ${request.method} ${request.requestURI} - operationId: $operationId")
+    if (request.requestURI != "/health") {
+      log.info("[preHandle] ${request.method} ${request.requestURI} - operationId: $operationId")
+    }
 
     Sentry.configureScope { scope ->
       scope.setContexts("appInsightsOperationId", operationId)
