@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SearchByCrnResponse
@@ -16,7 +16,7 @@ class OffenderSearchService(
       phrase = crn
     )
     val apiResponse = offenderSearchApiClient.searchOffenderByPhrase(request)
-      .awaitFirst().content
+      .awaitFirstOrNull()?.content
 
     return apiResponse
       ?.stream()
