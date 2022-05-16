@@ -3,12 +3,16 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class CaseOverviewControllerTest : IntegrationTestBase() {
+class CaseOverviewControllerTest(
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+) : IntegrationTestBase() {
 
   @Test
   fun `retrieves case summary details`() {
@@ -36,10 +40,51 @@ class CaseOverviewControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
+    runBlockingTest {
+      val crn = "A12345"
+      val staffCode = "STFFCDEU"
+      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      unallocatedConvictionResponse(crn, staffCode)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
+    runBlockingTest {
+      val crn = "A12345"
+      val staffCode = "STFFCDEU"
+      allOffenderDetailsResponse(crn)
+      unallocatedConvictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Community API Client - convictions endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
   fun `access denied when insufficient privileges used`() {
     runBlockingTest {
       val crn = "X123456"
-      unallocatedOffenderSearchResponse(crn)
       webTestClient.get()
         .uri("/cases/$crn/overview")
         .exchange()
