@@ -6,7 +6,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiCli
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
-import kotlin.streams.toList
 
 @Service
 class LicenceHistoryService(
