@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/secure/offenders/crn/X098092/contact-summary"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-contact-summary.json"
+  }
+}
