@@ -1,0 +1,102 @@
+{
+  "registrations": [
+    {
+      "registrationId": 2500167265,
+      "offenderId": 2500109986,
+      "register": {
+        "code": "5",
+        "description": "Public Protection"
+      },
+      "type": {
+        "code": "MAPP",
+        "description": "MAPPA"
+      },
+      "riskColour": "Red",
+      "startDate": "2021-02-10",
+      "nextReviewDate": "2021-05-10",
+      "reviewPeriodMonths": 3,
+      "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note",
+      "registeringTeam": {
+        "code": "N07CHT",
+        "description": "Automation SPG"
+      },
+      "registeringOfficer": {
+        "code": "N07A060",
+        "forenames": "NDelius26",
+        "surname": "NDelius26",
+        "unallocated": false
+      },
+      "registeringProbationArea": {
+        "code": "N07",
+        "description": "NPS London"
+      },
+      "registerLevel": {
+        "code": "M1",
+        "description": "MAPPA Level 1"
+      },
+      "registerCategory": {
+        "code": "X9",
+        "description": "All - Category to be determined"
+      },
+      "warnUser": false,
+      "active": true,
+      "numberOfPreviousDeregistrations": 0
+    },
+    {
+      "registrationId": 2500167262,
+      "offenderId": 2500109986,
+      "register": {
+        "code": "5",
+        "description": "Public Protection"
+      },
+      "type": {
+        "code": "MAPP",
+        "description": "MAPPA"
+      },
+      "riskColour": "Red",
+      "startDate": "2021-02-10",
+      "reviewPeriodMonths": 3,
+      "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
+      "registeringTeam": {
+        "code": "N07SP1",
+        "description": "Bexley\\Bromley SP TEST1"
+      },
+      "registeringOfficer": {
+        "code": "N07A001",
+        "forenames": "AZEROONE",
+        "surname": "AZEROONE",
+        "unallocated": false
+      },
+      "registeringProbationArea": {
+        "code": "N07",
+        "description": "NPS London"
+      },
+      "registerLevel": {
+        "code": "M0",
+        "description": "MAPPA Nominal (level to be determined)"
+      },
+      "registerCategory": {
+        "code": "X9",
+        "description": "All - Category to be determined"
+      },
+      "warnUser": false,
+      "active": false,
+      "endDate": "2021-02-10",
+      "deregisteringTeam": {
+        "code": "N07CHT",
+        "description": "Automation SPG"
+      },
+      "deregisteringOfficer": {
+        "code": "N07A060",
+        "forenames": "NDelius26",
+        "surname": "NDelius26",
+        "unallocated": false
+      },
+      "deregisteringProbationArea": {
+        "code": "N07",
+        "description": "NPS London"
+      },
+      "numberOfPreviousDeregistrations": 1
+    }
+  ]
+}
