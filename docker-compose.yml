@@ -14,8 +14,8 @@ services:
     environment:
       - SERVER_PORT=8080
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
-      - PROBATION_OFFENDER_SEARCH_ENDPOINT_URL=http://fake-probation-offender-search-api:8080
-      - PROBATION_COMMUNITY_API_ENDPOINT_URL=http://fake-probation-community-api:8080
+      - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
+      - COMMUNITY_API_ENDPOINT_URL=http://fake-community-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
       - SYSTEM_CLIENT_SECRET=clientsecret
@@ -50,31 +50,31 @@ services:
       - POSTGRES_USER=mrd_user
       - POSTGRES_DB=make_recall_decision
 
-  fake-probation-offender-search-api:
+  fake-offender-search-api:
     image: wiremock/wiremock
     networks:
       - hmpps
-    container_name: fake-probation-offender-search-api
+    container_name: fake-offender-search-api
     ports:
       - "9080:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     command: --verbose --local-response-templating
     volumes:
-      - ./fake-probation-offender-search-api:/home/wiremock
+      - ./fake-offender-search-api:/home/wiremock
 
-  fake-probation-community-api:
+  fake-community-api:
     image: wiremock/wiremock
     networks:
       - hmpps
-    container_name: fake-probation-community-api
+    container_name: fake-community-api
     ports:
       - "9081:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
     command: --verbose --local-response-templating
     volumes:
-      - ./fake-probation-community-api:/home/wiremock
+      - ./fake-community-api:/home/wiremock
 
 networks:
   hmpps:
