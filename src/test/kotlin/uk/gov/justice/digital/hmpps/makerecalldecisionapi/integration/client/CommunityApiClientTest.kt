@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -35,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.St
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -94,72 +98,32 @@ class CommunityApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `retrieves all offender details`() {
+  fun `retrieves empty convictions list when no active convictions present`() {
     // given
     val crn = "X123456"
-    allOffenderDetailsResponse(crn)
+    noActiveConvictionResponse(crn)
 
     // and
-    val expected = AllOffenderDetailsResponse(
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      firstName = "John",
-      surname = "Smith",
-      gender = "Male",
-      contactDetails = ContactDetails(
-        addresses = listOf(
-          Address(
-            postcode = "S3 7BS",
-            district = "Sheffield City Centre",
-            addressNumber = "32",
-            buildingName = "HMPPS Digital Studio",
-            town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
-          ),
-          Address(
-            town = "Sheffield",
-            county = "South Yorkshire",
-            buildingName = "HMPPS Digital Studio",
-            district = "Sheffield City Centre",
-            status = AddressStatus(code = "ABC123", description = "Not Main"),
-            postcode = "S3 7BS",
-            addressNumber = "33"
-          )
-        )
-      ),
-      offenderManagers = listOf(
-        OffenderManager(
-          active = true,
-          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "09056714321",
-            emailAddress = "first.last@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A"
-          )
-        ),
-        OffenderManager(
-          active = false,
-          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "123",
-            emailAddress = "dua.lipa@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A"
-          )
-        )
-
-      )
-    )
+    val expected = emptyList<ConvictionResponse>()
 
     // when
-    val actual = communityApiClient.getAllOffenderDetails(crn).block()
+    val actual = communityApiClient.getConvictions(crn).block()!!
 
     // then
     assertThat(actual, equalTo(expected))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun `throws exception when no person matching crn exists`() {
+    val nonExistentCrn = "X123456"
+    allOffenderDetailsResponseWithNoOffender(nonExistentCrn)
+    assertThatThrownBy {
+      runBlockingTest {
+        communityApiClient.getAllOffenderDetails(nonExistentCrn).block()
+      }
+    }.isInstanceOf(PersonNotFoundException::class.java)
+      .hasMessage("No details available for crn: $nonExistentCrn")
   }
 
   @Test
@@ -258,6 +222,75 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getContactSummary(crn, true).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves all offender details`() {
+    // given
+    val crn = "X123456"
+    allOffenderDetailsResponse(crn)
+
+    // and
+    val expected = AllOffenderDetailsResponse(
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      firstName = "John",
+      surname = "Smith",
+      gender = "Male",
+      contactDetails = ContactDetails(
+        addresses = listOf(
+          Address(
+            postcode = "S3 7BS",
+            district = "Sheffield City Centre",
+            addressNumber = "32",
+            buildingName = "HMPPS Digital Studio",
+            town = "Sheffield",
+            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
+          ),
+          Address(
+            town = "Sheffield",
+            county = "South Yorkshire",
+            buildingName = "HMPPS Digital Studio",
+            district = "Sheffield City Centre",
+            status = AddressStatus(code = "ABC123", description = "Not Main"),
+            postcode = "S3 7BS",
+            addressNumber = "33"
+          )
+        )
+      ),
+      offenderManagers = listOf(
+        OffenderManager(
+          active = true,
+          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
+          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
+          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
+          team = Team(
+            telephone = "09056714321",
+            emailAddress = "first.last@digital.justice.gov.uk",
+            code = "C01T04",
+            description = "OMU A"
+          )
+        ),
+        OffenderManager(
+          active = false,
+          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
+          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
+          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
+          team = Team(
+            telephone = "123",
+            emailAddress = "dua.lipa@digital.justice.gov.uk",
+            code = "C01T04",
+            description = "OMU A"
+          )
+        )
+
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getAllOffenderDetails(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
