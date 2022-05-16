@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
@@ -10,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Co
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -94,8 +96,18 @@ class CommunityApiClient(
       .get()
       .uri("/secure/offenders/crn/$crn/release")
       .retrieve()
+      .onStatus(
+        { httpStatus -> HttpStatus.BAD_REQUEST == httpStatus },
+        { throw ReleaseDetailsNotFoundException("No release details found for case $crn") }
+      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .onErrorResume { ex ->
+        when (ex) {
+          is ReleaseDetailsNotFoundException -> Mono.fromCallable { ReleaseSummaryResponse(lastRelease = null, lastRecall = null) }
+          else -> Mono.error(ex)
+        }
+      }
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
