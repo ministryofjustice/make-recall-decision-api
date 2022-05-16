@@ -96,12 +96,12 @@ management:
 offender:
   search:
     endpoint:
-      url: ${probation.offender.search.endpoint.url}
+      url: http://localhost:9080
 
 community:
   api:
     endpoint:
-      url: ${probation.community.api.endpoint.url}
+      url: http://localhost:9081
 
 gotenberg:
   endpoint:
