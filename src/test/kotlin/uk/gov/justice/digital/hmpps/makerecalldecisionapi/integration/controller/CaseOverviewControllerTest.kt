@@ -40,6 +40,29 @@ class CaseOverviewControllerTest(
   }
 
   @Test
+  fun `returns empty offences list where where no active convictions exist`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponse(crn)
+      noActiveConvictionResponse(crn)
+
+      val result = webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.offences.length()").isEqualTo(0)
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runBlockingTest {
       val crn = "A12345"

@@ -4,6 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -43,6 +44,25 @@ class PersonDetailsControllerTest(
         .jsonPath("$.offenderManager.probationTeam.label").isEqualTo("OMU A")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
+    }
+  }
+
+  @Test
+  fun `handles scenario where no person exists matching crn`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponseWithNoOffender(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/personal-details")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .isNotFound
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.NOT_FOUND.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("No personal details available: No details available for crn: A12345")
     }
   }
 

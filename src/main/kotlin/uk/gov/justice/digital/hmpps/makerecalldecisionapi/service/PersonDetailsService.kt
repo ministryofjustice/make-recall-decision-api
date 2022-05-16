@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -10,7 +11,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetailsRe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Risk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
 @Service
@@ -78,8 +78,7 @@ class PersonDetailsService(
   }
 
   private suspend fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
-    return communityApiClient.getAllOffenderDetails(crn).awaitFirstOrNull()
-      ?: throw PersonNotFoundException("No details available for crn: $crn")
+    return communityApiClient.getAllOffenderDetails(crn).awaitFirst()
   }
 
   private fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years

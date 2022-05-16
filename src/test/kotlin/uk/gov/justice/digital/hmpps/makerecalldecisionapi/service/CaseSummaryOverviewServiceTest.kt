@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,7 +30,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Se
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -50,31 +48,13 @@ class CaseSummaryOverviewServiceTest {
   }
 
   @Test
-  fun `throws exception when no person details available`() {
-    runBlockingTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.empty())
-
-      val nonExistentCrn = "this person doesn't exist"
-      assertThatThrownBy {
-        runBlockingTest {
-          caseSummaryOverviewService.getOverview(nonExistentCrn)
-        }
-      }.isInstanceOf(PersonNotFoundException::class.java)
-        .hasMessage("No details available for crn: $nonExistentCrn")
-
-      then(communityApiClient).should().getAllOffenderDetails(nonExistentCrn)
-    }
-  }
-
-  @Test
   fun `retrieves case summary when no offences available`() {
     runBlockingTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(communityApiClient.getConvictions(anyString()))
-        .willReturn(Mono.empty())
+        .willReturn(Mono.fromCallable { emptyList<ConvictionResponse>() })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -85,7 +65,7 @@ class CaseSummaryOverviewServiceTest {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(offencesShouldBeEmpty).isNull()
+      assertThat(offencesShouldBeEmpty).isEmpty()
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
