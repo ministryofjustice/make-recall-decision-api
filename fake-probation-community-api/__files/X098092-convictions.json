@@ -1,0 +1,387 @@
+[
+  {
+    "convictionId": 2500566094,
+    "index": "4",
+    "active": true,
+    "inBreach": false,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "convictionDate": "2022-01-17",
+    "referralDate": "2022-01-17",
+    "offences": [
+      {
+        "offenceId": "M2500566094",
+        "mainOffence": true,
+        "detail": {
+          "code": "01600",
+          "description": "(Buggery and attempted buggery - 01600)",
+          "mainCategoryCode": "016",
+          "mainCategoryDescription": "Buggery and attempted buggery",
+          "mainCategoryAbbreviation": "Buggery and attempted buggery",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Buggery and attempted buggery",
+          "form20Code": "31"
+        },
+        "offenceDate": "2022-01-17T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2022-01-17T15:28:32",
+        "lastUpdatedDatetime": "2022-01-17T15:28:32"
+      },
+      {
+        "offenceId": "A2500117060",
+        "mainOffence": false,
+        "detail": {
+          "code": "01806",
+          "description": "(Gross indecency by a male aged 18 or over with another male aged 18 or over - 01806)",
+          "mainCategoryCode": "018",
+          "mainCategoryDescription": "Indecency between males",
+          "mainCategoryAbbreviation": "Indecency between males",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "06",
+          "subCategoryDescription": "Gross indecency by a male aged 18 or over with another male aged 18 or over",
+          "form20Code": "3"
+        },
+        "offenceDate": "2022-01-17T00:00:00",
+        "createdDatetime": "2022-01-17T15:30:23",
+        "lastUpdatedDatetime": "2022-01-17T15:30:23"
+      }
+    ],
+    "latestCourtAppearanceOutcome": {
+      "code": "111",
+      "description": "Adjourned For Reports"
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500592955,
+      "appearanceDate": "2022-01-18T16:00:00",
+      "courtCode": "ABDRM1",
+      "courtName": "Aberdare Magistrates Court",
+      "appearanceType": {
+        "code": "V",
+        "description": "Application to Revoke / Vary"
+      },
+      "crn": "X098092"
+    },
+    "orderManagers": [
+      {
+        "probationAreaId": 2500010507,
+        "teamId": 2500038743,
+        "officerId": 2500626865,
+        "name": "Unallocated Staff",
+        "staffCode": "N57UATU",
+        "dateStartOfAllocation": "2022-01-17T00:00:00"
+      }
+    ]
+  },
+  {
+    "convictionId": 2500565594,
+    "index": "3",
+    "active": false,
+    "inBreach": false,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "referralDate": "2022-01-14",
+    "offences": [
+      {
+        "offenceId": "M2500565594",
+        "mainOffence": true,
+        "detail": {
+          "code": "02500",
+          "description": "(Abduction - 02500)",
+          "mainCategoryCode": "025",
+          "mainCategoryDescription": "Abduction",
+          "mainCategoryAbbreviation": "Abduction",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Abduction",
+          "form20Code": "3"
+        },
+        "offenceDate": "2022-01-14T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2022-01-14T15:05:21",
+        "lastUpdatedDatetime": "2022-01-14T15:05:21"
+      }
+    ],
+    "sentence": {
+      "sentenceId": 2500539955,
+      "description": "Absolute/Conditional Discharge",
+      "originalLength": 2,
+      "originalLengthUnits": "Months",
+      "defaultLength": 2,
+      "lengthInDays": 58,
+      "expectedSentenceEndDate": "2022-03-13",
+      "startDate": "2022-01-14",
+      "terminationDate": "2022-01-14",
+      "terminationReason": "Auto Terminated",
+      "sentenceType": {
+        "code": "NP",
+        "description": "Absolute/Conditional Discharge"
+      },
+      "failureToComplyLimit": 2,
+      "cja2003Order": true,
+      "legacyOrder": true
+    },
+    "latestCourtAppearanceOutcome": {
+      "code": "412",
+      "description": "Absolute/Conditional Discharge"
+    },
+    "responsibleCourt": {
+      "courtId": 1,
+      "code": "ABDRM1",
+      "selectable": true,
+      "courtName": "Aberdare Magistrates Court",
+      "telephoneNumber": "01685 721731",
+      "fax": "01685 723919",
+      "buildingName": "The Court House",
+      "street": "Cwmbach Road",
+      "locality": "Aberdare",
+      "town": "Aberdare",
+      "county": "Glamorgan",
+      "postcode": "CF44 0NW",
+      "country": "Wales",
+      "courtTypeId": 310,
+      "createdDatetime": "2013-02-05T10:08:41",
+      "lastUpdatedDatetime": "2021-09-20T16:33:49",
+      "probationAreaId": 1500001002,
+      "probationArea": {
+        "code": "N03",
+        "description": "NPS Wales"
+      },
+      "courtType": {
+        "code": "MAG",
+        "description": "Magistrates Court"
+      }
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500592454,
+      "appearanceDate": "2022-01-14T00:00:00",
+      "courtCode": "ABDRM1",
+      "courtName": "Aberdare Magistrates Court",
+      "appearanceType": {
+        "code": "A",
+        "description": "Appeal"
+      },
+      "crn": "X098092"
+    },
+    "orderManagers": [
+      {
+        "probationAreaId": 1500001002,
+        "teamId": 1500119954,
+        "officerId": 2500626365,
+        "name": "Unallocated Staff(N03) Staff",
+        "staffCode": "N03UATU",
+        "dateStartOfAllocation": "2022-01-14T00:00:00"
+      }
+    ]
+  },
+  {
+    "convictionId": 2500104963,
+    "index": "1",
+    "active": true,
+    "inBreach": true,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "convictionDate": "2017-09-15",
+    "referralDate": "2017-09-15",
+    "offences": [
+      {
+        "offenceId": "M2500104963",
+        "mainOffence": true,
+        "detail": {
+          "code": "04300",
+          "description": "Abstracting electricity - 04300",
+          "mainCategoryCode": "043",
+          "mainCategoryDescription": "Abstracting electricity",
+          "mainCategoryAbbreviation": "Abstracting electricity",
+          "ogrsOffenceCategory": "Theft (Non-motor)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Abstracting electricity",
+          "form20Code": "7"
+        },
+        "offenceDate": "2017-09-15T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2017-09-15T11:39:32",
+        "lastUpdatedDatetime": "2017-09-15T11:39:33"
+      }
+    ],
+    "sentence": {
+      "sentenceId": 2500098775,
+      "description": "CJA - Std Determinate Custody",
+      "originalLength": 12,
+      "originalLengthUnits": "Months",
+      "defaultLength": 12,
+      "lengthInDays": 364,
+      "expectedSentenceEndDate": "2018-09-14",
+      "startDate": "2017-09-15",
+      "sentenceType": {
+        "code": "SC",
+        "description": "CJA - Std Determinate Custody"
+      },
+      "additionalSentences": [
+        {
+          "additionalSentenceId": 2500117483,
+          "type": {
+            "code": "BDTY",
+            "description": "Back Duty"
+          },
+          "amount": 90,
+          "length": 80
+        },
+        {
+          "additionalSentenceId": 2500117484,
+          "type": {
+            "code": "BOVR",
+            "description": "Bound Over"
+          },
+          "amount": 80,
+          "length": 90
+        },
+        {
+          "additionalSentenceId": 2500117485,
+          "type": {
+            "code": "CSTS",
+            "description": "Costs"
+          },
+          "amount": 88
+        },
+        {
+          "additionalSentenceId": 2500117984,
+          "type": {
+            "code": "ASBO",
+            "description": "Anti-Social Behaviour Order"
+          },
+          "amount": 11.5,
+          "length": 10
+        }
+      ],
+      "failureToComplyLimit": 3,
+      "cja2003Order": true,
+      "legacyOrder": false
+    },
+    "latestCourtAppearanceOutcome": {
+      "code": "301",
+      "description": "CJA - Std Determinate Custody"
+    },
+    "custody": {
+      "institution": {
+        "institutionId": 156,
+        "isEstablishment": true,
+        "code": "COMMUN",
+        "description": "In the Community",
+        "institutionName": "In the Community",
+        "establishmentType": {
+          "code": "E",
+          "description": "Prison"
+        }
+      },
+      "keyDates": {},
+      "status": {
+        "code": "B",
+        "description": "Released - On Licence"
+      },
+      "sentenceStartDate": "2017-09-15"
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500109389,
+      "appearanceDate": "2017-09-15T00:00:00",
+      "courtCode": "ABDSUM",
+      "courtName": "Aberdeen Sheriff's Court (ABDSHF)",
+      "appearanceType": {
+        "code": "S",
+        "description": "Sentence"
+      },
+      "crn": "X098092"
+    },
+    "orderManagers": [
+      {
+        "probationAreaId": 1500001003,
+        "teamId": 2500002003,
+        "officerId": 2500119438,
+        "name": "Sophie Zz Pheim",
+        "staffCode": "N04P009",
+        "dateStartOfAllocation": "2017-09-18T10:19:17",
+        "gradeCode": "NPSQ"
+      },
+      {
+        "probationAreaId": 1500001006,
+        "teamId": 2500002006,
+        "officerId": 2500119267,
+        "name": "Sophie Zz Pheim",
+        "staffCode": "N07P009",
+        "dateStartOfAllocation": "2017-09-15T00:00:00",
+        "dateEndOfAllocation": "2017-09-18T10:19:17",
+        "gradeCode": "NPSQ"
+      }
+    ]
+  },
+  {
+    "convictionId": 2500104964,
+    "index": "2",
+    "active": true,
+    "inBreach": false,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "convictionDate": "2017-09-15",
+    "referralDate": "2017-09-15",
+    "offences": [
+      {
+        "offenceId": "M2500104964",
+        "mainOffence": true,
+        "detail": {
+          "code": "04300",
+          "description": "Abstracting electricity - 04300",
+          "mainCategoryCode": "043",
+          "mainCategoryDescription": "Abstracting electricity",
+          "mainCategoryAbbreviation": "Abstracting electricity",
+          "ogrsOffenceCategory": "Theft (Non-motor)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Abstracting electricity",
+          "form20Code": "7"
+        },
+        "offenceDate": "2017-09-15T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2017-09-15T11:59:38",
+        "lastUpdatedDatetime": "2017-09-15T11:59:38"
+      }
+    ],
+    "latestCourtAppearanceOutcome": {
+      "code": "504",
+      "description": "Breach - Amended & Continued"
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500109390,
+      "appearanceDate": "2017-09-15T00:00:00",
+      "courtCode": "ABDRM1",
+      "courtName": "Aberdare Magistrates Court",
+      "appearanceType": {
+        "code": "B",
+        "description": "Breach/Enforcement"
+      },
+      "crn": "X098092"
+    },
+    "orderManagers": [
+      {
+        "probationAreaId": 1500001003,
+        "teamId": 2500002003,
+        "officerId": 2500119439,
+        "name": "Sophie Zz Pheim",
+        "staffCode": "N04P009",
+        "dateStartOfAllocation": "2017-09-18T10:19:18",
+        "gradeCode": "NPSQ"
+      },
+      {
+        "probationAreaId": 1500001002,
+        "teamId": 1500119954,
+        "officerId": 2500119268,
+        "name": "Unallocated Staff(N03) Staff",
+        "staffCode": "N03UATU",
+        "dateStartOfAllocation": "2017-09-15T00:00:00",
+        "dateEndOfAllocation": "2017-09-18T10:19:18"
+      }
+    ]
+  }
+]

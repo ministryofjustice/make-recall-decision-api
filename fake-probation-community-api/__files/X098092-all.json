@@ -1,0 +1,102 @@
+{
+  "offenderId": 2500109986,
+  "title": "Mr",
+  "firstName": "harry",
+  "middleNames": [
+    "Tom"
+  ],
+  "surname": "smith",
+  "dateOfBirth": "1990-09-15",
+  "gender": "Male",
+  "otherIds": {
+    "crn": "X098092"
+  },
+  "contactDetails": {
+    "addresses": [
+      {
+        "from": "2022-03-16",
+        "noFixedAbode": false,
+        "status": {
+          "code": "M",
+          "description": "Main"
+        },
+        "type": {
+          "code": "A02",
+          "description": "Approved Premises"
+        },
+        "typeVerified": true,
+        "latestAssessmentDate": "2022-03-16T00:00:00",
+        "createdDatetime": "2022-03-16T12:40:28",
+        "lastUpdatedDatetime": "2022-03-16T12:40:57"
+      }
+    ]
+  },
+  "offenderProfile": {
+    "nationality": "Albanian",
+    "offenderLanguages": {},
+    "remandStatus": "Bail - Conditional",
+    "previousConviction": {}
+  },
+  "offenderAliases": [
+    {
+      "id": "2500044940",
+      "dateOfBirth": "1990-09-15",
+      "firstName": "Mr",
+      "surname": "Dave",
+      "gender": "Male"
+    }
+  ],
+  "offenderManagers": [
+    {
+      "trustOfficer": {
+        "forenames": "HMPPS",
+        "surname": "Auth"
+      },
+      "staff": {
+        "code": "N07A711",
+        "forenames": "HMPPS",
+        "surname": "Auth",
+        "unallocated": false
+      },
+      "partitionArea": "National Data",
+      "softDeleted": false,
+      "team": {
+        "code": "N07CHT",
+        "description": "Automation SPG",
+        "telephone": "01111111111",
+        "localDeliveryUnit": {
+          "code": "N07ALL",
+          "description": "All NPS London"
+        },
+        "district": {
+          "code": "N07ALL",
+          "description": "All NPS London"
+        },
+        "borough": {
+          "code": "N07ALL",
+          "description": "All NPS London"
+        }
+      },
+      "probationArea": {
+        "code": "N07",
+        "description": "NPS London",
+        "nps": true
+      },
+      "fromDate": "2022-03-16",
+      "active": true,
+      "allocationReason": {
+        "code": "ACRC",
+        "description": "Case Allocated to CRC"
+      }
+    }
+  ],
+  "softDeleted": false,
+  "currentDisposal": "1",
+  "partitionArea": "National Data",
+  "currentRestriction": false,
+  "restrictionMessage": "This is a restricted offender record. Please contact a system administrator",
+  "currentExclusion": false,
+  "exclusionMessage": "You are excluded from viewing this offender record. Please contact a system administrator",
+  "currentTier": "B-2",
+  "activeProbationManagedSentence": true
+}
