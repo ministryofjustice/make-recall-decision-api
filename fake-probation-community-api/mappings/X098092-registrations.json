@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/secure/offenders/crn/X098092/registrations"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-registrations.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
