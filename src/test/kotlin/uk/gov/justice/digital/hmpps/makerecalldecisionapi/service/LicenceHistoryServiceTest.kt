@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -64,7 +65,7 @@ class LicenceHistoryServiceTest {
   fun `given a contact summary and release summary then return these details in the response`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString(), true))
+      given(communityApiClient.getContactSummary(anyString(), eq(true)))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
@@ -83,7 +84,7 @@ class LicenceHistoryServiceTest {
   fun `given no release summary details then still retrieve contact summary details`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString(), true))
+      given(communityApiClient.getContactSummary(anyString(), eq(true)))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
@@ -101,7 +102,7 @@ class LicenceHistoryServiceTest {
   fun `given no contact summary details then still retrieve release summary details`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString(), true))
+      given(communityApiClient.getContactSummary(anyString(), eq(true)))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
@@ -119,7 +120,7 @@ class LicenceHistoryServiceTest {
   fun `given no contact summary details and no release summary details then still return an empty response`() {
     runBlockingTest {
 
-      given(communityApiClient.getContactSummary(anyString(), true))
+      given(communityApiClient.getContactSummary(anyString(), eq(true)))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
@@ -152,14 +153,16 @@ class LicenceHistoryServiceTest {
         descriptionType = "Registration Review",
         outcome = null,
         notes = "Comment added by John Smith on 05/05/2022",
-        enforcementAction = null
+        enforcementAction = null,
+        systemGenerated = false
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
         descriptionType = "Police Liaison",
         outcome = "Test - Not Clean / Not Acceptable / Unsuitable",
         notes = "This is a test",
-        enforcementAction = "Enforcement Letter Requested"
+        enforcementAction = "Enforcement Letter Requested",
+        systemGenerated = true
       )
     )
   }
@@ -169,14 +172,14 @@ class LicenceHistoryServiceTest {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review"),
+          type = ContactType(description = "Registration Review", systemGenerated = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison"),
+          type = ContactType(description = "Police Liaison", systemGenerated = true),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),

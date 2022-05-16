@@ -204,14 +204,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review"),
+          type = ContactType(description = "Registration Review", systemGenerated = true),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison"),
+          type = ContactType(description = "Police Liaison", systemGenerated = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
@@ -241,14 +241,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review"),
+          type = ContactType(description = "Registration Review", systemGenerated = true),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison"),
+          type = ContactType(description = "Police Liaison", systemGenerated = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),

@@ -37,6 +37,7 @@ class LicenceHistoryService(
           outcome = it.outcome?.description,
           notes = it.notes,
           enforcementAction = it.enforcement?.enforcementAction?.description,
+          systemGenerated = it.type?.systemGenerated
         )
       }?.toList() ?: emptyList()
   }
