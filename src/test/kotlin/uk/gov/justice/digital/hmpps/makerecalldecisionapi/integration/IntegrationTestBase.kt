@@ -8,10 +8,12 @@ import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
 import org.mockserver.matchers.Times.exactly
+import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
@@ -24,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
 
+@AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @FlywayTest
@@ -71,34 +74,37 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
-  protected fun allOffenderDetailsResponse(crn: String) {
+  protected fun allOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
     val allOffenderDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/all")
 
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun unallocatedConvictionResponse(crn: String, staffCode: String) {
+  protected fun unallocatedConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun registrationsResponse(crn: String) {
+  protected fun registrationsResponse(crn: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/registrations")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun unallocatedOffenderSearchResponse(crn: String) {
+  protected fun unallocatedOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
         .withPath("/phrase")
@@ -106,25 +112,28 @@ abstract class IntegrationTestBase {
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun contactSummaryResponse(crn: String, contactSummary: String) {
+  protected fun contactSummaryResponse(crn: String, contactSummary: String, delaySeconds: Long = 0) {
     val contactSummaryRequest =
       request().withPath("/secure/offenders/crn/$crn/contact-summary")
         .withQueryStringParameter("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI")
 
     communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(contactSummary)
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun releaseSummaryResponse(crn: String) {
+  protected fun releaseSummaryResponse(crn: String, delaySeconds: Long = 0) {
     val releaseSummaryRequest =
       request().withPath("/secure/offenders/crn/$crn/release")
 
     communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(releaseSummaryResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

@@ -106,3 +106,7 @@ community:
 gotenberg:
   endpoint:
     url: http://localhost:9091
+
+ndelius:
+  client:
+    timeout: 30

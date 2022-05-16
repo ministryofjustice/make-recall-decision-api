@@ -3,11 +3,13 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import javax.validation.ValidationException
 
@@ -36,6 +38,20 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No personal details available: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
+  @ExceptionHandler(ClientTimeoutException::class)
+  fun handleClientTimeoutException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> {
+    log.info("Client timeout exception: {}", e.message)
+    return ResponseEntity
+      .status(GATEWAY_TIMEOUT)
+      .body(
+        ErrorResponse(
+          status = GATEWAY_TIMEOUT,
+          userMessage = "Client timeout: ${e.message}",
           developerMessage = e.message
         )
       )
@@ -86,5 +102,3 @@ open class MakeRecallDecisionException(override val message: String? = null, ove
     }
   }
 }
-
-class ClientTimeoutException(clientName: String, errorType: String) : MakeRecallDecisionException("$clientName: [$errorType]")
