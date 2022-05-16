@@ -16,6 +16,7 @@ data class Content(
 
 data class ContactType(
   val description: String?,
+  val systemGenerated: Boolean,
 )
 
 data class ContactOutcome(
