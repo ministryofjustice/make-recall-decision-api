@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/phrase"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "phrase.json"
+  }
+}
