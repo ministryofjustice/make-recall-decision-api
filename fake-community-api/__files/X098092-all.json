@@ -1,11 +1,11 @@
 {
   "offenderId": 2500109986,
   "title": "Mr",
-  "firstName": "harry",
+  "firstName": "Harry",
   "middleNames": [
     "Tom"
   ],
-  "surname": "smith",
+  "surname": "Smith",
   "dateOfBirth": "1990-09-15",
   "gender": "Male",
   "otherIds": {
