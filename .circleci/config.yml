@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   hmpps: ministryofjustice/hmpps@5.1
   gradle: circleci/gradle@2.2
+  slack: circleci/slack@4.10
 
 parameters:
   alerts-slack-channel:
@@ -11,6 +12,36 @@ parameters:
   releases-slack-channel:
     type: string
     default: make-recall-decisions-pipeline
+
+slack-fail-post-step: &slack-fail-post-step
+  post-steps:
+    - slack/notify:
+        event: fail
+        branch_pattern: main
+        channel: << pipeline.parameters.alerts-slack-channel >>
+        custom: |
+          {
+            "text": "",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` - `${CIRCLE_JOB}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": { "type": "plain_text", "text": "View Job" },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                ]
+              }
+            ]
+          }
 
 jobs:
   validate:
@@ -57,19 +88,31 @@ workflows:
           filters:
             tags:
               ignore: /.*/
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
       - hmpps/helm_lint:
           name: helm_lint
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
       - hmpps/build_docker:
           name: build_docker
           filters:
             branches:
               only:
                 - main
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_dev
           env: "dev"
-          context: hmpps-common-vars
+          context:
+            - hmpps-common-vars
           filters:
             branches:
               only:
@@ -78,6 +121,7 @@ workflows:
             - validate
             - build_docker
             - helm_lint
+          <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_dev
           sentry_project: make-recall-decision-api
@@ -87,22 +131,26 @@ workflows:
             - deploy_dev
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
       - e2e_test:
           name: e2e_test_dev
           environment: dev
           context:
             - make-recall-decision-circleci-auth
+            - hmpps-common-vars
           requires:
             - deploy_dev
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
-         name: deploy_preprod
-         env: "preprod"
-         context:
-           - hmpps-common-vars
-           - make-recall-decision-api-preprod
-         requires:
+          name: deploy_preprod
+          env: "preprod"
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-preprod
+          requires:
            - e2e_test_dev
+          <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
           sentry_project: make-recall-decision-api
@@ -112,24 +160,28 @@ workflows:
             - deploy_preprod
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
       - e2e_test:
           name: e2e_test_preprod
           environment: preprod
           context:
             - make-recall-decision-circleci-auth
+            - hmpps-common-vars
           requires:
             - deploy_preprod
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
-         name: deploy_prod
-         env: "prod"
-         slack_notification: true
-         slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-         context:
-           - hmpps-common-vars
-           - make-recall-decision-api-prod
-         requires:
-           - e2e_test_preprod
+          name: deploy_prod
+          env: "prod"
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-prod
+          requires:
+            - e2e_test_preprod
+          <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_prod
           sentry_project: make-recall-decision-api
@@ -139,6 +191,7 @@ workflows:
             - deploy_prod
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
   security:
     triggers:
