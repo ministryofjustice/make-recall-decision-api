@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
+import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -14,7 +15,8 @@ import java.util.concurrent.TimeoutException
 
 class OffenderSearchApiClient(
   private val webClient: WebClient,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  private val timeoutCounter: Counter
 ) {
   fun searchOffenderByPhrase(request: OffenderSearchByPhraseRequest): Mono<OffenderDetailsResponse> {
     val responseType = object : ParameterizedTypeReference<OffenderDetailsResponse>() {}
@@ -40,6 +42,8 @@ class OffenderSearchApiClient(
   ) {
     when (exception) {
       is TimeoutException -> {
+        timeoutCounter.increment()
+
         throw ClientTimeoutException(
           "Offender Search API Client - search by phrase endpoint",
           "No response within $nDeliusTimeout seconds"
