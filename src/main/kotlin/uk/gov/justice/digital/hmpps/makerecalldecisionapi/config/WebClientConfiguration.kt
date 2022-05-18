@@ -1,5 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tags
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -13,12 +17,15 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
+import java.net.URI
 
 @Configuration
 class WebClientConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @Autowired private val meterRegistry: MeterRegistry
 ) {
 
   @Bean
@@ -50,8 +57,11 @@ class WebClientConfiguration(
 
   @Bean
   fun offenderSearchApiClient(@Qualifier("offenderSearchWebClientAppScope") webClient: WebClient): OffenderSearchApiClient {
-    return OffenderSearchApiClient(webClient, nDeliusTimeout)
+    return OffenderSearchApiClient(webClient, nDeliusTimeout, offenderSearchApiClientTimeoutCounter())
   }
+
+  @Bean
+  fun offenderSearchApiClientTimeoutCounter(): Counter = timeoutCounter(offenderSearchApiRootUri)
 
   @Bean
   fun communityWebClientAppScope(
@@ -63,13 +73,19 @@ class WebClientConfiguration(
 
   @Bean
   fun communityApiClient(@Qualifier("communityWebClientAppScope") webClient: WebClient): CommunityApiClient {
-    return CommunityApiClient(webClient, nDeliusTimeout)
+    return CommunityApiClient(webClient, nDeliusTimeout, communityApiClientTimeoutCounter())
   }
 
   @Bean
-  fun gotenbergClient(@Value("\${gotenberg.endpoint.url}") gotenbergEndpointUrl: String): WebClient {
-    return getPlainWebClient(WebClient.builder(), gotenbergEndpointUrl)
+  fun communityApiClientTimeoutCounter(): Counter = timeoutCounter(communityApiRootUri)
+
+  @Bean
+  fun gotenbergClient(): WebClient {
+    return getPlainWebClient(WebClient.builder(), gotenbergRootUri)
   }
+
+  @Bean
+  fun gotenbergClientTimeoutCounter(): Counter = timeoutCounter(gotenbergRootUri)
 
   private fun getOAuthWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
@@ -90,5 +106,11 @@ class WebClientConfiguration(
   ): WebClient {
     return builder.baseUrl(rootUri)
       .build()
+  }
+
+  private fun timeoutCounter(endpointUrl: String): Counter {
+    val metricName = "http_client_requests_timeout"
+    val host = URI(endpointUrl).host
+    return meterRegistry.counter(metricName, Tags.of("clientName", host))
   }
 }

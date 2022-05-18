@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
+import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
@@ -19,7 +20,8 @@ import java.util.concurrent.TimeoutException
 
 class CommunityApiClient(
   private val webClient: WebClient,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  private val timeoutCounter: Counter
 ) {
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
@@ -144,6 +146,8 @@ class CommunityApiClient(
   ) {
     when (exception) {
       is TimeoutException -> {
+        timeoutCounter.increment()
+
         throw ClientTimeoutException(
           "Community API Client - $endPoint endpoint",
           "No response within $nDeliusTimeout seconds"
