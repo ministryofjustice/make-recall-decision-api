@@ -33,10 +33,10 @@ spring:
             authorization-grant-type: client_credentials
         provider:
           hmpps-auth:
-            token-uri: ${hmpps.auth.url:https://sign-in-dev.hmpps.service.justice.gov.uk/auth}/oauth/token
+            token-uri: ${hmpps.auth.url}/oauth/token
       resourceserver:
         jwt:
-          jwk-set-uri: ${hmpps.auth.url:http://localhost:9090/auth}/.well-known/jwks.json
+          jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
@@ -92,6 +92,10 @@ management:
         time-to-live: 2000ms
     prometheus:
       enabled: true
+
+hmpps:
+  auth:
+    url: http://localhost:9090/auth
 
 offender:
   search:
