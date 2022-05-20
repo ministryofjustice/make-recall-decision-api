@@ -14,7 +14,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.6")
   implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
   implementation("io.opentelemetry:opentelemetry-api:1.13.0")
 
