@@ -23,12 +23,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Al
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Registration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Type
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
@@ -70,14 +67,11 @@ class PersonalDetailServiceTest {
       val crn = "12345"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.empty())
 
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val currentAddress = response.currentAddress!!
-      val riskFlagsShouldBeEmpty = response.risk!!.flags
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -97,7 +91,6 @@ class PersonalDetailServiceTest {
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
       assertThat(offenderManager.probationTeam?.code).isEqualTo("C01T04")
       assertThat(offenderManager.probationTeam?.label).isEqualTo("OMU A")
-      assertThat(riskFlagsShouldBeEmpty).isEmpty()
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -108,14 +101,11 @@ class PersonalDetailServiceTest {
       val crn = "12345"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.fromCallable { registrations })
 
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val currentAddress = response.currentAddress!!
-      val riskFlags = response.risk!!.flags
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -135,8 +125,6 @@ class PersonalDetailServiceTest {
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
       assertThat(offenderManager.probationTeam?.code).isEqualTo("C01T04")
       assertThat(offenderManager.probationTeam?.label).isEqualTo("OMU A")
-      assertThat(riskFlags!!.size).isEqualTo(1)
-      assertThat(riskFlags[0]).isEqualTo("Victim contact")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -182,25 +170,11 @@ class PersonalDetailServiceTest {
               )
           }
         )
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            registrations.copy(
-              registrations = listOf(
-                Registration(
-                  active = true,
-                  type = Type(code = null, description = null)
-                ),
-              )
-            )
-          }
-        )
 
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val currentAddress = response.currentAddress!!
-      val riskFlags = response.risk!!.flags
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -219,8 +193,6 @@ class PersonalDetailServiceTest {
       assertThat(offenderManager.phoneNumber).isEqualTo("")
       assertThat(offenderManager.probationTeam?.code).isEqualTo("")
       assertThat(offenderManager.probationTeam?.label).isEqualTo("")
-      assertThat(riskFlags!!.size).isEqualTo(1)
-      assertThat(riskFlags[0]).isEqualTo("")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -297,19 +269,6 @@ class PersonalDetailServiceTest {
       )
     )
   }
-
-  private val registrations = RegistrationsResponse(
-    registrations = listOf(
-      Registration(
-        active = true,
-        type = Type(code = "ABC123", description = "Victim contact")
-      ),
-      Registration(
-        active = false,
-        type = Type(code = "ABC124", description = "Mental health issues")
-      )
-    )
-  )
 
   private fun expectedPersonDetailsResponse(): PersonDetails {
     val dateOfBirth = LocalDate.parse("1982-10-24")
