@@ -242,19 +242,19 @@ class CommunityApiClientTest : IntegrationTestBase() {
       contactDetails = ContactDetails(
         addresses = listOf(
           Address(
-            postcode = "S3 7BS",
-            district = "Sheffield City Centre",
-            addressNumber = "32",
-            buildingName = "HMPPS Digital Studio",
-            town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
+            postcode = "90220",
+            district = "South Central",
+            addressNumber = "45",
+            buildingName = "Death Row Records",
+            town = "Compton",
+            county = "LA", status = AddressStatus(code = "ABC123", description = "Not Main")
           ),
           Address(
             town = "Sheffield",
             county = "South Yorkshire",
             buildingName = "HMPPS Digital Studio",
             district = "Sheffield City Centre",
-            status = AddressStatus(code = "ABC123", description = "Not Main"),
+            status = AddressStatus(code = "ABC123", description = "Main"),
             postcode = "S3 7BS",
             addressNumber = "33"
           )
