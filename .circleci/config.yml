@@ -1,9 +1,9 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@5.1
-  gradle: circleci/gradle@2.2
-  slack: circleci/slack@4.10
+  hmpps: ministryofjustice/hmpps@5.1.0
+  gradle: circleci/gradle@2.2.0
+  slack: circleci/slack@4.10.1
 
 parameters:
   alerts-slack-channel:
@@ -59,13 +59,16 @@ jobs:
           cache_checksum_file: "build.gradle.kts"
           steps:
             - run:
-                name: Run check
+                name: Run check & send results to sonarcloud
                 command: |
-                  ./gradlew check
+                  export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
+                  ./gradlew check sonarqube
       - store_test_results:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+      - store_artifacts:
+          path: build/reports/jacoco/test/html
 
   e2e_test:
     executor:

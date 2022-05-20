@@ -1,5 +1,7 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.7"
+  id("jacoco")
+  id("org.sonarqube") version "3.3"
   kotlin("plugin.spring") version "1.6.21"
 }
 
@@ -14,7 +16,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.6")
   implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
   implementation("io.opentelemetry:opentelemetry-api:1.13.0")
 
@@ -22,10 +24,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core:8.5.4")
   implementation("org.postgresql:postgresql:42.3.3")
 
-  "5.7.3".let { sentryVersion ->
-    implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
-    implementation("io.sentry:sentry-logback:$sentryVersion")
-  }
+  implementation("io.sentry:sentry-spring-boot-starter:5.7.3")
+  implementation("io.sentry:sentry-logback:5.7.3")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.7")
   implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
@@ -57,5 +57,16 @@ tasks {
     kotlinOptions {
       jvmTarget = "17"
     }
+  }
+}
+
+tasks.test {
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+  dependsOn(tasks.test)
+  reports {
+    xml.required.set(true)
   }
 }
