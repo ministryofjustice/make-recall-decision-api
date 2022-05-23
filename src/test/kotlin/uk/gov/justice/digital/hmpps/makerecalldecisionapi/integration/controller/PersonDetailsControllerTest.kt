@@ -33,7 +33,7 @@ class PersonDetailsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.currentAddress.line1").isEqualTo("32 HMPPS Digital Studio")
+        .jsonPath("$.currentAddress.line1").isEqualTo("33 HMPPS Digital Studio")
         .jsonPath("$.currentAddress.line2").isEqualTo("Sheffield City Centre")
         .jsonPath("$.currentAddress.town").isEqualTo("Sheffield")
         .jsonPath("$.currentAddress.postcode").isEqualTo("S3 7BS")

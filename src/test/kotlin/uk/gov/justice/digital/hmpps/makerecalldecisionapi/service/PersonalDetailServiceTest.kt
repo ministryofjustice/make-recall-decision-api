@@ -251,21 +251,21 @@ class PersonalDetailServiceTest {
       contactDetails = ContactDetails(
         addresses = listOf(
           Address(
+            town = "Compton",
+            county = "LA",
+            buildingName = "HMPPS Digital Studio",
+            district = "South Central",
+            status = AddressStatus(code = "ABC123", description = "Not Main"),
+            postcode = "90210",
+            addressNumber = "339"
+          ),
+          Address(
             postcode = "S3 7BS",
             district = "Sheffield City Centre",
             addressNumber = "32",
             buildingName = "HMPPS Digital Studio",
             town = "Sheffield",
             county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
-          ),
-          Address(
-            town = "Sheffield",
-            county = "South Yorkshire",
-            buildingName = "HMPPS Digital Studio",
-            district = "Sheffield City Centre",
-            status = AddressStatus(code = "ABC123", description = "Not Main"),
-            postcode = "S3 7BS",
-            addressNumber = "33"
           )
         )
       ),
