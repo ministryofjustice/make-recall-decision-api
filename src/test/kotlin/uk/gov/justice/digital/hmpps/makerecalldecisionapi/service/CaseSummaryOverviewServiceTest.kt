@@ -25,11 +25,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Of
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Registration
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Type
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -55,17 +58,22 @@ class CaseSummaryOverviewServiceTest {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(communityApiClient.getConvictions(anyString()))
         .willReturn(Mono.fromCallable { emptyList<ConvictionResponse>() })
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(Mono.empty())
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val offencesShouldBeEmpty = response.offences
+      val riskFlagsShouldBeEmpty = response.risk!!.flags
+
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(offencesShouldBeEmpty).isEmpty()
+      assertThat(riskFlagsShouldBeEmpty).isEmpty()
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -78,11 +86,15 @@ class CaseSummaryOverviewServiceTest {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(communityApiClient.getConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(Mono.fromCallable { registrations })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val offences = response.offences
+      val riskFlags = response.risk!!.flags
+
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
       assertThat(personalDetails.gender).isEqualTo("Male")
@@ -91,6 +103,8 @@ class CaseSummaryOverviewServiceTest {
       assertThat(offences?.size).isEqualTo(1)
       assertThat(offences!![0].mainOffence).isTrue
       assertThat(offences[0].description).isEqualTo("Robbery (other than armed robbery)")
+      assertThat(riskFlags!!.size).isEqualTo(1)
+      assertThat(riskFlags[0]).isEqualTo("Victim contact")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -152,6 +166,19 @@ class CaseSummaryOverviewServiceTest {
             )
           }
         )
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            registrations.copy(
+              registrations = listOf(
+                Registration(
+                  active = true,
+                  type = Type(code = null, description = null)
+                ),
+              )
+            )
+          }
+        )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -159,6 +186,8 @@ class CaseSummaryOverviewServiceTest {
       val offences = response.offences
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
+      val riskFlags = response.risk!!.flags
+
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
       assertThat(personalDetails.gender).isEqualTo("Male")
@@ -167,6 +196,8 @@ class CaseSummaryOverviewServiceTest {
       assertThat(offences?.size).isEqualTo(1)
       assertThat(offences!![0].mainOffence).isTrue
       assertThat(offences[0].description).isEqualTo("")
+      assertThat(riskFlags!!.size).isEqualTo(1)
+      assertThat(riskFlags[0]).isEqualTo("")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -204,6 +235,19 @@ class CaseSummaryOverviewServiceTest {
       )
     ),
     custody = Custody(status = CustodyStatus(code = "ABC123"))
+  )
+
+  private val registrations = RegistrationsResponse(
+    registrations = listOf(
+      Registration(
+        active = true,
+        type = Type(code = "ABC123", description = "Victim contact")
+      ),
+      Registration(
+        active = false,
+        type = Type(code = "ABC124", description = "Mental health issues")
+      )
+    )
   )
 
   private val allOffenderDetailsResponse = AllOffenderDetailsResponse(
