@@ -6,25 +6,25 @@ fun allOffenderDetailsResponse() = """
   "contactDetails": {
     "addresses": [
       {
-        "addressNumber": 32,
-        "buildingName": "HMPPS Digital Studio",
-        "county": "South Yorkshire",
+        "addressNumber": 45,
+        "buildingName": "Death Row Records",
+        "county": "LA",
         "createdDatetime": "2021-06-11T13:00:00",
-        "district": "Sheffield City Centre",
+        "district": "South Central",
         "from": "2021-06-10",
         "lastUpdatedDatetime": "2021-06-11T14:00:00",
         "latestAssessmentDate": "2021-06-11T12:00:00",
         "noFixedAbode": true,
         "notes": "Some address notes",
-        "postcode": "S3 7BS",
+        "postcode": "90220",
         "status": {
           "code": "ABC123",
-          "description": "Main"
+          "description": "Not Main"
         },
         "streetName": "Scotland Street",
         "telephoneNumber": "0123456789",
         "to": "2021-07-10",
-        "town": "Sheffield",
+        "town": "Compton",
         "type": {
           "code": "ABC123",
           "description": "Some description"
@@ -45,7 +45,7 @@ fun allOffenderDetailsResponse() = """
         "postcode": "S3 7BS",
         "status": {
           "code": "ABC123",
-          "description": "Not Main"
+          "description": "Main"
         },
         "streetName": "Scotland Street",
         "telephoneNumber": "0123456789",

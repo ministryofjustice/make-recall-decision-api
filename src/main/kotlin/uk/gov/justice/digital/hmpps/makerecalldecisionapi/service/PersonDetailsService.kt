@@ -37,9 +37,9 @@ class PersonDetailsService(
       ),
       currentAddress = CurrentAddress(
         line1 = formatTwoWordField(addressNumber, buildingName),
-        line2 = offenderDetails.contactDetails?.addresses?.get(0)?.district ?: "",
-        town = offenderDetails.contactDetails?.addresses?.get(0)?.town ?: "",
-        postcode = offenderDetails.contactDetails?.addresses?.get(0)?.postcode ?: ""
+        line2 = activeAddress?.district ?: "",
+        town = activeAddress?.town ?: "",
+        postcode = activeAddress?.postcode ?: ""
       ),
       offenderManager = OffenderManager(
         name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
