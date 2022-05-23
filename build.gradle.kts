@@ -21,7 +21,7 @@ dependencies {
   implementation("io.opentelemetry:opentelemetry-api:1.14.0")
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
-  implementation("org.flywaydb:flyway-core:8.5.4")
+  implementation("org.flywaydb:flyway-core:8.5.11")
   implementation("org.postgresql:postgresql:42.3.3")
 
   implementation("io.sentry:sentry-spring-boot-starter:5.7.4")
