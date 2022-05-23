@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Risk
 import java.time.LocalDate
 
 @Service
@@ -21,6 +23,9 @@ class CaseSummaryOverviewService(
     val name = if (firstName.isEmpty()) {
       surname
     } else "$firstName $surname"
+    val registrations = communityApiClient.getRegistrations(crn).awaitFirstOrNull()?.registrations
+    val activeRegistrations = registrations?.filter { it.active ?: false }
+    val riskFlags = activeRegistrations?.map { it.type?.description ?: "" } ?: emptyList()
 
     val offences: List<Offence> = activeConvictions
       .map { it.offences }
@@ -39,7 +44,8 @@ class CaseSummaryOverviewService(
         gender = offenderDetails?.gender ?: "",
         crn = crn
       ),
-      offences = offences.filter { it.mainOffence == true }
+      offences = offences.filter { it.mainOffence == true },
+      risk = Risk(flags = riskFlags)
     )
   }
 }

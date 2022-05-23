@@ -20,7 +20,6 @@ class PersonDetailsControllerTest(
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
-      registrationsResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -42,8 +41,6 @@ class PersonDetailsControllerTest(
         .jsonPath("$.offenderManager.email").isEqualTo("first.last@digital.justice.gov.uk")
         .jsonPath("$.offenderManager.probationTeam.code").isEqualTo("C01T04")
         .jsonPath("$.offenderManager.probationTeam.label").isEqualTo("OMU A")
-        .jsonPath("$.risk.flags.length()").isEqualTo(1)
-        .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
     }
   }
 
@@ -70,8 +67,7 @@ class PersonDetailsControllerTest(
   fun `gateway timeout 503 given on Community Api timeout`() {
     runBlockingTest {
       val crn = "A12345"
-      allOffenderDetailsResponse(crn)
-      registrationsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -82,7 +78,7 @@ class PersonDetailsControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - registrations endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 

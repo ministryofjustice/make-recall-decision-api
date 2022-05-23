@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
 data class PersonDetailsResponse(
   val personalDetailsOverview: PersonDetails?,
   val currentAddress: CurrentAddress?,
-  val risk: Risk?,
   val offenderManager: OffenderManager?
 )
 
@@ -19,8 +18,4 @@ data class OffenderManager(
   val phoneNumber: String?,
   val email: String?,
   val probationTeam: ProbationTeam?
-)
-
-data class Risk(
-  val flags: List<String?>?
 )
