@@ -5,7 +5,8 @@ import java.time.LocalDate
 
 data class CaseSummaryOverviewResponse(
   val personalDetailsOverview: PersonDetails?,
-  val offences: List<Offence>?
+  val offences: List<Offence>?,
+  val risk: Risk?,
 )
 
 data class PersonDetails(
@@ -25,4 +26,8 @@ data class ProbationTeam(
 data class Offence(
   val mainOffence: Boolean?,
   val description: String?
+)
+
+data class Risk(
+  val flags: List<String?>?
 )
