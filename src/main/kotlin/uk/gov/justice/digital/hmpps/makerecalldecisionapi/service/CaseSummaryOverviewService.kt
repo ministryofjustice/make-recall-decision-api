@@ -4,10 +4,10 @@ import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CaseSummaryOverviewResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Risk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Risk
 import java.time.LocalDate
 
 @Service

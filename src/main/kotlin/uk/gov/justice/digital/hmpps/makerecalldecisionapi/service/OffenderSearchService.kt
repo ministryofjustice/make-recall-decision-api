@@ -3,8 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.SearchByCrnResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import kotlin.streams.toList
 
 @Service

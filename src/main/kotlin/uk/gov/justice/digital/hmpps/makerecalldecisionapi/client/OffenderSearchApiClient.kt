@@ -7,8 +7,8 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.OffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
