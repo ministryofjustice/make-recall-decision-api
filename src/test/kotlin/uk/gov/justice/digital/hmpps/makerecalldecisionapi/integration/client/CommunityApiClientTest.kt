@@ -24,10 +24,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Enforce
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
@@ -291,6 +294,46 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getAllOffenderDetails(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves mappa details`() {
+    // given
+    val crn = "X123456"
+    mappaDetailsResponse(crn)
+
+    // and
+    val expected = MappaResponse(
+      level = 1,
+      levelDescription = "MAPPA Level 1",
+      category = 0,
+      categoryDescription = "All - Category to be determined",
+      startDate = LocalDate.parse("2021-02-10"),
+      reviewDate = LocalDate.parse("2021-05-10"),
+      team = Team(
+        code = "N07CHT",
+        description = "Automation SPG",
+        emailAddress = null,
+        telephone = null
+      ),
+      officer = Officer(
+        code = "N07A060",
+        forenames = "NDelius26",
+        surname = "Anderson",
+        unallocated = false
+      ),
+      probationArea = ProbationArea(
+        code = "N07",
+        description = "NPS London"
+      ),
+      notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
+    )
+
+    // when
+    val actual = communityApiClient.getAllMappaDetails(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
