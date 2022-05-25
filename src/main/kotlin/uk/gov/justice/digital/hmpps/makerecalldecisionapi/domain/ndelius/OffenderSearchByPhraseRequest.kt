@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
 
 import javax.validation.constraints.NotEmpty
 

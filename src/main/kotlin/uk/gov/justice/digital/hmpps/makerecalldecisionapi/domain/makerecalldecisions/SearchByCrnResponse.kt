@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
