@@ -16,16 +16,16 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ContactDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ProviderEmployee
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Staff
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 

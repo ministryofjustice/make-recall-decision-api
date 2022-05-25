@@ -12,9 +12,9 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.Content
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.OffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.offendersearchapi.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -71,7 +71,7 @@ class OffenderSearchServiceTest {
 
   val offenderSearchResponse = OffenderDetailsResponse(
     content = listOf(
-      Content(
+      OffenderDetails(
         firstName = "John",
         surname = "Blair",
         dateOfBirth = LocalDate.parse("1982-10-24")

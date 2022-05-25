@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import java.time.OffsetDateTime
 

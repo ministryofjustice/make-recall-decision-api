@@ -3,9 +3,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContactSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.LicenceHistoryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import kotlin.streams.toList
 
 @Service

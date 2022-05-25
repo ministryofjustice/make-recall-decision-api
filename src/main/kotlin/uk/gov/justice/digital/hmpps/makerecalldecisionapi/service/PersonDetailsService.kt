@@ -3,12 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CurrentAddress
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PersonDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ProbationTeam
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CurrentAddress
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import java.time.LocalDate
 
 @Service

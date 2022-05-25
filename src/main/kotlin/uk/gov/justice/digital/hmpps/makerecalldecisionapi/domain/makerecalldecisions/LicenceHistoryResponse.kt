@@ -1,6 +1,6 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.communityapi.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 
 data class LicenceHistoryResponse(
   val personalDetailsOverview: PersonDetails? = null,
