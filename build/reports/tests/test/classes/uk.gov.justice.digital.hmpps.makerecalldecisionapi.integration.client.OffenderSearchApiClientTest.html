@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - OffenderSearchApiClientTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>OffenderSearchApiClientTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client.html">uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client</a> &gt; OffenderSearchApiClientTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.255s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">retrieves offender details by crn()</td>
+<td class="success">0.255s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2022-05-12 14:56:05.653  INFO 5981 --- [rver-EventLog85] org.mockserver.log.MockServerEventLog    : 8092 started on port: 8092 |  
+2022-05-12 14:56:05.686  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 started on port: 8093 |  
+2022-05-12 14:56:05.718  INFO 5981 --- [rver-EventLog91] org.mockserver.log.MockServerEventLog    : 8094 started on port: 8094 |  
+2022-05-12 14:56:05.741  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 started on port: 9090 |  
+2022-05-12 14:56:05.745  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client.OffenderSearchApiClientTest], using SpringBootContextLoader |  
+2022-05-12 14:56:05.748  INFO 5981 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client.OffenderSearchApiClientTest]: no resource found for suffixes {-context.xml, Context.groovy}. |  
+2022-05-12 14:56:05.749  INFO 5981 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client.OffenderSearchApiClientTest]: OffenderSearchApiClientTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration. |  
+2022-05-12 14:56:05.758  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration uk.gov.justice.digital.hmpps.makerecalldecisionapi.MakeRecallDecisionApi for test class uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client.OffenderSearchApiClientTest |  
+2022-05-12 14:56:05.764  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener] |  
+2022-05-12 14:56:05.766  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@1660bba7, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@29cd48bd, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@49e3b86b, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@64b262a7, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@771c4015, org.springframework.test.context.support.DirtiesContextTestExecutionListener@34d776eb, org.springframework.test.context.transaction.TransactionalTestExecutionListener@60a3a0fa, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@17734113, org.springframework.test.context.event.EventPublishingTestExecutionListener@27aa700, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@d15f98a, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@704c3ca2, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@7d3a9061, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@2a2f7a61, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@8d40f07, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@196c8b93] |  
+2022-05-12 14:56:05.789  INFO 5981 --- [rver-EventLog85] org.mockserver.log.MockServerEventLog    : 8092 resetting all expectations and request logs |  
+2022-05-12 14:56:05.797  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 resetting all expectations and request logs |  
+2022-05-12 14:56:05.810  INFO 5981 --- [rver-EventLog91] org.mockserver.log.MockServerEventLog    : 8094 resetting all expectations and request logs |  
+2022-05-12 14:56:05.823  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/oauth/token&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;fd6a3ac4-a782-4259-859d-8a1a794d0cd4&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  fd6a3ac4-a782-4259-859d-8a1a794d0cd4
+ |  
+2022-05-12 14:56:05.835  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;ea9b56f5-8be4-452c-bd93-aaffba673c65&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  ea9b56f5-8be4-452c-bd93-aaffba673c65
+ |  
+2022-05-12 14:56:05.845  INFO 5981 --- [rver-EventLog85] org.mockserver.log.MockServerEventLog    : 8092 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;485cb8f4-4e51-4c17-a787-403d3590010a&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  485cb8f4-4e51-4c17-a787-403d3590010a
+ |  
+2022-05-12 14:56:05.856  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;a1e33e62-a81e-425a-8098-23af5b878d0e&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  a1e33e62-a81e-425a-8098-23af5b878d0e
+ |  
+2022-05-12 14:56:05.882  INFO 5981 --- [rver-EventLog91] org.mockserver.log.MockServerEventLog    : 8094 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;up\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;f016f393-aa26-440d-a1cf-0e585a747387&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  f016f393-aa26-440d-a1cf-0e585a747387
+ |  
+2022-05-12 14:56:05.899  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/phrase&quot;,
+      &quot;queryStringParameters&quot; : {
+        &quot;paged&quot; : [ &quot;false&quot; ]
+      }
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\n  \&quot;content\&quot;: [\n    {\n      \&quot;firstName\&quot;: \&quot;Pontius\&quot;,\n      \&quot;surname\&quot;: \&quot;Pilate\&quot;,\n      \&quot;dateOfBirth\&quot;: \&quot;2000-11-09\&quot;\n    }\n  ]\n}&quot;
+    },
+    &quot;id&quot; : &quot;a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;remainingTimes&quot; : 1
+    }
+  }
+
+ with id:
+
+  a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c
+ |  
+2022-05-12 14:56:05.916  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 received request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/auth/oauth/token&quot;,
+    &quot;headers&quot; : {
+      &quot;content-length&quot; : [ &quot;29&quot; ],
+      &quot;User-Agent&quot; : [ &quot;Java/17.0.2&quot; ],
+      &quot;Host&quot; : [ &quot;localhost:9090&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/x-www-form-urlencoded;charset=UTF-8&quot; ],
+      &quot;Connection&quot; : [ &quot;keep-alive&quot; ],
+      &quot;Authorization&quot; : [ &quot;Basic bWFrZS1yZWNhbGwtZGVjaXNpb24tYXBpOmNsaWVudHNlY3JldA==&quot; ],
+      &quot;Accept&quot; : [ &quot;application/json;charset=UTF-8&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : &quot;grant_type=client_credentials&quot;
+  }
+ |  
+2022-05-12 14:56:05.917  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/auth/oauth/token&quot;,
+    &quot;headers&quot; : {
+      &quot;content-length&quot; : [ &quot;29&quot; ],
+      &quot;User-Agent&quot; : [ &quot;Java/17.0.2&quot; ],
+      &quot;Host&quot; : [ &quot;localhost:9090&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/x-www-form-urlencoded;charset=UTF-8&quot; ],
+      &quot;Connection&quot; : [ &quot;keep-alive&quot; ],
+      &quot;Authorization&quot; : [ &quot;Basic bWFrZS1yZWNhbGwtZGVjaXNpb24tYXBpOmNsaWVudHNlY3JldA==&quot; ],
+      &quot;Accept&quot; : [ &quot;application/json;charset=UTF-8&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : &quot;grant_type=client_credentials&quot;
+  }
+
+ matched expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/oauth/token&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;fd6a3ac4-a782-4259-859d-8a1a794d0cd4&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+ |  
+2022-05-12 14:56:05.918  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 returning response:
+
+  {
+    &quot;headers&quot; : {
+      &quot;content-type&quot; : [ &quot;application/json&quot; ]
+    },
+    &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+  }
+
+ for request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/auth/oauth/token&quot;,
+    &quot;headers&quot; : {
+      &quot;content-length&quot; : [ &quot;29&quot; ],
+      &quot;User-Agent&quot; : [ &quot;Java/17.0.2&quot; ],
+      &quot;Host&quot; : [ &quot;localhost:9090&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/x-www-form-urlencoded;charset=UTF-8&quot; ],
+      &quot;Connection&quot; : [ &quot;keep-alive&quot; ],
+      &quot;Authorization&quot; : [ &quot;Basic bWFrZS1yZWNhbGwtZGVjaXNpb24tYXBpOmNsaWVudHNlY3JldA==&quot; ],
+      &quot;Accept&quot; : [ &quot;application/json;charset=UTF-8&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : &quot;grant_type=client_credentials&quot;
+  }
+
+ for action:
+
+  {
+    &quot;headers&quot; : {
+      &quot;content-type&quot; : [ &quot;application/json&quot; ]
+    },
+    &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+  }
+
+ from expectation:
+
+  fd6a3ac4-a782-4259-859d-8a1a794d0cd4
+ |  
+2022-05-12 14:56:05.971  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 received request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/phrase&quot;,
+    &quot;queryStringParameters&quot; : {
+      &quot;paged&quot; : [ &quot;false&quot; ]
+    },
+    &quot;headers&quot; : {
+      &quot;user-agent&quot; : [ &quot;ReactorNetty/1.0.18&quot; ],
+      &quot;host&quot; : [ &quot;localhost:8093&quot; ],
+      &quot;content-length&quot; : [ &quot;42&quot; ],
+      &quot;accept-encoding&quot; : [ &quot;gzip&quot; ],
+      &quot;accept&quot; : [ &quot;*/*&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/json&quot; ],
+      &quot;Authorization&quot; : [ &quot;Bearer ABCDE&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : {
+      &quot;phrase&quot; : &quot;X123456&quot;,
+      &quot;matchAllTerms&quot; : false
+    }
+  }
+ |  
+2022-05-12 14:56:05.975  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/phrase&quot;,
+    &quot;queryStringParameters&quot; : {
+      &quot;paged&quot; : [ &quot;false&quot; ]
+    },
+    &quot;headers&quot; : {
+      &quot;user-agent&quot; : [ &quot;ReactorNetty/1.0.18&quot; ],
+      &quot;host&quot; : [ &quot;localhost:8093&quot; ],
+      &quot;content-length&quot; : [ &quot;42&quot; ],
+      &quot;accept-encoding&quot; : [ &quot;gzip&quot; ],
+      &quot;accept&quot; : [ &quot;*/*&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/json&quot; ],
+      &quot;Authorization&quot; : [ &quot;Bearer ABCDE&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : {
+      &quot;phrase&quot; : &quot;X123456&quot;,
+      &quot;matchAllTerms&quot; : false
+    }
+  }
+
+ didn't match expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;a1e33e62-a81e-425a-8098-23af5b878d0e&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ because:
+
+  method matched
+  path didn't match
+ |  
+2022-05-12 14:56:05.994  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/phrase&quot;,
+    &quot;queryStringParameters&quot; : {
+      &quot;paged&quot; : [ &quot;false&quot; ]
+    },
+    &quot;headers&quot; : {
+      &quot;user-agent&quot; : [ &quot;ReactorNetty/1.0.18&quot; ],
+      &quot;host&quot; : [ &quot;localhost:8093&quot; ],
+      &quot;content-length&quot; : [ &quot;42&quot; ],
+      &quot;accept-encoding&quot; : [ &quot;gzip&quot; ],
+      &quot;accept&quot; : [ &quot;*/*&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/json&quot; ],
+      &quot;Authorization&quot; : [ &quot;Bearer ABCDE&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : {
+      &quot;phrase&quot; : &quot;X123456&quot;,
+      &quot;matchAllTerms&quot; : false
+    }
+  }
+
+ matched expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/phrase&quot;,
+      &quot;queryStringParameters&quot; : {
+        &quot;paged&quot; : [ &quot;false&quot; ]
+      }
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\n  \&quot;content\&quot;: [\n    {\n      \&quot;firstName\&quot;: \&quot;Pontius\&quot;,\n      \&quot;surname\&quot;: \&quot;Pilate\&quot;,\n      \&quot;dateOfBirth\&quot;: \&quot;2000-11-09\&quot;\n    }\n  ]\n}&quot;
+    },
+    &quot;id&quot; : &quot;a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;remainingTimes&quot; : 1
+    }
+  }
+ |  
+2022-05-12 14:56:06.005  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 returning response:
+
+  {
+    &quot;headers&quot; : {
+      &quot;content-type&quot; : [ &quot;application/json&quot; ]
+    },
+    &quot;body&quot; : &quot;{\n  \&quot;content\&quot;: [\n    {\n      \&quot;firstName\&quot;: \&quot;Pontius\&quot;,\n      \&quot;surname\&quot;: \&quot;Pilate\&quot;,\n      \&quot;dateOfBirth\&quot;: \&quot;2000-11-09\&quot;\n    }\n  ]\n}&quot;
+  }
+
+ for request:
+
+  {
+    &quot;method&quot; : &quot;POST&quot;,
+    &quot;path&quot; : &quot;/phrase&quot;,
+    &quot;queryStringParameters&quot; : {
+      &quot;paged&quot; : [ &quot;false&quot; ]
+    },
+    &quot;headers&quot; : {
+      &quot;user-agent&quot; : [ &quot;ReactorNetty/1.0.18&quot; ],
+      &quot;host&quot; : [ &quot;localhost:8093&quot; ],
+      &quot;content-length&quot; : [ &quot;42&quot; ],
+      &quot;accept-encoding&quot; : [ &quot;gzip&quot; ],
+      &quot;accept&quot; : [ &quot;*/*&quot; ],
+      &quot;Content-Type&quot; : [ &quot;application/json&quot; ],
+      &quot;Authorization&quot; : [ &quot;Bearer ABCDE&quot; ]
+    },
+    &quot;keepAlive&quot; : true,
+    &quot;secure&quot; : false,
+    &quot;body&quot; : {
+      &quot;phrase&quot; : &quot;X123456&quot;,
+      &quot;matchAllTerms&quot; : false
+    }
+  }
+
+ for action:
+
+  {
+    &quot;headers&quot; : {
+      &quot;content-type&quot; : [ &quot;application/json&quot; ]
+    },
+    &quot;body&quot; : &quot;{\n  \&quot;content\&quot;: [\n    {\n      \&quot;firstName\&quot;: \&quot;Pontius\&quot;,\n      \&quot;surname\&quot;: \&quot;Pilate\&quot;,\n      \&quot;dateOfBirth\&quot;: \&quot;2000-11-09\&quot;\n    }\n  ]\n}&quot;
+  }
+
+ from expectation:
+
+  a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c
+ |  
+2022-05-12 14:56:06.005  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 8093 removed expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/phrase&quot;,
+      &quot;queryStringParameters&quot; : {
+        &quot;paged&quot; : [ &quot;false&quot; ]
+      }
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\n  \&quot;content\&quot;: [\n    {\n      \&quot;firstName\&quot;: \&quot;Pontius\&quot;,\n      \&quot;surname\&quot;: \&quot;Pilate\&quot;,\n      \&quot;dateOfBirth\&quot;: \&quot;2000-11-09\&quot;\n    }\n  ]\n}&quot;
+    },
+    &quot;id&quot; : &quot;a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;remainingTimes&quot; : 0
+    }
+  }
+
+ with id:
+
+  a4c5c7d1-2d6b-4a7c-9f74-838d01bf520c
+ |  
+2022-05-12 14:56:06.039  INFO 5981 --- [rver-EventLog85] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8092 |  
+2022-05-12 14:56:06.159  INFO 5981 --- [rver-EventLog88] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8093 |  
+2022-05-12 14:56:06.277  INFO 5981 --- [rver-EventLog91] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8094 |  
+2022-05-12 14:56:06.400  INFO 5981 --- [rver-EventLog94] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 9090 |  
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.4.2</a> at 12 May 2022, 14:56:34</p>
+</div>
+</div>
+</body>
+</html>

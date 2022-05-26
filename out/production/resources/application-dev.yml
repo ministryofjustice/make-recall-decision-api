@@ -1,0 +1,8 @@
+offender:
+  search:
+    endpoint:
+      url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
+
+community:
+  endpoint:
+    url: https://community-api-public.test.probation.service.justice.gov.uk
