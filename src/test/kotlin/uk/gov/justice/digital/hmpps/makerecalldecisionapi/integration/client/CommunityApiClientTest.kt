@@ -244,6 +244,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
           Address(
             postcode = "90220",
             district = "South Central",
+            streetName = "Skid Row",
             addressNumber = "45",
             buildingName = "Death Row Records",
             town = "Compton",
@@ -254,9 +255,11 @@ class CommunityApiClientTest : IntegrationTestBase() {
             county = "South Yorkshire",
             buildingName = "HMPPS Digital Studio",
             district = "Sheffield City Centre",
+            streetName = "Scotland Street",
             status = AddressStatus(code = "ABC123", description = "Main"),
             postcode = "S3 7BS",
-            addressNumber = "33"
+            addressNumber = "33",
+
           )
         )
       ),
