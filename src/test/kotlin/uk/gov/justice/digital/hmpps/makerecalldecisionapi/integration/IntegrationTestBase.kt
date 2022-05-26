@@ -22,11 +22,9 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.roSHSummaryResponse
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -39,7 +37,6 @@ abstract class IntegrationTestBase {
   @Autowired
   lateinit var webTestClient: WebTestClient
 
-  var oasysARNApi: ClientAndServer = startClientAndServer(8095)
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
@@ -65,28 +62,16 @@ abstract class IntegrationTestBase {
     communityApi.reset()
     offenderSearchApi.reset()
     gotenbergMock.reset()
-    oasysARNApi.reset()
     setupOauth()
     setupHealthChecks()
   }
 
   @AfterAll
   fun tearDownServer() {
-    oasysARNApi.stop()
     communityApi.stop()
     offenderSearchApi.stop()
     gotenbergMock.stop()
     oauthMock.stop()
-  }
-
-  protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val allOffenderDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
-
-    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
   }
 
   protected fun allOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
@@ -95,16 +80,6 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {
-    val roSHSummaryRequest =
-      request().withPath("/risks/crn/$crn/summary")
-
-    oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(roSHSummaryResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
