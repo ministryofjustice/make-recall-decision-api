@@ -67,7 +67,7 @@ class CaseOverviewControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout on offenders endpoint`() {
+  fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runBlockingTest {
       val crn = "A12345"
       val staffCode = "STFFCDEU"

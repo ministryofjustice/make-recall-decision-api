@@ -8,11 +8,6 @@ community:
     endpoint:
       url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
 
-arn:
-  api:
-    endpoint:
-      url: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
-
 hmpps:
   auth:
     url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth

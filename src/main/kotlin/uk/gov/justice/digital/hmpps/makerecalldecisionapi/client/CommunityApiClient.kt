@@ -9,7 +9,6 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -66,26 +65,6 @@ class CommunityApiClient(
         handleTimeoutException(
           exception = ex,
           endPoint = "convictions"
-        )
-      }
-  }
-
-  fun getAllMappaDetails(crn: String): Mono<MappaResponse> {
-    val responseType = object : ParameterizedTypeReference<MappaResponse>() {}
-    return webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/risk/mappa")
-      .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw PersonNotFoundException("No details available for crn: $crn") }
-      )
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "mappa"
         )
       }
   }
