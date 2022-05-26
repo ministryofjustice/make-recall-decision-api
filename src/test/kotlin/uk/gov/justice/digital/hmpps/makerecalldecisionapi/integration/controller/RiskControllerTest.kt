@@ -2,12 +2,14 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
+@Disabled
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class RiskControllerTest(

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RiskService
 
 @RestController
@@ -23,9 +22,10 @@ class RiskController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
-  suspend fun risk(@PathVariable("crn") crn: String): RiskResponse {
+  suspend fun risk(@PathVariable("crn") crn: String): String {
     log.info("Risk endpoint hit for CRN: $crn")
-    return riskService.getRisk(crn)
+//    return riskService.getRisk(crn)
+    return riskResponse()
   }
 }
 
