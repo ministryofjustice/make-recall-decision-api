@@ -1,0 +1,97 @@
+info.app:
+  name: Make Recall Decision Api
+  version: 1.0
+  description: API to allow decisions about recalls to be made
+  contact:
+    name: HMPPS Digital Studio
+    email: feedback@digital.justice.gov.uk
+
+spring:
+  application:
+    name: make-recall-decision-api
+  codec:
+    max-in-memory-size: 10MB
+  security:
+    oauth2:
+      client:
+        registration:
+          make-recall-decision-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
+            scope: read
+          offender-search-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
+          community-api:
+            provider: hmpps-auth
+            client-id: ${oauth.client.id}
+            client-secret: ${oauth.client.secret}
+            authorization-grant-type: client_credentials
+        provider:
+          hmpps-auth:
+            token-uri: ${hmpps.auth.url:https://sign-in-dev.hmpps.service.justice.gov.uk/auth}/oauth/token
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${hmpps.auth.url:http://localhost:9090/auth}/.well-known/jwks.json
+
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+  profiles:
+    group:
+      test:
+        - "stdout"
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      remote-ip-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
+      internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|100\.6[4-9]\.\d{1,3}\.\d{1,3}|100\.[7-9][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]\.\d{1,3}\.\d{1,3}
+  shutdown: graceful
+  error:
+    include-message: always
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /
+      exposure:
+        include: 'info, health, prometheus'
+  endpoint:
+    health:
+      enabled: true
+      cache:
+        time-to-live: 2000ms
+      show-components: always
+      show-details: always
+      probes:
+        enabled: true
+    info:
+      enabled: true
+      cache:
+        time-to-live: 2000ms
+    prometheus:
+      enabled: true
+
+offender:
+  search:
+    endpoint:
+      url: ${probation.offender.search.endpoint.url}
+
+community:
+  endpoint:
+    url: ${community.api.endpoint.url}

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Version: 2022-05-12
+Implementation-Title: make-recall-decision-api
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: uk.gov.justice.digital.hmpps.makerecalldecisionapi.MakeReca
+ llDecisionApiKt
+Spring-Boot-Version: 2.6.7
+Spring-Boot-Classes: BOOT-INF/classes/
+Spring-Boot-Lib: BOOT-INF/lib/
+Spring-Boot-Classpath-Index: BOOT-INF/classpath.idx
+Spring-Boot-Layers-Index: BOOT-INF/layers.idx
+

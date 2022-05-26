@@ -13,7 +13,6 @@ generic-service:
     HMPPS_AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     OFFENDER_SEARCH_ENDPOINT_URL: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
     COMMUNITY_API_ENDPOINT_URL: https://community-api-secure.test.delius.probation.hmpps.dsd.io
-    ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod

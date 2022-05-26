@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - InfoTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>InfoTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health.html">uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health</a> &gt; InfoTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">2</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.190s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">Info page is accessible()</td>
+<td class="success">0.090s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Info page reports version()</td>
+<td class="success">0.100s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2022-05-12 14:56:25.298  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 started on port: 8092 |  
+2022-05-12 14:56:25.310  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 started on port: 8093 |  
+2022-05-12 14:56:25.324  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 started on port: 8094 |  
+2022-05-12 14:56:25.339  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 started on port: 9090 |  
+2022-05-12 14:56:25.343  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health.InfoTest], using SpringBootContextLoader |  
+2022-05-12 14:56:25.345  INFO 5981 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health.InfoTest]: no resource found for suffixes {-context.xml, Context.groovy}. |  
+2022-05-12 14:56:25.345  INFO 5981 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health.InfoTest]: InfoTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration. |  
+2022-05-12 14:56:25.350  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration uk.gov.justice.digital.hmpps.makerecalldecisionapi.MakeRecallDecisionApi for test class uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health.InfoTest |  
+2022-05-12 14:56:25.352  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener] |  
+2022-05-12 14:56:25.353  INFO 5981 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@11069bdd, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@62b903ae, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@60cfa399, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@5c6a915e, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@7917317d, org.springframework.test.context.support.DirtiesContextTestExecutionListener@5319f982, org.springframework.test.context.transaction.TransactionalTestExecutionListener@4ed74b13, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@463fc3f6, org.springframework.test.context.event.EventPublishingTestExecutionListener@6e38e95, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@1aaab222, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@6ed1fdb7, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@5649a3e8, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@4cc40892, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@330888a, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@62edf11e] |  
+
+
+                 _                             _ _       _           _     _                               _
+                | |                           | | |     | |         (_)   (_)                             (_)
+ _ __ ___   __ _| | _____   _ __ ___  ___ __ _| | |   __| | ___  ___ _ ___ _  ___  _ __  ___    __ _ _ __  _
+| '_ ` _ \ / _` | |/ / _ \ | '__/ _ \/ __/ _` | | |  / _` |/ _ \/ __| / __| |/ _ \| '_ \/ __|  / _` | '_ \| |
+| | | | | | (_| |   &lt;  __/ | | |  __/ (_| (_| | | | | (_| |  __/ (__| \__ \ | (_) | | | \__ \ | (_| | |_) | |
+|_| |_| |_|\__,_|_|\_\___| |_|  \___|\___\__,_|_|_|  \__,_|\___|\___|_|___/_|\___/|_| |_|___/  \__,_| .__/|_|
+                                                                                                    | |
+                                                                                                    |_|
+
+2022-05-12 14:56:25.456  INFO 5981 --- [    Test worker] u.g.j.d.h.m.integration.health.InfoTest  : Starting InfoTest using Java 17.0.2 on Loki-7281 with PID 5981 (started by charliejade in /home/charliejade/dev/apps/EE/make-recall-decision-api) |  
+2022-05-12 14:56:25.456 DEBUG 5981 --- [    Test worker] u.g.j.d.h.m.integration.health.InfoTest  : Running with Spring Boot v2.6.7, Spring v5.3.19 |  
+2022-05-12 14:56:25.456  INFO 5981 --- [    Test worker] u.g.j.d.h.m.integration.health.InfoTest  : The following 2 profiles are active: &quot;test&quot;, &quot;stdout&quot; |  
+2022-05-12 14:56:26.850  INFO 5981 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 9998 (http) |  
+2022-05-12 14:56:26 5.13.2 INFO Initializing ProtocolHandler [&quot;http-nio-9998&quot;] 
+2022-05-12 14:56:26 5.13.2 INFO Starting service [Tomcat] 
+2022-05-12 14:56:26 5.13.2 INFO Starting Servlet engine: [Apache Tomcat/9.0.62] 
+2022-05-12 14:56:26 5.13.2 INFO Initializing Spring embedded WebApplicationContext 
+2022-05-12 14:56:26.956  INFO 5981 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1483 ms |  
+2022-05-12 14:56:28.691  INFO 5981 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3531c23a, org.springframework.security.web.context.SecurityContextPersistenceFilter@14b1c925, org.springframework.security.web.header.HeaderWriterFilter@29400267, org.springframework.security.web.authentication.logout.LogoutFilter@8cc682f, org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter@17b4d5ab, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1908483f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@30722243, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1bf6d24a, org.springframework.security.web.session.SessionManagementFilter@1b4695a, org.springframework.security.web.access.ExceptionTranslationFilter@62cdff2b, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@47ce059f] |  
+2022-05-12 14:56:30.072  WARN 5981 --- [    Test worker] o.s.b.a.m.MustacheAutoConfiguration      : Cannot find template location: classpath:/templates/ (please add some templates, check your Mustache configuration, or set spring.mustache.check-template-location=false) |  
+2022-05-12 14:56:30.708  INFO 5981 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '' |  
+2022-05-12 14:56:30 5.13.2 INFO Starting ProtocolHandler [&quot;http-nio-9998&quot;] 
+2022-05-12 14:56:30.829  INFO 5981 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 9998 (http) with context path '' |  
+2022-05-12 14:56:30.846  INFO 5981 --- [    Test worker] u.g.j.d.h.m.integration.health.InfoTest  : Started InfoTest in 5.49 seconds (JVM running for 44.823) |  
+2022-05-12 14:56:30.848  INFO 5981 --- [    Test worker] u.g.j.d.h.m.h.VersionOutputter$Companion : Version 2022-05-12 started |  
+2022-05-12 14:56:30.869  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 resetting all expectations and request logs |  
+2022-05-12 14:56:30.877  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 resetting all expectations and request logs |  
+2022-05-12 14:56:30.883  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 resetting all expectations and request logs |  
+2022-05-12 14:56:30.893  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/oauth/token&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;42771eb0-c97f-40da-a8b0-ef59514ef27a&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  42771eb0-c97f-40da-a8b0-ef59514ef27a
+ |  
+2022-05-12 14:56:30.903  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;b478d0ce-3340-484e-b0c0-93bd8e2af17c&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  b478d0ce-3340-484e-b0c0-93bd8e2af17c
+ |  
+2022-05-12 14:56:30.910  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;692e1b04-b793-4a3f-86a8-744abfe009ed&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  692e1b04-b793-4a3f-86a8-744abfe009ed
+ |  
+2022-05-12 14:56:30.920  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;54f8edfe-674e-4f6b-a513-5a4a8a3e8d93&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  54f8edfe-674e-4f6b-a513-5a4a8a3e8d93
+ |  
+2022-05-12 14:56:30.929  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;up\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;1e98d1b6-2c41-40f0-9390-6b1971a9cdc1&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  1e98d1b6-2c41-40f0-9390-6b1971a9cdc1
+ |  
+2022-05-12 14:56:30 5.13.2 INFO Initializing Spring DispatcherServlet 'dispatcherServlet' 
+2022-05-12 14:56:30.935  INFO 5981 --- [nio-9998-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet' |  
+2022-05-12 14:56:30.937  INFO 5981 --- [nio-9998-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms |  
+2022-05-12 14:56:30.959  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 removed expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;692e1b04-b793-4a3f-86a8-744abfe009ed&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  692e1b04-b793-4a3f-86a8-744abfe009ed
+ |  
+2022-05-12 14:56:30.959  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 resetting all expectations and request logs |  
+2022-05-12 14:56:30.964  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 removed expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;54f8edfe-674e-4f6b-a513-5a4a8a3e8d93&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  54f8edfe-674e-4f6b-a513-5a4a8a3e8d93
+ |  
+2022-05-12 14:56:30.965  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 resetting all expectations and request logs |  
+2022-05-12 14:56:30.973  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 removed expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;up\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;1e98d1b6-2c41-40f0-9390-6b1971a9cdc1&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  1e98d1b6-2c41-40f0-9390-6b1971a9cdc1
+ |  
+2022-05-12 14:56:30.974  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 resetting all expectations and request logs |  
+2022-05-12 14:56:30.986  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/oauth/token&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;access_token\&quot;:\&quot;ABCDE\&quot;,\&quot;token_type\&quot;:\&quot;bearer\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;165c1fba-3d9c-45a3-96c8-3376620e93e4&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  165c1fba-3d9c-45a3-96c8-3376620e93e4
+ |  
+2022-05-12 14:56:30.998  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/auth/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;d1543c49-7515-4d7f-b60a-ea929945c712&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  d1543c49-7515-4d7f-b60a-ea929945c712
+ |  
+2022-05-12 14:56:31.012  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 8092 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;d2cd0975-9cbd-4da1-96e7-0e72c0d7c083&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  d2cd0975-9cbd-4da1-96e7-0e72c0d7c083
+ |  
+2022-05-12 14:56:31.024  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 8093 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health/ping&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;OK\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;a88a220e-915a-482d-8e2b-b32cc6e89934&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  a88a220e-915a-482d-8e2b-b32cc6e89934
+ |  
+2022-05-12 14:56:31.032  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 8094 creating expectation:
+
+  {
+    &quot;httpRequest&quot; : {
+      &quot;path&quot; : &quot;/health&quot;
+    },
+    &quot;httpResponse&quot; : {
+      &quot;headers&quot; : {
+        &quot;content-type&quot; : [ &quot;application/json&quot; ]
+      },
+      &quot;body&quot; : &quot;{\&quot;status\&quot;:\&quot;up\&quot;}&quot;
+    },
+    &quot;id&quot; : &quot;53a7e76e-f7af-4a7d-896a-d6df6c1eac4b&quot;,
+    &quot;priority&quot; : 0,
+    &quot;timeToLive&quot; : {
+      &quot;unlimited&quot; : true
+    },
+    &quot;times&quot; : {
+      &quot;unlimited&quot; : true
+    }
+  }
+
+ with id:
+
+  53a7e76e-f7af-4a7d-896a-d6df6c1eac4b
+ |  
+2022-05-12 14:56:31.066  INFO 5981 --- [ver-EventLog507] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8092 |  
+2022-05-12 14:56:31.176  INFO 5981 --- [ver-EventLog510] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8093 |  
+2022-05-12 14:56:31.295  INFO 5981 --- [ver-EventLog513] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 8094 |  
+2022-05-12 14:56:31.410  INFO 5981 --- [ver-EventLog516] org.mockserver.log.MockServerEventLog    : 9090 stopped for port: 9090 |  
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.4.2</a> at 12 May 2022, 14:56:34</p>
+</div>
+</div>
+</body>
+</html>

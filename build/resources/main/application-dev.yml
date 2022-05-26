@@ -1,0 +1,17 @@
+offender:
+  search:
+    endpoint:
+      url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
+
+community:
+  api:
+    endpoint:
+      url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
+
+hmpps:
+  auth:
+    url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
+gotenberg:
+  endpoint:
+    url: http://localhost:9091
