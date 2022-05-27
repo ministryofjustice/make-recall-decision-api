@@ -24,6 +24,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Enforce
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
@@ -91,7 +95,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     )
 
     // when
-    val actual = communityApiClient.getConvictions(crn).block()!![0]
+    val actual = communityApiClient.getActiveConvictions(crn).block()!![0]
 
     // then
     assertThat(actual, equalTo(expected))
@@ -107,7 +111,69 @@ class CommunityApiClientTest : IntegrationTestBase() {
     val expected = emptyList<ConvictionResponse>()
 
     // when
-    val actual = communityApiClient.getConvictions(crn).block()!!
+    val actual = communityApiClient.getActiveConvictions(crn).block()!!
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves licence conditions`() {
+    // given
+    val crn = "X123456"
+    val convictionId = 9876789L
+    licenceConditionsResponse(crn, convictionId)
+
+    // and
+    val expected = LicenceConditions(
+      licenceConditions = listOf(
+        LicenceCondition(
+          startDate = LocalDate.parse("2022-05-18"),
+          createdDateTime = LocalDateTime.parse("2022-05-18T19:33:56"),
+          active = true,
+          licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
+            code = "NLC8",
+            description = "Freedom of movement for conviction $convictionId"
+          ),
+          licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
+            code = "NSTT8",
+            description = "To only attend places of worship which have been previously agreed with your supervising officer."
+          )
+        ),
+        LicenceCondition(
+          startDate = LocalDate.parse("2022-05-20"),
+          createdDateTime = LocalDateTime.parse("2022-05-20T12:33:56"),
+          active = false,
+          licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
+            code = "NLC7",
+            description = "Inactive test"
+          ),
+          licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
+            code = "NSTT7",
+            description = "I am inactive"
+          )
+        )
+      )
+    )
+
+    // when
+    val actual = communityApiClient.getLicenceConditionsByConvictionId(crn, convictionId).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves empty licence conditions list when no active licence conditions present`() {
+    // given
+    val crn = "X123456"
+    noActiveConvictionResponse(crn)
+
+    // and
+    val expected = emptyList<ConvictionResponse>()
+
+    // when
+    val actual = communityApiClient.getActiveConvictions(crn).block()!!
 
     // then
     assertThat(actual, equalTo(expected))

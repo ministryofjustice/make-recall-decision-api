@@ -56,7 +56,7 @@ class CaseSummaryOverviewServiceTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
-      given(communityApiClient.getConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { emptyList<ConvictionResponse>() })
       given(communityApiClient.getRegistrations(anyString()))
         .willReturn(Mono.empty())
@@ -84,7 +84,7 @@ class CaseSummaryOverviewServiceTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
-      given(communityApiClient.getConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getRegistrations(anyString()))
         .willReturn(Mono.fromCallable { registrations })
@@ -148,7 +148,7 @@ class CaseSummaryOverviewServiceTest {
             )
           }
         )
-      given(communityApiClient.getConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(
           Mono.fromCallable {
             listOf(

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import io.micrometer.core.instrument.Counter
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
@@ -9,6 +10,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -23,9 +25,15 @@ class CommunityApiClient(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   private val timeoutCounter: Counter
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
+    log.info("About to get registrations for $crn")
+
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
-    return webClient
+    val result = webClient
       .get()
       .uri("/secure/offenders/crn/$crn/registrations")
       .retrieve()
@@ -37,11 +45,15 @@ class CommunityApiClient(
           endPoint = "registrations"
         )
       }
+    log.info("Returning registrations for $crn")
+    return result
   }
 
-  fun getConvictions(crn: String): Mono<List<ConvictionResponse>> {
+  fun getActiveConvictions(crn: String): Mono<List<ConvictionResponse>> {
+    log.info("About to get active convictions for $crn")
     val responseType = object : ParameterizedTypeReference<List<ConvictionResponse>>() {}
-    return webClient
+
+    val result = webClient
       .get()
       .uri {
         it.path("/secure/offenders/crn/$crn/convictions")
@@ -57,7 +69,7 @@ class CommunityApiClient(
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .onErrorResume { ex ->
         when (ex) {
-          is NoActiveConvictionsException -> Mono.fromCallable { emptyList<ConvictionResponse>() }
+          is NoActiveConvictionsException -> Mono.fromCallable { emptyList() }
           else -> Mono.error(ex)
         }
       }
@@ -67,11 +79,40 @@ class CommunityApiClient(
           endPoint = "convictions"
         )
       }
+
+    log.info("Returning active convictions for $crn")
+
+    return result
+  }
+
+  fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
+    log.info("About to get licence conditions for $crn by convictionId $convictionId")
+
+    val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
+    val result = webClient
+      .get()
+      .uri {
+        it.path("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
+          .build()
+      }
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "licenceConditions"
+        )
+      }
+    log.info("Returning licence conditions for $crn by convictionId $convictionId")
+    return result
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
+    log.info("About to get all offender details for $crn")
+
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
-    return webClient
+    val result = webClient
       .get()
       .uri("/secure/offenders/crn/$crn/all")
       .retrieve()
@@ -87,14 +128,18 @@ class CommunityApiClient(
           endPoint = "all offenders"
         )
       }
+    log.info("Returning all offender details for $crn")
+    return result
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
+    log.info("About to get contact summary for $crn")
+
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
     val url = "/secure/offenders/crn/$crn/contact-summary"
 
-    return webClient
+    val result = webClient
       .get()
       .uri {
         if (filterContacts) {
@@ -112,11 +157,15 @@ class CommunityApiClient(
           endPoint = "contact summary"
         )
       }
+    log.info("Returning contact summary for $crn")
+    return result
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
+    log.info("About to get release summary for $crn")
+
     val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
-    return webClient
+    val result = webClient
       .get()
       .uri("/secure/offenders/crn/$crn/release")
       .retrieve()
@@ -138,6 +187,8 @@ class CommunityApiClient(
           endPoint = "release summary"
         )
       }
+    log.info("Returning release summary for $crn")
+    return result
   }
 
   private fun handleTimeoutException(
