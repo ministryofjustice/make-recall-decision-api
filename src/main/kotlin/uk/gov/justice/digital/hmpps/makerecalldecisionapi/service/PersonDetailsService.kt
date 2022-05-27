@@ -21,6 +21,7 @@ class PersonDetailsService(
     val activeAddress = offenderDetails.contactDetails?.addresses
       ?.first { it.status?.description?.lowercase().equals("main") }
     val addressNumber = activeAddress?.addressNumber ?: ""
+    val streetName = activeAddress?.streetName ?: ""
     val buildingName = activeAddress?.buildingName ?: ""
     val firstName = offenderDetails.firstName ?: ""
     val surname = offenderDetails.surname ?: ""
@@ -36,7 +37,7 @@ class PersonDetailsService(
         crn = crn
       ),
       currentAddress = CurrentAddress(
-        line1 = formatTwoWordField(addressNumber, buildingName),
+        line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
         line2 = activeAddress?.district ?: "",
         town = activeAddress?.town ?: "",
         postcode = activeAddress?.postcode ?: ""
