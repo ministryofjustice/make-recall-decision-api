@@ -82,7 +82,7 @@ class PersonalDetailServiceTest {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(currentAddress.line1).isEqualTo("32 HMPPS Digital Studio")
+      assertThat(currentAddress.line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
       assertThat(currentAddress.line2).isEqualTo("Sheffield City Centre")
       assertThat(currentAddress.town).isEqualTo("Sheffield")
       assertThat(currentAddress.postcode).isEqualTo("S3 7BS")
@@ -116,7 +116,7 @@ class PersonalDetailServiceTest {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(currentAddress.line1).isEqualTo("32 HMPPS Digital Studio")
+      assertThat(currentAddress.line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
       assertThat(currentAddress.line2).isEqualTo("Sheffield City Centre")
       assertThat(currentAddress.town).isEqualTo("Sheffield")
       assertThat(currentAddress.postcode).isEqualTo("S3 7BS")
@@ -149,7 +149,8 @@ class PersonalDetailServiceTest {
                       addressNumber = null,
                       buildingName = null,
                       town = null,
-                      county = null, status = AddressStatus(code = "ABC123", description = "Main")
+                      county = null, status = AddressStatus(code = "ABC123", description = "Main"),
+                      streetName = null
                     )
                   )
                 ),
@@ -229,7 +230,8 @@ class PersonalDetailServiceTest {
             district = "South Central",
             status = AddressStatus(code = "ABC123", description = "Not Main"),
             postcode = "90210",
-            addressNumber = "339"
+            addressNumber = "339",
+            streetName = "Sesame Street"
           ),
           Address(
             postcode = "S3 7BS",
@@ -237,7 +239,8 @@ class PersonalDetailServiceTest {
             addressNumber = "32",
             buildingName = "HMPPS Digital Studio",
             town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
+            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main"),
+            streetName = "Jump Street"
           )
         )
       ),
