@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
@@ -158,7 +159,8 @@ class CaseSummaryOverviewServiceTest {
                     mainOffence = true,
                     detail = OffenceDetail(
                       mainCategoryDescription = null, subCategoryDescription = null,
-                      description = null
+                      description = null,
+                      code = null
                     )
                   )
                 )
@@ -220,7 +222,8 @@ class CaseSummaryOverviewServiceTest {
         mainOffence = true,
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Robbery (other than armed robbery)"
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123"
         )
       )
     ),
@@ -234,7 +237,13 @@ class CaseSummaryOverviewServiceTest {
         gradeCode = "string"
       )
     ),
-    custody = Custody(status = CustodyStatus(code = "ABC123"))
+    custody = Custody(
+      status = CustodyStatus(code = "ABC123", description = "custody status"),
+      keyDates = KeyDates(
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
+      )
+    )
   )
 
   private val registrations = RegistrationsResponse(

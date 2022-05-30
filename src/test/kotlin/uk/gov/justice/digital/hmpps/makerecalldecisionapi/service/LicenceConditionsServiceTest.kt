@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
@@ -83,7 +84,7 @@ class LicenceConditionsServiceTest {
         equalTo(
           LicenceConditionsResponse(
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse()
+            expectedOffenceWithLicenceConditionsResponse(licenceConditions)
           )
         )
       )
@@ -110,7 +111,7 @@ class LicenceConditionsServiceTest {
         equalTo(
           LicenceConditionsResponse(
             expectedPersonDetailsResponse(),
-            expectedOffenceWithEmptyLicenceConditionsResponse()
+            expectedOffenceWithLicenceConditionsResponse(null)
           )
         )
       )
@@ -154,20 +155,27 @@ class LicenceConditionsServiceTest {
     )
   }
 
-  private fun expectedOffenceWithLicenceConditionsResponse(): List<OffenceWithLicenceConditions> {
+  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<OffenceWithLicenceConditions> {
     return listOf(
       OffenceWithLicenceConditions(
         convictionId = 2500000001,
-        licenceConditions = licenceConditions.licenceConditions
-      )
-    )
-  }
-
-  private fun expectedOffenceWithEmptyLicenceConditionsResponse(): List<OffenceWithLicenceConditions> {
-    return listOf(
-      OffenceWithLicenceConditions(
-        convictionId = 2500000001,
-        licenceConditions = null
+        active = true,
+        offences = listOf(
+          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
+            mainOffence = true,
+            description = "Robbery (other than armed robbery)",
+            code = "ABC123"
+          )
+        ),
+        sentenceDescription = "Sentence description",
+        sentenceOriginalLength = 2,
+        sentenceOriginalLengthUnits = "years",
+        sentenceStartDate = LocalDate.parse("2022-04-26"),
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
+        statusCode = "ABC123",
+        statusDescription = "custody status",
+        licenceConditions = licenceConditions?.licenceConditions
       )
     )
   }
@@ -178,8 +186,8 @@ class LicenceConditionsServiceTest {
       startDate = LocalDate.parse("2022-04-26"),
       terminationDate = LocalDate.parse("2022-04-26"),
       expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "string", originalLength = 0,
-      originalLengthUnits = "string",
+      description = "Sentence description", originalLength = 2,
+      originalLengthUnits = "years",
       sentenceType = SentenceType(code = "ABC123")
     ),
     active = true,
@@ -188,7 +196,8 @@ class LicenceConditionsServiceTest {
         mainOffence = true,
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Robbery (other than armed robbery)"
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123"
         )
       )
     ),
@@ -202,7 +211,13 @@ class LicenceConditionsServiceTest {
         gradeCode = "string"
       )
     ),
-    custody = Custody(status = CustodyStatus(code = "ABC123"))
+    custody = Custody(
+      status = CustodyStatus(code = "ABC123", description = "custody status"),
+      keyDates = KeyDates(
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
+      )
+    )
   )
 
   val licenceConditions = LicenceConditions(
@@ -211,6 +226,8 @@ class LicenceConditionsServiceTest {
         startDate = LocalDate.parse("2022-05-18"),
         createdDateTime = LocalDateTime.parse("2022-05-18T19:33:56"),
         active = true,
+        terminationDate = LocalDate.parse("2022-05-22"),
+        licenceConditionNotes = "Licence condition notes",
         licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
           code = "NLC8",
           description = "Freedom of movement"

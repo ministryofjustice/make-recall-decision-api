@@ -7,8 +7,10 @@ import java.time.LocalDateTime
 data class LicenceCondition(
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val startDate: LocalDate?,
+  val terminationDate: LocalDate?,
   val createdDateTime: LocalDateTime?,
   val active: Boolean?,
+  val licenceConditionNotes: String?,
   val licenceConditionTypeMainCat: LicenceConditionTypeMainCat?,
   val licenceConditionTypeSubCat: LicenceConditionTypeSubCat?,
 )

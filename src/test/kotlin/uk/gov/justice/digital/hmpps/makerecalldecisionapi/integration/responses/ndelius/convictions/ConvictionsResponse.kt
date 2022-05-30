@@ -35,20 +35,20 @@ fun convictionsResponse(crn: String, staffCode: String) = """
          "nomsPrisonInstitutionCode": "string"
        },
        "keyDates": {
-         "conditionalReleaseDate": "2020-06-23",
-         "expectedPrisonOffenderManagerHandoverDate": "2020-06-23",
-         "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-23",
+         "conditionalReleaseDate": "2020-06-20",
+         "expectedPrisonOffenderManagerHandoverDate": "2020-06-21",
+         "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-22",
          "expectedReleaseDate": "2020-06-23",
-         "hdcEligibilityDate": "2020-06-23",
-         "licenceExpiryDate": "2020-06-23",
-         "paroleEligibilityDate": "2020-06-23",
-         "postSentenceSupervisionEndDate": "2020-06-23",
-         "sentenceExpiryDate": "2020-06-23"
+         "hdcEligibilityDate": "2020-06-24",
+         "licenceExpiryDate": "2020-06-25",
+         "paroleEligibilityDate": "2020-06-26",
+         "postSentenceSupervisionEndDate": "2020-06-27",
+         "sentenceExpiryDate": "2020-06-28"
        },
        "sentenceStartDate": "2022-04-26",
        "status": {
          "code": "ABC123",
-         "description": "Some description"
+         "description": "I am the custody status description"
        }
      },
      "failureToComplyCount": 3,
@@ -64,7 +64,7 @@ fun convictionsResponse(crn: String, staffCode: String) = """
          "detail": {
            "abbreviation": "string",
            "cjitCode": "string",
-           "code": "string",
+           "code": "1234",
            "description": "Robbery (other than armed robbery)",
            "form20Code": "string",
            "mainCategoryAbbreviation": "string",

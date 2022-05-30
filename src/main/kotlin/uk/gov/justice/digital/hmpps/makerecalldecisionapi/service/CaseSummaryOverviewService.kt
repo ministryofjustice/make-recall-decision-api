@@ -32,7 +32,7 @@ class CaseSummaryOverviewService(
       .flatMap { it!!.toList() }
       .map {
         Offence(
-          mainOffence = it.mainOffence, description = it.detail?.description ?: ""
+          mainOffence = it.mainOffence, description = it.detail?.description ?: "", code = it.detail?.code ?: ""
         )
       }
 
