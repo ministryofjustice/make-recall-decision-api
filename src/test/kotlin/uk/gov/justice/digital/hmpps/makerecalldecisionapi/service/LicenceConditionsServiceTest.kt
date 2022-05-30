@@ -199,6 +199,14 @@ class LicenceConditionsServiceTest {
           description = "Robbery (other than armed robbery)",
           code = "ABC123"
         )
+      ),
+      Offence(
+        mainOffence = false,
+        detail = OffenceDetail(
+          mainCategoryDescription = "string", subCategoryDescription = "string",
+          description = "Arson",
+          code = "ZYX789"
+        )
       )
     ),
     convictionId = 2500000001,
