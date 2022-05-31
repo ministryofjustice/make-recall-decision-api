@@ -20,7 +20,7 @@ class LicenceHistoryController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_ASSESS_RISK_AND_NEEDS)')")
   @GetMapping("/cases/{crn}/licence-history")
   @Operation(summary = "Returns filtered details of a case licence history")
   // FIXME: Potentially deprecated - remove once confirmed filters etc will be handled on frontend
