@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
 
 data class Custody(
-  val status: CustodyStatus?
+  val status: CustodyStatus?,
+  val keyDates: KeyDates?
 )

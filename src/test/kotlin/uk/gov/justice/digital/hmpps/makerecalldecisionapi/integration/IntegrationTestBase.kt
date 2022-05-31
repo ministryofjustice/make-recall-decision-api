@@ -20,10 +20,14 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.allOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.convictionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.offenderSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.registrationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveLicences
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -109,6 +113,44 @@ abstract class IntegrationTestBase {
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun multipleConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/convictions")
+
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(multipleConvictionsResponse(crn, staffCode))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun licenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
+
+    communityApi.`when`(licenceConditions, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceResponse(convictionId))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun multipleLicenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
+
+    communityApi.`when`(licenceConditions, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(multipleLicenceResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noActiveLicenceConditions(crn: String, convictionId: Long) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(noActiveLicences(convictionId))
     )
   }
 

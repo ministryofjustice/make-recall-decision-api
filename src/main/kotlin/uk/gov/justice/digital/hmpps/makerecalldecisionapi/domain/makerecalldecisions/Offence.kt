@@ -2,5 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class Offence(
   val mainOffence: Boolean?,
-  val description: String?
+  val description: String?,
+  val code: String?
 )

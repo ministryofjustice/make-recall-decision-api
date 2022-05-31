@@ -6,4 +6,5 @@ data class OffenceDetail @JsonCreator constructor(
   val mainCategoryDescription: String?,
   val subCategoryDescription: String?,
   val description: String?,
+  val code: String?,
 )
