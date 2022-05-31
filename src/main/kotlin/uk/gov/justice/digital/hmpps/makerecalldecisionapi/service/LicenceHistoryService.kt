@@ -34,6 +34,7 @@ class LicenceHistoryService(
       ?.map {
         ContactSummaryResponse(
           contactStartDate = it.contactStart,
+          code = it.type?.code,
           descriptionType = it.type?.description,
           outcome = it.outcome?.description,
           notes = it.notes,
