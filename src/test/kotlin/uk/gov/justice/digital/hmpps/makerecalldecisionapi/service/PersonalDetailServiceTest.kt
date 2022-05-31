@@ -96,6 +96,94 @@ class PersonalDetailServiceTest {
   }
 
   @Test
+  fun `retrieves person details when no addresses available`() {
+    runBlockingTest {
+      val crn = "12345"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            allOffenderDetailsResponse().copy(
+              contactDetails = ContactDetails(
+                addresses = emptyList()
+              )
+            )
+          }
+        )
+
+      val response = personDetailsService.getPersonDetails(crn)
+
+      val personalDetails = response.personalDetailsOverview!!
+      val currentAddress = response.currentAddress!!
+      val offenderManager = response.offenderManager!!
+      val dateOfBirth = LocalDate.parse("1982-10-24")
+      val age = dateOfBirth?.until(LocalDate.now())?.years
+
+      assertThat(personalDetails, equalTo(expectedPersonDetailsResponse()))
+      assertThat(personalDetails.crn).isEqualTo(crn)
+      assertThat(personalDetails.age).isEqualTo(age)
+      assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
+      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(currentAddress.line1).isEqualTo("")
+      assertThat(currentAddress.line2).isEqualTo("")
+      assertThat(currentAddress.town).isEqualTo("")
+      assertThat(currentAddress.postcode).isEqualTo("")
+      assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
+      assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
+      assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
+      assertThat(offenderManager.probationTeam?.code).isEqualTo("C01T04")
+      assertThat(offenderManager.probationTeam?.label).isEqualTo("OMU A")
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves person details when only previous address available`() {
+    runBlockingTest {
+      val crn = "12345"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            allOffenderDetailsResponse().copy(
+              contactDetails = ContactDetails(
+                addresses = listOf(
+                  Address(
+                    status = AddressStatus(code = "ABC123", description = "Previous"),
+                  )
+                )
+              )
+            )
+          }
+        )
+
+      val response = personDetailsService.getPersonDetails(crn)
+
+      val personalDetails = response.personalDetailsOverview!!
+      val currentAddress = response.currentAddress!!
+      val offenderManager = response.offenderManager!!
+      val dateOfBirth = LocalDate.parse("1982-10-24")
+      val age = dateOfBirth?.until(LocalDate.now())?.years
+
+      assertThat(personalDetails, equalTo(expectedPersonDetailsResponse()))
+      assertThat(personalDetails.crn).isEqualTo(crn)
+      assertThat(personalDetails.age).isEqualTo(age)
+      assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
+      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(currentAddress.line1).isEqualTo("")
+      assertThat(currentAddress.line2).isEqualTo("")
+      assertThat(currentAddress.town).isEqualTo("")
+      assertThat(currentAddress.postcode).isEqualTo("")
+      assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
+      assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
+      assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
+      assertThat(offenderManager.probationTeam?.code).isEqualTo("C01T04")
+      assertThat(offenderManager.probationTeam?.label).isEqualTo("OMU A")
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
   fun `retrieves person details when registration available`() {
     runBlockingTest {
       val crn = "12345"
