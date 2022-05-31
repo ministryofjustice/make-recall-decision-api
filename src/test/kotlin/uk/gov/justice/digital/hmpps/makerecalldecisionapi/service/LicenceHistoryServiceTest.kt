@@ -154,7 +154,8 @@ class LicenceHistoryServiceTest {
         outcome = null,
         notes = "Comment added by John Smith on 05/05/2022",
         enforcementAction = null,
-        systemGenerated = false
+        systemGenerated = false,
+        code = "1234"
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -162,7 +163,8 @@ class LicenceHistoryServiceTest {
         outcome = "Test - Not Clean / Not Acceptable / Unsuitable",
         notes = "This is a test",
         enforcementAction = "Enforcement Letter Requested",
-        systemGenerated = true
+        systemGenerated = true,
+        code = "1234"
       )
     )
   }
@@ -172,14 +174,14 @@ class LicenceHistoryServiceTest {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = false),
+          type = ContactType(description = "Registration Review", systemGenerated = false, code = "1234"),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison", systemGenerated = true),
+          type = ContactType(description = "Police Liaison", systemGenerated = true, code = "1234"),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
