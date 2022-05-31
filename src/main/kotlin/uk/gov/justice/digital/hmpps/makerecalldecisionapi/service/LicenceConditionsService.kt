@@ -31,7 +31,7 @@ class LicenceConditionsService(
     return activeConvictions
       .map {
         val result = communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId).awaitFirstOrNull()
-          ?.licenceConditions?.filter { it.active == true }
+          ?.licenceConditions
 
         val offences: List<Offence> = activeConvictions
           .map { it.offences }
