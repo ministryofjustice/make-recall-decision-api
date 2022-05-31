@@ -21,7 +21,7 @@ fun allOffenderDetailsResponse() = """
           "code": "ABC123",
           "description": "Not Main"
         },
-        "streetName": "Scotland Street",
+        "streetName": "Skid Row",
         "telephoneNumber": "0123456789",
         "to": "2021-07-10",
         "town": "Compton",
