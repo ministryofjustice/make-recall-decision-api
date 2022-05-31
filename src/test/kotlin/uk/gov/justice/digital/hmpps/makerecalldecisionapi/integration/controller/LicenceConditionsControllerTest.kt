@@ -36,7 +36,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.offences.length()").isEqualTo(1)
-        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(1)
+        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(2)
         .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId)
         .jsonPath("$.offences[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.offences[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
@@ -69,7 +69,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.offences.length()").isEqualTo(1)
-        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(3)
         .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId)
         .jsonPath("$.offences[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.offences[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
@@ -111,8 +111,8 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.offences.length()").isEqualTo(2)
-        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(1)
-        .jsonPath("$.offences[1].licenceConditions.length()").isEqualTo(1)
+        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.offences[1].licenceConditions.length()").isEqualTo(2)
         .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId1)
         .jsonPath("$.offences[1].convictionId").isEqualTo(convictionId2)
         .jsonPath("$.offences[0].licenceConditions[0].active").isEqualTo("true")
@@ -156,7 +156,7 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
-  fun `returns empty licence conditions where where no active licence conditions exist`() {
+  fun `returns empty licence conditions where no active or inactive licence conditions exist`() {
     runBlockingTest {
       val crn = "A12345"
       val convictionId1 = 2500000001
