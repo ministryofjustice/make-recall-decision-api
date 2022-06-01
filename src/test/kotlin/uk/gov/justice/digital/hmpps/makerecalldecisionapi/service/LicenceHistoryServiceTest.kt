@@ -11,46 +11,25 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Content
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class LicenceHistoryServiceTest {
+class LicenceHistoryServiceTest : ServiceTestBase() {
 
   private lateinit var licenceHistoryService: LicenceHistoryService
-
-  private lateinit var personDetailsService: PersonDetailsService
-
-  @Mock
-  private lateinit var communityApiClient: CommunityApiClient
-
-  val crn = "12345"
 
   @BeforeEach
   fun setup() {
@@ -185,70 +164,6 @@ class LicenceHistoryServiceTest {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-        )
-      )
-    )
-  }
-
-  private fun allReleaseSummariesResponse(): ReleaseSummaryResponse {
-
-    return ReleaseSummaryResponse(
-      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15")),
-      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"))
-    )
-  }
-
-  private fun allOffenderDetailsResponse(): AllOffenderDetailsResponse {
-    return AllOffenderDetailsResponse(
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      firstName = "John",
-      surname = "Smith",
-      gender = "Male",
-      contactDetails = ContactDetails(
-        addresses = listOf(
-          Address(
-            postcode = "S3 7BS",
-            district = "Sheffield City Centre",
-            addressNumber = "32",
-            buildingName = "HMPPS Digital Studio",
-            town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
-          ),
-          Address(
-            town = "Sheffield",
-            county = "South Yorkshire",
-            buildingName = "HMPPS Digital Studio",
-            district = "Sheffield City Centre",
-            status = AddressStatus(code = "ABC123", description = "Not Main"),
-            postcode = "S3 7BS",
-            addressNumber = "33"
-          )
-        )
-      ),
-      offenderManagers = listOf(
-        OffenderManager(
-          active = true,
-          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "09056714321",
-            emailAddress = "first.last@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A"
-          )
-        ),
-        OffenderManager(
-          active = false,
-          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "123",
-            emailAddress = "dua.lipa@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A"
-          )
         )
       )
     )

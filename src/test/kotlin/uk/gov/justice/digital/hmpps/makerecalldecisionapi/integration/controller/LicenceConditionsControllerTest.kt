@@ -14,15 +14,16 @@ class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
   val staffCode = "STFFCDEU"
+  val crn = "A12345"
+  val convictionId = 2500000001
 
   @Test
   fun `retrieves licence condition details`() {
     runBlockingTest {
-      val crn = "A12345"
-      val convictionId = 2500000001
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
+      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -45,17 +46,24 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
+        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
+        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
+        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
+        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
   @Test
   fun `retrieves multiple licence condition details`() {
     runBlockingTest {
-      val crn = "A12345"
-      val convictionId = 2500000001
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       multipleLicenceConditionsResponse(crn, convictionId)
+      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -85,19 +93,26 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.offences[0].licenceConditions[1].licenceConditionTypeMainCat.description").isEqualTo("Another main condition")
         .jsonPath("$.offences[0].licenceConditions[1].licenceConditionTypeSubCat.code").isEqualTo("NSTT9")
         .jsonPath("$.offences[0].licenceConditions[1].licenceConditionTypeSubCat.description").isEqualTo("Do not attend Hull city center after 8pm")
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
+        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
+        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
+        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
+        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
   @Test
   fun `retrieves licence condition details for multiple active offences`() {
     runBlockingTest {
-      val crn = "A12345"
-      val convictionId1 = 2500000001
       val convictionId2 = 123456789L
       allOffenderDetailsResponse(crn)
       multipleConvictionResponse(crn, staffCode)
-      licenceConditionsResponse(crn, convictionId1)
+      licenceConditionsResponse(crn, convictionId)
       licenceConditionsResponse(crn, convictionId2)
+      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -113,13 +128,13 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.offences.length()").isEqualTo(2)
         .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(2)
         .jsonPath("$.offences[1].licenceConditions.length()").isEqualTo(2)
-        .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId1)
+        .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId)
         .jsonPath("$.offences[1].convictionId").isEqualTo(convictionId2)
         .jsonPath("$.offences[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.offences[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
         .jsonPath("$.offences[0].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId1")
+        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
         .jsonPath("$.offences[1].licenceConditions[0].active").isEqualTo("true")
@@ -129,15 +144,23 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.offences[1].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId2")
         .jsonPath("$.offences[1].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.offences[1].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
+        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
+        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
+        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
+        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
   @Test
   fun `returns empty allLicenceConditions list where where no active convictions exist`() {
     runBlockingTest {
-      val crn = "A12345"
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
+      releaseSummaryResponse(crn)
 
       val result = webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -152,17 +175,24 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.offences.length()").isEqualTo(0)
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
+        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
+        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
+        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
+        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
   @Test
   fun `returns empty licence conditions where no active or inactive licence conditions exist`() {
     runBlockingTest {
-      val crn = "A12345"
-      val convictionId1 = 2500000001
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
-      noActiveLicenceConditions(crn, convictionId1)
+      noActiveLicenceConditions(crn, convictionId)
+      releaseSummaryResponse(crn)
 
       val result = webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -178,6 +208,51 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.offences.length()").isEqualTo(1)
         .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(0)
+        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
+        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
+        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
+        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
+        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
+        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
+        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
+    }
+  }
+
+  @Test
+  fun `given no custody release response 400 error then handle licence condition response`() {
+    runBlockingTest {
+      allOffenderDetailsResponse(crn)
+      unallocatedConvictionResponse(crn, staffCode)
+      licenceConditionsResponse(crn, convictionId)
+      releaseSummaryResponseWithStatusCode(
+        crn,
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse(),
+        400
+      )
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.offences.length()").isEqualTo(1)
+        .jsonPath("$.offences[0].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.offences[0].convictionId").isEqualTo(convictionId)
+        .jsonPath("$.offences[0].licenceConditions[0].active").isEqualTo("true")
+        .jsonPath("$.offences[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
+        .jsonPath("$.offences[0].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
+        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
+        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
+        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
+        .jsonPath("$.offences[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.releaseSummary.lastRelease").isEmpty()
+        .jsonPath("$.releaseSummary.lastRecall").isEmpty()
     }
   }
 
