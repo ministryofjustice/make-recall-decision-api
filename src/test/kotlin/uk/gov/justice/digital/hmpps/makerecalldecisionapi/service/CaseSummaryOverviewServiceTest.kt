@@ -9,10 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -39,12 +37,9 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class CaseSummaryOverviewServiceTest {
+class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   private lateinit var caseSummaryOverviewService: CaseSummaryOverviewService
-
-  @Mock
-  private lateinit var communityApiClient: CommunityApiClient
 
   @BeforeEach
   fun setup() {
@@ -56,7 +51,7 @@ class CaseSummaryOverviewServiceTest {
     runBlockingTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { emptyList<ConvictionResponse>() })
       given(communityApiClient.getRegistrations(anyString()))
@@ -69,7 +64,7 @@ class CaseSummaryOverviewServiceTest {
       val riskFlagsShouldBeEmpty = response.risk!!.flags
 
       assertThat(personalDetails.crn).isEqualTo(crn)
-      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
+      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
@@ -84,7 +79,7 @@ class CaseSummaryOverviewServiceTest {
     runBlockingTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getRegistrations(anyString()))
@@ -97,7 +92,7 @@ class CaseSummaryOverviewServiceTest {
       val riskFlags = response.risk!!.flags
 
       assertThat(personalDetails.crn).isEqualTo(crn)
-      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
+      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
@@ -117,7 +112,7 @@ class CaseSummaryOverviewServiceTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
-            allOffenderDetailsResponse.copy(
+            allOffenderDetailsResponse().copy(
               firstName = null,
               surname = null,
               contactDetails = ContactDetails(
@@ -255,60 +250,6 @@ class CaseSummaryOverviewServiceTest {
       Registration(
         active = false,
         type = Type(code = "ABC124", description = "Mental health issues")
-      )
-    )
-  )
-
-  private val allOffenderDetailsResponse = AllOffenderDetailsResponse(
-    dateOfBirth = LocalDate.parse("1982-10-24"),
-    firstName = "John",
-    surname = "Smith",
-    gender = "Male",
-    contactDetails = ContactDetails(
-      addresses = listOf(
-        Address(
-          postcode = "S3 7BS",
-          district = "Sheffield City Centre",
-          addressNumber = "32",
-          buildingName = "HMPPS Digital Studio",
-          town = "Sheffield",
-          county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
-        ),
-        Address(
-          town = "Sheffield",
-          county = "South Yorkshire",
-          buildingName = "HMPPS Digital Studio",
-          district = "Sheffield City Centre",
-          status = AddressStatus(code = "ABC123", description = "Not Main"),
-          postcode = "S3 7BS",
-          addressNumber = "33"
-        )
-      )
-    ),
-    offenderManagers = listOf(
-      OffenderManager(
-        active = true,
-        trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-        staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-        providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-        team = Team(
-          telephone = "09056714321",
-          emailAddress = "first.last@digital.justice.gov.uk",
-          code = "C01T04",
-          description = "OMU A"
-        )
-      ),
-      OffenderManager(
-        active = false,
-        trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-        staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-        providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-        team = Team(
-          telephone = "123",
-          emailAddress = "dua.lipa@digital.justice.gov.uk",
-          code = "C01T04",
-          description = "OMU A"
-        )
       )
     )
   )
