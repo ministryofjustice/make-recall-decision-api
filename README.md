@@ -16,6 +16,7 @@ The primary software client for this service is the related UI [make-recall-deci
 
 ### Code Style & Formatting
 
+
 ### Running the Service Locally
 
 In order to spin up the service, it's related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
