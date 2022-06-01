@@ -20,7 +20,7 @@ class OverviewController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_ASSESS_RISK_AND_NEEDS)')")
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/overview")
   @Operation(summary = "WIP: Returns an overview of the case details")
   suspend fun overview(@PathVariable("crn") crn: String): CaseSummaryOverviewResponse {
