@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
@@ -382,8 +383,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // and
     val expected = ReleaseSummaryResponse(
-      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15")),
-      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"))
+      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15"), notes = "I am a note", reason = Reason(code = "ADL", description = "Adult Licence")),
+      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"), notes = "I am a second note", reason = Reason(code = "ABC123", description = "another reason description"))
     )
 
     // when
