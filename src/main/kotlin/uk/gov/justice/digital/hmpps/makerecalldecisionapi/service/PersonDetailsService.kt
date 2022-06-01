@@ -19,7 +19,7 @@ class PersonDetailsService(
     val offenderDetails = getPersonalDetailsOverview(crn)
     val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
     val activeAddress = offenderDetails.contactDetails?.addresses
-      ?.first { it.status?.description?.lowercase().equals("main") }
+      ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
     val addressNumber = activeAddress?.addressNumber ?: ""
     val streetName = activeAddress?.streetName ?: ""
     val buildingName = activeAddress?.buildingName ?: ""
