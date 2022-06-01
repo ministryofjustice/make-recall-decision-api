@@ -156,9 +156,9 @@ class PersonalDetailServiceTest : ServiceTestBase() {
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
 
-      assertThat(personalDetails, equalTo(expectedPersonDetailsResponse()))
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
+      assertThat(personalDetails, equalTo(expectedPersonDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
