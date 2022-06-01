@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiCli
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceWithLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 
 @Service
 class LicenceConditionsService(
@@ -17,10 +18,12 @@ class LicenceConditionsService(
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
     val licenceConditions = buildLicenceConditions(crn)
+    val releaseSummary = getReleaseSummary(crn)
 
     return LicenceConditionsResponse(
       personalDetailsOverview = personalDetailsOverview,
       offences = licenceConditions,
+      releaseSummary = releaseSummary,
     )
   }
 
@@ -57,5 +60,9 @@ class LicenceConditionsService(
           licenceConditions = result
         )
       }
+  }
+
+  private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
+    return communityApiClient.getReleaseSummary(crn).awaitFirstOrNull()
   }
 }

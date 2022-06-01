@@ -4,6 +4,7 @@ fun releaseSummaryResponse() = """
 {
     "lastRelease": {
         "date": "2017-09-15",
+        "notes": "I am a note",
         "institution": {
             "institutionId": 361,
             "isEstablishment": true,
@@ -17,7 +18,12 @@ fun releaseSummaryResponse() = """
         }
     },
     "lastRecall": {
-        "date": "2020-10-15"
+      "date": "2020-10-15",
+      "notes": "I am a second note",
+      "reason": {
+        "code": "ABC123",
+        "description": "another reason description"
+      }
     }
 }
 """.trimIndent()
