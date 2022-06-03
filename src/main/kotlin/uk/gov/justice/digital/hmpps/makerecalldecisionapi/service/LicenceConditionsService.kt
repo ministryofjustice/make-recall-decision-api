@@ -1,17 +1,20 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 
 @Service
 class LicenceConditionsService(
-  private val communityApiClient: CommunityApiClient,
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService
 ) {
 
@@ -29,11 +32,11 @@ class LicenceConditionsService(
 
   private suspend fun buildLicenceConditions(crn: String): List<OffenceWithLicenceConditions> {
 
-    val activeConvictions = communityApiClient.getActiveConvictions(crn).awaitFirst()
+    val activeConvictions = getValue(communityApiClient.getActiveConvictions(crn))
 
     return activeConvictions
-      .map {
-        val result = communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId).awaitFirstOrNull()
+      ?.map {
+        val result = getValue(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
           ?.licenceConditions
 
         val offences: List<Offence> = activeConvictions
@@ -59,10 +62,23 @@ class LicenceConditionsService(
           statusDescription = it.custody?.status?.description,
           licenceConditions = result
         )
-      }
+      } ?: emptyList()
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
     return communityApiClient.getReleaseSummary(crn).awaitFirstOrNull()
+  }
+
+  private fun <T : Any> getValue(mono: Mono<T>?): T? {
+    return try {
+      val value = mono?.block()
+      value ?: value
+    } catch (wrappedException: RuntimeException) {
+      when (wrappedException.cause) {
+        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
+        is NoActiveConvictionsException -> throw wrappedException.cause as NoActiveConvictionsException
+        else -> throw wrappedException
+      }
+    }
   }
 }
