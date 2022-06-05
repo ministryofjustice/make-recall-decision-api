@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/secure/offenders/crn/X098092/convictions/2500566094/licenceConditions"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-licence-conditions1.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
