@@ -1,9 +1,9 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import java.time.LocalDate
 
-data class OffenceWithLicenceConditions(
+data class ConvictionResponse(
   val convictionId: Long?,
   val active: Boolean?,
   val offences: List<Offence>?,
