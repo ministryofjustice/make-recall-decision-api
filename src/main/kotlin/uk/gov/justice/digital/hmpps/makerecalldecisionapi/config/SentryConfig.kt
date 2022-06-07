@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -25,7 +26,7 @@ class SentryContextAppender : HandlerInterceptor {
     val operationId: String = Span.current().spanContext.traceId
 
     if (request.requestURI != "/health") {
-      log.info("[preHandle] ${request.method} ${request.requestURI} - operationId: $operationId")
+      log.info("[preHandle] ${request.method} ${request.requestURI} - operationId: $operationId".removeAllCrLf())
     }
 
     Sentry.configureScope { scope ->

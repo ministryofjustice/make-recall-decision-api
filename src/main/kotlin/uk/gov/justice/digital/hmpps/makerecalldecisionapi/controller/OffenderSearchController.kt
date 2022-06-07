@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -25,7 +26,7 @@ class OffenderSearchController(
   @GetMapping("/search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN")
   suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
-    log.info("Offender search endpoint hit for CRN: $crn")
+    log.info("Offender search endpoint hit for CRN: $crn".removeAllCrLf())
     return offenderSearchService.search(crn)
   }
 }

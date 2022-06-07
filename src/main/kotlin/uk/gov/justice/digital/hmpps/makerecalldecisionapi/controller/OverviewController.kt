@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryOverviewService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -24,7 +25,7 @@ class OverviewController(
   @GetMapping("/cases/{crn}/overview")
   @Operation(summary = "WIP: Returns an overview of the case details")
   suspend fun overview(@PathVariable("crn") crn: String): CaseSummaryOverviewResponse {
-    log.info("Overview endpoint hit for CRN: $crn")
+    log.info("Overview endpoint hit for CRN: $crn".removeAllCrLf())
     return caseSummaryOverviewService.getOverview(crn)
   }
 }
