@@ -1,8 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import io.micrometer.core.instrument.Counter
-import org.owasp.esapi.ESAPI
-import org.owasp.esapi.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
@@ -18,6 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -27,11 +27,11 @@ class CommunityApiClient(
   private val timeoutCounter: Counter
 ) {
   companion object {
-    val log = ESAPI.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get registrations for $crn")
+    log.info("About to get registrations for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
@@ -46,12 +46,12 @@ class CommunityApiClient(
           endPoint = "registrations"
         )
       }
-    log.info(Logger.SECURITY_SUCCESS, "Returning registrations for $crn")
+    log.info("Returning registrations for $crn".removeAllCrLf())
     return result
   }
 
   fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get active convictions for $crn")
+    log.info("About to get active convictions for $crn".removeAllCrLf())
     val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
     val result = webClient
@@ -81,13 +81,13 @@ class CommunityApiClient(
         )
       }
 
-    log.info(Logger.SECURITY_SUCCESS, "Returning active convictions for $crn")
+    log.info("Returning active convictions for $crn".removeAllCrLf())
 
     return result
   }
 
   fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get licence conditions for $crn by convictionId $convictionId")
+    log.info("About to get licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
     val result = webClient
@@ -105,12 +105,12 @@ class CommunityApiClient(
           endPoint = "licenceConditions"
         )
       }
-    log.info(Logger.SECURITY_SUCCESS, "Returning licence conditions for $crn by convictionId $convictionId")
+    log.info("Returning licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
     return result
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get all offender details for $crn")
+    log.info("About to get all offender details for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
     val result = webClient
@@ -129,12 +129,12 @@ class CommunityApiClient(
           endPoint = "all offenders"
         )
       }
-    log.info(Logger.SECURITY_SUCCESS, "Returning all offender details for $crn")
+    log.info("Returning all offender details for $crn".removeAllCrLf())
     return result
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get contact summary for $crn")
+    log.info("About to get contact summary for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
@@ -158,12 +158,12 @@ class CommunityApiClient(
           endPoint = "contact summary"
         )
       }
-    log.info(Logger.SECURITY_SUCCESS, "Returning contact summary for $crn")
+    log.info("Returning contact summary for $crn".removeAllCrLf())
     return result
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
-    log.info(Logger.SECURITY_SUCCESS, "About to get release summary for $crn")
+    log.info("About to get release summary for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
     val result = webClient
@@ -188,7 +188,7 @@ class CommunityApiClient(
           endPoint = "release summary"
         )
       }
-    log.info(Logger.SECURITY_SUCCESS, "Returning release summary for $crn")
+    log.info("Returning release summary for $crn".removeAllCrLf())
     return result
   }
 
