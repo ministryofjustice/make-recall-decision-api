@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceConditionsService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -24,7 +25,7 @@ class LicenceConditionsController(
   @GetMapping("/cases/{crn}/licence-conditions")
   @Operation(summary = "Returns details of the licence conditions on a case")
   suspend fun licenseConditions(@PathVariable("crn") crn: String): LicenceConditionsResponse {
-    log.info("Licence conditions endpoint hit for CRN: $crn")
+    log.info("Licence conditions endpoint hit for CRN: $crn".removeAllCrLf())
     return licenceConditionsService.getLicenceConditions(crn)
   }
 }

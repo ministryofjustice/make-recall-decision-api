@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Crn
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -21,7 +22,7 @@ class RiskController {
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
   fun risk(@PathVariable("crn") crn: Crn): String {
-    log.info("Risk endpoint hit for CRN: $crn")
+    log.info("Risk endpoint hit for CRN: $crn".removeAllCrLf())
     return riskResponse()
   }
 }
