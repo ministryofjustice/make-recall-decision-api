@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Content
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
@@ -63,7 +63,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     unallocatedConvictionResponse(crn, staffCode)
 
     // and
-    val expected = ConvictionResponse(
+    val expected = Conviction(
       convictionDate = LocalDate.parse("2021-06-10"),
       sentence = Sentence(
         startDate = LocalDate.parse("2022-04-26"),
@@ -114,7 +114,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     noActiveConvictionResponse(crn)
 
     // and
-    val expected = emptyList<ConvictionResponse>()
+    val expected = emptyList<Conviction>()
 
     // when
     val actual = communityApiClient.getActiveConvictions(crn).block()!!
@@ -180,7 +180,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     noActiveConvictionResponse(crn)
 
     // and
-    val expected = emptyList<ConvictionResponse>()
+    val expected = emptyList<Conviction>()
 
     // when
     val actual = communityApiClient.getActiveConvictions(crn).block()!!
@@ -244,14 +244,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR"),
+          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison", systemGenerated = false, code = "C204"),
+          type = ContactType(description = "Police Liaison", systemGenerated = false, code = "C204", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
@@ -281,14 +281,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR"),
+          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison", systemGenerated = false, code = "C204"),
+          type = ContactType(description = "Police Liaison", systemGenerated = false, code = "C204", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),

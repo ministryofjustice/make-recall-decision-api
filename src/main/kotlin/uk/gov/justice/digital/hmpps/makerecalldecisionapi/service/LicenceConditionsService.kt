@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
@@ -20,17 +20,17 @@ class LicenceConditionsService(
 
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val licenceConditions = buildLicenceConditions(crn)
+    val convictions = buildConvictionResponse(crn)
     val releaseSummary = getReleaseSummary(crn)
 
     return LicenceConditionsResponse(
       personalDetailsOverview = personalDetailsOverview,
-      offences = licenceConditions,
+      convictions = convictions,
       releaseSummary = releaseSummary,
     )
   }
 
-  private suspend fun buildLicenceConditions(crn: String): List<OffenceWithLicenceConditions> {
+  private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
 
     val activeConvictions = getValue(communityApiClient.getActiveConvictions(crn))
 
@@ -39,19 +39,18 @@ class LicenceConditionsService(
         val result = getValue(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
           ?.licenceConditions
 
-        val offences: List<Offence> = activeConvictions
-          .map { it.offences }
-          .flatMap { it!!.toList() }
-          .map {
+        val offences: List<Offence>? = it.offences
+          ?.stream()?.toList()
+          ?.map {
             Offence(
               mainOffence = it.mainOffence, description = it.detail?.description ?: "", code = it.detail?.code ?: ""
             )
           }
 
-        OffenceWithLicenceConditions(
+        ConvictionResponse(
           convictionId = it.convictionId,
           active = it.active,
-          offences = offences.filter { it.mainOffence == true },
+          offences = offences,
           sentenceDescription = it.sentence?.description,
           sentenceOriginalLength = it.sentence?.originalLength,
           sentenceOriginalLengthUnits = it.sentence?.originalLengthUnits,

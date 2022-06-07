@@ -12,9 +12,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
@@ -24,7 +25,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
@@ -47,7 +47,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given an active conviction and an active licence condition then return these details in the response`() {
+  fun `given an active conviction and licence conditions then return these details in the response`() {
     runBlockingTest {
 
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -149,9 +149,9 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
     )
   }
 
-  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<OffenceWithLicenceConditions> {
+  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<ConvictionResponse> {
     return listOf(
-      OffenceWithLicenceConditions(
+      ConvictionResponse(
         convictionId = 2500000001,
         active = true,
         offences = listOf(
@@ -159,6 +159,11 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
             mainOffence = true,
             description = "Robbery (other than armed robbery)",
             code = "ABC123"
+          ),
+          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
+            mainOffence = false,
+            description = "Arson",
+            code = "ZYX789"
           )
         ),
         sentenceDescription = "Sentence description",
@@ -174,7 +179,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
     )
   }
 
-  private val convictionResponse = ConvictionResponse(
+  private val convictionResponse = Conviction(
     convictionDate = LocalDate.parse("2021-06-10"),
     sentence = Sentence(
       startDate = LocalDate.parse("2022-04-26"),
@@ -222,7 +227,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
     )
   )
 
-  val licenceConditions = LicenceConditions(
+  private val licenceConditions = LicenceConditions(
     licenceConditions = listOf(
       LicenceCondition(
         startDate = LocalDate.parse("2022-05-18"),

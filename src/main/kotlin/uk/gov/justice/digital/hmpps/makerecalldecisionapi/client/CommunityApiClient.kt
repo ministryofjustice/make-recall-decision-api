@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
@@ -30,7 +30,7 @@ class CommunityApiClient(
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info("About to get registrations for $crn")
+    log.info("About to get registrations for {}", crn)
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
@@ -49,9 +49,9 @@ class CommunityApiClient(
     return result
   }
 
-  fun getActiveConvictions(crn: String): Mono<List<ConvictionResponse>> {
+  fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
     log.info("About to get active convictions for $crn")
-    val responseType = object : ParameterizedTypeReference<List<ConvictionResponse>>() {}
+    val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
     val result = webClient
       .get()
