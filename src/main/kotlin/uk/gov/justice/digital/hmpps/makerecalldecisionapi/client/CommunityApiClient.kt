@@ -1,7 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import io.micrometer.core.instrument.Counter
-import org.slf4j.LoggerFactory
+import org.owasp.esapi.ESAPI
+import org.owasp.esapi.Logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
@@ -26,11 +27,11 @@ class CommunityApiClient(
   private val timeoutCounter: Counter
 ) {
   companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    val log = ESAPI.getLogger(this::class.java)
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info("About to get registrations for {}", crn)
+    log.info(Logger.SECURITY_SUCCESS, "About to get registrations for $crn")
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
@@ -45,12 +46,12 @@ class CommunityApiClient(
           endPoint = "registrations"
         )
       }
-    log.info("Returning registrations for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "Returning registrations for $crn")
     return result
   }
 
   fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
-    log.info("About to get active convictions for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "About to get active convictions for $crn")
     val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
     val result = webClient
@@ -80,13 +81,13 @@ class CommunityApiClient(
         )
       }
 
-    log.info("Returning active convictions for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "Returning active convictions for $crn")
 
     return result
   }
 
   fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
-    log.info("About to get licence conditions for $crn by convictionId $convictionId")
+    log.info(Logger.SECURITY_SUCCESS, "About to get licence conditions for $crn by convictionId $convictionId")
 
     val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
     val result = webClient
@@ -104,12 +105,12 @@ class CommunityApiClient(
           endPoint = "licenceConditions"
         )
       }
-    log.info("Returning licence conditions for $crn by convictionId $convictionId")
+    log.info(Logger.SECURITY_SUCCESS, "Returning licence conditions for $crn by convictionId $convictionId")
     return result
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
-    log.info("About to get all offender details for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "About to get all offender details for $crn")
 
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
     val result = webClient
@@ -128,12 +129,12 @@ class CommunityApiClient(
           endPoint = "all offenders"
         )
       }
-    log.info("Returning all offender details for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "Returning all offender details for $crn")
     return result
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
-    log.info("About to get contact summary for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "About to get contact summary for $crn")
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
@@ -157,12 +158,12 @@ class CommunityApiClient(
           endPoint = "contact summary"
         )
       }
-    log.info("Returning contact summary for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "Returning contact summary for $crn")
     return result
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
-    log.info("About to get release summary for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "About to get release summary for $crn")
 
     val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
     val result = webClient
@@ -187,7 +188,7 @@ class CommunityApiClient(
           endPoint = "release summary"
         )
       }
-    log.info("Returning release summary for $crn")
+    log.info(Logger.SECURITY_SUCCESS, "Returning release summary for $crn")
     return result
   }
 
