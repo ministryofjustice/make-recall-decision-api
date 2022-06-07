@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -30,7 +31,7 @@ class CommunityApiClient(
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info("About to get registrations for {}", crn)
+    log.info("About to get registrations for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
@@ -45,12 +46,12 @@ class CommunityApiClient(
           endPoint = "registrations"
         )
       }
-    log.info("Returning registrations for $crn")
+    log.info("Returning registrations for $crn".removeAllCrLf())
     return result
   }
 
   fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
-    log.info("About to get active convictions for $crn")
+    log.info("About to get active convictions for $crn".removeAllCrLf())
     val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
     val result = webClient
@@ -80,13 +81,13 @@ class CommunityApiClient(
         )
       }
 
-    log.info("Returning active convictions for $crn")
+    log.info("Returning active convictions for $crn".removeAllCrLf())
 
     return result
   }
 
   fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
-    log.info("About to get licence conditions for $crn by convictionId $convictionId")
+    log.info("About to get licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
     val result = webClient
@@ -104,12 +105,12 @@ class CommunityApiClient(
           endPoint = "licenceConditions"
         )
       }
-    log.info("Returning licence conditions for $crn by convictionId $convictionId")
+    log.info("Returning licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
     return result
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
-    log.info("About to get all offender details for $crn")
+    log.info("About to get all offender details for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
     val result = webClient
@@ -128,12 +129,12 @@ class CommunityApiClient(
           endPoint = "all offenders"
         )
       }
-    log.info("Returning all offender details for $crn")
+    log.info("Returning all offender details for $crn".removeAllCrLf())
     return result
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
-    log.info("About to get contact summary for $crn")
+    log.info("About to get contact summary for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
@@ -157,12 +158,12 @@ class CommunityApiClient(
           endPoint = "contact summary"
         )
       }
-    log.info("Returning contact summary for $crn")
+    log.info("Returning contact summary for $crn".removeAllCrLf())
     return result
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
-    log.info("About to get release summary for $crn")
+    log.info("About to get release summary for $crn".removeAllCrLf())
 
     val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
     val result = webClient
@@ -187,7 +188,7 @@ class CommunityApiClient(
           endPoint = "release summary"
         )
       }
-    log.info("Returning release summary for $crn")
+    log.info("Returning release summary for $crn".removeAllCrLf())
     return result
   }
 
