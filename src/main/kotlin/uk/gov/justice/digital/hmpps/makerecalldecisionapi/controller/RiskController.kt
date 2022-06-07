@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
-import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -9,11 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Crn
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RiskService
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class RiskController {
+class RiskController(
+  private val riskService: RiskService
+) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
@@ -21,9 +23,9 @@ class RiskController {
   @PreAuthorize("hasRole('ROLE_PROBATION')")
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
-  fun risk(@PathVariable("crn") crn: Crn): String {
-    log.info(normalizeSpace("Risk endpoint hit for CRN: $crn"))
-    return riskResponse()
+  suspend fun risk(@PathVariable("crn") crn: String): RiskResponse {
+    log.info("Risk endpoint hit for CRN: $crn")
+    return riskService.getRisk(crn)
   }
 }
 

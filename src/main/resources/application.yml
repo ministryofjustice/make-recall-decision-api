@@ -28,6 +28,11 @@ spring:
             client-id: bill-sclater
             client-secret: "KbICZKm61'xNx+9y5Z63IvA-7(ohdu&Ubg0LF0m%$q0suoF<P8S3E$QV*;5h"
             authorization-grant-type: client_credentials
+          arn-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
           community-api:
             provider: hmpps-auth
             client-id: bill-sclater
@@ -109,6 +114,11 @@ community:
     endpoint:
       url: http://localhost:9081
 
+arn:
+  api:
+    endpoint:
+      url: ${arn.api.endpoint.url}
+
 gotenberg:
   endpoint:
     url: http://localhost:9091
@@ -116,3 +126,8 @@ gotenberg:
 ndelius:
   client:
     timeout: 30
+
+oasys:
+  arn:
+    client:
+      timeout: 30
