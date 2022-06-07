@@ -4,4 +4,6 @@ data class ContactType(
   val description: String?,
   val code: String?,
   val systemGenerated: Boolean,
+  val nationalStandard: Boolean,
+  val appointment: Boolean,
 )
