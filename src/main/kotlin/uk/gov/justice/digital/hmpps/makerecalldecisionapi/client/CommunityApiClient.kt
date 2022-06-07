@@ -30,7 +30,7 @@ class CommunityApiClient(
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info("About to get registrations for $crn")
+    log.info("About to get registrations for {}", crn)
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
