@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
@@ -19,7 +20,10 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentia
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.context.annotation.RequestScope
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.net.URI
@@ -28,9 +32,31 @@ import java.net.URI
 class WebClientUserEnhancementConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
+  @Value("\${arn.api.endpoint.url}") private val arnApiEndpointUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry
 ) {
+
+  @Bean
+  @RequestScope
+  fun assessRisksNeedsWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
+    return builder.baseUrl(arnApiEndpointUri)
+      .filter { request: ClientRequest, next: ExchangeFunction ->
+        val filtered = ClientRequest.from(request)
+          .header(HttpHeaders.AUTHORIZATION, UserContext.getAuthToken())
+          .build()
+        next.exchange(filtered)
+      }
+      .build()
+  }
+
+  @Bean
+  fun assessRisksNeedsApiClientUserEnhanced(@Qualifier("assessRisksNeedsWebClientUserEnhancedAppScope") webClient: WebClient): ArnApiClient {
+    return ArnApiClient(webClient, nDeliusTimeout, arnApiClientEnhancedTimeoutCounter())
+  }
+
+  @Bean
+  fun arnApiClientEnhancedTimeoutCounter(): Counter = timeoutCounter(arnApiEndpointUri)
 
   @Bean
   @RequestScope
@@ -43,11 +69,11 @@ class WebClientUserEnhancementConfiguration(
 
   @Bean
   fun offenderSearchApiClientUserEnhanced(@Qualifier("offenderSearchWebClientUserEnhancedAppScope") webClient: WebClient): OffenderSearchApiClient {
-    return OffenderSearchApiClient(webClient, nDeliusTimeout, offenderSearchApiClientTimeoutCounter2())
+    return OffenderSearchApiClient(webClient, nDeliusTimeout, offenderSearchApiClientEnhancedTimeoutCounter())
   }
 
   @Bean
-  fun offenderSearchApiClientTimeoutCounter2(): Counter = timeoutCounter(offenderSearchApiRootUri)
+  fun offenderSearchApiClientEnhancedTimeoutCounter(): Counter = timeoutCounter(offenderSearchApiRootUri)
 
   @Bean
   @RequestScope
