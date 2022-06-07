@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Content
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
@@ -63,7 +63,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     unallocatedConvictionResponse(crn, staffCode)
 
     // and
-    val expected = ConvictionResponse(
+    val expected = Conviction(
       convictionDate = LocalDate.parse("2021-06-10"),
       sentence = Sentence(
         startDate = LocalDate.parse("2022-04-26"),
@@ -114,7 +114,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     noActiveConvictionResponse(crn)
 
     // and
-    val expected = emptyList<ConvictionResponse>()
+    val expected = emptyList<Conviction>()
 
     // when
     val actual = communityApiClient.getActiveConvictions(crn).block()!!
@@ -180,7 +180,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
     noActiveConvictionResponse(crn)
 
     // and
-    val expected = emptyList<ConvictionResponse>()
+    val expected = emptyList<Conviction>()
 
     // when
     val actual = communityApiClient.getActiveConvictions(crn).block()!!

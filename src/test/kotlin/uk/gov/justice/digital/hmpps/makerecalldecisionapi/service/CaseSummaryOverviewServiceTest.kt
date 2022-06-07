@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
@@ -53,7 +53,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { emptyList<ConvictionResponse>() })
+        .willReturn(Mono.fromCallable { emptyList<Conviction>() })
       given(communityApiClient.getRegistrations(anyString()))
         .willReturn(Mono.empty())
 
@@ -201,7 +201,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
-  private val convictionResponse = ConvictionResponse(
+  private val convictionResponse = Conviction(
     convictionDate = LocalDate.parse("2021-06-10"),
     sentence = Sentence(
       startDate = LocalDate.parse("2022-04-26"),
