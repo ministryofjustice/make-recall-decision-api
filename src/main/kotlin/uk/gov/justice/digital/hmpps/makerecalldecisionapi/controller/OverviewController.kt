@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryOverviewService
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -25,7 +25,7 @@ class OverviewController(
   @GetMapping("/cases/{crn}/overview")
   @Operation(summary = "WIP: Returns an overview of the case details")
   suspend fun overview(@PathVariable("crn") crn: String): CaseSummaryOverviewResponse {
-    log.info("Overview endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("Overview endpoint hit for CRN: $crn"))
     return caseSummaryOverviewService.getOverview(crn)
   }
 }

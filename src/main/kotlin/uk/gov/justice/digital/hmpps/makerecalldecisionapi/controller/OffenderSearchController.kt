@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -26,7 +26,7 @@ class OffenderSearchController(
   @GetMapping("/search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN")
   suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
-    log.info("Offender search endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("Offender search endpoint hit for CRN: $crn"))
     return offenderSearchService.search(crn)
   }
 }
