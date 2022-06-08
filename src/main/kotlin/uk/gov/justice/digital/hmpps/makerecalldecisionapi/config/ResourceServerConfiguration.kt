@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.web.servlet.invoke
 
 @Configuration
 @EnableWebSecurity
@@ -13,20 +14,29 @@ import org.springframework.security.config.http.SessionCreationPolicy
 class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
 
   override fun configure(http: HttpSecurity) {
-    http
-      .sessionManagement()
-      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      .and().csrf().disable()
-      .authorizeRequests { auth ->
-        auth.antMatchers(
-          "/health/**", "/info", "/prometheus",
-          "/v3/api-docs/**",
-          "/swagger-ui/**", "/swagger-ui.html",
-          "/swagger-resources",
-          "/swagger-resources/configuration/ui",
-          "/swagger-resources/configuration/security",
-          "/webjars/**", "/favicon.ico", "/csrf",
-        ).permitAll().anyRequest().authenticated()
-      }.oauth2ResourceServer().jwt().jwtAuthenticationConverter(AuthAwareTokenConverter())
+    http {
+      csrf { disable() }
+      sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
+      authorizeRequests {
+        authorize("/health/**", permitAll)
+        authorize("/info", permitAll)
+        authorize("/prometheus", permitAll)
+        authorize("/v3/api-docs/**", permitAll)
+        authorize("/swagger-ui/**", permitAll)
+        authorize("/swagger-ui.html", permitAll)
+        authorize("/swagger-resources", permitAll)
+        authorize("/swagger-resources/configuration/ui", permitAll)
+        authorize("/swagger-resources/configuration/security", permitAll)
+        authorize("/webjars/**", permitAll)
+        authorize("/favicon.ico", permitAll)
+        authorize("/csrf", permitAll)
+        authorize(anyRequest, authenticated)
+      }
+      oauth2ResourceServer {
+        jwt {
+          jwtAuthenticationConverter = AuthAwareTokenConverter()
+        }
+      }
+    }
   }
 }
