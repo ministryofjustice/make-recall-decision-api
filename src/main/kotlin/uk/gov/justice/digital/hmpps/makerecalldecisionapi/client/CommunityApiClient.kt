@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -32,8 +31,6 @@ class CommunityApiClient(
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info("About to get registrations for $crn".removeAllCrLf())
-
     log.info(normalizeSpace("Second about to get registrations for $crn"))
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
@@ -49,12 +46,12 @@ class CommunityApiClient(
           endPoint = "registrations"
         )
       }
-    log.info("Returning registrations for $crn".removeAllCrLf())
+    log.info(normalizeSpace("Returning registrations for $crn"))
     return result
   }
 
   fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
-    log.info("About to get active convictions for $crn".removeAllCrLf())
+    log.info(normalizeSpace("About to get active convictions for $crn"))
     val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
     val result = webClient
@@ -84,13 +81,13 @@ class CommunityApiClient(
         )
       }
 
-    log.info("Returning active convictions for $crn".removeAllCrLf())
+    log.info(normalizeSpace("Returning active convictions for $crn"))
 
     return result
   }
 
   fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
-    log.info("About to get licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
+    log.info(normalizeSpace("About to get licence conditions for $crn by convictionId $convictionId"))
 
     val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
     val result = webClient
@@ -108,12 +105,12 @@ class CommunityApiClient(
           endPoint = "licenceConditions"
         )
       }
-    log.info("Returning licence conditions for $crn by convictionId $convictionId".removeAllCrLf())
+    log.info(normalizeSpace("Returning licence conditions for $crn by convictionId $convictionId"))
     return result
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
-    log.info("About to get all offender details for $crn".removeAllCrLf())
+    log.info(normalizeSpace("About to get all offender details for $crn"))
 
     val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
     val result = webClient
@@ -132,12 +129,12 @@ class CommunityApiClient(
           endPoint = "all offenders"
         )
       }
-    log.info("Returning all offender details for $crn".removeAllCrLf())
+    log.info(normalizeSpace("Returning all offender details for $crn"))
     return result
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
-    log.info("About to get contact summary for $crn".removeAllCrLf())
+    log.info(normalizeSpace("About to get contact summary for $crn"))
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
@@ -161,12 +158,12 @@ class CommunityApiClient(
           endPoint = "contact summary"
         )
       }
-    log.info("Returning contact summary for $crn".removeAllCrLf())
+    log.info(normalizeSpace("Returning contact summary for $crn"))
     return result
   }
 
   fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
-    log.info("About to get release summary for $crn".removeAllCrLf())
+    log.info(normalizeSpace("About to get release summary for $crn"))
 
     val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
     val result = webClient
@@ -191,7 +188,7 @@ class CommunityApiClient(
           endPoint = "release summary"
         )
       }
-    log.info("Returning release summary for $crn".removeAllCrLf())
+    log.info(normalizeSpace("Returning release summary for $crn"))
     return result
   }
 
