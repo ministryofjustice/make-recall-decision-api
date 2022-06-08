@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Crn
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -22,7 +22,7 @@ class RiskController {
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
   fun risk(@PathVariable("crn") crn: Crn): String {
-    log.info("Risk endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("Risk endpoint hit for CRN: $crn"))
     return riskResponse()
   }
 }

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,7 +25,7 @@ class PersonDetailsController(
   @GetMapping("/cases/{crn}/personal-details")
   @Operation(summary = "WIP: Returns an overview of the person details")
   suspend fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
-    log.info("Person details endpoint hit for CRN: $crn")
+    log.info(normalizeSpace("Person details endpoint hit for CRN: $crn"))
     return personDetailsService.getPersonDetails(crn)
   }
 }
