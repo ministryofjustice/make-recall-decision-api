@@ -1,20 +1,16 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.springframework.beans.factory.annotation.Qualifier
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import kotlin.streams.toList
 
 @Service
 class LicenceHistoryService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService
 ) {
 
@@ -31,9 +27,9 @@ class LicenceHistoryService(
   }
 
   private suspend fun getContactSummary(crn: String, filterContacts: Boolean): List<ContactSummaryResponse> {
-    val contactSummaryResponse = getValue(communityApiClient.getContactSummary(crn, filterContacts))
+    val contactSummaryResponse = communityApiClient.getContactSummary(crn, filterContacts).awaitFirstOrNull()?.content
 
-    return contactSummaryResponse?.content
+    return contactSummaryResponse
       ?.stream()
       ?.map {
         ContactSummaryResponse(
@@ -49,19 +45,6 @@ class LicenceHistoryService(
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValue(communityApiClient.getReleaseSummary(crn))
-  }
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is ReleaseDetailsNotFoundException -> throw wrappedException.cause as NoActiveConvictionsException
-        else -> throw wrappedException
-      }
-    }
+    return communityApiClient.getReleaseSummary(crn).awaitFirstOrNull()
   }
 }
