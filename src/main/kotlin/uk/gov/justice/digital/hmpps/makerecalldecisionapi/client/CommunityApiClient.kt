@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import io.micrometer.core.instrument.Counter
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -32,6 +33,8 @@ class CommunityApiClient(
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
     log.info("About to get registrations for $crn".removeAllCrLf())
+
+    log.info(normalizeSpace("Second about to get registrations for $crn"))
 
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
