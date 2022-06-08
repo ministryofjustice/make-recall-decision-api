@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -26,7 +27,7 @@ class LicenceHistoryController(
   @Operation(summary = "Returns filtered details of a case licence history")
   // FIXME: Potentially deprecated - remove once confirmed filters etc will be handled on frontend
   suspend fun licenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
-    log.info("Licence history endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("Licence history endpoint hit for CRN: $crn".removeAllCrLf()))
     return licenceHistoryService.getLicenceHistory(crn, true)
   }
 
@@ -34,7 +35,7 @@ class LicenceHistoryController(
   @GetMapping("/cases/{crn}/all-licence-history")
   @Operation(summary = "Returns all details of a case licence history")
   suspend fun allLicenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
-    log.info("All licence history endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("All licence history endpoint hit for CRN: $crn".removeAllCrLf()))
     return licenceHistoryService.getLicenceHistory(crn, false)
   }
 }

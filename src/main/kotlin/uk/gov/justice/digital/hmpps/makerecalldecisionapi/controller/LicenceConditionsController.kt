@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceConditionsService
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -25,7 +25,7 @@ class LicenceConditionsController(
   @GetMapping("/cases/{crn}/licence-conditions")
   @Operation(summary = "Returns details of the licence conditions on a case")
   suspend fun licenseConditions(@PathVariable("crn") crn: String): LicenceConditionsResponse {
-    log.info("Licence conditions endpoint hit for CRN: $crn".removeAllCrLf())
+    log.info(normalizeSpace("Licence conditions endpoint hit for CRN: $crn"))
     return licenceConditionsService.getLicenceConditions(crn)
   }
 }
