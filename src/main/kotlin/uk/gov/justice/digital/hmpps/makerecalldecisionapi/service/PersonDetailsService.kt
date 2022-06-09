@@ -77,7 +77,7 @@ class PersonDetailsService(
   }
 
   private fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
-    return getValue(communityApiClient.getAllOffenderDetails(crn))!!
+    return getValue(communityApiClient.getAllOffenderDetails(crn))
   }
 
   private fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
