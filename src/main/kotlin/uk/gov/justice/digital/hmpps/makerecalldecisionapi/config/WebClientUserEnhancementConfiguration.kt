@@ -37,37 +37,37 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 
-// TODO move these out
-@Component
-@Order(4)
-internal class UserContextFilter : Filter {
-  @Throws(IOException::class, ServletException::class)
-  override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
-    val httpServletRequest = servletRequest as HttpServletRequest
-    val authToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
-    authToken?.let {
-      UserContext.setAuthToken(authToken)
-    }
-
-    filterChain.doFilter(httpServletRequest, servletResponse)
-  }
-
-  override fun init(filterConfig: FilterConfig) {}
-  override fun destroy() {}
-}
-
-@Component
-object UserContext {
-  var authToken = ThreadLocal<String>()
-
-  fun setAuthToken(aToken: String) {
-    authToken.set(aToken)
-  }
-
-  fun getAuthToken(): String {
-    return authToken.get()
-  }
-}
+//// TODO move these out
+//@Component
+//@Order(4)
+//internal class UserContextFilter : Filter {
+//  @Throws(IOException::class, ServletException::class)
+//  override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
+//    val httpServletRequest = servletRequest as HttpServletRequest
+//    val authToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
+//    authToken?.let {
+//      UserContext.setAuthToken(authToken)
+//    }
+//
+//    filterChain.doFilter(httpServletRequest, servletResponse)
+//  }
+//
+//  override fun init(filterConfig: FilterConfig) {}
+//  override fun destroy() {}
+//}
+//
+//@Component
+//object UserContext {
+//  var authToken = ThreadLocal<String>()
+//
+//  fun setAuthToken(aToken: String) {
+//    authToken.set(aToken)
+//  }
+//
+//  fun getAuthToken(): String {
+//    return authToken.get()
+//  }
+//}
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
@@ -94,18 +94,13 @@ class WebClientUserEnhancementConfiguration(
   @Bean
   fun offenderSearchApiClientTimeoutCounter2(): Counter = timeoutCounter(offenderSearchApiRootUri)
 
-  // TODO test w UI
   @Bean
   @RequestScope
-  fun communityWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
-    return builder.baseUrl(communityApiRootUri)
-      .filter { request: ClientRequest, next: ExchangeFunction ->
-        val filtered = ClientRequest.from(request)
-          .header(HttpHeaders.AUTHORIZATION, UserContext.getAuthToken())
-          .build()
-        next.exchange(filtered)
-      }
-      .build()
+  fun communityWebClientUserEnhancedAppScope(
+    clientRegistrationRepository: ClientRegistrationRepository,
+    builder: WebClient.Builder
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, communityApiRootUri, "community-api")
   }
 
   @Bean
