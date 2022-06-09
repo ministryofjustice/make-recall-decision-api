@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceHistoryService
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.utils.removeAllCrLf
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -27,7 +26,7 @@ class LicenceHistoryController(
   @Operation(summary = "Returns filtered details of a case licence history")
   // FIXME: Potentially deprecated - remove once confirmed filters etc will be handled on frontend
   suspend fun licenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
-    log.info(normalizeSpace("Licence history endpoint hit for CRN: $crn".removeAllCrLf()))
+    log.info(normalizeSpace("Licence history endpoint hit for CRN: $crn"))
     return licenceHistoryService.getLicenceHistory(crn, true)
   }
 
@@ -35,7 +34,7 @@ class LicenceHistoryController(
   @GetMapping("/cases/{crn}/all-licence-history")
   @Operation(summary = "Returns all details of a case licence history")
   suspend fun allLicenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
-    log.info(normalizeSpace("All licence history endpoint hit for CRN: $crn".removeAllCrLf()))
+    log.info(normalizeSpace("All licence history endpoint hit for CRN: $crn"))
     return licenceHistoryService.getLicenceHistory(crn, false)
   }
 }
