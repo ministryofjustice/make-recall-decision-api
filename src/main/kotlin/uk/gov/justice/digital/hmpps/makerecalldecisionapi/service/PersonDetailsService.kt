@@ -19,7 +19,7 @@ class PersonDetailsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
 //  private val communityApiClient: CommunityApiClient
 ) {
-  suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
+  fun getPersonDetails(crn: String): PersonDetailsResponse {
     val offenderDetails = getPersonalDetailsOverview(crn)
     val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
     val activeAddress = offenderDetails.contactDetails?.addresses
@@ -58,7 +58,7 @@ class PersonDetailsService(
     )
   }
 
-  suspend fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
+  fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
     val offenderDetails = getPersonalDetailsOverview(crn)
     return PersonDetails(
       name = "${offenderDetails.firstName} ${offenderDetails.surname}",
@@ -76,7 +76,7 @@ class PersonDetailsService(
     return formattedField
   }
 
-  private suspend fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
+  private fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
     return getValue(communityApiClient.getAllOffenderDetails(crn))!!
   }
 
