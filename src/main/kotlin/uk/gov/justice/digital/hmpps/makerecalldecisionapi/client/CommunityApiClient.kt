@@ -32,7 +32,7 @@ class CommunityApiClient(
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
     log.info("About to get registrations for $crn".removeAllCrLf())
-
+    log.info("webclient::" + webClient.toString())
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
       .get()
@@ -131,6 +131,10 @@ class CommunityApiClient(
       }
     log.info("Returning all offender details for $crn".removeAllCrLf())
     return result
+    //The stacktrace has been enhanced by Reactor, refer to additional information below:
+    //Error has been observed at the following site(s):
+    //	*__checkpoint ⇢ 404 from GET https://community-api-secure.test.delius.probation.hmpps.dsd.io/secure/offenders/crn/X098092/all [DefaultWebClient]
+    //Original Stack Trace:
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
