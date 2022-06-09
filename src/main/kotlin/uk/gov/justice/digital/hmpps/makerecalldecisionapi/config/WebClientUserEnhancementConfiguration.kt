@@ -21,6 +21,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.ClientCodecConfigurer
 import org.springframework.lang.NonNull
 import org.springframework.lang.Nullable
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
@@ -361,4 +362,29 @@ class WebClientUserEnhancementConfiguration(
     val host = URI(endpointUrl).host
     return meterRegistry.counter(metricName, Tags.of("clientName", host))
   }
+
+
+  private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
+    val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
+    val manager = AuthorizedClientServiceOAuth2AuthorizedClientManager(clients, service)
+
+    val defaultClientCredentialsTokenResponseClient = DefaultClientCredentialsTokenResponseClient()
+    val authentication = SecurityContextHolder.getContext().authentication
+
+    defaultClientCredentialsTokenResponseClient.setRequestEntityConverter { grantRequest: OAuth2ClientCredentialsGrantRequest ->
+      val converter = CustomOAuth2ClientCredentialsGrantRequestEntityConverter()
+      val username = authentication.name
+      converter.enhanceWithUsername(grantRequest, username)
+    }
+
+    val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
+      .clientCredentials { clientCredentialsGrantBuilder: OAuth2AuthorizedClientProviderBuilder.ClientCredentialsGrantBuilder ->
+        clientCredentialsGrantBuilder.accessTokenResponseClient(defaultClientCredentialsTokenResponseClient)
+      }
+      .build()
+
+    manager.setAuthorizedClientProvider(authorizedClientProvider)
+    return manager
+  }
+
 }
