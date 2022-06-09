@@ -20,6 +20,7 @@ class PersonDetailsController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  // TODO make suspendable and try with await(..) run tests first, then app, then other EPS
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/personal-details")
   @Operation(summary = "WIP: Returns an overview of the person details")

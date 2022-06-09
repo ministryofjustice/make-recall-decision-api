@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
@@ -18,20 +20,15 @@ import org.springframework.security.oauth2.client.endpoint.DefaultClientCredenti
 import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.stereotype.Component
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.reactive.function.client.ClientRequest
-import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
-import java.net.URI
-import org.springframework.stereotype.Component
-import java.lang.ThreadLocal
-
-
-import org.springframework.core.annotation.Order
 import java.io.IOException
+import java.net.URI
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig
@@ -39,8 +36,8 @@ import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
-import kotlin.Throws
 
+// TODO move these out
 @Component
 @Order(4)
 internal class UserContextFilter : Filter {
@@ -97,20 +94,7 @@ class WebClientUserEnhancementConfiguration(
   @Bean
   fun offenderSearchApiClientTimeoutCounter2(): Counter = timeoutCounter(offenderSearchApiRootUri)
 
-//  @Bean
-//  @RequestScope
-//  fun communityWebClientUserEnhancedAppScope(
-//    clientRegistrationRepository: ClientRegistrationRepository,
-//    builder: WebClient.Builder
-//  ): WebClient {
-//    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, communityApiRootUri, "community-api")
-//  }
-
-  @Bean
-  fun communityApiClientUserEnhanced(@Qualifier("communityWebClientUserEnhancedAppScope") webClient: WebClient): CommunityApiClient {
-    return CommunityApiClient(webClient, nDeliusTimeout, communityApiClientUserEnhancedTimeoutCounter())
-  }
-
+  // TODO test w UI
   @Bean
   @RequestScope
   fun communityWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
@@ -125,19 +109,13 @@ class WebClientUserEnhancementConfiguration(
   }
 
   @Bean
+  fun communityApiClientUserEnhanced(@Qualifier("communityWebClientUserEnhancedAppScope") webClient: WebClient): CommunityApiClient {
+    return CommunityApiClient(webClient, nDeliusTimeout, communityApiClientUserEnhancedTimeoutCounter())
+  }
+
+  @Bean
   fun communityApiClientUserEnhancedTimeoutCounter(): Counter = timeoutCounter(communityApiRootUri)
-//  @Bean
-//  @RequestScope
-//  fun assessRisksNeedsWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
-//    return builder.baseUrl(assessRisksNeedsApiRootUri)
-//      .filter { request: ClientRequest, next: ExchangeFunction ->
-//        val filtered = ClientRequest.from(request)
-//          .header(HttpHeaders.AUTHORIZATION, UserContext.getAuthToken())
-//          .build()
-//        next.exchange(filtered)
-//      }
-//      .build()
-//  }
+
   private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
     val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
     val manager = AuthorizedClientServiceOAuth2AuthorizedClientManager(clients, service)

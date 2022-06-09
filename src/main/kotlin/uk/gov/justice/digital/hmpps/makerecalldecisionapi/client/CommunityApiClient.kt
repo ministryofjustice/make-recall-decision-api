@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import io.micrometer.core.instrument.Counter
+import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -32,7 +33,9 @@ class CommunityApiClient(
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
     log.info("About to get registrations for $crn".removeAllCrLf())
-    log.info("webclient::" + webClient.toString())
+
+    log.info(normalizeSpace("Second about to get registrations for $crn"))
+
     val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
     val result = webClient
       .get()
@@ -131,10 +134,6 @@ class CommunityApiClient(
       }
     log.info("Returning all offender details for $crn".removeAllCrLf())
     return result
-    //The stacktrace has been enhanced by Reactor, refer to additional information below:
-    //Error has been observed at the following site(s):
-    //	*__checkpoint ⇢ 404 from GET https://community-api-secure.test.delius.probation.hmpps.dsd.io/secure/offenders/crn/X098092/all [DefaultWebClient]
-    //Original Stack Trace:
   }
 
   fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
