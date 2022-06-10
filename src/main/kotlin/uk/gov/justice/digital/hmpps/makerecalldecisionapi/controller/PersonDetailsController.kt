@@ -21,10 +21,11 @@ class PersonDetailsController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/personal-details")
   @Operation(summary = "WIP: Returns an overview of the person details")
-  suspend fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
+//  suspend fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
+   fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
     log.info(normalizeSpace("Person details endpoint hit for CRN: $crn"))
     return personDetailsService.getPersonDetails(crn)
   }
