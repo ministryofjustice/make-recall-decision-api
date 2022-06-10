@@ -30,7 +30,7 @@ class LicenceHistoryController(
     return licenceHistoryService.getLicenceHistory(crn, true)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/all-licence-history")
   @Operation(summary = "Returns all details of a case licence history")
   suspend fun allLicenseHistory(@PathVariable("crn") crn: String): LicenceHistoryResponse {
