@@ -21,7 +21,7 @@ class PersonDetailsController(
   }
 
   // TODO make suspendable and try with await(..) run tests first, then app, then other EPS
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/personal-details")
   @Operation(summary = "WIP: Returns an overview of the person details")
   fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
