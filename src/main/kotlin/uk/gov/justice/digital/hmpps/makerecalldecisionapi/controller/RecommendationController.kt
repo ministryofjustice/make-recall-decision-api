@@ -23,7 +23,8 @@ class RecommendationController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasRole('ROLE_PROBATION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/cases/{crn}/recommendation")
   @Operation(summary = "WIP: Creates a recommendation")
   suspend fun recommendation(

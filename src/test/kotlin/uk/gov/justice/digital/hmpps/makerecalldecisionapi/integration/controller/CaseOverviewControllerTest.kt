@@ -27,7 +27,8 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -54,7 +55,8 @@ class CaseOverviewControllerTest(
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isOk
@@ -75,7 +77,8 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -97,7 +100,8 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -118,7 +122,8 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -139,7 +144,8 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError

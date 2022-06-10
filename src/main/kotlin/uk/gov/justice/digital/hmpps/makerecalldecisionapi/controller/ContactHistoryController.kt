@@ -21,7 +21,8 @@ class ContactHistoryController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasRole('ROLE_PROBATION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/contact-history")
   @Operation(summary = "Returns all details of a case contact history")
   suspend fun allContactHistory(@PathVariable("crn") crn: String): ContactHistoryResponse {
