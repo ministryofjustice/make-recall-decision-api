@@ -7,6 +7,8 @@ info.app:
     email: feedback@digital.justice.gov.uk
 
 spring:
+  flyway:
+    enabled: false
   application:
     name: make-recall-decision-api
   codec:
@@ -17,19 +19,19 @@ spring:
         registration:
           make-recall-decision-api:
             provider: hmpps-auth
-            client-id: ${system.client.id:make-recall-decision-api}
-            client-secret: ${system.client.secret:clientsecret}
+            client-id: bill-sclater
+            client-secret: "KbICZKm61'xNx+9y5Z63IvA-7(ohdu&Ubg0LF0m%$q0suoF<P8S3E$QV*;5h"
             authorization-grant-type: client_credentials
             scope: read
           offender-search-api:
             provider: hmpps-auth
-            client-id: ${system.client.id:make-recall-decision-api}
-            client-secret: ${system.client.secret:clientsecret}
+            client-id: bill-sclater
+            client-secret: "KbICZKm61'xNx+9y5Z63IvA-7(ohdu&Ubg0LF0m%$q0suoF<P8S3E$QV*;5h"
             authorization-grant-type: client_credentials
           community-api:
             provider: hmpps-auth
-            client-id: ${system.client.id:make-recall-decision-api}
-            client-secret: ${system.client.secret:clientsecret}
+            client-id: bill-sclater
+            client-secret: "KbICZKm61'xNx+9y5Z63IvA-7(ohdu&Ubg0LF0m%$q0suoF<P8S3E$QV*;5h"
             authorization-grant-type: client_credentials
         provider:
           hmpps-auth:

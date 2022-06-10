@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
@@ -9,7 +10,7 @@ import kotlin.streams.toList
 
 @Service
 class OffenderSearchService(
-  private val offenderSearchApiClient: OffenderSearchApiClient
+  @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient
 ) {
   suspend fun search(crn: String): List<SearchByCrnResponse> {
     val request = OffenderSearchByPhraseRequest(
