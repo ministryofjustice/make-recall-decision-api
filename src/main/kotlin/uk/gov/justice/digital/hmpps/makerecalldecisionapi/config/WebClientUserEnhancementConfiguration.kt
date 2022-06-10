@@ -9,6 +9,7 @@ import io.micrometer.core.instrument.Tags
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -36,20 +37,16 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.util.StringUtils
 import org.springframework.web.context.annotation.RequestScope
-import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.util.UriBuilder
-import reactor.core.publisher.Mono
 import reactor.netty.Connection
 import reactor.netty.http.client.HttpClient
 import reactor.netty.tcp.TcpClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.text.ParseException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -78,7 +75,7 @@ class ClientTrackingInterceptor : HandlerInterceptor {
           .orElse(null)
         clientDetails!!.setClientDetails(clientId, username)
       } catch (e: ParseException) {
-//        log.warn("problem decoding jwt public key for application insights", e)
+        log.warn("problem decoding jwt public key for application insights", e)
       }
     }
     return true
@@ -88,6 +85,9 @@ class ClientTrackingInterceptor : HandlerInterceptor {
   private fun getClaimsFromJWT(token: String): JWTClaimsSet {
     val signedJWT = SignedJWT.parse(token.replace("Bearer ", ""))
     return signedJWT.jwtClaimsSet
+  }
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }
 
@@ -122,10 +122,10 @@ class ClientDetails(
 
   override fun getCurrentAuditor(): Optional<String> {
     if (Companion.clientId.get() == null && Companion.username.get() == null) {
-//      log.warn(
-//        "Unable to retrieve clientId or username from ClientDetails, getCurrentAuditor() may have been " +
-//                "called from an asynchronous Reactor context"
-//      )
+      log.warn(
+        "Unable to retrieve clientId or username from ClientDetails, getCurrentAuditor() may have been " +
+                "called from an asynchronous Reactor context"
+      )
       return Optional.empty()
     }
     return Optional.ofNullable(
@@ -140,6 +140,9 @@ class ClientDetails(
   companion object {
     private val clientId = ThreadLocal<String?>()
     private val username = ThreadLocal<String?>()
+
+      private val log = LoggerFactory.getLogger(this::class.java)
+
   }
 }
 
@@ -179,50 +182,15 @@ class RestClientHelper(
 
   private fun addSpecAuthAttribute(spec: RequestHeadersSpec<*>, path: String): RequestHeadersSpec<*> {
     if (disableAuthentication!!) {
-//      log.info(String.format("Skipping authentication with community api for call to %s", path))
+      log.info(String.format("Skipping authentication with community api for call to %s", path))
       return spec
     }
-//    log.info(String.format("Authenticating with %s for call to %s", oauthClient, path))
+    log.info(String.format("Authenticating with %s for call to %s", oauthClient, path))
     return spec.attributes(ServletOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId(oauthClient))
   }
 
-//  fun handleOffenderError(crn: String?, clientResponse: ClientResponse): Mono<out Throwable?> {
-//    if (HttpStatus.NOT_FOUND == clientResponse.statusCode()) {
-//      return Mono.error(PersonNotFoundException(crn!!)) // TODO enrich
-//    }
-//    return if (HttpStatus.FORBIDDEN == clientResponse.statusCode()) {
-//      clientResponse.bodyToMono(CommunityApiError::class.java)
-//        .flatMap { error -> Mono.error { error } }
-//    } else handleError(clientResponse)
-//  }
-
-//  fun handleConvictionError(crn: String?, convictionId: Long?, clientResponse: ClientResponse): Mono<out Throwable?> {
-//    return if (HttpStatus.NOT_FOUND == clientResponse.statusCode()) {
-//      Mono.error(ConvictionNotFoundException(crn, convictionId))
-//    } else handleError(clientResponse)
-//  }
-
-//  fun handleCustodialStatusError(crn: String?, convictionId: Long?, sentenceId: Long?, clientResponse: ClientResponse): Mono<out Throwable?> {
-//    return if (HttpStatus.NOT_FOUND == clientResponse.statusCode()) {
-//      Mono.error(CustodialStatusNotFoundException(crn, convictionId, sentenceId))
-//    } else handleError(clientResponse)
-//  }
-
-//  fun handleNsiError(crn: String?, convictionId: Long?, nsiId: Long?, clientResponse: ClientResponse): Mono<out Throwable?> {
-//    return if (HttpStatus.NOT_FOUND == clientResponse.statusCode()) {
-//      Mono.error(NsiNotFoundException(crn, convictionId, nsiId))
-//    } else handleError(clientResponse)
-//  }
-
-  private fun handleError(clientResponse: ClientResponse): Mono<out Throwable?> {
-    val httpStatus = clientResponse.statusCode()
-    throw WebClientResponseException.create(
-      httpStatus.value(),
-      httpStatus.name,
-      clientResponse.headers().asHttpHeaders(),
-      clientResponse.toString().toByteArray(),
-      StandardCharsets.UTF_8
-    )
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }
 
@@ -322,26 +290,6 @@ class WebClientUserEnhancementConfiguration(
 
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
     return authorizedClientManager
-//    val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
-//    val manager = AuthorizedClientServiceOAuth2AuthorizedClientManager(clients, service)
-//
-//    val defaultClientCredentialsTokenResponseClient = DefaultClientCredentialsTokenResponseClient()
-//    val authentication = SecurityContextHolder.getContext().authentication
-//
-//    defaultClientCredentialsTokenResponseClient.setRequestEntityConverter { grantRequest: OAuth2ClientCredentialsGrantRequest ->
-//      val converter = CustomOAuth2ClientCredentialsGrantRequestEntityConverter()
-//      val username = authentication.name
-//      converter.enhanceWithUsername(grantRequest, username)
-//    }
-//
-//    val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
-//      .clientCredentials { clientCredentialsGrantBuilder: OAuth2AuthorizedClientProviderBuilder.ClientCredentialsGrantBuilder ->
-//        clientCredentialsGrantBuilder.accessTokenResponseClient(defaultClientCredentialsTokenResponseClient)
-//      }
-//      .build()
-//
-//    manager.setAuthorizedClientProvider(authorizedClientProvider)
-//    return manager
   }
 
   private fun getOAuthWebClient(
