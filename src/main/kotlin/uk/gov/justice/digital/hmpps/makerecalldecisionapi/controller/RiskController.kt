@@ -17,7 +17,7 @@ class RiskController {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
   fun risk(@PathVariable("crn") crn: Crn): String {
