@@ -22,7 +22,7 @@ class OffenderSearchController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasRole('ROLE_PROBATION')")
   @GetMapping("/search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN")
   suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
