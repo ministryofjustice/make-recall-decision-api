@@ -21,7 +21,7 @@ class PersonDetailsController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasRole('ROLE_PROBATION')")
   @GetMapping("/cases/{crn}/personal-details")
   @Operation(summary = "WIP: Returns an overview of the person details")
   suspend fun personDetails(@PathVariable("crn") crn: String): PersonDetailsResponse {
