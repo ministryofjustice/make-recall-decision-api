@@ -53,7 +53,7 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.contactTypeGroups[0].groupId").isEqualTo("1")
         .jsonPath("$.contactTypeGroups[0].label").isEqualTo("Appointment")
         .jsonPath("$.contactTypeGroups[0].contactTypeCodes[0]").isEqualTo("COAP")
-        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("unknown")
+        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("6")
         .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Unknown")
         .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
     }
@@ -97,7 +97,7 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.contactTypeGroups[0].groupId").isEqualTo("1")
         .jsonPath("$.contactTypeGroups[0].label").isEqualTo("Appointment")
         .jsonPath("$.contactTypeGroups[0].contactTypeCodes[0]").isEqualTo("COAP")
-        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("unknown")
+        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("6")
         .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Unknown")
         .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
     }
