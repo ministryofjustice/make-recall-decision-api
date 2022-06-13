@@ -3,10 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGroup
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import kotlin.streams.toList
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
 
 @Service
 class LicenceHistoryService(
@@ -17,11 +19,13 @@ class LicenceHistoryService(
   suspend fun getLicenceHistory(crn: String, filterContacts: Boolean): LicenceHistoryResponse {
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
     val contactSummary = getContactSummary(crn, filterContacts)
+    val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
     val releaseSummary = getReleaseSummary(crn)
 
     return LicenceHistoryResponse(
       personalDetailsOverview = personalDetailsOverview,
       contactSummary = contactSummary,
+      contactTypeGroups = contactTypeGroups,
       releaseSummary = releaseSummary,
     )
   }
@@ -42,6 +46,37 @@ class LicenceHistoryService(
           systemGenerated = it.type?.systemGenerated
         )
       }?.toList() ?: emptyList()
+  }
+
+  private fun buildRelevantContactTypeGroups(contactSummary: List<ContactSummaryResponse>): List<ContactGroupResponse?> {
+    val allRelevantContacts = contactSummary.distinctBy { it.code }
+
+    val contactGroups = ContactGroupsCsvReader.getContactGroups().groupBy(ContactGroup::groupId)
+      .entries.mapNotNull { (id, contactGroups) ->
+        val contacts = contactGroups.map { it.code }.filter { i -> allRelevantContacts.any { it.code == i } }
+        if (contacts.isNotEmpty())
+          ContactGroupResponse(id, contactGroups.first().groupName, contacts)
+        else
+          null
+      }
+
+    return addUnknownContactGroupToList(allRelevantContacts, contactGroups)
+  }
+
+  private fun addUnknownContactGroupToList(
+    allRelevantContacts: List<ContactSummaryResponse>,
+    existingContacts: List<ContactGroupResponse>
+  ): List<ContactGroupResponse> {
+    val unknownContacts = allRelevantContacts.filter {
+      relevantContact ->
+      ContactGroupsCsvReader.getContactGroups().none { it.code == relevantContact.code }
+    }
+    val codes = unknownContacts.mapNotNull { it.code }
+
+    return if (codes.isNotEmpty())
+      existingContacts + ContactGroupResponse("unknown", "Unknown", codes)
+    else
+      existingContacts
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {

@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
@@ -55,7 +56,7 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
-      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), allReleaseSummariesResponse())))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), allReleaseSummariesResponse())))
     }
   }
 
@@ -73,7 +74,7 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), null)))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), null)))
     }
   }
 
@@ -91,7 +92,7 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), allReleaseSummariesResponse())))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), emptyList(), allReleaseSummariesResponse())))
     }
   }
 
@@ -109,7 +110,7 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn, true)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), null)))
+      assertThat(response, equalTo(LicenceHistoryResponse(expectedPersonDetailsResponse(), emptyList(), emptyList(), null)))
     }
   }
 
@@ -134,7 +135,7 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
         notes = "Comment added by John Smith on 05/05/2022",
         enforcementAction = null,
         systemGenerated = false,
-        code = "1234"
+        code = "COAI"
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -143,7 +144,63 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
         notes = "This is a test",
         enforcementAction = "Enforcement Letter Requested",
         systemGenerated = true,
-        code = "1234"
+        code = "COAI"
+      ),
+      ContactSummaryResponse(
+        contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
+        descriptionType = "Planned visit",
+        outcome = "Planned test",
+        notes = "This is a test",
+        enforcementAction = null,
+        systemGenerated = true,
+        code = "COAP"
+      ),
+      ContactSummaryResponse(
+        contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
+        descriptionType = "Home visit",
+        outcome = "Testing",
+        notes = "This is another test",
+        enforcementAction = null,
+        systemGenerated = true,
+        code = "CHVS"
+      ),
+      ContactSummaryResponse(
+        contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
+        descriptionType = "I am unknown",
+        outcome = "Unknown contact",
+        notes = "This is an unknown test",
+        enforcementAction = null,
+        systemGenerated = true,
+        code = "ABCD"
+      ),
+      ContactSummaryResponse(
+        contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
+        descriptionType = "I am also unknown",
+        outcome = "Another unknown contact",
+        notes = "This is another unknown test",
+        enforcementAction = null,
+        systemGenerated = true,
+        code = "EFGH"
+      )
+    )
+  }
+
+  private fun expectedContactTypeGroupsResponse(): List<ContactGroupResponse> {
+    return listOf(
+      ContactGroupResponse(
+        groupId = "1",
+        label = "Appointment",
+        contactTypeCodes = listOf("COAI", "COAP")
+      ),
+      ContactGroupResponse(
+        groupId = "2",
+        label = "Home Visit",
+        contactTypeCodes = listOf("CHVS")
+      ),
+      ContactGroupResponse(
+        groupId = "unknown",
+        label = "Unknown",
+        contactTypeCodes = listOf("ABCD", "EFGH")
       )
     )
   }
@@ -153,18 +210,46 @@ class LicenceHistoryServiceTest : ServiceTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = false, code = "1234", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Registration Review", systemGenerated = false, code = "COAI", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison", systemGenerated = true, code = "1234", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Police Liaison", systemGenerated = true, code = "COAI", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-        )
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-12T10:39Z"),
+          type = ContactType(description = "Planned visit", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
+          outcome = ContactOutcome(description = "Planned test"),
+          notes = "This is a test",
+          enforcement = null,
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-11T10:39Z"),
+          type = ContactType(description = "Home visit", systemGenerated = true, code = "CHVS", nationalStandard = false, appointment = false),
+          outcome = ContactOutcome(description = "Testing"),
+          notes = "This is another test",
+          enforcement = null
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
+          type = ContactType(description = "I am unknown", systemGenerated = true, code = "ABCD", nationalStandard = false, appointment = false),
+          outcome = ContactOutcome(description = "Unknown contact"),
+          notes = "This is an unknown test",
+          enforcement = null,
+        ),
+        Content(
+          contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
+          type = ContactType(description = "I am also unknown", systemGenerated = true, code = "EFGH", nationalStandard = false, appointment = false),
+          outcome = ContactOutcome(description = "Another unknown contact"),
+          notes = "This is another unknown test",
+          enforcement = null,
+        ),
       )
     )
   }

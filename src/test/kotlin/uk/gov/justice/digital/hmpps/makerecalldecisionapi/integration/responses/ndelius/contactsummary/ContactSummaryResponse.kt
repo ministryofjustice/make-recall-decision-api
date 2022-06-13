@@ -8,7 +8,7 @@ fun contactSummaryResponse() = """
             "contactStart": "2022-06-03T08:00:00+01:00",
             "contactEnd": "2022-06-03T00:00:00+01:00",
             "type": {
-                "code": "ERGR",
+                "code": "COAP",
                 "description": "Registration Review",
                 "shortDescription": "ERGR - SGC",
                 "appointment": false,
