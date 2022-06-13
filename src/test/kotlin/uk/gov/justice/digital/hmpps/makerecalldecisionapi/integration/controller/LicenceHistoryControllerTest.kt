@@ -49,6 +49,13 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.contactSummary[1].outcome").isEqualTo("Test - Not Clean / Not Acceptable / Unsuitable")
         .jsonPath("$.contactSummary[1].notes").isEqualTo("This is a test")
         .jsonPath("$.contactSummary[1].enforcementAction").isEqualTo("Enforcement Letter Requested")
+        .jsonPath("$.contactTypeGroups.length()").isEqualTo(2)
+        .jsonPath("$.contactTypeGroups[0].groupId").isEqualTo("1")
+        .jsonPath("$.contactTypeGroups[0].label").isEqualTo("Appointment")
+        .jsonPath("$.contactTypeGroups[0].contactTypeCodes[0]").isEqualTo("COAP")
+        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("unknown")
+        .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Unknown")
+        .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
     }
   }
 
@@ -86,6 +93,13 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.contactSummary[1].outcome").isEqualTo("Test - Not Clean / Not Acceptable / Unsuitable")
         .jsonPath("$.contactSummary[1].notes").isEqualTo("This is a test")
         .jsonPath("$.contactSummary[1].enforcementAction").isEqualTo("Enforcement Letter Requested")
+        .jsonPath("$.contactTypeGroups.length()").isEqualTo(2)
+        .jsonPath("$.contactTypeGroups[0].groupId").isEqualTo("1")
+        .jsonPath("$.contactTypeGroups[0].label").isEqualTo("Appointment")
+        .jsonPath("$.contactTypeGroups[0].contactTypeCodes[0]").isEqualTo("COAP")
+        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("unknown")
+        .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Unknown")
+        .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
     }
   }
 
@@ -111,6 +125,7 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
         .jsonPath("$.contactSummary").isArray()
         .jsonPath("$.contactSummary.length()").isEqualTo("0")
+        .jsonPath("$.contactTypeGroups.length()").isEqualTo(0)
     }
   }
 
@@ -143,6 +158,7 @@ class LicenceHistoryControllerTest(
         .jsonPath("$.releaseSummary.lastRecall").isEmpty()
         .jsonPath("$.contactSummary").isArray()
         .jsonPath("$.contactSummary.length()").isEqualTo("2")
+        .jsonPath("$.contactTypeGroups.length()").isEqualTo("2")
     }
   }
 
