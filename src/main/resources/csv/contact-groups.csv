@@ -5,3 +5,7 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 2,Home Visit,CHVS,Home Visit to Case (NS)
 2,Home Visit,C253,Home Visit - Not Notified
 3,Internal communication,CM3B,eMail/Text to Other
+4,Custody and prison,EPOMAT,Prison Offender Manager - Automatic Transfer
+5,Drugs and alcohol,CGTS,Test
+6,Police,C204,Police Liaison
+6,Police,CARR,Arrest Incident
