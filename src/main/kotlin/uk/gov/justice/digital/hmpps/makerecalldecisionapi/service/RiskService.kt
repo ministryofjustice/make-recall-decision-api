@@ -1,7 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
@@ -15,6 +16,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -22,11 +25,11 @@ import java.util.Locale
 
 @Service
 class RiskService(
-  private val communityApiClient: CommunityApiClient,
-  private val arnApiClient: ArnApiClient
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient
 ) {
   suspend fun getRisk(crn: String): RiskResponse {
-    val riskSummaryResponse = arnApiClient.getRiskSummary(crn).awaitFirst()
+    val riskSummaryResponse = getValue(arnApiClient.getRiskSummary(crn))!!
     val personalDetailsOverview = fetchPersonalDetails(crn)
     val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
     val natureOfRisk = extractNatureOfRisk(riskSummaryResponse)
@@ -136,7 +139,7 @@ class RiskService(
   }
 
   private suspend fun fetchPersonalDetails(crn: String): RiskPersonalDetails {
-    val offenderDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
+    val offenderDetails = getValue(communityApiClient.getAllOffenderDetails(crn))
     val age = offenderDetails?.dateOfBirth?.until(LocalDate.now())?.years
     val firstName = offenderDetails?.firstName ?: ""
     val surname = offenderDetails?.surname ?: ""
@@ -154,7 +157,7 @@ class RiskService(
   }
 
   private suspend fun fetchMappa(crn: String): Mappa {
-    val mappa = communityApiClient.getAllMappaDetails(crn).awaitFirst()
+    val mappa = getValue(communityApiClient.getAllMappaDetails(crn))!!
     val reviewDate = mappa.reviewDate?.format(
       DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
         .withLocale(Locale.UK)
@@ -164,5 +167,18 @@ class RiskService(
       isNominal = true,
       lastUpdated = reviewDate
     )
+  }
+
+  private fun <T : Any> getValue(mono: Mono<T>?): T? {
+    return try {
+      val value = mono?.block()
+      value ?: value
+    } catch (wrappedException: RuntimeException) {
+      when (wrappedException.cause) {
+        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
+        is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
+        else -> throw wrappedException
+      }
+    }
   }
 }
