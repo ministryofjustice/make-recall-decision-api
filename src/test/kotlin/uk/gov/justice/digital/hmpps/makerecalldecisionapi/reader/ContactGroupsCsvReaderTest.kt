@@ -16,7 +16,7 @@ class ContactGroupsCsvReaderTest {
   @Test
   fun `given a csv file then read the contents and map to list of contact groups`() {
     val result = ContactGroupsCsvReader.getContactGroups()
-    assertEquals(6, result.size)
+    assertEquals(10, result.size)
     assertEquals("1", result.get(0).groupId)
     assertEquals("Appointment", result.get(0).groupName)
     assertEquals("COAI", result.get(0).code)
