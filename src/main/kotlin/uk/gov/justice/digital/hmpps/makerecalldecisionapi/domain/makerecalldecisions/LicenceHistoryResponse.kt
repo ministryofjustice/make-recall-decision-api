@@ -5,5 +5,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Release
 data class LicenceHistoryResponse(
   val personalDetailsOverview: PersonDetails? = null,
   val contactSummary: List<ContactSummaryResponse>? = null,
+  val contactTypeGroups: List<ContactGroupResponse?>? = null,
   val releaseSummary: ReleaseSummaryResponse? = null,
 )

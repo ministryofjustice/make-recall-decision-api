@@ -244,7 +244,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Registration Review", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
@@ -281,7 +281,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Registration Review", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
