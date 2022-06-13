@@ -11,7 +11,7 @@ import java.io.File
 @Component
 class ContactGroupsCsvReader {
   companion object {
-    private val resource: Resource = ClassPathResource("csv/contact-groups.csv")
+    private val resource: Resource = ClassPathResource("contact-groups.csv")
     private val file: File = resource.file
     private var contactGroups: List<ContactGroup>
 
