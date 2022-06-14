@@ -5,24 +5,24 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
 
 @Service
-class LicenceHistoryService(
+class ContactHistoryService(
   private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService
 ) {
 
-  suspend fun getLicenceHistory(crn: String, filterContacts: Boolean): LicenceHistoryResponse {
+  suspend fun getContactHistory(crn: String): ContactHistoryResponse {
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val contactSummary = getContactSummary(crn, filterContacts)
+    val contactSummary = getContactSummary(crn)
     val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
     val releaseSummary = getReleaseSummary(crn)
 
-    return LicenceHistoryResponse(
+    return ContactHistoryResponse(
       personalDetailsOverview = personalDetailsOverview,
       contactSummary = contactSummary,
       contactTypeGroups = contactTypeGroups,
@@ -30,8 +30,8 @@ class LicenceHistoryService(
     )
   }
 
-  private suspend fun getContactSummary(crn: String, filterContacts: Boolean): List<ContactSummaryResponse> {
-    val contactSummaryResponse = communityApiClient.getContactSummary(crn, filterContacts).awaitFirstOrNull()?.content
+  private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
+    val contactSummaryResponse = communityApiClient.getContactSummary(crn).awaitFirstOrNull()?.content
 
     return contactSummaryResponse
       ?.stream()

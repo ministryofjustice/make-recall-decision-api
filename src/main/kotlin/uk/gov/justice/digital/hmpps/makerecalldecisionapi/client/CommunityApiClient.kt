@@ -133,22 +133,14 @@ class CommunityApiClient(
     return result
   }
 
-  fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
+  fun getContactSummary(crn: String): Mono<ContactSummaryResponseCommunity> {
     log.info(normalizeSpace("About to get contact summary for $crn"))
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
-    val url = "/secure/offenders/crn/$crn/contact-summary"
-
     val result = webClient
       .get()
-      .uri {
-        if (filterContacts) {
-          it.path(url).queryParam("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI").build()
-        } else {
-          it.path(url).build()
-        }
-      }
+      .uri("/secure/offenders/crn/$crn//contact-summary")
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
