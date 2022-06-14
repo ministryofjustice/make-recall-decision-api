@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 
-data class LicenceHistoryResponse(
+data class ContactHistoryResponse(
   val personalDetailsOverview: PersonDetails? = null,
   val contactSummary: List<ContactSummaryResponse>? = null,
   val contactTypeGroups: List<ContactGroupResponse?>? = null,

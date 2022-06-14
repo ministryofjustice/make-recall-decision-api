@@ -174,15 +174,11 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun contactSummaryResponse(crn: String, contactSummary: String, filterContacts: Boolean = true, delaySeconds: Long = 0) {
+  protected fun contactSummaryResponse(crn: String, contactSummary: String, delaySeconds: Long = 0) {
     val contactSummaryUrl = "/secure/offenders/crn/$crn/contact-summary"
-    val contactSummaryRequest =
-      if (filterContacts) {
-        request().withPath(contactSummaryUrl)
-          .withQueryStringParameter("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI")
-      } else {
-        request().withPath(contactSummaryUrl)
-      }
+    val contactSummaryRequest = request()
+      .withPath(contactSummaryUrl)
+
     communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(contactSummary)
         .withDelay(Delay.seconds(delaySeconds))

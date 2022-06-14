@@ -12,12 +12,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class LicenceHistoryControllerTest(
+class ContactHistoryControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves licence history details`() {
+  fun `retrieves all contact history details`() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
@@ -28,7 +28,7 @@ class LicenceHistoryControllerTest(
       releaseSummaryResponse(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -60,51 +60,7 @@ class LicenceHistoryControllerTest(
   }
 
   @Test
-  fun `retrieves all licence history details`() {
-    runBlockingTest {
-      val crn = "A12345"
-      allOffenderDetailsResponse(crn)
-      contactSummaryResponse(
-        crn,
-        contactSummaryResponse(),
-        false
-      )
-      releaseSummaryResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/all-licence-history")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
-        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.contactSummary[0].contactStartDate").isEqualTo("2022-06-03T07:00:00Z")
-        .jsonPath("$.contactSummary[0].descriptionType").isEqualTo("Registration Review")
-        .jsonPath("$.contactSummary[0].outcome").isEmpty()
-        .jsonPath("$.contactSummary[0].notes").isEqualTo("Comment added by John Smith on 05/05/2022")
-        .jsonPath("$.contactSummary[0].enforcementAction").isEmpty()
-        .jsonPath("$.contactSummary[1].contactStartDate").isEqualTo("2022-05-10T10:39:00Z")
-        .jsonPath("$.contactSummary[1].descriptionType").isEqualTo("Police Liaison")
-        .jsonPath("$.contactSummary[1].outcome").isEqualTo("Test - Not Clean / Not Acceptable / Unsuitable")
-        .jsonPath("$.contactSummary[1].notes").isEqualTo("This is a test")
-        .jsonPath("$.contactSummary[1].enforcementAction").isEqualTo("Enforcement Letter Requested")
-        .jsonPath("$.contactTypeGroups.length()").isEqualTo(2)
-        .jsonPath("$.contactTypeGroups[0].groupId").isEqualTo("1")
-        .jsonPath("$.contactTypeGroups[0].label").isEqualTo("Appointment")
-        .jsonPath("$.contactTypeGroups[0].contactTypeCodes[0]").isEqualTo("COAP")
-        .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("6")
-        .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Police")
-        .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
-    }
-  }
-
-  @Test
-  fun `given empty contact history then handle licence history response`() {
+  fun `given empty contact history then handle response`() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
@@ -112,7 +68,7 @@ class LicenceHistoryControllerTest(
       releaseSummaryResponse(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -130,7 +86,7 @@ class LicenceHistoryControllerTest(
   }
 
   @Test
-  fun `given no custody release response 400 error then handle licence history response`() {
+  fun `given no custody release response 400 error then handle contact history response`() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
@@ -145,7 +101,7 @@ class LicenceHistoryControllerTest(
       )
 
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -171,7 +127,7 @@ class LicenceHistoryControllerTest(
       releaseSummaryResponse(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -192,7 +148,7 @@ class LicenceHistoryControllerTest(
       releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -209,7 +165,7 @@ class LicenceHistoryControllerTest(
     runBlockingTest {
       val crn = "X123456"
       webTestClient.get()
-        .uri("/cases/$crn/licence-history")
+        .uri("/cases/$crn/contact-history")
         .exchange()
         .expectStatus()
         .isUnauthorized
