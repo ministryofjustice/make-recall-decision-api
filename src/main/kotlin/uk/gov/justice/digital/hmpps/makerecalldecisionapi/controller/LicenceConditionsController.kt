@@ -21,7 +21,7 @@ class LicenceConditionsController(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @PreAuthorize("hasRole('ROLE_PROBATION')")
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/licence-conditions")
   @Operation(summary = "Returns details of the licence conditions on a case")
   suspend fun licenseConditions(@PathVariable("crn") crn: String): LicenceConditionsResponse {
