@@ -4,8 +4,30 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 1,Appointment,COPT,Planned Telephone Contact (NS)
 2,Home Visit,CHVS,Home Visit to Case (NS)
 2,Home Visit,C253,Home Visit - Not Notified
+3,Internal communication,CM3A,eMail/Text from Other
 3,Internal communication,CM3B,eMail/Text to Other
+3,Internal communication,C326,Internal Communications
+3,Internal communication,CI3A,Information - from 3rd Party
+3,Internal communication,CT3A,Phone Contact from Other
+3,Internal communication,CL3A,Letter/Fax from Other
+3,Internal communication,C039,Breach Action - Other Enforcement Letter Sent
+3,Internal communication,CLBR,Breach Action - Breach Letter Sent
 4,Custody and prison,EPOMAT,Prison Offender Manager - Automatic Transfer
+4,Custody and prison,NOMIS003,NOMIS Case Note - Release
+4,Custody and prison,NOMISD,NOMIS Case Notes - General
+4,Custody and prison,NOMIS026,NOMIS Case Note - OMIC Communication
 5,Drugs and alcohol,CGTS,Test
 6,Police,C204,Police Liaison
 6,Police,CARR,Arrest Incident
+7,Safeguarding,SFRR,Safeguarding Check - response received
+7,Safeguarding,SFGC,Safeguarding Check
+7,Case discussion,MO1,Management Oversight - General
+8,Transfers,EPOMIN,Prison Offender Manager - Internal Allocation
+9,Admin,CMS13,CMS - Information & Intelligence Gathering - Low
+10,Letters,AWLI,Breach Action - First Warning Letter Sent
+10,Letters,AWLF,Breach Action - Final Warning Letter Sent
+10,Letters,LCL,Licence Compliance Letter
+11,Communication with PoP,CMOB,eMail/Text to PoP
+11,Communication with PoP,CTOB,Phone Contact to PoP
+11,Communication with PoP,CTXT,Text Message to Send
+12,Uncategorised,CRTUP,Assistance to Court – Update from PP
