@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 data class RiskSummaryResponse(
   val whoIsAtRisk: String?,
@@ -11,7 +11,7 @@ data class RiskSummaryResponse(
   val riskMitigationFactors: String?,
   val riskInCommunity: RiskInCommunity?,
   val riskInCustody: RiskInCustody?,
-  val assessedOn: ZonedDateTime?,
+  val assessedOn: LocalDateTime?,
   val overallRiskLevel: String?
 )
 

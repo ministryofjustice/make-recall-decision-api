@@ -38,6 +38,7 @@ class RiskService(
     val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
     val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
 
+    // TODO no mappa available for D006296 on community API so nullify this field to test on dev
     val mappa = fetchMappa(crn) // TODO find out how isNominal field is derived
     val predictorScores = null // TODO Andrew's API will provide this
     val contingencyPlan = null // TODO Andrew's API will provide this
