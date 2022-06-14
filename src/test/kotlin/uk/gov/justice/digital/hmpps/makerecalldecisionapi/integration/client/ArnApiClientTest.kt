@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 class ArnApiClientTest : IntegrationTestBase() {
@@ -56,7 +56,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           "Public"
         )
       ),
-      assessedOn = ZonedDateTime.parse("2022-05-19T08:26:31.349Z[UTC]"),
+      assessedOn = LocalDateTime.parse("2022-05-19T08:26:31.349"),
       overallRiskLevel = "HIGH"
     )
 

@@ -30,7 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -133,7 +133,7 @@ class RiskServiceTest {
                 medium = null,
                 low = null
               ),
-              assessedOn = ZonedDateTime.parse("2021-10-09T08:26:31.349Z[UTC]"),
+              assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
               overallRiskLevel = null
             )
           }
@@ -258,7 +258,7 @@ class RiskServiceTest {
         "Public"
       )
     ),
-    assessedOn = ZonedDateTime.parse("2021-10-09T08:26:31.349Z[UTC]"),
+    assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
     overallRiskLevel = "HIGH"
   )
 
