@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduceRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.HistoricalScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.NatureOfRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPC
@@ -26,6 +27,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -46,8 +48,10 @@ class RiskService(
     val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
 
     // TODO no mappa available for D006296 on community API so nullify this field to test on dev
-    val mappa = handleFetchMappaApiCall(crn)
-    val predictorScores = handleFetchHistoricalScores(crn) // TODO handle 404
+    val mappa = handleFetchMappaApiCall(crn) //TODO move error handling into fetch!!
+    val predictorScores = PredictorScores(
+      current = null, // TODO
+      historical = fetchHistoricalScores(crn))
     val contingencyPlan = null // TODO Andrew's API will provide this
 
     return RiskResponse(
@@ -65,20 +69,38 @@ class RiskService(
   }
 
   //TODO fetchHistoricalScores implement!!
-  private suspend fun handleFetchHistoricalScores(crn: String): PredictorScores? {
-    return try { fetchHistoricalScores(crn) } catch (e: WebClientResponseException.NotFound) {
+  private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
+    val historicalScoresResponse = try {getValue(arnApiClient.getHistoricalScores(crn))!!}
+    catch (e: WebClientResponseException.NotFound) {
       log.info("No historical scores available for CRN: $crn - ${e.message}")
-      PredictorScores(current = Scores(
-        rsr = RSR(level = "", score = "", type = ""),
-        ospc = OSPC(level = "", score = "", type = ""),
-        ospi = OSPI(level = "", score = "", type = ""),
-        ogrs = null),
-      historical = emptyList())
+      null
     }
+    val ogrsScoresResponse = null ///secure/offenders/crn/{crn}/assessments
+    ///secure/offenders/crn/{crn}/assessments
+    //enrich below with date
+    return historicalScoresResponse?.historicalScores
+      ?.map {
+        HistoricalScore(
+          date = formatDateTimeStamp(it.calculatedDate) ?: "",
+          scores = Scores(
+                  rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
+                  ospc = OSPC(level = "", score = "", type = ""),//TODO contimue
+                  ospi = OSPI(level = "", score = "", type = ""),
+                  ogrs = null // TODO
+          )
+        )
+      } ?: emptyList()
   }
 
+  private fun formatDateTimeStamp(zoneDateTimeString: String) =
+    ZonedDateTime.parse(zoneDateTimeString).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+      .withLocale(Locale.UK)
+  )
+
   private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
-    return try { fetchMappa(crn) } catch (e: WebClientResponseException.NotFound) {
+    return try {
+      fetchMappa(crn)
+    } catch (e: WebClientResponseException.NotFound) {
       log.info("No MAPPA details available for CRN: $crn - ${e.message}")
       Mappa(level = "", isNominal = true, lastUpdated = "")
     }
@@ -185,13 +207,13 @@ class RiskService(
   }
 
   private suspend fun fetchMappa(crn: String): Mappa {
-    val mappa = getValue(communityApiClient.getAllMappaDetails(crn))!!
-    val reviewDate = mappa.reviewDate?.format(
+    val mappaResponse = getValue(communityApiClient.getAllMappaDetails(crn))!!
+    val reviewDate = mappaResponse.reviewDate?.format(
       DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
         .withLocale(Locale.UK)
     )
     return Mappa(
-      level = mappa.levelDescription ?: "",
+      level = mappaResponse.levelDescription ?: "",
       isNominal = true,
       lastUpdated = reviewDate ?: ""
     )
