@@ -179,7 +179,7 @@ class RiskServiceTest {
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
-            mappaResponse.copy(levelDescription = null)
+            mappaResponse.copy(levelDescription = null, reviewDate = null)
           }
         )
 
@@ -209,7 +209,7 @@ class RiskServiceTest {
       assertThat(riskOfSeriousHarm.lastUpdated).isEqualTo("2021-10-09")
       assertThat(mappa.isNominal).isTrue() // TODO how is this derived?
       assertThat(mappa.level).isEqualTo("")
-      assertThat(mappa.lastUpdated).isEqualTo("10 May 2021")
+      assertThat(mappa.lastUpdated).isEqualTo("")
       assertThat(natureOfRisk?.description).isEqualTo("")
       assertThat(whoIsAtRisk?.oasysHeading?.number).isEqualTo("10.1")
       assertThat(whoIsAtRisk?.oasysHeading?.description).isEqualTo("Who is at risk?")
