@@ -9,9 +9,12 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 3,Internal communication,C326,Internal Communications
 3,Internal communication,CI3A,Information - from 3rd Party
 3,Internal communication,CT3A,Phone Contact from Other
+3,Internal communication,CT3B,Phone Contact to Other
 3,Internal communication,CL3A,Letter/Fax from Other
 3,Internal communication,C039,Breach Action - Other Enforcement Letter Sent
 3,Internal communication,CLBR,Breach Action - Breach Letter Sent
+3,Internal communication,C325,Information / Documents Requested
+3,Internal communication,C129,Use of Video Link / Teleconference
 4,Custody and prison,EPOMAT,Prison Offender Manager - Automatic Transfer
 4,Custody and prison,NOMIS003,NOMIS Case Note - Release
 4,Custody and prison,NOMISD,NOMIS Case Notes - General
@@ -21,13 +24,22 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 6,Police,CARR,Arrest Incident
 7,Safeguarding,SFRR,Safeguarding Check - response received
 7,Safeguarding,SFGC,Safeguarding Check
-7,Case discussion,MO1,Management Oversight - General
-8,Transfers,EPOMIN,Prison Offender Manager - Internal Allocation
-9,Admin,CMS13,CMS - Information & Intelligence Gathering - Low
-10,Letters,AWLI,Breach Action - First Warning Letter Sent
-10,Letters,AWLF,Breach Action - Final Warning Letter Sent
-10,Letters,LCL,Licence Compliance Letter
-11,Communication with PoP,CMOB,eMail/Text to PoP
-11,Communication with PoP,CTOB,Phone Contact to PoP
-11,Communication with PoP,CTXT,Text Message to Send
-12,Uncategorised,CRTUP,Assistance to Court – Update from PP
+8,Case discussion,MO1,Management Oversight - General
+9,Transfers,EPOMIN,Prison Offender Manager - Internal Allocation
+10,Admin,CMS13,CMS - Information & Intelligence Gathering - Low
+10,Admin,C113,Clerical Officer Contact
+11,Letters,AWLI,Breach Action - First Warning Letter Sent
+11,Letters,AWLF,Breach Action - Final Warning Letter Sent
+11,Letters,LCL,Licence Compliance Letter
+12,Communication with PoP,CMOB,eMail/Text to PoP
+12,Communication with PoP,CTOB,Phone Contact to PoP
+12,Communication with PoP,CTXT,Text Message to Send
+12,Communication with PoP,CLOB,Letter/Fax to PoP
+12,Communication with PoP,CTOA,Phone Contact from PoP
+13,Electronic monitoring,C063,Contact with Electronic Monitoring Provider
+14,Uncategorised,CRTUP,Assistance to Court – Update from PP
+15,OASys,CSPR,Sentence Plan - Review
+15,OASys,CSPI,Sentence Plan - Initial
+15,OASys,C057,Sentence Plan - Final
+16,Approved premises,C123,AP - Hostel Curfew
+17,MAPPA,CCMM,MAPPA Meeting
