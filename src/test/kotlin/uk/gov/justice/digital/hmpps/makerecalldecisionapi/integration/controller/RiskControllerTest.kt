@@ -161,10 +161,7 @@ class RiskControllerTest(
 //        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
 //        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
-              // TODO let Jon know about change
-        .jsonPath("$.predictorScores.historical[0].calculatedDate").isEqualTo("12 September 2018 at 12:00")
-        .jsonPath("$.predictorScores.historical[0].completedDate").isEqualTo("12 September 2018 at 12:00")
-        .jsonPath("$.predictorScores.historical[0].signedDate").isEqualTo("12 September 2018 at 12:00")
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("12 September 2018 at 12:00")
         .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(12)
         .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
@@ -174,7 +171,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.6)
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-              //TODO these come from Delius!!!!
+  //TODO from delius
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
