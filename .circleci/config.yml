@@ -12,6 +12,9 @@ parameters:
   releases-slack-channel:
     type: string
     default: make-recall-decisions-pipeline
+  e2e-parallelism:
+    type: integer
+    default: 1
 
 slack-fail-post-step: &slack-fail-post-step
   post-steps:
@@ -141,6 +144,11 @@ workflows:
 
       - hmpps/helm_lint:
           name: helm_lint
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+      - e2e_local_test:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
