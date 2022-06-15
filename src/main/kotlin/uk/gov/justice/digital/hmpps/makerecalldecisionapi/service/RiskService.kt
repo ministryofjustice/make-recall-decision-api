@@ -11,10 +11,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduceRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.NatureOfRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OasysHeading
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskPersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
@@ -42,7 +47,7 @@ class RiskService(
 
     // TODO no mappa available for D006296 on community API so nullify this field to test on dev
     val mappa = handleFetchMappaApiCall(crn)
-    val predictorScores = null // TODO Andrew's API will provide this
+    val predictorScores = handleFetchHistoricalScores(crn) // TODO handle 404
     val contingencyPlan = null // TODO Andrew's API will provide this
 
     return RiskResponse(
@@ -57,6 +62,19 @@ class RiskService(
       factorsToReduceRisk = factorsToReduceRisk,
       whenRiskHighest = whenRiskHighest
     )
+  }
+
+  //TODO fetchHistoricalScores implement!!
+  private suspend fun handleFetchHistoricalScores(crn: String): PredictorScores? {
+    return try { fetchHistoricalScores(crn) } catch (e: WebClientResponseException.NotFound) {
+      log.info("No historical scores available for CRN: $crn - ${e.message}")
+      PredictorScores(current = Scores(
+        rsr = RSR(level = "", score = "", type = ""),
+        ospc = OSPC(level = "", score = "", type = ""),
+        ospi = OSPI(level = "", score = "", type = ""),
+        ogrs = null),
+      historical = emptyList())
+    }
   }
 
   private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {

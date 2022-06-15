@@ -20,7 +20,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.mappaDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
@@ -30,7 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.roSHSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -81,6 +82,17 @@ abstract class IntegrationTestBase {
     offenderSearchApi.stop()
     gotenbergMock.stop()
     oauthMock.stop()
+  }
+
+  // TODO will need a test for timeout!!
+  protected fun historicalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val historicalScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/rsr/history")
+
+    oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(historicalRiskScoresResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
   }
 
   protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
