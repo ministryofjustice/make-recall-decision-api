@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -39,7 +41,7 @@ class RiskService(
     val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
 
     // TODO no mappa available for D006296 on community API so nullify this field to test on dev
-    val mappa = fetchMappa(crn) // TODO find out how isNominal field is derived
+    val mappa = handleFetchMappaApiCall(crn)
     val predictorScores = null // TODO Andrew's API will provide this
     val contingencyPlan = null // TODO Andrew's API will provide this
 
@@ -55,6 +57,13 @@ class RiskService(
       factorsToReduceRisk = factorsToReduceRisk,
       whenRiskHighest = whenRiskHighest
     )
+  }
+
+  private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
+    return try { fetchMappa(crn) } catch (e: WebClientResponseException.NotFound) {
+      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
+      Mappa(level = "", isNominal = true, lastUpdated = "")
+    }
   }
 
   private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse): NatureOfRisk {
@@ -166,7 +175,7 @@ class RiskService(
     return Mappa(
       level = mappa.levelDescription ?: "",
       isNominal = true,
-      lastUpdated = reviewDate
+      lastUpdated = reviewDate ?: ""
     )
   }
 
@@ -181,5 +190,9 @@ class RiskService(
         else -> throw wrappedException
       }
     }
+  }
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }

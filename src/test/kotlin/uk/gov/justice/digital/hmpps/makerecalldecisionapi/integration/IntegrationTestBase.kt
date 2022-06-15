@@ -84,12 +84,20 @@ abstract class IntegrationTestBase {
   }
 
   protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val allOffenderDetailsRequest =
+    val mappaDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
 
-    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
+    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse())
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noMappaDetailsResponse(crn: String) {
+    val mappaDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
+    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
+      response().withStatusCode(404)
     )
   }
 
