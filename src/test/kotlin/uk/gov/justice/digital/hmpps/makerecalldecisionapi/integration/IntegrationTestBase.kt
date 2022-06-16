@@ -84,7 +84,6 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
-  // TODO will need a test for timeout!!
   protected fun historicalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val historicalScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/rsr/history")
@@ -92,6 +91,15 @@ abstract class IntegrationTestBase {
     oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(historicalRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noHistoricalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val historicalScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/rsr/history")
+
+    oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
+      response().withStatusCode(404)
     )
   }
 

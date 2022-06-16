@@ -79,7 +79,7 @@ data class OSPI(
 
 data class OGRS(
   val level: String?,
-  val score: Int?,
+  val score: String?,
   val type: String?
 )
 
