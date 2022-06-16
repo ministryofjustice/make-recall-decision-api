@@ -7,7 +7,5 @@ data class HistoricalScoreResponse(
   val ospcScoreLevel: String?,
   val ospiPercentageScore: String?,
   val ospiScoreLevel: String?,
-  val calculatedDate: String?,
-  val completedDate: String?,
-  val signedDate: String?
+  val calculatedDate: String?
 )

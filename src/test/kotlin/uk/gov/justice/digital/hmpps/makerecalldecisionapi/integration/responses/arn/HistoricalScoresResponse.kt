@@ -5,7 +5,7 @@ fun historicalRiskScoresResponse() = """
   {
     "rsrPercentageScore": 18,
     "rsrScoreLevel": "HIGH",
-    "ospcPercentageScore": 6.8,
+    "ospcPercentageScore": 6.2,
     "ospcScoreLevel": "LOW",
     "ospiPercentageScore": 8.1,
     "ospiScoreLevel": "MEDIUM",

@@ -16,12 +16,13 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk data when no mappa details available`() {
+  fun `retrieves risk data when no mappa details or historical scores available`() {
     runBlockingTest {
       val crn = "A12345"
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
+      noHistoricalRiskScoresResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -58,7 +59,19 @@ class RiskControllerTest(
         .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
         .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
         .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
-
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
 //        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
 //        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
@@ -71,32 +84,6 @@ class RiskControllerTest(
 //        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
 //        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("14 May 2019 at 12:00")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(18)
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.8)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(5.43)
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-//        .jsonPath("$.predictorScores.historical[1].date").isEqualTo("12 September 2018 at 12:00")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.score").isEqualTo(6.2)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.score").isEqualTo(8.6)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.score").isEqualTo(40)
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo("OGRS")
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -149,6 +136,19 @@ class RiskControllerTest(
         .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
         .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
         .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("12 September 2018 12:00")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(18)
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.2)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
 //        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
 //        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
@@ -161,20 +161,6 @@ class RiskControllerTest(
 //        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
 //        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
-        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("12 September 2018 at 12:00")
-        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(12)
-        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.2)
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.6)
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-        // TODO from delius
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -196,7 +182,7 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on OASYS ARN Api timeout`() {
+  fun `gateway timeout 503 given on OASYS ARN Api riskSummary endpoint`() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
@@ -213,6 +199,28 @@ class RiskControllerTest(
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: ARN API Client - risk summary endpoint: [No response within $oasysArnClientTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on OASYS ARN historical scores endpoint`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponse(crn)
+      mappaDetailsResponse(crn)
+      roSHSummaryResponse(crn)
+      historicalRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: ARN API Client - historical scores endpoint: [No response within $oasysArnClientTimeout seconds]")
     }
   }
 

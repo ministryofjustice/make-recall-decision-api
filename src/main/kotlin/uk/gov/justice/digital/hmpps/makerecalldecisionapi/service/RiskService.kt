@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduce
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.HistoricalScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.NatureOfRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OasysHeading
@@ -23,6 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
@@ -74,30 +76,38 @@ class RiskService(
       getValue(arnApiClient.getHistoricalScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No historical scores available for CRN: $crn - ${e.message}")
-      null
+      listOf(
+        HistoricalScoreResponse(
+          rsrPercentageScore = "",
+          rsrScoreLevel = "",
+          ospcPercentageScore = "",
+          ospcScoreLevel = "",
+          ospiPercentageScore = "",
+          ospiScoreLevel = "",
+          calculatedDate = null
+        )
+      )
     }
-    val ogrsScoresResponse = null // secure/offenders/crn/{crn}/assessments // TODO
-    // nsecure/offenders/crn/{crn}/assessments
-    // enrich below with date
     return historicalScoresResponse
-      ?.map {
+      .map {
         HistoricalScore(
           date = it.calculatedDate?.let { it1 -> formatDateTimeStamp(it1) } ?: "",
           scores = Scores(
-            rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
-            ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
-            ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
-            ogrs = null // TODO
+            rsr = RSR(level = it.rsrScoreLevel, score = it.rsrPercentageScore, type = "RSR"),
+            ospc = OSPC(level = it.ospcScoreLevel, score = it.ospcPercentageScore, type = "OSP/C"),
+            ospi = OSPI(level = it.ospiScoreLevel, score = it.ospiPercentageScore, type = "OSP/I"),
+            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO - discuss with ARN team
           )
         )
-      } ?: emptyList()
+      }
   }
 
-  private fun formatDateTimeStamp(zoneDateTimeString: String) =
-    ZonedDateTime.parse(zoneDateTimeString).format(
-      DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+  private fun formatDateTimeStamp(zoneDateTimeString: String): String {
+    return ZonedDateTime.parse(zoneDateTimeString).format(
+      DateTimeFormatter.ofPattern("dd MMMM YYYY HH:mm")
         .withLocale(Locale.UK)
     )
+  }
 
   private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse): NatureOfRisk {
     return NatureOfRisk(
