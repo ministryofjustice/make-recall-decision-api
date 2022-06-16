@@ -112,7 +112,7 @@ class RiskControllerTest(
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
-      historicalRiskScoresResponse(crn) //TODO update stub to match expectations
+      historicalRiskScoresResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -171,7 +171,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.6)
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-  //TODO from delius
+        // TODO from delius
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")

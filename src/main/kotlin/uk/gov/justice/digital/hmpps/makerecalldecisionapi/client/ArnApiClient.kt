@@ -6,7 +6,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoresResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
@@ -26,7 +26,7 @@ class ArnApiClient(
       .retrieve()
       .onStatus(
         { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw PersonNotFoundException("No details available for crn: $crn") } //TODO just return 200 and blank?
+        { throw PersonNotFoundException("No details available for crn: $crn") } // TODO just return 200 and blank?
       )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(arnClientTimeout))
@@ -38,8 +38,8 @@ class ArnApiClient(
       }
   }
 
-  fun getHistoricalScores(crn: String): Mono<HistoricalScoresResponse> {
-    val responseType = object : ParameterizedTypeReference<HistoricalScoresResponse>() {}
+  fun getHistoricalScores(crn: String): Mono<List<HistoricalScoreResponse>> {
+    val responseType = object : ParameterizedTypeReference<List<HistoricalScoreResponse>>() {}
     return webClient
       .get()
       .uri("/risks/crn/$crn/predictors/rsr/history")
