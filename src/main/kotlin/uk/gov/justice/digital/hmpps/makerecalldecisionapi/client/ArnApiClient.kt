@@ -26,7 +26,7 @@ class ArnApiClient(
       .retrieve()
       .onStatus(
         { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw PersonNotFoundException("No details available for crn: $crn") } // TODO just return 200 and blank?
+        { throw PersonNotFoundException("No details available for crn: $crn") }
       )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(arnClientTimeout))
