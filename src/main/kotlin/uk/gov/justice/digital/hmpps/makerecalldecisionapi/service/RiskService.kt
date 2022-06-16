@@ -48,10 +48,11 @@ class RiskService(
     val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
 
     // TODO no mappa available for D006296 on community API so nullify this field to test on dev
-    val mappa = handleFetchMappaApiCall(crn) //TODO move error handling into fetch!!
+    val mappa = fetchMappa(crn)
     val predictorScores = PredictorScores(
       current = null, // TODO
-      historical = fetchHistoricalScores(crn))
+      historical = fetchHistoricalScores(crn)
+    )
     val contingencyPlan = null // TODO Andrew's API will provide this
 
     return RiskResponse(
@@ -68,43 +69,35 @@ class RiskService(
     )
   }
 
-  //TODO fetchHistoricalScores implement!!
   private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
-    val historicalScoresResponse = try {getValue(arnApiClient.getHistoricalScores(crn))!!}
-    catch (e: WebClientResponseException.NotFound) {
+    val historicalScoresResponse = try {
+      getValue(arnApiClient.getHistoricalScores(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
       log.info("No historical scores available for CRN: $crn - ${e.message}")
       null
     }
-    val ogrsScoresResponse = null ///secure/offenders/crn/{crn}/assessments
-    ///secure/offenders/crn/{crn}/assessments
-    //enrich below with date
-    return historicalScoresResponse?.historicalScores
+    val ogrsScoresResponse = null // secure/offenders/crn/{crn}/assessments // TODO
+    // nsecure/offenders/crn/{crn}/assessments
+    // enrich below with date
+    return historicalScoresResponse
       ?.map {
         HistoricalScore(
-          date = formatDateTimeStamp(it.calculatedDate) ?: "",
+          date = it.calculatedDate?.let { it1 -> formatDateTimeStamp(it1) } ?: "",
           scores = Scores(
-                  rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
-                  ospc = OSPC(level = "", score = "", type = ""),//TODO contimue
-                  ospi = OSPI(level = "", score = "", type = ""),
-                  ogrs = null // TODO
+            rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
+            ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
+            ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
+            ogrs = null // TODO
           )
         )
       } ?: emptyList()
   }
 
   private fun formatDateTimeStamp(zoneDateTimeString: String) =
-    ZonedDateTime.parse(zoneDateTimeString).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-      .withLocale(Locale.UK)
-  )
-
-  private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
-    return try {
-      fetchMappa(crn)
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
-      Mappa(level = "", isNominal = true, lastUpdated = "")
-    }
-  }
+    ZonedDateTime.parse(zoneDateTimeString).format(
+      DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+        .withLocale(Locale.UK)
+    )
 
   private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse): NatureOfRisk {
     return NatureOfRisk(
@@ -207,13 +200,18 @@ class RiskService(
   }
 
   private suspend fun fetchMappa(crn: String): Mappa {
-    val mappaResponse = getValue(communityApiClient.getAllMappaDetails(crn))!!
-    val reviewDate = mappaResponse.reviewDate?.format(
+    val mappaResponse = try {
+      getValue(communityApiClient.getAllMappaDetails(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
+      null
+    }
+    val reviewDate = mappaResponse?.reviewDate?.format(
       DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
         .withLocale(Locale.UK)
     )
     return Mappa(
-      level = mappaResponse.levelDescription ?: "",
+      level = mappaResponse?.levelDescription ?: "",
       isNominal = true,
       lastUpdated = reviewDate ?: ""
     )
