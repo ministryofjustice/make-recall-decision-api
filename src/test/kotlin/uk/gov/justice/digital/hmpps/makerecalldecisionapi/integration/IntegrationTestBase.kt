@@ -26,9 +26,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -162,14 +166,26 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun unallocatedOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun offenderSearchResponse(crn: String, delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
         .withPath("/phrase")
         .withQueryStringParameter("paged", "false")
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
+    val offenderSearchRequest =
+      request()
+        .withPath("/phrase")
+        .withQueryStringParameter("paged", "false")
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(limitedAccessOffenderSearchResponse(crn))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -190,7 +206,7 @@ abstract class IntegrationTestBase {
       request().withPath("/secure/offenders/crn/$crn/release")
 
     communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryResponse())
+      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -201,6 +217,39 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
+    )
+  }
+
+  protected fun userAccessAllowed(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userAccessExcluded(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userAccessRestricted(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

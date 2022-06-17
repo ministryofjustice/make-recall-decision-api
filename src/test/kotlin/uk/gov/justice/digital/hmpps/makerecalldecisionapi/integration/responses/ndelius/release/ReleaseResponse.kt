@@ -1,6 +1,6 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release
 
-fun releaseSummaryResponse() = """
+fun releaseSummaryDeliusResponse() = """
 {
     "lastRelease": {
         "date": "2017-09-15",
