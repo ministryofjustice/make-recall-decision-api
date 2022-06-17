@@ -26,9 +26,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Provide
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -48,6 +53,7 @@ class RiskServiceTest {
   fun setup() {
     riskService = RiskService(communityApiClient, arnApiClient)
   }
+
   // TODO will be null pointers as not stubbing new arn stuff
   @Test
   fun `retrieves risk`() {
@@ -57,6 +63,10 @@ class RiskServiceTest {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
+      given(arnApiClient.getHistoricalScores(anyString()))
+        .willReturn(Mono.fromCallable { listOf(historicalScoresResponse) })
+      given(arnApiClient.getCurrentScores(anyString()))
+        .willReturn(Mono.fromCallable { listOf(currentScoreResponse) })
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
 
@@ -70,6 +80,8 @@ class RiskServiceTest {
       val circumstancesIncreaseRisk = response.circumstancesIncreaseRisk
       val factorsToReduceRisk = response.factorsToReduceRisk
       val whenRiskHighest = response.whenRiskHighest
+      val historicalScores = response.predictorScores?.historical
+      val currentScores = response.predictorScores?.current
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
@@ -101,8 +113,31 @@ class RiskServiceTest {
       assertThat(whenRiskHighest?.oasysHeading?.number).isEqualTo("10.3")
       assertThat(whenRiskHighest?.oasysHeading?.description).isEqualTo("When is the risk likely to be greatest?")
       assertThat(whenRiskHighest?.description).isEqualTo("the risk is imminent and more probably in X situation")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("1")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("LOW")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.type).isEqualTo("RSR")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.score).isEqualTo("2")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.level).isEqualTo("MEDIUM")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.type).isEqualTo("OSP/C")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.score).isEqualTo("3")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.level).isEqualTo("HIGH")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.type).isEqualTo("OSP/I")
+      assertThat(currentScores?.rsr?.level).isEqualTo("MEDIUM")
+      assertThat(currentScores?.rsr?.score).isEqualTo("2")
+      assertThat(currentScores?.rsr?.type).isEqualTo("RSR")
+      assertThat(currentScores?.ospc?.level).isEqualTo("HIGH")
+      assertThat(currentScores?.ospc?.score).isEqualTo("2")
+      assertThat(currentScores?.ospc?.type).isEqualTo("OSP/C")
+      assertThat(currentScores?.ospi?.level).isEqualTo("MEDIUM")
+      assertThat(currentScores?.ospi?.score).isEqualTo("3")
+      assertThat(currentScores?.ospi?.type).isEqualTo("OSP/I")
+      assertThat(currentScores?.ogrs?.level).isEqualTo("LOW")
+      assertThat(currentScores?.ogrs?.score).isEqualTo("1")
+      assertThat(currentScores?.ogrs?.type).isEqualTo("OGRS")
 
       then(arnApiClient).should().getRiskSummary(crn)
+      then(arnApiClient).should().getCurrentScores(crn)
+      then(arnApiClient).should().getHistoricalScores(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
     }
@@ -112,6 +147,16 @@ class RiskServiceTest {
   fun `retrieves risk with optional fields missing`() {
     runBlockingTest {
       val crn = "my wonderful crn"
+      given(arnApiClient.getHistoricalScores(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            listOf(historicalScoresResponseWithoutOptionalFields)
+          }
+        )
+      given(arnApiClient.getCurrentScores(anyString()))
+        .willReturn(
+          Mono.fromCallable { listOf(currentScoreResponseWithOptionalFields) }
+        )
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -193,6 +238,8 @@ class RiskServiceTest {
       val circumstancesIncreaseRisk = response.circumstancesIncreaseRisk
       val factorsToReduceRisk = response.factorsToReduceRisk
       val whenRiskHighest = response.whenRiskHighest
+      val historicalScores = response.predictorScores?.historical
+      val currentScores = response.predictorScores?.current
 
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -223,6 +270,29 @@ class RiskServiceTest {
       assertThat(whenRiskHighest?.oasysHeading?.number).isEqualTo("10.3")
       assertThat(whenRiskHighest?.oasysHeading?.description).isEqualTo("When is the risk likely to be greatest?")
       assertThat(whenRiskHighest?.description).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.rsr?.type).isEqualTo("RSR")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.score).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.level).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.ospc?.type).isEqualTo("OSP/C")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.score).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.level).isEqualTo("")
+      assertThat(historicalScores?.get(0)?.scores?.ospi?.type).isEqualTo("OSP/I")
+      assertThat(currentScores?.rsr?.level).isEqualTo("")
+      assertThat(currentScores?.rsr?.score).isEqualTo("")
+      assertThat(currentScores?.rsr?.type).isEqualTo("RSR")
+      assertThat(currentScores?.ospc?.level).isEqualTo("")
+      assertThat(currentScores?.ospc?.score).isEqualTo("")
+      assertThat(currentScores?.ospc?.type).isEqualTo("OSP/C")
+      assertThat(currentScores?.ospi?.level).isEqualTo("")
+      assertThat(currentScores?.ospi?.score).isEqualTo("")
+      assertThat(currentScores?.ospi?.type).isEqualTo("OSP/I")
+      assertThat(currentScores?.ogrs?.level).isEqualTo("")
+      assertThat(currentScores?.ogrs?.score).isEqualTo("")
+      assertThat(currentScores?.ogrs?.type).isEqualTo("OGRS")
+      then(arnApiClient).should().getCurrentScores(crn)
+      then(arnApiClient).should().getHistoricalScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
@@ -260,6 +330,40 @@ class RiskServiceTest {
     ),
     assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
     overallRiskLevel = "HIGH"
+  )
+
+  private val currentScoreResponse = CurrentScoreResponse(
+    completedDate = "2018-09-12T12:00:00.000Z",
+    generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "1", ogpRisk = "LOW"),
+    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "2", scoreLevel = "MEDIUM"),
+    sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "3", ospContactPercentageScore = "2", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "HIGH")
+  )
+
+  private val currentScoreResponseWithOptionalFields = CurrentScoreResponse(
+    completedDate = "",
+    generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
+    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
+    sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
+  )
+
+  private val historicalScoresResponse = HistoricalScoreResponse(
+    rsrPercentageScore = "1",
+    rsrScoreLevel = "LOW",
+    ospcPercentageScore = "2",
+    ospcScoreLevel = "MEDIUM",
+    ospiPercentageScore = "3",
+    ospiScoreLevel = "HIGH",
+    calculatedDate = "2018-09-12T12:00:00.000Z"
+  )
+
+  private val historicalScoresResponseWithoutOptionalFields = HistoricalScoreResponse(
+    rsrPercentageScore = "",
+    rsrScoreLevel = "",
+    ospcPercentageScore = "",
+    ospcScoreLevel = "",
+    ospiPercentageScore = "",
+    ospiScoreLevel = "",
+    calculatedDate = null
   )
 
   private val mappaResponse = MappaResponse(

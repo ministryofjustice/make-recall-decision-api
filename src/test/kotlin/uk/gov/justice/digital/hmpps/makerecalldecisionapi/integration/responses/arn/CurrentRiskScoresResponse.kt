@@ -24,7 +24,7 @@ fun currentRiskScoresResponse() = """
       "ogpTotalWeightedScore": 0,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "HIH"
+      "ogpRisk": "HIGH"
     },
     "riskOfSeriousRecidivismScore": {
       "percentageScore": 0,

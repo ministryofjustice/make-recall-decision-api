@@ -26,16 +26,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -80,14 +77,14 @@ class RiskService(
 
   private suspend fun fetchCurrentScores(crn: String): Scores {
     val currentScoresResponse = try {
-      getValue(arnApiClient.getCurrentScores(crn))!! //TODO sort by latest date in stream then get first!!!! add this to test
+      getValue(arnApiClient.getCurrentScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No cuurent scores available for CRN: $crn - ${e.message}")
       listOf(
         CurrentScoreResponse(
           completedDate = "",
-          generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogp1Year = "", ogp2Year = "", ogpRisk = ""),
-          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", staticOrDynamic = "", source = "", algorithmVersion = "", scoreLevel = ""),
+          generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
+          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
           sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
         )
       )
@@ -100,7 +97,7 @@ class RiskService(
       rsr = RSR(level = rsr?.scoreLevel ?: "", score = rsr?.percentageScore ?: "", type = "RSR"),
       ospc = OSPC(level = osp?.ospContactScoreLevel ?: "", score = osp?.ospContactPercentageScore ?: "", type = "OSP/C"),
       ospi = OSPI(level = osp?.ospIndecentScoreLevel ?: "", score = osp?.ospIndecentPercentageScore ?: "", type = "OSP/I"),
-      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS") //TODO check if 'total' is correct field
+      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS") // TODO check if 'total' is correct field
     )
   }
 

@@ -16,9 +16,6 @@ data class SexualPredictorScore(
 
 data class RiskOfSeriousRecidivismScore(
   val percentageScore: String?,
-  val staticOrDynamic: String?,
-  val source: String?,
-  val algorithmVersion: String?,
   val scoreLevel: String?
 )
 
@@ -26,8 +23,6 @@ data class GeneralPredictorScore(
   val ogpStaticWeightedScore: String?,
   val ogpDynamicWeightedScore: String?,
   val ogpTotalWeightedScore: String?,
-  val ogp1Year: String?,
-  val ogp2Year: String?,
   val ogpRisk: String?
 )
 
