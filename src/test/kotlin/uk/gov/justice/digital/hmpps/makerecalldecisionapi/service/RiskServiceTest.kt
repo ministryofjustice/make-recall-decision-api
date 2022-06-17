@@ -333,7 +333,7 @@ class RiskServiceTest {
   )
 
   private val currentScoreResponse = CurrentScoreResponse(
-    completedDate = "2018-09-12T12:00:00.000Z",
+    completedDate = "2018-09-12T12:00:00.000",
     generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "1", ogpRisk = "LOW"),
     riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "2", scoreLevel = "MEDIUM"),
     sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "3", ospContactPercentageScore = "2", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "HIGH")
@@ -353,7 +353,7 @@ class RiskServiceTest {
     ospcScoreLevel = "MEDIUM",
     ospiPercentageScore = "3",
     ospiScoreLevel = "HIGH",
-    calculatedDate = "2018-09-12T12:00:00.000Z"
+    calculatedDate = "2018-09-12T12:00:00.000"
   )
 
   private val historicalScoresResponseWithoutOptionalFields = HistoricalScoreResponse(

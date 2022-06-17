@@ -33,7 +33,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Sex
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -89,7 +89,7 @@ class RiskService(
         )
       )
     }
-    val latestScores = currentScoresResponse.maxByOrNull { ZonedDateTime.parse(it.completedDate) }
+    val latestScores = currentScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
     val rsr = latestScores?.riskOfSeriousRecidivismScore
     val osp = latestScores?.sexualPredictorScore
     val osg = latestScores?.generalPredictorScore
@@ -132,8 +132,8 @@ class RiskService(
       }
   }
 
-  private fun formatDateTimeStamp(zoneDateTimeString: String): String {
-    return ZonedDateTime.parse(zoneDateTimeString).format(
+  private fun formatDateTimeStamp(localDateTimeString: String): String {
+    return LocalDateTime.parse(localDateTimeString).format(
       DateTimeFormatter.ofPattern("dd MMMM YYYY HH:mm")
         .withLocale(Locale.UK)
     )

@@ -41,7 +41,7 @@ class ArnApiClientTest : IntegrationTestBase() {
         ospcScoreLevel = "LOW",
         ospiPercentageScore = "8.1",
         ospiScoreLevel = "MEDIUM",
-        calculatedDate = "2018-09-12T12:00:00.000Z"
+        calculatedDate = "2018-09-12T12:00:00.000"
       )
     )
 
@@ -61,13 +61,13 @@ class ArnApiClientTest : IntegrationTestBase() {
     // and
     val expected = listOf<CurrentScoreResponse>(
       CurrentScoreResponse(
-        completedDate = "2022-04-16T11:40:54.243Z",
+        completedDate = "2022-04-16T11:40:54.243",
         generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "0", ogpRisk = "HIGH"),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "0", scoreLevel = "HIGH"),
         sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "0", ospContactPercentageScore = "0", ospIndecentScoreLevel = "HIGH", ospContactScoreLevel = "HIGH")
       ),
       CurrentScoreResponse(
-        completedDate = "2022-06-16T11:40:54.243Z",
+        completedDate = "2022-06-16T11:40:54.243",
         generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "12", ogpRisk = "LOW"),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "23", scoreLevel = "HIGH"),
         sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "5", ospContactPercentageScore = "3.45", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "LOW")
