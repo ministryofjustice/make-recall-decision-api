@@ -16,13 +16,14 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk data when no mappa details or historical scores available`() {
+  fun `retrieves risk data when no mappa details or scores available`() {
     runBlockingTest {
       val crn = "A12345"
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       noHistoricalRiskScoresResponse(crn)
+      noCurrentRiskScoresResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -72,18 +73,18 @@ class RiskControllerTest(
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-//        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
-//        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
-//        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
-//        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
+        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
+        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -100,6 +101,7 @@ class RiskControllerTest(
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       historicalRiskScoresResponse(crn)
+      currentRiskScoresResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -149,24 +151,42 @@ class RiskControllerTest(
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-//        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
-//        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
-//        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
-//        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
+        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
+        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
+        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
+        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
+        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
+        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
 //          "If Mr Edwin enters enters pubs in Enfield Town - issue licence compliance letter\nIf Mr Edwin associates with Mr Daniels, Mr Moreland or Mr Barksdale - issue decision not to recall letter or recall. Supervision session to discuss reasons for association.\nIf Mr Edwin loses his accommodation, refer to housing support. \nIf Mr Edwin loses his employment, refer to ETE services to establish alternative employment\nIf Mr Edwin returns to drinking or taking drugs, cosndier increase in MAPPA level, refer to CGL support, increase reporting or recall."
 //        )
     }
+  }
+
+  @Test
+  fun `not found when person does ot exist`() {
+    val crn = "A12345"
+    roSHSummaryResponse(crn)
+    mappaDetailsResponse(crn)
+    historicalRiskScoresResponse(crn)
+    currentRiskScoresResponse(crn)
+    noOffenderDetailsResponse(crn)
+
+    webTestClient.get()
+      .uri("/cases/$crn/risk")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody()
+      .jsonPath("$.developerMessage").isEqualTo("No details available for crn: A12345")
   }
 
   @Test
@@ -203,12 +223,36 @@ class RiskControllerTest(
   }
 
   @Test
+  fun `gateway timeout 503 given on OASYS ARN current scores endpoint`() {
+    runBlockingTest {
+      val crn = "A12345"
+      allOffenderDetailsResponse(crn)
+      mappaDetailsResponse(crn)
+      roSHSummaryResponse(crn)
+      historicalRiskScoresResponse(crn)
+      currentRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: ARN API Client - current scores endpoint: [No response within $oasysArnClientTimeout seconds]")
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on OASYS ARN historical scores endpoint`() {
     runBlockingTest {
       val crn = "A12345"
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
+      currentRiskScoresResponse(crn)
       historicalRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -230,6 +274,8 @@ class RiskControllerTest(
       val crn = "A12345"
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
+      currentRiskScoresResponse(crn)
+      historicalRiskScoresResponse(crn)
       mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
