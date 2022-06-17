@@ -116,10 +116,6 @@ class CommunityApiClient(
       .get()
       .uri("/secure/offenders/crn/$crn/risk/mappa")
       .retrieve()
-//      .onStatus(
-//        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-//        { throw PersonNotFoundException("No details available for crn: $crn") }
-//      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { ex ->
