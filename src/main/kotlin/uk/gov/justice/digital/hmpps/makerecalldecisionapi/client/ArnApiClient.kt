@@ -6,6 +6,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -54,6 +55,21 @@ class ArnApiClient(
       }
   }
 
+  fun getCurrentScores(crn: String): Mono<List<CurrentScoreResponse>> {
+    val responseType = object : ParameterizedTypeReference<List<CurrentScoreResponse>>() {}
+    return webClient
+      .get()
+      .uri("/risks/crn/$crn/predictors/all")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "current scores"
+        )
+      }
+  }
   private fun handleTimeoutException(
     exception: Throwable?,
     endPoint: String

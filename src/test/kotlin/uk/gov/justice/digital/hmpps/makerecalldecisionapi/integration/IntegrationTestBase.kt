@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
@@ -84,6 +85,25 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
+  protected fun currentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val currentScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/all")
+
+    oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(currentRiskScoresResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noCurrentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val currentScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/all")
+
+    oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
   protected fun historicalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val historicalScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/rsr/history")
@@ -128,6 +148,15 @@ abstract class IntegrationTestBase {
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
+    val allOffenderDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/all")
+
+    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
+      response().withStatusCode(404)
     )
   }
 

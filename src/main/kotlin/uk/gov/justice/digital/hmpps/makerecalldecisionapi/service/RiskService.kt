@@ -24,11 +24,18 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -52,7 +59,7 @@ class RiskService(
     // TODO no mappa available for D006296 on community API so nullify this field to test on dev
     val mappa = fetchMappa(crn)
     val predictorScores = PredictorScores(
-      current = null, // TODO
+      current = fetchCurrentScores(crn),
       historical = fetchHistoricalScores(crn)
     )
     val contingencyPlan = null // TODO Andrew's API will provide this
@@ -68,6 +75,32 @@ class RiskService(
       circumstancesIncreaseRisk = circumstancesIncreaseRisk,
       factorsToReduceRisk = factorsToReduceRisk,
       whenRiskHighest = whenRiskHighest
+    )
+  }
+
+  private suspend fun fetchCurrentScores(crn: String): Scores {
+    val currentScoresResponse = try {
+      getValue(arnApiClient.getCurrentScores(crn))!! //TODO sort by latest date in stream then get first!!!! add this to test
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No cuurent scores available for CRN: $crn - ${e.message}")
+      listOf(
+        CurrentScoreResponse(
+          completedDate = "",
+          generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogp1Year = "", ogp2Year = "", ogpRisk = ""),
+          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", staticOrDynamic = "", source = "", algorithmVersion = "", scoreLevel = ""),
+          sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
+        )
+      )
+    }
+    val latestScores = currentScoresResponse.maxByOrNull { ZonedDateTime.parse(it.completedDate) }
+    val rsr = latestScores?.riskOfSeriousRecidivismScore
+    val osp = latestScores?.sexualPredictorScore
+    val osg = latestScores?.generalPredictorScore
+    return Scores(
+      rsr = RSR(level = rsr?.scoreLevel ?: "", score = rsr?.percentageScore ?: "", type = "RSR"),
+      ospc = OSPC(level = osp?.ospContactScoreLevel ?: "", score = osp?.ospContactPercentageScore ?: "", type = "OSP/C"),
+      ospi = OSPI(level = osp?.ospIndecentScoreLevel ?: "", score = osp?.ospIndecentPercentageScore ?: "", type = "OSP/I"),
+      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS") //TODO check if 'total' is correct field
     )
   }
 
@@ -93,9 +126,9 @@ class RiskService(
         HistoricalScore(
           date = it.calculatedDate?.let { it1 -> formatDateTimeStamp(it1) } ?: "",
           scores = Scores(
-            rsr = RSR(level = it.rsrScoreLevel, score = it.rsrPercentageScore, type = "RSR"),
-            ospc = OSPC(level = it.ospcScoreLevel, score = it.ospcPercentageScore, type = "OSP/C"),
-            ospi = OSPI(level = it.ospiScoreLevel, score = it.ospiPercentageScore, type = "OSP/I"),
+            rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
+            ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
+            ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
             ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO - discuss with ARN team
           )
         )
