@@ -16,15 +16,20 @@ class LicenceConditionsService(
 ) {
 
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
-    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val convictions = buildConvictionResponse(crn)
-    val releaseSummary = getReleaseSummary(crn)
+    val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      LicenceConditionsResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val convictions = buildConvictionResponse(crn)
+      val releaseSummary = getReleaseSummary(crn)
 
-    return LicenceConditionsResponse(
-      personalDetailsOverview = personalDetailsOverview,
-      convictions = convictions,
-      releaseSummary = releaseSummary,
-    )
+      LicenceConditionsResponse(
+        personalDetailsOverview = personalDetailsOverview,
+        convictions = convictions,
+        releaseSummary = releaseSummary,
+      )
+    }
   }
 
   private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
