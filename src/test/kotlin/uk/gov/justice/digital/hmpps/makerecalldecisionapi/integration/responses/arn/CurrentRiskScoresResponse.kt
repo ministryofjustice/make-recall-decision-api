@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses
 fun currentRiskScoresResponse() = """
 [
 {
-    "completedDate": "2022-04-16T11:40:54.243Z",
+    "completedDate": "2022-04-16T11:40:54.243",
     "assessmentStatus": "string",
     "groupReconvictionScore": {
       "oneYear": 0,
@@ -41,7 +41,7 @@ fun currentRiskScoresResponse() = """
     }
   },
   {
-    "completedDate": "2022-06-16T11:40:54.243Z",
+    "completedDate": "2022-06-16T11:40:54.243",
     "assessmentStatus": "string",
     "groupReconvictionScore": {
       "oneYear": 0,
