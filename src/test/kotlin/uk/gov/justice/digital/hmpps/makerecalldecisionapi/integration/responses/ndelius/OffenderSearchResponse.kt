@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun offenderSearchResponse(crn: String) = """
+fun offenderSearchDeliusResponse() = """
 {
   "content": [
     {

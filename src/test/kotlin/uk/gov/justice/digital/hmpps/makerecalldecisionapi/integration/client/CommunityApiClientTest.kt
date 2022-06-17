@@ -44,6 +44,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -351,6 +352,27 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getReleaseSummary(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves user access`() {
+    // given
+    val crn = "X123456"
+    userAccessAllowed(crn)
+
+    // and
+    val expected = UserAccessResponse(
+      userRestricted = false,
+      userExcluded = false,
+      exclusionMessage = null,
+      restrictionMessage = null,
+    )
+
+    // when
+    val actual = communityApiClient.getUserAccess(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
