@@ -86,7 +86,7 @@ class PersonDetailsControllerTest(
   fun `access denied when insufficient privileges used`() {
     runBlockingTest {
       val crn = "X123456"
-      unallocatedOffenderSearchResponse(crn)
+      offenderSearchResponse(crn)
       webTestClient.get()
         .uri("/cases/$crn/personalDetailsOverview")
         .exchange()

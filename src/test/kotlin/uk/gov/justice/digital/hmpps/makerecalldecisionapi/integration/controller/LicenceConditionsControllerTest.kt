@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -236,7 +237,7 @@ class LicenceConditionsControllerTest(
       licenceConditionsResponse(crn, convictionId)
       releaseSummaryResponseWithStatusCode(
         crn,
-        uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse(),
+        releaseSummaryDeliusResponse(),
         400
       )
 
