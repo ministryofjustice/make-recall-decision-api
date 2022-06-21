@@ -33,6 +33,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -44,6 +47,9 @@ abstract class IntegrationTestBase {
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   lateinit var webTestClient: WebTestClient
+
+  @Autowired
+  protected lateinit var repository: RecommendationRepository
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
@@ -67,6 +73,7 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
+    repository.deleteAll()
     communityApi.reset()
     offenderSearchApi.reset()
     gotenbergMock.reset()
@@ -80,6 +87,27 @@ abstract class IntegrationTestBase {
     offenderSearchApi.stop()
     gotenbergMock.stop()
     oauthMock.stop()
+  }
+
+  fun insertRecommendations() {
+    repository.saveAll(
+      listOf(
+        RecommendationEntity(
+          id = null,
+          name = "Dylan Adam Armstrong",
+          crn = "J678910",
+          recommendation = Recommendation.NOT_RECALL,
+          alternateActions = ""
+        ),
+        RecommendationEntity(
+          id = null,
+          name = "Andrei Edwards",
+          crn = "J680648",
+          recommendation = Recommendation.RECALL,
+          alternateActions = "increase reporting"
+        )
+      )
+    )
   }
 
   protected fun allOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
