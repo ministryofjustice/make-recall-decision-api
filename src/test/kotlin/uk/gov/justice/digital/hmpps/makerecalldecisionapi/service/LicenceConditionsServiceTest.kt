@@ -42,14 +42,15 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
     personDetailsService = PersonDetailsService(communityApiClient)
     licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService)
 
-    given(communityApiClient.getAllOffenderDetails(anyString()))
-      .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
   }
 
   @Test
   fun `given an active conviction and licence conditions then return these details in the response`() {
     runBlockingTest {
-
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
@@ -68,6 +69,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
+            null,
             expectedPersonDetailsResponse(),
             expectedOffenceWithLicenceConditionsResponse(licenceConditions),
             allReleaseSummariesResponse()
@@ -78,9 +80,28 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given no active licence conditions then still retrieve conviction details`() {
+  fun `given case is excluded for user then return user access response details`() {
     runBlockingTest {
 
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+
+      val response = licenceConditionsService.getLicenceConditions(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(LicenceConditionsResponse(userAccessResponse(true, false), null, null, null))
+      )
+    }
+  }
+
+  @Test
+  fun `given no active licence conditions then still retrieve conviction details`() {
+    runBlockingTest {
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
@@ -99,6 +120,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
+            null,
             expectedPersonDetailsResponse(),
             expectedOffenceWithLicenceConditionsResponse(null),
             allReleaseSummariesResponse()
@@ -111,7 +133,8 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no offender details then still retrieve personal details`() {
     runBlockingTest {
-
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { emptyList() })
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -128,6 +151,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
+            null,
             expectedPersonDetailsResponse(),
             emptyList(),
             allReleaseSummariesResponse()
