@@ -36,14 +36,16 @@ class ContactHistoryServiceTest : ServiceTestBase() {
     personDetailsService = PersonDetailsService(communityApiClient)
     contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService)
 
-    given(communityApiClient.getAllOffenderDetails(anyString()))
-      .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
   }
 
   @Test
   fun `given a contact summary and release summary then return these details in the response`() {
     runBlockingTest {
 
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -55,14 +57,30 @@ class ContactHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), allReleaseSummariesResponse())))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), allReleaseSummariesResponse())))
+    }
+  }
+
+  @Test
+  fun `given case is excluded for user then return user access response details`() {
+    runBlockingTest {
+
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+
+      val response = contactHistoryService.getContactHistory(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      assertThat(response, equalTo(ContactHistoryResponse(userAccessResponse(true, false), null, null, null, null)))
     }
   }
 
   @Test
   fun `given no release summary details then still retrieve contact summary details`() {
     runBlockingTest {
-
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -73,14 +91,15 @@ class ContactHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), null)))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), null)))
     }
   }
 
   @Test
   fun `given no contact summary details then still retrieve release summary details`() {
     runBlockingTest {
-
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -91,14 +110,15 @@ class ContactHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(expectedPersonDetailsResponse(), emptyList(), emptyList(), allReleaseSummariesResponse())))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), allReleaseSummariesResponse())))
     }
   }
 
   @Test
   fun `given no contact summary details and no release summary details then still return an empty response`() {
     runBlockingTest {
-
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -109,7 +129,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(expectedPersonDetailsResponse(), emptyList(), emptyList(), null)))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), null)))
     }
   }
 

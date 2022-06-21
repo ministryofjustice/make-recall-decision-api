@@ -21,6 +21,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves licence condition details`() {
     runBlockingTest {
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
@@ -61,6 +62,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves multiple licence condition details`() {
     runBlockingTest {
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       multipleLicenceConditionsResponse(crn, convictionId)
@@ -109,6 +111,7 @@ class LicenceConditionsControllerTest(
   fun `retrieves licence condition details for multiple active offences`() {
     runBlockingTest {
       val convictionId2 = 123456789L
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       multipleConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
@@ -168,6 +171,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `returns empty allLicenceConditions list where where no active convictions exist`() {
     runBlockingTest {
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
       releaseSummaryResponse(crn)
@@ -199,6 +203,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `returns empty licence conditions where no active or inactive licence conditions exist`() {
     runBlockingTest {
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       noActiveLicenceConditions(crn, convictionId)
@@ -232,6 +237,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `given no custody release response 400 error then handle licence condition response`() {
     runBlockingTest {
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
@@ -267,9 +273,29 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `given case is excluded then only return user access details`() {
+    runBlockingTest {
+      userAccessExcluded(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       unallocatedConvictionResponse(crn, staffCode)
       registrationsResponse(crn)
@@ -291,6 +317,7 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
       registrationsResponse(crn)
@@ -312,6 +339,7 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on licence conditions endpoint`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, 2500000001, delaySeconds = nDeliusTimeout + 2)

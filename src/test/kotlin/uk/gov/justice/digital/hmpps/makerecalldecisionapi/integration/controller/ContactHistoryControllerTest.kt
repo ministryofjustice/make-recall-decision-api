@@ -17,10 +17,12 @@ class ContactHistoryControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
+  val crn = "A12345"
+
   @Test
   fun `retrieves all contact history details`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(
         crn,
@@ -63,7 +65,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `given empty contact history then handle response`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, emptyContactSummaryResponse())
       releaseSummaryResponse(crn)
@@ -87,9 +89,28 @@ class ContactHistoryControllerTest(
   }
 
   @Test
+  fun `given case is excluded then only return user access details`() {
+    runBlockingTest {
+      userAccessExcluded(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+    }
+  }
+
+  @Test
   fun `given no custody release response 400 error then handle contact history response`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(
         crn,
@@ -122,7 +143,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummary = contactSummaryResponse(), delaySeconds = nDeliusTimeout + 2)
       releaseSummaryResponse(crn)
@@ -143,7 +164,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout on release summary endpoint`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummaryResponse())
       releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
@@ -164,7 +185,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `access denied when insufficient privileges used`() {
     runBlockingTest {
-      val crn = "X123456"
+      userAccessAllowed(crn)
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
         .exchange()

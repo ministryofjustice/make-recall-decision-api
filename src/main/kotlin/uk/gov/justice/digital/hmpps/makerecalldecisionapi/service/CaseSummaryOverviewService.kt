@@ -15,37 +15,42 @@ class CaseSummaryOverviewService(
   private val communityApiClient: CommunityApiClient
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
-    val offenderDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
-    val activeConvictions = communityApiClient.getActiveConvictions(crn).awaitFirst()
-    val age = offenderDetails?.dateOfBirth?.until(LocalDate.now())?.years
-    val firstName = offenderDetails?.firstName ?: ""
-    val surname = offenderDetails?.surname ?: ""
-    val name = if (firstName.isEmpty()) {
-      surname
-    } else "$firstName $surname"
-    val registrations = communityApiClient.getRegistrations(crn).awaitFirstOrNull()?.registrations
-    val activeRegistrations = registrations?.filter { it.active ?: false }
-    val riskFlags = activeRegistrations?.map { it.type?.description ?: "" } ?: emptyList()
+    val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+    if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      return CaseSummaryOverviewResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val offenderDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
+      val activeConvictions = communityApiClient.getActiveConvictions(crn).awaitFirst()
+      val age = offenderDetails?.dateOfBirth?.until(LocalDate.now())?.years
+      val firstName = offenderDetails?.firstName ?: ""
+      val surname = offenderDetails?.surname ?: ""
+      val name = if (firstName.isEmpty()) {
+        surname
+      } else "$firstName $surname"
+      val registrations = communityApiClient.getRegistrations(crn).awaitFirstOrNull()?.registrations
+      val activeRegistrations = registrations?.filter { it.active ?: false }
+      val riskFlags = activeRegistrations?.map { it.type?.description ?: "" } ?: emptyList()
 
-    val offences: List<Offence> = activeConvictions
-      .map { it.offences }
-      .flatMap { it!!.toList() }
-      .map {
-        Offence(
-          mainOffence = it.mainOffence, description = it.detail?.description ?: "", code = it.detail?.code ?: ""
-        )
-      }
+      val offences: List<Offence> = activeConvictions
+        .map { it.offences }
+        .flatMap { it!!.toList() }
+        .map {
+          Offence(
+            mainOffence = it.mainOffence, description = it.detail?.description ?: "", code = it.detail?.code ?: ""
+          )
+        }
 
-    return CaseSummaryOverviewResponse(
-      personalDetailsOverview = PersonDetails(
-        name = name,
-        dateOfBirth = offenderDetails?.dateOfBirth,
-        age = age,
-        gender = offenderDetails?.gender ?: "",
-        crn = crn
-      ),
-      offences = offences.filter { it.mainOffence == true },
-      risk = Risk(flags = riskFlags)
-    )
+      return CaseSummaryOverviewResponse(
+        personalDetailsOverview = PersonDetails(
+          name = name,
+          dateOfBirth = offenderDetails?.dateOfBirth,
+          age = age,
+          gender = offenderDetails?.gender ?: "",
+          crn = crn
+        ),
+        offences = offences.filter { it.mainOffence == true },
+        risk = Risk(flags = riskFlags)
+      )
+    }
   }
 }

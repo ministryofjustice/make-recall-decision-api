@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
@@ -11,6 +12,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -44,6 +46,9 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient)
+
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
   }
 
   @Test
@@ -71,6 +76,24 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(offencesShouldBeEmpty).isEmpty()
       assertThat(riskFlagsShouldBeEmpty).isEmpty()
       then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
+  fun `given case is excluded for user then return user access response details`() {
+    runBlockingTest {
+
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+
+      val response = caseSummaryOverviewService.getOverview(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(CaseSummaryOverviewResponse(userAccessResponse(true, false), null, null, null))
+      )
     }
   }
 
