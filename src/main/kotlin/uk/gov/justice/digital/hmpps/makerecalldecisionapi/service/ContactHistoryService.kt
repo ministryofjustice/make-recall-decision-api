@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -17,17 +18,22 @@ class ContactHistoryService(
 ) {
 
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
-    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val contactSummary = getContactSummary(crn)
-    val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
-    val releaseSummary = getReleaseSummary(crn)
+    val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      ContactHistoryResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val contactSummary = getContactSummary(crn)
+      val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
+      val releaseSummary = getReleaseSummary(crn)
 
-    return ContactHistoryResponse(
-      personalDetailsOverview = personalDetailsOverview,
-      contactSummary = contactSummary,
-      contactTypeGroups = contactTypeGroups,
-      releaseSummary = releaseSummary,
-    )
+      ContactHistoryResponse(
+        personalDetailsOverview = personalDetailsOverview,
+        contactSummary = contactSummary,
+        contactTypeGroups = contactTypeGroups,
+        releaseSummary = releaseSummary,
+      )
+    }
   }
 
   private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {

@@ -16,42 +16,47 @@ class PersonDetailsService(
   private val communityApiClient: CommunityApiClient
 ) {
   suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
-    val offenderDetails = getPersonalDetailsOverview(crn)
-    val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
-    val activeAddress = offenderDetails.contactDetails?.addresses
-      ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
-    val addressNumber = activeAddress?.addressNumber ?: ""
-    val streetName = activeAddress?.streetName ?: ""
-    val buildingName = activeAddress?.buildingName ?: ""
-    val firstName = offenderDetails.firstName ?: ""
-    val surname = offenderDetails.surname ?: ""
-    val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
-    val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
+    val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      PersonDetailsResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val offenderDetails = getPersonalDetailsOverview(crn)
+      val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
+      val activeAddress = offenderDetails.contactDetails?.addresses
+        ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
+      val addressNumber = activeAddress?.addressNumber ?: ""
+      val streetName = activeAddress?.streetName ?: ""
+      val buildingName = activeAddress?.buildingName ?: ""
+      val firstName = offenderDetails.firstName ?: ""
+      val surname = offenderDetails.surname ?: ""
+      val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
+      val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
 
-    return PersonDetailsResponse(
-      personalDetailsOverview = PersonDetails(
-        name = formatTwoWordField(firstName, surname),
-        dateOfBirth = offenderDetails.dateOfBirth,
-        age = age(offenderDetails),
-        gender = offenderDetails.gender ?: "",
-        crn = crn
-      ),
-      currentAddress = CurrentAddress(
-        line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
-        line2 = activeAddress?.district ?: "",
-        town = activeAddress?.town ?: "",
-        postcode = activeAddress?.postcode ?: ""
-      ),
-      offenderManager = OffenderManager(
-        name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
-        phoneNumber = activeOffenderManager?.team?.telephone ?: "",
-        email = activeOffenderManager?.team?.emailAddress ?: "",
-        probationTeam = ProbationTeam(
-          code = activeOffenderManager?.team?.code ?: "",
-          label = activeOffenderManager?.team?.description ?: ""
+      return PersonDetailsResponse(
+        personalDetailsOverview = PersonDetails(
+          name = formatTwoWordField(firstName, surname),
+          dateOfBirth = offenderDetails.dateOfBirth,
+          age = age(offenderDetails),
+          gender = offenderDetails.gender ?: "",
+          crn = crn
+        ),
+        currentAddress = CurrentAddress(
+          line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
+          line2 = activeAddress?.district ?: "",
+          town = activeAddress?.town ?: "",
+          postcode = activeAddress?.postcode ?: ""
+        ),
+        offenderManager = OffenderManager(
+          name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
+          phoneNumber = activeOffenderManager?.team?.telephone ?: "",
+          email = activeOffenderManager?.team?.emailAddress ?: "",
+          probationTeam = ProbationTeam(
+            code = activeOffenderManager?.team?.code ?: "",
+            label = activeOffenderManager?.team?.description ?: ""
+          )
         )
       )
-    )
+    }
   }
 
   suspend fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
