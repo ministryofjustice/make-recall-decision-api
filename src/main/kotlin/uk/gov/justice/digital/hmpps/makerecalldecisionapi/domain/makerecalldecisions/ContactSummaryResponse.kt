@@ -9,5 +9,6 @@ data class ContactSummaryResponse(
   val outcome: String? = null,
   val notes: String? = null,
   val enforcementAction: String? = null,
-  val systemGenerated: Boolean?
+  val systemGenerated: Boolean?,
+  val sensitive: Boolean?
 )

@@ -49,7 +49,8 @@ class ContactHistoryService(
           outcome = it.outcome?.description,
           notes = it.notes,
           enforcementAction = it.enforcement?.enforcementAction?.description,
-          systemGenerated = it.type?.systemGenerated
+          systemGenerated = it.type?.systemGenerated,
+          sensitive = it.sensitive
         )
       }?.toList() ?: emptyList()
   }
