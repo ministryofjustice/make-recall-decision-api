@@ -141,7 +141,7 @@ class CommunityApiClient(
 
     val result = webClient
       .get()
-      .uri("/secure/offenders/crn/$crn//contact-summary")
+      .uri("/secure/offenders/crn/$crn/contact-summary")
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))

@@ -248,6 +248,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -255,6 +256,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+          sensitive = true
         )
       )
     )
