@@ -18,7 +18,7 @@ class LicenceConditionsService(
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
     return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
-      LicenceConditionsResponse(userAccessResponse = userAccessResponse)
+      LicenceConditionsResponse(notTheUserAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val convictions = buildConvictionResponse(crn)
