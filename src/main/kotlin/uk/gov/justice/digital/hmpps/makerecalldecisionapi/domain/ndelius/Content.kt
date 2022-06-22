@@ -8,4 +8,5 @@ data class Content(
   val outcome: ContactOutcome? = null,
   val notes: String? = null,
   val enforcement: EnforcementAction? = null,
+  val sensitive: Boolean?
 )

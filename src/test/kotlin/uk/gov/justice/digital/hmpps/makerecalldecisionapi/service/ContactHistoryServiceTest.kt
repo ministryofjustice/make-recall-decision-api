@@ -154,7 +154,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "Comment added by John Smith on 05/05/2022",
         enforcementAction = null,
         systemGenerated = false,
-        code = "COAI"
+        code = "COAI",
+        sensitive = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -163,7 +164,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "This is a test",
         enforcementAction = "Enforcement Letter Requested",
         systemGenerated = true,
-        code = "COAI"
+        code = "COAI",
+        sensitive = true
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
@@ -172,7 +174,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "This is a test",
         enforcementAction = null,
         systemGenerated = true,
-        code = "COAP"
+        code = "COAP",
+        sensitive = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
@@ -181,7 +184,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "This is another test",
         enforcementAction = null,
         systemGenerated = true,
-        code = "CHVS"
+        code = "CHVS",
+        sensitive = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -190,7 +194,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "This is an unknown test",
         enforcementAction = null,
         systemGenerated = true,
-        code = "ABCD"
+        code = "ABCD",
+        sensitive = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -199,7 +204,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
         notes = "This is another unknown test",
         enforcementAction = null,
         systemGenerated = true,
-        code = "EFGH"
+        code = "EFGH",
+        sensitive = null
       )
     )
   }
@@ -233,6 +239,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -240,6 +247,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+          sensitive = true
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-12T10:39Z"),
@@ -247,13 +255,15 @@ class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Planned test"),
           notes = "This is a test",
           enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-11T10:39Z"),
           type = ContactType(description = "Home visit", systemGenerated = true, code = "CHVS", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Testing"),
           notes = "This is another test",
-          enforcement = null
+          enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -261,6 +271,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Unknown contact"),
           notes = "This is an unknown test",
           enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -268,6 +279,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Another unknown contact"),
           notes = "This is another unknown test",
           enforcement = null,
+          sensitive = null
         ),
       )
     )
