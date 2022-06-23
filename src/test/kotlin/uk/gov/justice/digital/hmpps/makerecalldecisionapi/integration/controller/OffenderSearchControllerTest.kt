@@ -35,7 +35,7 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `given excluded case for my user then change the name to Limited access`() {
+  fun `given excluded case for my user then set the user access excluded field`() {
     runBlockingTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
@@ -49,19 +49,20 @@ class OffenderSearchControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Limited access")
+        .jsonPath("$[0].name").isEqualTo("null null")
         .jsonPath("$[0].dateOfBirth").isEqualTo(null)
         .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(true)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
   @Test
-  fun `given excluded case but not for my user then fill in the missing name details from community API all endpoint`() {
+  fun `given missing name and case is excluded but not for my user then default missing name details`() {
     runBlockingTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
         .headers { it.authToken() }
@@ -71,14 +72,16 @@ class OffenderSearchControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("John Smith")
+        .jsonPath("$[0].name").isEqualTo("No name available")
         .jsonPath("$[0].dateOfBirth").isEqualTo(null)
         .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(null)
+        .jsonPath("$[0].userRestricted").isEqualTo(null)
     }
   }
 
   @Test
-  fun `given restricted case for my user then change the name to Limited access`() {
+  fun `given restricted case for my user then set the user restricted flag to true`() {
     runBlockingTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
@@ -92,9 +95,11 @@ class OffenderSearchControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Limited access")
+        .jsonPath("$[0].name").isEqualTo("null null")
         .jsonPath("$[0].dateOfBirth").isEqualTo(null)
         .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(true)
     }
   }
 
@@ -138,29 +143,6 @@ class OffenderSearchControllerTest(
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: Community API Client - user access endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on all endpoint`() {
-    runBlockingTest {
-      val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
-      webTestClient.get()
-        .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 
