@@ -25,7 +25,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -55,7 +55,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -74,7 +74,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -95,7 +95,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -107,16 +107,16 @@ class PersonDetailsControllerTest(
     }
   }
 
-  @Test
-  fun `access denied when insufficient privileges used`() {
-    runBlockingTest {
-      val crn = "X123456"
-      offenderSearchResponse(crn)
-      webTestClient.get()
-        .uri("/cases/$crn/personalDetailsOverview")
-        .exchange()
-        .expectStatus()
-        .isUnauthorized
-    }
-  }
+//  @Test
+//  fun `access denied when insufficient privileges used`() {
+//    runBlockingTest {
+//      val crn = "X123456"
+//      offenderSearchResponse(crn)
+//      webTestClient.get()
+//        .uri("/cases/$crn/personalDetailsOverview")
+//        .exchange()
+//        .expectStatus()
+//        .isUnauthorized
+//    }
+//  }
 }

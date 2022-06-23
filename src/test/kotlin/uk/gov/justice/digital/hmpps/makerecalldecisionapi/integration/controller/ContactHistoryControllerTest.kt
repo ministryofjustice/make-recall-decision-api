@@ -32,7 +32,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -75,7 +75,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -99,7 +99,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -129,7 +129,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -156,7 +156,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -178,7 +178,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -190,15 +190,15 @@ class ContactHistoryControllerTest(
     }
   }
 
-  @Test
-  fun `access denied when insufficient privileges used`() {
-    runBlockingTest {
-      userAccessAllowed(crn)
-      webTestClient.get()
-        .uri("/cases/$crn/contact-history")
-        .exchange()
-        .expectStatus()
-        .isUnauthorized
-    }
-  }
+//  @Test
+//  fun `access denied when insufficient privileges used`() {
+//    runBlockingTest {
+//      userAccessAllowed(crn)
+//      webTestClient.get()
+//        .uri("/cases/$crn/contact-history")
+//        .exchange()
+//        .expectStatus()
+//        .isUnauthorized
+//    }
+//  }
 }
