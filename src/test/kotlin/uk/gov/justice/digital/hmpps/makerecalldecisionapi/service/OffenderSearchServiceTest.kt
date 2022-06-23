@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -71,7 +70,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given search result contains case with null name and dob fields and access is restricted then default to empty string`() {
+  fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
     runBlockingTest {
       val crn = "X12345"
       val request = OffenderSearchByPhraseRequest(
@@ -86,16 +85,18 @@ class OffenderSearchServiceTest : ServiceTestBase() {
       val results = offenderSearch.search(crn)
 
       assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("Limited access")
+      assertThat(results[0].name).isEqualTo("null null")
       assertThat(results[0].crn).isEqualTo(crn)
       assertThat(results[0].dateOfBirth).isNull()
+      assertThat(results[0].userExcluded).isEqualTo(false)
+      assertThat(results[0].userRestricted).isEqualTo(true)
 
       then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
     }
   }
 
   @Test
-  fun `given search result contains case with null name and dob fields and access is not restricted then find the name for the case`() {
+  fun `given search result contains case with null name and dob fields and access is not restricted then default the name for the case`() {
     runBlockingTest {
       val crn = "X12345"
       val request = OffenderSearchByPhraseRequest(
@@ -107,15 +108,14 @@ class OffenderSearchServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(crn))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
 
-      given(communityApiClient.getAllOffenderDetails(ArgumentMatchers.anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-
       val results = offenderSearch.search(crn)
 
       assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("John Smith")
+      assertThat(results[0].name).isEqualTo("No name available")
       assertThat(results[0].crn).isEqualTo(crn)
       assertThat(results[0].dateOfBirth).isNull()
+      assertThat(results[0].userExcluded).isNull()
+      assertThat(results[0].userRestricted).isNull()
 
       then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
     }

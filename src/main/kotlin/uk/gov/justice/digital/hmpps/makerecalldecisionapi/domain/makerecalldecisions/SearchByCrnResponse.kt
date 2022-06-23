@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class SearchByCrnResponse(
+  val userExcluded: Boolean?,
+  val userRestricted: Boolean?,
   val name: String?,
   val crn: String?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
