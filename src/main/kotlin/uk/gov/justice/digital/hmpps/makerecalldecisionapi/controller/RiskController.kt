@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.security.access.prepost.PreAuthorize
+// import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,8 +17,8 @@ class RiskController {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
-
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+//  @PreAuthorize("hasRole('ROLE_PROBATION')")
+//  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/risk")
   @Operation(summary = "WIP: Returns case summary risk information")
   fun risk(@PathVariable("crn") crn: Crn): String {

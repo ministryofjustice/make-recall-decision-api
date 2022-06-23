@@ -1,15 +1,17 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
+import kotlin.streams.toList
 
 @Service
 class ContactHistoryService(
@@ -18,7 +20,7 @@ class ContactHistoryService(
 ) {
 
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
-    val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
     return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
       ContactHistoryResponse(userAccessResponse = userAccessResponse)
     } else {
@@ -37,7 +39,7 @@ class ContactHistoryService(
   }
 
   private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
-    val contactSummaryResponse = communityApiClient.getContactSummary(crn).awaitFirstOrNull()?.content
+    val contactSummaryResponse = getValue(communityApiClient.getContactSummary(crn))?.content
 
     return contactSummaryResponse
       ?.stream()
@@ -87,6 +89,19 @@ class ContactHistoryService(
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return communityApiClient.getReleaseSummary(crn).awaitFirstOrNull()
+    return getValue(communityApiClient.getReleaseSummary(crn))
+  }
+
+  private fun <T : Any> getValue(mono: Mono<T>?): T? {
+    return try {
+      val value = mono?.block()
+      value ?: value
+    } catch (wrappedException: RuntimeException) {
+      when (wrappedException.cause) {
+        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
+        is ReleaseDetailsNotFoundException -> throw wrappedException as ReleaseDetailsNotFoundException
+        else -> throw wrappedException
+      }
+    }
   }
 }
