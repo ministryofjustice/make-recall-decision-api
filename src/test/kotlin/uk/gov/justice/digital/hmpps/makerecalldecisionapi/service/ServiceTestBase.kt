@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import java.time.LocalDate
 
 abstract class ServiceTestBase {
@@ -91,4 +92,11 @@ abstract class ServiceTestBase {
       )
     )
   }
+
+  protected fun userAccessResponse(excluded: Boolean, restricted: Boolean) = UserAccessResponse(
+    userRestricted = restricted,
+    userExcluded = excluded,
+    exclusionMessage = "I am an exclusion message",
+    restrictionMessage = "I am a restriction message"
+  )
 }

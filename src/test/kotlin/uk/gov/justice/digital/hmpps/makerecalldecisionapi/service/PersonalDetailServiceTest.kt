@@ -15,6 +15,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
@@ -39,6 +40,8 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `throws exception when no person details available`() {
     runBlockingTest {
       val nonExistentCrn = "this person doesn't exist"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
 
@@ -54,9 +57,29 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `given case is excluded for user then return user access response details`() {
+    runBlockingTest {
+
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+
+      val response = personDetailsService.getPersonDetails(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(PersonDetailsResponse(userAccessResponse(true, false), null, null, null))
+      )
+    }
+  }
+
+  @Test
   fun `retrieves person details when no registration available`() {
     runBlockingTest {
       val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
 
@@ -91,6 +114,8 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when no addresses available`() {
     runBlockingTest {
       val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -133,6 +158,8 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when only previous address available`() {
     runBlockingTest {
       val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -179,6 +206,8 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when registration available`() {
     runBlockingTest {
       val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
 
@@ -213,6 +242,8 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when optional fields are missing`() {
     runBlockingTest {
       val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {

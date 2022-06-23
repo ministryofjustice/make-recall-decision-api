@@ -2,19 +2,21 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import java.time.LocalDate
 
 data class RiskResponse(
-  val personalDetailsOverview: RiskPersonalDetails?,
-  val riskOfSeriousHarm: RiskOfSeriousHarm?,
-  val mappa: Mappa?,
-  val predictorScores: PredictorScores?,
-  val natureOfRisk: NatureOfRisk?,
-  val contingencyPlan: ContingencyPlan?,
-  val whoIsAtRisk: WhoIsAtRisk?,
-  val circumstancesIncreaseRisk: CircumstancesIncreaseRisk?,
-  val factorsToReduceRisk: FactorsToReduceRisk?,
-  val whenRiskHighest: WhenRiskHighest?
+  val userAccessResponse: UserAccessResponse? = null,
+  val personalDetailsOverview: RiskPersonalDetails? = null,
+  val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
+  val mappa: Mappa? = null,
+  val predictorScores: PredictorScores? = null,
+  val natureOfRisk: NatureOfRisk? = null,
+  val contingencyPlan: ContingencyPlan? = null,
+  val whoIsAtRisk: WhoIsAtRisk? = null,
+  val circumstancesIncreaseRisk: CircumstancesIncreaseRisk? = null,
+  val factorsToReduceRisk: FactorsToReduceRisk? = null,
+  val whenRiskHighest: WhenRiskHighest? = null
 )
 
 data class RiskPersonalDetails(

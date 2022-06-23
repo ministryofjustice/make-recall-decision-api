@@ -1,6 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.2.3"
   id("jacoco")
+  kotlin("plugin.jpa") version "1.6.21"
   id("org.sonarqube") version "3.3"
   kotlin("plugin.spring") version "1.6.21"
 }
@@ -9,10 +10,15 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
+allOpen {
+  annotations("javax.persistence.Entity")
+}
+
 dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
@@ -20,7 +26,6 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
   implementation("io.opentelemetry:opentelemetry-api:1.14.0")
 
-  implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.flywaydb:flyway-core:8.5.11")
   implementation("org.postgresql:postgresql:42.3.6")
 
@@ -44,7 +49,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
-  testImplementation("com.h2database:h2:2.1.212")
+  testImplementation("com.h2database:h2:2.1.214")
 }
 
 java {

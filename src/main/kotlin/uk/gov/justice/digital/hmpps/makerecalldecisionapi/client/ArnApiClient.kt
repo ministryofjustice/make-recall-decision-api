@@ -70,6 +70,7 @@ class ArnApiClient(
         )
       }
   }
+
   private fun handleTimeoutException(
     exception: Throwable?,
     endPoint: String

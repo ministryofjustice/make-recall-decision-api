@@ -16,6 +16,7 @@ services:
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
       - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - COMMUNITY_API_ENDPOINT_URL=http://fake-community-api:8080
+      - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
       - SYSTEM_CLIENT_SECRET=clientsecret
@@ -75,6 +76,19 @@ services:
     command: --verbose --local-response-templating
     volumes:
       - ./fake-community-api:/home/wiremock
+
+  fake-arn-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-arn-api
+    ports:
+      - "9071:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-arn-api:/home/wiremock
 
 networks:
   hmpps:

@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
@@ -150,22 +151,14 @@ class CommunityApiClient(
     return result
   }
 
-  fun getContactSummary(crn: String, filterContacts: Boolean): Mono<ContactSummaryResponseCommunity> {
+  fun getContactSummary(crn: String): Mono<ContactSummaryResponseCommunity> {
     log.info(normalizeSpace("About to get contact summary for $crn"))
 
     val responseType = object : ParameterizedTypeReference<ContactSummaryResponseCommunity>() {}
 
-    val url = "/secure/offenders/crn/$crn/contact-summary"
-
     val result = webClient
       .get()
-      .uri {
-        if (filterContacts) {
-          it.path(url).queryParam("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI").build()
-        } else {
-          it.path(url).build()
-        }
-      }
+      .uri("/secure/offenders/crn/$crn/contact-summary")
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
@@ -206,6 +199,26 @@ class CommunityApiClient(
         )
       }
     log.info(normalizeSpace("Returning release summary for $crn"))
+    return result
+  }
+
+  fun getUserAccess(crn: String): Mono<UserAccessResponse> {
+    log.info(normalizeSpace("About to check user access details for $crn"))
+
+    val responseType = object : ParameterizedTypeReference<UserAccessResponse>() {}
+    val result = webClient
+      .get()
+      .uri("/secure/offenders/crn/$crn/userAccess")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "user access"
+        )
+      }
+    log.info(normalizeSpace("Returning user access details for $crn"))
     return result
   }
 

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/risks/crn/X098092/summary"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-rosh.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

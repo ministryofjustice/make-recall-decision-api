@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -28,7 +29,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    offenderSearch = OffenderSearchService(offenderSearchApiClient)
+    offenderSearch = OffenderSearchService(offenderSearchApiClient, communityApiClient)
   }
 
   @Test
@@ -69,12 +70,73 @@ class OffenderSearchServiceTest : ServiceTestBase() {
     }
   }
 
-  val offenderSearchResponse = OffenderDetailsResponse(
+  @Test
+  fun `given search result contains case with null name and dob fields and access is restricted then default to empty string`() {
+    runBlockingTest {
+      val crn = "X12345"
+      val request = OffenderSearchByPhraseRequest(
+        phrase = crn
+      )
+      given(offenderSearchApiClient.searchOffenderByPhrase(request))
+        .willReturn(Mono.fromCallable { omittedDetailsResponse })
+
+      given(communityApiClient.getUserAccess(crn))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, true) })
+
+      val results = offenderSearch.search(crn)
+
+      assertThat(results.size).isEqualTo(1)
+      assertThat(results[0].name).isEqualTo("Limited access")
+      assertThat(results[0].crn).isEqualTo(crn)
+      assertThat(results[0].dateOfBirth).isNull()
+
+      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+    }
+  }
+
+  @Test
+  fun `given search result contains case with null name and dob fields and access is not restricted then find the name for the case`() {
+    runBlockingTest {
+      val crn = "X12345"
+      val request = OffenderSearchByPhraseRequest(
+        phrase = crn
+      )
+      given(offenderSearchApiClient.searchOffenderByPhrase(request))
+        .willReturn(Mono.fromCallable { omittedDetailsResponse })
+
+      given(communityApiClient.getUserAccess(crn))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+
+      given(communityApiClient.getAllOffenderDetails(ArgumentMatchers.anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+
+      val results = offenderSearch.search(crn)
+
+      assertThat(results.size).isEqualTo(1)
+      assertThat(results[0].name).isEqualTo("John Smith")
+      assertThat(results[0].crn).isEqualTo(crn)
+      assertThat(results[0].dateOfBirth).isNull()
+
+      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+    }
+  }
+
+  private val offenderSearchResponse = OffenderDetailsResponse(
     content = listOf(
       OffenderDetails(
         firstName = "John",
         surname = "Blair",
         dateOfBirth = LocalDate.parse("1982-10-24")
+      )
+    )
+  )
+
+  private val omittedDetailsResponse = OffenderDetailsResponse(
+    content = listOf(
+      OffenderDetails(
+        firstName = null,
+        surname = null,
+        dateOfBirth = null
       )
     )
   )

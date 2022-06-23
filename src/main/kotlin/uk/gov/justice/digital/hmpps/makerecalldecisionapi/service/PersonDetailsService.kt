@@ -16,45 +16,50 @@ import java.time.LocalDate
 
 @Service
 class PersonDetailsService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
   suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
-    val offenderDetails = getPersonalDetailsOverview(crn)
-    val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
-    val activeAddress = offenderDetails.contactDetails?.addresses
-      ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
-    val addressNumber = activeAddress?.addressNumber ?: ""
-    val streetName = activeAddress?.streetName ?: ""
-    val buildingName = activeAddress?.buildingName ?: ""
-    val firstName = offenderDetails.firstName ?: ""
-    val surname = offenderDetails.surname ?: ""
-    val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
-    val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
+    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      PersonDetailsResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val offenderDetails = getPersonalDetailsOverview(crn)
+      val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
+      val activeAddress = offenderDetails.contactDetails?.addresses
+        ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
+      val addressNumber = activeAddress?.addressNumber ?: ""
+      val streetName = activeAddress?.streetName ?: ""
+      val buildingName = activeAddress?.buildingName ?: ""
+      val firstName = offenderDetails.firstName ?: ""
+      val surname = offenderDetails.surname ?: ""
+      val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
+      val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
 
-    return PersonDetailsResponse(
-      personalDetailsOverview = PersonDetails(
-        name = formatTwoWordField(firstName, surname),
-        dateOfBirth = offenderDetails.dateOfBirth,
-        age = age(offenderDetails),
-        gender = offenderDetails.gender ?: "",
-        crn = crn
-      ),
-      currentAddress = CurrentAddress(
-        line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
-        line2 = activeAddress?.district ?: "",
-        town = activeAddress?.town ?: "",
-        postcode = activeAddress?.postcode ?: ""
-      ),
-      offenderManager = OffenderManager(
-        name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
-        phoneNumber = activeOffenderManager?.team?.telephone ?: "",
-        email = activeOffenderManager?.team?.emailAddress ?: "",
-        probationTeam = ProbationTeam(
-          code = activeOffenderManager?.team?.code ?: "",
-          label = activeOffenderManager?.team?.description ?: ""
+      return PersonDetailsResponse(
+        personalDetailsOverview = PersonDetails(
+          name = formatTwoWordField(firstName, surname),
+          dateOfBirth = offenderDetails.dateOfBirth,
+          age = age(offenderDetails),
+          gender = offenderDetails.gender ?: "",
+          crn = crn
+        ),
+        currentAddress = CurrentAddress(
+          line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
+          line2 = activeAddress?.district ?: "",
+          town = activeAddress?.town ?: "",
+          postcode = activeAddress?.postcode ?: ""
+        ),
+        offenderManager = OffenderManager(
+          name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
+          phoneNumber = activeOffenderManager?.team?.telephone ?: "",
+          email = activeOffenderManager?.team?.emailAddress ?: "",
+          probationTeam = ProbationTeam(
+            code = activeOffenderManager?.team?.code ?: "",
+            label = activeOffenderManager?.team?.description ?: ""
+          )
         )
       )
-    )
+    }
   }
 
   fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
@@ -76,15 +81,15 @@ class PersonDetailsService(
   }
 
   private fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
-    return getValue(communityApiClient.getAllOffenderDetails(crn))
+    return getValue(communityApiClient.getAllOffenderDetails(crn))!!
   }
 
   private fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
-  private fun getValue(mono: Mono<AllOffenderDetailsResponse>): AllOffenderDetailsResponse {
+  private fun <T : Any> getValue(mono: Mono<T>?): T? {
     return try {
-      val allOffenderDetailsResponse = mono.block()
-      allOffenderDetailsResponse ?: allOffenderDetailsResponse
+      val value = mono?.block()
+      value ?: value
     } catch (wrappedException: RuntimeException) {
       when (wrappedException.cause) {
         is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
