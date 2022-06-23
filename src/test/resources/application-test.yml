@@ -24,6 +24,11 @@ community:
     endpoint:
       url: http://localhost:8092
 
+arn:
+  api:
+    endpoint:
+      url: http://localhost:8095
+
 gotenberg:
   endpoint:
     url: http://localhost:8094
@@ -41,3 +46,8 @@ hmpps:
 ndelius:
   client:
     timeout: 2
+
+oasys:
+  arn:
+    client:
+      timeout: 2
