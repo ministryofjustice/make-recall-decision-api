@@ -1,31 +1,32 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactive.awaitFirstOrNull
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 
 @Service
 class OffenderSearchService(
-  private val offenderSearchApiClient: OffenderSearchApiClient,
-  private val communityApiClient: CommunityApiClient
+  @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
   suspend fun search(crn: String): List<SearchByCrnResponse> {
     val request = OffenderSearchByPhraseRequest(
       phrase = crn
     )
-    val apiResponse = offenderSearchApiClient.searchOffenderByPhrase(request)
-      .awaitFirstOrNull()?.content
+    val apiResponse = getValue(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
 
     return apiResponse?.map {
       var name = "${it.firstName} ${it.surname}"
 
       // Workaround for an issue in Delius Probation Search API which omits key details when a case has ANY exclusion/restriction on it.
       if (it.firstName == null && it.surname == null) {
-        val userAccessResponse = communityApiClient.getUserAccess(crn).awaitFirst()
+        val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
 
         if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
           name = "Limited access"
@@ -36,8 +37,8 @@ class OffenderSearchService(
           // Refactor needed if we decide to expand this to include more searchable fields. Hopefully, this will have been fixed
           // by the Delius team by the time we need it and we can rip this code out.
           if (apiResponse.size == 1) {
-            val allDetails = communityApiClient.getAllOffenderDetails(crn).awaitFirst()
-            name = "${allDetails.firstName} ${allDetails.surname}"
+            val allDetails = getValue(communityApiClient.getAllOffenderDetails(crn))
+            name = "${allDetails?.firstName} ${allDetails?.surname}"
           }
         }
       }
@@ -48,5 +49,18 @@ class OffenderSearchService(
         crn = crn
       )
     }?.toList() ?: emptyList()
+  }
+
+  private fun <T : Any> getValue(mono: Mono<T>?): T? {
+    return try {
+      val value = mono?.block()
+      value ?: value
+    } catch (wrappedException: RuntimeException) {
+      when (wrappedException.cause) {
+        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
+        is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
+        else -> throw wrappedException
+      }
+    }
   }
 }
