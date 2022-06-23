@@ -47,6 +47,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -233,13 +234,12 @@ class CommunityApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `given contact summary request with filter contact parameter true, retrieve contact summaries with request filtered`() {
+  fun `given contact summary request retrieve contact summaries`() {
     // given
     val crn = "X123456"
     contactSummaryResponse(
       crn,
-      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse(),
-      true
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
     )
 
     // and
@@ -247,10 +247,11 @@ class CommunityApiClientTest : IntegrationTestBase() {
       content = listOf(
         Content(
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Registration Review", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
+          sensitive = null
         ),
         Content(
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -258,49 +259,13 @@ class CommunityApiClientTest : IntegrationTestBase() {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+          sensitive = true
         )
       )
     )
 
     // when
-    val actual = communityApiClient.getContactSummary(crn, true).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
-
-  @Test
-  fun `given contact summary request with filter contact parameter false, retrieve contact summaries with no request filtered`() {
-    // given
-    val crn = "X123456"
-    contactSummaryResponse(
-      crn,
-      uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse(),
-      false
-    )
-
-    // and
-    val expected = ContactSummaryResponseCommunity(
-      content = listOf(
-        Content(
-          contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
-          type = ContactType(description = "Registration Review", systemGenerated = true, code = "ERGR", nationalStandard = false, appointment = false),
-          outcome = null,
-          notes = "Comment added by John Smith on 05/05/2022",
-          enforcement = null,
-        ),
-        Content(
-          contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
-          type = ContactType(description = "Police Liaison", systemGenerated = false, code = "C204", nationalStandard = false, appointment = false),
-          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
-          notes = "This is a test",
-          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-        )
-      )
-    )
-
-    // when
-    val actual = communityApiClient.getContactSummary(crn, true).block()
+    val actual = communityApiClient.getContactSummary(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
@@ -432,6 +397,27 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getReleaseSummary(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves user access`() {
+    // given
+    val crn = "X123456"
+    userAccessAllowed(crn)
+
+    // and
+    val expected = UserAccessResponse(
+      userRestricted = false,
+      userExcluded = false,
+      exclusionMessage = null,
+      restrictionMessage = null,
+    )
+
+    // when
+    val actual = communityApiClient.getUserAccess(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

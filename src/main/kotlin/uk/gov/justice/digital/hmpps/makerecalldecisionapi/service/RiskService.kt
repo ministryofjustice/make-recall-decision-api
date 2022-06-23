@@ -44,35 +44,37 @@ class RiskService(
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient
 ) {
   suspend fun getRisk(crn: String): RiskResponse {
-    val riskSummaryResponse = getValue(arnApiClient.getRiskSummary(crn))!!
-    val personalDetailsOverview = fetchPersonalDetails(crn)
-    val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
-    val natureOfRisk = extractNatureOfRisk(riskSummaryResponse)
-    val whoIsAtRisk = extractWhoIsAtRisk(riskSummaryResponse)
-    val circumstancesIncreaseRisk = extractCircumstancesIncreaseRisk(riskSummaryResponse)
-    val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
-    val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
-
-    // TODO no mappa available for D006296 on community API so nullify this field to test on dev
-    val mappa = fetchMappa(crn)
-    val predictorScores = PredictorScores(
-      current = fetchCurrentScores(crn),
-      historical = fetchHistoricalScores(crn)
-    )
-    val contingencyPlan = null // TODO Andrew's API will provide this
-
-    return RiskResponse(
-      personalDetailsOverview = personalDetailsOverview,
-      riskOfSeriousHarm = riskOfSeriousHarm,
-      mappa = mappa,
-      predictorScores = predictorScores,
-      natureOfRisk = natureOfRisk,
-      contingencyPlan = contingencyPlan,
-      whoIsAtRisk = whoIsAtRisk,
-      circumstancesIncreaseRisk = circumstancesIncreaseRisk,
-      factorsToReduceRisk = factorsToReduceRisk,
-      whenRiskHighest = whenRiskHighest
-    )
+    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      RiskResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val riskSummaryResponse = getValue(arnApiClient.getRiskSummary(crn))
+      val personalDetailsOverview = fetchPersonalDetails(crn)
+      val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse!!)
+      val natureOfRisk = extractNatureOfRisk(riskSummaryResponse)
+      val whoIsAtRisk = extractWhoIsAtRisk(riskSummaryResponse)
+      val circumstancesIncreaseRisk = extractCircumstancesIncreaseRisk(riskSummaryResponse)
+      val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
+      val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
+      val mappa = handleFetchMappaApiCall(crn)
+      val predictorScores = PredictorScores(
+        current = fetchCurrentScores(crn),
+        historical = fetchHistoricalScores(crn)
+      )
+      val contingencyPlan = null // TODO Andrew's API will provide this
+      return RiskResponse(
+        personalDetailsOverview = personalDetailsOverview,
+        riskOfSeriousHarm = riskOfSeriousHarm,
+        mappa = mappa,
+        predictorScores = predictorScores,
+        natureOfRisk = natureOfRisk,
+        contingencyPlan = contingencyPlan,
+        whoIsAtRisk = whoIsAtRisk,
+        circumstancesIncreaseRisk = circumstancesIncreaseRisk,
+        factorsToReduceRisk = factorsToReduceRisk,
+        whenRiskHighest = whenRiskHighest
+      )
+    }
   }
 
   private suspend fun fetchCurrentScores(crn: String): Scores {
@@ -137,6 +139,13 @@ class RiskService(
       DateTimeFormatter.ofPattern("dd MMMM YYYY HH:mm")
         .withLocale(Locale.UK)
     )
+  }
+
+  private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
+    return try { fetchMappa(crn) } catch (e: WebClientResponseException.NotFound) {
+      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
+      Mappa(level = "", isNominal = true, lastUpdated = "")
+    }
   }
 
   private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse): NatureOfRisk {

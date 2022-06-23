@@ -15,6 +15,7 @@ class CustomOAuth2ClientCredentialsGrantRequestEntityConverter : OAuth2ClientCre
     val formParameters = body as MultiValueMap<String, Any>
     if (username != null) {
       formParameters.add("username", username)
+      formParameters.add("auth_source", "delius")
     }
     return RequestEntity(formParameters, headers, HttpMethod.POST, request.url)
   }

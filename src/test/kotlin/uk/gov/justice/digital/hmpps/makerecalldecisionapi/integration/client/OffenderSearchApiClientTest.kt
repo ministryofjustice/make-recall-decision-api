@@ -21,7 +21,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   fun `retrieves offender details by crn`() {
     // given
     val crn = "X123456"
-    unallocatedOffenderSearchResponse(crn)
+    offenderSearchResponse(crn)
 
     // and
     val expected = OffenderDetailsResponse(
@@ -30,6 +30,35 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = "Pontius",
           surname = "Pilate",
           dateOfBirth = LocalDate.parse("2000-11-09")
+        )
+      )
+    )
+
+    // when
+    val actual = offenderSearchApiClient.searchOffenderByPhrase(
+      OffenderSearchByPhraseRequest(
+        matchAllTerms = false,
+        phrase = crn
+      )
+    ).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves offender details by crn when practitioner is excluded from viewing the case`() {
+    // given
+    val crn = "X123456"
+    limitedAccessPractitionerOffenderSearchResponse(crn)
+
+    // and
+    val expected = OffenderDetailsResponse(
+      content = listOf(
+        OffenderDetails(
+          firstName = null,
+          surname = null,
+          dateOfBirth = null
         )
       )
     )

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release
 
 fun noCustodyReleaseSummaryResponse() = """
 {

@@ -19,6 +19,7 @@ class RiskControllerTest(
   fun `retrieves risk data when no mappa details or scores available`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
@@ -85,6 +86,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
+
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -97,12 +99,12 @@ class RiskControllerTest(
   fun `retrieves risk data`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       historicalRiskScoresResponse(crn)
       currentRiskScoresResponse(crn)
-
       webTestClient.get()
         .uri("/cases/$crn/risk")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -163,6 +165,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
+
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -172,8 +175,9 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `not found when person does ot exist`() {
+  fun `not found when person does not exist`() {
     val crn = "A12345"
+    userAccessAllowed(crn)
     roSHSummaryResponse(crn)
     mappaDetailsResponse(crn)
     historicalRiskScoresResponse(crn)
@@ -193,6 +197,7 @@ class RiskControllerTest(
   fun `access denied when insufficient privileges used`() {
     runBlockingTest {
       val crn = "X123456"
+      userAccessAllowed(crn)
       webTestClient.get()
         .uri("/cases/$crn/risk")
         .exchange()
@@ -202,9 +207,10 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on OASYS ARN Api riskSummary endpoint`() {
+  fun `gateway timeout 503 given on OASYS ARN Api timeout`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
@@ -226,6 +232,7 @@ class RiskControllerTest(
   fun `gateway timeout 503 given on OASYS ARN current scores endpoint`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
@@ -249,6 +256,7 @@ class RiskControllerTest(
   fun `gateway timeout 503 given on OASYS ARN historical scores endpoint`() {
     runBlockingTest {
       val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
@@ -266,28 +274,51 @@ class RiskControllerTest(
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: ARN API Client - historical scores endpoint: [No response within $oasysArnClientTimeout seconds]")
     }
-  }
 
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout`() {
-    runBlockingTest {
-      val crn = "A12345"
-      roSHSummaryResponse(crn)
-      allOffenderDetailsResponse(crn)
-      currentRiskScoresResponse(crn)
-      historicalRiskScoresResponse(crn)
-      mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+    @Test
+    fun `given case is excluded then only return user access details`() {
+      runBlockingTest {
+        val crn = "A12345"
+        userAccessRestricted(crn)
 
-      webTestClient.get()
-        .uri("/cases/$crn/risk")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+        webTestClient.get()
+          .uri("/cases/$crn/risk")
+          .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus().isOk
+          .expectBody()
+          .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+          .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+          .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+          .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+          .jsonPath("$.personalDetailsOverview").isEmpty
+      }
+    }
+
+    @Test
+    fun `gateway timeout 503 given on Community Api timeout`() {
+      runBlockingTest {
+        val crn = "A12345"
+        userAccessAllowed(crn)
+        roSHSummaryResponse(crn)
+        allOffenderDetailsResponse(crn)
+        currentRiskScoresResponse(crn)
+        historicalRiskScoresResponse(crn)
+        mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+
+        webTestClient.get()
+          .uri("/cases/$crn/risk")
+          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus()
+          .is5xxServerError
+          .expectBody()
+          .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+          .jsonPath("$.userMessage")
+          .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+      }
     }
   }
 }

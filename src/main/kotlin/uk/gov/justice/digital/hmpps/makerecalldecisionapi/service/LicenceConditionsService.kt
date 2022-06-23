@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -20,15 +19,20 @@ class LicenceConditionsService(
 ) {
 
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
-    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val convictions = buildConvictionResponse(crn)
-    val releaseSummary = getReleaseSummary(crn)
+    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
+    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+      LicenceConditionsResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val convictions = buildConvictionResponse(crn)
+      val releaseSummary = getReleaseSummary(crn)
 
-    return LicenceConditionsResponse(
-      personalDetailsOverview = personalDetailsOverview,
-      convictions = convictions,
-      releaseSummary = releaseSummary,
-    )
+      LicenceConditionsResponse(
+        personalDetailsOverview = personalDetailsOverview,
+        convictions = convictions,
+        releaseSummary = releaseSummary,
+      )
+    }
   }
 
   private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
@@ -66,7 +70,7 @@ class LicenceConditionsService(
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return communityApiClient.getReleaseSummary(crn).awaitFirstOrNull()
+    return getValue(communityApiClient.getReleaseSummary(crn))
   }
 
   private fun <T : Any> getValue(mono: Mono<T>?): T? {

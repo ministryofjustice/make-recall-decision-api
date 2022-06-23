@@ -29,10 +29,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.releaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -46,6 +53,10 @@ abstract class IntegrationTestBase {
   lateinit var webTestClient: WebTestClient
 
   var oasysARNApi: ClientAndServer = startClientAndServer(8095)
+
+  @Autowired
+  protected lateinit var repository: RecommendationRepository
+
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
@@ -68,6 +79,7 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
+    repository.deleteAll()
     communityApi.reset()
     offenderSearchApi.reset()
     gotenbergMock.reset()
@@ -138,6 +150,27 @@ abstract class IntegrationTestBase {
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
     communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  fun insertRecommendations() {
+    repository.saveAll(
+      listOf(
+        RecommendationEntity(
+          id = null,
+          name = "Dylan Adam Armstrong",
+          crn = "J678910",
+          recommendation = Recommendation.NOT_RECALL,
+          alternateActions = ""
+        ),
+        RecommendationEntity(
+          id = null,
+          name = "Andrei Edwards",
+          crn = "J680648",
+          recommendation = Recommendation.RECALL,
+          alternateActions = "increase reporting"
+        )
+      )
     )
   }
 
@@ -244,27 +277,35 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun unallocatedOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun offenderSearchResponse(crn: String, delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
         .withPath("/phrase")
         .withQueryStringParameter("paged", "false")
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchResponse(crn))
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun contactSummaryResponse(crn: String, contactSummary: String, filterContacts: Boolean = true, delaySeconds: Long = 0) {
+  protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
+    val offenderSearchRequest =
+      request()
+        .withPath("/phrase")
+        .withQueryStringParameter("paged", "false")
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(limitedAccessOffenderSearchResponse(crn))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun contactSummaryResponse(crn: String, contactSummary: String, delaySeconds: Long = 0) {
     val contactSummaryUrl = "/secure/offenders/crn/$crn/contact-summary"
-    val contactSummaryRequest =
-      if (filterContacts) {
-        request().withPath(contactSummaryUrl)
-          .withQueryStringParameter("contactTypes", "MO5", "LCL", "C204", "CARR", "C123", "C071", "COAP", "RECI")
-      } else {
-        request().withPath(contactSummaryUrl)
-      }
+    val contactSummaryRequest = request()
+      .withPath(contactSummaryUrl)
+
     communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(contactSummary)
         .withDelay(Delay.seconds(delaySeconds))
@@ -276,7 +317,7 @@ abstract class IntegrationTestBase {
       request().withPath("/secure/offenders/crn/$crn/release")
 
     communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryResponse())
+      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -287,6 +328,39 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
+    )
+  }
+
+  protected fun userAccessAllowed(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userAccessExcluded(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userAccessRestricted(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

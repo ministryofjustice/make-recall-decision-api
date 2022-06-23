@@ -15,15 +15,19 @@ class PersonDetailsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
+  val crn = "A12345"
+
   @Test
   fun `retrieves person details`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -47,12 +51,14 @@ class PersonDetailsControllerTest(
   @Test
   fun `handles scenario where no person exists matching crn`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponseWithNoOffender(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isNotFound
@@ -64,14 +70,37 @@ class PersonDetailsControllerTest(
   }
 
   @Test
+  fun `given case is excluded then only return user access details`() {
+    runBlockingTest {
+      userAccessRestricted(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout`() {
     runBlockingTest {
-      val crn = "A12345"
+      userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -82,16 +111,16 @@ class PersonDetailsControllerTest(
     }
   }
 
-  @Test
-  fun `access denied when insufficient privileges used`() {
-    runBlockingTest {
-      val crn = "X123456"
-      unallocatedOffenderSearchResponse(crn)
-      webTestClient.get()
-        .uri("/cases/$crn/personalDetailsOverview")
-        .exchange()
-        .expectStatus()
-        .isUnauthorized
-    }
-  }
+//  @Test
+//  fun `access denied when insufficient privileges used`() {
+//    runBlockingTest {
+//      val crn = "X123456"
+//      offenderSearchResponse(crn)
+//      webTestClient.get()
+//        .uri("/cases/$crn/personalDetailsOverview")
+//        .exchange()
+//        .expectStatus()
+//        .isUnauthorized
+//    }
+//  }
 }

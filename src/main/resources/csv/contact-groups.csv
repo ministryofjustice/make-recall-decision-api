@@ -1,6 +1,0 @@
-Group id,Group,Code,Contact name (for reference only - will not be used in UI)
-1,Appointment,COAI,Initial Appointment - In office (NS)
-1,Appointment,COAP,Planned Office Visit (NS)
-1,Appointment,COPT,Planned Telephone Contact (NS)
-2,Home Visit,CHVS,Home Visit to Case (NS)
-2,Home Visit,C253,Home Visit - Not Notified
