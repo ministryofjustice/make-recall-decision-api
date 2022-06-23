@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
@@ -18,19 +20,85 @@ import org.springframework.security.oauth2.client.endpoint.DefaultClientCredenti
 import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.stereotype.Component
 import org.springframework.web.context.annotation.RequestScope
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
+import java.io.IOException
 import java.net.URI
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.FilterConfig
+import javax.servlet.ServletException
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+
+// TODO move these out
+@Component
+@Order(4)
+internal class UserContextFilter : Filter {
+  @Throws(IOException::class, ServletException::class)
+  override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
+    val httpServletRequest = servletRequest as HttpServletRequest
+    val authToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
+    authToken?.let {
+      UserContext.setAuthToken(authToken)
+    }
+
+    filterChain.doFilter(httpServletRequest, servletResponse)
+  }
+
+  override fun init(filterConfig: FilterConfig) {}
+  override fun destroy() {}
+}
+
+@Component
+object UserContext {
+  var authToken = ThreadLocal<String>()
+
+  fun setAuthToken(aToken: String) {
+    authToken.set(aToken)
+  }
+
+  fun getAuthToken(): String {
+    return authToken.get()
+  }
+}
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
+  @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry
 ) {
+
+  @Bean
+  @RequestScope
+  fun assessRisksNeedsWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
+    return builder.baseUrl(arnApiRootUri)
+      .filter { request: ClientRequest, next: ExchangeFunction ->
+        val filtered = ClientRequest.from(request)
+          .header(HttpHeaders.AUTHORIZATION, UserContext.getAuthToken())
+          .build()
+        next.exchange(filtered)
+      }
+      .build()
+  }
+
+  @Bean
+  fun assessRisksNeedsApiClientUserEnhanced(@Qualifier("assessRisksNeedsWebClientUserEnhancedAppScope") webClient: WebClient): ArnApiClient {
+    return ArnApiClient(webClient, nDeliusTimeout, arnApiClientEnhancedTimeoutCounter())
+  }
+
+  @Bean
+  fun arnApiClientEnhancedTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
 
   @Bean
   @RequestScope
