@@ -23,30 +23,27 @@ class OffenderSearchService(
 
     return apiResponse?.map {
       var name = "${it.firstName} ${it.surname}"
+      var excluded: Boolean? = null
+      var restricted: Boolean? = null
 
-      // Workaround for an issue in Delius Probation Search API which omits key details when a case has ANY exclusion/restriction on it.
+      // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
         val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
 
-        if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
-          name = "Limited access"
+        if (true == userAccessResponse?.userRestricted || true == userAccessResponse?.userExcluded) {
+          excluded = userAccessResponse.userExcluded
+          restricted = userAccessResponse.userRestricted
         } else {
-          // This tries to fill in the blank details which are incorrectly omitted by Delius Search API
-          // Don't attempt to do this if more than one result as could end up causing the Community API (and our service) to grind to a halt.
-          // Shouldn't be an issue at the moment as CRN is the only field that can be used to search so we can only ever get 1 result.
-          // Refactor needed if we decide to expand this to include more searchable fields. Hopefully, this will have been fixed
-          // by the Delius team by the time we need it and we can rip this code out.
-          if (apiResponse.size == 1) {
-            val allDetails = getValue(communityApiClient.getAllOffenderDetails(crn))
-            name = "${allDetails?.firstName} ${allDetails?.surname}"
-          }
+          name = "No name available"
         }
       }
 
       SearchByCrnResponse(
         name = name,
         dateOfBirth = it.dateOfBirth,
-        crn = crn
+        crn = crn,
+        userExcluded = excluded,
+        userRestricted = restricted
       )
     }?.toList() ?: emptyList()
   }
