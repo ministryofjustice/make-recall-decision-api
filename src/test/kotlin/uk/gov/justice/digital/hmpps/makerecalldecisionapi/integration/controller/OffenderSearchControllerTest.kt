@@ -21,6 +21,7 @@ class OffenderSearchControllerTest(
       offenderSearchResponse(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -41,6 +42,7 @@ class OffenderSearchControllerTest(
       userAccessExcluded(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -62,6 +64,7 @@ class OffenderSearchControllerTest(
       allOffenderDetailsResponse(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -82,6 +85,7 @@ class OffenderSearchControllerTest(
       userAccessRestricted(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -102,6 +106,7 @@ class OffenderSearchControllerTest(
 
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -123,6 +128,7 @@ class OffenderSearchControllerTest(
 
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -145,6 +151,7 @@ class OffenderSearchControllerTest(
 
       webTestClient.get()
         .uri("/search?crn=$crn")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

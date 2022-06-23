@@ -25,6 +25,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -55,6 +56,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -74,6 +76,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -95,6 +98,7 @@ class PersonDetailsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

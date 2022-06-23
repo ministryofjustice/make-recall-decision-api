@@ -27,6 +27,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -55,6 +56,7 @@ class CaseOverviewControllerTest(
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -77,6 +79,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -100,6 +103,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -122,6 +126,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -144,6 +149,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
+        .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
