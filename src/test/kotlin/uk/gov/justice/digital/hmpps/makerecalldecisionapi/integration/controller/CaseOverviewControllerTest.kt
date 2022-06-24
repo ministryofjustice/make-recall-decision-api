@@ -3,9 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.AuthenticationFacade
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
@@ -16,6 +19,9 @@ class CaseOverviewControllerTest(
 
   val crn = "A12345"
   val staffCode = "STFFCDEU"
+
+  @Autowired
+  private val authenticationFacade: AuthenticationFacade = mock()
 
   @Test
   fun `retrieves case summary details`() {
