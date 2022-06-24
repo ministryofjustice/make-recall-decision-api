@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -21,35 +20,32 @@ class RecommendationControllerTest(
 
   @Test
   fun `creates recommendation`() {
-    runBlockingTest {
-      val crn = "A12345"
-      webTestClient.post()
-        .uri("/cases/$crn/recommendation")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest())
-        )
-        .headers { it.authToken() }
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.recommendation").isEqualTo("NOT_RECALL")
-        .jsonPath("$.alternateActions").isEqualTo("increase reporting")
-    }
+    val crn = "A12345"
+    webTestClient.post()
+      .uri("/cases/$crn/recommendation")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest())
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recommendation").isEqualTo("NOT_RECALL")
+      .jsonPath("$.alternateActions").isEqualTo("increase reporting")
   }
 
-//  @Test
-//  fun `access denied when Returns an overview of the person detailsinsufficient privileges used`() {
-//    runBlockingTest {
-//      val crn = "X123456"
-//      webTestClient.get()
-//        .uri("/cases/$crn/recommendation")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    val crn = "X123456"
+    webTestClient.post()
+      .uri("/cases/$crn/recommendation")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest())
+      )
+      .exchange()
+      .expectStatus()
+      .isUnauthorized
+  }
 }
