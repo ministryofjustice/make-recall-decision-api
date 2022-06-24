@@ -32,7 +32,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter:5.7.4")
   implementation("io.sentry:sentry-logback:5.7.4")
 
-  implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.8")
+  implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.9")
   implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.8")
   implementation("org.springdoc:springdoc-openapi-data-rest:1.6.8")
