@@ -27,6 +27,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.1")
   implementation("io.opentelemetry:opentelemetry-api:1.15.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.5")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.0")
