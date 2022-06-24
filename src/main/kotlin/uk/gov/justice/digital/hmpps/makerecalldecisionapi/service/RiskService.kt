@@ -35,9 +35,9 @@ class RiskService(
     return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
       RiskResponse(userAccessResponse = userAccessResponse)
     } else {
-      val riskSummaryResponse = getValue(arnApiClient.getRiskSummary(crn))
       val personalDetailsOverview = fetchPersonalDetails(crn)
-      val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse!!)
+      val riskSummaryResponse = handleFetchRiskSummary(crn)
+      val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
       val natureOfRisk = extractNatureOfRisk(riskSummaryResponse)
       val whoIsAtRisk = extractWhoIsAtRisk(riskSummaryResponse)
       val circumstancesIncreaseRisk = extractCircumstancesIncreaseRisk(riskSummaryResponse)
@@ -62,16 +62,27 @@ class RiskService(
     }
   }
 
+  private suspend fun handleFetchRiskSummary(crn: String): RiskSummaryResponse? {
+    return try {
+      getValue(arnApiClient.getRiskSummary(crn))
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No Risk Summary available for CRN: $crn - ${e.message}")
+      null
+    }
+  }
+
   private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
-    return try { fetchMappa(crn) } catch (e: WebClientResponseException.NotFound) {
+    return try {
+      fetchMappa(crn)
+    } catch (e: WebClientResponseException.NotFound) {
       log.info("No MAPPA details available for CRN: $crn - ${e.message}")
       Mappa(level = "", isNominal = true, lastUpdated = "")
     }
   }
 
-  private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse): NatureOfRisk {
+  private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse?): NatureOfRisk {
     return NatureOfRisk(
-      description = riskSummaryResponse.natureOfRisk ?: "",
+      description = riskSummaryResponse?.natureOfRisk ?: "",
       oasysHeading = OasysHeading(
         number = "10.2",
         description = "What is the nature of the risk?"
@@ -79,9 +90,9 @@ class RiskService(
     )
   }
 
-  private suspend fun extractFactorsToReduceRisk(riskSummaryResponse: RiskSummaryResponse): FactorsToReduceRisk {
+  private suspend fun extractFactorsToReduceRisk(riskSummaryResponse: RiskSummaryResponse?): FactorsToReduceRisk {
     return FactorsToReduceRisk(
-      description = riskSummaryResponse.riskMitigationFactors ?: "",
+      description = riskSummaryResponse?.riskMitigationFactors ?: "",
       oasysHeading = OasysHeading(
         number = "10.5",
         description = "What factors are likely to reduce the risk?"
@@ -89,9 +100,9 @@ class RiskService(
     )
   }
 
-  private suspend fun extractWhenRiskHighest(riskSummaryResponse: RiskSummaryResponse): WhenRiskHighest {
+  private suspend fun extractWhenRiskHighest(riskSummaryResponse: RiskSummaryResponse?): WhenRiskHighest {
     return WhenRiskHighest(
-      description = riskSummaryResponse.riskImminence ?: "",
+      description = riskSummaryResponse?.riskImminence ?: "",
       oasysHeading = OasysHeading(
         number = "10.3",
         description = "When is the risk likely to be greatest?"
@@ -99,9 +110,9 @@ class RiskService(
     )
   }
 
-  private suspend fun extractCircumstancesIncreaseRisk(riskSummaryResponse: RiskSummaryResponse): CircumstancesIncreaseRisk {
+  private suspend fun extractCircumstancesIncreaseRisk(riskSummaryResponse: RiskSummaryResponse?): CircumstancesIncreaseRisk {
     return CircumstancesIncreaseRisk(
-      description = riskSummaryResponse.riskIncreaseFactors ?: "",
+      description = riskSummaryResponse?.riskIncreaseFactors ?: "",
       oasysHeading = OasysHeading(
         number = "10.4",
         description = "What circumstances are likely to increase the risk?"
@@ -109,9 +120,9 @@ class RiskService(
     )
   }
 
-  private suspend fun extractWhoIsAtRisk(riskSummaryResponse: RiskSummaryResponse): WhoIsAtRisk {
+  private suspend fun extractWhoIsAtRisk(riskSummaryResponse: RiskSummaryResponse?): WhoIsAtRisk {
     return WhoIsAtRisk(
-      description = riskSummaryResponse.whoIsAtRisk ?: "",
+      description = riskSummaryResponse?.whoIsAtRisk ?: "",
       oasysHeading = OasysHeading(
         number = "10.1",
         description = "Who is at risk?"
@@ -119,27 +130,27 @@ class RiskService(
     )
   }
 
-  private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse): RiskOfSeriousHarm {
-    val overallRisk = riskSummaryResponse.overallRiskLevel
+  private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
+    val overallRisk = riskSummaryResponse?.overallRiskLevel
     return RiskOfSeriousHarm(
       overallRisk = overallRisk ?: "",
       riskToChildren = getRiskLevel(riskSummaryResponse, "children") ?: "",
       riskToPublic = getRiskLevel(riskSummaryResponse, "public") ?: "",
       riskToKnownAdult = getRiskLevel(riskSummaryResponse, "known adult") ?: "",
       riskToStaff = getRiskLevel(riskSummaryResponse, "staff") ?: "",
-      lastUpdated = riskSummaryResponse.assessedOn?.toLocalDate()
+      lastUpdated = riskSummaryResponse?.assessedOn?.toLocalDate()?.toString() ?: ""
     )
   }
 
-  private fun getRiskLevel(riskSummaryResponse: RiskSummaryResponse, key: String): String? {
+  private fun getRiskLevel(riskSummaryResponse: RiskSummaryResponse?, key: String): String? {
 
-    val veryHigh = riskSummaryResponse.riskInCommunity?.veryHigh
+    val veryHigh = riskSummaryResponse?.riskInCommunity?.veryHigh
       ?.firstOrNull { it?.lowercase() == key }
-    val high = riskSummaryResponse.riskInCommunity?.high
+    val high = riskSummaryResponse?.riskInCommunity?.high
       ?.firstOrNull { it?.lowercase() == key }
-    val medium = riskSummaryResponse.riskInCommunity?.medium
+    val medium = riskSummaryResponse?.riskInCommunity?.medium
       ?.firstOrNull { it?.lowercase() == key }
-    val low = riskSummaryResponse.riskInCommunity?.low
+    val low = riskSummaryResponse?.riskInCommunity?.low
       ?.firstOrNull { it?.lowercase() == key }
 
     val risks = linkedMapOf<String?, String?>(

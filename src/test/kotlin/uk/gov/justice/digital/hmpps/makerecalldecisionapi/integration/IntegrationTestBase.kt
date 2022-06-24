@@ -154,6 +154,14 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun noRoSHSummaryResponse(crn: String) {
+    val roSHSummaryRequest =
+      request().withPath("/risks/crn/$crn/summary")
+    oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
   protected fun registrationsResponse(crn: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/registrations")

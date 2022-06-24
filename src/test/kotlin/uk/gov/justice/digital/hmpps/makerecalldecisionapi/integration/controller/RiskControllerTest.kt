@@ -16,13 +16,13 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk data when no mappa details available`() {
+  fun `retrieves personal details data when no MAPPA or RoSH details available`() {
     runBlockingTest {
       val crn = "X123456"
       userAccessAllowed(crn)
-      roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
+      noRoSHSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -35,30 +35,30 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
-        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
+        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("")
         .jsonPath("$.mappa.level").isEqualTo("")
         .jsonPath("$.mappa.isNominal").isEqualTo(true)
         .jsonPath("$.mappa.lastUpdated").isEqualTo("")
         .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
         .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
-        .jsonPath("$.natureOfRisk.description").isEqualTo("The nature of the risk is X")
+        .jsonPath("$.natureOfRisk.description").isEqualTo("")
         .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
         .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
-        .jsonPath("$.whoIsAtRisk.description").isEqualTo("X, Y and Z are at risk")
+        .jsonPath("$.whoIsAtRisk.description").isEqualTo("")
         .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
         .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description").isEqualTo("What circumstances are likely to increase the risk?")
-        .jsonPath("$.circumstancesIncreaseRisk.description").isEqualTo("If offender in situation X the risk can be higher")
+        .jsonPath("$.circumstancesIncreaseRisk.description").isEqualTo("")
         .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
         .jsonPath("$.factorsToReduceRisk.oasysHeading.description").isEqualTo("What factors are likely to reduce the risk?")
-        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("Giving offender therapy in X will reduce the risk")
+        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("")
         .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
         .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
-        .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
+        .jsonPath("$.whenRiskHighest.description").isEqualTo("")
 
 //        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
 //        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")

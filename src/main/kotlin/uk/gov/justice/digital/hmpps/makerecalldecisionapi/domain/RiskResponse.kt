@@ -34,8 +34,7 @@ data class RiskOfSeriousHarm(
   val riskToPublic: String?,
   val riskToKnownAdult: String?,
   val riskToStaff: String?,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-  val lastUpdated: LocalDate?
+  val lastUpdated: String?
 )
 
 data class Mappa(
