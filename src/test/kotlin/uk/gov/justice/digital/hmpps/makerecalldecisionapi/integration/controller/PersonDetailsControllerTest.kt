@@ -75,7 +75,7 @@ class PersonDetailsControllerTest(
       userAccessRestricted(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/overview")
+        .uri("/cases/$crn/personal-details")
         .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
