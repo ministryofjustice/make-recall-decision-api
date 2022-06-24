@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
@@ -33,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -47,6 +49,8 @@ abstract class IntegrationTestBase {
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   lateinit var webTestClient: WebTestClient
+
+  var oasysARNApi: ClientAndServer = startClientAndServer(8095)
 
   @Autowired
   protected lateinit var repository: RecommendationRepository
@@ -77,16 +81,36 @@ abstract class IntegrationTestBase {
     communityApi.reset()
     offenderSearchApi.reset()
     gotenbergMock.reset()
+    oasysARNApi.reset()
     setupOauth()
     setupHealthChecks()
   }
 
   @AfterAll
   fun tearDownServer() {
+    oasysARNApi.stop()
     communityApi.stop()
     offenderSearchApi.stop()
     gotenbergMock.stop()
     oauthMock.stop()
+  }
+
+  protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
+    val mappaDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
+
+    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noMappaDetailsResponse(crn: String) {
+    val mappaDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
+    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
   }
 
   fun insertRecommendations() {
@@ -116,6 +140,16 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {
+    val roSHSummaryRequest =
+      request().withPath("/risks/crn/$crn/summary")
+
+    oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(roSHSummaryResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
