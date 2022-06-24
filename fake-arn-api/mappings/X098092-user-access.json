@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/secure/offenders/crn/X098092/userAccess"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-user-access.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

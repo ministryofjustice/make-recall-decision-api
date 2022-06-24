@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
@@ -108,6 +109,22 @@ class CommunityApiClient(
       }
     log.info(normalizeSpace("Returning licence conditions for $crn by convictionId $convictionId"))
     return result
+  }
+
+  fun getAllMappaDetails(crn: String): Mono<MappaResponse> {
+    val responseType = object : ParameterizedTypeReference<MappaResponse>() {}
+    return webClient
+      .get()
+      .uri("/secure/offenders/crn/$crn/risk/mappa")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "mappa"
+        )
+      }
   }
 
   fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
