@@ -100,7 +100,7 @@ class ContactHistoryControllerTest(
       userAccessExcluded(crn)
 
       webTestClient.get()
-        .uri("/cases/$crn/overview")
+        .uri("/cases/$crn/contact-history")
         .headers { it.authToken() }
 //        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
 //        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
