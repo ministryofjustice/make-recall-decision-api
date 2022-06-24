@@ -20,7 +20,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.mappaDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
@@ -28,13 +30,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -95,6 +97,44 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
+  protected fun currentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val currentScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/all")
+
+    oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(currentRiskScoresResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noCurrentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val currentScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/all")
+
+    oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
+  protected fun historicalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val historicalScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/rsr/history")
+
+    oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(historicalRiskScoresResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noHistoricalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val historicalScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/rsr/history")
+
+    oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
   protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
     val mappaDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
@@ -141,6 +181,15 @@ abstract class IntegrationTestBase {
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
+    val allOffenderDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/all")
+
+    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
+      response().withStatusCode(404)
     )
   }
 

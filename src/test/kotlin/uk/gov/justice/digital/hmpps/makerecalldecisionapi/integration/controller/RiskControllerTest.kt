@@ -18,10 +18,12 @@ class RiskControllerTest(
   @Test
   fun `retrieves personal details data when no MAPPA or RoSH details available`() {
     runBlockingTest {
-      val crn = "X123456"
+      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
+      noHistoricalRiskScoresResponse(crn)
+      noCurrentRiskScoresResponse(crn)
       noRoSHSummaryResponse(crn)
 
       webTestClient.get()
@@ -59,45 +61,31 @@ class RiskControllerTest(
         .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
         .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
         .jsonPath("$.whenRiskHighest.description").isEqualTo("")
-
-//        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
-//        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
-//        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
-//        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("14 May 2019 at 12:00")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(18)
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.8)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(5.43)
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-//        .jsonPath("$.predictorScores.historical[1].date").isEqualTo("12 September 2018 at 12:00")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.score").isEqualTo(6.2)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.score").isEqualTo(8.6)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.score").isEqualTo(40)
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
+        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
@@ -114,7 +102,8 @@ class RiskControllerTest(
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
-
+      historicalRiskScoresResponse(crn)
+      currentRiskScoresResponse(crn)
       webTestClient.get()
         .uri("/cases/$crn/risk")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -150,51 +139,57 @@ class RiskControllerTest(
         .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
         .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
         .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
-
-//        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
-//        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
-//        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
-//        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("14 May 2019 at 12:00")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(18)
-//        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.8)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
-//        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(5.43)
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("12 September 2018 12:00")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(18)
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(6.2)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-//        .jsonPath("$.predictorScores.historical[1].date").isEqualTo("12 September 2018 at 12:00")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(12)
-//        .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo("RSR")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.level").isEqualTo("LOW")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.score").isEqualTo(6.2)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPC.type").isEqualTo("OSP/C")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.score").isEqualTo(8.6)
-//        .jsonPath("$.predictorScores.historical[1].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.score").isEqualTo(40)
-//        .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
+        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo(3.45)
+        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
+        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("MEDIUM")
+        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo(5)
+        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
+
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
 //        .jsonPath("$.contingencyPlan.description").isEqualTo(
 //          "If Mr Edwin enters enters pubs in Enfield Town - issue licence compliance letter\nIf Mr Edwin associates with Mr Daniels, Mr Moreland or Mr Barksdale - issue decision not to recall letter or recall. Supervision session to discuss reasons for association.\nIf Mr Edwin loses his accommodation, refer to housing support. \nIf Mr Edwin loses his employment, refer to ETE services to establish alternative employment\nIf Mr Edwin returns to drinking or taking drugs, cosndier increase in MAPPA level, refer to CGL support, increase reporting or recall."
 //        )
     }
+  }
+
+  @Test
+  fun `not found when person does not exist`() {
+    val crn = "A12345"
+    userAccessAllowed(crn)
+    roSHSummaryResponse(crn)
+    mappaDetailsResponse(crn)
+    historicalRiskScoresResponse(crn)
+    currentRiskScoresResponse(crn)
+    noOffenderDetailsResponse(crn)
+
+    webTestClient.get()
+      .uri("/cases/$crn/risk")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isNotFound
+      .expectBody()
+      .jsonPath("$.developerMessage").isEqualTo("No details available for crn: A12345")
   }
 
   @Test
@@ -233,35 +228,15 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `given case is excluded then only return user access details`() {
-    runBlockingTest {
-      val crn = "A12345"
-      userAccessRestricted(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/risk")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
-        .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
-        .jsonPath("$.personalDetailsOverview").isEmpty
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout`() {
+  fun `gateway timeout 503 given on OASYS ARN current scores endpoint`() {
     runBlockingTest {
       val crn = "A12345"
       userAccessAllowed(crn)
-      roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
-      mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      mappaDetailsResponse(crn)
+      roSHSummaryResponse(crn)
+      historicalRiskScoresResponse(crn)
+      currentRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -272,7 +247,77 @@ class RiskControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: ARN API Client - current scores endpoint: [No response within $oasysArnClientTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on OASYS ARN historical scores endpoint`() {
+    runBlockingTest {
+      val crn = "A12345"
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      mappaDetailsResponse(crn)
+      roSHSummaryResponse(crn)
+      currentRiskScoresResponse(crn)
+      historicalRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: ARN API Client - historical scores endpoint: [No response within $oasysArnClientTimeout seconds]")
+    }
+
+    @Test
+    fun `given case is excluded then only return user access details`() {
+      runBlockingTest {
+        val crn = "A12345"
+        userAccessRestricted(crn)
+
+        webTestClient.get()
+          .uri("/cases/$crn/risk")
+          .headers { it.authToken() }
+//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
+//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus().isOk
+          .expectBody()
+          .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+          .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+          .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+          .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+          .jsonPath("$.personalDetailsOverview").isEmpty
+      }
+    }
+
+    @Test
+    fun `gateway timeout 503 given on Community Api timeout`() {
+      runBlockingTest {
+        val crn = "A12345"
+        userAccessAllowed(crn)
+        roSHSummaryResponse(crn)
+        allOffenderDetailsResponse(crn)
+        currentRiskScoresResponse(crn)
+        historicalRiskScoresResponse(crn)
+        mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+
+        webTestClient.get()
+          .uri("/cases/$crn/risk")
+          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus()
+          .is5xxServerError
+          .expectBody()
+          .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+          .jsonPath("$.userMessage")
+          .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+      }
     }
   }
 }

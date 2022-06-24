@@ -1,0 +1,78 @@
+[
+  {
+    "completedDate": "2022-04-16T11:40:54.243",
+    "assessmentStatus": "string",
+    "groupReconvictionScore": {
+      "oneYear": 0,
+      "twoYears": 0,
+      "scoreLevel": "HIGH"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 0,
+      "ovpDynamicWeightedScore": 0,
+      "ovpTotalWeightedScore": 0,
+      "oneYear": 0,
+      "twoYears": 0,
+      "ovpRisk": "HIGH"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 0,
+      "ogpDynamicWeightedScore": 0,
+      "ogpTotalWeightedScore": 0,
+      "ogp1Year": 0,
+      "ogp2Year": 0,
+      "ogpRisk": "HIGH"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 0,
+      "staticOrDynamic": "STATIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string",
+      "scoreLevel": "HIGH"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 0,
+      "ospContactPercentageScore": 0,
+      "ospIndecentScoreLevel": "HIGH",
+      "ospContactScoreLevel": "HIGH"
+    }
+  },
+  {
+    "completedDate": "2022-06-16T11:40:54.243",
+    "assessmentStatus": "string",
+    "groupReconvictionScore": {
+      "oneYear": 0,
+      "twoYears": 0,
+      "scoreLevel": "LOW"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 0,
+      "ovpDynamicWeightedScore": 0,
+      "ovpTotalWeightedScore": 0,
+      "oneYear": 0,
+      "twoYears": 0,
+      "ovpRisk": "LOW"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 0,
+      "ogpDynamicWeightedScore": 0,
+      "ogpTotalWeightedScore": 12,
+      "ogp1Year": 0,
+      "ogp2Year": 0,
+      "ogpRisk": "LOW"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 23,
+      "staticOrDynamic": "STATIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string",
+      "scoreLevel": "HIGH"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 5,
+      "ospContactPercentageScore": 3.45,
+      "ospIndecentScoreLevel": "MEDIUM",
+      "ospContactScoreLevel": "LOW"
+    }
+  }
+]

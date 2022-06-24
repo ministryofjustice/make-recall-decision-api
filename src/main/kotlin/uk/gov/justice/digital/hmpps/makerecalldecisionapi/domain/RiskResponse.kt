@@ -62,25 +62,25 @@ data class Scores(
 
 data class RSR(
   val level: String?,
-  val score: Int?,
+  val score: String?,
   val type: String?
 )
 
 data class OSPC(
   val level: String?,
-  val score: Int?,
+  val score: String?,
   val type: String?
 )
 
 data class OSPI(
   val level: String?,
-  val score: Int?,
+  val score: String?,
   val type: String?
 )
 
 data class OGRS(
   val level: String?,
-  val score: Int?,
+  val score: String?,
   val type: String?
 )
 
