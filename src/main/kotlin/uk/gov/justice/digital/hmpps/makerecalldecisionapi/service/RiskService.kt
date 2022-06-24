@@ -9,18 +9,31 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduceRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.HistoricalScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.NatureOfRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OasysHeading
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskPersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -44,9 +57,11 @@ class RiskService(
       val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
       val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
       val mappa = handleFetchMappaApiCall(crn)
-      val predictorScores = null // TODO Andrew's API will provide this
+      val predictorScores = PredictorScores(
+        current = fetchCurrentScores(crn),
+        historical = fetchHistoricalScores(crn)
+      )
       val contingencyPlan = null // TODO Andrew's API will provide this
-
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
         riskOfSeriousHarm = riskOfSeriousHarm,
@@ -60,6 +75,70 @@ class RiskService(
         whenRiskHighest = whenRiskHighest
       )
     }
+  }
+
+  private suspend fun fetchCurrentScores(crn: String): Scores {
+    val currentScoresResponse = try {
+      getValue(arnApiClient.getCurrentScores(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No cuurent scores available for CRN: $crn - ${e.message}")
+      listOf(
+        CurrentScoreResponse(
+          completedDate = "",
+          generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
+          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
+          sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
+        )
+      )
+    }
+    val latestScores = currentScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
+    val rsr = latestScores?.riskOfSeriousRecidivismScore
+    val osp = latestScores?.sexualPredictorScore
+    val osg = latestScores?.generalPredictorScore
+    return Scores(
+      rsr = RSR(level = rsr?.scoreLevel ?: "", score = rsr?.percentageScore ?: "", type = "RSR"),
+      ospc = OSPC(level = osp?.ospContactScoreLevel ?: "", score = osp?.ospContactPercentageScore ?: "", type = "OSP/C"),
+      ospi = OSPI(level = osp?.ospIndecentScoreLevel ?: "", score = osp?.ospIndecentPercentageScore ?: "", type = "OSP/I"),
+      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS") // TODO check if 'total' is correct field
+    )
+  }
+
+  private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
+    val historicalScoresResponse = try {
+      getValue(arnApiClient.getHistoricalScores(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No historical scores available for CRN: $crn - ${e.message}")
+      listOf(
+        HistoricalScoreResponse(
+          rsrPercentageScore = "",
+          rsrScoreLevel = "",
+          ospcPercentageScore = "",
+          ospcScoreLevel = "",
+          ospiPercentageScore = "",
+          ospiScoreLevel = "",
+          calculatedDate = null
+        )
+      )
+    }
+    return historicalScoresResponse
+      .map {
+        HistoricalScore(
+          date = it.calculatedDate?.let { it1 -> formatDateTimeStamp(it1) } ?: "",
+          scores = Scores(
+            rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
+            ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
+            ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
+            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO - discuss with ARN team
+          )
+        )
+      }
+  }
+
+  private fun formatDateTimeStamp(localDateTimeString: String): String {
+    return LocalDateTime.parse(localDateTimeString).format(
+      DateTimeFormatter.ofPattern("dd MMMM YYYY HH:mm")
+        .withLocale(Locale.UK)
+    )
   }
 
   private suspend fun handleFetchRiskSummary(crn: String): RiskSummaryResponse? {
@@ -181,13 +260,18 @@ class RiskService(
   }
 
   private suspend fun fetchMappa(crn: String): Mappa {
-    val mappa = getValue(communityApiClient.getAllMappaDetails(crn))!!
-    val reviewDate = mappa.reviewDate?.format(
+    val mappaResponse = try {
+      getValue(communityApiClient.getAllMappaDetails(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
+      null
+    }
+    val reviewDate = mappaResponse?.reviewDate?.format(
       DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
         .withLocale(Locale.UK)
     )
     return Mappa(
-      level = mappa.levelDescription ?: "",
+      level = mappaResponse?.levelDescription ?: "",
       isNominal = true,
       lastUpdated = reviewDate ?: ""
     )

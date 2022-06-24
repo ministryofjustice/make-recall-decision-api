@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.Duration
@@ -27,6 +29,38 @@ class ArnApiClient(
         handleTimeoutException(
           exception = ex,
           endPoint = "risk summary"
+        )
+      }
+  }
+
+  fun getHistoricalScores(crn: String): Mono<List<HistoricalScoreResponse>> {
+    val responseType = object : ParameterizedTypeReference<List<HistoricalScoreResponse>>() {}
+    return webClient
+      .get()
+      .uri("/risks/crn/$crn/predictors/rsr/history")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "historical scores"
+        )
+      }
+  }
+
+  fun getCurrentScores(crn: String): Mono<List<CurrentScoreResponse>> {
+    val responseType = object : ParameterizedTypeReference<List<CurrentScoreResponse>>() {}
+    return webClient
+      .get()
+      .uri("/risks/crn/$crn/predictors/all")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "current scores"
         )
       }
   }

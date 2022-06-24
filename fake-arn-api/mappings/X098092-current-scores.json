@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/risks/crn/X098092/predictors/all"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-current-scores.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
