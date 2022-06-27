@@ -24,6 +24,11 @@ class AuditService(
 
   suspend fun sendMessage(auditType: AuditType, details: String, crn: String) {
 
+    val auditType = auditType
+    val who = authenticationFacade.getUsername()
+    val serviceName = serviceName
+    val details = details
+
     val auditEvent = AuditEvent(
       what = auditType.name,
       who = authenticationFacade.getUsername(),

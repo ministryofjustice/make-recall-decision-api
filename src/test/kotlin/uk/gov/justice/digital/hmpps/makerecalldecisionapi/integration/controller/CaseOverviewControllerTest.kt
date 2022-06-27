@@ -1,15 +1,21 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
+import com.amazonaws.services.sqs.AmazonSQS
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
+import org.mockito.BDDMockito.given
+import org.mockito.Mockito.doReturn
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.AuthenticationFacade
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.hmpps.sqs.HmppsQueue
+import uk.gov.justice.hmpps.sqs.HmppsQueueService
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -20,12 +26,30 @@ class CaseOverviewControllerTest(
   val crn = "A12345"
   val staffCode = "STFFCDEU"
 
+  @MockBean
+  private lateinit var authenticationFacade: AuthenticationFacade
+
+  // FIXME: Fix this mess
   @Autowired
-  private val authenticationFacade: AuthenticationFacade = mock()
+  lateinit var hmppsQueueService: HmppsQueueService
+
+  internal val hmppsAuditQueue by lazy { hmppsQueueService.findByQueueId("audit") as HmppsQueue }
+
+  protected val hmppsEventQueueSqsClient by lazy { hmppsAuditQueue.sqsClient }
+  protected val hmppsEventSqsDlqClient by lazy { hmppsAuditQueue.sqsDlqClient as AmazonSQS }
+  val queueName = "any queue"
+  val dlqName = "any dlq"
+  protected val hmppsQueue = HmppsQueue("any queue id", hmppsEventQueueSqsClient, queueName, hmppsEventSqsDlqClient, dlqName)
 
   @Test
   fun `retrieves case summary details`() {
     runTest {
+      given(authenticationFacade.getUsername())
+        .willReturn("myUser")
+
+      doReturn(hmppsQueue)
+        .whenever(hmppsQueueService).findByQueueId("audit")
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
