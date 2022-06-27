@@ -1,9 +1,10 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.3.0-beta-1"
+  kotlin("jvm") version "1.7.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.6.21"
   id("org.sonarqube") version "3.3"
-  kotlin("plugin.spring") version "1.6.21"
+  kotlin("plugin.spring") version "1.7.0"
 }
 
 configurations {
@@ -24,7 +25,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
   implementation("io.opentelemetry:opentelemetry-api:1.15.0")
 
