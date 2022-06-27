@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
 import io.opentelemetry.api.trace.Span
+import io.sentry.Hint
 import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.SentryOptions
@@ -41,7 +42,7 @@ class SentryContextAppender : HandlerInterceptor {
 class SentryBeforeSendCallback : SentryOptions.BeforeSendCallback {
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-  override fun execute(event: SentryEvent, hint: Any?): SentryEvent? {
+  override fun execute(event: SentryEvent, hint: Hint): SentryEvent? {
     log.info("event: '{}', throwable: '{}', hint: '{}'", event, event.throwable, hint)
 
     if (event.throwable is ClientTimeoutException) {
