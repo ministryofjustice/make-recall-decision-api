@@ -3,7 +3,7 @@ plugins {
   id("jacoco")
   kotlin("plugin.jpa") version "1.6.21"
   id("org.sonarqube") version "3.3"
-  kotlin("plugin.spring") version "1.6.21"
+  kotlin("plugin.spring") version "1.7.0"
 }
 
 configurations {
