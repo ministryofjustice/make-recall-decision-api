@@ -14,6 +14,8 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
+val springDocVersion = "1.6.9"
+
 dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-web")
@@ -32,10 +34,10 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter:5.7.4")
   implementation("io.sentry:sentry-logback:5.7.4")
 
-  implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.8")
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.8")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.9")
+  implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
+  implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
+  implementation("org.springdoc:springdoc-openapi-kotlin:$springDocVersion")
+  implementation("org.springdoc:springdoc-openapi-data-rest:$springDocVersion")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
