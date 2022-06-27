@@ -157,12 +157,14 @@ abstract class IntegrationTestBase {
     repository.saveAll(
       listOf(
         RecommendationEntity(
+          id = null,
           name = "Dylan Adam Armstrong",
           crn = "J678910",
           recommendation = Recommendation.NOT_RECALL,
           alternateActions = ""
         ),
         RecommendationEntity(
+          id = null,
           name = "Andrei Edwards",
           crn = "J680648",
           recommendation = Recommendation.RECALL,
