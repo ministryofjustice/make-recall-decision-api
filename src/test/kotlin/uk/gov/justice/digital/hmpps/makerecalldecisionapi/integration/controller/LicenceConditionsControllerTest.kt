@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -20,7 +20,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `retrieves licence condition details`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -29,9 +29,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -63,7 +61,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `retrieves multiple licence condition details`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -72,9 +70,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -113,7 +109,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `retrieves licence condition details for multiple active offences`() {
-    runBlockingTest {
+    runTest {
       val convictionId2 = 123456789L
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -124,9 +120,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -176,7 +170,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `returns empty allLicenceConditions list where where no active convictions exist`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
@@ -184,9 +178,7 @@ class LicenceConditionsControllerTest(
 
       val result = webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isOk
@@ -210,7 +202,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `returns empty licence conditions where no active or inactive licence conditions exist`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -219,9 +211,7 @@ class LicenceConditionsControllerTest(
 
       val result = webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isOk
@@ -246,7 +236,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `given no custody release response 400 error then handle licence condition response`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -259,9 +249,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -286,14 +274,12 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `given case is excluded then only return user access details`() {
-    runBlockingTest {
+    runTest {
       userAccessExcluded(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -307,7 +293,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
@@ -316,9 +302,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -331,7 +315,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -340,9 +324,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -355,7 +337,7 @@ class LicenceConditionsControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on licence conditions endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -364,9 +346,7 @@ class LicenceConditionsControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -377,15 +357,15 @@ class LicenceConditionsControllerTest(
     }
   }
 
-//  @Test
-//  fun `access denied when insufficient privileges used`() {
-//    runBlockingTest {
-//      val crn = "X123456"
-//      webTestClient.get()
-//        .uri("/cases/$crn/licence-conditions")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runTest {
+      val crn = "X123456"
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }

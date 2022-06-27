@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -19,15 +19,13 @@ class PersonDetailsControllerTest(
 
   @Test
   fun `retrieves person details`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -50,15 +48,13 @@ class PersonDetailsControllerTest(
 
   @Test
   fun `handles scenario where no person exists matching crn`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponseWithNoOffender(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isNotFound
@@ -71,14 +67,12 @@ class PersonDetailsControllerTest(
 
   @Test
   fun `given case is excluded then only return user access details`() {
-    runBlockingTest {
+    runTest {
       userAccessRestricted(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -92,15 +86,13 @@ class PersonDetailsControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -111,16 +103,16 @@ class PersonDetailsControllerTest(
     }
   }
 
-//  @Test
-//  fun `access denied when insufficient privileges used`() {
-//    runBlockingTest {
-//      val crn = "X123456"
-//      offenderSearchResponse(crn)
-//      webTestClient.get()
-//        .uri("/cases/$crn/personalDetailsOverview")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runTest {
+      val crn = "X123456"
+      offenderSearchResponse(crn)
+      webTestClient.get()
+        .uri("/cases/$crn/personalDetailsOverview")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }

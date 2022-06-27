@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,7 +33,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
 
   @Test
   fun `returns empty list when search returns no results`() {
-    runBlockingTest {
+    runTest {
       val nonExistentCrn = "this person doesn't exist"
       val request = OffenderSearchByPhraseRequest(
         phrase = nonExistentCrn
@@ -50,7 +50,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
 
   @Test
   fun `returns search results`() {
-    runBlockingTest {
+    runTest {
       val crn = "X12345"
       val request = OffenderSearchByPhraseRequest(
         phrase = crn
@@ -71,7 +71,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
 
   @Test
   fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
-    runBlockingTest {
+    runTest {
       val crn = "X12345"
       val request = OffenderSearchByPhraseRequest(
         phrase = crn
@@ -97,7 +97,7 @@ class OffenderSearchServiceTest : ServiceTestBase() {
 
   @Test
   fun `given search result contains case with null name and dob fields and access is not restricted then default the name for the case`() {
-    runBlockingTest {
+    runTest {
       val crn = "X12345"
       val request = OffenderSearchByPhraseRequest(
         phrase = crn

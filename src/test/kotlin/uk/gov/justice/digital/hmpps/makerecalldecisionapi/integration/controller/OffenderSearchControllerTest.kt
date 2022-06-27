@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -16,14 +16,12 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `retrieves simple case summary details`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       offenderSearchResponse(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -36,15 +34,13 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `given excluded case for my user then set the user access excluded field`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -59,15 +55,13 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `given missing name and case is excluded but not for my user then default missing name details`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -82,15 +76,13 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `given restricted case for my user then set the user restricted flag to true`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessRestricted(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -105,15 +97,13 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Offender Search Api timeout on offenders search by phrase endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       offenderSearchResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -126,16 +116,14 @@ class OffenderSearchControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on user access endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/search?crn=$crn")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -146,16 +134,16 @@ class OffenderSearchControllerTest(
     }
   }
 
-//  @Test
-//  fun `access denied when insufficient privileges used`() {
-//    runBlockingTest {
-//      val crn = "X123456"
-//      offenderSearchResponse(crn)
-//      webTestClient.get()
-//        .uri("/cases/$crn/search")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runTest {
+      val crn = "X123456"
+      offenderSearchResponse(crn)
+      webTestClient.get()
+        .uri("/cases/$crn/search")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }

@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -54,10 +54,9 @@ class RiskServiceTest {
     riskService = RiskService(communityApiClient, arnApiClient)
   }
 
-  // TODO will be null pointers as not stubbing new arn stuff
   @Test
   fun `retrieves risk`() {
-    runBlockingTest {
+    runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
@@ -145,7 +144,7 @@ class RiskServiceTest {
 
   @Test
   fun `retrieves risk with optional fields missing`() {
-    runBlockingTest {
+    runTest {
       val crn = "my wonderful crn"
       given(arnApiClient.getHistoricalScores(anyString()))
         .willReturn(

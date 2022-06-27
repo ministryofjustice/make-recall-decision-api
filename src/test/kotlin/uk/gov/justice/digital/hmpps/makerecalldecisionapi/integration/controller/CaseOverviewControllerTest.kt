@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -19,7 +19,7 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `retrieves case summary details`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -27,9 +27,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -48,7 +46,7 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `returns empty offences list where where no active convictions exist`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
@@ -56,9 +54,7 @@ class CaseOverviewControllerTest(
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .isOk
@@ -74,14 +70,12 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `given case is excluded then only return user access details`() {
-    runBlockingTest {
+    runTest {
       userAccessExcluded(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -95,7 +89,7 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       unallocatedConvictionResponse(crn, staffCode)
@@ -103,9 +97,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -118,7 +110,7 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
@@ -126,9 +118,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -141,7 +131,7 @@ class CaseOverviewControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on registrations endpoint`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       unallocatedConvictionResponse(crn, staffCode)
@@ -149,9 +139,7 @@ class CaseOverviewControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -162,14 +150,14 @@ class CaseOverviewControllerTest(
     }
   }
 
-//  @Test
-//  fun `access denied when insufficient privileges used`() {
-//    runBlockingTest {
-//      webTestClient.get()
-//        .uri("/cases/$crn/overview")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runTest {
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }
