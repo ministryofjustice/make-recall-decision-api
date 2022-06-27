@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -53,7 +53,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves case summary when no offences available`() {
-    runBlockingTest {
+    runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
@@ -81,7 +81,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @Test
   fun `given case is excluded for user then return user access response details`() {
-    runBlockingTest {
+    runTest {
 
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
@@ -99,7 +99,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves case summary when offences available`() {
-    runBlockingTest {
+    runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
@@ -130,7 +130,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves case summary with optional fields missing`() {
-    runBlockingTest {
+    runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(

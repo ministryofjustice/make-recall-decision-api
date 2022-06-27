@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -48,7 +48,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @Test
   fun `given an active conviction and licence conditions then return these details in the response`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -81,7 +81,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @Test
   fun `given case is excluded for user then return user access response details`() {
-    runBlockingTest {
+    runTest {
 
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
@@ -99,7 +99,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @Test
   fun `given no active licence conditions then still retrieve conviction details`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -132,7 +132,7 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @Test
   fun `given no offender details then still retrieve personal details`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
