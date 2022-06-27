@@ -2,5 +2,9 @@ drop table if exists recommendations;
 
 CREATE TABLE recommendations
 (
-    data JSON
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    crn VARCHAR NOT NULL,
+    recommendation VARCHAR,
+    alternate_actions VARCHAR
 );
