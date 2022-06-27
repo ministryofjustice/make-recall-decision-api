@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -38,27 +38,25 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `throws exception when no person details available`() {
-    runBlockingTest {
-      val nonExistentCrn = "this person doesn't exist"
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
+    val nonExistentCrn = "this person doesn't exist"
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+    given(communityApiClient.getAllOffenderDetails(anyString()))
+      .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
 
-      assertThatThrownBy {
-        runBlockingTest {
-          personDetailsService.getPersonDetails(nonExistentCrn)
-        }
-      }.isInstanceOf(PersonNotFoundException::class.java)
-        .hasMessage("No details available for crn: $nonExistentCrn")
+    assertThatThrownBy {
+      runTest {
+        personDetailsService.getPersonDetails(nonExistentCrn)
+      }
+    }.isInstanceOf(PersonNotFoundException::class.java)
+      .hasMessage("No details available for crn: $nonExistentCrn")
 
-      then(communityApiClient).should().getAllOffenderDetails(nonExistentCrn)
-    }
+    then(communityApiClient).should().getAllOffenderDetails(nonExistentCrn)
   }
 
   @Test
   fun `given case is excluded for user then return user access response details`() {
-    runBlockingTest {
+    runTest {
 
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
@@ -76,7 +74,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves person details when no registration available`() {
-    runBlockingTest {
+    runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -112,7 +110,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves person details when no addresses available`() {
-    runBlockingTest {
+    runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -156,7 +154,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves person details when only previous address available`() {
-    runBlockingTest {
+    runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -204,7 +202,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves person details when registration available`() {
-    runBlockingTest {
+    runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -240,7 +238,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieves person details when optional fields are missing`() {
-    runBlockingTest {
+    runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -311,7 +309,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @Test
   fun `retrieve summary of person details`() {
-    runBlockingTest {
+    runTest {
 
       val crn = "12345"
 

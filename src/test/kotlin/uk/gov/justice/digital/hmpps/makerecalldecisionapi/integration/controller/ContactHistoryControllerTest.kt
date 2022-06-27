@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
@@ -21,7 +21,7 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `retrieves all contact history details`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(
@@ -32,9 +32,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -68,7 +66,7 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `given empty contact history then handle response`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, emptyContactSummaryResponse())
@@ -76,9 +74,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -96,14 +92,12 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `given case is excluded then only return user access details`() {
-    runBlockingTest {
+    runTest {
       userAccessExcluded(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -117,7 +111,7 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `given no custody release response 400 error then handle contact history response`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(
@@ -132,9 +126,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -152,7 +144,7 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummary = contactSummaryResponse(), delaySeconds = nDeliusTimeout + 2)
@@ -160,9 +152,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -175,7 +165,7 @@ class ContactHistoryControllerTest(
 
   @Test
   fun `gateway timeout 503 given on Community Api timeout on release summary endpoint`() {
-    runBlockingTest {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummaryResponse())
@@ -183,9 +173,7 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -196,15 +184,15 @@ class ContactHistoryControllerTest(
     }
   }
 
-//  @Test
-//  fun `access denied when insufficient privileges used`() {
-//    runBlockingTest {
-//      userAccessAllowed(crn)
-//      webTestClient.get()
-//        .uri("/cases/$crn/contact-history")
-//        .exchange()
-//        .expectStatus()
-//        .isUnauthorized
-//    }
-//  }
+  @Test
+  fun `access denied when insufficient privileges used`() {
+    runTest {
+      userAccessAllowed(crn)
+      webTestClient.get()
+        .uri("/cases/$crn/contact-history")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
 }

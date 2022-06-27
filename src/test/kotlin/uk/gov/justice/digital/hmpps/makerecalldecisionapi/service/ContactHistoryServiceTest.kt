@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -42,7 +42,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @Test
   fun `given a contact summary and release summary then return these details in the response`() {
-    runBlockingTest {
+    runTest {
 
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
@@ -63,7 +63,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @Test
   fun `given case is excluded for user then return user access response details`() {
-    runBlockingTest {
+    runTest {
 
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
@@ -78,7 +78,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @Test
   fun `given no release summary details then still retrieve contact summary details`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
@@ -97,7 +97,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @Test
   fun `given no contact summary details then still retrieve release summary details`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
@@ -116,7 +116,7 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @Test
   fun `given no contact summary details and no release summary details then still return an empty response`() {
-    runBlockingTest {
+    runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))

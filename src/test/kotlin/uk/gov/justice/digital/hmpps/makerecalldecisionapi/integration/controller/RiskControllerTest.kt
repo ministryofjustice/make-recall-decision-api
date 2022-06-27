@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -19,7 +19,7 @@ class RiskControllerTest(
 
   @Test
   fun `retrieves personal details data when no MAPPA or RoSH details available`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -98,7 +98,7 @@ class RiskControllerTest(
 
   @Test
   fun `retrieves risk data`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       roSHSummaryResponse(crn)
@@ -196,7 +196,7 @@ class RiskControllerTest(
 
   @Test
   fun `access denied when insufficient privileges used`() {
-    runBlockingTest {
+    runTest {
       val crn = "X123456"
       userAccessAllowed(crn)
       webTestClient.get()
@@ -209,7 +209,7 @@ class RiskControllerTest(
 
   @Test
   fun `gateway timeout 503 given on OASYS ARN Api timeout`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -231,7 +231,7 @@ class RiskControllerTest(
 
   @Test
   fun `gateway timeout 503 given on OASYS ARN current scores endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -255,7 +255,7 @@ class RiskControllerTest(
 
   @Test
   fun `gateway timeout 503 given on OASYS ARN historical scores endpoint`() {
-    runBlockingTest {
+    runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -278,15 +278,13 @@ class RiskControllerTest(
 
     @Test
     fun `given case is excluded then only return user access details`() {
-      runBlockingTest {
+      runTest {
         val crn = "A12345"
         userAccessRestricted(crn)
 
         webTestClient.get()
           .uri("/cases/$crn/risk")
-          .headers { it.authToken() }
-//        .headers { it.authToken(roles = listOf("ROLE_PROBATION")) }
-//        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
           .expectStatus().isOk
           .expectBody()
@@ -300,7 +298,7 @@ class RiskControllerTest(
 
     @Test
     fun `gateway timeout 503 given on Community Api timeout`() {
-      runBlockingTest {
+      runTest {
         val crn = "A12345"
         userAccessAllowed(crn)
         roSHSummaryResponse(crn)
