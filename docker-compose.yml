@@ -26,7 +26,7 @@ services:
       - POSTGRES_PASSWORD=secret
 
   gotenberg:
-    image: gotenberg/gotenberg:7.5.2
+    image: gotenberg/gotenberg:7.5.3
     networks:
       - hmpps
     container_name: gotenberg
