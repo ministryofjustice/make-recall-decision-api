@@ -32,7 +32,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.3.6")
 
   implementation("io.sentry:sentry-spring-boot-starter:5.7.4")
-  implementation("io.sentry:sentry-logback:5.7.4")
+  implementation("io.sentry:sentry-logback:6.1.3")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
