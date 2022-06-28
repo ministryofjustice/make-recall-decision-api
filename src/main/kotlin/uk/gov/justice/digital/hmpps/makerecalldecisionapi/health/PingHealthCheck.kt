@@ -27,18 +27,22 @@ abstract class PingHealthCheck(
   private val gaugeVal: AtomicInteger = AtomicInteger(0)
 
   override fun health(): Health? {
-    val result = try {
-      webClient.get()
-        .uri(healthUrl)
-        .retrieve()
-        .toEntity(String::class.java)
-        .flatMap { upWithStatus(it) }
-        .onErrorResume(WebClientResponseException::class.java) { recordHealthMetricDown(); downWithResponseBody(it) }
-        .onErrorResume(Exception::class.java) { recordHealthMetricDown(); downWithException(it) }
-        .block(timeout)
-    } catch (ex: Exception) {
-      Health.unknown().withBody(ex.toString()).build()
-    }
+
+    val result =
+      try {
+        webClient.get()
+          .uri(healthUrl)
+          .retrieve()
+          .toEntity(String::class.java)
+          .flatMap { upWithStatus(it) }
+          .block(timeout)
+      } catch (e: WebClientResponseException) {
+        recordHealthMetricDown()
+        downWithResponseBody(e)
+      } catch (ex: Exception) {
+        recordHealthMetricDown()
+        downWithException(ex)
+      }
 
     meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), gaugeVal)
 
@@ -60,12 +64,10 @@ abstract class PingHealthCheck(
   }
 
   private fun downWithException(it: Exception) =
-    Mono.just(Health.down(it).build())
+    Health.down(it).build()
 
   private fun downWithResponseBody(it: WebClientResponseException) =
-    Mono.just(
-      Health.down(it).withBody(it.responseBodyAsString).withHttpStatus(it.statusCode).build()
-    )
+    Health.down(it).withBody(it.responseBodyAsString).withHttpStatus(it.statusCode).build()
 
   private fun upWithStatus(it: ResponseEntity<String>): Mono<Health> =
     Mono.just(Health.up().withHttpStatus(it.statusCode).build())
