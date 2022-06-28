@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health
 
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,18 +19,22 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 import javax.sql.DataSource
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = ["management.server.port=9999", "server.port=9999"])
 class HealthCheckTest : IntegrationTestBase() {
 
   @Test
+  @Order(1)
   fun `Health page reports ok`() {
     healthCheckIsUp("/health")
   }
 
   @Test
+  @Order(2)
   fun `Health info reports version`() {
     healthCheckIsUpWith(
       "/health",
+      HttpStatus.OK,
       "status" to "UP",
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE)
     )
@@ -52,6 +59,7 @@ class HealthCheckTest : IntegrationTestBase() {
   fun `Health page reports ok when all component checks are ok`() {
     healthCheckIsUpWith(
       "/health",
+      HttpStatus.OK,
       "status" to "UP",
       "components.hmppsAuth.status" to "UP",
       "components.communityApi.status" to "UP",
@@ -76,33 +84,19 @@ class HealthCheckTest : IntegrationTestBase() {
 
     healthCheckIsUpWith(
       "/health",
-      "components.hmppsAuth.status" to "UNKNOWN",
-      "components.communityApi.status" to "UNKNOWN",
-      "components.offenderSearchApi.status" to "UNKNOWN",
-      "components.gotenberg.status" to "UNKNOWN"
+      HttpStatus.SERVICE_UNAVAILABLE,
+      "components.hmppsAuth.status" to "DOWN",
+      "components.communityApi.status" to "DOWN",
+      "components.offenderSearchApi.status" to "DOWN",
+      "components.gotenberg.status" to "DOWN"
     )
   }
 
   private fun healthCheckIsUp(healthUrl: String) {
-    healthCheckIsUpWith(healthUrl, "status" to "UP")
+    healthCheckIsUpWith(healthUrl, HttpStatus.OK, "status" to "UP")
   }
 
-  private fun healthCheckIsDownWith(expectedStatus: HttpStatus, vararg jsonPathAssertions: Pair<String, String>) {
-    webTestClient.get()
-      .uri("/health")
-      .exchange()
-      .expectStatus()
-      .isEqualTo(expectedStatus)
-      .expectBody()
-      .jsonPath("status").isEqualTo("DOWN")
-      .apply {
-        jsonPathAssertions.forEach { (jsonPath, equalTo) ->
-          hasJsonPath(jsonPath, equalTo)
-        }
-      }
-  }
-
-  private fun healthCheckIsUpWith(healthUrl: String, vararg jsonPathAssertions: Pair<String, String>, expectedStatus: HttpStatus = HttpStatus.OK) {
+  private fun healthCheckIsUpWith(healthUrl: String, expectedStatus: HttpStatus, vararg jsonPathAssertions: Pair<String, String>,) {
     webTestClient.get()
       .uri(healthUrl)
       .exchange()
