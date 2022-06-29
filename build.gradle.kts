@@ -1,7 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.3.0"
   kotlin("jvm") version "1.7.0"
-  id("jacoco")
   kotlin("plugin.jpa") version "1.7.0"
   id("org.sonarqube") version "3.4.0.2513"
   kotlin("plugin.spring") version "1.7.0"
@@ -57,7 +56,7 @@ dependencies {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
+    languageVersion.set(JavaLanguageVersion.of(18))
     vendor.set(JvmVendorSpec.matching("AdoptOpenJDK"))
   }
 }
@@ -65,18 +64,7 @@ java {
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "17"
+      jvmTarget = "18"
     }
-  }
-}
-
-tasks.test {
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-  dependsOn(tasks.test)
-  reports {
-    xml.required.set(true)
   }
 }
