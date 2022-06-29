@@ -175,6 +175,7 @@ workflows:
           requires:
             - validate
             - build_docker
+            - e2e_local_test
             - helm_lint
           <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
