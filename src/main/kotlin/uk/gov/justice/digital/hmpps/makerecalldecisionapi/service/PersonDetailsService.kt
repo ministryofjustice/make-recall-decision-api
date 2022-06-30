@@ -16,11 +16,12 @@ import java.time.LocalDate
 
 @Service
 class PersonDetailsService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val userAccessValidator: UserAccessValidator
 ) {
   suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
-    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       PersonDetailsResponse(userAccessResponse = userAccessResponse)
     } else {
       val offenderDetails = getPersonalDetailsOverview(crn)

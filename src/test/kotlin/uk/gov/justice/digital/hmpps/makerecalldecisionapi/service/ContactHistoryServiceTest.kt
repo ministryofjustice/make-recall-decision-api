@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
@@ -33,8 +34,8 @@ class ContactHistoryServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    personDetailsService = PersonDetailsService(communityApiClient)
-    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
+    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -65,14 +66,24 @@ class ContactHistoryServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, excludedResponse().toByteArray(), null
+        )
+      )
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getUserAccess(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(userAccessResponse(true, false), null, null, null, null)))
+      assertThat(
+        response,
+        equalTo(
+          ContactHistoryResponse(
+            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null, null
+          )
+        )
+      )
     }
   }
 
