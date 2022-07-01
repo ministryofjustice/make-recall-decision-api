@@ -41,11 +41,12 @@ import java.util.Locale
 @Service
 class RiskService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
-  @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient
+  @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
+  private val userAccessValidator: UserAccessValidator
 ) {
   suspend fun getRisk(crn: String): RiskResponse {
-    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       RiskResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = fetchPersonalDetails(crn)
@@ -61,7 +62,7 @@ class RiskService(
         current = fetchCurrentScores(crn),
         historical = fetchHistoricalScores(crn)
       )
-      val contingencyPlan = null // TODO Andrew's API will provide this
+      val contingencyPlan = null // TODO ARN team will provide this - WIP
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
         riskOfSeriousHarm = riskOfSeriousHarm,
@@ -99,7 +100,7 @@ class RiskService(
       rsr = RSR(level = rsr?.scoreLevel ?: "", score = rsr?.percentageScore ?: "", type = "RSR"),
       ospc = OSPC(level = osp?.ospContactScoreLevel ?: "", score = osp?.ospContactPercentageScore ?: "", type = "OSP/C"),
       ospi = OSPI(level = osp?.ospIndecentScoreLevel ?: "", score = osp?.ospIndecentPercentageScore ?: "", type = "OSP/I"),
-      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS") // TODO check if 'total' is correct field
+      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS")
     )
   }
 
@@ -128,7 +129,7 @@ class RiskService(
             rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
             ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
             ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
-            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO - discuss with ARN team
+            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO ARN team will provide this - WIP
           )
         )
       }

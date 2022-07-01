@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
@@ -39,8 +40,8 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    personDetailsService = PersonDetailsService(communityApiClient)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
+    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -83,8 +84,11 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, excludedResponse().toByteArray(), null
+        )
+      )
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -92,7 +96,11 @@ class LicenceConditionsServiceTest : ServiceTestBase() {
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
-        equalTo(LicenceConditionsResponse(userAccessResponse(true, false), null, null, null))
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+          )
+        )
       )
     }
   }

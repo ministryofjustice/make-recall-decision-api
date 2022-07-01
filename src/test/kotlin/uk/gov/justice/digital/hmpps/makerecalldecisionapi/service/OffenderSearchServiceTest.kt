@@ -10,6 +10,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
@@ -79,9 +80,11 @@ class OffenderSearchServiceTest : ServiceTestBase() {
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
         .willReturn(Mono.fromCallable { omittedDetailsResponse })
 
-      given(communityApiClient.getUserAccess(crn))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, true) })
-
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, restrictedResponse().toByteArray(), null
+        )
+      )
       val results = offenderSearch.search(crn)
 
       assertThat(results.size).isEqualTo(1)

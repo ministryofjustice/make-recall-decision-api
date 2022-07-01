@@ -38,7 +38,6 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 
-// TODO move these out
 @Component
 @Order(4)
 internal class UserContextFilter : Filter {

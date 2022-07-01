@@ -13,6 +13,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
@@ -33,7 +34,7 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    personDetailsService = PersonDetailsService(communityApiClient)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
   }
 
   @Test
@@ -58,8 +59,11 @@ class PersonalDetailServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, excludedResponse().toByteArray(), null
+        )
+      )
 
       val response = personDetailsService.getPersonDetails(crn)
 
@@ -67,7 +71,11 @@ class PersonalDetailServiceTest : ServiceTestBase() {
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
-        equalTo(PersonDetailsResponse(userAccessResponse(true, false), null, null, null))
+        equalTo(
+          PersonDetailsResponse(
+            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+          )
+        )
       )
     }
   }
