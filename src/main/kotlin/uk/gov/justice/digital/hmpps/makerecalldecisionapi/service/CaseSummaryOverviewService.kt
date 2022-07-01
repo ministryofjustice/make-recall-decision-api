@@ -16,12 +16,13 @@ import java.time.LocalDate
 
 @Service
 class CaseSummaryOverviewService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val userAccessValidator: UserAccessValidator
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
-    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-    if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
-      return CaseSummaryOverviewResponse(userAccessResponse = userAccessResponse)
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      CaseSummaryOverviewResponse(userAccessResponse)
     } else {
       val offenderDetails = getValue(communityApiClient.getAllOffenderDetails(crn))!!
       val activeConvictions = getValue(communityApiClient.getActiveConvictions(crn)) ?: emptyList()
@@ -42,7 +43,7 @@ class CaseSummaryOverviewService(
             mainOffence = it.mainOffence, description = it.detail?.description ?: "", code = it.detail?.code ?: ""
           )
         }
-      return CaseSummaryOverviewResponse(
+      CaseSummaryOverviewResponse(
         personalDetailsOverview = PersonDetails(
           name = name,
           dateOfBirth = offenderDetails.dateOfBirth,

@@ -15,12 +15,12 @@ import kotlin.streams.toList
 @Service
 class LicenceConditionsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
-  private val personDetailsService: PersonDetailsService
+  private val personDetailsService: PersonDetailsService,
+  private val userAccessValidator: UserAccessValidator
 ) {
-
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
-    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       LicenceConditionsResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)

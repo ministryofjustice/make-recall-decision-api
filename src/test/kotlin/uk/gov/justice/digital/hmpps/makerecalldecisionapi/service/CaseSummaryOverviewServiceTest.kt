@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
@@ -45,7 +46,7 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient)
+    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, userAccessValidator)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -83,8 +84,11 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(true, false) })
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, excludedResponse().toByteArray(), null
+        )
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -92,7 +96,11 @@ class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
-        equalTo(CaseSummaryOverviewResponse(userAccessResponse(true, false), null, null, null))
+        equalTo(
+          CaseSummaryOverviewResponse(
+            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+          )
+        )
       )
     }
   }

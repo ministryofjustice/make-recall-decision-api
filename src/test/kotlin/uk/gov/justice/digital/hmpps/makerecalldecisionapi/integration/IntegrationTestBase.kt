@@ -355,7 +355,7 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
     )
   }
 
@@ -366,7 +366,7 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
     )
   }
 

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -11,9 +12,11 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -26,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Provide
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
@@ -49,9 +53,12 @@ class RiskServiceTest {
   @Mock
   private lateinit var arnApiClient: ArnApiClient
 
+  protected lateinit var userAccessValidator: UserAccessValidator
+
   @BeforeEach
   fun setup() {
-    riskService = RiskService(communityApiClient, arnApiClient)
+    userAccessValidator = UserAccessValidator(communityApiClient)
+    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator)
   }
 
   @Test
@@ -296,6 +303,39 @@ class RiskServiceTest {
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
+
+  @Test
+  fun `given case is excluded for user then return user access response details`() {
+    runTest {
+      val crn = "12345"
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          403, "Forbidden", null, excludedResponse().toByteArray(), null
+        )
+      )
+
+      val response = riskService.getRisk(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          RiskResponse(
+            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  private fun userAccessResponse(excluded: Boolean, restricted: Boolean) = UserAccessResponse(
+    userRestricted = restricted,
+    userExcluded = excluded,
+    exclusionMessage = "I am an exclusion message",
+    restrictionMessage = null
+  )
 
   fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 

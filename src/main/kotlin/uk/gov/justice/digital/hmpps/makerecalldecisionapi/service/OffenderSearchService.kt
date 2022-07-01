@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 
@@ -28,13 +31,17 @@ class OffenderSearchService(
 
       // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
-        val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-
-        if (true == userAccessResponse?.userRestricted || true == userAccessResponse?.userExcluded) {
-          excluded = userAccessResponse.userExcluded
-          restricted = userAccessResponse.userRestricted
-        } else {
+        try {
+          getValue(communityApiClient.getUserAccess(crn))
           name = "No name available"
+        } catch (webClientResponseException: WebClientResponseException) {
+          if (webClientResponseException.rawStatusCode == 403) {
+            val userAccessResponse = Gson().fromJson(webClientResponseException.responseBodyAsString, UserAccessResponse::class.java)
+            excluded = userAccessResponse.userExcluded
+            restricted = userAccessResponse?.userRestricted
+          } else {
+            throw webClientResponseException
+          }
         }
       }
 
@@ -56,6 +63,7 @@ class OffenderSearchService(
       when (wrappedException.cause) {
         is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
         is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
+        is WebClientResponseException -> throw wrappedException.cause as WebClientResponseException
         else -> throw wrappedException
       }
     }

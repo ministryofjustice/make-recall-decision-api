@@ -16,19 +16,18 @@ import kotlin.streams.toList
 @Service
 class ContactHistoryService(
   private val communityApiClient: CommunityApiClient,
-  private val personDetailsService: PersonDetailsService
+  private val personDetailsService: PersonDetailsService,
+  private val userAccessValidator: UserAccessValidator
 ) {
-
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
-    val userAccessResponse = getValue(communityApiClient.getUserAccess(crn))
-    return if (true == userAccessResponse?.userExcluded || true == userAccessResponse?.userRestricted) {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       ContactHistoryResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val contactSummary = getContactSummary(crn)
       val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
       val releaseSummary = getReleaseSummary(crn)
-
       ContactHistoryResponse(
         personalDetailsOverview = personalDetailsOverview,
         contactSummary = contactSummary,
@@ -76,8 +75,7 @@ class ContactHistoryService(
     allRelevantContacts: List<ContactSummaryResponse>,
     existingContacts: List<ContactGroupResponse>
   ): List<ContactGroupResponse> {
-    val unknownContacts = allRelevantContacts.filter {
-      relevantContact ->
+    val unknownContacts = allRelevantContacts.filter { relevantContact ->
       ContactGroupsCsvReader.getContactGroups().none { it.code == relevantContact.code }
     }
     val codes = unknownContacts.mapNotNull { it.code }

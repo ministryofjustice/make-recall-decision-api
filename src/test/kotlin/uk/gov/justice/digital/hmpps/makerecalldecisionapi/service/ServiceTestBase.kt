@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
@@ -25,7 +26,14 @@ abstract class ServiceTestBase {
 
   protected lateinit var personDetailsService: PersonDetailsService
 
+  protected lateinit var userAccessValidator: UserAccessValidator
+
   protected val crn = "12345"
+
+  @BeforeEach
+  fun userValidatorSetup() {
+    userAccessValidator = UserAccessValidator(communityApiClient)
+  }
 
   protected fun allReleaseSummariesResponse(): ReleaseSummaryResponse {
 
