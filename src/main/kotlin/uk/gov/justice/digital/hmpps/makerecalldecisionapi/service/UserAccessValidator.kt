@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
@@ -9,7 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 
 @Component
-class UserAccessValidator(private val communityApiClient: CommunityApiClient) {
+class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient) {
   fun checkUserAccess(crn: String): UserAccessResponse? {
     val userAccessResponse = try {
       getValue(communityApiClient.getUserAccess(crn))
