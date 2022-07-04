@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PersonDetailsS
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class PersonDetailsController(
+internal class PersonDetailsController(
   private val personDetailsService: PersonDetailsService
 ) {
   companion object {

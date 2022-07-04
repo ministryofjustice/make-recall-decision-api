@@ -40,7 +40,7 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class CaseSummaryOverviewServiceTest : ServiceTestBase() {
+internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   private lateinit var caseSummaryOverviewService: CaseSummaryOverviewService
 

@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConv
 import kotlin.streams.toList
 
 @Service
-class LicenceConditionsService(
+internal class LicenceConditionsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator

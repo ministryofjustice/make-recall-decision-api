@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFou
 import java.time.LocalDate
 
 @Service
-class CaseSummaryOverviewService(
+internal class CaseSummaryOverviewService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val userAccessValidator: UserAccessValidator
 ) {

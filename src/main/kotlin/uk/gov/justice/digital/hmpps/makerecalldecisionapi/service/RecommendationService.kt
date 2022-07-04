@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 
 @Service
-class RecommendationService(
+internal class RecommendationService(
   val recommendationRepository: RecommendationRepository
 ) {
   fun createRecommendation(crn: String, recommendationRequest: RecommendationRequest): RecommendationResponse {

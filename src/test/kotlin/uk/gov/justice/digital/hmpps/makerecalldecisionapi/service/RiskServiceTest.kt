@@ -43,7 +43,7 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class RiskServiceTest {
+internal class RiskServiceTest {
 
   private lateinit var riskService: RiskService
 

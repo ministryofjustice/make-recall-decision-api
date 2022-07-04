@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.Recommendation
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class RecommendationController(
+internal class RecommendationController(
   private val recommendationService: RecommendationService
 ) {
   companion object {

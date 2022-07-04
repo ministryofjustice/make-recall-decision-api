@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOf
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import java.time.LocalDate
 
-abstract class ServiceTestBase {
+internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var communityApiClient: CommunityApiClient

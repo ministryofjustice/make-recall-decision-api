@@ -30,7 +30,7 @@ import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class PersonalDetailServiceTest : ServiceTestBase() {
+internal class PersonalDetailServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {

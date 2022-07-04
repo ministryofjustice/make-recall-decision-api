@@ -34,7 +34,7 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class LicenceConditionsServiceTest : ServiceTestBase() {
+internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
   private lateinit var licenceConditionsService: LicenceConditionsService
 

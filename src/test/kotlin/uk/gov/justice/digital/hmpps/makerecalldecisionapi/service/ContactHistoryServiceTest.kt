@@ -28,7 +28,7 @@ import java.time.OffsetDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class ContactHistoryServiceTest : ServiceTestBase() {
+internal class ContactHistoryServiceTest : ServiceTestBase() {
 
   private lateinit var contactHistoryService: ContactHistoryService
 
