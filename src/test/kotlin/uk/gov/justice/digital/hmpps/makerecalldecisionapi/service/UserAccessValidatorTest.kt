@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class UserAccessValidatorTest {
+internal class UserAccessValidatorTest {
 
   @Mock
   protected lateinit var communityApiClient: CommunityApiClient

@@ -55,6 +55,10 @@ dependencies {
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
   testImplementation("com.h2database:h2:2.1.214")
+
+  testImplementation("io.rest-assured:rest-assured:5.0.1")
+  implementation("io.rest-assured:json-path:5.0.1")
+  implementation("io.rest-assured:xml-path:5.0.1")
 }
 
 java {
@@ -81,4 +85,42 @@ tasks.jacocoTestReport {
   reports {
     xml.required.set(true)
   }
+}
+
+val SourceSet.kotlin: SourceDirectorySet
+  get() = project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>().sourceSets.getByName(name).kotlin
+
+sourceSets {
+  create("functional-test") {
+    kotlin.srcDirs("src/functional-test")
+    compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+    runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
+  }
+}
+val dockerUp = task<Exec>("dockerUp") {
+  dependsOn("assemble")
+  commandLine("docker-compose", "-f", "docker-compose-functional-test.yml", "up", "-d")
+}
+
+val waitForIt = task<Exec>("waitForIt") {
+  dependsOn(dockerUp)
+  commandLine("./scripts/wait-for-it.sh", "127.0.0.1:8081", "--strict", "-t", "600")
+}
+
+val dockerDown = task<Exec>("dockerDown") {
+  commandLine("./scripts/clean-up-docker.sh")
+}
+
+task<Test>("functional-test") {
+  description = "Runs the functional test"
+  group = "verification"
+  testClassesDirs = sourceSets["functional-test"].output.classesDirs
+  classpath = sourceSets["functional-test"].runtimeClasspath
+  useJUnitPlatform()
+  dependsOn(waitForIt)
+  finalizedBy(dockerDown)
+}
+
+tasks.withType<Jar>() {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
