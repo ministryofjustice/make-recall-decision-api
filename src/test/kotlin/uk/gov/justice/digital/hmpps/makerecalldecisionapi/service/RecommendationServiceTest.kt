@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class RecommendationServiceTest : ServiceTestBase() {
+internal class RecommendationServiceTest : ServiceTestBase() {
 
   private lateinit var recommendationService: RecommendationService
 

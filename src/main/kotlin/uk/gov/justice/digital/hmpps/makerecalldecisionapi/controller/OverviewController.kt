@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryOve
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class OverviewController(
+internal class OverviewController(
   private val caseSummaryOverviewService: CaseSummaryOverviewService
 ) {
   companion object {

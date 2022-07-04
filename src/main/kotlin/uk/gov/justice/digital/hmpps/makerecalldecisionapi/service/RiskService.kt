@@ -39,7 +39,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Service
-class RiskService(
+internal class RiskService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator

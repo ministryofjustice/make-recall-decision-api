@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearch
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class OffenderSearchController(
+internal class OffenderSearchController(
   private val offenderSearchService: OffenderSearchService
 ) {
 

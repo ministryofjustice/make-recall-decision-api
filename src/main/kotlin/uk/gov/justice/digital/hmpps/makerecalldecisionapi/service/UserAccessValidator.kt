@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 
 @Component
-class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient) {
+internal class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient) {
   fun checkUserAccess(crn: String): UserAccessResponse? {
     val userAccessResponse = try {
       getValue(communityApiClient.getUserAccess(crn))

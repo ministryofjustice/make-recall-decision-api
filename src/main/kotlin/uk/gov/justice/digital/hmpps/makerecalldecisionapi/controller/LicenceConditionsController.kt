@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceConditi
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class LicenceConditionsController(
+internal class LicenceConditionsController(
   private val licenceConditionsService: LicenceConditionsService
 ) {
   companion object {

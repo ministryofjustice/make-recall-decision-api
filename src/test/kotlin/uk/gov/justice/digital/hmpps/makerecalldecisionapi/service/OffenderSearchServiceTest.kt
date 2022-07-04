@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-class OffenderSearchServiceTest : ServiceTestBase() {
+internal class OffenderSearchServiceTest : ServiceTestBase() {
 
   private lateinit var offenderSearch: OffenderSearchService
 

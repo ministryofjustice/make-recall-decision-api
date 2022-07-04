@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCs
 import kotlin.streams.toList
 
 @Service
-class ContactHistoryService(
+internal class ContactHistoryService(
   private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator

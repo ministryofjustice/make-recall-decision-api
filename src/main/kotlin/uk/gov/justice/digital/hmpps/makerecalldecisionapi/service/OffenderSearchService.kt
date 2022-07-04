@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 
 @Service
-class OffenderSearchService(
+internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {

@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ContactHistory
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class ContactHistoryController(
+internal class ContactHistoryController(
   private val contactHistoryService: ContactHistoryService
 ) {
   companion object {
