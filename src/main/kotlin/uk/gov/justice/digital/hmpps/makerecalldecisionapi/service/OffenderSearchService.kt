@@ -4,14 +4,11 @@ import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 
 @Service
 internal class OffenderSearchService(
@@ -22,7 +19,7 @@ internal class OffenderSearchService(
     val request = OffenderSearchByPhraseRequest(
       phrase = crn
     )
-    val apiResponse = getValue(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
+    val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
 
     return apiResponse?.map {
       var name = "${it.firstName} ${it.surname}"
@@ -32,7 +29,7 @@ internal class OffenderSearchService(
       // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
         try {
-          getValue(communityApiClient.getUserAccess(crn))
+          getValueAndHandleWrappedException(communityApiClient.getUserAccess(crn))
           name = "No name available"
         } catch (webClientResponseException: WebClientResponseException) {
           if (webClientResponseException.rawStatusCode == 403) {
@@ -53,19 +50,5 @@ internal class OffenderSearchService(
         userRestricted = restricted
       )
     }?.toList() ?: emptyList()
-  }
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
-        is WebClientResponseException -> throw wrappedException.cause as WebClientResponseException
-        else -> throw wrappedException
-      }
-    }
   }
 }

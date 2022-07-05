@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
@@ -30,8 +29,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.His
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -80,7 +77,7 @@ internal class RiskService(
 
   private suspend fun fetchCurrentScores(crn: String): Scores {
     val currentScoresResponse = try {
-      getValue(arnApiClient.getCurrentScores(crn))!!
+      getValueAndHandleWrappedException(arnApiClient.getCurrentScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No cuurent scores available for CRN: $crn - ${e.message}")
       listOf(
@@ -106,7 +103,7 @@ internal class RiskService(
 
   private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
     val historicalScoresResponse = try {
-      getValue(arnApiClient.getHistoricalScores(crn))!!
+      getValueAndHandleWrappedException(arnApiClient.getHistoricalScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No historical scores available for CRN: $crn - ${e.message}")
       listOf(
@@ -144,7 +141,7 @@ internal class RiskService(
 
   private suspend fun handleFetchRiskSummary(crn: String): RiskSummaryResponse? {
     return try {
-      getValue(arnApiClient.getRiskSummary(crn))
+      getValueAndHandleWrappedException(arnApiClient.getRiskSummary(crn))
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No Risk Summary available for CRN: $crn - ${e.message}")
       null
@@ -243,7 +240,7 @@ internal class RiskService(
   }
 
   private suspend fun fetchPersonalDetails(crn: String): RiskPersonalDetails {
-    val offenderDetails = getValue(communityApiClient.getAllOffenderDetails(crn))
+    val offenderDetails = getValueAndHandleWrappedException(communityApiClient.getAllOffenderDetails(crn))
     val age = offenderDetails?.dateOfBirth?.until(LocalDate.now())?.years
     val firstName = offenderDetails?.firstName ?: ""
     val surname = offenderDetails?.surname ?: ""
@@ -262,7 +259,7 @@ internal class RiskService(
 
   private suspend fun fetchMappa(crn: String): Mappa {
     val mappaResponse = try {
-      getValue(communityApiClient.getAllMappaDetails(crn))!!
+      getValueAndHandleWrappedException(communityApiClient.getAllMappaDetails(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No MAPPA details available for CRN: $crn - ${e.message}")
       null
@@ -276,19 +273,6 @@ internal class RiskService(
       isNominal = true,
       lastUpdated = reviewDate ?: ""
     )
-  }
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
-        else -> throw wrappedException
-      }
-    }
   }
 
   companion object {

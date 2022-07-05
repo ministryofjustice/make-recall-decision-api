@@ -2,14 +2,11 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import kotlin.streams.toList
 
 @Service
@@ -37,11 +34,11 @@ internal class LicenceConditionsService(
 
   private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
 
-    val activeConvictions = getValue(communityApiClient.getActiveConvictions(crn))
+    val activeConvictions = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
 
     return activeConvictions
       ?.map {
-        val result = getValue(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
+        val result = getValueAndHandleWrappedException(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
           ?.licenceConditions
 
         val offences: List<Offence>? = it.offences
@@ -70,19 +67,6 @@ internal class LicenceConditionsService(
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValue(communityApiClient.getReleaseSummary(crn))
-  }
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is NoActiveConvictionsException -> throw wrappedException.cause as NoActiveConvictionsException
-        else -> throw wrappedException
-      }
-    }
+    return getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
   }
 }
