@@ -46,6 +46,7 @@ slack-fail-post-step: &slack-fail-post-step
             ]
           }
 
+machine: true
 jobs:
   validate:
     executor:
@@ -72,6 +73,19 @@ jobs:
           path: build/reports/tests
       - store_artifacts:
           path: build/reports/jacoco/test/html
+
+  functional-test:
+    executor:
+      name: hmpps/default
+      tag: "3.10"
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Run Functional Tests tests on dev
+          command: ./scripts/run-functional-test.sh -e dev
 
   e2e_test:
     executor:

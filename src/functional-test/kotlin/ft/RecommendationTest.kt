@@ -21,6 +21,6 @@ class RecommendationTest() : FunctionalTest() {
       .post("http://127.0.0.1:8080/cases/{crn}/recommendation")
 
     // then
-    assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
+    assertThat(lastResponse.statusCode).isEqualTo(expected)
   }
 }
