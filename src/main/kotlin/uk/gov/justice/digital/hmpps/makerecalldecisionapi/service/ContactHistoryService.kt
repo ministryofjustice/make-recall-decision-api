@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
 import kotlin.streams.toList
 
@@ -38,7 +35,7 @@ internal class ContactHistoryService(
   }
 
   private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
-    val contactSummaryResponse = getValue(communityApiClient.getContactSummary(crn))?.content
+    val contactSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getContactSummary(crn))?.content
 
     return contactSummaryResponse
       ?.stream()
@@ -87,19 +84,6 @@ internal class ContactHistoryService(
   }
 
   private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValue(communityApiClient.getReleaseSummary(crn))
-  }
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is ReleaseDetailsNotFoundException -> throw wrappedException as ReleaseDetailsNotFoundException
-        else -> throw wrappedException
-      }
-    }
+    return getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
   }
 }
