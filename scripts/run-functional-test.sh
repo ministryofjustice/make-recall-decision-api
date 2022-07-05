@@ -9,7 +9,8 @@
 ./scripts/wait-for-it.sh 127.0.0.1:8080 --strict -t 600
 
 # start functional test in separate jvm
+sleep 60
 ./gradlew functional-test-light
 
 # clean up
-./scripts/clean-up-docker.sh
+#./scripts/clean-up-docker.sh
