@@ -167,6 +167,11 @@ workflows:
             - hmpps-common-vars
           <<: *slack-fail-post-step
 
+      - functional_test:
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
       - hmpps/build_docker:
           name: build_docker
           filters:
