@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CurrentAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager
@@ -10,8 +9,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
 @Service
@@ -82,21 +79,8 @@ internal class PersonDetailsService(
   }
 
   private fun getPersonalDetailsOverview(crn: String): AllOffenderDetailsResponse {
-    return getValue(communityApiClient.getAllOffenderDetails(crn))!!
+    return getValueAndHandleWrappedException(communityApiClient.getAllOffenderDetails(crn))!!
   }
 
   private fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
-
-  private fun <T : Any> getValue(mono: Mono<T>?): T? {
-    return try {
-      val value = mono?.block()
-      value ?: value
-    } catch (wrappedException: RuntimeException) {
-      when (wrappedException.cause) {
-        is ClientTimeoutException -> throw wrappedException.cause as ClientTimeoutException
-        is PersonNotFoundException -> throw wrappedException.cause as PersonNotFoundException
-        else -> throw wrappedException
-      }
-    }
-  }
 }
