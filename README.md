@@ -9,6 +9,13 @@ This is the backend service to help case officers make recommendations on recall
 
 The primary software client for this service is the related UI [make-recall-decision-ui].
 
+## Functional test
+
+The functional test is a black box test of the MRD API. It runs against the dev environment rather than mock services.
+
+* To start the functional tests run the script `./scripts/run-functional-test.sh`
+* To run the test in the IDE first start `./scripts/start-local-development.sh`, `docker-compose-postgres.yml` and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
+
 ### Limitations
 
 - the exposed API is WIP: it has been created to satisfy the specific UI client; modifications to it may be
