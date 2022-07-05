@@ -74,7 +74,7 @@ jobs:
       - store_artifacts:
           path: build/reports/jacoco/test/html
 
-  functional-test:
+  functional_test:
     executor:
       name: hmpps/default
       tag: "3.10"
@@ -84,8 +84,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Functional Tests tests on dev
-          command: ./scripts/run-functional-test.sh -e dev
+          name: Run Functional Tests tests on '<< parameters.environment >>'
+          command: ./scripts/run-functional-test.sh -e << parameters.environment >>
 
   e2e_test:
     executor:
@@ -188,6 +188,7 @@ workflows:
                 - main
           requires:
             - validate
+            - functional_test
             - build_docker
             - e2e_local_test
             - helm_lint
