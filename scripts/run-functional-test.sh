@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # start postgres db
-docker-compose -f ./docker-compose-postgres.yml up -d
-./scripts/wait-for-it.sh 127.0.0.1:5432 --strict -t 600
+#docker-compose -f ./docker-compose-postgres.yml up -d
+#./scripts/wait-for-it.sh 127.0.0.1:5432 --strict -t 600
 
 # start api
 ./scripts/start-local-development.sh &
