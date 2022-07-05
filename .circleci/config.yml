@@ -76,8 +76,12 @@ jobs:
 
   functional_test:
     executor:
-      name: hmpps/default
-      tag: "3.10"
+      name: hmpps/java_postgres
+      jdk_tag: "18.0"
+      postgres_tag: 13-alpine
+      postgres_username: mrd_user
+      postgres_password: secret
+      postgres_db: make_recall_decision
     parameters:
       environment:
         type: string
