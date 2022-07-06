@@ -1,0 +1,17 @@
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
+
+@Service
+internal class DocumentService(
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
+) {
+
+  fun getDocumentsForContacts(crn: String): List<CaseDocument>? {
+    val groupedDocuments = getValueAndHandleWrappedException(communityApiClient.getGroupedDocuments(crn))
+    return groupedDocuments?.documents?.filter { it.type?.code == "CONTACT_DOCUMENT" }
+  }
+}
