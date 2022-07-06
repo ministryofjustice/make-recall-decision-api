@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactType
@@ -34,8 +36,9 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
+    documentService = DocumentService(communityApiClient)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
-    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator)
+    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -49,12 +52,15 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
@@ -94,12 +100,15 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), null)))
@@ -113,12 +122,15 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.empty())
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), allReleaseSummariesResponse())))
@@ -132,12 +144,15 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.empty())
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.empty())
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), null)))
@@ -166,7 +181,19 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         systemGenerated = false,
         code = "COAI",
-        sensitive = null
+        sensitive = null,
+        contactDocuments = listOf(
+          CaseDocument(
+            id = "f2943b31-2250-41ab-a04d-004e27a97add",
+            documentName = "test doc.docx",
+            author = "Trevor Small",
+            type = CaseDocumentType(code = "CONTACT_DOCUMENT", description = "Contact related document"),
+            extendedDescription = "Contact on 21/06/2022 for Information - from 3rd Party",
+            lastModifiedAt = "2022-06-21T20:27:23.407",
+            createdAt = "2022-06-21T20:27:23",
+            parentPrimaryKeyId = "2504763194"
+          )
+        )
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -176,7 +203,19 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = "Enforcement Letter Requested",
         systemGenerated = true,
         code = "COAI",
-        sensitive = true
+        sensitive = true,
+        contactDocuments = listOf(
+          CaseDocument(
+            id = "630ca741-cbb6-4f2e-8e86-73825d8c4d82",
+            documentName = "a test.pdf",
+            author = "Jackie Gough",
+            type = CaseDocumentType(code = "CONTACT_DOCUMENT", description = "Contact related document"),
+            extendedDescription = "Contact on 21/06/2020 for Complementary Therapy Session (NS)",
+            lastModifiedAt = "2022-06-21T20:29:17.324",
+            createdAt = "2022-06-21T20:29:17",
+            parentPrimaryKeyId = "2504763206"
+          )
+        )
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
@@ -186,7 +225,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         systemGenerated = true,
         code = "COAP",
-        sensitive = null
+        sensitive = null,
+        contactDocuments = emptyList()
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
@@ -196,7 +236,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         systemGenerated = true,
         code = "CHVS",
-        sensitive = null
+        sensitive = null,
+        contactDocuments = emptyList()
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -206,7 +247,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         systemGenerated = true,
         code = "ABCD",
-        sensitive = null
+        sensitive = null,
+        contactDocuments = emptyList()
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -216,7 +258,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         systemGenerated = true,
         code = "EFGH",
-        sensitive = null
+        sensitive = null,
+        contactDocuments = emptyList()
       )
     )
   }
@@ -245,6 +288,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     return ContactSummaryResponseCommunity(
       content = listOf(
         Content(
+          contactId = "2504763194",
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
           type = ContactType(description = "Registration Review", systemGenerated = false, code = "COAI", nationalStandard = false, appointment = false),
           outcome = null,
@@ -253,6 +297,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           sensitive = null
         ),
         Content(
+          contactId = "2504763206",
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
           type = ContactType(description = "Police Liaison", systemGenerated = true, code = "COAI", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
@@ -261,6 +306,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           sensitive = true
         ),
         Content(
+          contactId = "2504763207",
           contactStart = OffsetDateTime.parse("2022-05-12T10:39Z"),
           type = ContactType(description = "Planned visit", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Planned test"),
@@ -269,6 +315,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           sensitive = null
         ),
         Content(
+          contactId = "987",
           contactStart = OffsetDateTime.parse("2022-05-11T10:39Z"),
           type = ContactType(description = "Home visit", systemGenerated = true, code = "CHVS", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Testing"),
@@ -277,6 +324,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           sensitive = null
         ),
         Content(
+          contactId = "654",
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
           type = ContactType(description = "I am unknown", systemGenerated = true, code = "ABCD", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Unknown contact"),
@@ -285,6 +333,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           sensitive = null
         ),
         Content(
+          contactId = "321",
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
           type = ContactType(description = "I am also unknown", systemGenerated = true, code = "EFGH", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Another unknown contact"),

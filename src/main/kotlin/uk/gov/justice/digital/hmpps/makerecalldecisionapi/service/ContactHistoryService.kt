@@ -8,13 +8,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
-import kotlin.streams.toList
 
 @Service
 internal class ContactHistoryService(
   private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
+  private val documentService: DocumentService
 ) {
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -36,6 +36,7 @@ internal class ContactHistoryService(
 
   private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
     val contactSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getContactSummary(crn))?.content
+    val allContactDocuments = documentService.getDocumentsForContacts(crn)
 
     return contactSummaryResponse
       ?.stream()
@@ -48,7 +49,8 @@ internal class ContactHistoryService(
           notes = it.notes,
           enforcementAction = it.enforcement?.enforcementAction?.description,
           systemGenerated = it.type?.systemGenerated,
-          sensitive = it.sensitive
+          sensitive = it.sensitive,
+          contactDocuments = allContactDocuments?.filter { document -> document.parentPrimaryKeyId == it.contactId }
         )
       }?.toList() ?: emptyList()
   }
