@@ -98,28 +98,14 @@ sourceSets {
     runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
   }
 }
-val dockerUp = task<Exec>("dockerUp") {
-  dependsOn("assemble")
-  commandLine("docker-compose", "-f", "docker-compose-functional-test.yml", "up", "-d")
-}
 
-val waitForIt = task<Exec>("waitForIt") {
-  dependsOn(dockerUp)
-  commandLine("./scripts/wait-for-it.sh", "127.0.0.1:8081", "--strict", "-t", "600")
-}
-
-val dockerDown = task<Exec>("dockerDown") {
-  commandLine("./scripts/clean-up-docker.sh")
-}
-
-task<Test>("functional-test") {
-  description = "Runs the functional test"
+task<Test>("functional-test-light") {
+  description = "Runs the functional test, will require start-local-development.sh " +
+    "and docker-compose-postgres.yml to be started manually"
   group = "verification"
   testClassesDirs = sourceSets["functional-test"].output.classesDirs
   classpath = sourceSets["functional-test"].runtimeClasspath
   useJUnitPlatform()
-  dependsOn(waitForIt)
-  finalizedBy(dockerDown)
 }
 
 tasks.withType<Jar>() {
