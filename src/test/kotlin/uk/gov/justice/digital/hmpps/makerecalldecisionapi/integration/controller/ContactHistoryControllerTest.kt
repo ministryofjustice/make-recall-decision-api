@@ -28,6 +28,7 @@ class ContactHistoryControllerTest(
         crn,
         contactSummaryResponse()
       )
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -61,6 +62,26 @@ class ContactHistoryControllerTest(
         .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("6")
         .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Police")
         .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
+        .jsonPath("$.contactSummary[0].contactDocuments.length()").isEqualTo(1)
+        .jsonPath("$.contactSummary[1].contactDocuments.length()").isEqualTo(1)
+        .jsonPath("$.contactSummary[0].contactDocuments[0].id").isEqualTo("f2943b31-2250-41ab-a04d-004e27a97add")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].documentName").isEqualTo("test doc.docx")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].author").isEqualTo("Trevor Small")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].type.description").isEqualTo("Contact related document")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].extendedDescription").isEqualTo("Contact on 21/06/2022 for Information - from 3rd Party")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:27:23.407")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:27:23")
+        .jsonPath("$.contactSummary[0].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504412185")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].id").isEqualTo("630ca741-cbb6-4f2e-8e86-73825d8c4d82")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].documentName").isEqualTo("a test.pdf")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].author").isEqualTo("Jackie Gough")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].type.description").isEqualTo("Contact related document")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].extendedDescription").isEqualTo("Contact on 21/06/2020 for Complementary Therapy Session (NS)")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:29:17.324")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:29:17")
+        .jsonPath("$.contactSummary[1].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435532")
     }
   }
 
@@ -70,6 +91,7 @@ class ContactHistoryControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, emptyContactSummaryResponse())
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -105,6 +127,7 @@ class ContactHistoryControllerTest(
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+        .jsonPath("$.contactSummary").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
     }
   }
@@ -118,6 +141,7 @@ class ContactHistoryControllerTest(
         crn,
         contactSummaryResponse()
       )
+      groupedDocumentsResponse(crn)
       releaseSummaryResponseWithStatusCode(
         crn,
         releaseSummaryDeliusResponse(),
@@ -138,7 +162,8 @@ class ContactHistoryControllerTest(
         .jsonPath("$.releaseSummary.lastRecall").isEmpty()
         .jsonPath("$.contactSummary").isArray()
         .jsonPath("$.contactSummary.length()").isEqualTo("2")
-        .jsonPath("$.contactTypeGroups.length()").isEqualTo("2")
+        .jsonPath("$.contactSummary[0].contactDocuments.length()").isEqualTo("1")
+        .jsonPath("$.contactSummary[1].contactDocuments.length()").isEqualTo("1")
     }
   }
 
@@ -148,6 +173,7 @@ class ContactHistoryControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummary = contactSummaryResponse(), delaySeconds = nDeliusTimeout + 2)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -169,6 +195,7 @@ class ContactHistoryControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummaryResponse())
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
@@ -181,6 +208,28 @@ class ContactHistoryControllerTest(
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: Community API Client - release summary endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Community Api timeout on grouped documents endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      contactSummaryResponse(crn, contactSummaryResponse())
+      groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      releaseSummaryResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/contact-history")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Community API Client - grouped documents endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 

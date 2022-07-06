@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
@@ -219,6 +220,26 @@ class CommunityApiClient(
         )
       }
     log.info(normalizeSpace("Returning user access details for $crn"))
+    return result
+  }
+
+  fun getGroupedDocuments(crn: String): Mono<GroupedDocuments> {
+    log.info(normalizeSpace("About to get all grouped documents for $crn"))
+
+    val responseType = object : ParameterizedTypeReference<GroupedDocuments>() {}
+    val result = webClient
+      .get()
+      .uri("/secure/offenders/crn/$crn/documents/grouped")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "grouped documents"
+        )
+      }
+    log.info(normalizeSpace("Returning all grouped documents for $crn"))
     return result
   }
 

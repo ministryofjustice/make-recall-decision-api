@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
@@ -367,6 +368,16 @@ abstract class IntegrationTestBase {
     communityApi.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
         .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
+    )
+  }
+
+  protected fun groupedDocumentsResponse(crn: String, delaySeconds: Long = 0) {
+    val groupedDocumentsRequest =
+      request().withPath("/secure/offenders/crn/$crn/documents/grouped")
+
+    communityApi.`when`(groupedDocumentsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(groupedDocumentsDeliusResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
