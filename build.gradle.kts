@@ -58,7 +58,7 @@ dependencies {
 
   testImplementation("io.rest-assured:rest-assured:5.0.1")
   implementation("io.rest-assured:json-path:5.0.1")
-  implementation("io.rest-assured:xml-path:5.0.1")
+  implementation("io.rest-assured:xml-path:5.1.1")
 }
 
 java {
