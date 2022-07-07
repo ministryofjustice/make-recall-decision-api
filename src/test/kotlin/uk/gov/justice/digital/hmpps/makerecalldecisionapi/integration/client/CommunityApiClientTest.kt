@@ -459,4 +459,18 @@ class CommunityApiClientTest : IntegrationTestBase() {
     // then
     assertThat(actual, equalTo(expected))
   }
+
+  @Test
+  fun `retrieves requested document`() {
+    // given
+    val crn = "X123456"
+    val documentId = "54345"
+    getDocumentResponse(crn, documentId)
+
+    // when
+    val actual = communityApiClient.getDocumentByCrnAndId(crn, documentId).block()
+
+    // then
+    assertThat(actual.statusCode.is2xxSuccessful, equalTo(true))
+  }
 }

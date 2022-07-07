@@ -10,7 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
+import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.core.io.Resource
+import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
@@ -18,6 +21,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDoc
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class DocumentServiceTest : ServiceTestBase() {
+
+  private val documentId = "12345"
+  private val responseEntity: ResponseEntity<Resource>? = mock(ResponseEntity::class.java) as ResponseEntity<Resource>?
 
   @BeforeEach
   fun setup() {
@@ -53,7 +59,37 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }
   }
 
-  protected fun expectedContactDocumentResponse(): List<CaseDocument>? {
+  @Test
+  fun `given a get document request then return the requested document`() {
+    runTest {
+
+      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
+        .willReturn(Mono.fromCallable { responseEntity })
+
+      val response = documentService.getDocumentByCrnAndId(crn, documentId)
+
+      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+
+      assertThat(response, equalTo(responseEntity))
+    }
+  }
+
+  @Test
+  fun `given no document in request then return empty result`() {
+    runTest {
+
+      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
+        .willReturn(Mono.empty())
+
+      val response = documentService.getDocumentByCrnAndId(crn, documentId)
+
+      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+
+      assertThat(response, equalTo(null))
+    }
+  }
+
+  private fun expectedContactDocumentResponse(): List<CaseDocument>? {
     return listOf(
       CaseDocument(
         id = "f2943b31-2250-41ab-a04d-004e27a97add",

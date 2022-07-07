@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.io.Resource
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
@@ -13,5 +15,9 @@ internal class DocumentService(
   fun getDocumentsForContacts(crn: String): List<CaseDocument>? {
     val groupedDocuments = getValueAndHandleWrappedException(communityApiClient.getGroupedDocuments(crn))
     return groupedDocuments?.documents?.filter { it.type?.code == "CONTACT_DOCUMENT" }
+  }
+
+  fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource>? {
+    return getValueAndHandleWrappedException(communityApiClient.getDocumentByCrnAndId(crn, documentId))
   }
 }
