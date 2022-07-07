@@ -57,7 +57,7 @@ dependencies {
   testImplementation("com.h2database:h2:2.1.214")
 
   testImplementation("io.rest-assured:rest-assured:5.0.1")
-  implementation("io.rest-assured:json-path:5.0.1")
+  implementation("io.rest-assured:json-path:5.1.1")
   implementation("io.rest-assured:xml-path:5.0.1")
 }
 
