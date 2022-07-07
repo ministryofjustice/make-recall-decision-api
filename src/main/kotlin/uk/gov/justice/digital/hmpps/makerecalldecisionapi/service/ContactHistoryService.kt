@@ -50,7 +50,8 @@ internal class ContactHistoryService(
           enforcementAction = it.enforcement?.enforcementAction?.description,
           systemGenerated = it.type?.systemGenerated,
           sensitive = it.sensitive,
-          contactDocuments = allContactDocuments?.filter { document -> document.parentPrimaryKeyId == it.contactId }
+          contactDocuments = allContactDocuments?.filter { document -> document.parentPrimaryKeyId == it.contactId },
+          description = it.description,
         )
       }?.toList() ?: emptyList()
   }
