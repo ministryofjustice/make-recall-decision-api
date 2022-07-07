@@ -101,7 +101,8 @@ fun contactSummaryResponse() = """
             "lastUpdatedByUser": {
                 "forenames": "John",
                 "surname": "Smith"
-            }
+            },
+            "description": "This is a contact description"
         }
     ],
     "pageable": {

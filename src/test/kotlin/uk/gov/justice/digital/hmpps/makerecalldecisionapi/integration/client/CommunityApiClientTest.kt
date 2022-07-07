@@ -256,7 +256,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = null
         ),
         Content(
           contactId = "2504435532",
@@ -265,7 +266,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-          sensitive = true
+          sensitive = true,
+          description = "This is a contact description"
         )
       )
     )
@@ -471,6 +473,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
     val actual = communityApiClient.getDocumentByCrnAndId(crn, documentId).block()
 
     // then
-    assertThat(actual.statusCode.is2xxSuccessful, equalTo(true))
+    assertThat(actual?.statusCode?.is2xxSuccessful, equalTo(true))
   }
 }

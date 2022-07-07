@@ -193,7 +193,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             createdAt = "2022-06-21T20:27:23",
             parentPrimaryKeyId = "2504763194"
           )
-        )
+        ),
+        description = "This is a contact description"
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -215,7 +216,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             createdAt = "2022-06-21T20:29:17",
             parentPrimaryKeyId = "2504763206"
           )
-        )
+        ),
+        description = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
@@ -226,7 +228,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         systemGenerated = true,
         code = "COAP",
         sensitive = null,
-        contactDocuments = emptyList()
+        contactDocuments = emptyList(),
+        description = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
@@ -237,7 +240,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         systemGenerated = true,
         code = "CHVS",
         sensitive = null,
-        contactDocuments = emptyList()
+        contactDocuments = emptyList(),
+        description = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -248,7 +252,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         systemGenerated = true,
         code = "ABCD",
         sensitive = null,
-        contactDocuments = emptyList()
+        contactDocuments = emptyList(),
+        description = null
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -259,7 +264,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         systemGenerated = true,
         code = "EFGH",
         sensitive = null,
-        contactDocuments = emptyList()
+        contactDocuments = emptyList(),
+        description = null
       )
     )
   }
@@ -294,7 +300,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = null,
           notes = "Comment added by John Smith on 05/05/2022",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = "This is a contact description"
         ),
         Content(
           contactId = "2504763206",
@@ -303,7 +310,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
           notes = "This is a test",
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
-          sensitive = true
+          sensitive = true,
+          description = null
         ),
         Content(
           contactId = "2504763207",
@@ -312,7 +320,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Planned test"),
           notes = "This is a test",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = null
         ),
         Content(
           contactId = "987",
@@ -321,7 +330,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Testing"),
           notes = "This is another test",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = null
         ),
         Content(
           contactId = "654",
@@ -330,7 +340,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Unknown contact"),
           notes = "This is an unknown test",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = null
         ),
         Content(
           contactId = "321",
@@ -339,7 +350,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           outcome = ContactOutcome(description = "Another unknown contact"),
           notes = "This is another unknown test",
           enforcement = null,
-          sensitive = null
+          sensitive = null,
+          description = null
         ),
       )
     )

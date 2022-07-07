@@ -12,5 +12,6 @@ data class ContactSummaryResponse(
   val enforcementAction: String? = null,
   val systemGenerated: Boolean?,
   val sensitive: Boolean?,
-  val contactDocuments: List<CaseDocument>?
+  val contactDocuments: List<CaseDocument>?,
+  val description: String?,
 )
