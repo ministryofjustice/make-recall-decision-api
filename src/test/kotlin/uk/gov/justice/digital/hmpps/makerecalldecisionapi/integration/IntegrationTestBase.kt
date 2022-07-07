@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
+import org.mockserver.matchers.Times
 import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -378,6 +380,33 @@ abstract class IntegrationTestBase {
     communityApi.`when`(groupedDocumentsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(groupedDocumentsDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun getDocumentResponse(crn: String, documentId: String, delaySeconds: Long = 0) {
+    val documentRequest =
+      request().withPath("/secure/offenders/crn/$crn/documents/$documentId")
+
+    communityApi.`when`(documentRequest, Times.exactly(1)).respond(
+      response()
+        .withHeader(HttpHeaders.CONTENT_TYPE, "application/pdf;charset=UTF-8")
+        .withHeader(HttpHeaders.ACCEPT_RANGES, "bytes")
+        .withHeader(HttpHeaders.CACHE_CONTROL, "max-age=0, must-revalidate")
+        .withHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"myPdfTest.pdf\"")
+        .withHeader(HttpHeaders.DATE, "Fri, 05 Jul 2022 09:50:45 GMT")
+        .withHeader(HttpHeaders.ETAG, "9514985635950")
+        .withHeader(HttpHeaders.LAST_MODIFIED, "Wed, 03 Jul 2022 13:20:35 GMT")
+        .withBody(ClassPathResource("myPdfTest.pdf").file.readBytes())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noDocumentAvailable(crn: String, documentId: String) {
+    val documentRequest =
+      request().withPath("/secure/offenders/crn/$crn/documents/$documentId")
+
+    communityApi.`when`(documentRequest, exactly(1)).respond(
+      response().withStatusCode(404)
     )
   }
 

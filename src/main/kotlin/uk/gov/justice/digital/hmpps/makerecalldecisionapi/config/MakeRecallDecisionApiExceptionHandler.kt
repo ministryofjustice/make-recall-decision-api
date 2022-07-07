@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import javax.validation.ValidationException
 
@@ -31,13 +32,27 @@ class MakeRecallDecisionApiExceptionHandler {
 
   @ExceptionHandler(PersonNotFoundException::class)
   fun handlePersonNotFoundException(e: PersonNotFoundException): ResponseEntity<ErrorResponse> {
-    log.info("Validation exception: {}", e.message)
+    log.info("Person not found exception: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)
       .body(
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No personal details available: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
+  @ExceptionHandler(DocumentNotFoundException::class)
+  fun handleDocumentNotFoundException(e: DocumentNotFoundException): ResponseEntity<ErrorResponse> {
+    log.info("Document not found exception: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "${e.message}",
           developerMessage = e.message
         )
       )
