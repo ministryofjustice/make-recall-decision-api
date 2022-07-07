@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/secure/offenders/crn/X098092/documents/630ca741-cbb6-4f2e-8e86-73825d8c4d82"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "a_test.pdf",
+    "headers": {
+      "Content-Type": "application/pdf"
+    }
+  }
+}
