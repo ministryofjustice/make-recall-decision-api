@@ -44,6 +44,8 @@ spring:
           jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
 
   jackson:
+    parser:
+      allow-backslash-escaping-any-character: true
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false

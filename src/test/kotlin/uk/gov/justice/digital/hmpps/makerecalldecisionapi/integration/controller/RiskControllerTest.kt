@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -18,7 +19,7 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves personal details data when no MAPPA or RoSH details available`() {
+  fun `retrieves personal details data when no MAPPA, RoSH, or Contingency plan details available`() {
     runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
@@ -27,6 +28,8 @@ class RiskControllerTest(
       noHistoricalRiskScoresResponse(crn)
       noCurrentRiskScoresResponse(crn)
       noRoSHSummaryResponse(crn)
+      // TODO reintroduce once ARN-1026 is complete
+//      noContingencyPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -88,11 +91,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
-//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
+      // TODO reintroduce once ARN-1026 is complete
+//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-//        .jsonPath("$.contingencyPlan.description").isEqualTo(
-//          "If Mr Edwin enters enters pubs in Enfield Town - issue licence compliance letter\nIf Mr Edwin associates with Mr Daniels, Mr Moreland or Mr Barksdale - issue decision not to recall letter or recall. Supervision session to discuss reasons for association.\nIf Mr Edwin loses his accommodation, refer to housing support. \nIf Mr Edwin loses his employment, refer to ETE services to establish alternative employment\nIf Mr Edwin returns to drinking or taking drugs, cosndier increase in MAPPA level, refer to CGL support, increase reporting or recall."
-//        )
+//        .jsonPath("$.contingencyPlan.description").isEqualTo("")
     }
   }
 
@@ -106,6 +108,16 @@ class RiskControllerTest(
       mappaDetailsResponse(crn)
       historicalRiskScoresResponse(crn)
       currentRiskScoresResponse(crn)
+      // TODO reintroduce once ARN-1026 is complete
+//      contingencyPlanResponse(crn)
+
+      // TODO reintroduce once ARN-1026 is complete
+//      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
+//      val assessmentsFromArnContingencyPlanResponse = JSONArray(arnContingencyPlanResponse.get("assessments").toString())
+//      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
+//
+//      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("monitoringAndControl").toString() + latestCompleteAssessment.get("interventionsAndTreatment").toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
+
       webTestClient.get()
         .uri("/cases/$crn/risk")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -167,11 +179,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
 
-//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(11.9)
+      // TODO reintroduce once ARN-1026 is complete
+//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
 //        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-//        .jsonPath("$.contingencyPlan.description").isEqualTo(
-//          "If Mr Edwin enters enters pubs in Enfield Town - issue licence compliance letter\nIf Mr Edwin associates with Mr Daniels, Mr Moreland or Mr Barksdale - issue decision not to recall letter or recall. Supervision session to discuss reasons for association.\nIf Mr Edwin loses his accommodation, refer to housing support. \nIf Mr Edwin loses his employment, refer to ETE services to establish alternative employment\nIf Mr Edwin returns to drinking or taking drugs, cosndier increase in MAPPA level, refer to CGL support, increase reporting or recall."
-//        )
+//        .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
     }
   }
 
@@ -184,6 +195,8 @@ class RiskControllerTest(
     historicalRiskScoresResponse(crn)
     currentRiskScoresResponse(crn)
     noOffenderDetailsResponse(crn)
+    // TODO reintroduce once ARN-1026 is complete
+//    noContingencyPlanResponse(crn)
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -214,6 +227,7 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
+      contingencyPlanResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -238,6 +252,7 @@ class RiskControllerTest(
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
       historicalRiskScoresResponse(crn)
+      contingencyPlanResponse(crn)
       currentRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -262,6 +277,7 @@ class RiskControllerTest(
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
       currentRiskScoresResponse(crn)
+      contingencyPlanResponse(crn)
       historicalRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -276,36 +292,19 @@ class RiskControllerTest(
         .isEqualTo("Client timeout: ARN API Client - historical scores endpoint: [No response within $oasysArnClientTimeout seconds]")
     }
 
+    // TODO reintroduce once ARN-1026 is complete
+    @Disabled
     @Test
-    fun `given case is excluded then only return user access details`() {
-      runTest {
-        val crn = "A12345"
-        userAccessRestricted(crn)
-
-        webTestClient.get()
-          .uri("/cases/$crn/risk")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus().isOk
-          .expectBody()
-          .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
-          .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
-          .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
-          .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
-          .jsonPath("$.personalDetailsOverview").isEmpty
-      }
-    }
-
-    @Test
-    fun `gateway timeout 503 given on Community Api timeout`() {
+    fun `gateway timeout 503 given on OASYS ARN contingency plan endpoint`() {
       runTest {
         val crn = "A12345"
         userAccessAllowed(crn)
-        roSHSummaryResponse(crn)
         allOffenderDetailsResponse(crn)
+        mappaDetailsResponse(crn)
+        roSHSummaryResponse(crn)
         currentRiskScoresResponse(crn)
         historicalRiskScoresResponse(crn)
-        mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+        contingencyPlanResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
         webTestClient.get()
           .uri("/cases/$crn/risk")
@@ -316,7 +315,51 @@ class RiskControllerTest(
           .expectBody()
           .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
           .jsonPath("$.userMessage")
-          .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+          .isEqualTo("Client timeout: ARN API Client - risk contingency plan endpoint: [No response within $oasysArnClientTimeout seconds]")
+      }
+
+      @Test
+      fun `given case is excluded then only return user access details`() {
+        runTest {
+          val crn = "A12345"
+          userAccessRestricted(crn)
+
+          webTestClient.get()
+            .uri("/cases/$crn/risk")
+            .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+            .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+            .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+            .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+            .jsonPath("$.personalDetailsOverview").isEmpty
+        }
+      }
+
+      @Test
+      fun `gateway timeout 503 given on Community Api timeout`() {
+        runTest {
+          val crn = "A12345"
+          userAccessAllowed(crn)
+          roSHSummaryResponse(crn)
+          allOffenderDetailsResponse(crn)
+          currentRiskScoresResponse(crn)
+          historicalRiskScoresResponse(crn)
+          mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+
+          webTestClient.get()
+            .uri("/cases/$crn/risk")
+            .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+            .exchange()
+            .expectStatus()
+            .is5xxServerError
+            .expectBody()
+            .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+            .jsonPath("$.userMessage")
+            .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+        }
       }
     }
   }

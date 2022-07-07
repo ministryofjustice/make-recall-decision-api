@@ -22,6 +22,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanSimpleResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
@@ -116,6 +118,32 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun noContingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
+    val contingencyPlanRequest =
+      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
+    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
+      response().withStatusCode(404)
+    )
+  }
+
+  protected fun contingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
+    val contingencyPlanRequest =
+      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
+    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(contingencyPlanResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun contingencyPlanSimpleResponse(crn: String, delaySeconds: Long = 0) {
+    val contingencyPlanRequest =
+      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
+    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(contingencyPlanSimpleResponse())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
