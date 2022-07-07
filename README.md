@@ -13,7 +13,7 @@ The primary software client for this service is the related UI [make-recall-deci
 
 The functional test is a black box test of the MRD API. It runs against the dev environment rather than mock services.
 
-* Add CLIENT_ID, CLIENT_SECRET, and USER_NAME (Dev Delius user) to your environment variables in both your bash profile, and your IntelliJ environment variables under `Edit Run Configurations`
+* Add SYSTEM_CLIENT_ID, SYSTEM_CLIENT_SECRET, and USER_NAME (Dev Delius user) to your environment variables in both your bash profile, and your IntelliJ environment variables under `Edit Run Configurations`
 * To start the functional tests from the command line run the script `./scripts/run-functional-test.sh`
 * To run the test in the IDE first start `./scripts/start-local-development.sh`, `docker-compose-postgres.yml` and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
 

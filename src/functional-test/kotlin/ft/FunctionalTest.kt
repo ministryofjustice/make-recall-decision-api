@@ -14,8 +14,8 @@ open class FunctionalTest {
   val token = "Bearer ${getToken()}"
   val testCrn = "D006296"
   companion object {
-    val client_id = System.getenv("CLIENT_ID")
-    val client_secret = System.getenv("CLIENT_SECRET")
+    val client_id = System.getenv("SYSTEM_CLIENT_ID")
+    val client_secret = System.getenv("SYSTEM_CLIENT_SECRET")
     val base64EncodedClientCreds = Base64.getEncoder().encodeToString("$client_id:$client_secret".toByteArray())
     val authHeaderValue = "Basic $base64EncodedClientCreds"
     val authPath = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials&username=${System.getenv("USER_NAME")}"
