@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -18,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registr
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
@@ -240,6 +243,30 @@ class CommunityApiClient(
         )
       }
     log.info(normalizeSpace("Returning all grouped documents for $crn"))
+    return result
+  }
+
+  fun getDocumentByCrnAndId(crn: String, documentId: String): Mono<ResponseEntity<Resource>> {
+    log.info(normalizeSpace("About to get document for $crn and documentId $documentId"))
+
+    val result = webClient
+      .get()
+      .uri("/secure/offenders/crn/$crn/documents/$documentId")
+      .retrieve()
+      .onStatus(
+        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
+        { throw DocumentNotFoundException("No document found for crn: $crn and documentId: $documentId") }
+      )
+      .toEntity(Resource::class.java)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "document by CRN and ID"
+        )
+      }
+
+    log.info(normalizeSpace("Returning document for $crn and documentId $documentId"))
     return result
   }
 
