@@ -22,7 +22,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       registrationsResponse(crn)
 
       webTestClient.get()
@@ -92,7 +92,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       registrationsResponse(crn)
 
       webTestClient.get()
@@ -113,7 +113,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
+      convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
       registrationsResponse(crn)
 
       webTestClient.get()
@@ -134,7 +134,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       registrationsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()

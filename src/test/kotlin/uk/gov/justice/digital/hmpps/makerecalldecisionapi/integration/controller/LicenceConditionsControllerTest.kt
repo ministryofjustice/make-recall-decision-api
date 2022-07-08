@@ -16,15 +16,16 @@ class LicenceConditionsControllerTest(
 ) : IntegrationTestBase() {
   val staffCode = "STFFCDEU"
   val crn = "A12345"
-  val convictionId = 2500000001
+  val convictionId = 2500614567
 
   @Test
   fun `retrieves licence condition details`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -48,6 +49,23 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.convictions[0].licenceDocuments.length()").isEqualTo(2)
+        .jsonPath("$.convictions[0].licenceDocuments[0].id").isEqualTo("374136ce-f863-48d8-96dc-7581636e461e")
+        .jsonPath("$.convictions[0].licenceDocuments[0].documentName").isEqualTo("GKlicencejune2022.pdf")
+        .jsonPath("$.convictions[0].licenceDocuments[0].author").isEqualTo("Tom Thumb")
+        .jsonPath("$.convictions[0].licenceDocuments[0].type.code").isEqualTo("CONVICTION_DOCUMENT")
+        .jsonPath("$.convictions[0].licenceDocuments[0].type.description").isEqualTo("Sentence related")
+        .jsonPath("$.convictions[0].licenceDocuments[0].lastModifiedAt").isEqualTo("2022-06-07T17:00:29.493")
+        .jsonPath("$.convictions[0].licenceDocuments[0].createdAt").isEqualTo("2022-06-07T17:00:29")
+        .jsonPath("$.convictions[0].licenceDocuments[0].parentPrimaryKeyId").isEqualTo("2500614567")
+        .jsonPath("$.convictions[0].licenceDocuments[1].id").isEqualTo("374136ce-f863-48d8-96dc-7581636e123e")
+        .jsonPath("$.convictions[0].licenceDocuments[1].documentName").isEqualTo("TDlicencejuly2022.pdf")
+        .jsonPath("$.convictions[0].licenceDocuments[1].author").isEqualTo("Wendy Rose")
+        .jsonPath("$.convictions[0].licenceDocuments[1].type.code").isEqualTo("CONVICTION_DOCUMENT")
+        .jsonPath("$.convictions[0].licenceDocuments[1].type.description").isEqualTo("Sentence related")
+        .jsonPath("$.convictions[0].licenceDocuments[1].lastModifiedAt").isEqualTo("2022-07-08T10:00:29.493")
+        .jsonPath("$.convictions[0].licenceDocuments[1].createdAt").isEqualTo("2022-06-08T10:00:29")
+        .jsonPath("$.convictions[0].licenceDocuments[1].parentPrimaryKeyId").isEqualTo("2500614567")
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
         .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
@@ -64,8 +82,9 @@ class LicenceConditionsControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       multipleLicenceConditionsResponse(crn, convictionId)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -96,6 +115,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeMainCat.description").isEqualTo("Another main condition")
         .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.code").isEqualTo("NSTT9")
         .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.description").isEqualTo("Do not attend Hull city center after 8pm")
+        .jsonPath("$.convictions[0].licenceDocuments.length()").isEqualTo(2)
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
         .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
@@ -116,6 +136,7 @@ class LicenceConditionsControllerTest(
       multipleConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       licenceConditionsResponse(crn, convictionId2)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       webTestClient.get()
@@ -150,6 +171,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.convictions[0].licenceDocuments.length()").isEqualTo(2)
         .jsonPath("$.convictions[1].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.convictions[1].licenceConditions[0].startDate").isEqualTo("2022-05-18")
         .jsonPath("$.convictions[1].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
@@ -174,6 +196,7 @@ class LicenceConditionsControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       val result = webTestClient.get()
@@ -205,8 +228,9 @@ class LicenceConditionsControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       noActiveLicenceConditions(crn, convictionId)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
 
       val result = webTestClient.get()
@@ -239,8 +263,9 @@ class LicenceConditionsControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
+      groupedDocumentsResponse(crn)
       releaseSummaryResponseWithStatusCode(
         crn,
         releaseSummaryDeliusResponse(),
@@ -297,7 +322,7 @@ class LicenceConditionsControllerTest(
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      unallocatedConvictionResponse(crn, staffCode)
+      convictionResponse(crn, staffCode)
       registrationsResponse(crn)
 
       webTestClient.get()
@@ -319,7 +344,8 @@ class LicenceConditionsControllerTest(
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
+      convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
+      groupedDocumentsResponse(crn)
       registrationsResponse(crn)
 
       webTestClient.get()
@@ -341,8 +367,9 @@ class LicenceConditionsControllerTest(
       val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      unallocatedConvictionResponse(crn, staffCode)
-      licenceConditionsResponse(crn, 2500000001, delaySeconds = nDeliusTimeout + 2)
+      convictionResponse(crn, staffCode)
+      groupedDocumentsResponse(crn)
+      licenceConditionsResponse(crn, 2500614567, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -354,6 +381,29 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: Community API Client - licenceConditions endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Community Api timeout on grouped documents endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      licenceConditionsResponse(crn, 2500614567)
+      groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      releaseSummaryResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Community API Client - grouped documents endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 

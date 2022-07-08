@@ -230,7 +230,7 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun unallocatedConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
+  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
