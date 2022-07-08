@@ -8,5 +8,5 @@ data class CaseDocument(
   val extendedDescription: String?,
   val lastModifiedAt: String?,
   val createdAt: String?,
-  val parentPrimaryKeyId: String?,
+  val parentPrimaryKeyId: Long?,
 )
