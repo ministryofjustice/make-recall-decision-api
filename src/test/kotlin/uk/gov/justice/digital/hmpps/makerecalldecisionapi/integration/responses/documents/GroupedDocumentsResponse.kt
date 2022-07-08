@@ -57,7 +57,19 @@ fun groupedDocumentsDeliusResponse() = """
                     },
                     "lastModifiedAt": "2022-06-07T17:00:29.493",
                     "createdAt": "2022-06-07T17:00:29",
-                    "parentPrimaryKeyId": 2500613253
+                    "parentPrimaryKeyId": 2500614567
+                },
+                {
+                    "id": "374136ce-f863-48d8-96dc-7581636e123e",
+                    "documentName": "TDlicencejuly2022.pdf",
+                    "author": "Wendy Rose",
+                    "type": {
+                        "code": "CONVICTION_DOCUMENT",
+                        "description": "Sentence related"
+                    },
+                    "lastModifiedAt": "2022-07-08T10:00:29.493",
+                    "createdAt": "2022-06-08T10:00:29",
+                    "parentPrimaryKeyId": 2500614567
                 },
                 {
                     "id": "342234a8-b279-4d6e-b9ff-c7910afce95e",

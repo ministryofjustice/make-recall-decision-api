@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import java.time.LocalDate
 
@@ -15,5 +16,6 @@ data class ConvictionResponse(
   val postSentenceSupervisionEndDate: LocalDate?,
   val statusCode: String?,
   val statusDescription: String?,
-  val licenceConditions: List<LicenceCondition>?
+  val licenceConditions: List<LicenceCondition>?,
+  val licenceDocuments: List<CaseDocument>?,
 )

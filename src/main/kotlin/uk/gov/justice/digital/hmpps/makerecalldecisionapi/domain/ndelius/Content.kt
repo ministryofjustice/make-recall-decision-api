@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
 import java.time.OffsetDateTime
 
 data class Content(
-  val contactId: String?,
+  val contactId: Long?,
   val contactStart: OffsetDateTime?,
   val type: ContactType?,
   val outcome: ContactOutcome? = null,

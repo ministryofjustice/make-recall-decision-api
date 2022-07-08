@@ -13,7 +13,8 @@ import kotlin.streams.toList
 internal class LicenceConditionsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
+  private val documentService: DocumentService
 ) {
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -35,6 +36,8 @@ internal class LicenceConditionsService(
   private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
 
     val activeConvictions = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
+
+    val allConvictionDocuments = documentService.getDocumentsForConvictions(crn)
 
     return activeConvictions
       ?.map {
@@ -61,7 +64,8 @@ internal class LicenceConditionsService(
           postSentenceSupervisionEndDate = it.custody?.keyDates?.postSentenceSupervisionEndDate,
           statusCode = it.custody?.status?.code,
           statusDescription = it.custody?.status?.description,
-          licenceConditions = result
+          licenceConditions = result,
+          licenceDocuments = allConvictionDocuments?.filter { document -> document.parentPrimaryKeyId == it.convictionId },
         )
       } ?: emptyList()
   }

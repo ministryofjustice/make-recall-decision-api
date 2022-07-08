@@ -191,7 +191,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             extendedDescription = "Contact on 21/06/2022 for Information - from 3rd Party",
             lastModifiedAt = "2022-06-21T20:27:23.407",
             createdAt = "2022-06-21T20:27:23",
-            parentPrimaryKeyId = "2504763194"
+            parentPrimaryKeyId = 2504763194L
           )
         ),
         description = "This is a contact description"
@@ -214,7 +214,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             extendedDescription = "Contact on 21/06/2020 for Complementary Therapy Session (NS)",
             lastModifiedAt = "2022-06-21T20:29:17.324",
             createdAt = "2022-06-21T20:29:17",
-            parentPrimaryKeyId = "2504763206"
+            parentPrimaryKeyId = 2504763206L
           )
         ),
         description = null
@@ -294,7 +294,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     return ContactSummaryResponseCommunity(
       content = listOf(
         Content(
-          contactId = "2504763194",
+          contactId = 2504763194L,
           contactStart = OffsetDateTime.parse("2022-06-03T07:00Z"),
           type = ContactType(description = "Registration Review", systemGenerated = false, code = "COAI", nationalStandard = false, appointment = false),
           outcome = null,
@@ -304,7 +304,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           description = "This is a contact description"
         ),
         Content(
-          contactId = "2504763206",
+          contactId = 2504763206L,
           contactStart = OffsetDateTime.parse("2022-05-10T10:39Z"),
           type = ContactType(description = "Police Liaison", systemGenerated = true, code = "COAI", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
@@ -314,7 +314,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           description = null
         ),
         Content(
-          contactId = "2504763207",
+          contactId = 2504763207L,
           contactStart = OffsetDateTime.parse("2022-05-12T10:39Z"),
           type = ContactType(description = "Planned visit", systemGenerated = true, code = "COAP", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Planned test"),
@@ -324,7 +324,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           description = null
         ),
         Content(
-          contactId = "987",
+          contactId = 987L,
           contactStart = OffsetDateTime.parse("2022-05-11T10:39Z"),
           type = ContactType(description = "Home visit", systemGenerated = true, code = "CHVS", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Testing"),
@@ -334,7 +334,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           description = null
         ),
         Content(
-          contactId = "654",
+          contactId = 654L,
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
           type = ContactType(description = "I am unknown", systemGenerated = true, code = "ABCD", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Unknown contact"),
@@ -344,7 +344,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
           description = null
         ),
         Content(
-          contactId = "321",
+          contactId = 321L,
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
           type = ContactType(description = "I am also unknown", systemGenerated = true, code = "EFGH", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Another unknown contact"),

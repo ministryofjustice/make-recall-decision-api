@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
@@ -40,8 +42,9 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
+    documentService = DocumentService(communityApiClient)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator)
+    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, documentService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -56,14 +59,17 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
       then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500000001)
+      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
       then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
@@ -114,14 +120,17 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.empty())
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
       then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500000001)
+      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
       then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
@@ -145,6 +154,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { emptyList() })
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
@@ -153,6 +164,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getActiveConvictions(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getReleaseSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).shouldHaveNoMoreInteractions()
 
       com.natpryce.hamkrest.assertion.assertThat(
@@ -184,7 +196,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<ConvictionResponse> {
     return listOf(
       ConvictionResponse(
-        convictionId = 2500000001,
+        convictionId = 2500614567,
         active = true,
         offences = listOf(
           uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
@@ -206,7 +218,29 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
         statusCode = "ABC123",
         statusDescription = "custody status",
-        licenceConditions = licenceConditions?.licenceConditions
+        licenceConditions = licenceConditions?.licenceConditions,
+        licenceDocuments = listOf(
+          CaseDocument(
+            id = "374136ce-f863-48d8-96dc-7581636e461e",
+            documentName = "GKlicencejune2022.pdf",
+            author = "Tom Thumb",
+            type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"),
+            extendedDescription = null,
+            lastModifiedAt = "2022-06-07T17:00:29.493",
+            createdAt = "2022-06-07T17:00:29",
+            parentPrimaryKeyId = 2500614567L
+          ),
+          CaseDocument(
+            id = "374136ce-f863-48d8-96dc-7581636e123e",
+            documentName = "TDlicencejuly2022.pdf",
+            author = "Wendy Rose",
+            type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"),
+            extendedDescription = null,
+            lastModifiedAt = "2022-07-08T10:00:29.493",
+            createdAt = "2022-06-08T10:00:29",
+            parentPrimaryKeyId = 2500614567L
+          ),
+        )
       )
     )
   }
@@ -240,7 +274,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         )
       )
     ),
-    convictionId = 2500000001,
+    convictionId = 2500614567,
     orderManagers =
     listOf(
       OrderManager(
