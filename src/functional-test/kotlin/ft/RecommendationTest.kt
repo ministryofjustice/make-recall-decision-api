@@ -8,19 +8,25 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 class RecommendationTest() : FunctionalTest() {
   @Test
-  fun `make a recommendation, expected 200`() {
+  fun `make a recommendation, expected 201`() {
     // given
-    val expected = HttpStatus.OK.value()
+    val expected = HttpStatus.CREATED.value()
 
     // when
     lastResponse = RestAssured
       .given()
-      .pathParam("crn", testCrn)
       .contentType(APPLICATION_JSON_VALUE)
       .header("Authorization", token)
-      .post("http://127.0.0.1:8080/cases/{crn}/recommendation")
+      .body(recommendationRequest("X12345"))
+      .post("http://127.0.0.1:8080/recommendations")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
   }
 }
+
+fun recommendationRequest(crn: String) = """
+  {
+    "crn": "$crn"
+  }
+""".trimIndent()
