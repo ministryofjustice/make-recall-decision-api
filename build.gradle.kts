@@ -94,6 +94,7 @@ val SourceSet.kotlin: SourceDirectorySet
 sourceSets {
   create("functional-test") {
     kotlin.srcDirs("src/functional-test")
+    java.srcDirs("src")
     compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
     runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
   }
