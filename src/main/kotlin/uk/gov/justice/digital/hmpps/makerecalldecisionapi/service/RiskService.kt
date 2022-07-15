@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContingencyPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduceRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.HistoricalScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
@@ -23,6 +24,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
@@ -59,7 +62,7 @@ internal class RiskService(
         current = fetchCurrentScores(crn),
         historical = fetchHistoricalScores(crn)
       )
-      val contingencyPlan = null // TODO ARN team will provide this - WIP
+      val contingencyPlan = null // fetchContingencyPlan(crn) // TODO reintroduce once ARN-1026 is complete
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
         riskOfSeriousHarm = riskOfSeriousHarm,
@@ -75,11 +78,41 @@ internal class RiskService(
     }
   }
 
+  private suspend fun fetchContingencyPlan(crn: String): ContingencyPlan {
+    val contingencyPlanResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getContingencyPlan(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No contingency plan available for CRN: $crn - ${e.message}")
+      ContingencyPlanResponse(assessments = emptyList())
+    }
+    val latestCompletedAssessment = contingencyPlanResponse.assessments
+      ?.filter { it?.assessmentStatus.equals("COMPLETE") }
+      ?.maxByOrNull { LocalDateTime.parse(it?.dateCompleted) }
+    return ContingencyPlan(
+      description = formatContingencyPlanDetails(latestCompletedAssessment),
+      oasysHeading = OasysHeading(
+        number = "10.1",
+        description = "Contingency plan"
+      )
+    )
+  }
+
+  private fun formatContingencyPlanDetails(latestCompletedAssessment: Assessment?): String {
+    val keyConsiderationsCurrentSituation = latestCompletedAssessment?.keyConsiderationsCurrentSituation ?: ""
+    val furtherConsiderationsCurrentSituation = latestCompletedAssessment?.furtherConsiderationsCurrentSituation ?: ""
+    val supervision = latestCompletedAssessment?.supervision ?: ""
+    val monitoringAndControl = latestCompletedAssessment?.monitoringAndControl ?: ""
+    val interventionsAndTreatment = latestCompletedAssessment?.interventionsAndTreatment ?: ""
+    val victimSafetyPlanning = latestCompletedAssessment?.victimSafetyPlanning ?: ""
+    val contingencyPlans = latestCompletedAssessment?.contingencyPlans ?: ""
+    return keyConsiderationsCurrentSituation + furtherConsiderationsCurrentSituation + supervision + monitoringAndControl + interventionsAndTreatment + victimSafetyPlanning + contingencyPlans
+  }
+
   private suspend fun fetchCurrentScores(crn: String): Scores {
     val currentScoresResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getCurrentScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
-      log.info("No cuurent scores available for CRN: $crn - ${e.message}")
+      log.info("No current scores available for CRN: $crn - ${e.message}")
       listOf(
         CurrentScoreResponse(
           completedDate = "",

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
@@ -43,6 +45,36 @@ class ArnApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = arnApiClient.getHistoricalScores(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves contingency plan`() {
+    // given
+    val crn = "X123456"
+    contingencyPlanSimpleResponse(crn)
+
+    // and
+    val expected = ContingencyPlanResponse(
+      assessments = listOf(
+        Assessment(
+          dateCompleted = "2020-07-03T11:42:01",
+          assessmentStatus = "COMPLETE",
+          keyConsiderationsCurrentSituation = "key considerations for current situation",
+          furtherConsiderationsCurrentSituation = "further considerations for current situation",
+          supervision = null,
+          monitoringAndControl = "monitoring and control",
+          interventionsAndTreatment = "interventions and treatment",
+          victimSafetyPlanning = "victim safety planning",
+          contingencyPlans = null
+        )
+      )
+    )
+
+    // when
+    val actual = arnApiClient.getContingencyPlan(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
