@@ -22,27 +22,26 @@ class RecommendationControllerTest(
   fun `creates recommendation`() {
     val crn = "A12345"
     webTestClient.post()
-      .uri("/cases/$crn/recommendation")
+      .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest())
+        BodyInserters.fromValue(recommendationRequest(crn))
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
-      .expectStatus().isOk
+      .expectStatus().isCreated
       .expectBody()
-      .jsonPath("$.recommendation").isEqualTo("NOT_RECALL")
-      .jsonPath("$.alternateActions").isEqualTo("increase reporting")
+      .jsonPath("$.id").isEqualTo(1)
   }
 
   @Test
   fun `access denied when insufficient privileges used`() {
     val crn = "X123456"
     webTestClient.post()
-      .uri("/cases/$crn/recommendation")
+      .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest())
+        BodyInserters.fromValue(recommendationRequest(crn))
       )
       .exchange()
       .expectStatus()
