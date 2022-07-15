@@ -1,8 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests
 
-fun recommendationRequest() = """
+fun recommendationRequest(crn: String) = """
   {
-    "recommendation": "NOT_RECALL",
-    "alternateActions": "increase reporting"
+    "crn": "$crn"
   }
 """.trimIndent()

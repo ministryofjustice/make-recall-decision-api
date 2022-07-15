@@ -6,11 +6,11 @@ import javax.persistence.Table
 @Entity
 @Table(name = "recommendations")
 data class RecommendationEntity(
-  var name: String?,
+  var name: String? = null,
   val crn: String?,
-  var recommendation: Recommendation,
-  var alternateActions: String
-) : EntityWithUUID()
+  var recommendation: Recommendation? = null,
+  var alternateActions: String? = null
+) : EntityWithId()
 
 enum class Recommendation {
   RECALL, NOT_RECALL
