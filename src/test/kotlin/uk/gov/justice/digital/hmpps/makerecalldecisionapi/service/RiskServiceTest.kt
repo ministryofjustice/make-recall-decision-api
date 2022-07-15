@@ -30,6 +30,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
@@ -44,7 +46,6 @@ import java.time.LocalDateTime
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class RiskServiceTest {
-
   private lateinit var riskService: RiskService
 
   @Mock
@@ -73,6 +74,9 @@ internal class RiskServiceTest {
         .willReturn(Mono.fromCallable { listOf(historicalScoresResponse) })
       given(arnApiClient.getCurrentScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(currentScoreResponse) })
+      // TODO reintroduce once ARN-1026 is complete
+//      given(arnApiClient.getContingencyPlan(anyString()))
+//        .willReturn(Mono.fromCallable { contingencyPlanResponse })
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
 
@@ -88,6 +92,8 @@ internal class RiskServiceTest {
       val whenRiskHighest = response.whenRiskHighest
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
+      // TODO reintroduce once ARN-1026 is complete
+//      val contingencyPlan = response.contingencyPlan
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
@@ -140,10 +146,18 @@ internal class RiskServiceTest {
       assertThat(currentScores?.ogrs?.level).isEqualTo("LOW")
       assertThat(currentScores?.ogrs?.score).isEqualTo("1")
       assertThat(currentScores?.ogrs?.type).isEqualTo("OGRS")
+      // TODO reintroduce once ARN-1026 is complete
+//      assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
+//      assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
+//      assertThat(contingencyPlan?.description).isEqualTo(
+//        "key consideration for current situation\n" + "further consideration for current situation\n" + "supervision\n" + "monitoring and control\n" + "interventions and treatment\n" + "victim safety planning\n" + "contingency plans"
+//      )
 
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getCurrentScores(crn)
       then(arnApiClient).should().getHistoricalScores(crn)
+      // TODO reintroduce once ARN-1026 is complete
+//      then(arnApiClient).should().getContingencyPlan(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
     }
@@ -227,6 +241,16 @@ internal class RiskServiceTest {
           }
         )
 
+      // TODO reintroduce once ARN-1026 is complete
+//      given(arnApiClient.getContingencyPlan(anyString()))
+//        .willReturn(
+//          Mono.fromCallable {
+//            ContingencyPlanResponse(
+//              assessments = emptyList()
+//            )
+//          }
+//        )
+
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -246,6 +270,8 @@ internal class RiskServiceTest {
       val whenRiskHighest = response.whenRiskHighest
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
+      // TODO reintroduce once ARN-1026 is complete
+//      val contingencyPlan = response.contingencyPlan
 
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -297,6 +323,13 @@ internal class RiskServiceTest {
       assertThat(currentScores?.ogrs?.level).isEqualTo("")
       assertThat(currentScores?.ogrs?.score).isEqualTo("")
       assertThat(currentScores?.ogrs?.type).isEqualTo("OGRS")
+      // TODO reintroduce once ARN-1026 is complete
+//      assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
+//      assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
+//      assertThat(contingencyPlan?.description).isEmpty()
+
+      // TODO reintroduce once ARN-1026 is complete
+//      then(arnApiClient).should().getContingencyPlan(crn)
       then(arnApiClient).should().getCurrentScores(crn)
       then(arnApiClient).should().getHistoricalScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
@@ -369,6 +402,22 @@ internal class RiskServiceTest {
     ),
     assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
     overallRiskLevel = "HIGH"
+  )
+
+  private val contingencyPlanResponse = ContingencyPlanResponse(
+    assessments = listOf(
+      Assessment(
+        dateCompleted = "2021-10-09T08:26:31.349",
+        assessmentStatus = "COMPLETE",
+        keyConsiderationsCurrentSituation = "key consideration for current situation\n",
+        furtherConsiderationsCurrentSituation = "further consideration for current situation\n",
+        supervision = "supervision\n",
+        monitoringAndControl = "monitoring and control\n",
+        interventionsAndTreatment = "interventions and treatment\n",
+        victimSafetyPlanning = "victim safety planning\n",
+        contingencyPlans = "contingency plans"
+      )
+    )
   )
 
   private val currentScoreResponse = CurrentScoreResponse(
