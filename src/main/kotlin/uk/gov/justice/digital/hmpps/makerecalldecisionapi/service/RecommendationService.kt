@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import java.util.Optional
 
 @Service
 internal class RecommendationService(
@@ -15,5 +16,9 @@ internal class RecommendationService(
     return CreateRecommendationResponse(
       id = savedRecommendation.id
     )
+  }
+
+  fun getRecommendation(recommendationId: Long): Optional<RecommendationEntity> {
+    return recommendationRepository.findById(recommendationId)
   }
 }
