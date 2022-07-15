@@ -20,8 +20,15 @@ allOpen {
 val springDocVersion = "1.6.9"
 val restAssuredVersion = "5.1.1"
 
-dependencies {
+repositories {
+  maven {
+    url = uri("https://repo.e-iceblue.com/nexus/content/groups/public/")
+  }
+  mavenCentral()
+}
 
+dependencies {
+  implementation("e-iceblue:spire.doc.free:3.9.0")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -31,6 +38,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.1")
   implementation("io.opentelemetry:opentelemetry-api:1.15.0")
+  // implementation("com.deepoove:poi-tl:1.12.0")
+  implementation("org.apache.poi:poi:3.16")
+  implementation("org.apache.poi:poi-scratchpad:3.16")
+  implementation("org.apache.poi:poi-ooxml:3.16")
+  implementation("org.apache.poi:poi-ooxml-schemas:3.16")
+  implementation("org.apache.poi:poi-excelant:3.16")
+  implementation("org.apache.xmlbeans:xmlbeans:2.6.0")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.0")
@@ -47,6 +61,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.3.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
   testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")
@@ -111,4 +127,8 @@ task<Test>("functional-test-light") {
 
 tasks.withType<Jar>() {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
