@@ -47,6 +47,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.3.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.16.3")
 
   testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")
@@ -55,7 +56,6 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
-  testImplementation("com.h2database:h2:2.1.214")
 
   testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
   implementation("io.rest-assured:json-path:$restAssuredVersion")

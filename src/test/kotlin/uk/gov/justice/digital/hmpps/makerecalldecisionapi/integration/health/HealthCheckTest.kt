@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -15,10 +18,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller.RecommendationControllerTest.Companion.setUpDb
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller.RecommendationControllerTest.Companion.tearDownDb
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 import javax.sql.DataSource
 
+@ExperimentalCoroutinesApi
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = ["management.server.port=9999", "server.port=9999"])
 class HealthCheckTest : IntegrationTestBase() {
@@ -112,6 +118,20 @@ class HealthCheckTest : IntegrationTestBase() {
 
   private fun WebTestClient.BodyContentSpec.hasJsonPath(jsonPath: String, equalTo: String) =
     jsonPath(jsonPath).isEqualTo(equalTo)
+
+  companion object {
+    @JvmStatic
+    @BeforeAll
+    fun beforeAll() {
+      setUpDb()
+    }
+
+    @JvmStatic
+    @AfterAll
+    fun afterAll() {
+      tearDownDb()
+    }
+  }
 }
 
 @Configuration
@@ -120,8 +140,8 @@ class JpaConfig(private val env: Environment) {
   @Bean
   fun dataSource(): DataSource {
     val dataSource = DriverManagerDataSource()
-    dataSource.setDriverClassName("org.h2.Driver")
-    dataSource.url = "jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1"
+    dataSource.setDriverClassName("org.postgresql.Driver")
+    dataSource.url = "jdbc:postgresql://127.0.0.1:5432/make_recall_decision"
     dataSource.username = "mrd_user"
     dataSource.password = "secret"
     return dataSource
