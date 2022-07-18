@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
@@ -37,6 +39,22 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .expectBody()
       .jsonPath("$.id").isEqualTo(1)
       .jsonPath("$.crn").isEqualTo(crn)
+  }
+
+  @Test
+  fun `handles scenario where no recommendation exists for given id`() {
+    runTest {
+      webTestClient.get()
+        .uri("/recommendations/999")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .isNotFound
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.NOT_FOUND.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("No recommendation available: No recommendation found for id: 999")
+    }
   }
 
   @Test

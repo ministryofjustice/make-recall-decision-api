@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -23,9 +24,10 @@ internal class RecommendationService(
   @OptIn(ExperimentalStdlibApi::class)
   fun getRecommendation(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
+      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     return RecommendationResponse(
-      id = recommendationEntity?.id,
-      crn = recommendationEntity?.data?.crn
+      id = recommendationEntity.id,
+      crn = recommendationEntity.data.crn
     )
   }
 }
