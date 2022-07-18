@@ -42,8 +42,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -181,25 +179,6 @@ abstract class IntegrationTestBase {
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
     communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
       response().withStatusCode(404)
-    )
-  }
-
-  fun insertRecommendations() {
-    repository.saveAll(
-      listOf(
-        RecommendationEntity(
-          name = "Dylan Adam Armstrong",
-          crn = "J678910",
-          recommendation = Recommendation.NOT_RECALL,
-          alternateActions = ""
-        ),
-        RecommendationEntity(
-          name = "Andrei Edwards",
-          crn = "J680648",
-          recommendation = Recommendation.RECALL,
-          alternateActions = "increase reporting"
-        )
-      )
     )
   }
 

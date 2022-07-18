@@ -7,13 +7,17 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
+import java.util.Optional
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -30,8 +34,16 @@ internal class RecommendationController(
   suspend fun recommendation(
     @RequestBody recommendationRequest: CreateRecommendationRequest
   ): ResponseEntity<CreateRecommendationResponse>? {
-    log.info(normalizeSpace("Recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
+    log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val responseBody = recommendationService.createRecommendation(recommendationRequest)
     return ResponseEntity<CreateRecommendationResponse>(responseBody, HttpStatus.CREATED)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/recommendations/{recommendationId}")
+  @Operation(summary = "WIP: Gets a recommendation")
+  suspend fun getRecommendation(@PathVariable("recommendationId") recommendationId: Long): Optional<RecommendationEntity> {
+    log.info(normalizeSpace("Get recommendation details endpoint hit for recommendation id: $recommendationId"))
+    return recommendationService.getRecommendation(recommendationId)
   }
 }
