@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
@@ -14,10 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.r
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class RecommendationControllerTest(
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  @Autowired private val objectMapper: ObjectMapper
-) : IntegrationTestBase() {
+class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create and get recommendation`() {
@@ -45,6 +42,22 @@ class RecommendationControllerTest(
   }
 
   @Test
+  fun `handles scenario where no recommendation exists for given id`() {
+    runTest {
+      webTestClient.get()
+        .uri("/recommendations/999")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .isNotFound
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.NOT_FOUND.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("No recommendation available: No recommendation found for id: 999")
+    }
+  }
+
+  @Test
   fun `access denied when insufficient privileges used for creation request`() {
     val crn = "X123456"
     webTestClient.post()
@@ -57,15 +70,26 @@ class RecommendationControllerTest(
       .expectStatus()
       .isUnauthorized
   }
+  companion object {
+    @JvmStatic
+    @BeforeAll
+    fun setUpDb() {
+      cleanUpDocker()
+      ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
+      val ready = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600").start()
+      ready.waitFor()
+    }
 
-  @Test
-  fun `access denied when insufficient privileges used for Get request`() {
-    runTest {
-      webTestClient.get()
-        .uri("/recommendations/123")
-        .exchange()
-        .expectStatus()
-        .isUnauthorized
+    @JvmStatic
+    @AfterAll
+    fun tearDownDb() {
+      cleanUpDocker()
+    }
+
+    @JvmStatic
+    private fun cleanUpDocker() {
+      val clean = ProcessBuilder("./scripts/clean-up-docker.sh").start()
+      clean.waitFor()
     }
   }
 }

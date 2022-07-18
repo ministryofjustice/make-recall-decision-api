@@ -7,6 +7,10 @@ info.app:
     email: feedback@digital.justice.gov.uk
 
 spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
   application:
     name: make-recall-decision-api
   codec:

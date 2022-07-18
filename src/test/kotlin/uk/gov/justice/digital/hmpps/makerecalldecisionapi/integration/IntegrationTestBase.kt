@@ -82,7 +82,6 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
-    repository.deleteAll()
     communityApi.reset()
     offenderSearchApi.reset()
     gotenbergMock.reset()
