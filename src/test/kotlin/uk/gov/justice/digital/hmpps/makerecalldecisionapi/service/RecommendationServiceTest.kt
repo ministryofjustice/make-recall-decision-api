@@ -13,9 +13,14 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecallTypeOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.util.Optional
 
@@ -37,22 +42,184 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `saves a recommendation to the database`() {
     // given
     val crn = "12345"
-    val recommendationToSave = RecommendationEntity(data = RecommendationModel(crn = crn))
+    val recommendationToSave = RecommendationEntity(
+      id = 1,
+      data = RecommendationModel(
+        crn = crn,
+        status = Status.DRAFT,
+        lastModifiedBy = "Bill"
+      )
+    )
 
     // and
     given(recommendationRepository.save(any()))
       .willReturn(recommendationToSave)
 
     // when
-    recommendationService.createRecommendation(CreateRecommendationRequest(crn))
+    val result = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
 
     // then
+    assertThat(result.id).isEqualTo(1)
+    assertThat(result.status).isEqualTo(Status.DRAFT)
+    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
+    assertThat(result.activeRecommendation!!.lastModifiedBy).isEqualTo("Bill")
+    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
+
+    then(recommendationRepository).should().save(
+      recommendationToSave.copy(id = null, data = (RecommendationModel(crn = crn, status = Status.DRAFT, lastModifiedBy = "Bill", lastModifiedDate = result.activeRecommendation?.lastModifiedDate)))
+    )
+  }
+
+  @Test
+  fun `updates a recommendation to the database`() {
+    // given
+    val crn = "12345"
+    val existingRecommendation = RecommendationEntity(
+      id = 1,
+      data = RecommendationModel(
+        crn = crn,
+        status = Status.DRAFT,
+        lastModifiedBy = "Bill"
+      )
+    )
+
+    // and
+    val updateRecommendationRequest = UpdateRecommendationRequest(
+      recallType = RecallType(
+        value = Recommendation.NO_RECALL,
+        options = listOf(
+          RecallTypeOption(value = Recommendation.NO_RECALL.name, text = Recommendation.NO_RECALL.text),
+          RecallTypeOption(value = Recommendation.FIXED_TERM.name, text = Recommendation.FIXED_TERM.text),
+          RecallTypeOption(value = Recommendation.STANDARD.name, text = Recommendation.STANDARD.text)
+        )
+      )
+    )
+
+    // and
+    val recommendationToSave =
+      existingRecommendation.copy(
+        id = existingRecommendation.id,
+        data = RecommendationModel(
+          crn = existingRecommendation.data.crn,
+          recommendation = updateRecommendationRequest.recallType?.value,
+          status = existingRecommendation.data.status,
+          lastModifiedDate = existingRecommendation.data.lastModifiedDate,
+          lastModifiedBy = existingRecommendation.data.lastModifiedBy
+        )
+      )
+
+    // and
+    given(recommendationRepository.save(any()))
+      .willReturn(recommendationToSave)
+
+    // and
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    // when
+    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L)
+
+    // then
+    assertThat(updateRecommendationResponse.id).isEqualTo(1)
+    assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
+    assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
+    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
+    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
+    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
+    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
+    // TODO add once MRD-342 complete
+//    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
+//    assertThat(result.activeRecommendation?.lastModifiedBy).isEqualTo("Bill")
+//    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
+
     then(recommendationRepository).should().save(recommendationToSave)
+    then(recommendationRepository).should().findById(1)
+  }
+
+  @Test
+  fun `updates a recommendation to the database when optional fields not present on request`() {
+    // given
+    val crn = "12345"
+    val existingRecommendation = RecommendationEntity(
+      id = 1,
+      data = RecommendationModel(
+        crn = crn,
+        status = Status.DRAFT,
+        lastModifiedBy = "Bill",
+        recommendation = Recommendation.NO_RECALL
+      )
+    )
+
+    // and
+    val updateRecommendationRequest = UpdateRecommendationRequest(recallType = null)
+
+    // and
+    val recommendationToSave =
+      existingRecommendation.copy(
+        id = existingRecommendation.id,
+        data = RecommendationModel(
+          crn = existingRecommendation.data.crn,
+          recommendation = existingRecommendation.data.recommendation,
+          status = existingRecommendation.data.status,
+          lastModifiedDate = existingRecommendation.data.lastModifiedDate,
+          lastModifiedBy = existingRecommendation.data.lastModifiedBy
+        )
+      )
+
+    // and
+    given(recommendationRepository.save(any()))
+      .willReturn(recommendationToSave)
+
+    // and
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    // when
+    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L)
+
+    // then
+    assertThat(updateRecommendationResponse.id).isEqualTo(1)
+    assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
+    assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
+    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
+    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
+    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
+    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
+    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
+    // TODO add once MRD-342 complete
+//    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
+//    assertThat(result.activeRecommendation?.lastModifiedBy).isEqualTo("Bill")
+//    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
+
+    then(recommendationRepository).should().save(recommendationToSave)
+    then(recommendationRepository).should().findById(1)
+  }
+
+  @Test
+  fun `throws exception when no recommendation available for given id on an update`() {
+    val recommendation = Optional.empty<RecommendationEntity>()
+
+    given(recommendationRepository.findById(456L))
+      .willReturn(recommendation)
+
+    Assertions.assertThatThrownBy {
+      runTest {
+        recommendationService.updateRecommendation(UpdateRecommendationRequest(recallType = null), recommendationId = 456L)
+      }
+    }.isInstanceOf(NoRecommendationFoundException::class.java)
+      .hasMessage("No recommendation found for id: 456")
+
+    then(recommendationRepository).should().findById(456L)
   }
 
   @Test
   fun `get a recommendation from the database`() {
-    val recommendation = Optional.of(RecommendationEntity(RecommendationModel(crn = "12345")))
+    val recommendation = Optional.of(RecommendationEntity(data = RecommendationModel(crn = "12345")))
 
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
