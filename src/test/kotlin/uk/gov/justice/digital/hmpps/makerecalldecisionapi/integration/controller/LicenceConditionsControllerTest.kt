@@ -15,7 +15,6 @@ class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
   val staffCode = "STFFCDEU"
-  val crn = "A12345"
   val convictionId = 2500614567
 
   @Test

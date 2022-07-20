@@ -15,8 +15,6 @@ class PersonDetailsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
-  val crn = "A12345"
-
   @Test
   fun `retrieves person details`() {
     runTest {

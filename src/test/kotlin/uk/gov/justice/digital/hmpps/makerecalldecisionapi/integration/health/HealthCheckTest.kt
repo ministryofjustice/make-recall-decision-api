@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -121,14 +121,14 @@ class HealthCheckTest : IntegrationTestBase() {
 
   companion object {
     @JvmStatic
-    @BeforeAll
-    fun beforeAll() {
+    @BeforeEach
+    fun beforeEach() {
       setUpDb()
     }
 
     @JvmStatic
-    @AfterAll
-    fun afterAll() {
+    @AfterEach
+    fun afterEach() {
       tearDownDb()
     }
   }

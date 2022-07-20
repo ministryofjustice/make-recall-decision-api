@@ -2,11 +2,16 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -14,7 +19,6 @@ class CaseOverviewControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
-  val crn = "A12345"
   val staffCode = "STFFCDEU"
 
   @Test
@@ -24,6 +28,16 @@ class CaseOverviewControllerTest(
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse(crn)
+
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -41,6 +55,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.offences[0].description").isEqualTo("Robbery (other than armed robbery)")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo("1")
     }
   }
 
@@ -158,6 +173,29 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus()
         .isUnauthorized
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    @BeforeAll
+    fun setUpDb() {
+      cleanUpDocker()
+      ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
+      val ready = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600").start()
+      ready.waitFor()
+    }
+
+    @JvmStatic
+    @AfterAll
+    fun tearDownDb() {
+      cleanUpDocker()
+    }
+
+    @JvmStatic
+    private fun cleanUpDocker() {
+      val clean = ProcessBuilder("./scripts/clean-up-docker.sh").start()
+      clean.waitFor()
     }
   }
 }

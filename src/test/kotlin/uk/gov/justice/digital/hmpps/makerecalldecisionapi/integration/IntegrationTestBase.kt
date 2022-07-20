@@ -67,6 +67,8 @@ abstract class IntegrationTestBase {
 
   private val gson: Gson = Gson()
 
+  val crn = "A12345"
+
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
 
@@ -88,6 +90,7 @@ abstract class IntegrationTestBase {
     oasysARNApi.reset()
     setupOauth()
     setupHealthChecks()
+    // createRecommendation()
   }
 
   @AfterAll
@@ -98,6 +101,18 @@ abstract class IntegrationTestBase {
     gotenbergMock.stop()
     oauthMock.stop()
   }
+
+  // fun createRecommendation() {
+  //   webTestClient.post()
+  //     .uri("/recommendations")
+  //     .contentType(MediaType.APPLICATION_JSON)
+  //     .body(
+  //       BodyInserters.fromValue(recommendationRequest(crn))
+  //     )
+  //     .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+  //     .exchange()
+  //     .expectStatus().isCreated
+  // }
 
   protected fun currentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =

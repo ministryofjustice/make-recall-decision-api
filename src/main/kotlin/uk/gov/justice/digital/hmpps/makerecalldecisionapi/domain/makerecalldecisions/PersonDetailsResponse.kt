@@ -6,5 +6,6 @@ data class PersonDetailsResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val personalDetailsOverview: PersonDetails? = null,
   val currentAddress: CurrentAddress? = null,
-  val offenderManager: OffenderManager? = null
+  val offenderManager: OffenderManager? = null,
+  val activeRecommendation: ActiveRecommendation? = null,
 )

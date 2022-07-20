@@ -34,7 +34,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
 
   @Test

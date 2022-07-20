@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import java.time.LocalDate
 
@@ -16,7 +17,8 @@ data class RiskResponse(
   val whoIsAtRisk: WhoIsAtRisk? = null,
   val circumstancesIncreaseRisk: CircumstancesIncreaseRisk? = null,
   val factorsToReduceRisk: FactorsToReduceRisk? = null,
-  val whenRiskHighest: WhenRiskHighest? = null
+  val whenRiskHighest: WhenRiskHighest? = null,
+  val activeRecommendation: ActiveRecommendation? = null,
 )
 
 data class RiskPersonalDetails(

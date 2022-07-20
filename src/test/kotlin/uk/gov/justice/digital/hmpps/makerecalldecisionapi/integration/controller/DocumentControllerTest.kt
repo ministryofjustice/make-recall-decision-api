@@ -15,7 +15,6 @@ class DocumentControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
-  val crn = "A12345"
   val documentId = "543456"
 
   @Test

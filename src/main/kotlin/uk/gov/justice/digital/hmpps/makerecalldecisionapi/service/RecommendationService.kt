@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
@@ -21,6 +22,9 @@ import kotlin.jvm.optionals.getOrNull
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val lastModifiedDate = LocalDateTime.now().toString()
     val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate)
@@ -80,7 +84,7 @@ internal class RecommendationService(
       null
     }
 
-    val updatedRecommendationEntity = recommendationRepository.save(
+    return recommendationRepository.save(
       existingRecommendationEntity.copy(
         id = existingRecommendationEntity.id,
         data = RecommendationModel(
@@ -92,7 +96,25 @@ internal class RecommendationService(
         )
       )
     )
-    return updatedRecommendationEntity
+  }
+
+  fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
+    val recommendationEntity2 = recommendationRepository.findById(1)
+    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn)
+    // , RecommendationStatus.DRAFT.name)
+
+    if (recommendationEntity.size > 1) {
+      log.error("More than one recommendation found for CRN. Returning the latest.")
+    }
+    return if (recommendationEntity.size > 0) {
+      ActiveRecommendation(
+        recommendationId = recommendationEntity.get(0).id,
+        lastModifiedDate = recommendationEntity.get(0).data.lastModifiedDate,
+        lastModifiedBy = recommendationEntity.get(0).data.lastModifiedBy,
+      )
+    } else {
+      null
+    }
   }
 
   private fun useExistingOptions() = listOf(

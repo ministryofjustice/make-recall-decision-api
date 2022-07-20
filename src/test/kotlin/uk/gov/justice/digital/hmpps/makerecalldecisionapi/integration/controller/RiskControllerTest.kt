@@ -21,7 +21,6 @@ class RiskControllerTest(
   @Test
   fun `retrieves personal details data when no MAPPA, RoSH, or Contingency plan details available`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)

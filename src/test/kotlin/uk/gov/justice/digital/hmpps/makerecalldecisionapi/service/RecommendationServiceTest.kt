@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
@@ -21,17 +20,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class RecommendationServiceTest : ServiceTestBase() {
-
-  private lateinit var recommendationService: RecommendationService
-
-  @Mock
-  private lateinit var recommendationRepository: RecommendationRepository
 
   @BeforeEach
   fun setup() {
@@ -228,6 +221,20 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(result.id).isEqualTo(recommendation.get().id)
     assertThat(result.crn).isEqualTo(recommendation.get().data.crn)
+  }
+
+  @Test
+  fun `get a draft recommendation for CRN from the database`() {
+    val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = "X12345", lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00"))
+
+    given(recommendationRepository.findByCrnAndStatus("X12345"))
+      .willReturn(listOf(recommendation))
+
+    val result = recommendationService.getDraftRecommendationForCrn("X12345")
+
+    assertThat(result?.recommendationId).isEqualTo(recommendation.id)
+    assertThat(result?.lastModifiedBy).isEqualTo(recommendation.data.lastModifiedBy)
+    assertThat(result?.lastModifiedDate).isEqualTo(recommendation.data.lastModifiedDate)
   }
 
   @Test

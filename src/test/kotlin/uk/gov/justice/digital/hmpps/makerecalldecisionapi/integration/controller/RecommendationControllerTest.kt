@@ -23,7 +23,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create and get recommendation`() {
-    val crn = "A12345"
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
