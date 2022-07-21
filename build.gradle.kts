@@ -29,7 +29,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.9.1")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("io.opentelemetry:opentelemetry-api:1.15.0")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
