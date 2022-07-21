@@ -246,11 +246,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get the latest draft recommendation for CRN when multiple draft recommendations exist in database`() {
-    val recommendation1 = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T23:00:00"))
-    val recommendation2 = RecommendationEntity(id = 2, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T10:00:00"))
-    val recommendation3 = RecommendationEntity(id = 3, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T11:00:00"))
-    val recommendation4 = RecommendationEntity(id = 4, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T09:00:00"))
-    val recommendation5 = RecommendationEntity(id = 5, data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00"))
+    val recommendation1 = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T23:00:00.000"))
+    val recommendation2 = RecommendationEntity(id = 2, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T10:00:00.000"))
+    val recommendation3 = RecommendationEntity(id = 3, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T11:00:00.000"))
+    val recommendation4 = RecommendationEntity(id = 4, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T09:00:00.000"))
+    val recommendation5 = RecommendationEntity(id = 5, data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000"))
 
     given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
       .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5))

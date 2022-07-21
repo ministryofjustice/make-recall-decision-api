@@ -119,7 +119,7 @@ class CaseOverviewControllerTest(
       convictionResponse(crn, staffCode)
       registrationsResponse()
       deleteAndCreateRecommendation()
-      updateRecommendation(Status.SUBMITTED)
+      updateRecommendation(Status.DOCUMENT_CREATED)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
