@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
@@ -15,12 +16,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDateTime
+import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
 @Service
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val lastModifiedDate = LocalDateTime.now().toString()
     val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate)
@@ -80,19 +85,38 @@ internal class RecommendationService(
       null
     }
 
-    val updatedRecommendationEntity = recommendationRepository.save(
+    val status = updateRecommendationRequest?.status ?: existingRecommendationEntity.data.status
+
+    return recommendationRepository.save(
       existingRecommendationEntity.copy(
         id = existingRecommendationEntity.id,
         data = RecommendationModel(
           crn = existingRecommendationEntity.data.crn,
           recommendation = recommendation,
-          status = existingRecommendationEntity.data.status,
+          status = status,
           lastModifiedDate = existingRecommendationEntity.data.lastModifiedDate,
           lastModifiedBy = existingRecommendationEntity.data.lastModifiedBy
         )
       )
     )
-    return updatedRecommendationEntity
+  }
+
+  fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
+    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    Collections.sort(recommendationEntity)
+
+    if (recommendationEntity.size > 1) {
+      log.error("More than one recommendation found for CRN. Returning the latest.")
+    }
+    return if (recommendationEntity.isNotEmpty()) {
+      ActiveRecommendation(
+        recommendationId = recommendationEntity[0].id,
+        lastModifiedDate = recommendationEntity[0].data.lastModifiedDate,
+        lastModifiedBy = recommendationEntity[0].data.lastModifiedBy,
+      )
+    } else {
+      null
+    }
   }
 
   private fun useExistingOptions() = listOf(

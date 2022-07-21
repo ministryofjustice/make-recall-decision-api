@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
@@ -21,17 +20,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class RecommendationServiceTest : ServiceTestBase() {
-
-  private lateinit var recommendationService: RecommendationService
-
-  @Mock
-  private lateinit var recommendationRepository: RecommendationRepository
 
   @BeforeEach
   fun setup() {
@@ -41,7 +34,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `saves a recommendation to the database`() {
     // given
-    val crn = "12345"
     val recommendationToSave = RecommendationEntity(
       id = 1,
       data = RecommendationModel(
@@ -73,7 +65,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `updates a recommendation to the database`() {
     // given
-    val crn = "12345"
     val existingRecommendation = RecommendationEntity(
       id = 1,
       data = RecommendationModel(
@@ -85,6 +76,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     // and
     val updateRecommendationRequest = UpdateRecommendationRequest(
+      status = null,
       recallType = RecallType(
         value = Recommendation.NO_RECALL,
         options = listOf(
@@ -142,7 +134,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `updates a recommendation to the database when optional fields not present on request`() {
     // given
-    val crn = "12345"
     val existingRecommendation = RecommendationEntity(
       id = 1,
       data = RecommendationModel(
@@ -154,7 +145,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     )
 
     // and
-    val updateRecommendationRequest = UpdateRecommendationRequest(recallType = null)
+    val updateRecommendationRequest = UpdateRecommendationRequest(
+      status = null,
+      recallType = null
+    )
 
     // and
     val recommendationToSave =
@@ -209,7 +203,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     Assertions.assertThatThrownBy {
       runTest {
-        recommendationService.updateRecommendation(UpdateRecommendationRequest(recallType = null), recommendationId = 456L)
+        recommendationService.updateRecommendation(
+          UpdateRecommendationRequest(
+            status = null,
+            recallType = null
+          ),
+          recommendationId = 456L
+        )
       }
     }.isInstanceOf(NoRecommendationFoundException::class.java)
       .hasMessage("No recommendation found for id: 456")
@@ -219,7 +219,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a recommendation from the database`() {
-    val recommendation = Optional.of(RecommendationEntity(data = RecommendationModel(crn = "12345")))
+    val recommendation = Optional.of(RecommendationEntity(data = RecommendationModel(crn = crn)))
 
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
@@ -228,6 +228,38 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(result.id).isEqualTo(recommendation.get().id)
     assertThat(result.crn).isEqualTo(recommendation.get().data.crn)
+  }
+
+  @Test
+  fun `get a draft recommendation for CRN from the database`() {
+    val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00"))
+
+    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+      .willReturn(listOf(recommendation))
+
+    val result = recommendationService.getDraftRecommendationForCrn(crn)
+
+    assertThat(result?.recommendationId).isEqualTo(recommendation.id)
+    assertThat(result?.lastModifiedBy).isEqualTo(recommendation.data.lastModifiedBy)
+    assertThat(result?.lastModifiedDate).isEqualTo(recommendation.data.lastModifiedDate)
+  }
+
+  @Test
+  fun `get the latest draft recommendation for CRN when multiple draft recommendations exist in database`() {
+    val recommendation1 = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T23:00:00.000"))
+    val recommendation2 = RecommendationEntity(id = 2, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T10:00:00.000"))
+    val recommendation3 = RecommendationEntity(id = 3, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T11:00:00.000"))
+    val recommendation4 = RecommendationEntity(id = 4, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T09:00:00.000"))
+    val recommendation5 = RecommendationEntity(id = 5, data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000"))
+
+    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+      .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5))
+
+    val result = recommendationService.getDraftRecommendationForCrn(crn)
+
+    assertThat(result?.recommendationId).isEqualTo(recommendation3.id)
+    assertThat(result?.lastModifiedBy).isEqualTo(recommendation3.data.lastModifiedBy)
+    assertThat(result?.lastModifiedDate).isEqualTo(recommendation3.data.lastModifiedDate)
   }
 
   @Test

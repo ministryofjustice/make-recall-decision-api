@@ -42,7 +42,9 @@ import java.util.Locale
 internal class RiskService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
+  private val recommendationService: RecommendationService
+
 ) {
   suspend fun getRisk(crn: String): RiskResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -63,6 +65,8 @@ internal class RiskService(
         historical = fetchHistoricalScores(crn)
       )
       val contingencyPlan = null // fetchContingencyPlan(crn) // TODO reintroduce once ARN-1026 is complete
+      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
         riskOfSeriousHarm = riskOfSeriousHarm,
@@ -73,7 +77,8 @@ internal class RiskService(
         whoIsAtRisk = whoIsAtRisk,
         circumstancesIncreaseRisk = circumstancesIncreaseRisk,
         factorsToReduceRisk = factorsToReduceRisk,
-        whenRiskHighest = whenRiskHighest
+        whenRiskHighest = whenRiskHighest,
+        activeRecommendation = recommendationDetails
       )
     }
   }

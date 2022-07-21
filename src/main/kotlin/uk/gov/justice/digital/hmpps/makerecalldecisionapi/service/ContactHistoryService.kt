@@ -15,7 +15,8 @@ internal class ContactHistoryService(
   private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
-  private val documentService: DocumentService
+  private val documentService: DocumentService,
+  private val recommendationService: RecommendationService
 ) {
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -26,11 +27,14 @@ internal class ContactHistoryService(
       val contactSummary = getContactSummary(crn)
       val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
       val releaseSummary = getReleaseSummary(crn)
+      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+
       ContactHistoryResponse(
         personalDetailsOverview = personalDetailsOverview,
         contactSummary = contactSummary,
         contactTypeGroups = contactTypeGroups,
         releaseSummary = releaseSummary,
+        activeRecommendation = recommendationDetails,
       )
     }
   }

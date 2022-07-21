@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 
 internal abstract class ServiceTestBase {
@@ -28,17 +29,23 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var communityApiClient: CommunityApiClient
 
+  @Mock
+  protected lateinit var recommendationRepository: RecommendationRepository
+
   protected lateinit var personDetailsService: PersonDetailsService
 
   protected lateinit var userAccessValidator: UserAccessValidator
 
   protected lateinit var documentService: DocumentService
 
+  protected lateinit var recommendationService: RecommendationService
+
   protected val crn = "12345"
 
   @BeforeEach
   fun userValidatorSetup() {
     userAccessValidator = UserAccessValidator(communityApiClient)
+    recommendationService = RecommendationService(recommendationRepository)
   }
 
   protected fun allReleaseSummariesResponse(): ReleaseSummaryResponse {

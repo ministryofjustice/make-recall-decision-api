@@ -8,4 +8,5 @@ data class LicenceConditionsResponse(
   val personalDetailsOverview: PersonDetails? = null,
   val convictions: List<ConvictionResponse>? = null,
   val releaseSummary: ReleaseSummaryResponse? = null,
+  val activeRecommendation: ActiveRecommendation? = null,
 )
