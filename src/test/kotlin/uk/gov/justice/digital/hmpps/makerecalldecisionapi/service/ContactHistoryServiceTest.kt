@@ -37,8 +37,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     documentService = DocumentService(communityApiClient)
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
-    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })

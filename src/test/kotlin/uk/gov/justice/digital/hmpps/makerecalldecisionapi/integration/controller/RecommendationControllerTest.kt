@@ -4,8 +4,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -23,7 +21,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create and get recommendation`() {
-    val crn = "A12345"
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -57,23 +54,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `update a recommendation`() {
-    val crn = "A12345"
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-
-    val idOfRecommendationJustCreated = response.get("id")
+    deleteAndCreateRecommendation()
 
     webTestClient.patch()
-      .uri("/recommendations/$idOfRecommendationJustCreated")
+      .uri("/recommendations/$createdRecommendationId")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(updateRecommendationRequest())
@@ -82,7 +66,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$.id").isEqualTo(1)
+      .jsonPath("$.id").isEqualTo(createdRecommendationId)
       .jsonPath("$.crn").isEqualTo(crn)
       .jsonPath("$.recallType.value").isEqualTo("FIXED_TERM")
       .jsonPath("$.recallType.options[0].value").isEqualTo("FIXED_TERM")
@@ -149,28 +133,5 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val responseEntityExchangeResult = responseBodySpec.returnResult()
     val responseString = responseEntityExchangeResult.responseBody
     return JSONObject(responseString)
-  }
-
-  companion object {
-    @JvmStatic
-    @BeforeAll
-    fun setUpDb() {
-      cleanUpDocker()
-      ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
-      val ready = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600").start()
-      ready.waitFor()
-    }
-
-    @JvmStatic
-    @AfterAll
-    fun tearDownDb() {
-      cleanUpDocker()
-    }
-
-    @JvmStatic
-    private fun cleanUpDocker() {
-      val clean = ProcessBuilder("./scripts/clean-up-docker.sh").start()
-      clean.waitFor()
-    }
   }
 }

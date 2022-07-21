@@ -46,7 +46,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, userAccessValidator)
+    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, userAccessValidator, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })

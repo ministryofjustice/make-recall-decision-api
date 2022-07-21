@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -52,14 +53,20 @@ internal class RiskServiceTest {
   private lateinit var communityApiClient: CommunityApiClient
 
   @Mock
+  private lateinit var recommendationRepository: RecommendationRepository
+
+  @Mock
   private lateinit var arnApiClient: ArnApiClient
 
   protected lateinit var userAccessValidator: UserAccessValidator
 
+  protected lateinit var recommendationService: RecommendationService
+
   @BeforeEach
   fun setup() {
     userAccessValidator = UserAccessValidator(communityApiClient)
-    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator)
+    recommendationService = RecommendationService(recommendationRepository)
+    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
   @Test

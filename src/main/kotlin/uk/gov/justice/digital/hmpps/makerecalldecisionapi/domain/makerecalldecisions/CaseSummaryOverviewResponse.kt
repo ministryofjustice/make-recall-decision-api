@@ -7,4 +7,5 @@ data class CaseSummaryOverviewResponse(
   val personalDetailsOverview: PersonDetails? = null,
   val offences: List<Offence>? = null,
   val risk: Risk? = null,
+  val activeRecommendation: ActiveRecommendation? = null,
 )

@@ -9,4 +9,5 @@ data class ContactHistoryResponse(
   val contactSummary: List<ContactSummaryResponse>? = null,
   val contactTypeGroups: List<ContactGroupResponse?>? = null,
   val releaseSummary: ReleaseSummaryResponse? = null,
+  val activeRecommendation: ActiveRecommendation? = null,
 )

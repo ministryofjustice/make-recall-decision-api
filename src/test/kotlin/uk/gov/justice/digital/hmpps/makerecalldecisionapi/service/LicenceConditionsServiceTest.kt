@@ -43,8 +43,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     documentService = DocumentService(communityApiClient)
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, documentService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })

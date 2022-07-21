@@ -14,7 +14,8 @@ internal class LicenceConditionsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
-  private val documentService: DocumentService
+  private val documentService: DocumentService,
+  private val recommendationService: RecommendationService
 ) {
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -24,11 +25,13 @@ internal class LicenceConditionsService(
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val convictions = buildConvictionResponse(crn)
       val releaseSummary = getReleaseSummary(crn)
+      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       LicenceConditionsResponse(
         personalDetailsOverview = personalDetailsOverview,
         convictions = convictions,
         releaseSummary = releaseSummary,
+        activeRecommendation = recommendationDetails,
       )
     }
   }

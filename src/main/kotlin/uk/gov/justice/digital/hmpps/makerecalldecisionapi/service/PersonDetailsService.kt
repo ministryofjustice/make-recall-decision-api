@@ -14,7 +14,8 @@ import java.time.LocalDate
 @Service
 internal class PersonDetailsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
+  private val recommendationService: RecommendationService
 ) {
   suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -32,6 +33,7 @@ internal class PersonDetailsService(
       val surname = offenderDetails.surname ?: ""
       val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
       val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
+      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return PersonDetailsResponse(
         personalDetailsOverview = PersonDetails(
@@ -55,7 +57,8 @@ internal class PersonDetailsService(
             code = activeOffenderManager?.team?.code ?: "",
             label = activeOffenderManager?.team?.description ?: ""
           )
-        )
+        ),
+        activeRecommendation = recommendationDetails
       )
     }
   }

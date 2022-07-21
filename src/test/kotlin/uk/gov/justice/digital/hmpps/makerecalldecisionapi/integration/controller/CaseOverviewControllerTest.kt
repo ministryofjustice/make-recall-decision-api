@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -14,7 +15,6 @@ class CaseOverviewControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
-  val crn = "A12345"
   val staffCode = "STFFCDEU"
 
   @Test
@@ -23,7 +23,8 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn)
+      registrationsResponse()
+      deleteAndCreateRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -41,6 +42,9 @@ class CaseOverviewControllerTest(
         .jsonPath("$.offences[0].description").isEqualTo("Robbery (other than armed robbery)")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
     }
   }
 
@@ -50,7 +54,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -88,12 +92,52 @@ class CaseOverviewControllerTest(
   }
 
   @Test
+  fun `given case has no recommendation in database then do not return any active recommendation`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      // Delete recommendation from database if one was created in previous tests
+      deleteRecommendation()
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.activeRecommendation").isEmpty()
+    }
+  }
+
+  @Test
+  fun `given case has recommendation in non-draft state in database then do not return any active recommendation`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.DOCUMENT_CREATED)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.activeRecommendation").isEmpty()
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -114,7 +158,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -135,7 +179,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      registrationsResponse(delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
