@@ -26,6 +26,7 @@ class LicenceConditionsControllerTest(
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
+      deleteAndCreateRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -73,6 +74,9 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
         .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
         .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
     }
   }
 
@@ -322,7 +326,7 @@ class LicenceConditionsControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -345,7 +349,7 @@ class LicenceConditionsControllerTest(
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
       groupedDocumentsResponse(crn)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")

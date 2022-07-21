@@ -2,13 +2,17 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 
 @Repository
 interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
 
-  // TODO: Add status
-  @Query(value = "SELECT recommendations FROM RecommendationEntity recommendations WHERE FUNC('jsonb_extract_path_text', recommendations.data, 'crn') = :crn")
-  fun findByCrnAndStatus(crn: String): List<RecommendationEntity>
+  @Query(
+    value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE CAST(t.data ->> 'crn' AS VARCHAR) = :crn " +
+      "AND CAST(t.data ->> 'status' AS VARCHAR) = :status",
+    nativeQuery = true
+  )
+  fun findByCrnAndStatus(@Param("crn")crn: String, @Param("status")status: String): List<RecommendationEntity>
 }

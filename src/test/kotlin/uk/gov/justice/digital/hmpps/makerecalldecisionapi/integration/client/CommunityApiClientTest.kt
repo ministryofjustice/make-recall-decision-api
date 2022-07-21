@@ -66,7 +66,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves convictions`() {
     // given
-    val crn = "X123456"
     val staffCode = "STFFCDEU"
     convictionResponse(crn, staffCode)
 
@@ -118,7 +117,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves empty convictions list when no active convictions present`() {
     // given
-    val crn = "X123456"
     noActiveConvictionResponse(crn)
 
     // and
@@ -134,7 +132,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves licence conditions`() {
     // given
-    val crn = "X123456"
     val convictionId = 9876789L
     licenceConditionsResponse(crn, convictionId)
 
@@ -184,7 +181,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves empty licence conditions list when no active licence conditions present`() {
     // given
-    val crn = "X123456"
     noActiveConvictionResponse(crn)
 
     // and
@@ -213,8 +209,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves registrations`() {
     // given
-    val crn = "X123456"
-    registrationsResponse(crn)
+    registrationsResponse()
 
     // and
     val expected = RegistrationsResponse(
@@ -240,7 +235,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `given contact summary request retrieve contact summaries`() {
     // given
-    val crn = "X123456"
     contactSummaryResponse(
       crn,
       uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse()
@@ -282,7 +276,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves all offender details`() {
     // given
-    val crn = "X123456"
     allOffenderDetailsResponse(crn)
 
     // and
@@ -354,7 +347,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves mappa details`() {
     // given
-    val crn = "X123456"
     mappaDetailsResponse(crn)
 
     // and
@@ -394,7 +386,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves release summaries`() {
     // given
-    val crn = "X123456"
     releaseSummaryResponse(crn)
 
     // and
@@ -413,7 +404,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves user access`() {
     // given
-    val crn = "X123456"
     userAccessAllowed(crn)
 
     // and
@@ -434,7 +424,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves grouped documents`() {
     // given
-    val crn = "X123456"
     groupedDocumentsResponse(crn)
 
     // and
@@ -466,7 +455,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves requested document`() {
     // given
-    val crn = "X123456"
     val documentId = "54345"
     getDocumentResponse(crn, documentId)
 

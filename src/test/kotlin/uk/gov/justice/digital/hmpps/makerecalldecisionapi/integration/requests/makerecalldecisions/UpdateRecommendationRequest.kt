@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions
 
-fun updateRecommendationRequest() = """
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+
+fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 {
   "recallType": {
     "value": "FIXED_TERM",
@@ -9,6 +11,7 @@ fun updateRecommendationRequest() = """
       { "value": "STANDARD", "text": "Standard" },
       { "value": "NO_RECALL", "text": "No recall" }
     ]
-  }
+  },
+  "status": "$status"
 }
 """.trimIndent()

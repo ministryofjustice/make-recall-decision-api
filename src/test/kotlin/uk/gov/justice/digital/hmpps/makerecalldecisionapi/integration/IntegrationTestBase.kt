@@ -2,7 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.flywaydb.test.annotation.FlywayTest
+import org.json.JSONObject
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
@@ -19,9 +21,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanSimpleResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
@@ -37,12 +44,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import java.util.concurrent.TimeUnit
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -69,6 +78,8 @@ abstract class IntegrationTestBase {
 
   val crn = "A12345"
 
+  var createdRecommendationId: Int = 0
+
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
 
@@ -82,6 +93,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  companion object {
+    @JvmStatic
+    @BeforeAll
+    fun setUpDb() {
+      val postgresProcess = ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
+      postgresProcess.waitFor(120L, TimeUnit.SECONDS)
+      val waitForProcess = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600", "--", "sleep", "10").start()
+      waitForProcess.waitFor(60L, TimeUnit.SECONDS)
+    }
+  }
+
   @BeforeEach
   fun startUpServer() {
     communityApi.reset()
@@ -90,7 +112,6 @@ abstract class IntegrationTestBase {
     oasysARNApi.reset()
     setupOauth()
     setupHealthChecks()
-    // createRecommendation()
   }
 
   @AfterAll
@@ -102,17 +123,51 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
-  // fun createRecommendation() {
-  //   webTestClient.post()
-  //     .uri("/recommendations")
-  //     .contentType(MediaType.APPLICATION_JSON)
-  //     .body(
-  //       BodyInserters.fromValue(recommendationRequest(crn))
-  //     )
-  //     .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-  //     .exchange()
-  //     .expectStatus().isCreated
-  // }
+  fun deleteAndCreateRecommendation() {
+    deleteRecommendation()
+    createRecommendation()
+  }
+
+  fun deleteRecommendation() {
+    repository.deleteAll()
+  }
+
+  private fun createRecommendation() {
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+
+    createdRecommendationId = response.get("id") as Int
+  }
+
+  fun updateRecommendation(status: Status) {
+    convertResponseToJSONObject(
+      webTestClient.patch()
+        .uri("/recommendations/$createdRecommendationId")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(updateRecommendationRequest(status))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().is2xxSuccessful
+    )
+  }
+
+  private fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
+    val responseBodySpec = response.expectBody<String>()
+    val responseEntityExchangeResult = responseBodySpec.returnResult()
+    val responseString = responseEntityExchangeResult.responseBody
+    return JSONObject(responseString)
+  }
 
   protected fun currentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
@@ -233,12 +288,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun registrationsResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun registrationsResponse(delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/registrations")
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(registrationsResponse())
+      response().withContentType(APPLICATION_JSON).withBody(registrationsDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

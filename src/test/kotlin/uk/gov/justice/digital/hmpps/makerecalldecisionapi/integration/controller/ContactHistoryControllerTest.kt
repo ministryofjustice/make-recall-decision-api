@@ -28,6 +28,7 @@ class ContactHistoryControllerTest(
       )
       groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
+      deleteAndCreateRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
@@ -82,6 +83,9 @@ class ContactHistoryControllerTest(
         .jsonPath("$.contactSummary[1].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:29:17.324")
         .jsonPath("$.contactSummary[1].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:29:17")
         .jsonPath("$.contactSummary[1].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435532")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
     }
   }
 

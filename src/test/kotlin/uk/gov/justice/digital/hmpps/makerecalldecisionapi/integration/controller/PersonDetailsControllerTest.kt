@@ -20,6 +20,7 @@ class PersonDetailsControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
+      deleteAndCreateRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -41,6 +42,9 @@ class PersonDetailsControllerTest(
         .jsonPath("$.offenderManager.email").isEqualTo("first.last@digital.justice.gov.uk")
         .jsonPath("$.offenderManager.probationTeam.code").isEqualTo("C01T04")
         .jsonPath("$.offenderManager.probationTeam.label").isEqualTo("OMU A")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
     }
   }
 

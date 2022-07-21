@@ -2,16 +2,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -27,17 +23,8 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn)
-
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
+      registrationsResponse()
+      deleteAndCreateRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -55,7 +42,9 @@ class CaseOverviewControllerTest(
         .jsonPath("$.offences[0].description").isEqualTo("Robbery (other than armed robbery)")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
-        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo("1")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
     }
   }
 
@@ -65,7 +54,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -103,12 +92,52 @@ class CaseOverviewControllerTest(
   }
 
   @Test
+  fun `given case has no recommendation in database then do not return any active recommendation`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      // Delete recommendation from database if one was created in previous tests
+      deleteRecommendation()
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.activeRecommendation").isEmpty()
+    }
+  }
+
+  @Test
+  fun `given case has recommendation in non-draft state in database then do not return any active recommendation`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.SUBMITTED)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.activeRecommendation").isEmpty()
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -129,7 +158,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
-      registrationsResponse(crn)
+      registrationsResponse()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -150,7 +179,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
-      registrationsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      registrationsResponse(delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -173,29 +202,6 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus()
         .isUnauthorized
-    }
-  }
-
-  companion object {
-    @JvmStatic
-    @BeforeAll
-    fun setUpDb() {
-      cleanUpDocker()
-      ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
-      val ready = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600").start()
-      ready.waitFor()
-    }
-
-    @JvmStatic
-    @AfterAll
-    fun tearDownDb() {
-      cleanUpDocker()
-    }
-
-    @JvmStatic
-    private fun cleanUpDocker() {
-      val clean = ProcessBuilder("./scripts/clean-up-docker.sh").start()
-      clean.waitFor()
     }
   }
 }

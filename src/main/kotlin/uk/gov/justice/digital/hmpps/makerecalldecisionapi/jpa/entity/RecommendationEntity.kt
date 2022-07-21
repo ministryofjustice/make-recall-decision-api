@@ -37,7 +37,7 @@ enum class Recommendation(val text: String) {
 }
 
 enum class Status {
-  DRAFT
+  DRAFT, SUBMITTED
 }
 
 data class RecallTypeOption(

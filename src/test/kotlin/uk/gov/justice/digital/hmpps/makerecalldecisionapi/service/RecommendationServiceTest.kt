@@ -78,6 +78,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     // and
     val updateRecommendationRequest = UpdateRecommendationRequest(
+      status = null,
       recallType = RecallType(
         value = Recommendation.NO_RECALL,
         options = listOf(
@@ -147,7 +148,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     )
 
     // and
-    val updateRecommendationRequest = UpdateRecommendationRequest(recallType = null)
+    val updateRecommendationRequest = UpdateRecommendationRequest(
+      status = null,
+      recallType = null
+    )
 
     // and
     val recommendationToSave =
@@ -202,7 +206,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     Assertions.assertThatThrownBy {
       runTest {
-        recommendationService.updateRecommendation(UpdateRecommendationRequest(recallType = null), recommendationId = 456L)
+        recommendationService.updateRecommendation(
+          UpdateRecommendationRequest(
+            status = null,
+            recallType = null
+          ),
+          recommendationId = 456L
+        )
       }
     }.isInstanceOf(NoRecommendationFoundException::class.java)
       .hasMessage("No recommendation found for id: 456")
@@ -227,7 +237,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `get a draft recommendation for CRN from the database`() {
     val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = "X12345", lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00"))
 
-    given(recommendationRepository.findByCrnAndStatus("X12345"))
+    given(recommendationRepository.findByCrnAndStatus("X12345", Status.DRAFT.name))
       .willReturn(listOf(recommendation))
 
     val result = recommendationService.getDraftRecommendationForCrn("X12345")

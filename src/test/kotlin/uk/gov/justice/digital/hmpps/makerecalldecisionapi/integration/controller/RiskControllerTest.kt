@@ -107,6 +107,8 @@ class RiskControllerTest(
       mappaDetailsResponse(crn)
       historicalRiskScoresResponse(crn)
       currentRiskScoresResponse(crn)
+      deleteAndCreateRecommendation()
+
       // TODO reintroduce once ARN-1026 is complete
 //      contingencyPlanResponse(crn)
 
@@ -177,6 +179,9 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo(12)
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
 
       // TODO reintroduce once ARN-1026 is complete
 //        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)

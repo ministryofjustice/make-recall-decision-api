@@ -84,13 +84,15 @@ internal class RecommendationService(
       null
     }
 
+    val status = updateRecommendationRequest?.status ?: existingRecommendationEntity.data.status
+
     return recommendationRepository.save(
       existingRecommendationEntity.copy(
         id = existingRecommendationEntity.id,
         data = RecommendationModel(
           crn = existingRecommendationEntity.data.crn,
           recommendation = recommendation,
-          status = existingRecommendationEntity.data.status,
+          status = status,
           lastModifiedDate = existingRecommendationEntity.data.lastModifiedDate,
           lastModifiedBy = existingRecommendationEntity.data.lastModifiedBy
         )
@@ -99,18 +101,16 @@ internal class RecommendationService(
   }
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
-    val recommendationEntity2 = recommendationRepository.findById(1)
-    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn)
-    // , RecommendationStatus.DRAFT.name)
+    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
     if (recommendationEntity.size > 1) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
-    return if (recommendationEntity.size > 0) {
+    return if (recommendationEntity.isNotEmpty()) {
       ActiveRecommendation(
-        recommendationId = recommendationEntity.get(0).id,
-        lastModifiedDate = recommendationEntity.get(0).data.lastModifiedDate,
-        lastModifiedBy = recommendationEntity.get(0).data.lastModifiedBy,
+        recommendationId = recommendationEntity[0].id,
+        lastModifiedDate = recommendationEntity[0].data.lastModifiedDate,
+        lastModifiedBy = recommendationEntity[0].data.lastModifiedBy,
       )
     } else {
       null
