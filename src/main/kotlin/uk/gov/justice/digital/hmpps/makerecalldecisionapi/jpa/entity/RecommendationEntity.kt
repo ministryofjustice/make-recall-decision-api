@@ -22,7 +22,12 @@ data class RecommendationEntity(
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel
-)
+) : Comparable<RecommendationEntity> {
+  override fun compareTo(other: RecommendationEntity) = compareValuesBy(
+    other, this,
+    { it.data?.lastModifiedDate }
+  )
+}
 
 data class RecommendationModel(
   val crn: String?,

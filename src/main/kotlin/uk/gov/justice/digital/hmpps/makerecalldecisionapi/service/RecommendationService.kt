@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDateTime
+import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -102,6 +103,7 @@ internal class RecommendationService(
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
     val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    Collections.sort(recommendationEntity)
 
     if (recommendationEntity.size > 1) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
