@@ -34,12 +34,7 @@ internal class RecommendationService(
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
-      status = savedRecommendation?.data?.status,
-      activeRecommendation = ActiveRecommendation(
-        recommendationId = savedRecommendation?.id,
-        lastModifiedBy = username,
-        lastModifiedDate = lastModifiedDate
-      )
+      status = savedRecommendation?.data?.status
     )
   }
 
@@ -69,8 +64,7 @@ internal class RecommendationService(
         ?: RecallType(
           value = updatedRecommendationEntity.data.recommendation ?: existingRecommendationEntity.data.recommendation,
           options = useExistingOptions()
-        ),
-      activeRecommendation = null // TODO add once MRD-342 complete
+        )
     )
   }
 
