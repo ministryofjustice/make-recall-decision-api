@@ -52,7 +52,7 @@ internal class RecommendationController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PatchMapping("/recommendations/{recommendationId}")
-  @Operation(summary = "WIP: Creates a recommendation")
+  @Operation(summary = "WIP: Updates a recommendation")
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationRequest: UpdateRecommendationRequest
