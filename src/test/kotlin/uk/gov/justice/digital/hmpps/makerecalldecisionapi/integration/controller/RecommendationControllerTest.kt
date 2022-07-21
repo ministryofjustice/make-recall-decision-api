@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -14,6 +16,8 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -34,13 +38,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     )
 
     val idOfRecommendationJustCreated = response.get("id")
-    val activeRecommendation = JSONObject(response.get("activeRecommendation").toString())
 
     assertThat(response.get("id")).isNotNull
     assertThat(response.get("status")).isEqualTo("DRAFT")
-    assertThat(activeRecommendation.get("recommendationId")).isEqualTo(idOfRecommendationJustCreated)
-    assertThat(activeRecommendation.get("lastModifiedDate")).isNotNull
-    assertThat(activeRecommendation.get("lastModifiedBy")).isEqualTo("SOME_USER")
 
     webTestClient.get()
       .uri("/recommendations/$idOfRecommendationJustCreated")
@@ -76,9 +76,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.recallType.options[2].value").isEqualTo("NO_RECALL")
       .jsonPath("$.recallType.options[2].text").isEqualTo("No recall")
       .jsonPath("$.status").isEqualTo("DRAFT")
-//      .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(idOfRecommendationJustCreated)
-//      .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
-//      .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER") // TODO reintroduce once MRD-342 complete
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+
+    assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
+    assertThat(result[0].data.recommendation?.name, equalTo(Recommendation.FIXED_TERM.name))
   }
 
   @Test
