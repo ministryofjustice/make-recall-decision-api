@@ -43,13 +43,11 @@ internal class RecommendationService(
   fun getRecommendation(recommendationId: Long): FetchRecommendationResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-    val activeRecommendation = getDraftRecommendationForCrn(recommendationEntity.data.crn!!)
     return FetchRecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
-      recallType = recommendationEntity.data.recommendation?.name,
-      status = recommendationEntity.data.status?.name,
-      activeRecommendation = activeRecommendation
+      recallType = recommendationEntity.data.recommendation,
+      status = recommendationEntity.data.status
     )
   }
 

@@ -58,9 +58,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.crn").isEqualTo(crn)
       .jsonPath("$.status").isEqualTo("DRAFT")
       .jsonPath("$.recallType").isEqualTo("FIXED_TERM")
-      .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
-      .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
-      .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
   }
 
   private fun updateRecommendation() {

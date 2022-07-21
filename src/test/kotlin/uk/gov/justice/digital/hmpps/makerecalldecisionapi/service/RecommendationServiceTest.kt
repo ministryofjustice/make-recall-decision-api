@@ -215,17 +215,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
 
-    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
-      .willReturn(listOf(recommendation.get()))
-
     val result = recommendationService.getRecommendation(456L)
 
     assertThat(result.id).isEqualTo(recommendation.get().id)
     assertThat(result.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(result.status).isEqualTo(recommendation.get().data.status?.name)
-    assertThat(result.recallType).isEqualTo(recommendation.get().data.recommendation?.name)
-    assertThat(result.activeRecommendation?.lastModifiedBy).isEqualTo(recommendation.get().data.lastModifiedBy)
-    assertThat(result.activeRecommendation?.lastModifiedDate).isEqualTo("2022-05-18T19:33:56")
+    assertThat(result.status).isEqualTo(recommendation.get().data.status)
+    assertThat(result.recallType).isEqualTo(recommendation.get().data.recommendation)
   }
 
   @Test
