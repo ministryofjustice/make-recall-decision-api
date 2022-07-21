@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.FetchRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
@@ -39,12 +40,16 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun getRecommendation(recommendationId: Long): RecommendationResponse {
+  fun getRecommendation(recommendationId: Long): FetchRecommendationResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-    return RecommendationResponse(
+    val activeRecommendation = getDraftRecommendationForCrn(recommendationEntity.data.crn!!)
+    return FetchRecommendationResponse(
       id = recommendationEntity.id,
-      crn = recommendationEntity.data.crn
+      crn = recommendationEntity.data.crn,
+      recallType = recommendationEntity.data.recommendation?.name,
+      status = recommendationEntity.data.status?.name,
+      activeRecommendation = activeRecommendation
     )
   }
 
