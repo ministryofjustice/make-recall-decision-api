@@ -16,6 +16,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -27,8 +29,8 @@ internal class RecommendationService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
-    val lastModifiedDate = LocalDateTime.now().toString()
-    val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate)
+    val lastModifiedDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"))
+    val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate.toString())
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
