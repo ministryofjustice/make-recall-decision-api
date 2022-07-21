@@ -53,12 +53,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     // then
     assertThat(result.id).isEqualTo(1)
     assertThat(result.status).isEqualTo(Status.DRAFT)
-    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
-    assertThat(result.activeRecommendation!!.lastModifiedBy).isEqualTo("Bill")
-    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
 
     then(recommendationRepository).should().save(
-      recommendationToSave.copy(id = null, data = (RecommendationModel(crn = crn, status = Status.DRAFT, lastModifiedBy = "Bill", lastModifiedDate = result.activeRecommendation?.lastModifiedDate)))
+      recommendationToSave.copy(id = null, data = (RecommendationModel(crn = crn, status = Status.DRAFT, lastModifiedBy = "Bill", lastModifiedDate = any())))
     )
   }
 
@@ -122,10 +119,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
     assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
     assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
-    // TODO add once MRD-342 complete
-//    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
-//    assertThat(result.activeRecommendation?.lastModifiedBy).isEqualTo("Bill")
-//    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -185,10 +178,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
     assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
     assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
-    // TODO add once MRD-342 complete
-//    assertThat(result.activeRecommendation?.recommendationId).isEqualTo(1)
-//    assertThat(result.activeRecommendation?.lastModifiedBy).isEqualTo("Bill")
-//    assertThat(result.activeRecommendation?.lastModifiedDate).isNotNull
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
