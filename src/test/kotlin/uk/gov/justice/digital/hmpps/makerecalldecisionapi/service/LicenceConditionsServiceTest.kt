@@ -214,6 +214,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         sentenceOriginalLength = 2,
         sentenceOriginalLengthUnits = "years",
         sentenceStartDate = LocalDate.parse("2022-04-26"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-11"),
         licenceExpiryDate = LocalDate.parse("2022-05-10"),
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
         statusCode = "ABC123",
@@ -288,6 +289,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       status = CustodyStatus(code = "ABC123", description = "custody status"),
       keyDates = KeyDates(
         licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-11"),
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
       )
     )
