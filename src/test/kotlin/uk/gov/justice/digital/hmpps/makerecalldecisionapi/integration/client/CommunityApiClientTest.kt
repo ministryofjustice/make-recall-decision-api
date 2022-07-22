@@ -76,8 +76,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
         startDate = LocalDate.parse("2022-04-26"),
         terminationDate = LocalDate.parse("2022-04-26"),
         expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-        description = "string", originalLength = 0,
-        originalLengthUnits = "string",
+        description = "sentence description", originalLength = 12,
+        originalLengthUnits = "days",
         sentenceType = SentenceType(code = "ABC123")
       ),
       active = true,
@@ -103,7 +103,11 @@ class CommunityApiClientTest : IntegrationTestBase() {
       ),
       custody = Custody(
         status = CustodyStatus(code = "ABC123", description = "I am the custody status description"),
-        keyDates = KeyDates(licenceExpiryDate = LocalDate.parse("2020-06-25"), postSentenceSupervisionEndDate = LocalDate.parse("2020-06-27"))
+        keyDates = KeyDates(
+          licenceExpiryDate = LocalDate.parse("2020-06-25"),
+          sentenceExpiryDate = LocalDate.parse("2020-06-28"),
+          postSentenceSupervisionEndDate = LocalDate.parse("2020-06-27")
+        )
       )
     )
 
