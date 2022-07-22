@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.FetchRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
@@ -29,6 +28,7 @@ internal class RecommendationService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
+
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val lastModifiedDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"))
     val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate.toString())
@@ -40,13 +40,16 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun getRecommendation(recommendationId: Long): FetchRecommendationResponse {
+  fun getRecommendation(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-    return FetchRecommendationResponse(
+    return RecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
-      recallType = recommendationEntity.data.recommendation,
+      recallType = RecallType(
+        value = recommendationEntity.data.recommendation,
+        options = useExistingOptions()
+      ),
       status = recommendationEntity.data.status
     )
   }

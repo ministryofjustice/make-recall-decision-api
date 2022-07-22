@@ -57,7 +57,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.id").isEqualTo(createdRecommendationId)
       .jsonPath("$.crn").isEqualTo(crn)
       .jsonPath("$.status").isEqualTo("DRAFT")
-      .jsonPath("$.recallType").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.options[0].value").isEqualTo("NO_RECALL")
+      .jsonPath("$.recallType.options[0].text").isEqualTo("No recall")
+      .jsonPath("$.recallType.options[1].value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.options[1].text").isEqualTo("Fixed term")
+      .jsonPath("$.recallType.options[2].value").isEqualTo("STANDARD")
+      .jsonPath("$.recallType.options[2].text").isEqualTo("Standard")
   }
 
   private fun updateRecommendation() {

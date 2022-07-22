@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.FetchRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
@@ -46,7 +45,7 @@ internal class RecommendationController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/recommendations/{recommendationId}")
   @Operation(summary = "WIP: Gets a recommendation")
-  suspend fun getRecommendation(@PathVariable("recommendationId") recommendationId: Long): FetchRecommendationResponse {
+  suspend fun getRecommendation(@PathVariable("recommendationId") recommendationId: Long): RecommendationResponse {
     log.info(normalizeSpace("Get recommendation details endpoint hit for recommendation id: $recommendationId"))
     return recommendationService.getRecommendation(recommendationId)
   }
