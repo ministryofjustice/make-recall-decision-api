@@ -208,15 +208,25 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a recommendation from the database`() {
-    val recommendation = Optional.of(RecommendationEntity(data = RecommendationModel(crn = crn)))
+    val recommendation = Optional.of(
+      RecommendationEntity(data = RecommendationModel(crn = crn, status = Status.DRAFT, recommendation = Recommendation.NO_RECALL, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56"))
+    )
 
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
 
-    val result = recommendationService.getRecommendation(456L)
+    val recommendationResponse = recommendationService.getRecommendation(456L)
 
-    assertThat(result.id).isEqualTo(recommendation.get().id)
-    assertThat(result.crn).isEqualTo(recommendation.get().data.crn)
+    assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
+    assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
+    assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
+    assertThat(recommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
+    assertThat(recommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
+    assertThat(recommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
+    assertThat(recommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
+    assertThat(recommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
+    assertThat(recommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
+    assertThat(recommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
   }
 
   @Test

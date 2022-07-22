@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `create and get recommendation`() {
+  fun `create recommendation`() {
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -39,17 +39,43 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val idOfRecommendationJustCreated = response.get("id")
 
-    assertThat(response.get("id")).isNotNull
+    assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
+  }
+
+  @Test
+  fun `get recommendation`() {
+    deleteAndCreateRecommendation()
+    updateRecommendation()
 
     webTestClient.get()
-      .uri("/recommendations/$idOfRecommendationJustCreated")
+      .uri("/recommendations/$createdRecommendationId")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$.id").isEqualTo(idOfRecommendationJustCreated)
+      .jsonPath("$.id").isEqualTo(createdRecommendationId)
       .jsonPath("$.crn").isEqualTo(crn)
+      .jsonPath("$.status").isEqualTo("DRAFT")
+      .jsonPath("$.recallType.value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.options[0].value").isEqualTo("NO_RECALL")
+      .jsonPath("$.recallType.options[0].text").isEqualTo("No recall")
+      .jsonPath("$.recallType.options[1].value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.options[1].text").isEqualTo("Fixed term")
+      .jsonPath("$.recallType.options[2].value").isEqualTo("STANDARD")
+      .jsonPath("$.recallType.options[2].text").isEqualTo("Standard")
+  }
+
+  private fun updateRecommendation() {
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(updateRecommendationRequest())
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
   }
 
   @Test
