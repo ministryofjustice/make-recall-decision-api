@@ -28,6 +28,7 @@ internal class RecommendationService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
+
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val lastModifiedDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"))
     val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate.toString())
@@ -44,7 +45,12 @@ internal class RecommendationService(
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     return RecommendationResponse(
       id = recommendationEntity.id,
-      crn = recommendationEntity.data.crn
+      crn = recommendationEntity.data.crn,
+      recallType = RecallType(
+        value = recommendationEntity.data.recommendation,
+        options = useExistingOptions()
+      ),
+      status = recommendationEntity.data.status
     )
   }
 
