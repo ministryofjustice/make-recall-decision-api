@@ -44,7 +44,7 @@ internal class LicenceConditionsService(
 
     return activeConvictions
       ?.map {
-        val result = getValueAndHandleWrappedException(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
+        val licenceConditions = getValueAndHandleWrappedException(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
           ?.licenceConditions
 
         val offences: List<Offence>? = it.offences
@@ -64,10 +64,11 @@ internal class LicenceConditionsService(
           sentenceOriginalLengthUnits = it.sentence?.originalLengthUnits,
           sentenceStartDate = it.sentence?.startDate,
           licenceExpiryDate = it.custody?.keyDates?.licenceExpiryDate,
+          sentenceExpiryDate = it.custody?.keyDates?.sentenceExpiryDate,
           postSentenceSupervisionEndDate = it.custody?.keyDates?.postSentenceSupervisionEndDate,
           statusCode = it.custody?.status?.code,
           statusDescription = it.custody?.status?.description,
-          licenceConditions = result,
+          licenceConditions = licenceConditions,
           licenceDocuments = allConvictionDocuments?.filter { document -> document.parentPrimaryKeyId == it.convictionId },
         )
       } ?: emptyList()
