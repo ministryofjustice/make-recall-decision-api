@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 
@@ -29,7 +30,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
         OffenderDetails(
           firstName = "Pontius",
           surname = "Pilate",
-          dateOfBirth = LocalDate.parse("2000-11-09")
+          dateOfBirth = LocalDate.parse("2000-11-09"),
+          otherIds = OtherIds(crn)
         )
       )
     )
@@ -58,7 +60,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
         OffenderDetails(
           firstName = null,
           surname = null,
-          dateOfBirth = null
+          dateOfBirth = null,
+          otherIds = OtherIds(crn)
         )
       )
     )
