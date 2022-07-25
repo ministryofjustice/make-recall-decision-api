@@ -65,7 +65,6 @@ dependencies {
 java {
   toolchain {
     languageVersion.set(JavaLanguageVersion.of(18))
-    vendor.set(JvmVendorSpec.matching("AdoptOpenJDK"))
   }
 }
 
