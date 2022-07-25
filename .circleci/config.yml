@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   hmpps: ministryofjustice/hmpps@5.1.0
-  gradle: circleci/gradle@2.2.0
   slack: circleci/slack@4.10.1
 
 parameters:
@@ -54,14 +53,19 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
-      - gradle/with_cache:
-          cache_checksum_file: "build.gradle.kts"
-          steps:
-            - run:
-                name: Run check & send results to sonarcloud
-                command: |
-                  export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
-                  ./gradlew check sonarqube
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "build.gradle.kts" }}
+            - gradle-
+      - run:
+          name: Run check & send results to sonarcloud
+          command: |
+            export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
+            ./gradlew check sonarqube
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-{{ checksum "build.gradle.kts" }}
       - store_test_results:
           path: build/test-results
       - store_artifacts:
