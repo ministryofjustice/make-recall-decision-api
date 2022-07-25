@@ -206,17 +206,17 @@ fun multipleConvictionsResponse(crn: String, staffCode: String) = """
           "nomsPrisonInstitutionCode": "string"
         },
         "keyDates": {
-          "conditionalReleaseDate": "2020-06-23",
-          "expectedPrisonOffenderManagerHandoverDate": "2020-06-23",
-          "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-23",
-          "expectedReleaseDate": "2020-06-23",
-          "hdcEligibilityDate": "2020-06-23",
-          "licenceExpiryDate": "2020-06-23",
-          "paroleEligibilityDate": "2020-06-23",
-          "postSentenceSupervisionEndDate": "2020-06-23",
+          "conditionalReleaseDate": "2020-06-15",
+          "expectedPrisonOffenderManagerHandoverDate": "2020-06-16",
+          "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-17",
+          "expectedReleaseDate": "2020-06-18",
+          "hdcEligibilityDate": "2020-06-19",
+          "licenceExpiryDate": "2020-06-20",
+          "paroleEligibilityDate": "2020-06-21",
+          "postSentenceSupervisionEndDate": "2020-06-22",
           "sentenceExpiryDate": "2020-06-23"
         },
-        "sentenceStartDate": "2022-04-26",
+        "sentenceStartDate": "2022-04-25",
         "status": {
           "code": "ABC123",
           "description": "Some description"
@@ -352,7 +352,7 @@ fun multipleConvictionsResponse(crn: String, staffCode: String) = """
           "code": "ABC123",
           "description": "Some description"
         },
-        "startDate": "2022-04-26",
+        "startDate": "2022-04-25",
         "terminationDate": "2022-04-26",
         "terminationReason": "string",
         "unpaidWork": {

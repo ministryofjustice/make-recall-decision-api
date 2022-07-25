@@ -53,20 +53,62 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves case summary when no offences available`() {
+  fun `retrieves case summary when convictions and offences available`() {
     runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { emptyList<Conviction>() })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.empty())
+        .willReturn(Mono.fromCallable { registrations })
+      given(communityApiClient.getReleaseSummary(anyString()))
+        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val offencesShouldBeEmpty = response.offences
+      val convictions = response.convictions
+      val riskFlags = response.risk!!.flags
+
+      assertThat(personalDetails.crn).isEqualTo(crn)
+      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
+      assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
+      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(convictions?.size).isEqualTo(1)
+      assertThat(convictions!![0].offences?.size).isEqualTo(1)
+      assertThat(convictions[0].active).isTrue
+      assertThat(convictions[0].offences!![0].mainOffence).isTrue
+      assertThat(convictions[0].offences!![0].description).isEqualTo("Robbery (other than armed robbery)")
+      assertThat(convictions[0].sentenceDescription).isEqualTo("Sentence description")
+      assertThat(convictions[0].sentenceOriginalLength).isEqualTo(6)
+      assertThat(convictions[0].sentenceOriginalLengthUnits).isEqualTo("Days")
+      assertThat(convictions[0].sentenceExpiryDate).isEqualTo("2022-06-10")
+      assertThat(convictions[0].licenceExpiryDate).isEqualTo("2022-05-10")
+      assertThat(riskFlags!!.size).isEqualTo(1)
+      assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves case summary when no convictions available`() {
+    runTest {
+      val crn = "my wonderful crn"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getActiveConvictions(anyString()))
+        .willReturn(Mono.fromCallable { emptyList() })
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(Mono.empty())
+      given(communityApiClient.getReleaseSummary(anyString()))
+        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+
+      val response = caseSummaryOverviewService.getOverview(crn)
+
+      val personalDetails = response.personalDetailsOverview!!
+      val convictionsShouldBeEmpty = response.convictions
       val riskFlagsShouldBeEmpty = response.risk!!.flags
 
       assertThat(personalDetails.crn).isEqualTo(crn)
@@ -74,8 +116,9 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(offencesShouldBeEmpty).isEmpty()
+      assertThat(convictionsShouldBeEmpty).isEmpty()
       assertThat(riskFlagsShouldBeEmpty).isEmpty()
+      assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -102,37 +145,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
           )
         )
       )
-    }
-  }
-
-  @Test
-  fun `retrieves case summary when offences available`() {
-    runTest {
-      val crn = "my wonderful crn"
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse) })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.fromCallable { registrations })
-
-      val response = caseSummaryOverviewService.getOverview(crn)
-
-      val personalDetails = response.personalDetailsOverview!!
-      val offences = response.offences
-      val riskFlags = response.risk!!.flags
-
-      assertThat(personalDetails.crn).isEqualTo(crn)
-      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
-      assertThat(personalDetails.gender).isEqualTo("Male")
-      assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-      assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(offences?.size).isEqualTo(1)
-      assertThat(offences!![0].mainOffence).isTrue
-      assertThat(offences[0].description).isEqualTo("Robbery (other than armed robbery)")
-      assertThat(riskFlags!!.size).isEqualTo(1)
-      assertThat(riskFlags[0]).isEqualTo("Victim contact")
-      then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
 
@@ -211,7 +223,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val offences = response.offences
+      val convictions = response.convictions
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
       val riskFlags = response.risk!!.flags
@@ -221,9 +233,9 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("")
-      assertThat(offences?.size).isEqualTo(1)
-      assertThat(offences!![0].mainOffence).isTrue
-      assertThat(offences[0].description).isEqualTo("")
+      assertThat(convictions!![0].offences?.size).isEqualTo(1)
+      assertThat(convictions[0].offences!![0].mainOffence).isTrue
+      assertThat(convictions[0].offences!![0].description).isEqualTo("")
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(riskFlags[0]).isEqualTo("")
       then(communityApiClient).should().getAllOffenderDetails(crn)
@@ -238,8 +250,8 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       startDate = LocalDate.parse("2022-04-26"),
       terminationDate = LocalDate.parse("2022-04-26"),
       expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "string", originalLength = 0,
-      originalLengthUnits = "string",
+      description = "Sentence description", originalLength = 6,
+      originalLengthUnits = "Days",
       sentenceType = SentenceType(code = "ABC123")
     ),
     active = true,
@@ -267,6 +279,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       status = CustodyStatus(code = "ABC123", description = "custody status"),
       keyDates = KeyDates(
         licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
       )
     )
