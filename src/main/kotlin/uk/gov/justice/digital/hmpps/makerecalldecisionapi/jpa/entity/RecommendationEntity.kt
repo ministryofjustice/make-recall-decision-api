@@ -24,9 +24,8 @@ data class RecommendationEntity(
   var data: RecommendationModel
 ) : Comparable<RecommendationEntity> {
   override fun compareTo(other: RecommendationEntity) = compareValuesBy(
-    other, this,
-    { it.data?.lastModifiedDate }
-  )
+    other, this
+  ) { it.data.lastModifiedDate }
 }
 
 data class RecommendationModel(
@@ -34,7 +33,9 @@ data class RecommendationModel(
   var recommendation: Recommendation? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
-  val lastModifiedDate: String? = null
+  var lastModifiedDate: String? = null,
+  val createdBy: String? = null,
+  val createdDate: String? = null
 ) : Serializable
 
 enum class Recommendation(val text: String) {

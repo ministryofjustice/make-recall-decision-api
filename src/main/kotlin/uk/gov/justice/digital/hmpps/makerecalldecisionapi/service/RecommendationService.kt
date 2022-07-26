@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.joda.time.format.DateTimeFormat.forPattern
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,9 +18,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -30,12 +30,11 @@ internal class RecommendationService(
   }
 
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
-    val lastModifiedDate = LocalDateTime.now().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'"))
-    val savedRecommendation = saveRecommendationEntity(recommendationRequest, username, lastModifiedDate.toString())
+    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username)
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
-      status = savedRecommendation?.data?.status
+      status = savedRecommendation?.data?.status,
     )
   }
 
@@ -56,11 +55,11 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(updateRecommendationRequest: UpdateRecommendationRequest, recommendationId: Long): RecommendationResponse {
+  fun updateRecommendation(updateRecommendationRequest: UpdateRecommendationRequest, recommendationId: Long, username: String?): RecommendationResponse {
     val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
-    val updatedRecommendationEntity = updateRecommendation(existingRecommendationEntity, updateRecommendationRequest)
+    val updatedRecommendationEntity = updateRecommendation(existingRecommendationEntity, updateRecommendationRequest, username)
 
     return RecommendationResponse(
       id = updatedRecommendationEntity!!.id!!,
@@ -76,7 +75,8 @@ internal class RecommendationService(
 
   private fun updateRecommendation(
     existingRecommendationEntity: RecommendationEntity,
-    updateRecommendationRequest: UpdateRecommendationRequest
+    updateRecommendationRequest: UpdateRecommendationRequest,
+    updatedByUserName: String?
   ): RecommendationEntity? {
     val updatedRecallType = updateRecommendationRequest.recallType?.value
     val originalRecallType = existingRecommendationEntity.data.recommendation?.name
@@ -86,21 +86,14 @@ internal class RecommendationService(
     } else {
       null
     }
+    val status = updateRecommendationRequest.status ?: existingRecommendationEntity.data.status
 
-    val status = updateRecommendationRequest?.status ?: existingRecommendationEntity.data.status
+    existingRecommendationEntity.data.recommendation = recommendation
+    existingRecommendationEntity.data.status = status
+    existingRecommendationEntity.data.lastModifiedDate = nowDate()
+    existingRecommendationEntity.data.lastModifiedBy = updatedByUserName
 
-    return recommendationRepository.save(
-      existingRecommendationEntity.copy(
-        id = existingRecommendationEntity.id,
-        data = RecommendationModel(
-          crn = existingRecommendationEntity.data.crn,
-          recommendation = recommendation,
-          status = status,
-          lastModifiedDate = existingRecommendationEntity.data.lastModifiedDate,
-          lastModifiedBy = existingRecommendationEntity.data.lastModifiedBy
-        )
-      )
-    )
+    return recommendationRepository.save(existingRecommendationEntity)
   }
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
@@ -136,18 +129,27 @@ internal class RecommendationService(
     )
   )
 
-  private fun saveRecommendationEntity(
+  private fun nowDate(): String {
+    val formatter = forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    return formatter.print(DateTime(DateTimeZone.UTC)).toString()
+  }
+
+  private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
-    username: String?,
-    lastModifiedDate: String?
+    createdByUserName: String?,
   ): RecommendationEntity? {
+
+    val now = nowDate()
+
     return recommendationRepository.save(
       RecommendationEntity(
         data = RecommendationModel(
           crn = recommendationRequest.crn,
           status = Status.DRAFT,
-          lastModifiedBy = username,
-          lastModifiedDate = lastModifiedDate
+          lastModifiedBy = createdByUserName,
+          lastModifiedDate = now,
+          createdBy = createdByUserName,
+          createdDate = now
         )
       )
     )

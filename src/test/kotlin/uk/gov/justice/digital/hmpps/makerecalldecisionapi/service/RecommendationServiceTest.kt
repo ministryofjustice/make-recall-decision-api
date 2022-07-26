@@ -4,6 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.joda.time.DateTimeUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -29,10 +30,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     recommendationService = RecommendationService(recommendationRepository)
+    DateTimeUtils.setCurrentMillisFixed(1658828907443)
   }
 
   @Test
-  fun `saves a recommendation to the database`() {
+  fun `creates a new recommendation in the database`() {
     // given
     val recommendationToSave = RecommendationEntity(
       id = 1,
@@ -55,7 +57,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(result.status).isEqualTo(Status.DRAFT)
 
     then(recommendationRepository).should().save(
-      recommendationToSave.copy(id = null, data = (RecommendationModel(crn = crn, status = Status.DRAFT, lastModifiedBy = "Bill", lastModifiedDate = any())))
+      recommendationToSave.copy(id = null, data = (RecommendationModel(crn = crn, status = Status.DRAFT, lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z")))
     )
   }
 
@@ -67,7 +69,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(
         crn = crn,
         status = Status.DRAFT,
-        lastModifiedBy = "Bill"
+        lastModifiedBy = "Jack",
+        lastModifiedDate = "2022-07-01T15:22:24.567Z",
+        createdBy = "Jack",
+        createdDate = "2022-07-01T15:22:24.567Z"
       )
     )
 
@@ -92,8 +97,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = existingRecommendation.data.crn,
           recommendation = updateRecommendationRequest.recallType?.value,
           status = existingRecommendation.data.status,
-          lastModifiedDate = existingRecommendation.data.lastModifiedDate,
-          lastModifiedBy = existingRecommendation.data.lastModifiedBy
+          lastModifiedDate = "2022-07-26T09:48:27.443Z",
+          lastModifiedBy = "Bill",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z"
         )
       )
 
@@ -106,7 +113,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       .willReturn(Optional.of(existingRecommendation))
 
     // when
-    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L)
+    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
 
     // then
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
@@ -133,7 +140,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         crn = crn,
         status = Status.DRAFT,
         lastModifiedBy = "Bill",
-        recommendation = Recommendation.NO_RECALL
+        recommendation = Recommendation.NO_RECALL,
+        createdBy = "Jack",
+        createdDate = "2022-07-01T15:22:24.567Z"
       )
     )
 
@@ -151,8 +160,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = existingRecommendation.data.crn,
           recommendation = existingRecommendation.data.recommendation,
           status = existingRecommendation.data.status,
-          lastModifiedDate = existingRecommendation.data.lastModifiedDate,
-          lastModifiedBy = existingRecommendation.data.lastModifiedBy
+          lastModifiedDate = "2022-07-26T09:48:27.443Z",
+          lastModifiedBy = "Bill",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z"
         )
       )
 
@@ -165,7 +176,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       .willReturn(Optional.of(existingRecommendation))
 
     // when
-    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L)
+    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
 
     // then
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
@@ -197,7 +208,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             status = null,
             recallType = null
           ),
-          recommendationId = 456L
+          recommendationId = 456L,
+          "Bill"
         )
       }
     }.isInstanceOf(NoRecommendationFoundException::class.java)
@@ -209,7 +221,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `get a recommendation from the database`() {
     val recommendation = Optional.of(
-      RecommendationEntity(data = RecommendationModel(crn = crn, status = Status.DRAFT, recommendation = Recommendation.NO_RECALL, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56"))
+      RecommendationEntity(
+        data = RecommendationModel(crn = crn, status = Status.DRAFT, recommendation = Recommendation.NO_RECALL, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56")
+      )
     )
 
     given(recommendationRepository.findById(456L))
@@ -231,7 +245,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a draft recommendation for CRN from the database`() {
-    val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00"))
+    val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
 
     given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
       .willReturn(listOf(recommendation))
@@ -245,11 +259,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get the latest draft recommendation for CRN when multiple draft recommendations exist in database`() {
-    val recommendation1 = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T23:00:00.000"))
-    val recommendation2 = RecommendationEntity(id = 2, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T10:00:00.000"))
-    val recommendation3 = RecommendationEntity(id = 3, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T11:00:00.000"))
-    val recommendation4 = RecommendationEntity(id = 4, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T09:00:00.000"))
-    val recommendation5 = RecommendationEntity(id = 5, data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000"))
+    val recommendation1 = RecommendationEntity(id = 1, data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T23:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
+    val recommendation2 = RecommendationEntity(id = 2, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T10:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
+    val recommendation3 = RecommendationEntity(id = 3, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T11:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
+    val recommendation4 = RecommendationEntity(id = 4, data = RecommendationModel(crn = crn, lastModifiedBy = "Mary Berry", lastModifiedDate = "2022-08-01T09:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
+    val recommendation5 = RecommendationEntity(id = 5, data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z"))
 
     given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
       .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5))
