@@ -369,7 +369,7 @@ abstract class IntegrationTestBase {
         .withQueryStringParameter("paged", "false")
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse())
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse(crn))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
