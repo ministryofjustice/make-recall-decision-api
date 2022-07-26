@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -129,7 +130,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       OffenderDetails(
         firstName = "John",
         surname = "Blair",
-        dateOfBirth = LocalDate.parse("1982-10-24")
+        dateOfBirth = LocalDate.parse("1982-10-24"),
+        otherIds = OtherIds(crn = "X12345")
       )
     )
   )
@@ -139,7 +141,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       OffenderDetails(
         firstName = null,
         surname = null,
-        dateOfBirth = null
+        dateOfBirth = null,
+        otherIds = OtherIds(crn = "X12345")
       )
     )
   )

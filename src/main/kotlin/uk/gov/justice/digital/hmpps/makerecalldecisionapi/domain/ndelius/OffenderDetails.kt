@@ -7,5 +7,10 @@ data class OffenderDetails(
   val firstName: String?,
   val surname: String?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-  val dateOfBirth: LocalDate?
+  val dateOfBirth: LocalDate?,
+  val otherIds: OtherIds?
+)
+
+data class OtherIds(
+  var crn: String?
 )

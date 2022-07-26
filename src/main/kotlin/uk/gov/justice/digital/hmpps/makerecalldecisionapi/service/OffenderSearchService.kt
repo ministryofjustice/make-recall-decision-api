@@ -45,7 +45,7 @@ internal class OffenderSearchService(
       SearchByCrnResponse(
         name = name,
         dateOfBirth = it.dateOfBirth,
-        crn = crn,
+        crn = it.otherIds?.crn,
         userExcluded = excluded,
         userRestricted = restricted
       )
