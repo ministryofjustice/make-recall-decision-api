@@ -55,9 +55,11 @@ internal class RecommendationController(
   @Operation(summary = "WIP: Updates a recommendation")
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
-    @RequestBody updateRecommendationRequest: UpdateRecommendationRequest
+    @RequestBody updateRecommendationRequest: UpdateRecommendationRequest,
+    userLogin: Principal
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
-    return recommendationService.updateRecommendation(updateRecommendationRequest, recommendationId)
+    val username = userLogin.name
+    return recommendationService.updateRecommendation(updateRecommendationRequest, recommendationId, username)
   }
 }

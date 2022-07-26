@@ -31,6 +31,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.2")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("io.opentelemetry:opentelemetry-api:1.16.0")
+  implementation("joda-time:joda-time:2.10.14")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.0")
