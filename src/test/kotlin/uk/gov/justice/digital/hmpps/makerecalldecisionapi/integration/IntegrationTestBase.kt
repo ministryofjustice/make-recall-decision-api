@@ -95,12 +95,17 @@ abstract class IntegrationTestBase {
 
   companion object {
     @JvmStatic
+    var postgresStarted = false
+
+    @JvmStatic
     @BeforeAll
     fun setUpDb() {
+      if (postgresStarted) return
       val postgresProcess = ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
       postgresProcess.waitFor(120L, TimeUnit.SECONDS)
       val waitForProcess = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600", "--", "sleep", "10").start()
       waitForProcess.waitFor(60L, TimeUnit.SECONDS)
+      postgresStarted = true
     }
   }
 
