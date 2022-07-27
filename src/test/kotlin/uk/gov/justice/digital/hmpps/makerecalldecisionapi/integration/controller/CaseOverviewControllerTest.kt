@@ -47,33 +47,12 @@ class CaseOverviewControllerTest(
         .jsonPath("$.convictions[0].sentenceOriginalLengthUnits").isEqualTo("days")
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
         .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
-    }
-  }
-
-  @Test
-  fun `sets isCustodial flag to false for case with non custodial conviction`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
-      nonCustodialConvictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
-      deleteAndCreateRecommendation()
-
-      webTestClient.get()
-        .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
     }
   }
 

@@ -25,9 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EstablishmentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institution
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
@@ -104,33 +102,12 @@ class CommunityApiClientTest : IntegrationTestBase() {
         )
       ),
       custody = Custody(
-        bookingNumber = "V74111",
-        institution = Institution(
-          code = "COMMUN",
-          description = "In the Community",
-          establishmentType = EstablishmentType(
-            code = "E",
-            description = "Prison"
-          ),
-          institutionId = 156,
-          institutionName = "In the Community",
-          isEstablishment = true,
-          isPrivate = false,
-          nomsPrisonInstitutionCode = "AB124",
-        ),
         status = CustodyStatus(code = "ABC123", description = "I am the custody status description"),
         keyDates = KeyDates(
-          conditionalReleaseDate = LocalDate.parse("2020-06-20"),
-          expectedPrisonOffenderManagerHandoverDate = LocalDate.parse("2020-06-21"),
-          expectedPrisonOffenderManagerHandoverStartDate = LocalDate.parse("2020-06-22"),
-          expectedReleaseDate = LocalDate.parse("2020-06-23"),
-          hdcEligibilityDate = LocalDate.parse("2020-06-24"),
           licenceExpiryDate = LocalDate.parse("2020-06-25"),
-          paroleEligibilityDate = LocalDate.parse("2020-06-26"),
           sentenceExpiryDate = LocalDate.parse("2020-06-28"),
           postSentenceSupervisionEndDate = LocalDate.parse("2020-06-27")
-        ),
-        sentenceStartDate = LocalDate.parse("2022-04-26")
+        )
       )
     )
 

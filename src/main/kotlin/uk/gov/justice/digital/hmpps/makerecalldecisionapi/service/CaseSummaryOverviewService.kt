@@ -83,8 +83,7 @@ internal class CaseSummaryOverviewService(
           sentenceOriginalLength = it.sentence?.originalLength,
           sentenceOriginalLengthUnits = it.sentence?.originalLengthUnits,
           sentenceExpiryDate = it.custody?.keyDates?.sentenceExpiryDate,
-          licenceExpiryDate = it.custody?.keyDates?.licenceExpiryDate,
-          isCustodial = it.isCustodial
+          licenceExpiryDate = it.custody?.keyDates?.licenceExpiryDate
         )
       } ?: emptyList()
   }
