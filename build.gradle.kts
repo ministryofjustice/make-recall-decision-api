@@ -48,7 +48,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.5.1")
-  implementation("com.vladmihalcea:hibernate-types-52:2.17.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.17.1")
 
   testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")
