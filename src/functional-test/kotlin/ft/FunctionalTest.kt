@@ -10,6 +10,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.util.Base64
 
 open class FunctionalTest {
+  val BASE_URL = "https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk/"
   lateinit var lastResponse: Response
   val token = "Bearer ${getToken()}"
   val testCrn = "D006296"
