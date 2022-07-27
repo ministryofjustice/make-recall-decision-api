@@ -18,25 +18,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -59,7 +51,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse) })
+        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getRegistrations(anyString()))
         .willReturn(Mono.fromCallable { registrations })
       given(communityApiClient.getReleaseSummary(anyString()))
@@ -77,7 +69,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(convictions?.size).isEqualTo(1)
-      assertThat(convictions!![0].offences?.size).isEqualTo(1)
+      assertThat(convictions!![0].offences?.size).isEqualTo(2)
       assertThat(convictions[0].active).isTrue
       assertThat(convictions[0].offences!![0].mainOffence).isTrue
       assertThat(convictions[0].offences!![0].description).isEqualTo("Robbery (other than armed robbery)")
@@ -86,8 +78,28 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].sentenceOriginalLengthUnits).isEqualTo("Days")
       assertThat(convictions[0].sentenceExpiryDate).isEqualTo("2022-06-10")
       assertThat(convictions[0].licenceExpiryDate).isEqualTo("2022-05-10")
+      assertThat(convictions[0].isCustodial).isTrue
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves case summary when conviction is non custodial`() {
+    runTest {
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getActiveConvictions(anyString()))
+        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(Mono.fromCallable { registrations })
+      given(communityApiClient.getReleaseSummary(anyString()))
+        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+
+      val response = caseSummaryOverviewService.getOverview(crn)
+
+      assertThat(response.convictions!![0].isCustodial).isFalse
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -191,7 +203,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         .willReturn(
           Mono.fromCallable {
             listOf(
-              convictionResponse.copy(
+              custodialConvictionResponse().copy(
                 offences = listOf(
                   Offence(
                     mainOffence = true,
@@ -243,47 +255,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   }
 
   fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
-
-  private val convictionResponse = Conviction(
-    convictionDate = LocalDate.parse("2021-06-10"),
-    sentence = Sentence(
-      startDate = LocalDate.parse("2022-04-26"),
-      terminationDate = LocalDate.parse("2022-04-26"),
-      expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "Sentence description", originalLength = 6,
-      originalLengthUnits = "Days",
-      sentenceType = SentenceType(code = "ABC123")
-    ),
-    active = true,
-    offences = listOf(
-      Offence(
-        mainOffence = true,
-        detail = OffenceDetail(
-          mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Robbery (other than armed robbery)",
-          code = "ABC123"
-        )
-      )
-    ),
-    convictionId = 2500000001,
-    orderManagers =
-    listOf(
-      OrderManager(
-        dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
-        name = "string",
-        staffCode = "STFFCDEU",
-        gradeCode = "string"
-      )
-    ),
-    custody = Custody(
-      status = CustodyStatus(code = "ABC123", description = "custody status"),
-      keyDates = KeyDates(
-        licenceExpiryDate = LocalDate.parse("2022-05-10"),
-        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
-      )
-    )
-  )
 
   private val registrations = RegistrationsResponse(
     registrations = listOf(

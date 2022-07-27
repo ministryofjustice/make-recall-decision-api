@@ -70,6 +70,7 @@ internal class LicenceConditionsService(
           statusDescription = it.custody?.status?.description,
           licenceConditions = licenceConditions,
           licenceDocuments = allConvictionDocuments?.filter { document -> document.parentPrimaryKeyId == it.convictionId },
+          isCustodial = it.isCustodial
         )
       } ?: emptyList()
   }

@@ -12,5 +12,8 @@ data class Conviction(
   val offences: List<Offence>?,
   val convictionId: Long?,
   val orderManagers: List<OrderManager>?,
-  val custody: Custody?
-)
+  val custody: Custody? = null
+) {
+  val isCustodial: Boolean
+    get() = custody != null
+}
