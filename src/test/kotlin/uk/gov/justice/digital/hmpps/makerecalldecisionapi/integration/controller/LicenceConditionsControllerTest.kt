@@ -18,7 +18,7 @@ class LicenceConditionsControllerTest(
   val convictionId = 2500614567
 
   @Test
-  fun `retrieves licence condition details`() {
+  fun `retrieves licence condition details for case with custodial conviction`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -49,6 +49,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
         .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
         .jsonPath("$.convictions[0].postSentenceSupervisionEndDate").isEqualTo("2020-06-27")
+        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
         .jsonPath("$.convictions[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.convictions[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
         .jsonPath("$.convictions[0].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
@@ -88,6 +89,27 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `sets isCustodial flag to false for case with non custodial conviction`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      nonCustodialConvictionResponse(crn, staffCode)
+      licenceConditionsResponse(crn, convictionId)
+      groupedDocumentsResponse(crn)
+      releaseSummaryResponse(crn)
+      deleteAndCreateRecommendation()
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
+    }
+  }
+
+  @Test
   fun `retrieves multiple licence condition details`() {
     runTest {
       userAccessAllowed(crn)
@@ -115,6 +137,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
         .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
         .jsonPath("$.convictions[0].postSentenceSupervisionEndDate").isEqualTo("2020-06-27")
+        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
         .jsonPath("$.convictions[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.convictions[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
         .jsonPath("$.convictions[0].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
@@ -180,6 +203,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-23")
         .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-23")
         .jsonPath("$.convictions[0].postSentenceSupervisionEndDate").isEqualTo("2020-06-23")
+        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
         .jsonPath("$.convictions[0].convictionId").isEqualTo(convictionId)
         .jsonPath("$.convictions[0].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.convictions[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
@@ -194,6 +218,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[1].licenceExpiryDate").isEqualTo("2020-06-20")
         .jsonPath("$.convictions[1].sentenceExpiryDate").isEqualTo("2020-06-23")
         .jsonPath("$.convictions[1].postSentenceSupervisionEndDate").isEqualTo("2020-06-22")
+        .jsonPath("$.convictions[1].isCustodial").isEqualTo(true)
         .jsonPath("$.convictions[1].licenceConditions[0].active").isEqualTo("true")
         .jsonPath("$.convictions[1].licenceConditions[0].startDate").isEqualTo("2022-05-18")
         .jsonPath("$.convictions[1].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
