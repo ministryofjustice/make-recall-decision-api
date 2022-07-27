@@ -22,17 +22,17 @@ fun convictionsResponse(crn: String, staffCode: String) = """
      "custody": {
        "bookingNumber": "V74111",
        "institution": {
-         "code": "COMMUN",
-         "description": "In the Community",
+         "code": "string",
+         "description": "string",
          "establishmentType": {
-           "code": "E",
-           "description": "Prison"
+           "code": "ABC123",
+           "description": "Some description"
          },
-         "institutionId": 156,
-         "institutionName": "In the Community",
+         "institutionId": 0,
+         "institutionName": "string",
          "isEstablishment": true,
-         "isPrivate": false,
-         "nomsPrisonInstitutionCode": "AB124"
+         "isPrivate": true,
+         "nomsPrisonInstitutionCode": "string"
        },
        "keyDates": {
          "conditionalReleaseDate": "2020-06-20",

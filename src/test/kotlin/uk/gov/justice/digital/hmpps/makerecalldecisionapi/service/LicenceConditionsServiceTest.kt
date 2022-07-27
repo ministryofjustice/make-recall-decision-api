@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,10 +18,19 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -48,7 +56,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })
       given(communityApiClient.getGroupedDocuments(anyString()))
@@ -75,27 +83,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           )
         )
       )
-    }
-  }
-
-  @Test
-  fun `given an active non custodial conviction then set custodial flag to false`() {
-    runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.fromCallable { licenceConditions })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-
-      val response = licenceConditionsService.getLicenceConditions(crn)
-
-      Assertions.assertThat(response.convictions!![0].isCustodial).isFalse
-      then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
 
@@ -130,7 +117,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.empty())
       given(communityApiClient.getGroupedDocuments(anyString()))
@@ -224,15 +211,14 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           )
         ),
         sentenceDescription = "Sentence description",
-        sentenceOriginalLength = 6,
-        sentenceOriginalLengthUnits = "Days",
+        sentenceOriginalLength = 2,
+        sentenceOriginalLengthUnits = "years",
         sentenceStartDate = LocalDate.parse("2022-04-26"),
-        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-11"),
         licenceExpiryDate = LocalDate.parse("2022-05-10"),
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
         statusCode = "ABC123",
         statusDescription = "custody status",
-        isCustodial = true,
         licenceConditions = licenceConditions?.licenceConditions,
         licenceDocuments = listOf(
           CaseDocument(
@@ -259,6 +245,55 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       )
     )
   }
+
+  private val convictionResponse = Conviction(
+    convictionDate = LocalDate.parse("2021-06-10"),
+    sentence = Sentence(
+      startDate = LocalDate.parse("2022-04-26"),
+      terminationDate = LocalDate.parse("2022-04-26"),
+      expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
+      description = "Sentence description", originalLength = 2,
+      originalLengthUnits = "years",
+      sentenceType = SentenceType(code = "ABC123")
+    ),
+    active = true,
+    offences = listOf(
+      Offence(
+        mainOffence = true,
+        detail = OffenceDetail(
+          mainCategoryDescription = "string", subCategoryDescription = "string",
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123"
+        )
+      ),
+      Offence(
+        mainOffence = false,
+        detail = OffenceDetail(
+          mainCategoryDescription = "string", subCategoryDescription = "string",
+          description = "Arson",
+          code = "ZYX789"
+        )
+      )
+    ),
+    convictionId = 2500614567,
+    orderManagers =
+    listOf(
+      OrderManager(
+        dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
+        name = "string",
+        staffCode = "STFFCDEU",
+        gradeCode = "string"
+      )
+    ),
+    custody = Custody(
+      status = CustodyStatus(code = "ABC123", description = "custody status"),
+      keyDates = KeyDates(
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-11"),
+        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
+      )
+    )
+  )
 
   private val licenceConditions = LicenceConditions(
     licenceConditions = listOf(
