@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OverviewConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Risk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
@@ -62,7 +62,7 @@ internal class CaseSummaryOverviewService(
     )
   }
 
-  private suspend fun buildConvictionResponse(crn: String): List<ConvictionResponse> {
+  private suspend fun buildConvictionResponse(crn: String): List<OverviewConvictionResponse> {
 
     val activeConvictions = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
 
@@ -76,7 +76,7 @@ internal class CaseSummaryOverviewService(
             )
           }
 
-        ConvictionResponse(
+        OverviewConvictionResponse(
           active = it.active,
           offences = offences,
           sentenceDescription = it.sentence?.description,
