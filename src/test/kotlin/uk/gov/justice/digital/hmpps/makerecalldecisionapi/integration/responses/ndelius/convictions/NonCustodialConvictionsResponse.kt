@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions
 
-fun convictionsResponse(crn: String, staffCode: String) = """
+fun nonCustodialConvictionsResponse(crn: String, staffCode: String) = """
  [
    {
      "active": true,
@@ -18,37 +18,6 @@ fun convictionsResponse(crn: String, staffCode: String) = """
        "courtCode": "SHEFMC",
        "courtName": "Sheffield Magistrates Court",
        "crn": "$crn"
-     },
-     "custody": {
-       "institution": {
-         "code": "COMMUN",
-         "description": "In the Community",
-         "establishmentType": {
-           "code": "E",
-           "description": "Prison"
-         },
-         "institutionId": 156,
-         "institutionName": "In the Community",
-         "isEstablishment": true,
-         "isPrivate": false,
-         "nomsPrisonInstitutionCode": "AB124"
-       },
-       "keyDates": {
-         "conditionalReleaseDate": "2020-06-20",
-         "expectedPrisonOffenderManagerHandoverDate": "2020-06-21",
-         "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-22",
-         "expectedReleaseDate": "2020-06-23",
-         "hdcEligibilityDate": "2020-06-24",
-         "licenceExpiryDate": "2020-06-25",
-         "paroleEligibilityDate": "2020-06-26",
-         "postSentenceSupervisionEndDate": "2020-06-27",
-         "sentenceExpiryDate": "2020-06-28"
-       },
-       "sentenceStartDate": "2022-04-26",
-       "status": {
-         "code": "ABC123",
-         "description": "I am the custody status description"
-       }
      },
      "failureToComplyCount": 3,
      "inBreach": true,
