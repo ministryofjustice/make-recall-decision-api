@@ -16,7 +16,7 @@ class ContactHistoryTest() : FunctionalTest() {
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/contact-history")
+      .get(BASE_URL + "cases/{crn}/contact-history")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)

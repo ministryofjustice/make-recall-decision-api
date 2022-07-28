@@ -16,7 +16,7 @@ class PersonalDetailsTest() : FunctionalTest() {
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/personal-details")
+      .get(BASE_URL + "cases/{crn}/personal-details")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)

@@ -16,7 +16,7 @@ class LicenceConditionsTest() : FunctionalTest() {
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/licence-conditions")
+      .get(BASE_URL + "cases/{crn}/licence-conditions")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)

@@ -18,7 +18,7 @@ class RecommendationTest() : FunctionalTest() {
       .contentType(APPLICATION_JSON_VALUE)
       .header("Authorization", token)
       .body(recommendationRequest("X12345"))
-      .post("http://127.0.0.1:8080/recommendations")
+      .post(BASE_URL + "recommendations")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)

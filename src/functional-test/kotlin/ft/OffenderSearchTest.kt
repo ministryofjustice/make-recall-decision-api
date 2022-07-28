@@ -16,7 +16,7 @@ class OffenderSearchTest() : FunctionalTest() {
       .given()
       .queryParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/search")
+      .get(BASE_URL+ "search")
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
