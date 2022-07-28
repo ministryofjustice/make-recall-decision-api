@@ -20,7 +20,6 @@ fun convictionsResponse(crn: String, staffCode: String) = """
        "crn": "$crn"
      },
      "custody": {
-       "bookingNumber": "V74111",
        "institution": {
          "code": "COMMUN",
          "description": "In the Community",

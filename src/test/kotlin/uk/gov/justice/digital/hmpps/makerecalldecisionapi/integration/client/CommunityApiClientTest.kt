@@ -104,7 +104,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
         )
       ),
       custody = Custody(
-        bookingNumber = "V74111",
+        bookingNumber = null,
         institution = Institution(
           code = "COMMUN",
           description = "In the Community",
