@@ -89,7 +89,7 @@ jobs:
       - checkout
       - run:
           name: Run Functional Tests tests on dev
-          command: ./scripts/run-functional-test.sh -e dev
+          command: ./gradlew functional-test-light
 
   e2e_test:
     executor:
