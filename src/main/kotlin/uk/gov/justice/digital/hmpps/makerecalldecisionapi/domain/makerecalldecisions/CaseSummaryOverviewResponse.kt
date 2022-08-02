@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 data class CaseSummaryOverviewResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val personalDetailsOverview: PersonDetails? = null,
-  val convictions: List<ConvictionResponse>? = null,
+  val convictions: List<OverviewConvictionResponse>? = null,
   val releaseSummary: ReleaseSummaryResponse? = null,
   val risk: Risk? = null,
   val activeRecommendation: ActiveRecommendation? = null,

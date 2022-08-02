@@ -31,6 +31,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.2")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("io.opentelemetry:opentelemetry-api:1.16.0")
+  implementation("joda-time:joda-time:2.10.14")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.0")
@@ -46,8 +47,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.5.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.17.0")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.5.1")
+  implementation("com.vladmihalcea:hibernate-types-52:2.17.1")
 
   testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")

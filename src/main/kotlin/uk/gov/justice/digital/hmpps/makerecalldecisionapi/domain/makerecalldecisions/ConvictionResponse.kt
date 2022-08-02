@@ -19,4 +19,5 @@ data class ConvictionResponse(
   val statusDescription: String? = null,
   val licenceConditions: List<LicenceCondition>? = null,
   val licenceDocuments: List<CaseDocument>? = null,
+  val isCustodial: Boolean? = null
 )

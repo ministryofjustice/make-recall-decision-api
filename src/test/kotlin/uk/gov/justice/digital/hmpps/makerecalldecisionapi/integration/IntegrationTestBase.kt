@@ -38,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
@@ -95,12 +96,17 @@ abstract class IntegrationTestBase {
 
   companion object {
     @JvmStatic
+    var postgresStarted = false
+
+    @JvmStatic
     @BeforeAll
     fun setUpDb() {
+      if (postgresStarted) return
       val postgresProcess = ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
       postgresProcess.waitFor(120L, TimeUnit.SECONDS)
       val waitForProcess = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600", "--", "sleep", "10").start()
       waitForProcess.waitFor(60L, TimeUnit.SECONDS)
+      postgresStarted = true
     }
   }
 
@@ -312,6 +318,16 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(convictionsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun nonCustodialConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/convictions")
+
+    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(nonCustodialConvictionsResponse(crn, staffCode))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
