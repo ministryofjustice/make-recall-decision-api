@@ -16,7 +16,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
@@ -58,12 +57,12 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.crn").isEqualTo(crn)
       .jsonPath("$.status").isEqualTo("DRAFT")
       .jsonPath("$.recallType.value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recallType.options[0].value").isEqualTo("NO_RECALL")
-      .jsonPath("$.recallType.options[0].text").isEqualTo("No recall")
-      .jsonPath("$.recallType.options[1].value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recallType.options[1].text").isEqualTo("Fixed term")
-      .jsonPath("$.recallType.options[2].value").isEqualTo("STANDARD")
-      .jsonPath("$.recallType.options[2].text").isEqualTo("Standard")
+      .jsonPath("$.recallType.options[1].value").isEqualTo("STANDARD")
+      .jsonPath("$.recallType.options[1].text").isEqualTo("Standard")
+      .jsonPath("$.recallType.options[0].value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recallType.options[0].text").isEqualTo("Fixed term")
+      .jsonPath("$.recallType.options[2].value").isEqualTo("NO_RECALL")
+      .jsonPath("$.recallType.options[2].text").isEqualTo("No recall")
   }
 
   private fun updateRecommendation() {
@@ -106,7 +105,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
-    assertThat(result[0].data.recommendation?.name, equalTo(Recommendation.FIXED_TERM.name))
   }
 
   @Test
