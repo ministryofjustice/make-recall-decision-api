@@ -64,10 +64,6 @@ internal class RecommendationService(
       crn = updatedRecommendationEntity.data.crn,
       status = updatedRecommendationEntity.data.status,
       recallType = updateRecommendationRequest.recallType
-        ?: RecallType(
-          value = updatedRecommendationEntity.data.recallType?.value ?: existingRecommendationEntity.data.recallType?.value,
-          options = updatedRecommendationEntity.data.recallType?.options ?: existingRecommendationEntity.data.recallType?.options,
-        )
     )
   }
 

@@ -76,5 +76,3 @@ Run the following script to run all he tests locally (or to see how to run them)
 
 [make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
 [make-recall-decision-ui]: https://github.com/ministryofjustice/make-recall-decision-ui
-
-

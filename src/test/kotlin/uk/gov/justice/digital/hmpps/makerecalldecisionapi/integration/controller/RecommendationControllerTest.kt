@@ -105,8 +105,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
-
-    assertThat(result[0].data.recallType?.value, equalTo("FIXED_TERM"))
   }
 
   @Test
