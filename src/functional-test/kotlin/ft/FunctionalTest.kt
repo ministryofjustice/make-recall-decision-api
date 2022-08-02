@@ -9,6 +9,6 @@ open class FunctionalTest {
   val BASE_URL = "https://mrd-functional-test-dev.hmpps.service.justice.gov.uk/"
   lateinit var lastResponse: Response
   fun assertResponse(restassuredResponse: Response, expectation: String) {
-    JSONAssert.assertEquals(JSONObject(lastResponse.asString()), JSONObject(expectation), JSONCompareMode.LENIENT)
+    JSONAssert.assertEquals(JSONObject(restassuredResponse.asString()), JSONObject(expectation), JSONCompareMode.LENIENT)
   }
 }

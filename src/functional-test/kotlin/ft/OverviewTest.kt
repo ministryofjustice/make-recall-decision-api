@@ -81,4 +81,3 @@ fun overviewExpectation() = """//TODO correct
     "activeRecommendation": null
 }
 """.trimIndent()
-
