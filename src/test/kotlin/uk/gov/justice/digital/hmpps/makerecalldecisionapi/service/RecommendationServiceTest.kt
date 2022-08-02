@@ -147,12 +147,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         status = Status.DRAFT,
         lastModifiedBy = "Bill",
         recallType = RecallType(
-          value = "STANDARD",
-          options = listOf(
-            RecallTypeOption(value = "NO_RECALL", text = "No recall"),
-            RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
-            RecallTypeOption(value = "STANDARD", text = "Standard")
-          )
+          value = null,
+          options = null
         ),
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z"
@@ -172,12 +168,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = existingRecommendation.data.crn,
           recallType = RecallType(
-            value = "STANDARD",
-            options = listOf(
-              RecallTypeOption(value = "NO_RECALL", text = "No recall"),
-              RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
-              RecallTypeOption(value = "STANDARD", text = "Standard")
-            )
+            value = null,
+            options = null
           ),
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
@@ -202,13 +194,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo("STANDARD")
-    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
-    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
-    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo("FIXED_TERM")
-    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
-    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
-    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
+    assertThat(updateRecommendationResponse.recallType?.value).isNull()
+    assertThat(updateRecommendationResponse.recallType?.options).isNull()
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
