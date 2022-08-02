@@ -12,8 +12,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecallTypeOption
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -46,8 +44,8 @@ internal class RecommendationService(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
       recallType = RecallType(
-        value = recommendationEntity.data.recommendation,
-        options = useExistingOptions()
+        value = recommendationEntity.data.recallType?.value,
+        options = recommendationEntity.data.recallType?.options
       ),
       status = recommendationEntity.data.status
     )
@@ -67,8 +65,8 @@ internal class RecommendationService(
       status = updatedRecommendationEntity.data.status,
       recallType = updateRecommendationRequest.recallType
         ?: RecallType(
-          value = updatedRecommendationEntity.data.recommendation ?: existingRecommendationEntity.data.recommendation,
-          options = useExistingOptions()
+          value = updatedRecommendationEntity.data.recallType?.value ?: existingRecommendationEntity.data.recallType?.value,
+          options = updatedRecommendationEntity.data.recallType?.options ?: existingRecommendationEntity.data.recallType?.options,
         )
     )
   }
@@ -78,17 +76,12 @@ internal class RecommendationService(
     updateRecommendationRequest: UpdateRecommendationRequest,
     updatedByUserName: String?
   ): RecommendationEntity? {
-    val updatedRecallType = updateRecommendationRequest.recallType?.value
-    val originalRecallType = existingRecommendationEntity.data.recommendation?.name
+    val updatedRecallType = updateRecommendationRequest.recallType
+    val originalRecallType = existingRecommendationEntity.data.recallType
     val recallType = updatedRecallType ?: originalRecallType
-    val recommendation = if (recallType != null) {
-      Recommendation.valueOf(recallType.toString())
-    } else {
-      null
-    }
     val status = updateRecommendationRequest.status ?: existingRecommendationEntity.data.status
 
-    existingRecommendationEntity.data.recommendation = recommendation
+    existingRecommendationEntity.data.recallType = recallType
     existingRecommendationEntity.data.status = status
     existingRecommendationEntity.data.lastModifiedDate = nowDate()
     existingRecommendationEntity.data.lastModifiedBy = updatedByUserName
@@ -113,21 +106,6 @@ internal class RecommendationService(
       null
     }
   }
-
-  private fun useExistingOptions() = listOf(
-    RecallTypeOption(
-      value = Recommendation.NO_RECALL.name,
-      text = Recommendation.NO_RECALL.text
-    ),
-    RecallTypeOption(
-      value = Recommendation.FIXED_TERM.name,
-      text = Recommendation.FIXED_TERM.text
-    ),
-    RecallTypeOption(
-      value = Recommendation.STANDARD.name,
-      text = Recommendation.STANDARD.text
-    )
-  )
 
   private fun nowDate(): String {
     val formatter = forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
