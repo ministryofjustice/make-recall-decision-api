@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecallTypeOption
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -80,11 +79,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val updateRecommendationRequest = UpdateRecommendationRequest(
       status = null,
       recallType = RecallType(
-        value = Recommendation.NO_RECALL,
+        value = "NO_RECALL",
         options = listOf(
-          RecallTypeOption(value = Recommendation.NO_RECALL.name, text = Recommendation.NO_RECALL.text),
-          RecallTypeOption(value = Recommendation.FIXED_TERM.name, text = Recommendation.FIXED_TERM.text),
-          RecallTypeOption(value = Recommendation.STANDARD.name, text = Recommendation.STANDARD.text)
+          RecallTypeOption(value = "NO_RECALL", text = "No recall"),
+          RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
+          RecallTypeOption(value = "STANDARD", text = "Standard")
         )
       )
     )
@@ -95,7 +94,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = existingRecommendation.id,
         data = RecommendationModel(
           crn = existingRecommendation.data.crn,
-          recommendation = updateRecommendationRequest.recallType?.value,
+          recallType = RecallType(
+            value = "NO_RECALL",
+            options = listOf(
+              RecallTypeOption(value = "NO_RECALL", text = "No recall"),
+              RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
+              RecallTypeOption(value = "STANDARD", text = "Standard")
+            )
+          ),
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
@@ -119,13 +125,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
-    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
-    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
-    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
+    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo("NO_RECALL")
+    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
+    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
+    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo("FIXED_TERM")
+    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
+    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
+    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -140,7 +146,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         crn = crn,
         status = Status.DRAFT,
         lastModifiedBy = "Bill",
-        recommendation = Recommendation.NO_RECALL,
+        recallType = RecallType(
+          value = null,
+          options = null
+        ),
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z"
       )
@@ -158,7 +167,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = existingRecommendation.id,
         data = RecommendationModel(
           crn = existingRecommendation.data.crn,
-          recommendation = existingRecommendation.data.recommendation,
+          recallType = RecallType(
+            value = null,
+            options = null
+          ),
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
@@ -182,13 +194,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
-    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
-    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
-    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
-    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
+    assertThat(updateRecommendationResponse.recallType?.value).isNull()
+    assertThat(updateRecommendationResponse.recallType?.options).isNull()
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -220,9 +227,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a recommendation from the database`() {
+    val recallType = RecallType(
+      value = "FIXED_TERM",
+      options = listOf(
+        RecallTypeOption(value = "NO_RECALL", text = "No recall"),
+        RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
+        RecallTypeOption(value = "STANDARD", text = "Standard")
+      )
+    )
     val recommendation = Optional.of(
       RecommendationEntity(
-        data = RecommendationModel(crn = crn, status = Status.DRAFT, recommendation = Recommendation.NO_RECALL, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56")
+        data = RecommendationModel(crn = crn, status = Status.DRAFT, recallType = recallType, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56")
       )
     )
 
@@ -234,13 +249,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
-    assertThat(recommendationResponse.recallType?.value).isEqualTo(Recommendation.NO_RECALL)
-    assertThat(recommendationResponse.recallType?.options!![0].value).isEqualTo(Recommendation.NO_RECALL.name)
-    assertThat(recommendationResponse.recallType?.options!![0].text).isEqualTo(Recommendation.NO_RECALL.text)
-    assertThat(recommendationResponse.recallType?.options!![1].value).isEqualTo(Recommendation.FIXED_TERM.name)
-    assertThat(recommendationResponse.recallType?.options!![1].text).isEqualTo(Recommendation.FIXED_TERM.text)
-    assertThat(recommendationResponse.recallType?.options!![2].value).isEqualTo(Recommendation.STANDARD.name)
-    assertThat(recommendationResponse.recallType?.options!![2].text).isEqualTo(Recommendation.STANDARD.text)
+    assertThat(recommendationResponse.recallType?.value).isEqualTo("FIXED_TERM")
+    assertThat(recommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
+    assertThat(recommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
+    assertThat(recommendationResponse.recallType?.options!![1].value).isEqualTo("FIXED_TERM")
+    assertThat(recommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
+    assertThat(recommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
+    assertThat(recommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
   }
 
   @Test
