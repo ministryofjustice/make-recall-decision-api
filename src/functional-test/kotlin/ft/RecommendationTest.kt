@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 class RecommendationTest() : FunctionalTest() {
+  // TODO refactor to use mrd-functionsal-test app
   @Test
   fun `make a recommendation, expected 201`() {
     // given
@@ -16,7 +17,7 @@ class RecommendationTest() : FunctionalTest() {
     lastResponse = RestAssured
       .given()
       .contentType(APPLICATION_JSON_VALUE)
-      .header("Authorization", token)
+//      .header("Authorization", token)
       .body(recommendationRequest("X12345"))
       .post("http://127.0.0.1:8080/recommendations")
 

@@ -73,6 +73,24 @@ jobs:
       - store_artifacts:
           path: build/reports/jacoco/test/html
 
+  functional_test:
+    circleci_ip_ranges: true
+    executor:
+      name: hmpps/java_postgres
+      jdk_tag: "18.0"
+      postgres_tag: 13-alpine
+      postgres_username: mrd_user
+      postgres_password: secret
+      postgres_db: make_recall_decision
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Run Functional Tests tests on dev
+          command: ./gradlew functional-test
+
   e2e_test:
     executor:
       name: hmpps/default
@@ -154,6 +172,14 @@ workflows:
             - hmpps-common-vars
           <<: *slack-fail-post-step
 
+      - functional_test:
+          environment: dev
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+          requires:
+            - deploy_dev
+
       - hmpps/build_docker:
           name: build_docker
           filters:
@@ -197,7 +223,7 @@ workflows:
             - hmpps-common-vars
             - make-recall-decision-api-preprod
           requires:
-            - deploy_dev
+            - functional_test
           <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod

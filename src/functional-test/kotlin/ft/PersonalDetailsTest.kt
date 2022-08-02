@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
 class PersonalDetailsTest() : FunctionalTest() {
+  // TODO refactor to use mrd-functionsal-test app
   @Test
   fun `fetch personal details, expected 200`() {
     // given
@@ -14,8 +15,8 @@ class PersonalDetailsTest() : FunctionalTest() {
     // when
     lastResponse = RestAssured
       .given()
-      .pathParam("crn", testCrn)
-      .header("Authorization", token)
+//      .pathParam("crn", testCrn)
+//      .header("Authorization", token)
       .get("http://127.0.0.1:8080/cases/{crn}/personal-details")
 
     // then

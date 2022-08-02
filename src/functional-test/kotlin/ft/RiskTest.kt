@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
 class RiskTest() : FunctionalTest() {
+  // TODO refactor to use mrd-functionsal-test app
   @Disabled // TODO reintroduce once ARN-1026 is complete
   @Test
   fun `retrieve risk data, expected 200`() {
@@ -16,8 +17,8 @@ class RiskTest() : FunctionalTest() {
     // when
     lastResponse = RestAssured
       .given()
-      .pathParam("crn", testCrn)
-      .header("Authorization", token)
+//      .pathParam("crn", testCrn)
+//      .header("Authorization", token)
       .get("http://127.0.0.1:8080/cases/{crn}/risk")
 
     // then
