@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ActiveRecommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import java.time.LocalDate
 
