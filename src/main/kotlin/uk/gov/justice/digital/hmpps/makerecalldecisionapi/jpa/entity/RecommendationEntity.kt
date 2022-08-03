@@ -45,12 +45,7 @@ enum class Status {
   DRAFT, DOCUMENT_CREATED, DELETED
 }
 
-data class CustodyStatusOption(
-  val value: String? = null,
-  val text: String? = null
-)
-
-data class RecallTypeOption(
+data class TextValueOption(
   val value: String? = null,
   val text: String? = null
 )

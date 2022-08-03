@@ -17,11 +17,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.CustodyStatusOption
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecallTypeOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -83,17 +82,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recallType = RecallType(
         value = "NO_RECALL",
         options = listOf(
-          RecallTypeOption(value = "NO_RECALL", text = "No recall"),
-          RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
-          RecallTypeOption(value = "STANDARD", text = "Standard")
+          TextValueOption(value = "NO_RECALL", text = "No recall"),
+          TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
+          TextValueOption(value = "STANDARD", text = "Standard")
         )
       ),
       custodyStatus = CustodyStatus(
         value = "YES_PRISON",
         options = listOf(
-          CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
-          CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
-          CustodyStatusOption(value = "NO", text = "No")
+          TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
+          TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
+          TextValueOption(value = "NO", text = "No")
         )
       )
     )
@@ -107,17 +106,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           recallType = RecallType(
             value = "NO_RECALL",
             options = listOf(
-              RecallTypeOption(value = "NO_RECALL", text = "No recall"),
-              RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
-              RecallTypeOption(value = "STANDARD", text = "Standard")
+              TextValueOption(value = "NO_RECALL", text = "No recall"),
+              TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
+              TextValueOption(value = "STANDARD", text = "Standard")
             )
           ),
           custodyStatus = CustodyStatus(
             value = "YES_PRISON",
             options = listOf(
-              CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
-              CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
-              CustodyStatusOption(value = "NO", text = "No")
+              TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
+              TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
+              TextValueOption(value = "NO", text = "No")
             )
           ),
           status = existingRecommendation.data.status,
@@ -257,18 +256,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val recallType = RecallType(
       value = "FIXED_TERM",
       options = listOf(
-        RecallTypeOption(value = "NO_RECALL", text = "No recall"),
-        RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
-        RecallTypeOption(value = "STANDARD", text = "Standard")
+        TextValueOption(value = "NO_RECALL", text = "No recall"),
+        TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
+        TextValueOption(value = "STANDARD", text = "Standard")
       )
     )
 
     val custodyStatus = CustodyStatus(
       value = "YES_PRISON",
       options = listOf(
-        CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
-        CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
-        CustodyStatusOption(value = "NO", text = "No")
+        TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
+        TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
+        TextValueOption(value = "NO", text = "No")
       )
     )
 
