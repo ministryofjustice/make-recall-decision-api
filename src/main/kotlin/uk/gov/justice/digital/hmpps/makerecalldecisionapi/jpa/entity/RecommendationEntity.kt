@@ -41,10 +41,6 @@ data class RecommendationModel(
   val createdDate: String? = null
 ) : Serializable
 
-enum class Recommendation(val text: String) {
-  STANDARD("Standard"), NO_RECALL("No recall"), FIXED_TERM("Fixed term"),
-}
-
 enum class Status {
   DRAFT, DOCUMENT_CREATED, DELETED
 }
