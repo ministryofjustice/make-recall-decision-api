@@ -38,7 +38,8 @@ data class RecommendationModel(
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
-  val createdDate: String? = null
+  val createdDate: String? = null,
+  val personName: String? = null
 ) : Serializable
 
 enum class Status {

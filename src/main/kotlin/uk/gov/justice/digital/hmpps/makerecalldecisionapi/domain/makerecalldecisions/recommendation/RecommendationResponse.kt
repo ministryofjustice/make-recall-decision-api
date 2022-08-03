@@ -7,5 +7,6 @@ data class RecommendationResponse(
   val status: Status? = null,
   val custodyStatus: CustodyStatus? = null,
   val crn: String? = null,
-  val recallType: RecallType? = null
+  val recallType: RecallType? = null,
+  val personName: String? = null
 )
