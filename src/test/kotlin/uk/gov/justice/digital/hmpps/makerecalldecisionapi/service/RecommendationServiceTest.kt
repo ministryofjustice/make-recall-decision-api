@@ -13,9 +13,11 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.CustodyStatusOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecallTypeOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -85,6 +87,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
           RecallTypeOption(value = "STANDARD", text = "Standard")
         )
+      ),
+      custodyStatus = CustodyStatus(
+        value = "YES_PRISON",
+        options = listOf(
+          CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
+          CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
+          CustodyStatusOption(value = "NO", text = "No")
+        )
       )
     )
 
@@ -100,6 +110,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
               RecallTypeOption(value = "NO_RECALL", text = "No recall"),
               RecallTypeOption(value = "FIXED_TERM", text = "Fixed term"),
               RecallTypeOption(value = "STANDARD", text = "Standard")
+            )
+          ),
+          custodyStatus = CustodyStatus(
+            value = "YES_PRISON",
+            options = listOf(
+              CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
+              CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
+              CustodyStatusOption(value = "NO", text = "No")
             )
           ),
           status = existingRecommendation.data.status,
@@ -132,6 +150,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
     assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
     assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
+    assertThat(updateRecommendationResponse.custodyStatus?.value).isEqualTo("YES_PRISON")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![1].value).isEqualTo("YES_POLICE")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![1].text).isEqualTo("Yes, police custody")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![2].value).isEqualTo("NO")
+    assertThat(updateRecommendationResponse.custodyStatus?.options!![2].text).isEqualTo("No")
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -158,7 +183,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     // and
     val updateRecommendationRequest = UpdateRecommendationRequest(
       status = null,
-      recallType = null
+      recallType = null,
+      custodyStatus = null
     )
 
     // and
@@ -213,7 +239,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.updateRecommendation(
           UpdateRecommendationRequest(
             status = null,
-            recallType = null
+            recallType = null,
+            custodyStatus = null
           ),
           recommendationId = 456L,
           "Bill"
@@ -235,9 +262,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         RecallTypeOption(value = "STANDARD", text = "Standard")
       )
     )
+
+    val custodyStatus = CustodyStatus(
+      value = "YES_PRISON",
+      options = listOf(
+        CustodyStatusOption(value = "YES_PRISON", text = "Yes, prison custody"),
+        CustodyStatusOption(value = "YES_POLICE", text = "Yes, police custody"),
+        CustodyStatusOption(value = "NO", text = "No")
+      )
+    )
+
     val recommendation = Optional.of(
       RecommendationEntity(
-        data = RecommendationModel(crn = crn, status = Status.DRAFT, recallType = recallType, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56")
+        data = RecommendationModel(crn = crn, status = Status.DRAFT, custodyStatus = custodyStatus, recallType = recallType, lastModifiedBy = "Bill", lastModifiedDate = "2022-05-18T19:33:56")
       )
     )
 
@@ -256,6 +293,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
     assertThat(recommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
     assertThat(recommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
+    assertThat(recommendationResponse.custodyStatus?.value).isEqualTo("YES_PRISON")
+    assertThat(recommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
+    assertThat(recommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
+    assertThat(recommendationResponse.custodyStatus?.options!![1].value).isEqualTo("YES_POLICE")
+    assertThat(recommendationResponse.custodyStatus?.options!![1].text).isEqualTo("Yes, police custody")
+    assertThat(recommendationResponse.custodyStatus?.options!![2].value).isEqualTo("NO")
+    assertThat(recommendationResponse.custodyStatus?.options!![2].text).isEqualTo("No")
   }
 
   @Test

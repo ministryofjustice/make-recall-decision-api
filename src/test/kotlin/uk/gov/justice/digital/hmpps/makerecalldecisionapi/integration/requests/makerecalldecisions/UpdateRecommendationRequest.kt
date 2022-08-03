@@ -12,6 +12,14 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       { "value": "NO_RECALL", "text": "No recall" }
     ]
   },
+  "custodyStatus": {
+    "value": "YES_PRISON",
+    "options": [
+      { "value": "YES_PRISON", "text": "Yes, prison custody" },
+      { "value": "YES_POLICE", "text": "Yes, police custody" },
+      { "value": "NO", "text": "No" }
+    ]
+  },
   "status": "$status"
 }
 """.trimIndent()

@@ -63,6 +63,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.recallType.options[0].text").isEqualTo("Fixed term")
       .jsonPath("$.recallType.options[2].value").isEqualTo("NO_RECALL")
       .jsonPath("$.recallType.options[2].text").isEqualTo("No recall")
+      .jsonPath("$.custodyStatus.value").isEqualTo("YES_PRISON")
+      .jsonPath("$.custodyStatus.options[0].value").isEqualTo("YES_PRISON")
+      .jsonPath("$.custodyStatus.options[0].text").isEqualTo("Yes, prison custody")
+      .jsonPath("$.custodyStatus.options[1].value").isEqualTo("YES_POLICE")
+      .jsonPath("$.custodyStatus.options[1].text").isEqualTo("Yes, police custody")
+      .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
+      .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
   }
 
   private fun updateRecommendation() {
@@ -100,6 +107,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.recallType.options[1].text").isEqualTo("Standard")
       .jsonPath("$.recallType.options[2].value").isEqualTo("NO_RECALL")
       .jsonPath("$.recallType.options[2].text").isEqualTo("No recall")
+      .jsonPath("$.custodyStatus.value").isEqualTo("YES_PRISON")
+      .jsonPath("$.custodyStatus.options[0].value").isEqualTo("YES_PRISON")
+      .jsonPath("$.custodyStatus.options[0].text").isEqualTo("Yes, prison custody")
+      .jsonPath("$.custodyStatus.options[1].value").isEqualTo("YES_POLICE")
+      .jsonPath("$.custodyStatus.options[1].text").isEqualTo("Yes, police custody")
+      .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
+      .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
       .jsonPath("$.status").isEqualTo("DRAFT")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
