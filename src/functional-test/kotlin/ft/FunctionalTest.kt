@@ -5,6 +5,8 @@ import io.restassured.response.Response
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.BeforeAll
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.util.Base64
@@ -29,6 +31,10 @@ open class FunctionalTest {
         .post(authPath)
       assertThat(tokenResponse.statusCode).isEqualTo(HttpStatus.OK.value())
       return JSONObject(tokenResponse.body().asString()).getString("access_token")
+    }
+
+    fun assertResponse(restassuredResponse: Response, expectation: String) {
+      JSONAssert.assertEquals(JSONObject(restassuredResponse.asString()), JSONObject(expectation), JSONCompareMode.LENIENT)
     }
   }
 }
