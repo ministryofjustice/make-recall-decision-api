@@ -3,7 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -32,6 +33,7 @@ data class RecommendationEntity(
 data class RecommendationModel(
   val crn: String?,
   var recallType: RecallType? = null,
+  var custodyStatus: CustodyStatus? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,
@@ -43,7 +45,7 @@ enum class Status {
   DRAFT, DOCUMENT_CREATED, DELETED
 }
 
-data class RecallTypeOption(
+data class TextValueOption(
   val value: String? = null,
   val text: String? = null
 )
