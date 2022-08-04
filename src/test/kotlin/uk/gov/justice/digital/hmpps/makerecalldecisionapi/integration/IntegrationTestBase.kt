@@ -261,7 +261,7 @@ abstract class IntegrationTestBase {
     val allOffenderDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/all")
 
-    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
+    communityApi.`when`(allOffenderDetailsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -437,7 +437,7 @@ abstract class IntegrationTestBase {
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    communityApi.`when`(userAccessRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )

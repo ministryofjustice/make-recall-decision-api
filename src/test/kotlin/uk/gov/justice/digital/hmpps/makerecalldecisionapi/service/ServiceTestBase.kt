@@ -1,8 +1,13 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.junit.jupiter.api.BeforeEach
+import org.mockito.BDDMockito.anyString
 import org.mockito.Mock
+import org.mockito.Mockito.lenient
+import org.mockito.kotlin.doReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -44,6 +49,9 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var recommendationRepository: RecommendationRepository
 
+  @Mock
+  protected lateinit var mockPersonDetailService: PersonDetailsService
+
   protected lateinit var personDetailsService: PersonDetailsService
 
   protected lateinit var userAccessValidator: UserAccessValidator
@@ -56,8 +64,14 @@ internal abstract class ServiceTestBase {
 
   @BeforeEach
   fun userValidatorSetup() {
+    lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(
+      PersonDetailsResponse(
+        personalDetailsOverview = PersonDetails(name = "John Smith", age = null, crn = null, dateOfBirth = null, gender = null)
+      )
+    )
     userAccessValidator = UserAccessValidator(communityApiClient)
-    recommendationService = RecommendationService(recommendationRepository)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
 
   protected fun allReleaseSummariesResponse(): ReleaseSummaryResponse {

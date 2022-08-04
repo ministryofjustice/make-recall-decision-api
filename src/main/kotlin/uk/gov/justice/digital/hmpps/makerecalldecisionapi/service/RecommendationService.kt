@@ -4,11 +4,13 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat.forPattern
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
@@ -22,18 +24,20 @@ import kotlin.jvm.optionals.getOrNull
 
 @Service
 internal class RecommendationService(
-  val recommendationRepository: RecommendationRepository
+  val recommendationRepository: RecommendationRepository,
+  @Lazy val personDetailsService: PersonDetailsService
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
-
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
-    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username)
+    val name = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }?.personalDetailsOverview?.name
+    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, PersonOnProbation(name = name))
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
       status = savedRecommendation?.data?.status,
+      personOnProbation = savedRecommendation?.data?.personOnProbation
     )
   }
 
@@ -52,7 +56,8 @@ internal class RecommendationService(
       custodyStatus = CustodyStatus(
         value = recommendationEntity.data.custodyStatus?.value,
         options = recommendationEntity.data.custodyStatus?.options
-      )
+      ),
+      personOnProbation = recommendationEntity.data.personOnProbation
     )
   }
 
@@ -69,7 +74,8 @@ internal class RecommendationService(
       crn = updatedRecommendationEntity.data.crn,
       status = updatedRecommendationEntity.data.status,
       recallType = updateRecommendationRequest.recallType,
-      custodyStatus = updateRecommendationRequest.custodyStatus
+      custodyStatus = updateRecommendationRequest.custodyStatus,
+      personOnProbation = updatedRecommendationEntity.data.personOnProbation
     )
   }
 
@@ -128,6 +134,7 @@ internal class RecommendationService(
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
     createdByUserName: String?,
+    personOnProbation: PersonOnProbation?
   ): RecommendationEntity? {
 
     val now = nowDate()
@@ -140,7 +147,8 @@ internal class RecommendationService(
           lastModifiedBy = createdByUserName,
           lastModifiedDate = now,
           createdBy = createdByUserName,
-          createdDate = now
+          createdDate = now,
+          personOnProbation = personOnProbation
         )
       )
     )
