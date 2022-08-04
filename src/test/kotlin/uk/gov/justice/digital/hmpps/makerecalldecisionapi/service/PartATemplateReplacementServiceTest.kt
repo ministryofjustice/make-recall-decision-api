@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
@@ -14,13 +13,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
-
-  protected lateinit var partATemplateReplacementService: PartATemplateReplacementService
-
-  @BeforeEach
-  fun before() {
-    partATemplateReplacementService = PartATemplateReplacementService()
-  }
 
   @Test
   fun `given recommendation data then build the part A document`() {

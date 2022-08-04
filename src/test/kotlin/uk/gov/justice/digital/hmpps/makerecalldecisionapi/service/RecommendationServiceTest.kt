@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
@@ -387,5 +388,31 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       .hasMessage("No recommendation found for id: 456")
 
     then(recommendationRepository).should().findById(456L)
+  }
+
+  @Test
+  fun `generate Part A document from recommendation data`() {
+    val existingRecommendation = RecommendationEntity(
+      id = 1,
+      data = RecommendationModel(
+        crn = crn,
+        status = Status.DRAFT,
+        custodyStatus = CustodyStatus(value = CustodyStatusValue.YES_PRISON, options = null),
+        lastModifiedBy = "Jack",
+        lastModifiedDate = "2022-07-01T15:22:24.567Z",
+        createdBy = "Jack",
+        createdDate = "2022-07-01T15:22:24.567Z"
+      )
+    )
+
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    given(partATemplateReplacementService.generateDocFromTemplate(existingRecommendation))
+      .willReturn("encoded document")
+
+    val result = recommendationService.generatePartA(1L)
+
+    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_$crn.docx", fileContents = "encoded document"))
   }
 }
