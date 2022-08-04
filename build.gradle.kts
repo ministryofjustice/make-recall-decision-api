@@ -32,6 +32,7 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("io.opentelemetry:opentelemetry-api:1.16.0")
   implementation("joda-time:joda-time:2.10.14")
+  implementation("com.deepoove:poi-tl:1.12.0")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.0")
@@ -53,6 +54,7 @@ dependencies {
   testImplementation("org.mock-server:mockserver-netty:5.13.2")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
