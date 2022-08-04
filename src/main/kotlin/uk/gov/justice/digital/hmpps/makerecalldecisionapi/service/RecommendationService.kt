@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
@@ -25,7 +26,8 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
-  @Lazy val personDetailsService: PersonDetailsService
+  @Lazy val personDetailsService: PersonDetailsService,
+  val partATemplateReplacementService: PartATemplateReplacementService
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -124,6 +126,19 @@ internal class RecommendationService(
     } else {
       null
     }
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  fun generatePartA(recommendationId: Long): PartAResponse {
+    val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
+      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+
+    val fileContents = partATemplateReplacementService.generateDocFromTemplate(recommendationEntity)
+
+    return PartAResponse(
+      fileName = "NAT_Recall_Part_A_" + recommendationEntity.data.crn + ".docx",
+      fileContents = fileContents
+    )
   }
 
   private fun nowDate(): String {
