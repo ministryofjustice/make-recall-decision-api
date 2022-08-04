@@ -61,6 +61,7 @@ internal class RiskServiceTest {
   @Mock
   private lateinit var arnApiClient: ArnApiClient
 
+  @Mock
   private lateinit var partATemplateReplacementService: PartATemplateReplacementService
 
   protected lateinit var userAccessValidator: UserAccessValidator

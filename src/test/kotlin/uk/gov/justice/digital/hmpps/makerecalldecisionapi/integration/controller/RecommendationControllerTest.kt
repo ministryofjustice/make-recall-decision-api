@@ -133,6 +133,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `generate a Part A from recommendation data`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
 
     val response = convertResponseToJSONObject(
