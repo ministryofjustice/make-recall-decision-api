@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CurrentAddress
@@ -15,9 +16,9 @@ import java.time.LocalDate
 internal class PersonDetailsService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val userAccessValidator: UserAccessValidator,
-  private val recommendationService: RecommendationService
+  @Lazy private val recommendationService: RecommendationService
 ) {
-  suspend fun getPersonDetails(crn: String): PersonDetailsResponse {
+  fun getPersonDetails(crn: String): PersonDetailsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       PersonDetailsResponse(userAccessResponse = userAccessResponse)

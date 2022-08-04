@@ -24,6 +24,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create recommendation`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -40,10 +42,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("name")).isEqualTo("John Smith")
   }
 
   @Test
   fun `get recommendation`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
     updateRecommendation()
 
@@ -70,6 +75,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.options[1].text").isEqualTo("Yes, police custody")
       .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
+      .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
   }
 
   private fun updateRecommendation() {
@@ -86,6 +92,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `update a recommendation`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
 
     webTestClient.patch()
@@ -115,6 +123,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
       .jsonPath("$.status").isEqualTo("DRAFT")
+      .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
