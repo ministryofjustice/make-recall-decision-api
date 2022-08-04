@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.hibernate.validator.internal.util.Contracts.assertNotNull
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -128,6 +129,23 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
+  }
+
+  @Test
+  fun `generate a Part A from recommendation data`() {
+    deleteAndCreateRecommendation()
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/part-a")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_$crn.docx")
+    assertNotNull(response.get("fileContents"))
   }
 
   @Test
