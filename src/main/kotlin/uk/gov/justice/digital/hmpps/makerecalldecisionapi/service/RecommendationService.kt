@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
@@ -30,13 +31,13 @@ internal class RecommendationService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
-    val personName = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }?.personalDetailsOverview?.name
-    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, personName)
+    val name = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }?.personalDetailsOverview?.name
+    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, PersonOnProbation(name = name))
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
       status = savedRecommendation?.data?.status,
-      personName = savedRecommendation?.data?.personName
+      personOnProbation = savedRecommendation?.data?.personOnProbation
     )
   }
 
@@ -56,7 +57,7 @@ internal class RecommendationService(
         value = recommendationEntity.data.custodyStatus?.value,
         options = recommendationEntity.data.custodyStatus?.options
       ),
-      personName = recommendationEntity.data.personName
+      personOnProbation = recommendationEntity.data.personOnProbation
     )
   }
 
@@ -74,7 +75,7 @@ internal class RecommendationService(
       status = updatedRecommendationEntity.data.status,
       recallType = updateRecommendationRequest.recallType,
       custodyStatus = updateRecommendationRequest.custodyStatus,
-      personName = updatedRecommendationEntity.data.personName
+      personOnProbation = updatedRecommendationEntity.data.personOnProbation
     )
   }
 
@@ -133,7 +134,7 @@ internal class RecommendationService(
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
     createdByUserName: String?,
-    personName: String?
+    personOnProbation: PersonOnProbation?
   ): RecommendationEntity? {
 
     val now = nowDate()
@@ -147,7 +148,7 @@ internal class RecommendationService(
           lastModifiedDate = now,
           createdBy = createdByUserName,
           createdDate = now,
-          personName = personName
+          personOnProbation = personOnProbation
         )
       )
     )

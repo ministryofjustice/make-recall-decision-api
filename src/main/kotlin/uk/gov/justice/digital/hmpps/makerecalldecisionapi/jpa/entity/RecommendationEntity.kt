@@ -4,6 +4,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import java.io.Serializable
 import javax.persistence.Column
@@ -39,7 +40,7 @@ data class RecommendationModel(
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
   val createdDate: String? = null,
-  val personName: String? = null
+  val personOnProbation: PersonOnProbation? = null
 ) : Serializable
 
 enum class Status {

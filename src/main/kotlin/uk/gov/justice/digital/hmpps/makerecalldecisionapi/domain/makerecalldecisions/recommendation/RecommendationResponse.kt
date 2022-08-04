@@ -8,5 +8,9 @@ data class RecommendationResponse(
   val custodyStatus: CustodyStatus? = null,
   val crn: String? = null,
   val recallType: RecallType? = null,
-  val personName: String? = null
+  val personOnProbation: PersonOnProbation? = null
+)
+
+data class PersonOnProbation(
+  val name: String? = null
 )

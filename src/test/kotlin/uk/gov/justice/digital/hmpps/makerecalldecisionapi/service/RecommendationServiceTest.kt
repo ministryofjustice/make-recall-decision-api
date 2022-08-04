@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -42,7 +43,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         crn = crn,
         status = Status.DRAFT,
         lastModifiedBy = "Bill",
-        personName = "John Smith"
+        personOnProbation = PersonOnProbation(name = "John Smith")
       )
     )
 
@@ -56,12 +57,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     // then
     assertThat(result.id).isEqualTo(1)
     assertThat(result.status).isEqualTo(Status.DRAFT)
-    assertThat(result.personName).isEqualTo("John Smith")
+    assertThat(result.personOnProbation?.name).isEqualTo("John Smith")
 
     then(recommendationRepository).should().save(
       recommendationToSave.copy(
         id = null,
-        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personName = "John Smith", lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
+        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personOnProbation = PersonOnProbation(name = "John Smith"), lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
       )
     )
   }
@@ -74,7 +75,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(
         crn = crn,
         status = Status.DRAFT,
-        personName = "John Smith",
+        personOnProbation = PersonOnProbation(name = "John Smith"),
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
@@ -109,7 +110,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = existingRecommendation.id,
         data = RecommendationModel(
           crn = existingRecommendation.data.crn,
-          personName = "John Smith",
+          personOnProbation = PersonOnProbation(name = "John Smith"),
           recallType = RecallType(
             value = "NO_RECALL",
             options = listOf(
@@ -149,7 +150,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.personName).isEqualTo("John Smith")
+    assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo("John Smith")
     assertThat(updateRecommendationResponse.recallType?.value).isEqualTo("NO_RECALL")
     assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
     assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
@@ -177,7 +178,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(
         crn = crn,
         status = Status.DRAFT,
-        personName = null,
+        personOnProbation = null,
         lastModifiedBy = "Bill",
         recallType = RecallType(
           value = null,
@@ -201,7 +202,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = existingRecommendation.id,
         data = RecommendationModel(
           crn = existingRecommendation.data.crn,
-          personName = null,
+          personOnProbation = null,
           recallType = RecallType(
             value = null,
             options = null
@@ -229,7 +230,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.id).isEqualTo(1)
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.personName).isEqualTo(null)
+    assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo(null)
     assertThat(updateRecommendationResponse.recallType?.value).isNull()
     assertThat(updateRecommendationResponse.recallType?.options).isNull()
 
@@ -287,7 +288,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
-          personName = "John Smith",
+          personOnProbation = PersonOnProbation(name = "John Smith"),
           custodyStatus = custodyStatus,
           recallType = recallType,
           lastModifiedBy = "Bill",
@@ -303,7 +304,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(recommendationResponse.personName).isEqualTo(recommendation.get().data.personName)
+    assertThat(recommendationResponse.personOnProbation?.name).isEqualTo(recommendation.get().data.personOnProbation?.name)
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
     assertThat(recommendationResponse.recallType?.value).isEqualTo("FIXED_TERM")
     assertThat(recommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")

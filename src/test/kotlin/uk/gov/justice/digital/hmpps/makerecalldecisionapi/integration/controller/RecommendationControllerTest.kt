@@ -42,7 +42,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
-    assertThat(response.get("personName")).isEqualTo("John Smith")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("name")).isEqualTo("John Smith")
   }
 
   @Test
@@ -75,7 +75,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.options[1].text").isEqualTo("Yes, police custody")
       .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
-      .jsonPath("$.personName").isEqualTo("John Smith")
+      .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
   }
 
   private fun updateRecommendation() {
@@ -123,7 +123,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.options[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.options[2].text").isEqualTo("No")
       .jsonPath("$.status").isEqualTo("DRAFT")
-      .jsonPath("$.personName").isEqualTo("John Smith")
+      .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
 
