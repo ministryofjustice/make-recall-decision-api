@@ -337,6 +337,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
 
     return PersonDetails(
       name = "John Smith",
+      firstName = "John",
+      surname = "Smith",
       dateOfBirth = dateOfBirth,
       age = dateOfBirth?.until(LocalDate.now())?.years,
       gender = "Male",

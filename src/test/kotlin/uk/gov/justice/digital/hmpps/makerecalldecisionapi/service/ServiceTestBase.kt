@@ -69,7 +69,7 @@ internal abstract class ServiceTestBase {
   fun userValidatorSetup() {
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(
       PersonDetailsResponse(
-        personalDetailsOverview = PersonDetails(name = "John Smith", age = null, crn = null, dateOfBirth = null, gender = null)
+        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", age = null, crn = null, dateOfBirth = null, gender = null)
       )
     )
     userAccessValidator = UserAccessValidator(communityApiClient)

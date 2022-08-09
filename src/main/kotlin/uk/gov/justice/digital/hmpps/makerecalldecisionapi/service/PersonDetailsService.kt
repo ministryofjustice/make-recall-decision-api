@@ -30,20 +30,12 @@ internal class PersonDetailsService(
       val addressNumber = activeAddress?.addressNumber ?: ""
       val streetName = activeAddress?.streetName ?: ""
       val buildingName = activeAddress?.buildingName ?: ""
-      val firstName = offenderDetails.firstName ?: ""
-      val surname = offenderDetails.surname ?: ""
       val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
       val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return PersonDetailsResponse(
-        personalDetailsOverview = PersonDetails(
-          name = formatTwoWordField(firstName, surname),
-          dateOfBirth = offenderDetails.dateOfBirth,
-          age = age(offenderDetails),
-          gender = offenderDetails.gender ?: "",
-          crn = crn
-        ),
+        personalDetailsOverview = buildPersonalDetails(crn, offenderDetails),
         currentAddress = CurrentAddress(
           line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
           line2 = activeAddress?.district ?: "",
@@ -66,11 +58,20 @@ internal class PersonDetailsService(
 
   fun buildPersonalDetailsOverviewResponse(crn: String): PersonDetails {
     val offenderDetails = getPersonalDetailsOverview(crn)
+    return buildPersonalDetails(crn, offenderDetails)
+  }
+
+  fun buildPersonalDetails(crn: String, offenderDetails: AllOffenderDetailsResponse): PersonDetails {
+    val firstName = offenderDetails.firstName ?: ""
+    val surname = offenderDetails.surname ?: ""
+
     return PersonDetails(
-      name = "${offenderDetails.firstName} ${offenderDetails.surname}",
+      name = formatTwoWordField(firstName, surname),
+      firstName = firstName,
+      surname = surname,
       dateOfBirth = offenderDetails.dateOfBirth,
       age = age(offenderDetails),
-      gender = offenderDetails.gender,
+      gender = offenderDetails.gender ?: "",
       crn = crn
     )
   }

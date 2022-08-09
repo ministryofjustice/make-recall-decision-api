@@ -12,5 +12,7 @@ data class RecommendationResponse(
 )
 
 data class PersonOnProbation(
-  val name: String? = null
+  val name: String? = null,
+  val firstName: String? = null,
+  val surname: String? = null
 )

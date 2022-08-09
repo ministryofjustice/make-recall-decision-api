@@ -5,6 +5,8 @@ import java.time.LocalDate
 
 data class PersonDetails(
   val name: String?,
+  val firstName: String?,
+  val surname: String?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val dateOfBirth: LocalDate?,
   val age: Int?,
