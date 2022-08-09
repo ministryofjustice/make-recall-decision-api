@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -146,7 +147,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectStatus().isOk
     )
 
-    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_$crn.docx")
+    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
   }
 

@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import org.joda.time.format.DateTimeFormat.forPattern
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
@@ -20,6 +17,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -33,8 +32,12 @@ internal class RecommendationService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
-    val name = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }?.personalDetailsOverview?.name
-    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, PersonOnProbation(name = name))
+    val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+    val name = personDetails?.personalDetailsOverview?.name
+    val firstName = personDetails?.personalDetailsOverview?.firstName
+    val surname = personDetails?.personalDetailsOverview?.surname
+
+    val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, PersonOnProbation(name = name, firstName = firstName, surname = surname))
 
     return RecommendationResponse(
       id = savedRecommendation?.id,
@@ -92,7 +95,7 @@ internal class RecommendationService(
     existingRecommendationEntity.data.recallType = updateRecallType(existingRecommendationEntity, updateRecommendationRequest)
     existingRecommendationEntity.data.custodyStatus = updateCustodyStatus(existingRecommendationEntity, updateRecommendationRequest)
     existingRecommendationEntity.data.status = status
-    existingRecommendationEntity.data.lastModifiedDate = nowDate()
+    existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
     existingRecommendationEntity.data.lastModifiedBy = updatedByUserName
 
     return recommendationRepository.save(existingRecommendationEntity)
@@ -136,14 +139,24 @@ internal class RecommendationService(
     val fileContents = partATemplateReplacementService.generateDocFromTemplate(recommendationEntity)
 
     return PartAResponse(
-      fileName = "NAT_Recall_Part_A_" + recommendationEntity.data.crn + ".docx",
+      fileName = generatePartAFileName(recommendationEntity.data),
       fileContents = fileContents
     )
   }
 
-  private fun nowDate(): String {
-    val formatter = forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    return formatter.print(DateTime(DateTimeZone.UTC)).toString()
+  private fun generatePartAFileName(recommendation: RecommendationModel): String {
+
+    val surname = recommendation.personOnProbation?.surname ?: ""
+    val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation?.firstName.isNotEmpty()) {
+      recommendation.personOnProbation?.firstName.subSequence(0, 1)
+    } else ""
+    val crn = recommendation.crn ?: ""
+
+    return "NAT_Recall_Part_A_" +
+      nowDate() + "_" +
+      surname + "_" +
+      firstName + "_" +
+      crn + ".docx"
   }
 
   private fun saveNewRecommendationEntity(
@@ -152,7 +165,7 @@ internal class RecommendationService(
     personOnProbation: PersonOnProbation?
   ): RecommendationEntity? {
 
-    val now = nowDate()
+    val now = nowDateTime()
 
     return recommendationRepository.save(
       RecommendationEntity(

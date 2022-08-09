@@ -63,7 +63,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     then(recommendationRepository).should().save(
       recommendationToSave.copy(
         id = null,
-        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personOnProbation = PersonOnProbation(name = "John Smith"), lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
+        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personOnProbation = PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"), lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
       )
     )
   }
@@ -401,7 +401,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z"
+        createdDate = "2022-07-01T15:22:24.567Z",
+        personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
       )
     )
 
@@ -413,6 +414,33 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     val result = recommendationService.generatePartA(1L)
 
-    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_$crn.docx", fileContents = "encoded document"))
+    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_26072022_Long_J_$crn.docx", fileContents = "encoded document"))
+  }
+
+  @Test
+  fun `generate Part A document with missing recommendation data required to build filename`() {
+    val existingRecommendation = RecommendationEntity(
+      id = 1,
+      data = RecommendationModel(
+        crn = null,
+        status = Status.DRAFT,
+        custodyStatus = CustodyStatus(value = CustodyStatusValue.YES_PRISON, options = null),
+        lastModifiedBy = "Jack",
+        lastModifiedDate = "2022-07-01T15:22:24.567Z",
+        createdBy = "Jack",
+        createdDate = "2022-07-01T15:22:24.567Z",
+        personOnProbation = PersonOnProbation(firstName = "", surname = "")
+      )
+    )
+
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    given(partATemplateReplacementService.generateDocFromTemplate(existingRecommendation))
+      .willReturn("encoded document")
+
+    val result = recommendationService.generatePartA(1L)
+
+    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_26072022___.docx", fileContents = "encoded document"))
   }
 }
