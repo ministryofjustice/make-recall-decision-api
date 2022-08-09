@@ -53,6 +53,21 @@ generic-service:
       POSTGRES_PASSWORD: "password"
 
   allowlist:
+    # Probation Site addressing supernet.  New DIA infrastructure deployed in ~120 Probation sites as part of the Probation Reform Programme.  Continuing into Approved Premise
+    # infrastructure refresh.
+    #
+    # Each site allocated a /29 subnet from these supernets.  Full subnet breakdown/allocation in MoJ IPAM https://ipam.moj.technology/subnets/3/334/
+    # justin.fielding@justice.gov.uk
+    probation-service-sites-group-1: "194.33.200.0/22"
+    probation-service-sites-group-2: "194.33.204.0/23"
+    probation-service-sites-group-3: "194.33.206.0/23"
+    vodafone-dia-sites-group-4: "194.33.216.0/23"
+    # Individual DIA probation sites using Vodafone Enterprise Broadband:
+    west-bromwich-fits_1111: "87.74.137.157/32"
+    bolton-fits_4508: "87.74.150.215/32"
+    carlisle-fits_4489: "87.75.71.77/32"
+    workington: "87.75.74.100/32"
+    # Other
     office: "217.33.148.210/32"
     health-kick: "35.177.252.195/32"
     petty-france-wifi: "213.121.161.112/28"
