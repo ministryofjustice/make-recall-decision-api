@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -46,7 +47,8 @@ data class RecommendationModel(
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
   val createdDate: String? = null,
-  val personOnProbation: PersonOnProbation? = null
+  val personOnProbation: PersonOnProbation? = null,
+  var alternativesToRecallTried: AlternativesToRecallTried? = null
 ) : Serializable
 
 enum class Status {

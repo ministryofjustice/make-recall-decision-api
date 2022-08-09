@@ -14,9 +14,12 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -90,7 +93,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z"
+        createdDate = "2022-07-01T15:22:24.567Z",
+        alternativesToRecallTried = AlternativesToRecallTried(
+          selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
+          allOptions = listOf(RecallAlternative(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
+        )
       )
     )
 
@@ -114,7 +121,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
           createdBy = existingRecommendation.data.createdBy,
-          createdDate = existingRecommendation.data.createdDate
+          createdDate = existingRecommendation.data.createdDate,
+          alternativesToRecallTried = existingRecommendation.data.alternativesToRecallTried
         )
       )
 
@@ -151,7 +159,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             responseToProbation = null,
             isThisAnEmergencyRecall = null,
             hasVictimsInContactScheme = null,
-            dateVloInformed = null
+            dateVloInformed = null,
+            alternativesToRecallTried = null
           ),
           recommendationId = 456L,
           "Bill"

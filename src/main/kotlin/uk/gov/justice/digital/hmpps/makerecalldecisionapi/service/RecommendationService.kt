@@ -58,7 +58,8 @@ internal class RecommendationService(
       isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
       hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,
       dateVloInformed = recommendationEntity.data.dateVloInformed,
-      personOnProbation = recommendationEntity.data.personOnProbation
+      personOnProbation = recommendationEntity.data.personOnProbation,
+      alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried
     )
   }
 
@@ -71,6 +72,7 @@ internal class RecommendationService(
 
     val status = updateRecommendationRequest.status ?: existingRecommendationEntity.data.status
 
+    existingRecommendationEntity.data.alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried ?: existingRecommendationEntity.data.alternativesToRecallTried
     existingRecommendationEntity.data.recallType = updateRecommendationRequest.recallType ?: existingRecommendationEntity.data.recallType
     existingRecommendationEntity.data.custodyStatus = updateRecommendationRequest.custodyStatus ?: existingRecommendationEntity.data.custodyStatus
     existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation ?: existingRecommendationEntity.data.responseToProbation

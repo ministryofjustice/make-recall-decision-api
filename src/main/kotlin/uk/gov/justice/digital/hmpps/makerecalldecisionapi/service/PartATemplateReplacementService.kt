@@ -38,6 +38,15 @@ internal class PartATemplateReplacementService {
       "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
       "has_victims_in_contact_scheme" to partAData.hasVictimsInContactScheme,
       "date_vlo_informed" to partAData.dateVloInformed,
+      "warning_letter_details" to partAData.selectedAlternativesMap["warning_letter_details"],
+      "drug_testing_details" to partAData.selectedAlternativesMap["drug_testing_details"],
+      "increased_frequency_details" to partAData.selectedAlternativesMap["increased_frequency_details"],
+      "extra_licence_conditions_details" to partAData.selectedAlternativesMap["extra_licence_conditions_details"],
+      "referral_to_other_teams_details" to partAData.selectedAlternativesMap["referral_to_other_teams_details"],
+      "referral_to_approved_premises_details" to partAData.selectedAlternativesMap["referral_to_approved_premises_details"],
+      "referral_to_partnership_agencies_details" to partAData.selectedAlternativesMap["referral_to_partnership_agencies_details"],
+      "risk_escalation_details" to partAData.selectedAlternativesMap["risk_escalation_details"],
+      "alternative_to_recall_other_details" to partAData.selectedAlternativesMap["alternative_to_recall_other_details"]
     )
   }
 }
