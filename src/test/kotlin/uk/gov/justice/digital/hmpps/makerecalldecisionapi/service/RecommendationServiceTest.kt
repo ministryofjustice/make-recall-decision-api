@@ -18,6 +18,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -88,8 +90,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val updateRecommendationRequest = UpdateRecommendationRequest(
       status = null,
       recallType = RecallType(
-        value = "NO_RECALL",
-        options = listOf(
+        selected = RecallTypeSelectedValue(value = RecallTypeValue.NO_RECALL, details = "details"),
+        allOptions = listOf(
           TextValueOption(value = "NO_RECALL", text = "No recall"),
           TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
           TextValueOption(value = "STANDARD", text = "Standard")
@@ -113,8 +115,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = existingRecommendation.data.crn,
           personOnProbation = PersonOnProbation(name = "John Smith"),
           recallType = RecallType(
-            value = "NO_RECALL",
-            options = listOf(
+            selected = RecallTypeSelectedValue(value = RecallTypeValue.NO_RECALL, details = "details"),
+            allOptions = listOf(
               TextValueOption(value = "NO_RECALL", text = "No recall"),
               TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
               TextValueOption(value = "STANDARD", text = "Standard")
@@ -152,13 +154,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
     assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo("John Smith")
-    assertThat(updateRecommendationResponse.recallType?.value).isEqualTo("NO_RECALL")
-    assertThat(updateRecommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
-    assertThat(updateRecommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
-    assertThat(updateRecommendationResponse.recallType?.options!![1].value).isEqualTo("FIXED_TERM")
-    assertThat(updateRecommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
-    assertThat(updateRecommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
-    assertThat(updateRecommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
+    assertThat(updateRecommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.NO_RECALL)
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![0].value).isEqualTo("NO_RECALL")
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![0].text).isEqualTo("No recall")
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![1].value).isEqualTo("FIXED_TERM")
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
+    assertThat(updateRecommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
     assertThat(updateRecommendationResponse.custodyStatus?.value).isEqualTo(CustodyStatusValue.YES_PRISON)
     assertThat(updateRecommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
     assertThat(updateRecommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
@@ -182,8 +184,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         personOnProbation = null,
         lastModifiedBy = "Bill",
         recallType = RecallType(
-          value = null,
-          options = null
+          selected = null,
+          allOptions = null
         ),
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z"
@@ -205,8 +207,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = existingRecommendation.data.crn,
           personOnProbation = null,
           recallType = RecallType(
-            value = null,
-            options = null
+            selected = null,
+            allOptions = null
           ),
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
@@ -232,8 +234,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
     assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
     assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo(null)
-    assertThat(updateRecommendationResponse.recallType?.value).isNull()
-    assertThat(updateRecommendationResponse.recallType?.options).isNull()
+    assertThat(updateRecommendationResponse.recallType?.selected).isNull()
+    assertThat(updateRecommendationResponse.recallType?.allOptions).isNull()
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -267,8 +269,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `get a recommendation from the database`() {
     val recallType = RecallType(
-      value = "FIXED_TERM",
-      options = listOf(
+      selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"),
+      allOptions = listOf(
         TextValueOption(value = "NO_RECALL", text = "No recall"),
         TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
         TextValueOption(value = "STANDARD", text = "Standard")
@@ -307,13 +309,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
     assertThat(recommendationResponse.personOnProbation?.name).isEqualTo(recommendation.get().data.personOnProbation?.name)
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
-    assertThat(recommendationResponse.recallType?.value).isEqualTo("FIXED_TERM")
-    assertThat(recommendationResponse.recallType?.options!![0].value).isEqualTo("NO_RECALL")
-    assertThat(recommendationResponse.recallType?.options!![0].text).isEqualTo("No recall")
-    assertThat(recommendationResponse.recallType?.options!![1].value).isEqualTo("FIXED_TERM")
-    assertThat(recommendationResponse.recallType?.options!![1].text).isEqualTo("Fixed term")
-    assertThat(recommendationResponse.recallType?.options!![2].value).isEqualTo("STANDARD")
-    assertThat(recommendationResponse.recallType?.options!![2].text).isEqualTo("Standard")
+    assertThat(recommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.FIXED_TERM)
+    assertThat(recommendationResponse.recallType?.selected?.details).isEqualTo("My details")
+    assertThat(recommendationResponse.recallType?.allOptions!![0].value).isEqualTo("NO_RECALL")
+    assertThat(recommendationResponse.recallType?.allOptions!![0].text).isEqualTo("No recall")
+    assertThat(recommendationResponse.recallType?.allOptions!![1].value).isEqualTo("FIXED_TERM")
+    assertThat(recommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
+    assertThat(recommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
+    assertThat(recommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
     assertThat(recommendationResponse.custodyStatus?.value).isEqualTo(CustodyStatusValue.YES_PRISON)
     assertThat(recommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
     assertThat(recommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
