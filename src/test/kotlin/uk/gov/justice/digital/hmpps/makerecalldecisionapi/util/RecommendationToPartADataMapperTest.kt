@@ -28,7 +28,7 @@ class RecommendationToPartADataMapperTest {
   @CsvSource("YES_POLICE,Police Custody", "YES_PRISON,Prison Custody", "NO,No")
   fun `given custody status in recommendation data then should map to the part A text`(custodyValue: CustodyStatusValue, partADisplayText: String) {
     runTest {
-      val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = "ABC123", custodyStatus = CustodyStatus(value = custodyValue, options = null)))
+      val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = "ABC123", custodyStatus = CustodyStatus(selected = custodyValue, allOptions = null)))
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 

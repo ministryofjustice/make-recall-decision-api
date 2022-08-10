@@ -16,8 +16,8 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "custodyStatus": {
-    "value": "YES_PRISON",
-    "options": [
+    "selected": "YES_PRISON",
+    "allOptions": [
       { "value": "YES_PRISON", "text": "Yes, prison custody" },
       { "value": "YES_POLICE", "text": "Yes, police custody" },
       { "value": "NO", "text": "No" }

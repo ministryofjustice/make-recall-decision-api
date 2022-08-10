@@ -18,7 +18,7 @@ class RecommendationToPartADataMapper {
     }
 
     private fun findCustodyStatusToDisplay(custodyStatus: CustodyStatus?): String {
-      return when (custodyStatus?.value) {
+      return when (custodyStatus?.selected) {
         CustodyStatusValue.YES_POLICE -> CustodyStatusValue.YES_POLICE.partADisplayValue
         CustodyStatusValue.YES_PRISON -> CustodyStatusValue.YES_PRISON.partADisplayValue
         else -> CustodyStatusValue.NO.partADisplayValue
