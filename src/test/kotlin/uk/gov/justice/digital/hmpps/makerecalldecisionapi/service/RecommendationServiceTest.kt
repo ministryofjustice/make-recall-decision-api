@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -412,12 +411,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
 
-    given(partATemplateReplacementService.generateDocFromTemplate(existingRecommendation))
-      .willReturn("encoded document")
-
     val result = recommendationService.generatePartA(1L)
 
-    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_26072022_Long_J_$crn.docx", fileContents = "encoded document"))
+    assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Long_J_$crn.docx")
+    assertThat(result.fileContents).isNotNull()
   }
 
   @Test
@@ -439,11 +436,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
 
-    given(partATemplateReplacementService.generateDocFromTemplate(existingRecommendation))
-      .willReturn("encoded document")
-
     val result = recommendationService.generatePartA(1L)
 
-    assertThat(result).isEqualTo(PartAResponse(fileName = "NAT_Recall_Part_A_26072022___.docx", fileContents = "encoded document"))
+    assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___.docx")
+    assertThat(result.fileContents).isNotNull()
   }
 }

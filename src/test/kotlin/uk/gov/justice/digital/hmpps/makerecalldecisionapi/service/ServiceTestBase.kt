@@ -60,7 +60,6 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var recommendationService: RecommendationService
 
-  @Mock
   protected lateinit var partATemplateReplacementService: PartATemplateReplacementService
 
   protected val crn = "12345"
@@ -73,6 +72,7 @@ internal abstract class ServiceTestBase {
       )
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
+    partATemplateReplacementService = PartATemplateReplacementService()
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
