@@ -53,15 +53,9 @@ internal class RecommendationService(
     return RecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
-      recallType = RecallType(
-        value = recommendationEntity.data.recallType?.value,
-        options = recommendationEntity.data.recallType?.options
-      ),
+      recallType = recommendationEntity.data.recallType,
       status = recommendationEntity.data.status,
-      custodyStatus = CustodyStatus(
-        value = recommendationEntity.data.custodyStatus?.value,
-        options = recommendationEntity.data.custodyStatus?.options
-      ),
+      custodyStatus = recommendationEntity.data.custodyStatus,
       personOnProbation = recommendationEntity.data.personOnProbation
     )
   }
