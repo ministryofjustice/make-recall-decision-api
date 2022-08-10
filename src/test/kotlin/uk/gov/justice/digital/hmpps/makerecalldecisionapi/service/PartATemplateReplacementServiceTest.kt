@@ -27,7 +27,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          custodyStatus = CustodyStatus(value = CustodyStatusValue.YES_POLICE, options = null),
+          custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null)
         )
       )

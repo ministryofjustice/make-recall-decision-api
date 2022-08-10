@@ -97,8 +97,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
       ),
       custodyStatus = CustodyStatus(
-        value = CustodyStatusValue.YES_PRISON,
-        options = listOf(
+        selected = CustodyStatusValue.YES_PRISON,
+        allOptions = listOf(
           TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
           TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
           TextValueOption(value = "NO", text = "No")
@@ -122,8 +122,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             )
           ),
           custodyStatus = CustodyStatus(
-            value = CustodyStatusValue.YES_PRISON,
-            options = listOf(
+            selected = CustodyStatusValue.YES_PRISON,
+            allOptions = listOf(
               TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
               TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
               TextValueOption(value = "NO", text = "No")
@@ -160,13 +160,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(updateRecommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
     assertThat(updateRecommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
     assertThat(updateRecommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
-    assertThat(updateRecommendationResponse.custodyStatus?.value).isEqualTo(CustodyStatusValue.YES_PRISON)
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![1].value).isEqualTo("YES_POLICE")
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![1].text).isEqualTo("Yes, police custody")
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![2].value).isEqualTo("NO")
-    assertThat(updateRecommendationResponse.custodyStatus?.options!![2].text).isEqualTo("No")
+    assertThat(updateRecommendationResponse.custodyStatus?.selected).isEqualTo(CustodyStatusValue.YES_PRISON)
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![0].value).isEqualTo("YES_PRISON")
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![0].text).isEqualTo("Yes, prison custody")
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![1].value).isEqualTo("YES_POLICE")
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![1].text).isEqualTo("Yes, police custody")
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![2].value).isEqualTo("NO")
+    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
 
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
@@ -277,8 +277,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     )
 
     val custodyStatus = CustodyStatus(
-      value = CustodyStatusValue.YES_PRISON,
-      options = listOf(
+      selected = CustodyStatusValue.YES_PRISON,
+      allOptions = listOf(
         TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
         TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
         TextValueOption(value = "NO", text = "No")
@@ -316,13 +316,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
     assertThat(recommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
     assertThat(recommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
-    assertThat(recommendationResponse.custodyStatus?.value).isEqualTo(CustodyStatusValue.YES_PRISON)
-    assertThat(recommendationResponse.custodyStatus?.options!![0].value).isEqualTo("YES_PRISON")
-    assertThat(recommendationResponse.custodyStatus?.options!![0].text).isEqualTo("Yes, prison custody")
-    assertThat(recommendationResponse.custodyStatus?.options!![1].value).isEqualTo("YES_POLICE")
-    assertThat(recommendationResponse.custodyStatus?.options!![1].text).isEqualTo("Yes, police custody")
-    assertThat(recommendationResponse.custodyStatus?.options!![2].value).isEqualTo("NO")
-    assertThat(recommendationResponse.custodyStatus?.options!![2].text).isEqualTo("No")
+    assertThat(recommendationResponse.custodyStatus?.selected).isEqualTo(CustodyStatusValue.YES_PRISON)
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![0].value).isEqualTo("YES_PRISON")
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![0].text).isEqualTo("Yes, prison custody")
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![1].value).isEqualTo("YES_POLICE")
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![1].text).isEqualTo("Yes, police custody")
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![2].value).isEqualTo("NO")
+    assertThat(recommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
   }
 
   @Test
@@ -399,7 +399,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(
         crn = crn,
         status = Status.DRAFT,
-        custodyStatus = CustodyStatus(value = CustodyStatusValue.YES_PRISON, options = null),
+        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_PRISON, allOptions = null),
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
@@ -424,7 +424,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(
         crn = null,
         status = Status.DRAFT,
-        custodyStatus = CustodyStatus(value = CustodyStatusValue.YES_PRISON, options = null),
+        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_PRISON, allOptions = null),
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
