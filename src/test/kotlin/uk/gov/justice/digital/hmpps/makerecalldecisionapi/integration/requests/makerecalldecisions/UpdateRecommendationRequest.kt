@@ -5,8 +5,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 {
   "recallType": {
-    "value": "FIXED_TERM",
-    "options": [
+    "selected": {
+      "value": "FIXED_TERM",
+      "details": "My details"
+    },
+    "allOptions": [
       { "value": "FIXED_TERM", "text": "Fixed term" },
       { "value": "STANDARD", "text": "Standard" },
       { "value": "NO_RECALL", "text": "No recall" }

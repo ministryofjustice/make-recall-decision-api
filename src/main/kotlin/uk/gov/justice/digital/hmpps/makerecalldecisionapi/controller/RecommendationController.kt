@@ -66,7 +66,7 @@ internal class RecommendationController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/recommendations/{recommendationId}/part-a")
-  @Operation(summary = "WIP: Generates a PArt A document")
+  @Operation(summary = "WIP: Generates a Part A document")
   suspend fun generatePartADocument(
     @PathVariable("recommendationId") recommendationId: Long,
   ): PartAResponse {
