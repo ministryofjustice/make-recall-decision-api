@@ -19,8 +19,8 @@ internal class PartATemplateReplacementService {
     val file = XWPFTemplate.compile(resource.inputStream).render(
       hashMapOf(
         "custody_status" to partAData.custodyStatus,
-        "recall_type" to partAData.recallType,
-        "recall_type_details" to partAData.recallType,
+        "recall_type" to partAData.recallType.value,
+        "recall_type_details" to partAData.recallType.details,
       )
     )
 
