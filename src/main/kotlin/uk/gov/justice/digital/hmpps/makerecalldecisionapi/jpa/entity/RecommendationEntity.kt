@@ -35,6 +35,7 @@ data class RecommendationModel(
   val crn: String?,
   var recallType: RecallType? = null,
   var custodyStatus: CustodyStatus? = null,
+  var responseToProbation: String? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,

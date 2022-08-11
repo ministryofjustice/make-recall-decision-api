@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 data class PartAData(
   val custodyStatus: String,
   val recallType: RecallTypePartA,
+  val responseToProbation: String?,
 )
 
 data class RecallTypePartA(

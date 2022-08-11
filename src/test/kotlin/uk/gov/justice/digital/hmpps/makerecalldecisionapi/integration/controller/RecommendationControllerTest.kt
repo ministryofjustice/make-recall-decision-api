@@ -77,6 +77,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.allOptions[1].text").isEqualTo("Yes, police custody")
       .jsonPath("$.custodyStatus.allOptions[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.allOptions[2].text").isEqualTo("No")
+      .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
   }
 
@@ -124,6 +125,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.allOptions[1].text").isEqualTo("Yes, police custody")
       .jsonPath("$.custodyStatus.allOptions[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.allOptions[2].text").isEqualTo("No")
+      .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
       .jsonPath("$.status").isEqualTo("DRAFT")
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
 
