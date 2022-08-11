@@ -12,6 +12,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -64,7 +65,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     then(recommendationRepository).should().save(
       recommendationToSave.copy(
         id = null,
-        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personOnProbation = PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"), lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
+        data = (
+          RecommendationModel(
+            crn = crn,
+            status = Status.DRAFT,
+            personOnProbation = PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"),
+            lastModifiedBy = "Bill",
+            lastModifiedDate = "2022-07-26T09:48:27.443Z",
+            createdBy = "Bill",
+            createdDate = "2022-07-26T09:48:27.443Z"
+          )
+          )
       )
     )
   }
@@ -86,26 +97,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     )
 
     // and
-    val updateRecommendationRequest = UpdateRecommendationRequest(
-      status = null,
-      recallType = RecallType(
-        selected = RecallTypeSelectedValue(value = RecallTypeValue.NO_RECALL, details = "details"),
-        allOptions = listOf(
-          TextValueOption(value = "NO_RECALL", text = "No recall"),
-          TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-          TextValueOption(value = "STANDARD", text = "Standard")
-        )
-      ),
-      custodyStatus = CustodyStatus(
-        selected = CustodyStatusValue.YES_PRISON,
-        allOptions = listOf(
-          TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
-          TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
-          TextValueOption(value = "NO", text = "No")
-        )
-      ),
-      responseToProbation = "They have not responded well"
-    )
+    val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData()
 
     // and
     val recommendationToSave =
@@ -162,76 +154,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `updates a recommendation to the database when optional fields not present on request`() {
-    // given
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = crn,
-        status = Status.DRAFT,
-        personOnProbation = null,
-        lastModifiedBy = "Bill",
-        recallType = RecallType(
-          selected = null,
-          allOptions = null
-        ),
-        createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z"
-      )
-    )
-
-    // and
-    val updateRecommendationRequest = UpdateRecommendationRequest(
-      status = null,
-      recallType = null,
-      custodyStatus = null,
-      responseToProbation = null
-    )
-
-    // and
-    val recommendationToSave =
-      existingRecommendation.copy(
-        id = existingRecommendation.id,
-        data = RecommendationModel(
-          crn = existingRecommendation.data.crn,
-          personOnProbation = null,
-          recallType = RecallType(
-            selected = null,
-            allOptions = null
-          ),
-          status = existingRecommendation.data.status,
-          lastModifiedDate = "2022-07-26T09:48:27.443Z",
-          lastModifiedBy = "Bill",
-          createdBy = "Jack",
-          createdDate = "2022-07-01T15:22:24.567Z"
-        )
-      )
-
-    // and
-    given(recommendationRepository.save(any()))
-      .willReturn(recommendationToSave)
-
-    // and
-    given(recommendationRepository.findById(any()))
-      .willReturn(Optional.of(existingRecommendation))
-
-    // when
-    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
-
-    // then
-    assertThat(updateRecommendationResponse.id).isEqualTo(1)
-    assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
-    assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo(null)
-    assertThat(updateRecommendationResponse.recallType?.selected).isNull()
-    assertThat(updateRecommendationResponse.recallType?.allOptions).isNull()
-    assertThat(updateRecommendationResponse.responseToProbation).isNull()
-
-    then(recommendationRepository).should().save(recommendationToSave)
-    then(recommendationRepository).should().findById(1)
-  }
-
-  @Test
   fun `throws exception when no recommendation available for given id on an update`() {
     val recommendation = Optional.empty<RecommendationEntity>()
 
@@ -277,20 +199,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
     )
 
-    val recommendation = Optional.of(
-      RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn,
-          status = Status.DRAFT,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
-          custodyStatus = custodyStatus,
-          recallType = recallType,
-          responseToProbation = "They have not responded well",
-          lastModifiedBy = "Bill",
-          lastModifiedDate = "2022-05-18T19:33:56"
-        )
-      )
-    )
+    val recommendation = Optional.of(MrdTestDataBuilder.recommendationDataEntityData(crn))
 
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
@@ -321,10 +230,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a draft recommendation for CRN from the database`() {
-    val recommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(crn = crn, lastModifiedBy = "John Smith", lastModifiedDate = "2022-07-19T12:00:00", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z")
-    )
+    val recommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
     given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
       .willReturn(listOf(recommendation))
@@ -388,20 +294,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `generate Part A document from recommendation data`() {
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = crn,
-        status = Status.DRAFT,
-        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_PRISON, allOptions = null),
-        responseToProbation = "They have not responded well",
-        lastModifiedBy = "Jack",
-        lastModifiedDate = "2022-07-01T15:22:24.567Z",
-        createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z",
-        personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
-      )
-    )
+    val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
@@ -414,20 +307,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = null,
-        status = Status.DRAFT,
-        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_PRISON, allOptions = null),
-        responseToProbation = "They have not responded well",
-        lastModifiedBy = "Jack",
-        lastModifiedDate = "2022-07-01T15:22:24.567Z",
-        createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z",
-        personOnProbation = PersonOnProbation(firstName = "", surname = "")
-      )
-    )
+    var existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(null, "", "")
 
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
