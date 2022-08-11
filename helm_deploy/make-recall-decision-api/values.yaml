@@ -53,6 +53,8 @@ generic-service:
       POSTGRES_PASSWORD: "password"
 
   allowlist:
+    kettering_user: "194.33.196.4/24"
+    norwich_user: "194.33.192.0/24"
     office: "217.33.148.210/32"
     quantum: "62.25.109.197/32"
     quantum_alt: "212.137.36.230/32"
