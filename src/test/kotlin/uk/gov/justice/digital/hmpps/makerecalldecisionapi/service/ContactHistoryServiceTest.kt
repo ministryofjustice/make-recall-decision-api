@@ -275,13 +275,13 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   private fun expectedContactTypeGroupsResponse(): List<ContactGroupResponse> {
     return listOf(
       ContactGroupResponse(
-        groupId = "1",
-        label = "Appointment",
-        contactTypeCodes = listOf("COAI", "COAP")
+        groupId = "3",
+        label = "Appointments",
+        contactTypeCodes = listOf("CHVS", "COAI", "COAP")
       ),
       ContactGroupResponse(
-        groupId = "2",
-        label = "Home Visit",
+        groupId = "11",
+        label = "Home visit",
         contactTypeCodes = listOf("CHVS")
       ),
       ContactGroupResponse(

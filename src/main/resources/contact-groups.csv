@@ -1,45 +1,257 @@
 Group id,Group,Code,Contact name (for reference only - will not be used in UI)
-1,Appointment,COAI,Initial Appointment - In office (NS)
-1,Appointment,COAP,Planned Office Visit (NS)
-1,Appointment,COPT,Planned Telephone Contact (NS)
-2,Home Visit,CHVS,Home Visit to Case (NS)
-2,Home Visit,C253,Home Visit - Not Notified
-3,Internal communication,CM3A,eMail/Text from Other
-3,Internal communication,CM3B,eMail/Text to Other
-3,Internal communication,C326,Internal Communications
-3,Internal communication,CI3A,Information - from 3rd Party
-3,Internal communication,CT3A,Phone Contact from Other
-3,Internal communication,CT3B,Phone Contact to Other
-3,Internal communication,CL3A,Letter/Fax from Other
-3,Internal communication,C039,Breach Action - Other Enforcement Letter Sent
-3,Internal communication,CLBR,Breach Action - Breach Letter Sent
-3,Internal communication,C325,Information / Documents Requested
-3,Internal communication,C129,Use of Video Link / Teleconference
-4,Custody and prison,EPOMAT,Prison Offender Manager - Automatic Transfer
-4,Custody and prison,NOMIS003,NOMIS Case Note - Release
-4,Custody and prison,NOMISD,NOMIS Case Notes - General
-4,Custody and prison,NOMIS026,NOMIS Case Note - OMIC Communication
-5,Drugs and alcohol,CGTS,Test
-6,Police,C204,Police Liaison
-6,Police,CARR,Arrest Incident
-7,Safeguarding,SFRR,Safeguarding Check - response received
-7,Safeguarding,SFGC,Safeguarding Check
-8,Case discussion,MO1,Management Oversight - General
-9,Transfers,EPOMIN,Prison Offender Manager - Internal Allocation
-10,Admin,CMS13,CMS - Information & Intelligence Gathering - Low
-10,Admin,C113,Clerical Officer Contact
-11,Letters,AWLI,Breach Action - First Warning Letter Sent
-11,Letters,AWLF,Breach Action - Final Warning Letter Sent
-11,Letters,LCL,Licence Compliance Letter
-12,Communication with PoP,CMOB,eMail/Text to PoP
-12,Communication with PoP,CTOB,Phone Contact to PoP
-12,Communication with PoP,CTXT,Text Message to Send
-12,Communication with PoP,CLOB,Letter/Fax to PoP
-12,Communication with PoP,CTOA,Phone Contact from PoP
-13,Electronic monitoring,C063,Contact with Electronic Monitoring Provider
-14,Uncategorised,CRTUP,Assistance to Court – Update from PP
-15,OASys,CSPR,Sentence Plan - Review
-15,OASys,CSPI,Sentence Plan - Initial
+1,Administrative,C070,Case Allocated
+1,Administrative,C113,Clerical Officer Contact
+1,Administrative,C256,Order/ Licence Received
+1,Administrative,CCTR,Component Termination Removed
+1,Administrative,CMS02,CMS - Sentence Plan Intervention Delivery - Medium
+1,Administrative,CMS03,CMS - Sentence Plan Intervention Delivery - High
+1,Administrative,CMS28,CMS - Case Related Communication - Low
+1,Administrative,CMS28,CMS - Information & Intelligence Gathering - Low
+1,Administrative,CMS30,CMS - Case Related Communication - High
+1,Administrative,CMS32,CMS - Assistance with Assessments - Medium
+1,Administrative,CMS33,CMS - Assistance with Assessments - High
+1,Administrative,CRCC,Completed
+1,Administrative,CSTR,Sentence Termination Removed
+1,Administrative,DPRE,Pre Cons Received
+1,Administrative,IIRMS19,Case Management Intervention – Low
+2,Anti-terrorism,PREVENT,Prevent Activity
+3,Appointments,APAT,Programme Session (NS)
+3,Appointments,C031,Other Appointment (Non NS)
+3,Appointments,C089,Alcohol Key Worker Session (NS)
+3,Appointments,C090,Drug Key Worker Session (NS)
+3,Appointments,C107,Programme 1-2-1 Session (NS)
+3,Appointments,C253,IOM Home Visit to Case
+3,Appointments,C314,Appointment with External Agency (NS)
+3,Appointments,C444,Other Appointment (NS)
+3,Appointments,CAIS,IOM Office Visit – planned
+3,Appointments,CAPX,IAPS Attendance (NS)
+3,Appointments,CHVS,Home Visit to Case (NS)
+3,Appointments,CITD,Citizenship Drugs Session (NS)
+3,Appointments,CNOF,Notification of Failure (NS)
+3,Appointments,COAI,Initial Appointment - In office (NS)
+3,Appointments,COAP,Planned Office Visit (NS)
+3,Appointments,CODC,Planned Doorstep Contact (NS)
+3,Appointments,CODI,Initial Appointment on Doorstep (NS)
+3,Appointments,COHV,Initial Appointment - Home Visit (NS)
+3,Appointments,COPT,Planned Telephone Contact (NS)
+3,Appointments,COTI,Initial Appointment by Telephone (NS)
+3,Appointments,COVC,Planned Video Contact (NS)
+3,Appointments,CRSAPT,Appointment with CRS Provider (NS)
+3,Appointments,CTOB,Phone Contact to PoP
+3,Appointments,DRGAPT,Drug Test Appointment (NS)
+3,Appointments,EAPK,AP - Keyworker Session (NS)
+3,Appointments,MAP7,MAP - Signpost Map (NS)
+3,Appointments,NSI04,RO Appointment - (NS)
+3,Appointments,OFF8,Emotional Well-Being (NS)
+3,Appointments,POLY16,CT Polygraph Exam
+3,Appointments,RARP,RAR Programme Day
+4,Approved premises,APBR,Breach of AP Rules
+4,Approved premises,APMH,AP - Mental Health Concerns
+4,Approved premises,APNC,AP – Notice of Concern
+4,Approved premises,APNO,AP - Suspected Overdose Incident
+4,Approved premises,APPA01,"AP PA - Attitudes, thinking & behaviours"
+4,Approved premises,APPA03,AP PA - Accommodation
+4,Approved premises,APPA06,AP PA - ETE
+4,Approved premises,APPA07,"AP PA - Finance, Benefit and Debt"
+4,Approved premises,APPA08,AP PA - Health
+4,Approved premises,APPH,AP - Physical Health
+4,Approved premises,APRS2,AP - Room Search - Non Compliance AP rules/Licence
+4,Approved premises,APSS1,AP - Suicide Self-Harm Monitoring Started
+4,Approved premises,APSS2,Ap - Suicide Self-Harm Monitoring Reviewed
+4,Approved premises,APSS3,AP - Suicide/ Self-Harm Assessment
+4,Approved premises,APSS4,AP - Suicide/ Self-Harm Monitoring Plan
+4,Approved premises,C103,AP - Purposeful Activity
+4,Approved premises,C118,AP - Advice Note/ Written Warning
+4,Approved premises,C122,AP - Out of hours recall
+4,Approved premises,C123,AP - Hostel Curfew
+4,Approved premises,C145,Curfew Violation
+4,Approved premises,C145,Curfew Violation
+4,Approved premises,C191,AP - Letters / Documents
+4,Approved premises,C350,AP - Other Contact
+4,Approved premises,C389,AP - Maintenance charge/benefits
+4,Approved premises,C466,AP - 2nd Stage Induction
+4,Approved premises,EAP0,AP INCIDENT - register
+4,Approved premises,EAPC,Other App Prem Contact
+4,Approved premises,EAPK,AP - Keyworker Session (NS)
+5,Breaches and warnings,AWL2,Breach Action - Second Warning Letter Sent
+5,Breaches and warnings,AWLF,Breach Action - Final Warning Letter Sent
+5,Breaches and warnings,AWLI,Breach Action - First Warning Letter Sent
+5,Breaches and warnings,BIIR,Additional Breach Information Requested
+5,Breaches and warnings,C039,Breach Action - Other Enforcement Letter Sent
+5,Breaches and warnings,C040,Breach Action - Withdraw Warning Letter
+5,Breaches and warnings,C041,Breach Action - Recall Requested
+5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
+5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
+5,Breaches and warnings,CLBW,Withdrawal of Warning
+5,Breaches and warnings,LCL,Licence Compliance Letter
+6,Case discussion ,C053,Case Decisions
+6,Case discussion ,C238,Case Discussion
+6,Case discussion ,CRCO,Case Reviewed by Case Manager 
+6,Case discussion ,CSPO,Consultation with Manager
+6,Case discussion ,CTPJ,Professional Judgement 
+6,Case discussion ,RROD,Risk Review Discussion
+7,Communication,C101,Appointment with External Agency
+7,Communication,C129,Use of Video Link / Teleconference
+7,Communication,C325,Information / Documents Requested
+7,Communication,C326,Internal Communications
+7,Communication,CAIL,IOM Correspondence/Mail Contact
+7,Communication,CDHC,HDC - Correspondence / Communication
+7,Communication,CI3A,Information - from 3rd Party
+7,Communication,CI3B,Information - to 3rd Party
+7,Communication,CIEA,Information - from External Agency
+7,Communication,CL3A,Letter/Fax from Other
+7,Communication,CL3B,Letter/Fax to Other
+7,Communication,CM3A,eMail/Text from Other
+7,Communication,CM3B,eMail/Text to Other
+7,Communication,CRFI,Request For Information
+7,Communication,CT3B,Phone Contact to Other
+7,Communication,ICON,IOM Case Conference
+7,Communication,INFFES,Information - from EMS Provider
+7,Communication,POLY10,Disclosure - Linked to Polygraph
+7,Communication,POLY13,Disclosure - Not Linked to Polygraph
+7,Communication,POLY17,Polygraph Disclosure (CT)
+7,Communication,RRRI,NPS - Further Information Requested
+8,Communication with person on probation,CIOA,Information - from PoP
+8,Communication with person on probation,CIOB,Information - to PoP
+8,Communication with person on probation,CLOA,Letter/Fax from PoP
+8,Communication with person on probation,CLOB,Letter/Fax to PoP
+8,Communication with person on probation,CMOA,eMail/Text from PoP
+8,Communication with person on probation,CMOB,eMail/Text to PoP
+8,Communication with person on probation,COPT,Planned Telephone Contact (NS)
+8,Communication with person on probation,COSR,Interview for Report / Other
+8,Communication with person on probation,COUP,Unplanned Contact from Person on Probation
+8,Communication with person on probation,CTOA,Phone Contact from PoP
+8,Communication with person on probation,CTOB,Phone Contact to PoP
+8,Communication with person on probation,CTXT,Text Message to Send
+9,Custody ,C401,QA - HDC3/PD1 Returned to Prison
+9,Custody ,CPVS,Prison Visit
+9,Custody ,EPOMAT,Prison Offender Manager - Automatic Transfer
+9,Custody ,EPOMEX,Prison Offender Manager - External Transfer
+9,Custody ,EPOMIN,Prison Offender Manager - Internal Allocation
+9,Custody ,ETRN,Transfer Reason Notes
+9,Custody ,NOMIS003,NOMIS Case Note - Release
+9,Custody ,NOMIS025,NOMIS Case Note - OMiC Assessments/Reports
+9,Custody ,NOMIS026,NOMIS Case Note - OMIC Communication
+9,Custody ,NOMIS027,NOMIS Case Note - Consultation with Head of OM Del
+9,Custody ,NOMIS028,NOMIS Case Note - OMIC Planned Supervision Session
+9,Custody ,NOMIS029,NOMIS Case Note - OMIC Referrals
+9,Custody ,NOMIS030,NOMIS Case Note -OMiC Safeguarding Adults/Children
+9,Custody ,NOMIS031,NOMIS Case Note - OMIC Sentence Planning
+9,Custody ,NOMISD,NOMIS Case Notes - General
+9,Custody ,POM1,POM-COM handover
+10,Drugs and alcohol,AAM3,Alcohol Consumption and Tamper
+10,Drugs and alcohol,AAM4,Multi-Day Alcohol Consumption with Tamper
+10,Drugs and alcohol,APNO,AP - Suspected Overdose Incident
+10,Drugs and alcohol,C071,Alcohol Test
+10,Drugs and alcohol,C089,Alcohol Key Worker Session (NS)
+10,Drugs and alcohol,C090,Drug Key Worker Session (NS)
+10,Drugs and alcohol,CGRF,Referral
+10,Drugs and alcohol,CGTS,Test
+10,Drugs and alcohol,CITD,Citizenship Drugs Session (NS)
+10,Drugs and alcohol,DRGAPT,Drug Test Appointment (NS)
+10,Drugs and alcohol,DRGCNT,Drug use - progress or suspicion
+10,Drugs and alcohol,DRGTST,Drug Test Details
+10,Drugs and alcohol,TST07,Increase testing frequency
+11,Home visit,C253,Home Visit - Not Notified
+11,Home visit,CHVS,Home Visit to Case (NS)
+11,Home visit,CODC,Planned Doorstep Contact (NS)
+11,Home visit,COHV,Initial Appointment - Home Visit (NS)
+11,Home visit,IOHV,IOM Home Visit to Case
+12,Electronic monitoring,AAM3,Alcohol Consumption and Tamper
+12,Electronic monitoring,AAM4,Multi-Day Alcohol Consumption with Tamper
+12,Electronic monitoring,AAM8,Tamper/Obstruction no breach
+12,Electronic monitoring,C063,Contact with Electronic Monitoring Provider
+12,Electronic monitoring,C145,Curfew Violation
+12,Electronic monitoring,CDHC,HDC - Correspondence / Communication
+12,Electronic monitoring,EM01,Exclusion Zone Violation
+12,Electronic monitoring,EM02,Strap Tamper
+12,Electronic monitoring,INFFES,Information - from EMS Provider
+12,Electronic monitoring,INFTES,Information - to EMS Provider
+13,Management oversight,C002,Management Oversight
+13,Management oversight,C416,High Risk Review Meeting
+13,Management oversight,LRP1,Lifer Review Panel
+13,Management oversight,MO1,Management Oversight - General
+13,Management oversight,MO2,Management Oversight - Lifer/IPP Panel
+13,Management oversight,MO3,Management Oversight - MAPPA
+13,Management oversight,MO5,Management Oversight - Recall
+13,Management oversight,SPOD03,Case Allocation: SPO Oversight
+14,Mappa / IOM / Marac,C005,Marac meeting
+14,Mappa / IOM / Marac,C200,MAPPA Information
+14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
+14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
+14,Mappa / IOM / Marac,C318,IOM Other Contact
+14,Mappa / IOM / Marac,CAIL,IOM Correspondence/Mail Contact
+14,Mappa / IOM / Marac,CCMM,MAPPA Meeting
+14,Mappa / IOM / Marac,CCMR,MAPPA Referral
+14,Mappa / IOM / Marac,CCON,Case Conference
+14,Mappa / IOM / Marac,EASC,MARAC Assessment
+14,Mappa / IOM / Marac,ICON,IOM Case Conference
+14,Mappa / IOM / Marac,IOAV,IOM Agency Visit
+14,Mappa / IOM / Marac,IOHV,IOM Home Visit to Case
+14,Mappa / IOM / Marac,MAPQ,MAPPA Q screening Tool
+14,Mappa / IOM / Marac,MO3,Management Oversight - MAPPA
+15,OASys,ARMS1,ARMS Referral
+15,OASys,ARMS2,ARMS assessment
+15,OASys,BCST,Basic Custody Screening Completed
+15,OASys,C004,OASys Assessment Completed
 15,OASys,C057,Sentence Plan - Final
-16,Approved premises,C123,AP - Hostel Curfew
-17,MAPPA,CCMM,MAPPA Meeting
+15,OASys,C070,Sentence Plan - Initial
+15,OASys,CSPR,Sentence Plan - Review
+16,Offender Personality Disorder (OPD),OPD007,OPD Case Consultation
+16,Offender Personality Disorder (OPD),OPD011,OPD - Person on Probation Recalled
+16,Offender Personality Disorder (OPD),OPD015,OPD Other Contact
+16,Offender Personality Disorder (OPD),OPD021,OPD Pathway - Review of Existing Plan
+17,Police,C204,Police Liaison
+17,Police,C369,Police Intelligence Check
+17,Police,C515,Police Intelligence Check-Response Received
+17,Police,CARR,Arrest Incident
+17,Police,CNOC,Notification of Charge
+18,Programmes and interventions,APAT,Programme Session (NS)
+18,Programmes and interventions,C107,Programme 1-2-1 Session (NS)
+18,Programmes and interventions,CAPX,IAPS Attendance (NS)
+18,Programmes and interventions,CRSAPT,Appointment with CRS Provider (NS)
+18,Programmes and interventions,EIAL,IAPS Status Change - Complete
+18,Programmes and interventions,EICO,IAPS Contact - Other
+18,Programmes and interventions,RARP,RAR Programme Day
+19,Recall,C041,Breach Action - Recall Requested
+19,Recall,C122,AP - Out of hours recall
+19,Recall,C439,Recall - Review Report submitted to RR Section
+19,Recall,CNPS,NPS Recall Decision - Enforcement
+19,Recall,CNPS,PS Recall Decision
+19,Recall,LCL,Licence Compliance Letter
+19,Recall,MO5,Management Oversight - Recall
+19,Recall,OPD011,OPD - Person on Probation Recalled
+19,Recall,POLY04,Polygraph linked to recall 
+19,Recall,RECDI,Recall Discussion 
+19,Recall,RECQ,Recall - Quality Decision Challenged 
+19,Recall,VOR01,Verge of Recall Support 
+20,Safeguarding and vulnerability,APMH,AP - Mental Health Concerns
+20,Safeguarding and vulnerability,APSS1,AP - Suicide Self-Harm Monitoring Started
+20,Safeguarding and vulnerability,APSS2,Ap - Suicide Self-Harm Monitoring Reviewed
+20,Safeguarding and vulnerability,APSS3,AP - Suicide/ Self-Harm Assessment
+20,Safeguarding and vulnerability,APSS4,AP - Suicide/ Self-Harm Monitoring Plan
+20,Safeguarding and vulnerability,C005,Marac Meeting
+20,Safeguarding and vulnerability,C078,Child Protection Meeting
+20,Safeguarding and vulnerability,C157,Safeguarding - Child Related Contact
+20,Safeguarding and vulnerability,C158,Safeguarding - Known Persons Check
+20,Safeguarding and vulnerability,C159,Safeguarding - Child Protection Core Group Meeting
+20,Safeguarding and vulnerability,C160,Safeguarding - Vulnerable Adult Strategy Meeting
+20,Safeguarding and vulnerability,C161,Safeguarding - Vulnerable Adult Contact
+20,Safeguarding and vulnerability,C203,Health and Social Service Liaison
+20,Safeguarding and vulnerability,C280,Suicide/Self Harm Information
+20,Safeguarding and vulnerability,CCCP,Safeguarding Case Conference
+20,Safeguarding and vulnerability,EASS,Safeguarding Assessment
+20,Safeguarding and vulnerability,NOMIS030,NOMIS Case Note -OMiC Safeguarding Adults/Children
+20,Safeguarding and vulnerability,NSD1,Core Group meeting
+20,Safeguarding and vulnerability,POLY10,Disclosure - Linked to Polygraph
+20,Safeguarding and vulnerability,POLY13,Disclosure - Not Linked to Polygraph
+20,Safeguarding and vulnerability,POLY17,Polygraph Disclosure (CT)
+20,Safeguarding and vulnerability,SFGC,Safeguarding Check
+20,Safeguarding and vulnerability,SFRR,Safeguarding Check - response received
+20,Safeguarding and vulnerability,SSHI,Suicide/ Self-Harm Incident
+21,Unpaid work,C038,CP/UPW Comment
+21,Unpaid work,C403,CP/UPW Placement Consultation Completed
+21,Unpaid work,C405,CP/UPW Incident/ Accident
+21,Unpaid work,UPW2,CP/UPW ELIGIBLE - not being worked intensively at commencement
+21,Unpaid work,UPW7,UPW - 6 Month Review
+21,Unpaid work,UPW8,UPW - 9 Month Review
