@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
@@ -54,14 +55,15 @@ internal class RecommendationController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PatchMapping("/recommendations/{recommendationId}")
   @Operation(summary = "WIP: Updates a recommendation")
+  @ResponseStatus(HttpStatus.OK)
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationRequest: UpdateRecommendationRequest,
     userLogin: Principal
-  ): RecommendationResponse {
+  ) {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    return recommendationService.updateRecommendation(updateRecommendationRequest, recommendationId, username)
+    recommendationService.updateRecommendation(updateRecommendationRequest, recommendationId, username)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
