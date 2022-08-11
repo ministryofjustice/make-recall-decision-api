@@ -33,6 +33,7 @@ internal class PartATemplateReplacementService {
       "custody_status" to partAData.custodyStatus,
       "recall_type" to partAData.recallType.value,
       "recall_type_details" to partAData.recallType.details,
+      "response_to_probation" to partAData.responseToProbation,
     )
   }
 }
