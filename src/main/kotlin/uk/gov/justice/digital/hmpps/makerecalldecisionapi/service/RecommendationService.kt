@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -63,51 +61,21 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(updateRecommendationRequest: UpdateRecommendationRequest, recommendationId: Long, username: String?): RecommendationResponse {
+  fun updateRecommendation(updateRecommendationRequest: UpdateRecommendationRequest, recommendationId: Long, username: String?) {
+
     val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
-    val updatedRecommendationEntity = updateRecommendationInDb(existingRecommendationEntity, updateRecommendationRequest, username)
-
-    return RecommendationResponse(
-      id = updatedRecommendationEntity!!.id!!,
-      crn = updatedRecommendationEntity.data.crn,
-      status = updatedRecommendationEntity.data.status,
-      recallType = updateRecommendationRequest.recallType,
-      custodyStatus = updateRecommendationRequest.custodyStatus,
-      responseToProbation = updateRecommendationRequest.responseToProbation,
-      personOnProbation = updatedRecommendationEntity.data.personOnProbation
-    )
-  }
-
-  private fun updateRecommendationInDb(
-    existingRecommendationEntity: RecommendationEntity,
-    updateRecommendationRequest: UpdateRecommendationRequest,
-    updatedByUserName: String?
-  ): RecommendationEntity? {
-
     val status = updateRecommendationRequest.status ?: existingRecommendationEntity.data.status
 
-    existingRecommendationEntity.data.recallType = updateRecallType(existingRecommendationEntity, updateRecommendationRequest)
-    existingRecommendationEntity.data.custodyStatus = updateCustodyStatus(existingRecommendationEntity, updateRecommendationRequest)
-    existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation
+    existingRecommendationEntity.data.recallType = updateRecommendationRequest.recallType ?: existingRecommendationEntity.data.recallType
+    existingRecommendationEntity.data.custodyStatus = updateRecommendationRequest.custodyStatus ?: existingRecommendationEntity.data.custodyStatus
+    existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation ?: existingRecommendationEntity.data.responseToProbation
     existingRecommendationEntity.data.status = status
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
-    existingRecommendationEntity.data.lastModifiedBy = updatedByUserName
+    existingRecommendationEntity.data.lastModifiedBy = username
 
-    return recommendationRepository.save(existingRecommendationEntity)
-  }
-
-  private fun updateRecallType(existingRecommendationEntity: RecommendationEntity, updateRecommendationRequest: UpdateRecommendationRequest): RecallType? {
-    val updatedRecallType = updateRecommendationRequest.recallType
-    val originalRecallType = existingRecommendationEntity.data.recallType
-    return updatedRecallType ?: originalRecallType
-  }
-
-  private fun updateCustodyStatus(existingRecommendationEntity: RecommendationEntity, updateRecommendationRequest: UpdateRecommendationRequest): CustodyStatus? {
-    val updatedCustodyStatus = updateRecommendationRequest.custodyStatus
-    val originalCustodyStatus = existingRecommendationEntity.data.custodyStatus
-    return updatedCustodyStatus ?: originalCustodyStatus
+    recommendationRepository.save(existingRecommendationEntity)
   }
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
