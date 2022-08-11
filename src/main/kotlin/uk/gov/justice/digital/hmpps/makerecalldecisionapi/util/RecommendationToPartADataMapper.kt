@@ -14,7 +14,7 @@ class RecommendationToPartADataMapper {
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
       val custodyStatus = findCustodyStatusToDisplay(recommendation.data.custodyStatus)
       val recallType = findRecallTypeToDisplay(recommendation.data.recallType)
-      return PartAData(custodyStatus, recallType)
+      return PartAData(custodyStatus, recallType, recommendation.data.responseToProbation)
     }
 
     private fun findCustodyStatusToDisplay(custodyStatus: CustodyStatus?): String {

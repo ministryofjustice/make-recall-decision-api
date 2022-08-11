@@ -23,6 +23,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       { "value": "NO", "text": "No" }
     ]
   },
+  "responseToProbation": "They have not responded well",
   "status": "$status"
 }
 """.trimIndent()

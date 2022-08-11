@@ -56,6 +56,7 @@ internal class RecommendationService(
       recallType = recommendationEntity.data.recallType,
       status = recommendationEntity.data.status,
       custodyStatus = recommendationEntity.data.custodyStatus,
+      responseToProbation = recommendationEntity.data.responseToProbation,
       personOnProbation = recommendationEntity.data.personOnProbation
     )
   }
@@ -74,6 +75,7 @@ internal class RecommendationService(
       status = updatedRecommendationEntity.data.status,
       recallType = updateRecommendationRequest.recallType,
       custodyStatus = updateRecommendationRequest.custodyStatus,
+      responseToProbation = updateRecommendationRequest.responseToProbation,
       personOnProbation = updatedRecommendationEntity.data.personOnProbation
     )
   }
@@ -88,6 +90,7 @@ internal class RecommendationService(
 
     existingRecommendationEntity.data.recallType = updateRecallType(existingRecommendationEntity, updateRecommendationRequest)
     existingRecommendationEntity.data.custodyStatus = updateCustodyStatus(existingRecommendationEntity, updateRecommendationRequest)
+    existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation
     existingRecommendationEntity.data.status = status
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
     existingRecommendationEntity.data.lastModifiedBy = updatedByUserName

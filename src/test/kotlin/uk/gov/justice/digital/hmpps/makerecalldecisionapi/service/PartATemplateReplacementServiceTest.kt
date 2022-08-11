@@ -41,15 +41,17 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
     runTest {
       val partA = PartAData(
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
-        recallType = RecallTypePartA(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details")
+        recallType = RecallTypePartA(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
+        responseToProbation = "They have not responded well"
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(3)
+      assertThat(result.size).isEqualTo(4)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
+      assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
     }
   }
 }
