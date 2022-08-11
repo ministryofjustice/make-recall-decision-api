@@ -126,29 +126,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       .willReturn(Optional.of(existingRecommendation))
 
     // when
-    val updateRecommendationResponse = recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
+    recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
 
     // then
-    assertThat(updateRecommendationResponse.id).isEqualTo(1)
-    assertThat(updateRecommendationResponse.status).isEqualTo(Status.DRAFT)
-    assertThat(updateRecommendationResponse.crn).isEqualTo(crn)
-    assertThat(updateRecommendationResponse.personOnProbation?.name).isEqualTo("John Smith")
-    assertThat(updateRecommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.NO_RECALL)
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![0].value).isEqualTo("NO_RECALL")
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![0].text).isEqualTo("No recall")
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![1].value).isEqualTo("FIXED_TERM")
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
-    assertThat(updateRecommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
-    assertThat(updateRecommendationResponse.custodyStatus?.selected).isEqualTo(CustodyStatusValue.YES_PRISON)
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![0].value).isEqualTo("YES_PRISON")
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![0].text).isEqualTo("Yes, prison custody")
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![1].value).isEqualTo("YES_POLICE")
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![1].text).isEqualTo("Yes, police custody")
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![2].value).isEqualTo("NO")
-    assertThat(updateRecommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
-    assertThat(updateRecommendationResponse.responseToProbation).isEqualTo("They have not responded well")
-
     then(recommendationRepository).should().save(recommendationToSave)
     then(recommendationRepository).should().findById(1)
   }

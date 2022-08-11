@@ -15,6 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -48,11 +49,12 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `get recommendation`() {
+  fun `update and get recommendation`() {
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation()
+    updateRecommendation(updateRecommendationRequest())
+    updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
       .uri("/recommendations/$createdRecommendationId")
@@ -79,59 +81,21 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.allOptions[2].text").isEqualTo("No")
       .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
-  }
-
-  private fun updateRecommendation() {
-    webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(updateRecommendationRequest())
-      )
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-      .expectStatus().isOk
-  }
-
-  @Test
-  fun `update a recommendation`() {
-    userAccessAllowed(crn)
-    allOffenderDetailsResponse(crn)
-    deleteAndCreateRecommendation()
-
-    webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(updateRecommendationRequest())
-      )
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.id").isEqualTo(createdRecommendationId)
-      .jsonPath("$.crn").isEqualTo(crn)
-      .jsonPath("$.recallType.selected.value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recallType.allOptions[0].value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recallType.allOptions[0].text").isEqualTo("Fixed term")
-      .jsonPath("$.recallType.allOptions[1].value").isEqualTo("STANDARD")
-      .jsonPath("$.recallType.allOptions[1].text").isEqualTo("Standard")
-      .jsonPath("$.recallType.allOptions[2].value").isEqualTo("NO_RECALL")
-      .jsonPath("$.recallType.allOptions[2].text").isEqualTo("No recall")
-      .jsonPath("$.custodyStatus.selected").isEqualTo("YES_PRISON")
-      .jsonPath("$.custodyStatus.allOptions[0].value").isEqualTo("YES_PRISON")
-      .jsonPath("$.custodyStatus.allOptions[0].text").isEqualTo("Yes, prison custody")
-      .jsonPath("$.custodyStatus.allOptions[1].value").isEqualTo("YES_POLICE")
-      .jsonPath("$.custodyStatus.allOptions[1].text").isEqualTo("Yes, police custody")
-      .jsonPath("$.custodyStatus.allOptions[2].value").isEqualTo("NO")
-      .jsonPath("$.custodyStatus.allOptions[2].text").isEqualTo("No")
-      .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
-      .jsonPath("$.status").isEqualTo("DRAFT")
-      .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
-
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
+  }
+
+  private fun updateRecommendation(recommendationRequest: String) {
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest)
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
   }
 
   @Test
@@ -139,7 +103,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation()
+    updateRecommendation(updateRecommendationRequest())
 
     val response = convertResponseToJSONObject(
       webTestClient.post()

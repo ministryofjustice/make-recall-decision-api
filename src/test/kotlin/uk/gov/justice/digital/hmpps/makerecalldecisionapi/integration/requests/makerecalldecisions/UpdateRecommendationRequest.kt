@@ -4,6 +4,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 {
+  "custodyStatus": {
+    "selected": "YES_PRISON",
+    "allOptions": [
+      { "value": "YES_PRISON", "text": "Yes, prison custody" },
+      { "value": "YES_POLICE", "text": "Yes, police custody" },
+      { "value": "NO", "text": "No" }
+    ]
+  },
   "recallType": {
     "selected": {
       "value": "FIXED_TERM",
@@ -13,14 +21,6 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       { "value": "FIXED_TERM", "text": "Fixed term" },
       { "value": "STANDARD", "text": "Standard" },
       { "value": "NO_RECALL", "text": "No recall" }
-    ]
-  },
-  "custodyStatus": {
-    "selected": "YES_PRISON",
-    "allOptions": [
-      { "value": "YES_PRISON", "text": "Yes, prison custody" },
-      { "value": "YES_POLICE", "text": "Yes, police custody" },
-      { "value": "NO", "text": "No" }
     ]
   },
   "responseToProbation": "They have not responded well",

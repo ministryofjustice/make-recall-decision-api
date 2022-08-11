@@ -20,6 +20,7 @@ internal class PartATemplateReplacementService {
     val file = XWPFTemplate.compile(resource.inputStream).render(
       mappingsForTemplate(partAData)
     )
+    // ).writeToFile("out_template.docx")
 
     val out = ByteArrayOutputStream()
     file.write(out)

@@ -155,17 +155,15 @@ abstract class IntegrationTestBase {
   }
 
   fun updateRecommendation(status: Status) {
-    convertResponseToJSONObject(
-      webTestClient.patch()
-        .uri("/recommendations/$createdRecommendationId")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(updateRecommendationRequest(status))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().is2xxSuccessful
-    )
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(updateRecommendationRequest(status))
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().is2xxSuccessful
   }
 
   private fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
