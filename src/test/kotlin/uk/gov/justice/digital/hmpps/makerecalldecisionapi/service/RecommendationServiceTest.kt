@@ -14,18 +14,14 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -109,6 +105,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           recallType = updateRecommendationRequest.recallType,
           custodyStatus = updateRecommendationRequest.custodyStatus,
           responseToProbation = updateRecommendationRequest.responseToProbation,
+          isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
@@ -147,7 +144,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             status = null,
             recallType = null,
             custodyStatus = null,
-            responseToProbation = null
+            responseToProbation = null,
+            isThisAnEmergencyRecall = null
           ),
           recommendationId = 456L,
           "Bill"
@@ -161,24 +159,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a recommendation from the database`() {
-    val recallType = RecallType(
-      selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"),
-      allOptions = listOf(
-        TextValueOption(value = "NO_RECALL", text = "No recall"),
-        TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-        TextValueOption(value = "STANDARD", text = "Standard")
-      )
-    )
-
-    val custodyStatus = CustodyStatus(
-      selected = CustodyStatusValue.YES_PRISON,
-      allOptions = listOf(
-        TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
-        TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
-        TextValueOption(value = "NO", text = "No")
-      )
-    )
-
     val recommendation = Optional.of(MrdTestDataBuilder.recommendationDataEntityData(crn))
 
     given(recommendationRepository.findById(456L))
@@ -206,6 +186,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.custodyStatus?.allOptions!![2].value).isEqualTo("NO")
     assertThat(recommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
     assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
+    assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
   }
 
   @Test

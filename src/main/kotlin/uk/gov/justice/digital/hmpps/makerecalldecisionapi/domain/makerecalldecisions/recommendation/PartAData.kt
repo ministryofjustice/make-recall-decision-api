@@ -4,6 +4,7 @@ data class PartAData(
   val custodyStatus: String,
   val recallType: RecallTypePartA,
   val responseToProbation: String?,
+  val isThisAnEmergencyRecall: String?,
 )
 
 data class RecallTypePartA(

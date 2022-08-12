@@ -24,6 +24,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "responseToProbation": "They have not responded well",
+  "isThisAnEmergencyRecall": true,
   "status": "$status"
 }
 """.trimIndent()
