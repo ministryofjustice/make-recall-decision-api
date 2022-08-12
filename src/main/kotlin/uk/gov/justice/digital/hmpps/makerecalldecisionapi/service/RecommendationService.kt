@@ -55,6 +55,7 @@ internal class RecommendationService(
       status = recommendationEntity.data.status,
       custodyStatus = recommendationEntity.data.custodyStatus,
       responseToProbation = recommendationEntity.data.responseToProbation,
+      isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
       personOnProbation = recommendationEntity.data.personOnProbation
     )
   }
@@ -71,6 +72,7 @@ internal class RecommendationService(
     existingRecommendationEntity.data.recallType = updateRecommendationRequest.recallType ?: existingRecommendationEntity.data.recallType
     existingRecommendationEntity.data.custodyStatus = updateRecommendationRequest.custodyStatus ?: existingRecommendationEntity.data.custodyStatus
     existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation ?: existingRecommendationEntity.data.responseToProbation
+    existingRecommendationEntity.data.isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall ?: existingRecommendationEntity.data.isThisAnEmergencyRecall
     existingRecommendationEntity.data.status = status
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
     existingRecommendationEntity.data.lastModifiedBy = username

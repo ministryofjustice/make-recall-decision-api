@@ -6,5 +6,6 @@ data class UpdateRecommendationRequest(
   val recallType: RecallType?,
   val status: Status?,
   val custodyStatus: CustodyStatus?,
-  val responseToProbation: String?
+  val responseToProbation: String?,
+  val isThisAnEmergencyRecall: Boolean?
 )

@@ -14,7 +14,9 @@ class RecommendationToPartADataMapper {
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
       val custodyStatus = findCustodyStatusToDisplay(recommendation.data.custodyStatus)
       val recallType = findRecallTypeToDisplay(recommendation.data.recallType)
-      return PartAData(custodyStatus, recallType, recommendation.data.responseToProbation)
+      val isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall)
+
+      return PartAData(custodyStatus, recallType, recommendation.data.responseToProbation, isThisAnEmergencyRecall)
     }
 
     private fun findCustodyStatusToDisplay(custodyStatus: CustodyStatus?): String {
@@ -33,6 +35,10 @@ class RecommendationToPartADataMapper {
       }
 
       return RecallTypePartA(partAValue, recallType?.selected?.details)
+    }
+
+    private fun convertBooleanToYesNo(value: Boolean?): String {
+      return if (value == true) "Yes" else "No"
     }
   }
 }

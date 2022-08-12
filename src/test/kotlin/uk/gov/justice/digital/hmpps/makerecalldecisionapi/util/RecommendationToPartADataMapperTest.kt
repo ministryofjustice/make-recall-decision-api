@@ -51,4 +51,19 @@ class RecommendationToPartADataMapperTest {
       assertThat(result.recallType.details).isEqualTo("My details")
     }
   }
+
+  @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
+  @CsvSource("true,Yes", "false,No", "null,No")
+  fun `given is emergency recall data then should map to the part A text`(isThisAnEmergencyRecall: Boolean, partADisplayText: String?) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", isThisAnEmergencyRecall = isThisAnEmergencyRecall)
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.isThisAnEmergencyRecall).isEqualTo(partADisplayText)
+    }
+  }
 }

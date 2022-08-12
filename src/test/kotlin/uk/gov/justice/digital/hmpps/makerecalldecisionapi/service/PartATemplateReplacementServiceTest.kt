@@ -29,7 +29,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           crn = crn,
           custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
-          responseToProbation = "They did not respond well"
+          responseToProbation = "They did not respond well",
+          isThisAnEmergencyRecall = true
         )
       )
 
@@ -43,16 +44,18 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val partA = PartAData(
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
         recallType = RecallTypePartA(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
-        responseToProbation = "They have not responded well"
+        responseToProbation = "They have not responded well",
+        isThisAnEmergencyRecall = "Yes",
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(4)
+      assertThat(result.size).isEqualTo(5)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
+      assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
     }
   }
 }

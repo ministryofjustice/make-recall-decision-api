@@ -80,6 +80,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.custodyStatus.allOptions[2].value").isEqualTo("NO")
       .jsonPath("$.custodyStatus.allOptions[2].text").isEqualTo("No")
       .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
+      .jsonPath("$.isThisAnEmergencyRecall").isEqualTo(true)
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)

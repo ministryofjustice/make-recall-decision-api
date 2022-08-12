@@ -36,6 +36,7 @@ data class RecommendationModel(
   var recallType: RecallType? = null,
   var custodyStatus: CustodyStatus? = null,
   var responseToProbation: String? = null,
+  var isThisAnEmergencyRecall: Boolean? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,

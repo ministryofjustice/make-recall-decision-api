@@ -38,6 +38,7 @@ class MrdTestDataBuilder {
             )
           ),
           responseToProbation = "They have not responded well",
+          isThisAnEmergencyRecall = true,
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -66,7 +67,8 @@ class MrdTestDataBuilder {
             TextValueOption(value = "NO", text = "No")
           )
         ),
-        responseToProbation = "They have not responded well"
+        responseToProbation = "They have not responded well",
+        isThisAnEmergencyRecall = true
       )
     }
   }

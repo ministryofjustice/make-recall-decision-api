@@ -9,6 +9,7 @@ data class RecommendationResponse(
   val crn: String? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
+  val isThisAnEmergencyRecall: Boolean? = null,
   val personOnProbation: PersonOnProbation? = null
 )
 

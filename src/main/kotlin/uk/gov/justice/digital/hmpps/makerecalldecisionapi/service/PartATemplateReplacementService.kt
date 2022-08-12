@@ -35,6 +35,7 @@ internal class PartATemplateReplacementService {
       "recall_type" to partAData.recallType.value,
       "recall_type_details" to partAData.recallType.details,
       "response_to_probation" to partAData.responseToProbation,
+      "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
     )
   }
 }
