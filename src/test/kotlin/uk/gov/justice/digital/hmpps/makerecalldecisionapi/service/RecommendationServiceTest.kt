@@ -18,10 +18,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.time.LocalDate
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -106,6 +108,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           custodyStatus = updateRecommendationRequest.custodyStatus,
           responseToProbation = updateRecommendationRequest.responseToProbation,
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
+          victimsInContactScheme = updateRecommendationRequest.victimsInContactScheme,
+          dateVloInformed = updateRecommendationRequest.dateVloInformed,
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
@@ -145,7 +149,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             recallType = null,
             custodyStatus = null,
             responseToProbation = null,
-            isThisAnEmergencyRecall = null
+            isThisAnEmergencyRecall = null,
+            victimsInContactScheme = null,
+            dateVloInformed = null
           ),
           recommendationId = 456L,
           "Bill"
@@ -187,6 +193,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
     assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
+    assertThat(recommendationResponse.victimsInContactScheme?.selected).isEqualTo(VictimsInContactSchemeValue.YES)
+    assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
   }
 
   @Test

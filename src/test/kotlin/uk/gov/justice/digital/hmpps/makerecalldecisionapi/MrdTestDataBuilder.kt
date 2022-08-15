@@ -7,10 +7,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import java.time.LocalDate
 
 class MrdTestDataBuilder {
   companion object Helper {
@@ -39,6 +42,15 @@ class MrdTestDataBuilder {
           ),
           responseToProbation = "They have not responded well",
           isThisAnEmergencyRecall = true,
+          victimsInContactScheme = VictimsInContactScheme(
+            selected = VictimsInContactSchemeValue.YES,
+            allOptions = listOf(
+              TextValueOption(value = "YES", text = "Yes"),
+              TextValueOption(value = "NO", text = "No"),
+              TextValueOption(value = "NOT_APPLICABLE", text = "Not applicable")
+            )
+          ),
+          dateVloInformed = LocalDate.now(),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -68,7 +80,16 @@ class MrdTestDataBuilder {
           )
         ),
         responseToProbation = "They have not responded well",
-        isThisAnEmergencyRecall = true
+        isThisAnEmergencyRecall = true,
+        victimsInContactScheme = VictimsInContactScheme(
+          selected = VictimsInContactSchemeValue.YES,
+          allOptions = listOf(
+            TextValueOption(value = "YES", text = "Yes"),
+            TextValueOption(value = "NO", text = "No"),
+            TextValueOption(value = "NOT_APPLICABLE", text = "Not applicable")
+          )
+        ),
+        dateVloInformed = LocalDate.now()
       )
     }
   }

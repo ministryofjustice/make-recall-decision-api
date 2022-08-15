@@ -13,8 +13,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypePartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -30,7 +33,9 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
-          isThisAnEmergencyRecall = true
+          isThisAnEmergencyRecall = true,
+          victimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
+          dateVloInformed = LocalDate.now()
         )
       )
 
@@ -46,16 +51,20 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         recallType = RecallTypePartA(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = "Yes",
+        hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
+        dateVloInformed = "1 September 2022",
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(5)
+      assertThat(result.size).isEqualTo(7)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
+      assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
+      assertThat(result["date_vlo_informed"]).isEqualTo("1 September 2022")
     }
   }
 }
