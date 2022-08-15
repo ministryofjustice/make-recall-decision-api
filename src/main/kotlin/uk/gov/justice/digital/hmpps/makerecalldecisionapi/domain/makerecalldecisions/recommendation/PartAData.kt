@@ -7,6 +7,7 @@ data class PartAData(
   val isThisAnEmergencyRecall: String?,
   val hasVictimsInContactScheme: String?,
   val dateVloInformed: String?,
+  val selectedAlternativesMap: Map<String, String>
 )
 
 data class RecallTypePartA(
