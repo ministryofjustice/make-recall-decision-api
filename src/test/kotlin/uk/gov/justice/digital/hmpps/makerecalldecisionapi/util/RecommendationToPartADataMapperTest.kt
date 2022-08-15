@@ -43,7 +43,17 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given selected alternative {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("WARNINGS_LETTER,We sent a warning letter on 27th July 2022", "DRUG_TESTING,Drugs test passed")
+  @CsvSource(
+    "WARNINGS_LETTER,We sent a warning letter on 27th July 2022",
+    "DRUG_TESTING,Drugs test passed",
+    "INCREASED_FREQUENCY,Increased frequency",
+    "EXTRA_LICENCE_CONDITIONS,Extra licence conditions added",
+    "REFERRAL_TO_APPROVED_PREMISES,Referred to approved premises",
+    "REFERRAL_TO_APPROVED_PREMISES,Referred to other team",
+    "REFERRAL_TO_PARTNERSHIP_AGENCIES,Referred to agency xyz",
+    "RISK_ESCALATION,Risk level escalated",
+    "ALTERNATIVE_TO_RECALL_OTHER,Alternative abc"
+  )
   fun `given selected alternative in recommendation data then should map to the part A text`(selectedAlternativeValue: String, partADisplayText: String) {
     runTest {
       val recommendation = RecommendationEntity(
