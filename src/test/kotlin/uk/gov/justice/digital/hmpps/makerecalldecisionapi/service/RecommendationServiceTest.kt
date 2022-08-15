@@ -25,11 +25,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommenda
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-<<<<<<< HEAD
-import java.time.LocalDate
-=======
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
->>>>>>> MRD-458_alternative-to-recall: Removed redundant RecallAllternative class.
+import java.time.LocalDate
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
