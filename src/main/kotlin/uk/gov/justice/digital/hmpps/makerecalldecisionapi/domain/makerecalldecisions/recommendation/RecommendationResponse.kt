@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.time.LocalDate
 
 data class RecommendationResponse(
   val id: Long? = null,
@@ -10,6 +11,8 @@ data class RecommendationResponse(
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
+  val victimsInContactScheme: VictimsInContactScheme? = null,
+  val dateVloInformed: LocalDate? = null,
   val personOnProbation: PersonOnProbation? = null
 )
 
