@@ -39,7 +39,7 @@ data class RecommendationModel(
   var custodyStatus: CustodyStatus? = null,
   var responseToProbation: String? = null,
   var isThisAnEmergencyRecall: Boolean? = null,
-  var victimsInContactScheme: VictimsInContactScheme? = null,
+  var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   var dateVloInformed: LocalDate? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
