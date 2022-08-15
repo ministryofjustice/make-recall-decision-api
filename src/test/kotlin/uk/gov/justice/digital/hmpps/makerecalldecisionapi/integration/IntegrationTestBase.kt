@@ -135,7 +135,7 @@ abstract class IntegrationTestBase {
   }
 
   fun deleteRecommendation() {
-    repository.deleteAll()
+    repository.deleteAllInBatch()
   }
 
   private fun createRecommendation() {
