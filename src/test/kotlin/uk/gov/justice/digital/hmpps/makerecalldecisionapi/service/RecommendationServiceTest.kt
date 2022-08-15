@@ -182,7 +182,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           custodyStatus = updateRecommendationRequest.custodyStatus,
           responseToProbation = updateRecommendationRequest.responseToProbation,
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
-          victimsInContactScheme = updateRecommendationRequest.victimsInContactScheme,
+          hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
           dateVloInformed = updateRecommendationRequest.dateVloInformed,
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
