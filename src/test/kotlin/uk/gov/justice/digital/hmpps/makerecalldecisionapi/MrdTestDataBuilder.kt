@@ -18,38 +18,21 @@ import java.time.LocalDate
 class MrdTestDataBuilder {
   companion object Helper {
 
-    fun recommendationDataEntityData(crn: String?, firstName: String = "Jim", surname: String = "Long"): RecommendationEntity {
+    fun recommendationDataEntityData(
+      crn: String?,
+      firstName: String = "Jim",
+      surname: String = "Long"
+    ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
-          recallType = RecallType(
-            selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"),
-            allOptions = listOf(
-              TextValueOption(value = "NO_RECALL", text = "No recall"),
-              TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-              TextValueOption(value = "STANDARD", text = "Standard")
-            )
-          ),
-          custodyStatus = CustodyStatus(
-            selected = CustodyStatusValue.YES_PRISON,
-            allOptions = listOf(
-              TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
-              TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
-              TextValueOption(value = "NO", text = "No")
-            )
-          ),
+          recallType = recallTypeData(),
+          custodyStatus = custodyStatusData(),
           responseToProbation = "They have not responded well",
           isThisAnEmergencyRecall = true,
-          victimsInContactScheme = VictimsInContactScheme(
-            selected = VictimsInContactSchemeValue.YES,
-            allOptions = listOf(
-              TextValueOption(value = "YES", text = "Yes"),
-              TextValueOption(value = "NO", text = "No"),
-              TextValueOption(value = "NOT_APPLICABLE", text = "Not applicable")
-            )
-          ),
+          victimsInContactScheme = victimsInContactSchemeData(),
           dateVloInformed = LocalDate.now(),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
@@ -63,33 +46,45 @@ class MrdTestDataBuilder {
     fun updateRecommendationRequestData(): UpdateRecommendationRequest {
       return UpdateRecommendationRequest(
         status = null,
-        recallType = RecallType(
-          selected = RecallTypeSelectedValue(value = RecallTypeValue.NO_RECALL, details = "details"),
-          allOptions = listOf(
-            TextValueOption(value = "NO_RECALL", text = "No recall"),
-            TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-            TextValueOption(value = "STANDARD", text = "Standard")
-          )
-        ),
-        custodyStatus = CustodyStatus(
-          selected = CustodyStatusValue.YES_PRISON,
-          allOptions = listOf(
-            TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
-            TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
-            TextValueOption(value = "NO", text = "No")
-          )
-        ),
+        recallType = recallTypeData(),
+        custodyStatus = custodyStatusData(),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = true,
-        victimsInContactScheme = VictimsInContactScheme(
-          selected = VictimsInContactSchemeValue.YES,
-          allOptions = listOf(
-            TextValueOption(value = "YES", text = "Yes"),
-            TextValueOption(value = "NO", text = "No"),
-            TextValueOption(value = "NOT_APPLICABLE", text = "Not applicable")
-          )
-        ),
+        victimsInContactScheme = victimsInContactSchemeData(),
         dateVloInformed = LocalDate.now()
+      )
+    }
+
+    private fun recallTypeData(): RecallType {
+      return RecallType(
+        selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"),
+        allOptions = listOf(
+          TextValueOption(value = "NO_RECALL", text = "No recall"),
+          TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
+          TextValueOption(value = "STANDARD", text = "Standard")
+        )
+      )
+    }
+
+    private fun custodyStatusData(): CustodyStatus {
+      return CustodyStatus(
+        selected = CustodyStatusValue.YES_PRISON,
+        allOptions = listOf(
+          TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
+          TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
+          TextValueOption(value = "NO", text = "No")
+        )
+      )
+    }
+
+    private fun victimsInContactSchemeData(): VictimsInContactScheme {
+      return VictimsInContactScheme(
+        selected = VictimsInContactSchemeValue.YES,
+        allOptions = listOf(
+          TextValueOption(value = "YES", text = "Yes"),
+          TextValueOption(value = "NO", text = "No"),
+          TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
+        )
       )
     }
   }
