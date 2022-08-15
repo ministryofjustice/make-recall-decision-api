@@ -34,6 +34,27 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "dateVloInformed": "2022-08-01",
-  "status": "$status"
+  "status": "$status",
+  "alternativesToRecallTried": {
+		"selected": [{
+				"value": "WARNINGS_LETTER",
+				"details": "We sent a warning letter on 27th July 2022"
+			},
+			{
+				"value": "DRUG_TESTING",
+                "details": "Drug test passed"
+			}
+		],
+		"allOptions": [{
+				"value": "WARNINGS_LETTER",
+				"text": "Warnings/licence breach letters"
+
+			},
+			{
+				"value": "DRUG_TESTING",
+				"text": "Drug testing"
+			}
+		]
+	}
 }
 """.trimIndent()

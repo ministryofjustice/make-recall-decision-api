@@ -7,11 +7,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -37,6 +39,25 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.custodyStatus).isEqualTo(partADisplayText)
+    }
+  }
+
+  @ParameterizedTest(name = "given selected alternative {0} in recommendation data should map to the part A text {1}")
+  @CsvSource("WARNINGS_LETTER,We sent a warning letter on 27th July 2022", "DRUG_TESTING,Drugs test passed")
+  fun `given selected alternative in recommendation data then should map to the part A text`(selectedAlternativeValue: String, partADisplayText: String) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123", custodyStatus = null,
+          alternativesToRecallTried = AlternativesToRecallTried(
+            selected = listOf(SelectedAlternative(value = selectedAlternativeValue, details = partADisplayText)),
+            allOptions = null
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+      assertThat(result.selectedAlternativesMap.containsValue(partADisplayText)).isTrue
     }
   }
 
