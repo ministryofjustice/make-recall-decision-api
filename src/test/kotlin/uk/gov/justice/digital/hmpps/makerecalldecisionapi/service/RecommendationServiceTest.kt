@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -95,8 +96,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
         alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(TextValueOption(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
+          selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
+          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
         )
       )
     )
@@ -166,8 +167,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData()
       .copy(
         alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = "NONE", details = "Rationale for none")),
-          allOptions = listOf(TextValueOption(value = "NONE", text = "None"))
+          selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.NONE.name, details = "Rationale for none")),
+          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.NONE.name, text = "None"))
         )
       )
 
