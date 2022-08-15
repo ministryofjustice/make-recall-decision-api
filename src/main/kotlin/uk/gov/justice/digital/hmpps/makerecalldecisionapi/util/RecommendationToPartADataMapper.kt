@@ -19,7 +19,7 @@ class RecommendationToPartADataMapper {
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
         responseToProbation = recommendation.data.responseToProbation,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
-        hasVictimsInContactScheme = recommendation.data.victimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
+        hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed)
       )
     }

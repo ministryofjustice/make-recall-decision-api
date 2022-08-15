@@ -34,7 +34,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
           isThisAnEmergencyRecall = true,
-          victimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
+          hasVictimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
           dateVloInformed = LocalDate.now()
         )
       )

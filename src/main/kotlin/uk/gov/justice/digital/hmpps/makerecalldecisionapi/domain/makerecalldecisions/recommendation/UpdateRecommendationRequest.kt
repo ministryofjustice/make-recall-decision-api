@@ -9,6 +9,6 @@ data class UpdateRecommendationRequest(
   val custodyStatus: CustodyStatus?,
   val responseToProbation: String?,
   val isThisAnEmergencyRecall: Boolean?,
-  val victimsInContactScheme: VictimsInContactScheme?,
+  val hasVictimsInContactScheme: VictimsInContactScheme?,
   val dateVloInformed: LocalDate?
 )

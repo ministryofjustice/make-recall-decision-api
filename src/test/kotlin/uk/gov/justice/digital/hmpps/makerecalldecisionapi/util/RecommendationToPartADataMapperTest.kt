@@ -77,7 +77,7 @@ class RecommendationToPartADataMapperTest {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", victimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme))
+        data = RecommendationModel(crn = "ABC123", hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme))
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)

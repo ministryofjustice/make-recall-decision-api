@@ -25,7 +25,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "responseToProbation": "They have not responded well",
   "isThisAnEmergencyRecall": true,
-  "victimsInContactScheme": {
+  "hasVictimsInContactScheme": {
     "selected": "YES",
     "allOptions": [
       { "value": "YES", "text": "Yes" },

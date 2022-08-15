@@ -32,7 +32,7 @@ class MrdTestDataBuilder {
           custodyStatus = custodyStatusData(),
           responseToProbation = "They have not responded well",
           isThisAnEmergencyRecall = true,
-          victimsInContactScheme = victimsInContactSchemeData(),
+          hasVictimsInContactScheme = victimsInContactSchemeData(),
           dateVloInformed = LocalDate.now(),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
@@ -50,7 +50,7 @@ class MrdTestDataBuilder {
         custodyStatus = custodyStatusData(),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = true,
-        victimsInContactScheme = victimsInContactSchemeData(),
+        hasVictimsInContactScheme = victimsInContactSchemeData(),
         dateVloInformed = LocalDate.now()
       )
     }

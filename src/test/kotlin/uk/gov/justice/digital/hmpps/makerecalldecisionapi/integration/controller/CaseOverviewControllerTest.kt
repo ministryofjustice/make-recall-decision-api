@@ -124,13 +124,13 @@ class CaseOverviewControllerTest(
   @Test
   fun `given case has no recommendation in database then do not return any active recommendation`() {
     runTest {
+      // Delete recommendation from database if one was created in previous tests
+      deleteRecommendation()
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
-      // Delete recommendation from database if one was created in previous tests
-      deleteRecommendation()
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
