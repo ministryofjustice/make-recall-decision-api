@@ -4,7 +4,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -57,7 +56,7 @@ class MrdTestDataBuilder {
         dateVloInformed = LocalDate.now(),
         alternativesToRecallTried = AlternativesToRecallTried(
           selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(RecallAlternative(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
+          allOptions = listOf(TextValueOption(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
         )
       )
     }

@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypePartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -20,7 +19,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+<<<<<<< HEAD
 import java.time.LocalDate
+=======
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+>>>>>>> MRD-458_alternative-to-recall: Removed redundant RecallAllternative class.
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -42,8 +45,14 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           dateVloInformed = LocalDate.now(),
           alternativesToRecallTried = AlternativesToRecallTried(
             selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
+<<<<<<< HEAD
             allOptions = listOf(RecallAlternative(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
           )
+=======
+            allOptions = listOf(TextValueOption(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
+          ),
+          isThisAnEmergencyRecall = true
+>>>>>>> MRD-458_alternative-to-recall: Removed redundant RecallAllternative class.
         )
       )
 

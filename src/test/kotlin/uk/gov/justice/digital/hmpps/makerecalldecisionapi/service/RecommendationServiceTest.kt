@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
@@ -26,7 +25,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommenda
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+<<<<<<< HEAD
 import java.time.LocalDate
+=======
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+>>>>>>> MRD-458_alternative-to-recall: Removed redundant RecallAllternative class.
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -96,7 +99,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         createdDate = "2022-07-01T15:22:24.567Z",
         alternativesToRecallTried = AlternativesToRecallTried(
           selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(RecallAlternative(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
+          allOptions = listOf(TextValueOption(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
         )
       )
     )
