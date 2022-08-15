@@ -1,30 +1,27 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypePartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 
 class RecommendationToPartADataMapper {
 
   companion object Mapper {
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
-      val custodyStatus = findCustodyStatusToDisplay(recommendation.data.custodyStatus)
-      val recallType = findRecallTypeToDisplay(recommendation.data.recallType)
-      val isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall)
-
-      return PartAData(custodyStatus, recallType, recommendation.data.responseToProbation, isThisAnEmergencyRecall)
-    }
-
-    private fun findCustodyStatusToDisplay(custodyStatus: CustodyStatus?): String {
-      return when (custodyStatus?.selected) {
-        CustodyStatusValue.YES_POLICE -> CustodyStatusValue.YES_POLICE.partADisplayValue
-        CustodyStatusValue.YES_PRISON -> CustodyStatusValue.YES_PRISON.partADisplayValue
-        else -> CustodyStatusValue.NO.partADisplayValue
-      }
+      return PartAData(
+        custodyStatus = recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
+        recallType = findRecallTypeToDisplay(recommendation.data.recallType),
+        responseToProbation = recommendation.data.responseToProbation,
+        isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
+        hasVictimsInContactScheme = recommendation.data.victimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
+        dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed)
+      )
     }
 
     private fun findRecallTypeToDisplay(recallType: RecallType?): RecallTypePartA {
@@ -38,7 +35,7 @@ class RecommendationToPartADataMapper {
     }
 
     private fun convertBooleanToYesNo(value: Boolean?): String {
-      return if (value == true) "Yes" else "No"
+      return if (value == true) YES else NO
     }
   }
 }

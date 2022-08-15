@@ -6,7 +6,9 @@ import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import java.io.Serializable
+import java.time.LocalDate
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -37,6 +39,8 @@ data class RecommendationModel(
   var custodyStatus: CustodyStatus? = null,
   var responseToProbation: String? = null,
   var isThisAnEmergencyRecall: Boolean? = null,
+  var victimsInContactScheme: VictimsInContactScheme? = null,
+  var dateVloInformed: LocalDate? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,

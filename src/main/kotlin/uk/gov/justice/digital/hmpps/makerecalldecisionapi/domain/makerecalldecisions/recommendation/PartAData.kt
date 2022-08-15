@@ -5,6 +5,8 @@ data class PartAData(
   val recallType: RecallTypePartA,
   val responseToProbation: String?,
   val isThisAnEmergencyRecall: String?,
+  val hasVictimsInContactScheme: String?,
+  val dateVloInformed: String?,
 )
 
 data class RecallTypePartA(

@@ -25,6 +25,15 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "responseToProbation": "They have not responded well",
   "isThisAnEmergencyRecall": true,
+  "victimsInContactScheme": {
+    "selected": "YES",
+    "allOptions": [
+      { "value": "YES", "text": "Yes" },
+      { "value": "NO", "text": "No" },
+      { "value": "NOT_APPLICABLE", "text": "N/A" }
+    ]
+  },
+  "dateVloInformed": "2022-08-01",
   "status": "$status"
 }
 """.trimIndent()
