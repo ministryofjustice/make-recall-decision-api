@@ -22,11 +22,11 @@ class RecommendationToPartADataMapper {
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
-        selectedAlternativesMap = convertToMap(recommendation.data.alternativesToRecallTried?.selected)
+        selectedAlternativesMap = convertToSelectedAlternativesMap(recommendation.data.alternativesToRecallTried?.selected)
       )
     }
 
-    private fun convertToMap(selectedAlternatives: List<SelectedAlternative>?): Map<String, String> {
+    private fun convertToSelectedAlternativesMap(selectedAlternatives: List<SelectedAlternative>?): Map<String, String> {
       val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
       return mapOf(
         "warning_letter_details" to (selectedAlternativesMap["WARNINGS_LETTER"] ?: EMPTY_STRING),
