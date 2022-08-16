@@ -118,79 +118,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
           hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
           dateVloInformed = updateRecommendationRequest.dateVloInformed,
+          hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
           createdBy = existingRecommendation.data.createdBy,
           createdDate = existingRecommendation.data.createdDate,
           alternativesToRecallTried = existingRecommendation.data.alternativesToRecallTried
-        )
-      )
-
-    // and
-    given(recommendationRepository.save(any()))
-      .willReturn(recommendationToSave)
-
-    // and
-    given(recommendationRepository.findById(any()))
-      .willReturn(Optional.of(existingRecommendation))
-
-    // when
-    recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
-
-    // then
-    then(recommendationRepository).should().save(recommendationToSave)
-    then(recommendationRepository).should().findById(1)
-  }
-
-  @Test
-  fun `updates a recommendation to the database when selected alternative is none`() {
-    // given
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = crn,
-        status = Status.DRAFT,
-        personOnProbation = PersonOnProbation(name = "John Smith"),
-        lastModifiedBy = "Jack",
-        lastModifiedDate = "2022-07-01T15:22:24.567Z",
-        createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z",
-        alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = "WARNINGS_LETTER", details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(TextValueOption(value = "WARNINGS_LETTER", text = "Warnings/licence breach letters"))
-        )
-      )
-    )
-
-    // and
-    val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData()
-      .copy(
-        alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.NONE.name, details = "Rationale for none")),
-          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.NONE.name, text = "None"))
-        )
-      )
-
-    // and
-    val recommendationToSave =
-      existingRecommendation.copy(
-        id = existingRecommendation.id,
-        data = RecommendationModel(
-          crn = existingRecommendation.data.crn,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
-          recallType = updateRecommendationRequest.recallType,
-          custodyStatus = updateRecommendationRequest.custodyStatus,
-          responseToProbation = updateRecommendationRequest.responseToProbation,
-          isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
-          hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
-          dateVloInformed = updateRecommendationRequest.dateVloInformed,
-          status = existingRecommendation.data.status,
-          lastModifiedDate = "2022-07-26T09:48:27.443Z",
-          lastModifiedBy = "Bill",
-          createdBy = existingRecommendation.data.createdBy,
-          createdDate = existingRecommendation.data.createdDate,
-          alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried
         )
       )
 
@@ -228,7 +162,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isThisAnEmergencyRecall = null,
             hasVictimsInContactScheme = null,
             dateVloInformed = null,
-            alternativesToRecallTried = null
+            alternativesToRecallTried = null,
+            hasArrestIssues = null
           ),
           recommendationId = 456L,
           "Bill"
@@ -272,6 +207,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
     assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(VictimsInContactSchemeValue.YES)
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
+    assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
   }
 
   @Test
