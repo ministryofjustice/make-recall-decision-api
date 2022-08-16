@@ -7,15 +7,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ArrestIssues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypePartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -38,13 +39,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
           isThisAnEmergencyRecall = true,
-
           hasVictimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
           dateVloInformed = LocalDate.now(),
           alternativesToRecallTried = AlternativesToRecallTried(
             selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
             allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
-          )
+          ),
+          hasArrestIssues = ArrestIssues(selected = true, details = "Has arrest issues")
         )
       )
 
@@ -57,7 +58,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
     runTest {
       val partA = PartAData(
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
-        recallType = RecallTypePartA(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
+        recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = "Yes",
         hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
@@ -72,12 +73,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           "referral_to_partnership_agencies_details" to "referred to partner agency",
           "risk_escalation_details" to "risk escalation",
           "alternative_to_recall_other_details" to "alternative action"
-        )
+        ),
+        hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details")
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(16)
+      assertThat(result.size).isEqualTo(18)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -94,6 +96,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo("referred to partner agency")
       assertThat(result["risk_escalation_details"]).isEqualTo("risk escalation")
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
+      assertThat(result["has_arrest_issues"]).isEqualTo("Yes")
+      assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
     }
   }
 }

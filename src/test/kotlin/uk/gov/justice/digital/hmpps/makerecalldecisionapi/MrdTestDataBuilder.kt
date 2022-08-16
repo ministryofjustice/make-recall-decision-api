@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ArrestIssues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
@@ -37,11 +38,13 @@ class MrdTestDataBuilder {
           isThisAnEmergencyRecall = true,
           hasVictimsInContactScheme = victimsInContactSchemeData(),
           dateVloInformed = LocalDate.now(),
+          hasArrestIssues = arrestIssues(),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
-          personOnProbation = PersonOnProbation(firstName = firstName, surname = surname)
+          personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
+          alternativesToRecallTried = alternativesToRecallTried()
         )
       )
     }
@@ -55,10 +58,8 @@ class MrdTestDataBuilder {
         isThisAnEmergencyRecall = true,
         hasVictimsInContactScheme = victimsInContactSchemeData(),
         dateVloInformed = LocalDate.now(),
-        alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
-        )
+        alternativesToRecallTried = alternativesToRecallTried(),
+        hasArrestIssues = arrestIssues()
       )
     }
 
@@ -93,6 +94,17 @@ class MrdTestDataBuilder {
           TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
         )
       )
+    }
+
+    private fun alternativesToRecallTried(): AlternativesToRecallTried {
+      return AlternativesToRecallTried(
+        selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
+        allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
+      )
+    }
+
+    private fun arrestIssues(): ArrestIssues {
+      return ArrestIssues(selected = true, details = "Arrest issue details")
     }
   }
 }

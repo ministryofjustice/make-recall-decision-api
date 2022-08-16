@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ArrestIssues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -128,6 +129,21 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.dateVloInformed).isEqualTo("1 September 2022")
+    }
+  }
+
+  @Test
+  fun `given has arrest issues data then should map in part A text`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", hasArrestIssues = ArrestIssues(selected = true, details = "Arrest details"))
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.hasArrestIssues?.value).isEqualTo("Yes")
+      assertThat(result.hasArrestIssues?.details).isEqualTo("Arrest details")
     }
   }
 }
