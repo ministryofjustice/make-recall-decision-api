@@ -13,6 +13,7 @@ data class RecommendationResponse(
   val isThisAnEmergencyRecall: Boolean? = null,
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
   val dateVloInformed: LocalDate? = null,
+  val hasArrestIssues: ArrestIssues? = null,
   val personOnProbation: PersonOnProbation? = null,
   val alternativesToRecallTried: AlternativesToRecallTried? = null
 )

@@ -55,6 +55,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 				"text": "Drug testing"
 			}
 		]
-	}
+	},
+  "hasArrestIssues": {
+    "selected": true,
+    "details": "Violent behaviour" 
+  }
 }
 """.trimIndent()
