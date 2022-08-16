@@ -53,6 +53,7 @@ generic-service:
       POSTGRES_PASSWORD: "password"
 
   allowlist:
+    north_shields_user: "194.33.192.1/24"
     kettering_user: "194.33.196.4/24"
     norwich_user: "194.33.192.0/24"
     office: "217.33.148.210/32"
