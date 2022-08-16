@@ -64,7 +64,6 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 4,Approved premises,C122,AP - Out of hours recall
 4,Approved premises,C123,AP - Hostel Curfew
 4,Approved premises,C145,Curfew Violation
-4,Approved premises,C145,Curfew Violation
 4,Approved premises,C191,AP - Letters / Documents
 4,Approved premises,C350,AP - Other Contact
 4,Approved premises,C389,AP - Maintenance charge/benefits
@@ -79,7 +78,6 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 5,Breaches and warnings,C039,Breach Action - Other Enforcement Letter Sent
 5,Breaches and warnings,C040,Breach Action - Withdraw Warning Letter
 5,Breaches and warnings,C041,Breach Action - Recall Requested
-5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
 5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
 5,Breaches and warnings,CLBW,Withdrawal of Warning
 5,Breaches and warnings,LCL,Licence Compliance Letter
@@ -176,7 +174,6 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 13,Management oversight,SPOD03,Case Allocation: SPO Oversight
 14,Mappa / IOM / Marac,C005,Marac meeting
 14,Mappa / IOM / Marac,C200,MAPPA Information
-14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
 14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
 14,Mappa / IOM / Marac,C318,IOM Other Contact
 14,Mappa / IOM / Marac,CAIL,IOM Correspondence/Mail Contact
