@@ -51,7 +51,12 @@ data class RecommendationModel(
   val createdDate: String? = null,
   val personOnProbation: PersonOnProbation? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null
-) : Serializable
+) : Serializable {
+
+  fun getIsThisAnEmergencyRecall(): Boolean? {
+    return isThisAnEmergencyRecall
+  }
+}
 
 enum class Status {
   DRAFT, DOCUMENT_CREATED, DELETED

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
 import java.security.Principal
 
@@ -58,7 +58,7 @@ internal class RecommendationController(
   @ResponseStatus(HttpStatus.OK)
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
-    @RequestBody updateRecommendationRequest: UpdateRecommendationRequest,
+    @RequestBody updateRecommendationRequest: JsonNode,
     userLogin: Principal
   ) {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
