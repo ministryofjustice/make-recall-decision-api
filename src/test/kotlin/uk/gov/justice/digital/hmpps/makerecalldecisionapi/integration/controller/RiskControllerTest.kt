@@ -2,13 +2,15 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Disabled
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -27,8 +29,7 @@ class RiskControllerTest(
       noHistoricalRiskScoresResponse(crn)
       noCurrentRiskScoresResponse(crn)
       noRoSHSummaryResponse(crn)
-      // TODO reintroduce once ARN-1026 is complete
-//      noContingencyPlanResponse(crn)
+      noContingencyPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -75,8 +76,9 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo("")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
+        // TODO not available from rsr/history - TBD
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo("")
 //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
         .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("")
@@ -90,10 +92,9 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
         .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
-      // TODO reintroduce once ARN-1026 is complete
-//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-//        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-//        .jsonPath("$.contingencyPlan.description").isEqualTo("")
+        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
+        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
+        .jsonPath("$.contingencyPlan.description").isEqualTo("")
     }
   }
 
@@ -108,16 +109,13 @@ class RiskControllerTest(
       historicalRiskScoresResponse(crn)
       currentRiskScoresResponse(crn)
       deleteAndCreateRecommendation()
+      contingencyPlanResponse(crn)
 
-      // TODO reintroduce once ARN-1026 is complete
-//      contingencyPlanResponse(crn)
+      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
+      val assessmentsFromArnContingencyPlanResponse = JSONArray(arnContingencyPlanResponse.get("assessments").toString())
+      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
 
-      // TODO reintroduce once ARN-1026 is complete
-//      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
-//      val assessmentsFromArnContingencyPlanResponse = JSONArray(arnContingencyPlanResponse.get("assessments").toString())
-//      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
-//
-//      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("monitoringAndControl").toString() + latestCompleteAssessment.get("interventionsAndTreatment").toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
+      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("monitoringAndControl").toString() + latestCompleteAssessment.get("interventionsAndTreatment").toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -164,9 +162,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(8.1)
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
-//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
+        // TODO not available from rsr/history - TBD
+        //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("MEDIUM")
+        //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo(40)
+        //        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
         .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.current.RSR.score").isEqualTo(23)
@@ -182,11 +181,9 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
-
-      // TODO reintroduce once ARN-1026 is complete
-//        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-//        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-//        .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
+        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
+        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
+        .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
     }
   }
 
@@ -200,7 +197,7 @@ class RiskControllerTest(
     currentRiskScoresResponse(crn)
     noOffenderDetailsResponse(crn)
     // TODO reintroduce once ARN-1026 is complete
-//    noContingencyPlanResponse(crn)
+    noContingencyPlanResponse(crn)
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -296,8 +293,6 @@ class RiskControllerTest(
         .isEqualTo("Client timeout: ARN API Client - historical scores endpoint: [No response within $oasysArnClientTimeout seconds]")
     }
 
-    // TODO reintroduce once ARN-1026 is complete
-    @Disabled
     @Test
     fun `gateway timeout 503 given on OASYS ARN contingency plan endpoint`() {
       runTest {
