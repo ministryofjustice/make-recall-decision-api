@@ -6,7 +6,6 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 1,Administrative,CMS02,CMS - Sentence Plan Intervention Delivery - Medium
 1,Administrative,CMS03,CMS - Sentence Plan Intervention Delivery - High
 1,Administrative,CMS28,CMS - Case Related Communication - Low
-1,Administrative,CMS28,CMS - Information & Intelligence Gathering - Low
 1,Administrative,CMS30,CMS - Case Related Communication - High
 1,Administrative,CMS32,CMS - Assistance with Assessments - Medium
 1,Administrative,CMS33,CMS - Assistance with Assessments - High
@@ -216,7 +215,6 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 19,Recall,C041,Breach Action - Recall Requested
 19,Recall,C122,AP - Out of hours recall
 19,Recall,C439,Recall - Review Report submitted to RR Section
-19,Recall,CNPS,NPS Recall Decision - Enforcement
 19,Recall,CNPS,PS Recall Decision
 19,Recall,LCL,Licence Compliance Letter
 19,Recall,MO5,Management Oversight - Recall
