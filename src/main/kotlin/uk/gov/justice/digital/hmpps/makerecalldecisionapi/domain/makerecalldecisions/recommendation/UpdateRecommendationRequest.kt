@@ -11,5 +11,6 @@ data class UpdateRecommendationRequest(
   val isThisAnEmergencyRecall: Boolean?,
   val hasVictimsInContactScheme: VictimsInContactScheme?,
   val dateVloInformed: LocalDate?,
-  val alternativesToRecallTried: AlternativesToRecallTried?
+  val alternativesToRecallTried: AlternativesToRecallTried?,
+  val hasArrestIssues: ArrestIssues?
 )

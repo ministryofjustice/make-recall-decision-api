@@ -58,6 +58,7 @@ internal class RecommendationService(
       isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
       hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,
       dateVloInformed = recommendationEntity.data.dateVloInformed,
+      hasArrestIssues = recommendationEntity.data.hasArrestIssues,
       personOnProbation = recommendationEntity.data.personOnProbation,
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried
     )
@@ -79,6 +80,7 @@ internal class RecommendationService(
     existingRecommendationEntity.data.isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall ?: existingRecommendationEntity.data.isThisAnEmergencyRecall
     existingRecommendationEntity.data.hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme ?: existingRecommendationEntity.data.hasVictimsInContactScheme
     existingRecommendationEntity.data.dateVloInformed = updateRecommendationRequest.dateVloInformed ?: existingRecommendationEntity.data.dateVloInformed
+    existingRecommendationEntity.data.hasArrestIssues = updateRecommendationRequest.hasArrestIssues ?: existingRecommendationEntity.data.hasArrestIssues
     existingRecommendationEntity.data.status = status
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
     existingRecommendationEntity.data.lastModifiedBy = username

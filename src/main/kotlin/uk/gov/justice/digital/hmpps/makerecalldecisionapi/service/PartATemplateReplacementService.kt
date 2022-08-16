@@ -46,7 +46,9 @@ internal class PartATemplateReplacementService {
       "referral_to_approved_premises_details" to partAData.selectedAlternativesMap["referral_to_approved_premises_details"],
       "referral_to_partnership_agencies_details" to partAData.selectedAlternativesMap["referral_to_partnership_agencies_details"],
       "risk_escalation_details" to partAData.selectedAlternativesMap["risk_escalation_details"],
-      "alternative_to_recall_other_details" to partAData.selectedAlternativesMap["alternative_to_recall_other_details"]
+      "alternative_to_recall_other_details" to partAData.selectedAlternativesMap["alternative_to_recall_other_details"],
+      "has_arrest_issues" to partAData.hasArrestIssues?.value,
+      "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
     )
   }
 }

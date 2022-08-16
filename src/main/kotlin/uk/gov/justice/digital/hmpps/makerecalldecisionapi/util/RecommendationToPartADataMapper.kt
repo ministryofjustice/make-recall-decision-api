@@ -2,10 +2,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypePartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
@@ -23,7 +23,8 @@ class RecommendationToPartADataMapper {
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
-        selectedAlternativesMap = convertToSelectedAlternativesMap(recommendation.data.alternativesToRecallTried?.selected)
+        selectedAlternativesMap = convertToSelectedAlternativesMap(recommendation.data.alternativesToRecallTried?.selected),
+        hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details)
       )
     }
 
@@ -42,14 +43,14 @@ class RecommendationToPartADataMapper {
       )
     }
 
-    private fun findRecallTypeToDisplay(recallType: RecallType?): RecallTypePartA {
+    private fun findRecallTypeToDisplay(recallType: RecallType?): ValueWithDetails {
       val partAValue = when (recallType?.selected?.value) {
         RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
         RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
         else -> null
       }
 
-      return RecallTypePartA(partAValue, recallType?.selected?.details)
+      return ValueWithDetails(partAValue, recallType?.selected?.details)
     }
 
     private fun convertBooleanToYesNo(value: Boolean?): String {
