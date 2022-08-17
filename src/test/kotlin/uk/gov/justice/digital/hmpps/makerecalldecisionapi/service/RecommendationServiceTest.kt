@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.fasterxml.jackson.databind.JsonNode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
@@ -27,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import java.time.LocalDate
 import java.util.Optional
 
@@ -136,8 +138,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
 
+    val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+    val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
     // when
-    recommendationService.updateRecommendation(updateRecommendationRequest, 1L, "Bill")
+    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill")
 
     // then
     then(recommendationRepository).should().save(recommendationToSave)
@@ -151,20 +156,25 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
 
+    val updateRecommendationRequest = UpdateRecommendationRequest(
+      status = null,
+      recallType = null,
+      custodyStatus = null,
+      responseToProbation = null,
+      isThisAnEmergencyRecall = null,
+      hasVictimsInContactScheme = null,
+      dateVloInformed = null,
+      alternativesToRecallTried = null,
+      hasArrestIssues = null
+    )
+
+    val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+    val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
     Assertions.assertThatThrownBy {
       runTest {
         recommendationService.updateRecommendation(
-          UpdateRecommendationRequest(
-            status = null,
-            recallType = null,
-            custodyStatus = null,
-            responseToProbation = null,
-            isThisAnEmergencyRecall = null,
-            hasVictimsInContactScheme = null,
-            dateVloInformed = null,
-            alternativesToRecallTried = null,
-            hasArrestIssues = null
-          ),
+          recommendationJsonNode,
           recommendationId = 456L,
           "Bill"
         )
