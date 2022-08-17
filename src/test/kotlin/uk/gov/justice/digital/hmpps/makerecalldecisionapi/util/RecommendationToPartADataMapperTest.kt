@@ -83,8 +83,8 @@ class RecommendationToPartADataMapperTest {
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.recallType.value).isEqualTo(partADisplayText)
-      assertThat(result.recallType.details).isEqualTo("My details")
+      assertThat(result.recallType?.value).isEqualTo(partADisplayText)
+      assertThat(result.recallType?.details).isEqualTo("My details")
     }
   }
 
@@ -129,6 +129,20 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.dateVloInformed).isEqualTo("1 September 2022")
+    }
+  }
+
+  @Test
+  fun `given null date vlo informed then should map to empty string in part A text`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", dateVloInformed = null)
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.dateVloInformed).isEqualTo("")
     }
   }
 

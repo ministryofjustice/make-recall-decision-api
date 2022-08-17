@@ -22,7 +22,7 @@ class DateTimeHelper {
     fun convertLocalDateToReadableDate(date: LocalDate?): String {
       val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-      return date?.format(formatter).toString()
+      return date?.format(formatter) ?: ""
     }
   }
 }
