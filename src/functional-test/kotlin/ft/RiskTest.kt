@@ -2,12 +2,10 @@ package ft
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
 class RiskTest() : FunctionalTest() {
-  @Disabled // TODO reintroduce once ARN-1026 is complete
   @Test
   fun `retrieve risk data, expected 200`() {
     // given
@@ -21,6 +19,6 @@ class RiskTest() : FunctionalTest() {
       .get("http://127.0.0.1:8080/cases/{crn}/risk")
 
     // then
-    assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
+    assertThat(lastResponse.statusCode).isEqualTo(expected)
   }
 }
