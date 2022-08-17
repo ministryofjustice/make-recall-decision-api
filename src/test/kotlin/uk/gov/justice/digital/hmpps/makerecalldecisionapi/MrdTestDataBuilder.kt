@@ -51,7 +51,7 @@ class MrdTestDataBuilder {
 
     fun updateRecommendationRequestData(): UpdateRecommendationRequest {
       return UpdateRecommendationRequest(
-        status = null,
+        status = Status.DRAFT,
         recallType = recallTypeData(),
         custodyStatus = custodyStatusData(),
         responseToProbation = "They have not responded well",

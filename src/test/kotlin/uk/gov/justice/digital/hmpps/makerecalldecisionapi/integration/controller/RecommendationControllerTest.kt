@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
@@ -100,6 +101,36 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.alternativesToRecallTried.allOptions[1].text").isEqualTo("Drug testing")
       .jsonPath("$.hasArrestIssues.selected").isEqualTo(true)
       .jsonPath("$.hasArrestIssues.details").isEqualTo("Violent behaviour")
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
+  }
+
+  @Test
+  fun `given an update that clears the vlo date field then save in database and get recommendation with null vlo date`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
+    deleteAndCreateRecommendation()
+    updateRecommendation(updateRecommendationRequest())
+    updateRecommendation(updateRecommendationRequestWithClearedValues())
+
+    webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.id").isEqualTo(createdRecommendationId)
+      .jsonPath("$.crn").isEqualTo(crn)
+      .jsonPath("$.status").isEqualTo("DRAFT")
+      .jsonPath("$.hasVictimsInContactScheme.selected").isEqualTo("NO")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[0].value").isEqualTo("YES")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[0].text").isEqualTo("Yes")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[1].value").isEqualTo("NO")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[1].text").isEqualTo("No")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
+      .jsonPath("$.hasVictimsInContactScheme.allOptions[2].text").isEqualTo("N/A")
+      .jsonPath("$.dateVloInformed").isEqualTo(null)
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
