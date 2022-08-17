@@ -58,12 +58,12 @@ internal class RecommendationController(
   @ResponseStatus(HttpStatus.OK)
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
-    @RequestBody updateRecommendationRequest: JsonNode,
+    @RequestBody updateRecommendationJson: JsonNode,
     userLogin: Principal
   ) {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    recommendationService.updateRecommendation(updateRecommendationRequest, recommendationId, username)
+    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")

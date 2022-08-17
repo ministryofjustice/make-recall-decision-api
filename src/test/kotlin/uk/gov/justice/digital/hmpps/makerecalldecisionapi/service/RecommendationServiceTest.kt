@@ -15,19 +15,14 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import java.time.LocalDate
 import java.util.Optional
@@ -96,16 +91,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z",
-        alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
-        )
+        createdDate = "2022-07-01T15:22:24.567Z"
       )
     )
 
     // and
-    val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData()
+    val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
     // and
     val recommendationToSave =
@@ -126,7 +117,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           lastModifiedBy = "Bill",
           createdBy = existingRecommendation.data.createdBy,
           createdDate = existingRecommendation.data.createdDate,
-          alternativesToRecallTried = existingRecommendation.data.alternativesToRecallTried
+          alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried
         )
       )
 
@@ -156,7 +147,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
 
-    val updateRecommendationRequest = UpdateRecommendationRequest(
+    val updateRecommendationRequest = RecommendationModel(
+      crn = null,
       status = null,
       recallType = null,
       custodyStatus = null,
