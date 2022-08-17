@@ -54,7 +54,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given recommendation data then build the mappings for the template`() {
+  fun `given recommendation data then build the mappings for the Part A template`() {
     runTest {
       val partA = PartAData(
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
