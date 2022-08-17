@@ -73,7 +73,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
                 )
               )
             )
-          )
+          ),
+          underIntegratedOffenderManagement = SelectedWithDetails(selected = true, details = "This is the IOM details")
         )
       )
 
@@ -109,12 +110,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name, SelectedStandardLicenceConditions.NO_OFFENCE.name, SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name, SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
           SelectedStandardLicenceConditions.ADDRESS_APPROVED.name, SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name, SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
         ),
-        additionalConditionsBreached = "These are the additional conditions breached"
+        additionalConditionsBreached = "These are the additional conditions breached",
+        isUnderIntegratedOffenderManagement = ValueWithDetails(value = "Yes", details = "This is the IOM details")
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(26)
+      assertThat(result.size).isEqualTo(28)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -141,6 +143,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
+      assertThat(result["is_under_integrated_offender_management"]).isEqualTo("Yes")
+      assertThat(result["is_under_integrated_offender_management_details"]).isEqualTo("This is the IOM details")
     }
   }
 

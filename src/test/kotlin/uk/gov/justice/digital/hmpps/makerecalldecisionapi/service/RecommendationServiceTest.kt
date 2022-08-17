@@ -119,7 +119,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           createdBy = existingRecommendation.data.createdBy,
           createdDate = existingRecommendation.data.createdDate,
           alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
-          licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached
+          licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
+          underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement
         )
       )
 
@@ -159,7 +160,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       hasVictimsInContactScheme = null,
       dateVloInformed = null,
       alternativesToRecallTried = null,
-      hasArrestIssues = null
+      hasArrestIssues = null,
+      underIntegratedOffenderManagement = null
     )
 
     val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
@@ -222,6 +224,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].note).isEqualTo("Additional note")
     assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].mainCatCode).isEqualTo("NLC5")
     assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].subCatCode).isEqualTo("NST14")
+    assertThat(recommendationResponse.underIntegratedOffenderManagement?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.underIntegratedOffenderManagement?.details).isEqualTo("This is the IOM details")
   }
 
   @Test

@@ -50,6 +50,7 @@ class MrdTestDataBuilder {
           personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
           alternativesToRecallTried = alternativesToRecallTried(),
           licenceConditionsBreached = licenceConditionsBreached(),
+          underIntegratedOffenderManagement = integratedOffenderManagement()
         )
       )
     }
@@ -70,6 +71,7 @@ class MrdTestDataBuilder {
         alternativesToRecallTried = alternativesToRecallTried(),
         hasArrestIssues = arrestIssues(),
         licenceConditionsBreached = licenceConditionsBreached(),
+        underIntegratedOffenderManagement = integratedOffenderManagement()
       )
     }
 
@@ -134,6 +136,10 @@ class MrdTestDataBuilder {
           )
         )
       )
+    }
+
+    private fun integratedOffenderManagement(): SelectedWithDetails {
+      return SelectedWithDetails(selected = true, details = "This is the IOM details")
     }
   }
 }

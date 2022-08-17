@@ -54,7 +54,8 @@ data class RecommendationModel(
   val createdDate: String? = null,
   val personOnProbation: PersonOnProbation? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
-  var licenceConditionsBreached: LicenceConditionsBreached? = null
+  var licenceConditionsBreached: LicenceConditionsBreached? = null,
+  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: SelectedWithDetails? = null
 ) : Serializable
 
 enum class Status {

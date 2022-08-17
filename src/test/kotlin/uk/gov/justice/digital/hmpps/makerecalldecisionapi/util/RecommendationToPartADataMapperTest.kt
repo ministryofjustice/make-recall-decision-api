@@ -242,6 +242,21 @@ class RecommendationToPartADataMapperTest {
   }
 
   @Test
+  fun `given has is under integrated offender management then should map in part A text`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", underIntegratedOffenderManagement = SelectedWithDetails(selected = true, details = "This is the IOM details"))
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.isUnderIntegratedOffenderManagement?.value).isEqualTo("Yes")
+      assertThat(result.isUnderIntegratedOffenderManagement?.details).isEqualTo("This is the IOM details")
+    }
+  }
+
+  @Test
   fun `given no alternative licence conditions then return empty text for alternative licences in the part A`() {
     runTest {
       val recommendation = RecommendationEntity(
