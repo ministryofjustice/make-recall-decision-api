@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectReader
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
@@ -9,12 +11,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDateTime
 import java.util.Collections
@@ -66,22 +68,16 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(updateRecommendationRequest: UpdateRecommendationRequest, recommendationId: Long, username: String?) {
+  fun updateRecommendation(jsonRquest: JsonNode, recommendationId: Long, username: String?) {
 
     val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
-    val status = updateRecommendationRequest.status ?: existingRecommendationEntity.data.status
+    val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
 
-    existingRecommendationEntity.data.alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried ?: existingRecommendationEntity.data.alternativesToRecallTried
-    existingRecommendationEntity.data.recallType = updateRecommendationRequest.recallType ?: existingRecommendationEntity.data.recallType
-    existingRecommendationEntity.data.custodyStatus = updateRecommendationRequest.custodyStatus ?: existingRecommendationEntity.data.custodyStatus
-    existingRecommendationEntity.data.responseToProbation = updateRecommendationRequest.responseToProbation ?: existingRecommendationEntity.data.responseToProbation
-    existingRecommendationEntity.data.isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall ?: existingRecommendationEntity.data.isThisAnEmergencyRecall
-    existingRecommendationEntity.data.hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme ?: existingRecommendationEntity.data.hasVictimsInContactScheme
-    existingRecommendationEntity.data.dateVloInformed = updateRecommendationRequest.dateVloInformed ?: existingRecommendationEntity.data.dateVloInformed
-    existingRecommendationEntity.data.hasArrestIssues = updateRecommendationRequest.hasArrestIssues ?: existingRecommendationEntity.data.hasArrestIssues
-    existingRecommendationEntity.data.status = status
+    val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRquest)
+
+    existingRecommendationEntity.data = updateRecommendationRequest
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
     existingRecommendationEntity.data.lastModifiedBy = username
 

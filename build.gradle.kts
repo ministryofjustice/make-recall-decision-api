@@ -33,6 +33,8 @@ dependencies {
   implementation("io.opentelemetry:opentelemetry-api:1.16.0")
   implementation("joda-time:joda-time:2.10.14")
   implementation("com.deepoove:poi-tl:1.12.0")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   implementation("org.flywaydb:flyway-core:8.5.13")
   implementation("org.postgresql:postgresql:42.4.1")
