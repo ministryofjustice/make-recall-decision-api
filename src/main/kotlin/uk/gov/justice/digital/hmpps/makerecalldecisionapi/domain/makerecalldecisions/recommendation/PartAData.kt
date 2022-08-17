@@ -1,17 +1,17 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 data class PartAData(
-  val custodyStatus: String,
-  val recallType: ValueWithDetails,
-  val responseToProbation: String?,
-  val isThisAnEmergencyRecall: String?,
-  val hasVictimsInContactScheme: String?,
-  val dateVloInformed: String?,
-  val selectedAlternativesMap: Map<String, String>,
-  val hasArrestIssues: ValueWithDetails?,
+  val custodyStatus: String? = null,
+  val recallType: ValueWithDetails? = null,
+  val responseToProbation: String? = null,
+  val isThisAnEmergencyRecall: String? = null,
+  val hasVictimsInContactScheme: String? = null,
+  val dateVloInformed: String? = null,
+  val selectedAlternativesMap: Map<String, String> = emptyMap(),
+  val hasArrestIssues: ValueWithDetails? = null,
 )
 
 data class ValueWithDetails(
-  val value: String?,
-  val details: String?
+  val value: String? = null,
+  val details: String? = null
 )
