@@ -17,7 +17,7 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
-val springDocVersion = "1.6.9"
+val springDocVersion = "1.6.10"
 val restAssuredVersion = "5.1.1"
 
 dependencies {
