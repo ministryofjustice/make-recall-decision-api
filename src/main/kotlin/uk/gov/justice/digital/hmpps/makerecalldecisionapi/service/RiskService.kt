@@ -64,7 +64,7 @@ internal class RiskService(
         current = fetchCurrentScores(crn),
         historical = fetchHistoricalScores(crn)
       )
-      val contingencyPlan = null // fetchContingencyPlan(crn) // TODO reintroduce once ARN-1026 is complete
+      val contingencyPlan = fetchContingencyPlan(crn) // TODO reintroduce once ARN-1026 is complete
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return RiskResponse(
@@ -164,7 +164,7 @@ internal class RiskService(
             rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
             ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
             ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
-            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO ARN team will provide this - WIP
+            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO not available from rsr/history - TBD
           )
         )
       }
