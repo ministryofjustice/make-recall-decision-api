@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
@@ -40,9 +42,9 @@ data class RecommendationModel(
   var recallType: RecallType? = null,
   var custodyStatus: CustodyStatus? = null,
   var responseToProbation: String? = null,
-  var isThisAnEmergencyRecall: Boolean? = null,
+  @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
-  var dateVloInformed: LocalDate? = null,
+  @JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
   var hasArrestIssues: ArrestIssues? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
@@ -51,12 +53,7 @@ data class RecommendationModel(
   val createdDate: String? = null,
   val personOnProbation: PersonOnProbation? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null
-) : Serializable {
-
-  fun getIsThisAnEmergencyRecall(): Boolean? {
-    return isThisAnEmergencyRecall
-  }
-}
+) : Serializable
 
 enum class Status {
   DRAFT, DOCUMENT_CREATED, DELETED
