@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -49,8 +48,12 @@ class MrdTestDataBuilder {
       )
     }
 
-    fun updateRecommendationRequestData(): UpdateRecommendationRequest {
-      return UpdateRecommendationRequest(
+    fun updateRecommendationRequestData(existingRecommendation: RecommendationEntity,): RecommendationModel {
+      return RecommendationModel(
+        crn = existingRecommendation.data.crn,
+        createdBy = existingRecommendation.data.createdBy,
+        createdDate = existingRecommendation.data.createdDate,
+        personOnProbation = existingRecommendation.data.personOnProbation,
         status = Status.DRAFT,
         recallType = recallTypeData(),
         custodyStatus = custodyStatusData(),

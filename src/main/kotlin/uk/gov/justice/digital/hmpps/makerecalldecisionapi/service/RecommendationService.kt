@@ -68,14 +68,14 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRquest: JsonNode, recommendationId: Long, username: String?) {
+  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?) {
 
     val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
     val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
 
-    val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRquest)
+    val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
 
     existingRecommendationEntity.data = updateRecommendationRequest
     existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
