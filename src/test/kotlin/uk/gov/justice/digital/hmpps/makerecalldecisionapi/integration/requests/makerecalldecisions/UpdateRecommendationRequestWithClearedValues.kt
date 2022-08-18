@@ -12,6 +12,10 @@ fun updateRecommendationRequestWithClearedValues(status: Status = Status.DRAFT) 
       { "value": "NOT_APPLICABLE", "text": "N/A" }
     ]
   },
-  "dateVloInformed": null
+  "dateVloInformed": null,
+  "hasArrestIssues": {
+    "selected": false,
+    "details": null
+  }
 }
 """.trimIndent()
