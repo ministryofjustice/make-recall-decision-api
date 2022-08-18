@@ -107,7 +107,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `given an update that clears the vlo date field then save in database and get recommendation with null vlo date`() {
+  fun `given an update that clears hidden fields then save in database and get recommendation with null values for hidden fields`() {
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
@@ -131,6 +131,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.hasVictimsInContactScheme.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
       .jsonPath("$.hasVictimsInContactScheme.allOptions[2].text").isEqualTo("N/A")
       .jsonPath("$.dateVloInformed").isEqualTo(null)
+      .jsonPath("$.hasArrestIssues.selected").isEqualTo(false)
+      .jsonPath("$.hasArrestIssues.details").isEqualTo(null)
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
