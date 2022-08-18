@@ -183,6 +183,9 @@ internal class RiskService(
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No Risk Summary available for CRN: $crn - ${e.message}")
       null
+    } catch (e: WebClientResponseException.InternalServerError) {
+      log.info("No Risk Summary available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      null
     }
   }
 

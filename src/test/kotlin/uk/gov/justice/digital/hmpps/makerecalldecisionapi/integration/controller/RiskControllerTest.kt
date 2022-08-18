@@ -99,6 +99,84 @@ class RiskControllerTest(
   }
 
   @Test
+  fun `retrieves personal details data when no MAPPA, or Contingency plan details available and ARN RoSHSummary fetch fails`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      noMappaDetailsResponse(crn)
+      noHistoricalRiskScoresResponse(crn)
+      noCurrentRiskScoresResponse(crn)
+      failedRoSHSummaryResponse(crn)
+      noContingencyPlanResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("")
+        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("")
+        .jsonPath("$.mappa.level").isEqualTo("")
+        .jsonPath("$.mappa.isNominal").isEqualTo(true)
+        .jsonPath("$.mappa.lastUpdated").isEqualTo("")
+        .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
+        .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
+        .jsonPath("$.natureOfRisk.description").isEqualTo("")
+        .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
+        .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
+        .jsonPath("$.whoIsAtRisk.description").isEqualTo("")
+        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
+        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description").isEqualTo("What circumstances are likely to increase the risk?")
+        .jsonPath("$.circumstancesIncreaseRisk.description").isEqualTo("")
+        .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
+        .jsonPath("$.factorsToReduceRisk.oasysHeading.description").isEqualTo("What factors are likely to reduce the risk?")
+        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("")
+        .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
+        .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
+        .jsonPath("$.whenRiskHighest.description").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
+        // TODO not available from rsr/history - TBD
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.score").isEqualTo("")
+//        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.RSR.type").isEqualTo("RSR")
+        .jsonPath("$.predictorScores.current.RSR.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.RSR.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.type").isEqualTo("OSP/C")
+        .jsonPath("$.predictorScores.current.OSPC.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPC.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.type").isEqualTo("OSP/I")
+        .jsonPath("$.predictorScores.current.OSPI.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OSPI.score").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.current.OGRS.level").isEqualTo("")
+        .jsonPath("$.predictorScores.current.OGRS.score").isEqualTo("")
+        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
+        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
+        .jsonPath("$.contingencyPlan.description").isEqualTo("")
+    }
+  }
+
+  @Test
   fun `retrieves risk data`() {
     runTest {
       val crn = "A12345"

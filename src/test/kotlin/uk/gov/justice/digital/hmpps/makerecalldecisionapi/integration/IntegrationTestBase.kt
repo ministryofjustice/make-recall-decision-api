@@ -52,6 +52,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUnavailableResponse
 import java.util.concurrent.TimeUnit
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -289,6 +290,14 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun failedRoSHSummaryResponse(crn: String) {
+    val roSHSummaryRequest =
+      request().withPath("/risks/crn/$crn/summary")
+    oasysARNApi.`when`(roSHSummaryRequest).respond(
+      response().withBody(riskSummaryUnavailableResponse()).withStatusCode(500)
     )
   }
 
