@@ -3,13 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 
 data class AlternativesToRecallTried(
-  val selected: List<SelectedAlternative>?,
+  val selected: List<ValueWithDetails>?,
   val allOptions: List<TextValueOption>? = null
-)
-
-data class SelectedAlternative(
-  val value: String?,
-  val details: String?
 )
 
 enum class SelectedAlternativeOptions {

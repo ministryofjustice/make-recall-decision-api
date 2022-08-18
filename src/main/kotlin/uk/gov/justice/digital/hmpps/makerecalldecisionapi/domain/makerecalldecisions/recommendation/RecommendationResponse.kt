@@ -15,7 +15,8 @@ data class RecommendationResponse(
   val dateVloInformed: LocalDate? = null,
   val hasArrestIssues: SelectedWithDetails? = null,
   val personOnProbation: PersonOnProbation? = null,
-  val alternativesToRecallTried: AlternativesToRecallTried? = null
+  val alternativesToRecallTried: AlternativesToRecallTried? = null,
+  val licenceConditionsBreached: LicenceConditionsBreached? = null
 )
 
 data class PersonOnProbation(
