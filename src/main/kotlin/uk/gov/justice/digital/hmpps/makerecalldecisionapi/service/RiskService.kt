@@ -89,6 +89,9 @@ internal class RiskService(
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No contingency plan available for CRN: $crn - ${e.message}")
       ContingencyPlanResponse(assessments = emptyList())
+    } catch (e: WebClientResponseException.InternalServerError) {
+      log.info("No contingency plan available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      ContingencyPlanResponse(assessments = emptyList())
     }
     val latestCompletedAssessment = contingencyPlanResponse.assessments
       ?.filter { it?.assessmentStatus.equals("COMPLETE") }
@@ -119,12 +122,12 @@ internal class RiskService(
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No current scores available for CRN: $crn - ${e.message}")
       listOf(
-        CurrentScoreResponse(
-          completedDate = "",
-          generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
-          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
-          sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
-        )
+        emptyCurrentScoreResponse()
+      )
+    } catch (e: WebClientResponseException.InternalServerError) {
+      log.info("No current scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      listOf(
+        emptyCurrentScoreResponse()
       )
     }
     val latestScores = currentScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
@@ -139,22 +142,22 @@ internal class RiskService(
     )
   }
 
+  private fun emptyCurrentScoreResponse() = CurrentScoreResponse(
+    completedDate = "",
+    generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
+    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
+    sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
+  )
+
   private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
     val historicalScoresResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getHistoricalScores(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No historical scores available for CRN: $crn - ${e.message}")
-      listOf(
-        HistoricalScoreResponse(
-          rsrPercentageScore = "",
-          rsrScoreLevel = "",
-          ospcPercentageScore = "",
-          ospcScoreLevel = "",
-          ospiPercentageScore = "",
-          ospiScoreLevel = "",
-          calculatedDate = null
-        )
-      )
+      emptyHistoricalScoresResponse()
+    } catch (e: WebClientResponseException.InternalServerError) {
+      log.info("No historical scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      emptyHistoricalScoresResponse()
     }
     return historicalScoresResponse
       .map {
@@ -169,6 +172,18 @@ internal class RiskService(
         )
       }
   }
+
+  private fun emptyHistoricalScoresResponse() = listOf(
+    HistoricalScoreResponse(
+      rsrPercentageScore = "",
+      rsrScoreLevel = "",
+      ospcPercentageScore = "",
+      ospcScoreLevel = "",
+      ospiPercentageScore = "",
+      ospiScoreLevel = "",
+      calculatedDate = null
+    )
+  )
 
   private fun formatDateTimeStamp(localDateTimeString: String): String {
     return LocalDateTime.parse(localDateTimeString).format(

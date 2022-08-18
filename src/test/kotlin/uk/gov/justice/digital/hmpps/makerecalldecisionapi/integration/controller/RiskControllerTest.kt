@@ -104,10 +104,10 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
-      noHistoricalRiskScoresResponse(crn)
-      noCurrentRiskScoresResponse(crn)
+      failedHistoricalRiskScoresResponse(crn)
+      failedCurrentRiskScoresResponse(crn)
       failedRoSHSummaryResponse(crn)
-      noContingencyPlanResponse(crn)
+      failedContingencyPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")

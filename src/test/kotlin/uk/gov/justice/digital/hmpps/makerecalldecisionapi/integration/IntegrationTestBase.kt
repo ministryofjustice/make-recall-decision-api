@@ -193,11 +193,28 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun failedCurrentRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val currentScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/all")
+
+    oasysARNApi.`when`(currentScoresRequest).respond(
+      response().withStatusCode(500)
+    )
+  }
+
   protected fun noContingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
     val contingencyPlanRequest =
       request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
     oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun failedContingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
+    val contingencyPlanRequest =
+      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
+    oasysARNApi.`when`(contingencyPlanRequest).respond(
+      response().withStatusCode(500)
     )
   }
 
@@ -235,6 +252,15 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun failedHistoricalRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
+    val historicalScoresRequest =
+      request().withPath("/risks/crn/$crn/predictors/rsr/history")
+
+    oasysARNApi.`when`(historicalScoresRequest).respond(
+      response().withStatusCode(500)
     )
   }
 
