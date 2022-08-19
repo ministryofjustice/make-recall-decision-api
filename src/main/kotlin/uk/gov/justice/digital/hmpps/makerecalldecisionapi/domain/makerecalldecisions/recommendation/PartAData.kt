@@ -7,8 +7,10 @@ data class PartAData(
   val isThisAnEmergencyRecall: String? = null,
   val hasVictimsInContactScheme: String? = null,
   val dateVloInformed: String? = null,
-  val selectedAlternativesMap: Map<String, String> = emptyMap(),
+  val selectedAlternatives: List<ValueWithDetails>? = null,
   val hasArrestIssues: ValueWithDetails? = null,
+  val selectedStandardConditionsBreached: List<String>? = null,
+  val additionalConditionsBreached: String? = null,
 )
 
 data class ValueWithDetails(

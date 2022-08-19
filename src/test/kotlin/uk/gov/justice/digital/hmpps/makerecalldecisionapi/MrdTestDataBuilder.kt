@@ -1,15 +1,19 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -43,7 +47,8 @@ class MrdTestDataBuilder {
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
           personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
-          alternativesToRecallTried = alternativesToRecallTried()
+          alternativesToRecallTried = alternativesToRecallTried(),
+          licenceConditionsBreached = licenceConditionsBreached(),
         )
       )
     }
@@ -62,7 +67,8 @@ class MrdTestDataBuilder {
         hasVictimsInContactScheme = victimsInContactSchemeData(),
         dateVloInformed = LocalDate.now(),
         alternativesToRecallTried = alternativesToRecallTried(),
-        hasArrestIssues = arrestIssues()
+        hasArrestIssues = arrestIssues(),
+        licenceConditionsBreached = licenceConditionsBreached(),
       )
     }
 
@@ -101,13 +107,23 @@ class MrdTestDataBuilder {
 
     private fun alternativesToRecallTried(): AlternativesToRecallTried {
       return AlternativesToRecallTried(
-        selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
+        selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
         allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
       )
     }
 
     private fun arrestIssues(): SelectedWithDetails {
       return SelectedWithDetails(selected = true, details = "Arrest issue details")
+    }
+
+    private fun licenceConditionsBreached(): LicenceConditionsBreached {
+      return LicenceConditionsBreached(
+        standardLicenceConditions = StandardLicenceConditions(
+          selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name),
+          allOptions = listOf(TextValueOption(value = SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name, text = "They had good behaviour"))
+        ),
+        additionalLicenceConditions = listOf(AdditionalLicenceCondition(title = "Additional title", details = "Additional details", note = "Additional note"))
+      )
     }
   }
 }

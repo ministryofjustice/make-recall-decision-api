@@ -7,18 +7,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
@@ -40,35 +43,6 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.custodyStatus).isEqualTo(partADisplayText)
-    }
-  }
-
-  @ParameterizedTest(name = "given selected alternative {0} in recommendation data should map to the part A text {1}")
-  @CsvSource(
-    "WARNINGS_LETTER,We sent a warning letter on 27th July 2022",
-    "DRUG_TESTING,Drugs test passed",
-    "INCREASED_FREQUENCY,Increased frequency",
-    "EXTRA_LICENCE_CONDITIONS,Extra licence conditions added",
-    "REFERRAL_TO_APPROVED_PREMISES,Referred to approved premises",
-    "REFERRAL_TO_APPROVED_PREMISES,Referred to other team",
-    "REFERRAL_TO_PARTNERSHIP_AGENCIES,Referred to agency xyz",
-    "RISK_ESCALATION,Risk level escalated",
-    "ALTERNATIVE_TO_RECALL_OTHER,Alternative abc"
-  )
-  fun `given selected alternative in recommendation data then should map to the part A text`(selectedAlternativeValue: String, partADisplayText: String) {
-    runTest {
-      val recommendation = RecommendationEntity(
-        id = 1,
-        data = RecommendationModel(
-          crn = "ABC123", custodyStatus = null,
-          alternativesToRecallTried = AlternativesToRecallTried(
-            selected = listOf(SelectedAlternative(value = selectedAlternativeValue, details = partADisplayText)),
-            allOptions = null
-          )
-        )
-      )
-      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
-      assertThat(result.selectedAlternativesMap.containsValue(partADisplayText)).isTrue
     }
   }
 
@@ -158,6 +132,120 @@ class RecommendationToPartADataMapperTest {
 
       assertThat(result.hasArrestIssues?.value).isEqualTo("Yes")
       assertThat(result.hasArrestIssues?.details).isEqualTo("Arrest details")
+    }
+  }
+
+  @Test
+  fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          licenceConditionsBreached = LicenceConditionsBreached(
+            additionalLicenceConditions = listOf(AdditionalLicenceCondition(title = "I am a title", details = "details1", note = "note1")),
+            standardLicenceConditions = null
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1")
+      assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
+    }
+  }
+
+  @Test
+  fun `given multiple alternative licence conditions then build up the text with line breaks for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          licenceConditionsBreached = LicenceConditionsBreached(
+            additionalLicenceConditions = listOf(
+              AdditionalLicenceCondition(title = "I am a title", details = "details1", note = "note1"),
+              AdditionalLicenceCondition(title = "I am another title", details = "details2", note = "note2")
+            ),
+            standardLicenceConditions = null
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator()).append(System.lineSeparator())
+        .append("I am another title").append(System.lineSeparator()).append("details2").append(System.lineSeparator()).append("Note: note2")
+
+      assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
+    }
+  }
+
+  @Test
+  fun `given multiple alternative licence conditions with no note then build up the text with line breaks and no notes for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          licenceConditionsBreached = LicenceConditionsBreached(
+            additionalLicenceConditions = listOf(
+              AdditionalLicenceCondition(title = "I am a title", details = "details1"),
+              AdditionalLicenceCondition(title = "I am another title", details = "details2")
+            ),
+            standardLicenceConditions = null
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append(System.lineSeparator())
+        .append("I am another title").append(System.lineSeparator()).append("details2")
+
+      assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
+    }
+  }
+
+  @Test
+  fun `given no alternative licence conditions then return empty text for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          licenceConditionsBreached = LicenceConditionsBreached(
+            additionalLicenceConditions = null, standardLicenceConditions = null
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.additionalConditionsBreached).isEqualTo(EMPTY_STRING)
+    }
+  }
+
+  @Test
+  fun `given selected standard licence conditions then return this for standard licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          licenceConditionsBreached = LicenceConditionsBreached(
+            additionalLicenceConditions = null,
+            standardLicenceConditions = StandardLicenceConditions(
+              selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+            )
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.selectedStandardConditionsBreached?.get(0)).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     }
   }
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
@@ -52,7 +53,8 @@ data class RecommendationModel(
   val createdBy: String? = null,
   val createdDate: String? = null,
   val personOnProbation: PersonOnProbation? = null,
-  var alternativesToRecallTried: AlternativesToRecallTried? = null
+  var alternativesToRecallTried: AlternativesToRecallTried? = null,
+  var licenceConditionsBreached: LicenceConditionsBreached? = null
 ) : Serializable
 
 enum class Status {

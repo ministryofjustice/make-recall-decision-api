@@ -59,6 +59,31 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "hasArrestIssues": {
     "selected": true,
     "details": "Violent behaviour" 
-  }
+  },
+   "licenceConditionsBreached":{
+      "standardLicenceConditions":{
+         "selected":[
+            "GOOD_BEHAVIOUR",
+            "NO_OFFENCE"
+         ],
+        "allOptions":[
+           {
+              "value":"GOOD_BEHAVIOUR",
+              "text":"Be of good behaviour"
+           },
+           {
+              "value":"NO_OFFENCE",
+              "text":"Not to commit any offence"
+           }
+        ]
+      },
+      "additionalLicenceConditions":[
+         {
+            "title":"Disclosure of information",
+            "details":"Notify your supervising officer of any intimate relationships",
+            "note":"Persons wife is Joan Smyth"
+         }
+      ]
+   }
 }
 """.trimIndent()

@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -117,7 +118,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           lastModifiedBy = "Bill",
           createdBy = existingRecommendation.data.createdBy,
           createdDate = existingRecommendation.data.createdDate,
-          alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried
+          alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
+          licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached
         )
       )
 
@@ -211,6 +213,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
     assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
+    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.selected!![0]).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].value).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].text).isEqualTo("They had good behaviour")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].title).isEqualTo("Additional title")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].details).isEqualTo("Additional details")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].note).isEqualTo("Additional note")
   }
 
   @Test

@@ -6,22 +6,27 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -42,10 +47,26 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           hasVictimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
           dateVloInformed = LocalDate.now(),
           alternativesToRecallTried = AlternativesToRecallTried(
-            selected = listOf(SelectedAlternative(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
+            selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
             allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
           ),
-          hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues")
+          hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues"),
+          licenceConditionsBreached = LicenceConditionsBreached(
+            standardLicenceConditions = StandardLicenceConditions(
+              selected = listOf(
+                SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
+                SelectedStandardLicenceConditions.NO_OFFENCE.name,
+                SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
+                SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
+                SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
+                SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
+              )
+            ),
+            additionalLicenceConditions = listOf(
+              AdditionalLicenceCondition(title = "Condition title", details = "Additional condition detail 1", note = "This is a note"),
+              AdditionalLicenceCondition(title = "Another condition title", details = "Another additional condition detail 2")
+            )
+          )
         )
       )
 
@@ -56,6 +77,18 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
   @Test
   fun `given recommendation data then build the mappings for the Part A template`() {
     runTest {
+
+      val alternativesList: List<ValueWithDetails> = listOf(
+        ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022"),
+        ValueWithDetails(value = SelectedAlternativeOptions.DRUG_TESTING.name, details = "drugs test passed"),
+        ValueWithDetails(value = SelectedAlternativeOptions.INCREASED_FREQUENCY.name, details = "increased frequency"),
+        ValueWithDetails(value = SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name, details = "licence conditions added"),
+        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name, details = "referred to approved premises"),
+        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name, details = "referral to other team"),
+        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name, details = "referred to partner agency"),
+        ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
+        ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
+      )
       val partA = PartAData(
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
@@ -63,23 +96,18 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         isThisAnEmergencyRecall = "Yes",
         hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
         dateVloInformed = "1 September 2022",
-        selectedAlternativesMap = mapOf(
-          "warning_letter_details" to "We sent a warning letter on 27th July 2022",
-          "drug_testing_details" to "drugs test passed",
-          "increased_frequency_details" to "increased frequency",
-          "extra_licence_conditions_details" to "licence conditions added",
-          "referral_to_other_teams_details" to "referral to other team",
-          "referral_to_approved_premises_details" to "referred to approved premises",
-          "referral_to_partnership_agencies_details" to "referred to partner agency",
-          "risk_escalation_details" to "risk escalation",
-          "alternative_to_recall_other_details" to "alternative action"
+        selectedAlternatives = alternativesList,
+        hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
+        selectedStandardConditionsBreached = listOf(
+          SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name, SelectedStandardLicenceConditions.NO_OFFENCE.name, SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name, SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
+          SelectedStandardLicenceConditions.ADDRESS_APPROVED.name, SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name, SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
         ),
-        hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details")
+        additionalConditionsBreached = "These are the additional conditions breached"
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(18)
+      assertThat(result.size).isEqualTo(26)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -98,6 +126,53 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
       assertThat(result["has_arrest_issues"]).isEqualTo("Yes")
       assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
+      assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["officer_visit_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["address_approved_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
+    }
+  }
+
+  @Test
+  fun `given empty some data then build the mappings with blank strings for the Part A template`() {
+    runTest {
+
+      val partA = PartAData(
+        custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
+        recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
+        responseToProbation = "They have not responded well",
+        isThisAnEmergencyRecall = "Yes",
+        hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
+        dateVloInformed = "1 September 2022",
+        selectedAlternatives = listOf(),
+        hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
+        selectedStandardConditionsBreached = null,
+        additionalConditionsBreached = EMPTY_STRING
+      )
+
+      val result = partATemplateReplacementService.mappingsForTemplate(partA)
+
+      assertThat(result["warning_letter_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["drug_testing_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["increased_frequency_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["extra_licence_conditions_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_other_teams_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_approved_premises_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_escalation_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["alternative_to_recall_other_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["keep_in_touch_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["officer_visit_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["address_approved_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
     }
   }
 }
