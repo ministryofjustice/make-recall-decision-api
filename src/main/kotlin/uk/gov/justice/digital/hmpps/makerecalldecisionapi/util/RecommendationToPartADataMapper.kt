@@ -1,10 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternative
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
@@ -23,23 +22,10 @@ class RecommendationToPartADataMapper {
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
-        selectedAlternativesMap = convertToSelectedAlternativesMap(recommendation.data.alternativesToRecallTried?.selected),
-        hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details)
-      )
-    }
-
-    private fun convertToSelectedAlternativesMap(selectedAlternatives: List<SelectedAlternative>?): Map<String, String> {
-      val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
-      return mapOf(
-        "warning_letter_details" to (selectedAlternativesMap[SelectedAlternativeOptions.WARNINGS_LETTER.name] ?: EMPTY_STRING),
-        "drug_testing_details" to (selectedAlternativesMap[SelectedAlternativeOptions.DRUG_TESTING.name] ?: EMPTY_STRING),
-        "increased_frequency_details" to (selectedAlternativesMap[SelectedAlternativeOptions.INCREASED_FREQUENCY.name] ?: EMPTY_STRING),
-        "extra_licence_conditions_details" to (selectedAlternativesMap[SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name] ?: EMPTY_STRING),
-        "referral_to_approved_premises_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name] ?: EMPTY_STRING),
-        "referral_to_other_teams_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name] ?: EMPTY_STRING),
-        "referral_to_partnership_agencies_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name] ?: EMPTY_STRING),
-        "risk_escalation_details" to (selectedAlternativesMap[SelectedAlternativeOptions.RISK_ESCALATION.name] ?: EMPTY_STRING),
-        "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name] ?: EMPTY_STRING)
+        selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
+        hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details),
+        selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
+        additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
       )
     }
 
@@ -55,6 +41,26 @@ class RecommendationToPartADataMapper {
 
     private fun convertBooleanToYesNo(value: Boolean?): String {
       return if (value == true) YES else NO
+    }
+
+    private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: List<AdditionalLicenceCondition>?): String {
+      return additionalLicenceConditions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+        builder.append(licenceCondition.title)
+        builder.append(System.lineSeparator())
+        builder.append(licenceCondition.details)
+
+        if (licenceCondition.note != null) {
+          builder.append(System.lineSeparator())
+          builder.append("Note: " + licenceCondition.note)
+        }
+
+        if (additionalLicenceConditions.size - 1 != index) {
+          builder.append(System.lineSeparator())
+          builder.append(System.lineSeparator())
+        }
+        builder
+      }?.toString()
+        ?: EMPTY_STRING
     }
   }
 }
