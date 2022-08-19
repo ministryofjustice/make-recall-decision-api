@@ -31,7 +31,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.2")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.3")
   implementation("io.opentelemetry:opentelemetry-api:1.16.0")
-  implementation("joda-time:joda-time:2.10.14")
+  implementation("joda-time:joda-time:2.11.0")
   implementation("com.deepoove:poi-tl:1.12.0")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
