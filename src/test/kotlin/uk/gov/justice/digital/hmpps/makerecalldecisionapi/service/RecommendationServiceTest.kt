@@ -216,9 +216,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.selected!![0]).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].value).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].text).isEqualTo("They had good behaviour")
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].title).isEqualTo("Additional title")
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].details).isEqualTo("Additional details")
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions!![0].note).isEqualTo("Additional note")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.selected!![0]).isEqualTo("NST14")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].title).isEqualTo("Additional title")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].details).isEqualTo("Additional details")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].note).isEqualTo("Additional note")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].mainCatCode).isEqualTo("NLC5")
+    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].subCatCode).isEqualTo("NST14")
   }
 
   @Test

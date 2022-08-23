@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -53,7 +54,7 @@ class MrdTestDataBuilder {
       )
     }
 
-    fun updateRecommendationRequestData(existingRecommendation: RecommendationEntity,): RecommendationModel {
+    fun updateRecommendationRequestData(existingRecommendation: RecommendationEntity): RecommendationModel {
       return RecommendationModel(
         crn = existingRecommendation.data.crn,
         createdBy = existingRecommendation.data.createdBy,
@@ -122,7 +123,16 @@ class MrdTestDataBuilder {
           selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name),
           allOptions = listOf(TextValueOption(value = SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name, text = "They had good behaviour"))
         ),
-        additionalLicenceConditions = listOf(AdditionalLicenceCondition(title = "Additional title", details = "Additional details", note = "Additional note"))
+        additionalLicenceConditions = AdditionalLicenceConditions(
+          selected = listOf("NST14"),
+          allOptions = listOf(
+            AdditionalLicenceConditionOption(
+              subCatCode = "NST14",
+              mainCatCode = "NLC5",
+              title = "Additional title", details = "Additional details", note = "Additional note"
+            )
+          )
+        )
       )
     }
   }

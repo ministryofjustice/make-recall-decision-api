@@ -6,7 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -62,9 +63,15 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
                 SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
               )
             ),
-            additionalLicenceConditions = listOf(
-              AdditionalLicenceCondition(title = "Condition title", details = "Additional condition detail 1", note = "This is a note"),
-              AdditionalLicenceCondition(title = "Another condition title", details = "Another additional condition detail 2")
+            additionalLicenceConditions = AdditionalLicenceConditions(
+              selected = listOf("NST14"),
+              allOptions = listOf(
+                AdditionalLicenceConditionOption(
+                  subCatCode = "NST14",
+                  mainCatCode = "NLC5",
+                  title = "Additional title", details = "Additional details", note = "Additional note"
+                )
+              )
             )
           )
         )

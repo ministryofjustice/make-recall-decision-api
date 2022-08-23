@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -43,8 +43,12 @@ class RecommendationToPartADataMapper {
       return if (value == true) YES else NO
     }
 
-    private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: List<AdditionalLicenceCondition>?): String {
-      return additionalLicenceConditions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+    private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: AdditionalLicenceConditions?): String {
+      val selectedOptions = additionalLicenceConditions?.allOptions
+        ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
+
+      return selectedOptions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+
         builder.append(licenceCondition.title)
         builder.append(System.lineSeparator())
         builder.append(licenceCondition.details)
@@ -54,7 +58,7 @@ class RecommendationToPartADataMapper {
           builder.append("Note: " + licenceCondition.note)
         }
 
-        if (additionalLicenceConditions.size - 1 != index) {
+        if (selectedOptions.size - 1 != index) {
           builder.append(System.lineSeparator())
           builder.append(System.lineSeparator())
         }

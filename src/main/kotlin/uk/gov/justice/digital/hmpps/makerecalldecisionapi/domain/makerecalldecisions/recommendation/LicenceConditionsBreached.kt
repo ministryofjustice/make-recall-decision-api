@@ -2,5 +2,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class LicenceConditionsBreached(
   val standardLicenceConditions: StandardLicenceConditions?,
-  val additionalLicenceConditions: List<AdditionalLicenceCondition>? = null
+  val additionalLicenceConditions: AdditionalLicenceConditions?
+)
+
+data class AdditionalLicenceConditions(
+  val selected: List<String>? = null,
+  val allOptions: List<AdditionalLicenceConditionOption>? = null
 )
