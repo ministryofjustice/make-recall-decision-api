@@ -7,7 +7,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -143,7 +144,16 @@ class RecommendationToPartADataMapperTest {
         data = RecommendationModel(
           crn = "ABC123",
           licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = listOf(AdditionalLicenceCondition(title = "I am a title", details = "details1", note = "note1")),
+            additionalLicenceConditions = AdditionalLicenceConditions(
+              selected = listOf("NST14"),
+              allOptions = listOf(
+                AdditionalLicenceConditionOption(
+                  subCatCode = "NST14",
+                  mainCatCode = "NLC5",
+                  title = "I am a title", details = "details1", note = "note1"
+                )
+              )
+            ),
             standardLicenceConditions = null
           )
         )
@@ -164,9 +174,20 @@ class RecommendationToPartADataMapperTest {
         data = RecommendationModel(
           crn = "ABC123",
           licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = listOf(
-              AdditionalLicenceCondition(title = "I am a title", details = "details1", note = "note1"),
-              AdditionalLicenceCondition(title = "I am another title", details = "details2", note = "note2")
+            additionalLicenceConditions = AdditionalLicenceConditions(
+              selected = listOf("NST14", "XYZ"),
+              allOptions = listOf(
+                AdditionalLicenceConditionOption(
+                  subCatCode = "NST14",
+                  mainCatCode = "NLC5",
+                  title = "I am a title", details = "details1", note = "note1"
+                ),
+                AdditionalLicenceConditionOption(
+                  subCatCode = "XYZ",
+                  mainCatCode = "ABC",
+                  title = "I am another title", details = "details2", note = "note2"
+                )
+              )
             ),
             standardLicenceConditions = null
           )
@@ -175,7 +196,8 @@ class RecommendationToPartADataMapperTest {
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator()).append(System.lineSeparator())
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator())
+        .append(System.lineSeparator())
         .append("I am another title").append(System.lineSeparator()).append("details2").append(System.lineSeparator()).append("Note: note2")
 
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
@@ -190,9 +212,20 @@ class RecommendationToPartADataMapperTest {
         data = RecommendationModel(
           crn = "ABC123",
           licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = listOf(
-              AdditionalLicenceCondition(title = "I am a title", details = "details1"),
-              AdditionalLicenceCondition(title = "I am another title", details = "details2")
+            additionalLicenceConditions = AdditionalLicenceConditions(
+              selected = listOf("NST14", "XYZ"),
+              allOptions = listOf(
+                AdditionalLicenceConditionOption(
+                  subCatCode = "NST14",
+                  mainCatCode = "NLC5",
+                  title = "I am a title", details = "details1"
+                ),
+                AdditionalLicenceConditionOption(
+                  subCatCode = "XYZ",
+                  mainCatCode = "ABC",
+                  title = "I am another title", details = "details2"
+                )
+              )
             ),
             standardLicenceConditions = null
           )
