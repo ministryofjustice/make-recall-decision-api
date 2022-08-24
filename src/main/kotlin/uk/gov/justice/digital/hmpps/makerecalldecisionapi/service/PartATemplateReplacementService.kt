@@ -45,7 +45,8 @@ internal class PartATemplateReplacementService {
       "date_vlo_informed" to partAData.dateVloInformed,
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
-      "additional_conditions_breached" to partAData.additionalConditionsBreached
+      "additional_conditions_breached" to partAData.additionalConditionsBreached,
+      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
@@ -77,7 +78,7 @@ internal class PartATemplateReplacementService {
       "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING),
+      "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING)
     )
   }
 }
