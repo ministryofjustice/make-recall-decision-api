@@ -113,8 +113,20 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 		}
 	},
 	"isUnderIntegratedOffenderManagement": {
-		"selected": true,
-		"details": "IOM details"
+		"selected": "YES",
+		"allOptions": [{
+				"value": "YES",
+				"text": "Yes"
+			},
+			{
+				"value": "NO",
+				"text": "No"
+			},
+			{
+				"value": "NOT_APPLICABLE",
+				"text": "N/A"
+			}
+		]
 	}
 }
 """.trimIndent()

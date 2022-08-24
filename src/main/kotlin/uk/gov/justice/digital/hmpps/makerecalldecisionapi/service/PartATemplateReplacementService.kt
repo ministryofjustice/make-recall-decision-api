@@ -46,9 +46,7 @@ internal class PartATemplateReplacementService {
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
       "additional_conditions_breached" to partAData.additionalConditionsBreached,
-      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement?.value,
-      // FIXME: this might need to be removed based on the outcome of the questions raised in comments on MRD-464. There is no place in the Part A to put the IOM details
-      "is_under_integrated_offender_management_details" to partAData.isUnderIntegratedOffenderManagement?.details,
+      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

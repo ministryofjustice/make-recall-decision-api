@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import java.io.Serializable
 import java.time.LocalDate
@@ -55,7 +56,7 @@ data class RecommendationModel(
   val personOnProbation: PersonOnProbation? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
-  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: SelectedWithDetails? = null
+  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null
 ) : Serializable
 
 enum class Status {

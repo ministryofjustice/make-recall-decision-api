@@ -18,10 +18,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import java.time.LocalDate
 
@@ -246,13 +248,18 @@ class RecommendationToPartADataMapperTest {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", underIntegratedOffenderManagement = SelectedWithDetails(selected = true, details = "This is the IOM details"))
+        data = RecommendationModel(
+          crn = "ABC123",
+          underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
+            selected = "YES",
+            allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
+          )
+        )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.isUnderIntegratedOffenderManagement?.value).isEqualTo("Yes")
-      assertThat(result.isUnderIntegratedOffenderManagement?.details).isEqualTo("This is the IOM details")
+      assertThat(result.isUnderIntegratedOffenderManagement).isEqualTo("YES")
     }
   }
 

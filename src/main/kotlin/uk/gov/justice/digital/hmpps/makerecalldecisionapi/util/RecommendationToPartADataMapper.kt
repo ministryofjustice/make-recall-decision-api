@@ -26,7 +26,7 @@ class RecommendationToPartADataMapper {
         hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details),
         selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
         additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
-        isUnderIntegratedOffenderManagement = ValueWithDetails(convertBooleanToYesNo(recommendation.data.underIntegratedOffenderManagement?.selected), recommendation.data.underIntegratedOffenderManagement?.details)
+        isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected
       )
     }
 
