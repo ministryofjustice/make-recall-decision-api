@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
@@ -50,6 +51,12 @@ class MrdTestDataBuilder {
           personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
           alternativesToRecallTried = alternativesToRecallTried(),
           licenceConditionsBreached = licenceConditionsBreached(),
+          underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
+            selected = "YES",
+            allOptions = listOf(
+              TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
+            )
+          )
         )
       )
     }
@@ -70,6 +77,7 @@ class MrdTestDataBuilder {
         alternativesToRecallTried = alternativesToRecallTried(),
         hasArrestIssues = arrestIssues(),
         licenceConditionsBreached = licenceConditionsBreached(),
+        underIntegratedOffenderManagement = integratedOffenderManagement()
       )
     }
 
@@ -133,6 +141,13 @@ class MrdTestDataBuilder {
             )
           )
         )
+      )
+    }
+
+    private fun integratedOffenderManagement(): UnderIntegratedOffenderManagement {
+      return UnderIntegratedOffenderManagement(
+        selected = "YES",
+        allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
       )
     }
   }

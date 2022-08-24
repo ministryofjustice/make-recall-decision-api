@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
@@ -73,6 +74,10 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
                 )
               )
             )
+          ),
+          underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
+            selected = "YES",
+            allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
           )
         )
       )
@@ -106,15 +111,21 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         selectedAlternatives = alternativesList,
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
         selectedStandardConditionsBreached = listOf(
-          SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name, SelectedStandardLicenceConditions.NO_OFFENCE.name, SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name, SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
-          SelectedStandardLicenceConditions.ADDRESS_APPROVED.name, SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name, SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
+          SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
+          SelectedStandardLicenceConditions.NO_OFFENCE.name,
+          SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
+          SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
+          SelectedStandardLicenceConditions.ADDRESS_APPROVED.name,
+          SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
+          SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
         ),
-        additionalConditionsBreached = "These are the additional conditions breached"
+        additionalConditionsBreached = "These are the additional conditions breached",
+        isUnderIntegratedOffenderManagement = "YES"
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(26)
+      assertThat(result.size).isEqualTo(27)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -141,6 +152,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
+      assertThat(result["is_under_integrated_offender_management"]).isEqualTo("YES")
     }
   }
 

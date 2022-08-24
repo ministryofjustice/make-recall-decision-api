@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
 
 data class RecommendationResponse(
@@ -16,7 +18,13 @@ data class RecommendationResponse(
   val hasArrestIssues: SelectedWithDetails? = null,
   val personOnProbation: PersonOnProbation? = null,
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
-  val licenceConditionsBreached: LicenceConditionsBreached? = null
+  val licenceConditionsBreached: LicenceConditionsBreached? = null,
+  @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null
+)
+
+data class UnderIntegratedOffenderManagement(
+  val selected: String? = null,
+  val allOptions: List<TextValueOption>? = null
 )
 
 data class PersonOnProbation(
