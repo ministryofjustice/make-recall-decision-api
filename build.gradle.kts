@@ -53,7 +53,7 @@ dependencies {
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.6.0")
   implementation("com.vladmihalcea:hibernate-types-52:2.18.0")
 
-  testImplementation("org.mock-server:mockserver-netty:5.13.2")
+  testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
