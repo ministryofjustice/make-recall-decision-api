@@ -63,6 +63,38 @@
       },
       "crn": "X098092"
     },
+    "custody": {
+      "bookingNumber": "V74111",
+      "institution": {
+        "code": "string",
+        "description": "string",
+        "establishmentType": {
+          "code": "ABC123",
+          "description": "Some description"
+        },
+        "institutionId": 0,
+        "institutionName": "string",
+        "isEstablishment": true,
+        "isPrivate": true,
+        "nomsPrisonInstitutionCode": "string"
+      },
+      "keyDates": {
+        "conditionalReleaseDate": "2020-06-23",
+        "expectedPrisonOffenderManagerHandoverDate": "2020-06-23",
+        "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-23",
+        "expectedReleaseDate": "2020-06-23",
+        "hdcEligibilityDate": "2020-06-23",
+        "licenceExpiryDate": "2020-06-23",
+        "paroleEligibilityDate": "2020-06-23",
+        "postSentenceSupervisionEndDate": "2020-06-23",
+        "sentenceExpiryDate": "2020-06-23"
+      },
+      "sentenceStartDate": "2022-08-24",
+      "status": {
+        "code": "ABC123",
+        "description": "Some description"
+      }
+    },
     "orderManagers": [
       {
         "probationAreaId": 2500010507,
