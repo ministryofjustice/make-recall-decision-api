@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
@@ -46,7 +46,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
           isThisAnEmergencyRecall = true,
-          hasVictimsInContactScheme = VictimsInContactScheme(selected = VictimsInContactSchemeValue.YES, allOptions = null),
+          hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
           dateVloInformed = LocalDate.now(),
           alternativesToRecallTried = AlternativesToRecallTried(
             selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
@@ -76,7 +76,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             )
           ),
           underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
-            selected = "YES",
+            selected = "NOT_APPLICABLE",
             allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
           )
         )
@@ -106,7 +106,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = "Yes",
-        hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
+        hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
         dateVloInformed = "1 September 2022",
         selectedAlternatives = alternativesList,
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
@@ -152,7 +152,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
-      assertThat(result["is_under_integrated_offender_management"]).isEqualTo("YES")
+      assertThat(result["is_under_integrated_offender_management"]).isEqualTo("Yes")
     }
   }
 
@@ -165,7 +165,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         isThisAnEmergencyRecall = "Yes",
-        hasVictimsInContactScheme = VictimsInContactSchemeValue.YES.partADisplayValue,
+        hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
         dateVloInformed = "1 September 2022",
         selectedAlternatives = listOf(),
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
