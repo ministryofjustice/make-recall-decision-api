@@ -44,7 +44,7 @@ data class Mappa(
   val isNominal: Boolean?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val lastUpdated: String?,
-  val category: String?,
+  val category: Int?,
 )
 
 data class PredictorScores(
