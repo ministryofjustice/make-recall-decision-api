@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
@@ -46,7 +47,7 @@ internal class PartATemplateReplacementService {
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
       "additional_conditions_breached" to partAData.additionalConditionsBreached,
-      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement
+      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement?.let { YesNoNotApplicableOptions.valueOf(it).partADisplayValue }
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
