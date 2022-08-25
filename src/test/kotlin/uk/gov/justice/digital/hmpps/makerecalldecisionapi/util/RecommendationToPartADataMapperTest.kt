@@ -20,7 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
@@ -82,7 +82,7 @@ class RecommendationToPartADataMapperTest {
 
   @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("YES,Yes", "NO,No", "NOT_APPLICABLE,N/A")
-  fun `given victims in contact scheme data then should map to the part A text`(victimsInContactScheme: VictimsInContactSchemeValue, partADisplayText: String?) {
+  fun `given victims in contact scheme data then should map to the part A text`(victimsInContactScheme: YesNoNotApplicableOptions, partADisplayText: String?) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,

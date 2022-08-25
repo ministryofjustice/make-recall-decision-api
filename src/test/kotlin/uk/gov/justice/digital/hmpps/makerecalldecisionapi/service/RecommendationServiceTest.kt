@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactSchemeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -211,7 +211,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
     assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
-    assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(VictimsInContactSchemeValue.YES)
+    assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(YesNoNotApplicableOptions.YES)
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
     assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
