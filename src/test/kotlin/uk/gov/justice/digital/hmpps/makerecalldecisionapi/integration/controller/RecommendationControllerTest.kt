@@ -120,6 +120,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[1].value").isEqualTo("NO")
       .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].text").isEqualTo("N/A")
       .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
+      .jsonPath("$.localPoliceContact.contactName").isEqualTo("Thomas Magnum")
+      .jsonPath("$.localPoliceContact.phoneNumber").isEqualTo("555-0100")
+      .jsonPath("$.localPoliceContact.faxNumber").isEqualTo("555-0199")
+      .jsonPath("$.localPoliceContact.emailAddress").isEqualTo("thomas.magnum@gmail.com")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
