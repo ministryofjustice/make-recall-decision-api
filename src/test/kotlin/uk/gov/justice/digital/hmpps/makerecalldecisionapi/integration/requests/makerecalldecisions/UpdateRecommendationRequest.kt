@@ -127,6 +127,12 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 				"text": "N/A"
 			}
 		]
+	},
+	"localPoliceContact": {
+		"contactName": "Thomas Magnum",
+		"phoneNumber": "555-0100",
+		"faxNumber": "555-0199",
+		"emailAddress": "thomas.magnum@gmail.com"
 	}
 }
 """.trimIndent()

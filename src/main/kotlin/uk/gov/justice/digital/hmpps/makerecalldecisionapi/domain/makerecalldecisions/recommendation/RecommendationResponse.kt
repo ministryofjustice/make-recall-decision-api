@@ -9,6 +9,7 @@ data class RecommendationResponse(
   val id: Long? = null,
   val status: Status? = null,
   val custodyStatus: CustodyStatus? = null,
+  val localPoliceContact: LocalPoliceContact? = null,
   val crn: String? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,

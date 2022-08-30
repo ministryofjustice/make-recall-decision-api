@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -78,7 +79,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
             selected = "NOT_APPLICABLE",
             allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
-          )
+          ),
+          localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com")
         )
       )
 
@@ -120,12 +122,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
         ),
         additionalConditionsBreached = "These are the additional conditions breached",
-        isUnderIntegratedOffenderManagement = "YES"
+        isUnderIntegratedOffenderManagement = "YES",
+        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com")
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(27)
+      assertThat(result.size).isEqualTo(31)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -153,6 +156,10 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
       assertThat(result["is_under_integrated_offender_management"]).isEqualTo("Yes")
+      assertThat(result["contact_name"]).isEqualTo("Thomas Magnum")
+      assertThat(result["phone_number"]).isEqualTo("555-0100")
+      assertThat(result["fax_number"]).isEqualTo("555-0199")
+      assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
     }
   }
 

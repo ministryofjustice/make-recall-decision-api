@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -56,7 +57,8 @@ class MrdTestDataBuilder {
             allOptions = listOf(
               TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
             )
-          )
+          ),
+          localPoliceContact = localPoliceContact()
         )
       )
     }
@@ -77,7 +79,8 @@ class MrdTestDataBuilder {
         alternativesToRecallTried = alternativesToRecallTried(),
         hasArrestIssues = arrestIssues(),
         licenceConditionsBreached = licenceConditionsBreached(),
-        underIntegratedOffenderManagement = integratedOffenderManagement()
+        underIntegratedOffenderManagement = integratedOffenderManagement(),
+        localPoliceContact = localPoliceContact()
       )
     }
 
@@ -142,6 +145,10 @@ class MrdTestDataBuilder {
           )
         )
       )
+    }
+
+    private fun localPoliceContact(): LocalPoliceContact {
+      return LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com")
     }
 
     private fun integratedOffenderManagement(): UnderIntegratedOffenderManagement {
