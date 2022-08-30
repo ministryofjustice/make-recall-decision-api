@@ -24,6 +24,24 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.ADULT_OR_CHILD_SAFEGUARDING_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_BULLIED_BY_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEREAVEMENT_ISSUES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BULLYING_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.CULTURAL_OR_LANGUAGE_DIFFERENCES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.DOMESTIC_ABUSE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.DRUG_OR_ALCOHOL_USE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.LEARNING_DIFFICULTIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.MENTAL_HEALTH_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NONE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NOT_KNOWN
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_DISABILITIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_HEALTH_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -80,7 +98,47 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             selected = "NOT_APPLICABLE",
             allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
           ),
-          localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com")
+          localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+          vulnerabilities = Vulnerabilities(
+            selected = listOf(
+              ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide"),
+              ValueWithDetails(value = RELATIONSHIP_BREAKDOWN.name, details = "Divorced"),
+              ValueWithDetails(value = NOT_KNOWN.name, details = "Not known"),
+//              ValueWithDetails(value = NONE.name, details = "None"),
+              ValueWithDetails(value = DOMESTIC_ABUSE.name, details = "Victim of domestic violence"),
+              ValueWithDetails(value = DRUG_OR_ALCOHOL_USE.name, details = "Has an alcohol dependency"),
+              ValueWithDetails(value = BULLYING_OTHERS.name, details = "Bullying"),
+              ValueWithDetails(value = BEING_BULLIED_BY_OTHERS.name, details = "Bullied"),
+              ValueWithDetails(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, details = "At risk of serious harm"),
+              ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
+              ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
+              ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
+              ValueWithDetails(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, details = "Insulin"),
+              ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
+              ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
+              ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
+              ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist")
+            ),
+            allOptions = listOf(
+              TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+              TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
+              TextValueOption(value = NOT_KNOWN.name, text = "Not known"),
+              TextValueOption(value = NONE.name, text = "None"),
+              TextValueOption(value = DOMESTIC_ABUSE.name, text = "Domestic abuse"),
+              TextValueOption(value = DRUG_OR_ALCOHOL_USE.name, text = "Drug or alcohol use"),
+              TextValueOption(value = BULLYING_OTHERS.name, text = "Bullying others"),
+              TextValueOption(value = BEING_BULLIED_BY_OTHERS.name, text = "Being bullied by others"),
+              TextValueOption(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, text = "Being at risk of serious harm from others"),
+              TextValueOption(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, text = "Adult or child safeguarding concerns"),
+              TextValueOption(value = MENTAL_HEALTH_CONCERNS.name, text = "Mental health concerns"),
+              TextValueOption(value = PHYSICAL_HEALTH_CONCERNS.name, text = "Physical health concerns"),
+              TextValueOption(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, text = "Medication taken including compliance with medication"),
+              TextValueOption(value = BEREAVEMENT_ISSUES.name, text = "Bereavement issues"),
+              TextValueOption(value = LEARNING_DIFFICULTIES.name, text = "Learning difficulties"),
+              TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
+              TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences")
+            )
+          )
         )
       )
 
@@ -123,12 +181,19 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         ),
         additionalConditionsBreached = "These are the additional conditions breached",
         isUnderIntegratedOffenderManagement = "YES",
-        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com")
+        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+        vulnerabilities = Vulnerabilities(
+          selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
+          allOptions = listOf(
+            TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+            TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
+          )
+        )
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(31)
+      assertThat(result.size).isEqualTo(49)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -160,6 +225,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["phone_number"]).isEqualTo("555-0100")
       assertThat(result["fax_number"]).isEqualTo("555-0199")
       assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
+      assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com") // TODO - BS how do I handle checkboxes
     }
   }
 

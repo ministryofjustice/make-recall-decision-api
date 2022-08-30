@@ -7,10 +7,30 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.ADULT_OR_CHILD_SAFEGUARDING_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_BULLIED_BY_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEREAVEMENT_ISSUES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BULLYING_OTHERS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.CULTURAL_OR_LANGUAGE_DIFFERENCES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.DOMESTIC_ABUSE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.DRUG_OR_ALCOHOL_USE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.LEARNING_DIFFICULTIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.MENTAL_HEALTH_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NONE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NOT_KNOWN
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_DISABILITIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_HEALTH_CONCERNS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToPartADataMapper
 import java.io.ByteArrayOutputStream
 import java.util.Base64
@@ -26,7 +46,7 @@ internal class PartATemplateReplacementService {
     val file = XWPFTemplate.compile(resource.inputStream).render(
       mappingsForTemplate(partAData)
     )
-    // ).writeToFile("out_template.docx")
+//    ).writeToFile("out_template.docx")
 
     val out = ByteArrayOutputStream()
     file.write(out)
@@ -51,14 +71,19 @@ internal class PartATemplateReplacementService {
       "contact_name" to partAData.localPoliceContact?.contactName,
       "phone_number" to partAData.localPoliceContact?.phoneNumber,
       "fax_number" to partAData.localPoliceContact?.faxNumber,
-      "email_address" to partAData.localPoliceContact?.emailAddress
+      "email_address" to partAData.localPoliceContact?.emailAddress,
+      "has_vulnerabilities" to if (hasVulnerabilities(partAData)) YES else NO
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(partAData.selectedStandardConditionsBreached))
+    mappings.putAll(convertToSelectedVulnerabilitiesMap(partAData.vulnerabilities))
 
     return mappings
   }
+
+  private fun hasVulnerabilities(partAData: PartAData) =
+    partAData.vulnerabilities?.selected?.isNotEmpty() == true && !partAData.vulnerabilities.selected.any { it.value == NONE.name }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
@@ -85,5 +110,39 @@ internal class PartATemplateReplacementService {
       "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING)
     )
+  }
+
+  private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: Vulnerabilities?): Map<String, String> {
+    return mapOf(
+      "risk_of_suicide_or_self_harm" to (getVulnerabilityDisplayText(RISK_OF_SUICIDE_OR_SELF_HARM.name, vulnerabilities)),
+      "relationship_breakdown" to (getVulnerabilityDisplayText(RELATIONSHIP_BREAKDOWN.name, vulnerabilities)),
+      "not_known" to (getVulnerabilityDisplayText(NOT_KNOWN.name, vulnerabilities)),
+      "none" to (getVulnerabilityDisplayText(NONE.name, vulnerabilities)),
+      "domestic_abuse" to (getVulnerabilityDisplayText(DOMESTIC_ABUSE.name, vulnerabilities)),
+      "drug_or_alcohol_use" to (getVulnerabilityDisplayText(DRUG_OR_ALCOHOL_USE.name, vulnerabilities)),
+      "bullying_others" to (getVulnerabilityDisplayText(BULLYING_OTHERS.name, vulnerabilities)),
+      "being_bullied_by_others" to (getVulnerabilityDisplayText(BEING_BULLIED_BY_OTHERS.name, vulnerabilities)),
+      "being_at_risk_of_serious_harm_from_others" to (getVulnerabilityDisplayText(BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, vulnerabilities)),
+      "adult_or_child_safeguarding_concerns" to (getVulnerabilityDisplayText(ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, vulnerabilities)),
+      "mental_health_concerns" to (getVulnerabilityDisplayText(MENTAL_HEALTH_CONCERNS.name, vulnerabilities)),
+      "physical_health_concerns" to (getVulnerabilityDisplayText(PHYSICAL_HEALTH_CONCERNS.name, vulnerabilities)),
+      "medication_taken_including_compliance_with_medication" to (getVulnerabilityDisplayText(MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, vulnerabilities)),
+      "bereavement_issues" to (getVulnerabilityDisplayText(BEREAVEMENT_ISSUES.name, vulnerabilities)),
+      "learning_difficulties" to (getVulnerabilityDisplayText(LEARNING_DIFFICULTIES.name, vulnerabilities)),
+      "physical_disabilities" to (getVulnerabilityDisplayText(PHYSICAL_DISABILITIES.name, vulnerabilities)),
+      "cultural_or_language_differences" to (getVulnerabilityDisplayText(CULTURAL_OR_LANGUAGE_DIFFERENCES.name, vulnerabilities))
+    )
+  }
+
+  private fun getVulnerabilityDisplayText(vulnerability: String?, vulnerabilities: Vulnerabilities?): String {
+    val selectedVulnerabilities = vulnerabilities?.selected?.map { it.value }
+    val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
+    val detailsMap = vulnerabilities?.selected?.associate { it.value to it.details }
+
+    return if (selectedVulnerabilities?.contains(vulnerability) == true) {
+      "\n${"${displayTextMap?.get(vulnerability)!!}:"}\n${detailsMap?.get(vulnerability)}\n"
+    } else {
+      EMPTY_STRING
+    }
   }
 }
