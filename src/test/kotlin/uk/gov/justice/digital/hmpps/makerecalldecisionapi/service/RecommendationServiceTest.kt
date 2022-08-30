@@ -120,7 +120,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           createdDate = existingRecommendation.data.createdDate,
           alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
           licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
-          underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement
+          underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
+          localPoliceContact = updateRecommendationRequest.localPoliceContact
         )
       )
 
@@ -231,6 +232,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(1)?.value).isEqualTo("NO")
     assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(2)?.text).isEqualTo("N/A")
     assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(2)?.value).isEqualTo("NOT_APPLICABLE")
+    assertThat(recommendationResponse.localPoliceContact?.contactName).isEqualTo("Thomas Magnum")
+    assertThat(recommendationResponse.localPoliceContact?.phoneNumber).isEqualTo("555-0100")
+    assertThat(recommendationResponse.localPoliceContact?.faxNumber).isEqualTo("555-0199")
+    assertThat(recommendationResponse.localPoliceContact?.emailAddress).isEqualTo("thomas.magnum@gmail.com")
   }
 
   @Test

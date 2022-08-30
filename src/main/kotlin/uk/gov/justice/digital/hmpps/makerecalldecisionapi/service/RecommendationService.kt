@@ -64,7 +64,8 @@ internal class RecommendationService(
       personOnProbation = recommendationEntity.data.personOnProbation,
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
-      underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement
+      underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
+      localPoliceContact = recommendationEntity.data.localPoliceContact
     )
   }
 
