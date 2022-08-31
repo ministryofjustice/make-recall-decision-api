@@ -209,7 +209,7 @@ internal class RiskService(
       fetchMappa(crn)
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No MAPPA details available for CRN: $crn - ${e.message}")
-      Mappa(level = "", isNominal = true, lastUpdated = "", category = null)
+      Mappa(level = null, isNominal = true, lastUpdated = "", category = null)
     }
   }
 
@@ -325,7 +325,7 @@ internal class RiskService(
         .withLocale(Locale.UK)
     )
     return Mappa(
-      level = mappaResponse?.levelDescription ?: "",
+      level = mappaResponse?.level,
       isNominal = true,
       lastUpdated = reviewDate ?: "",
       category = mappaResponse?.category
