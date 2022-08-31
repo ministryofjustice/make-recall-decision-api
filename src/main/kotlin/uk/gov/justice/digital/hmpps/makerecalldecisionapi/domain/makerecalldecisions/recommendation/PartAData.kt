@@ -12,7 +12,8 @@ data class PartAData(
   val selectedStandardConditionsBreached: List<String>? = null,
   val additionalConditionsBreached: String? = null,
   val isUnderIntegratedOffenderManagement: String? = null,
-  val localPoliceContact: LocalPoliceContact? = null
+  val localPoliceContact: LocalPoliceContact? = null,
+  val vulnerabilities: Vulnerabilities? = null
 )
 
 data class ValueWithDetails(

@@ -18,6 +18,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -80,7 +82,18 @@ class MrdTestDataBuilder {
         hasArrestIssues = arrestIssues(),
         licenceConditionsBreached = licenceConditionsBreached(),
         underIntegratedOffenderManagement = integratedOffenderManagement(),
-        localPoliceContact = localPoliceContact()
+        localPoliceContact = localPoliceContact(),
+        vulnerabilities = vulnerabilities()
+      )
+    }
+
+    private fun vulnerabilities(): Vulnerabilities {
+      return Vulnerabilities(
+        selected = listOf(ValueWithDetails(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
+        allOptions = listOf(
+          TextValueOption(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+          TextValueOption(value = VulnerabilityOptions.RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
+        )
       )
     }
 

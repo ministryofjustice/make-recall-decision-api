@@ -121,7 +121,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
           licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
           underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
-          localPoliceContact = updateRecommendationRequest.localPoliceContact
+          localPoliceContact = updateRecommendationRequest.localPoliceContact,
+          vulnerabilities = updateRecommendationRequest.vulnerabilities
         )
       )
 

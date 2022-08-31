@@ -27,7 +27,8 @@ class RecommendationToPartADataMapper {
         selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
         additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
         isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected,
-        localPoliceContact = recommendation.data.localPoliceContact
+        localPoliceContact = recommendation.data.localPoliceContact,
+        vulnerabilities = recommendation.data.vulnerabilities
       )
     }
 

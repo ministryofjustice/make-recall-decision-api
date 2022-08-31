@@ -65,7 +65,8 @@ internal class RecommendationService(
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
       underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
-      localPoliceContact = recommendationEntity.data.localPoliceContact
+      localPoliceContact = recommendationEntity.data.localPoliceContact,
+      vulnerabilities = recommendationEntity.data.vulnerabilities
     )
   }
 
