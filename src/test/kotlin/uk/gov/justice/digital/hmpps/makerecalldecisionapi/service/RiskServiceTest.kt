@@ -118,7 +118,7 @@ internal class RiskServiceTest {
       assertThat(riskOfSeriousHarm.riskToStaff).isEqualTo("MEDIUM")
       assertThat(riskOfSeriousHarm.lastUpdated).isEqualTo("2021-10-09")
       assertThat(mappa.isNominal).isTrue() // TODO how is this derived?
-      assertThat(mappa.level).isEqualTo("MAPPA Level 1")
+      assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
       assertThat(mappa.lastUpdated).isEqualTo("10 May 2021")
       assertThat(natureOfRisk?.oasysHeading?.number).isEqualTo("10.2")
@@ -263,7 +263,7 @@ internal class RiskServiceTest {
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
-            mappaResponse.copy(levelDescription = null, reviewDate = null, category = null)
+            mappaResponse.copy(level = null, levelDescription = null, reviewDate = null, category = null)
           }
         )
 
@@ -295,7 +295,7 @@ internal class RiskServiceTest {
       assertThat(riskOfSeriousHarm.riskToStaff).isEqualTo("")
       assertThat(riskOfSeriousHarm.lastUpdated).isEqualTo("2021-10-09")
       assertThat(mappa.isNominal).isTrue() // TODO how is this derived?
-      assertThat(mappa.level).isEqualTo("")
+      assertThat(mappa.level).isEqualTo(null)
       assertThat(mappa.lastUpdated).isEqualTo("")
       assertThat(mappa.category).isNull()
       assertThat(natureOfRisk?.description).isEqualTo("")

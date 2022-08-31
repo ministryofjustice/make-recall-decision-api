@@ -40,7 +40,7 @@ data class RiskOfSeriousHarm(
 )
 
 data class Mappa(
-  val level: String?,
+  val level: Int?,
   val isNominal: Boolean?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val lastUpdated: String?,
