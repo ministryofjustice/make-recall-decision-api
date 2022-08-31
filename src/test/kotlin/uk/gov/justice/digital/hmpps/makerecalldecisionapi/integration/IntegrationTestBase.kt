@@ -476,6 +476,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun userAccessAllowedOnce(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
   protected fun userAccessExcluded(crn: String, delaySeconds: Long = 0) {
     val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
     val userAccessRequest = request()

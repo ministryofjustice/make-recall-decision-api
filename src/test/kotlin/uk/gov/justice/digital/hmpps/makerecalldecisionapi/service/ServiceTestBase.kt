@@ -73,7 +73,7 @@ internal abstract class ServiceTestBase {
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
     partATemplateReplacementService = PartATemplateReplacementService()
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
 

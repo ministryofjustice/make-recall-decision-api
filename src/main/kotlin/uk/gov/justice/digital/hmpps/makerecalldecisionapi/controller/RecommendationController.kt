@@ -41,7 +41,7 @@ internal class RecommendationController(
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val username = userLogin.name
     val responseBody = recommendationService.createRecommendation(recommendationRequest, username)
-    return ResponseEntity<RecommendationResponse>(responseBody, HttpStatus.CREATED)
+    return ResponseEntity<RecommendationResponse>(responseBody, recommendationService.deriveHttpStatus(responseBody))
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
