@@ -225,7 +225,6 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["phone_number"]).isEqualTo("555-0100")
       assertThat(result["fax_number"]).isEqualTo("555-0199")
       assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
-      assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com") // TODO - BS how do I handle checkboxes
     }
   }
 

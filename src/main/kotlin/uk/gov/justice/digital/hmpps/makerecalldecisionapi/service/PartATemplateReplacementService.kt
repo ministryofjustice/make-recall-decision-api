@@ -83,7 +83,7 @@ internal class PartATemplateReplacementService {
   }
 
   private fun hasVulnerabilities(partAData: PartAData) =
-    partAData.vulnerabilities?.selected?.isNotEmpty() == true && !partAData.vulnerabilities.selected.any { it.value == NONE.name }
+    partAData.vulnerabilities?.selected?.isNotEmpty() == true && !partAData.vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
