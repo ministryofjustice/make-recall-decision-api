@@ -415,6 +415,7 @@ class RiskControllerTest(
             .jsonPath("$.userAccessResponse.restrictionMessage").isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
             .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
             .jsonPath("$.personalDetailsOverview").isEmpty
+            .jsonPath("$.mappa").isEqualTo(null)
         }
       }
 
@@ -439,6 +440,7 @@ class RiskControllerTest(
             .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
             .jsonPath("$.userMessage")
             .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+            .jsonPath("$.mappa").isEqualTo(null)
         }
       }
     }
