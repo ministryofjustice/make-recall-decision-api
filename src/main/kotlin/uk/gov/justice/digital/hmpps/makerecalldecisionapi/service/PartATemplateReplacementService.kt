@@ -137,7 +137,11 @@ internal class PartATemplateReplacementService {
   private fun getVulnerabilityDisplayText(vulnerability: String?, vulnerabilities: Vulnerabilities?): String {
     val selectedVulnerabilities = vulnerabilities?.selected?.map { it.value }
     val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
-    val detailsMap = vulnerabilities?.selected?.associate { it.value to it.details }
+    val detailsMap = vulnerabilities?.selected?.associate {
+      if (it.value == NOT_KNOWN.name || it.value == NONE.name) {
+        it.value to EMPTY_STRING
+      } else it.value to it.details
+    }
 
     return if (selectedVulnerabilities?.contains(vulnerability) == true) {
       "\n${"${displayTextMap?.get(vulnerability)!!}:"}\n${detailsMap?.get(vulnerability)}\n"
