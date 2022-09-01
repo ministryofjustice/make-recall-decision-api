@@ -103,8 +103,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             selected = listOf(
               ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide"),
               ValueWithDetails(value = RELATIONSHIP_BREAKDOWN.name, details = "Divorced"),
-              ValueWithDetails(value = NOT_KNOWN.name, details = "Not known"),
-//              ValueWithDetails(value = NONE.name, details = "None"),
+              ValueWithDetails(value = NOT_KNOWN.name, details = null),
+              ValueWithDetails(value = NONE.name, details = null),
               ValueWithDetails(value = DOMESTIC_ABUSE.name, details = "Victim of domestic violence"),
               ValueWithDetails(value = DRUG_OR_ALCOHOL_USE.name, details = "Has an alcohol dependency"),
               ValueWithDetails(value = BULLYING_OTHERS.name, details = "Bullying"),
