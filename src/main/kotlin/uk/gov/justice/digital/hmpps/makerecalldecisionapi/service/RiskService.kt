@@ -49,7 +49,7 @@ internal class RiskService(
   suspend fun getRisk(crn: String): RiskResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
-      RiskResponse(userAccessResponse = userAccessResponse)
+      RiskResponse(userAccessResponse = userAccessResponse, mappa = null)
     } else {
       val personalDetailsOverview = fetchPersonalDetails(crn)
       val riskSummaryResponse = handleFetchRiskSummary(crn)
@@ -210,6 +210,8 @@ internal class RiskService(
     } catch (e: WebClientResponseException.NotFound) {
       log.info("No MAPPA details available for CRN: $crn - ${e.message}")
       Mappa(level = null, isNominal = true, lastUpdated = "", category = null)
+    } catch (e: WebClientResponseException) {
+      null
     }
   }
 
