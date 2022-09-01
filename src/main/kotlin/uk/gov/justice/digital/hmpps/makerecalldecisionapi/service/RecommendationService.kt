@@ -86,13 +86,12 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?) {
+  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?): Boolean? {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
-      if (userAccessResponse?.userRestricted == true) log.info(userAccessResponse.restrictionMessage)
-      if (userAccessResponse?.userExcluded == true) log.info(userAccessResponse.exclusionMessage)
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      false
     } else {
       val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
         ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
@@ -107,6 +106,7 @@ internal class RecommendationService(
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
+      true
     }
   }
 
@@ -128,9 +128,14 @@ internal class RecommendationService(
     }
   }
 
-  fun deriveHttpStatus(responseBody: RecommendationResponse): HttpStatus {
-    return if (responseBody.userAccessResponse?.userRestricted == true || responseBody.userAccessResponse?.userExcluded == true) HttpStatus.OK
+  fun deriveRecommendationHttpStatus(responseBody: RecommendationResponse): HttpStatus {
+    return if (responseBody.userAccessResponse?.userRestricted == true || responseBody.userAccessResponse?.userExcluded == true) HttpStatus.FORBIDDEN
     else HttpStatus.CREATED
+  }
+
+  fun derivePartAHttpStatus(responseBody: PartAResponse): HttpStatus {
+    return if (responseBody.userAccessResponse?.userRestricted == true || responseBody.userAccessResponse?.userExcluded == true) HttpStatus.FORBIDDEN
+    else HttpStatus.OK
   }
 
   @OptIn(ExperimentalStdlibApi::class)

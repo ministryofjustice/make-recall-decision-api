@@ -8,8 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
-import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -148,7 +146,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     updateRecommendation(updateRecommendationRequestWithClearedValues())
 
     webTestClient.get()
-      .uri("/recommendations/$createdRecommendationId")
+      .uri(
+        "/recommendations/$createdRecommendationId"
+      )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
@@ -283,7 +283,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isForbidden
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
@@ -295,7 +295,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `given case is excluded when updating a recommendation then only return user access details`() {
     runTest {
-      // given
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
       userAccessAllowedOnce(crn)
@@ -304,13 +303,15 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       val original = getRecommendation()
       userAccessExcluded(crn)
 
-      // when
-      updateRecommendation(updateRecommendationRequest())
-
-      // then
-      userAccessAllowedOnce(crn)
-      val shouldNotBeUpdated = getRecommendation()
-      JSONAssert.assertEquals(original, shouldNotBeUpdated, JSONCompareMode.LENIENT)
+      webTestClient.patch()
+        .uri("/recommendations/$createdRecommendationId")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(updateRecommendationRequest())
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isForbidden
     }
   }
 
@@ -337,7 +338,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId/part-a")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isForbidden
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)

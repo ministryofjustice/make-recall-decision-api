@@ -41,7 +41,7 @@ internal class RecommendationController(
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val username = userLogin.name
     val responseBody = recommendationService.createRecommendation(recommendationRequest, username)
-    return ResponseEntity<RecommendationResponse>(responseBody, recommendationService.deriveHttpStatus(responseBody))
+    return ResponseEntity<RecommendationResponse>(responseBody, recommendationService.deriveRecommendationHttpStatus(responseBody))
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
@@ -60,10 +60,13 @@ internal class RecommendationController(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationJson: JsonNode,
     userLogin: Principal
-  ) {
+  ): ResponseEntity<Unit> {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username)
+    return when {
+      recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username) == true -> ResponseEntity(HttpStatus.OK)
+      else -> ResponseEntity(HttpStatus.FORBIDDEN)
+    }
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
@@ -71,8 +74,9 @@ internal class RecommendationController(
   @Operation(summary = "WIP: Generates a Part A document")
   suspend fun generatePartADocument(
     @PathVariable("recommendationId") recommendationId: Long,
-  ): PartAResponse {
+  ): ResponseEntity<PartAResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
-    return recommendationService.generatePartA(recommendationId)
+    val responseBody = recommendationService.generatePartA(recommendationId)
+    return ResponseEntity<PartAResponse>(responseBody, recommendationService.derivePartAHttpStatus(responseBody))
   }
 }
