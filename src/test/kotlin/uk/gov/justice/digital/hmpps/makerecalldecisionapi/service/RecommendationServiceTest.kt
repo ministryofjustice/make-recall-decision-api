@@ -18,6 +18,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.argumentCaptor
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -50,7 +51,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `creates a new recommendation in the database`() {
     // given
     val recommendationToSave = RecommendationEntity(
-      id = 1,
       data = RecommendationModel(
         crn = crn,
         status = Status.DRAFT,
@@ -67,16 +67,23 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val result = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
 
     // then
-    assertThat(result.id).isEqualTo(1)
+    assertThat(result.id).isNotNull
     assertThat(result.status).isEqualTo(Status.DRAFT)
     assertThat(result.personOnProbation?.name).isEqualTo("John Smith")
 
-    then(recommendationRepository).should().save(
-      recommendationToSave.copy(
-        id = null,
-        data = (RecommendationModel(crn = crn, status = Status.DRAFT, personOnProbation = PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"), lastModifiedBy = "Bill", lastModifiedDate = "2022-07-26T09:48:27.443Z", createdBy = "Bill", createdDate = "2022-07-26T09:48:27.443Z"))
-      )
-    )
+    // and
+    val captor = argumentCaptor<RecommendationEntity>()
+    then(recommendationRepository).should().save(captor.capture())
+    val recommendationEntity = captor.firstValue
+
+    assertThat(recommendationEntity.id).isNotNull()
+    assertThat(recommendationEntity.data.crn).isEqualTo(crn)
+    assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
+    assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"))
+    assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
+    assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
+    assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
+    assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
   }
 
   @Test
