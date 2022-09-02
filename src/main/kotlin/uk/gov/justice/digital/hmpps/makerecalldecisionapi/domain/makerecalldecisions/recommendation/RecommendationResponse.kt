@@ -15,6 +15,7 @@ data class RecommendationResponse(
   val crn: String? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
+  val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
   val dateVloInformed: LocalDate? = null,

@@ -19,6 +19,7 @@ class RecommendationToPartADataMapper {
         custodyStatus = recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
         responseToProbation = recommendation.data.responseToProbation,
+        whatLedToRecall = recommendation.data.whatLedToRecall,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
