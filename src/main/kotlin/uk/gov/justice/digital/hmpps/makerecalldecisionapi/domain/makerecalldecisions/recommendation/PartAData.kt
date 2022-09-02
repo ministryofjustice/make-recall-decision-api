@@ -13,7 +13,8 @@ data class PartAData(
   val additionalConditionsBreached: String? = null,
   val isUnderIntegratedOffenderManagement: String? = null,
   val localPoliceContact: LocalPoliceContact? = null,
-  val vulnerabilities: Vulnerabilities? = null
+  val vulnerabilities: Vulnerabilities? = null,
+  val gender: String? = null
 )
 
 data class ValueWithDetails(

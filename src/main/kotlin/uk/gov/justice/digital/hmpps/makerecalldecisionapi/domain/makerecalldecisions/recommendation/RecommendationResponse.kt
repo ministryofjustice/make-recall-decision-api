@@ -34,5 +34,6 @@ data class UnderIntegratedOffenderManagement(
 data class PersonOnProbation(
   val name: String? = null,
   val firstName: String? = null,
-  val surname: String? = null
+  val surname: String? = null,
+  val gender: String? = null
 )

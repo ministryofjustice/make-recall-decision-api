@@ -72,7 +72,8 @@ internal class PartATemplateReplacementService {
       "phone_number" to partAData.localPoliceContact?.phoneNumber,
       "fax_number" to partAData.localPoliceContact?.faxNumber,
       "email_address" to partAData.localPoliceContact?.emailAddress,
-      "has_vulnerabilities" to if (hasVulnerabilities(partAData)) YES else NO
+      "has_vulnerabilities" to if (hasVulnerabilities(partAData)) YES else NO,
+      "gender" to partAData.gender
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
