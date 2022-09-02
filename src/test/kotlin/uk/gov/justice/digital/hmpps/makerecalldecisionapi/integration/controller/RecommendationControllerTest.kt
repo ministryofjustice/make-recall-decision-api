@@ -47,6 +47,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("name")).isEqualTo("John Smith")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("gender")).isEqualTo("Male")
   }
 
   @Test
@@ -91,6 +92,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.hasVictimsInContactScheme.allOptions[2].text").isEqualTo("N/A")
       .jsonPath("$.dateVloInformed").isEqualTo("2022-08-01")
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
+      .jsonPath("$.personOnProbation.gender").isEqualTo("Male")
       .jsonPath("$.alternativesToRecallTried.selected[0].value").isEqualTo("WARNINGS_LETTER")
       .jsonPath("$.alternativesToRecallTried.selected[0].details").isEqualTo("We sent a warning letter on 27th July 2022")
       .jsonPath("$.alternativesToRecallTried.selected[1].value").isEqualTo("DRUG_TESTING")
