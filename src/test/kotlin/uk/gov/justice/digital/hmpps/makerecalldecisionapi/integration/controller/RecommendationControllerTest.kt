@@ -146,7 +146,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     updateRecommendation(updateRecommendationRequestWithClearedValues())
 
     webTestClient.get()
-      .uri("/recommendations/$createdRecommendationId")
+      .uri(
+        "/recommendations/$createdRecommendationId"
+      )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
@@ -246,6 +248,103 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .exchange()
       .expectStatus()
       .isUnauthorized
+  }
+
+  @Test
+  fun `given case is excluded when fetching a recommendation then only return user access details`() {
+    runTest {
+      userAccessAllowedOnce(crn)
+      allOffenderDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
+      deleteAndCreateRecommendation()
+      userAccessExcluded(crn)
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+    }
+  }
+
+  @Test
+  fun `given case is excluded when creating a recommendation then only return user access details`() {
+    runTest {
+      userAccessExcluded(crn)
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isForbidden
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+    }
+  }
+
+  @Test
+  fun `given case is excluded when updating a recommendation then only return user access details`() {
+    runTest {
+      userAccessAllowedOnce(crn)
+      allOffenderDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
+      deleteAndCreateRecommendation()
+      userAccessAllowedOnce(crn)
+      val original = getRecommendation()
+      userAccessExcluded(crn)
+
+      webTestClient.patch()
+        .uri("/recommendations/$createdRecommendationId")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(updateRecommendationRequest())
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isForbidden
+    }
+  }
+
+  private fun getRecommendation(): JSONObject {
+    return convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+    )
+  }
+
+  @Test
+  fun `given case is excluded when generating a Part A then only return user access details`() {
+    runTest {
+      userAccessAllowedOnce(crn)
+      allOffenderDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
+      deleteAndCreateRecommendation()
+      userAccessAllowedOnce(crn)
+      updateRecommendation(updateRecommendationRequest())
+      userAccessExcluded(crn)
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/part-a")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isForbidden
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+    }
   }
 
   private fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
