@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -65,6 +66,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
           isThisAnEmergencyRecall = true,
+          personOnProbation = PersonOnProbation(gender = "Male"),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
           dateVloInformed = LocalDate.now(),
           alternativesToRecallTried = AlternativesToRecallTried(
@@ -188,12 +190,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
             TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
           )
-        )
+        ),
+        gender = "Male"
       )
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(49)
+      assertThat(result.size).isEqualTo(50)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -225,6 +228,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["phone_number"]).isEqualTo("555-0100")
       assertThat(result["fax_number"]).isEqualTo("555-0199")
       assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
+      assertThat(result["gender"]).isEqualTo("Male")
     }
   }
 
