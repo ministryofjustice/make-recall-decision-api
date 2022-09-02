@@ -2,9 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
+import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -36,8 +37,8 @@ internal class RecommendationService(
 
   fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
-      RecommendationResponse(userAccessResponse)
+    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       val name = personDetails?.personalDetailsOverview?.name
@@ -59,7 +60,6 @@ internal class RecommendationService(
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-
     return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       RecommendationResponse(userAccessResponse)
     } else {
@@ -86,12 +86,12 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?): Boolean? {
+  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?) {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
-      false
+    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
         ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
@@ -106,7 +106,6 @@ internal class RecommendationService(
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
-      true
     }
   }
 
@@ -128,26 +127,16 @@ internal class RecommendationService(
     }
   }
 
-  fun deriveRecommendationHttpStatus(responseBody: RecommendationResponse): HttpStatus {
-    return if (responseBody.userAccessResponse?.userRestricted == true || responseBody.userAccessResponse?.userExcluded == true) HttpStatus.FORBIDDEN
-    else HttpStatus.CREATED
-  }
-
-  fun derivePartAHttpStatus(responseBody: PartAResponse): HttpStatus {
-    return if (responseBody.userAccessResponse?.userRestricted == true || responseBody.userAccessResponse?.userExcluded == true) HttpStatus.FORBIDDEN
-    else HttpStatus.OK
-  }
-
   @OptIn(ExperimentalStdlibApi::class)
   fun generatePartA(recommendationId: Long): PartAResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
-      PartAResponse(userAccessResponse)
+    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents = partATemplateReplacementService.generateDocFromTemplate(recommendationEntity)
-      PartAResponse(
+      return PartAResponse(
         fileName = generatePartAFileName(recommendationEntity.data),
         fileContents = fileContents
       )

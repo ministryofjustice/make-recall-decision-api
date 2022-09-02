@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.DateTimeUtils
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,7 +22,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
@@ -28,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -256,14 +258,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(crn)).willThrow(
         WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null)
       )
-      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      try {
+        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+        fail()
+      } catch (actual: UserAccessException) {
+        val expected = UserAccessException(Gson().toJson(UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
+        assertThat(actual.message, equalTo((expected.message)))
+      }
       then(communityApiClient).should().getUserAccess(crn)
-      assertThat(
-        response,
-        equalTo(
-          (RecommendationResponse(userAccessResponse = UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
-        )
-      )
     }
   }
 
@@ -287,7 +289,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill")
+      try {
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill")
+      } catch (e: UserAccessException) {
+        // nothing to do here!!
+      }
       then(communityApiClient).should().getUserAccess(crn)
       then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
@@ -313,25 +319,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         equalTo(RecommendationResponse(userAccessResponse = UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
       )
     }
-  }
-
-  @Test
-  fun `given case is excluded when generating a Part A for user then return user access response details`() {
-    given(communityApiClient.getUserAccess(crn)).willThrow(WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null))
-
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = crn
-      )
-    )
-
-    given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-
-    val response = recommendationService.generatePartA(1L)
-    assertThat(
-      response, equalTo(PartAResponse(userAccessResponse = UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
-    )
   }
 
   @Test
