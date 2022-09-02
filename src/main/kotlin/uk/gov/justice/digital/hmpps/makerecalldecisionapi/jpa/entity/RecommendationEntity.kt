@@ -16,22 +16,20 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
 import java.io.Serializable
+import java.security.SecureRandom
 import java.time.LocalDate
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
+import kotlin.math.abs
 
 @Entity
 @Table(name = "recommendations")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 data class RecommendationEntity(
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  open var id: Long? = null,
-//  open var id: Int = abs(SecureRandom().nextInt()), //take out genval annotation too
+  open var id: Long = abs(SecureRandom().nextInt().toLong()),
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel
