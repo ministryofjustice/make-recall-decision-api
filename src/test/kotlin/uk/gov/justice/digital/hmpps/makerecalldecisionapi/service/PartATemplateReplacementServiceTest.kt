@@ -65,6 +65,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
+          whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
           personOnProbation = PersonOnProbation(gender = "Male"),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
@@ -167,6 +168,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
+        whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = "Yes",
         hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
         dateVloInformed = "1 September 2022",
@@ -201,6 +203,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
+      assertThat(result["what_led_to_recall"]).isEqualTo("Increasingly violent behaviour")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
       assertThat(result["date_vlo_informed"]).isEqualTo("1 September 2022")
@@ -240,6 +243,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
+        whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = "Yes",
         hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
         dateVloInformed = "1 September 2022",

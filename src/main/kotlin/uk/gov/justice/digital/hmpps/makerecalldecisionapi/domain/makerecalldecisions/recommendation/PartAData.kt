@@ -4,6 +4,7 @@ data class PartAData(
   val custodyStatus: String? = null,
   val recallType: ValueWithDetails? = null,
   val responseToProbation: String? = null,
+  val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: String? = null,
   val hasVictimsInContactScheme: String? = null,
   val dateVloInformed: String? = null,

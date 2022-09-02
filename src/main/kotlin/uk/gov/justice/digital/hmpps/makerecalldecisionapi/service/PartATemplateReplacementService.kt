@@ -61,6 +61,7 @@ internal class PartATemplateReplacementService {
       "recall_type" to partAData.recallType?.value,
       "recall_type_details" to partAData.recallType?.details,
       "response_to_probation" to partAData.responseToProbation,
+      "what_led_to_recall" to partAData.whatLedToRecall,
       "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
       "has_victims_in_contact_scheme" to partAData.hasVictimsInContactScheme,
       "date_vlo_informed" to partAData.dateVloInformed,

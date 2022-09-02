@@ -42,6 +42,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "responseToProbation": "They have not responded well",
+  "whatLedToRecall": "The offence is for aggravated burglary which he committed while under the influence of alcohol.",
   "isThisAnEmergencyRecall": true,
   "hasVictimsInContactScheme": {
     "selected": "YES",
