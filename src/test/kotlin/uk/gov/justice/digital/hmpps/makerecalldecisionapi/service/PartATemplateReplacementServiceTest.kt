@@ -198,7 +198,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(50)
+      assertThat(result.size).isEqualTo(51)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
