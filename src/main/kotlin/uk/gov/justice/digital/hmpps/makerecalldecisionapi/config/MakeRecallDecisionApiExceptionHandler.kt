@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -13,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import javax.validation.ValidationException
 
 @RestControllerAdvice
@@ -29,6 +31,12 @@ class MakeRecallDecisionApiExceptionHandler {
           developerMessage = e.message
         )
       )
+  }
+
+  @ExceptionHandler(UserAccessException::class)
+  fun handleUserAccessException(e: UserAccessException): ResponseEntity<Unit> {
+    log.info("UserAccess exception: {}", e.message)
+    return ResponseEntity(FORBIDDEN)
   }
 
   @ExceptionHandler(NoRecommendationFoundException::class)

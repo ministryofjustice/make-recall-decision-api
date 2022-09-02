@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
 
 data class RecommendationResponse(
+  val userAccessResponse: UserAccessResponse? = null,
   val id: Long? = null,
   val status: Status? = null,
   val custodyStatus: CustodyStatus? = null,

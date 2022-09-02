@@ -31,7 +31,7 @@ data class RecommendationEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   open var id: Long? = null,
-
+//  open var id: Int = abs(SecureRandom().nextInt()), //take out genval annotation too
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel
