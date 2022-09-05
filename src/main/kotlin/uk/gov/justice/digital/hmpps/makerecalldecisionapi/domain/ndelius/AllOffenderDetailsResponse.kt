@@ -8,7 +8,14 @@ data class AllOffenderDetailsResponse(
   val dateOfBirth: LocalDate?,
   val firstName: String?,
   val surname: String? = null,
+  val middleNames: List<String>?,
   val gender: String? = null,
   val contactDetails: ContactDetails?,
-  val offenderManagers: List<OffenderManager>?
+  val offenderManagers: List<OffenderManager>?,
+  val offenderProfile: OffenderProfile?,
+  val otherIds: OtherIds?
+)
+
+data class OffenderProfile(
+  val ethnicity: String? = null
 )

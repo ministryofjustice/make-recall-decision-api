@@ -29,10 +29,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToPartADataMapper
 import java.io.ByteArrayOutputStream
+import java.time.format.DateTimeFormatter
 import java.util.Base64
 
 @Service
@@ -77,7 +79,14 @@ internal class PartATemplateReplacementService {
       "fax_number" to partAData.localPoliceContact?.faxNumber,
       "email_address" to partAData.localPoliceContact?.emailAddress,
       "has_vulnerabilities" to if (hasVulnerabilities(partAData)) YES else NO,
-      "gender" to partAData.gender
+      "gender" to partAData.gender,
+      "date_of_birth" to partAData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+      "name" to partAData.name,
+      "ethnicity" to if (partAData.ethnicity.isNullOrBlank()) NOT_SPECIFIED else partAData.ethnicity,
+      "cro_number" to partAData.croNumber,
+      "pnc_number" to partAData.pncNumber,
+      "most_recent_prisoner_number" to partAData.mostRecentPrisonerNumber,
+      "noms_number" to partAData.nomsNumber
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

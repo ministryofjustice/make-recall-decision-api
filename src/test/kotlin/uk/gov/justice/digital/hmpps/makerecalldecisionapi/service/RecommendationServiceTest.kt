@@ -55,7 +55,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         crn = crn,
         status = Status.DRAFT,
         lastModifiedBy = "Bill",
-        personOnProbation = PersonOnProbation(name = "John Smith")
+        personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
       )
     )
 
@@ -70,6 +70,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(result.id).isNotNull
     assertThat(result.status).isEqualTo(Status.DRAFT)
     assertThat(result.personOnProbation?.name).isEqualTo("John Smith")
+    assertThat(result.personOnProbation?.ethnicity).isEqualTo("Ainu")
+    assertThat(result.personOnProbation?.gender).isEqualTo("Male")
+    assertThat(result.personOnProbation?.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
+    assertThat(result.personOnProbation?.croNumber).isEqualTo("123456/04A")
+    assertThat(result.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
+    assertThat(result.personOnProbation?.nomsNumber).isEqualTo("A1234CR")
+    assertThat(result.personOnProbation?.pncNumber).isEqualTo("2004/0712343H")
 
     // and
     val captor = argumentCaptor<RecommendationEntity>()
@@ -79,7 +86,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationEntity.id).isNotNull()
     assertThat(recommendationEntity.data.crn).isEqualTo(crn)
     assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
-    assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", surname = "Smith"))
+    assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"))
     assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
     assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
     assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")

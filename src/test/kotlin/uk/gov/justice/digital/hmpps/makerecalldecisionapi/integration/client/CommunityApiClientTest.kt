@@ -39,8 +39,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaRe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
@@ -311,6 +313,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
       firstName = "John",
       surname = "Smith",
       gender = "Male",
+      middleNames = listOf<String>("Homer", "Bart"),
+      otherIds = OtherIds(
+        crn = "12345C",
+        croNumber = "123456/04A",
+        mostRecentPrisonerNumber = "G12345",
+        nomsNumber = "A1234CR",
+        pncNumber = "2004/0712343H"
+      ),
       contactDetails = ContactDetails(
         addresses = listOf(
           Address(
@@ -330,8 +340,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
             streetName = "Scotland Street",
             status = AddressStatus(code = "ABC123", description = "Main"),
             postcode = "S3 7BS",
-            addressNumber = "33",
-
+            addressNumber = "33"
           )
         )
       ),
@@ -361,7 +370,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
           )
         )
 
-      )
+      ),
+      offenderProfile = OffenderProfile(ethnicity = "Ainu")
     )
 
     // when

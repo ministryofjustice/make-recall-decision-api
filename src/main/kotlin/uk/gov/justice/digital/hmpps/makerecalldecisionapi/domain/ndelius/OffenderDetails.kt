@@ -12,5 +12,9 @@ data class OffenderDetails(
 )
 
 data class OtherIds(
-  var crn: String?
+  var crn: String?,
+  val croNumber: String?,
+  val mostRecentPrisonerNumber: String?,
+  val pncNumber: String?,
+  val nomsNumber: String?
 )
