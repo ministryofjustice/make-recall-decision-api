@@ -50,6 +50,7 @@ data class RecommendationModel(
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   @JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
   var hasArrestIssues: SelectedWithDetails? = null,
+  var hasContrabandRisk: SelectedWithDetails? = null,
   var status: Status? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,

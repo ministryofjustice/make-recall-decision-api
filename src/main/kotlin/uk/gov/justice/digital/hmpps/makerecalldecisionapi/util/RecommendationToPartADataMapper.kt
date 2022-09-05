@@ -25,6 +25,7 @@ class RecommendationToPartADataMapper {
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
         selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
         hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details),
+        hasContrabandRisk = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasContrabandRisk?.selected), recommendation.data.hasContrabandRisk?.details),
         selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
         additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
         isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected,

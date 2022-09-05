@@ -75,6 +75,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
           ),
           hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues"),
+          hasContrabandRisk = SelectedWithDetails(selected = true, details = "Has contraband risk"),
           licenceConditionsBreached = LicenceConditionsBreached(
             standardLicenceConditions = StandardLicenceConditions(
               selected = listOf(
@@ -174,6 +175,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         dateVloInformed = "1 September 2022",
         selectedAlternatives = alternativesList,
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
+        hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
         selectedStandardConditionsBreached = listOf(
           SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
           SelectedStandardLicenceConditions.NO_OFFENCE.name,
@@ -198,7 +200,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(51)
+      assertThat(result.size).isEqualTo(53)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
@@ -218,6 +220,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
       assertThat(result["has_arrest_issues"]).isEqualTo("Yes")
       assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
+      assertThat(result["has_contraband_risk"]).isEqualTo("Yes")
+      assertThat(result["has_contraband_risk_details"]).isEqualTo("Contraband risk details")
       assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
@@ -249,6 +253,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         dateVloInformed = "1 September 2022",
         selectedAlternatives = listOf(),
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
+        hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
         selectedStandardConditionsBreached = null,
         additionalConditionsBreached = EMPTY_STRING
       )

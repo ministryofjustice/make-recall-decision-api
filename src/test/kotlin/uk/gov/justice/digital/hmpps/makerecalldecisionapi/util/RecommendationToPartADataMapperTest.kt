@@ -139,6 +139,21 @@ class RecommendationToPartADataMapperTest {
   }
 
   @Test
+  fun `given has contraband risk data then should map in part A text`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details"))
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.hasContrabandRisk?.value).isEqualTo("Yes")
+      assertThat(result.hasContrabandRisk?.details).isEqualTo("Contraband risk details")
+    }
+  }
+
+  @Test
   fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
     runTest {
       val recommendation = RecommendationEntity(

@@ -67,6 +67,8 @@ internal class PartATemplateReplacementService {
       "date_vlo_informed" to partAData.dateVloInformed,
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
+      "has_contraband_risk" to partAData.hasContrabandRisk?.value,
+      "has_contraband_risk_details" to partAData.hasContrabandRisk?.details,
       "additional_conditions_breached" to partAData.additionalConditionsBreached,
       "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement?.let { YesNoNotApplicableOptions.valueOf(it).partADisplayValue },
       "contact_name" to partAData.localPoliceContact?.contactName,
