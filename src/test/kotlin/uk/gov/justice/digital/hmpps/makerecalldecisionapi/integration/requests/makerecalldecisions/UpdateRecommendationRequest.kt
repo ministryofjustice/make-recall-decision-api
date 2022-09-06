@@ -6,6 +6,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
 {
   "custodyStatus": {
     "selected": "YES_PRISON",
+    "details": "Bromsgrove Police Station\r\nLondon",
     "allOptions": [
       {
         "value": "YES_PRISON",

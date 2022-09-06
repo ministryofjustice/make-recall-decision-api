@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 data class PartAData(
-  val custodyStatus: String? = null,
+  val custodyStatus: ValueWithDetails? = null,
   val recallType: ValueWithDetails? = null,
   val responseToProbation: String? = null,
   val whatLedToRecall: String? = null,

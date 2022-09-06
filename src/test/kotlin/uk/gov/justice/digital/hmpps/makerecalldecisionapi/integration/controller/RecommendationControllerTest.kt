@@ -75,6 +75,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.recallType.allOptions[2].value").isEqualTo("NO_RECALL")
       .jsonPath("$.recallType.allOptions[2].text").isEqualTo("No recall")
       .jsonPath("$.custodyStatus.selected").isEqualTo("YES_PRISON")
+      .jsonPath("$.custodyStatus.details").isEqualTo("Bromsgrove Police Station\r\nLondon")
       .jsonPath("$.custodyStatus.allOptions[0].value").isEqualTo("YES_PRISON")
       .jsonPath("$.custodyStatus.allOptions[0].text").isEqualTo("Yes, prison custody")
       .jsonPath("$.custodyStatus.allOptions[1].value").isEqualTo("YES_POLICE")

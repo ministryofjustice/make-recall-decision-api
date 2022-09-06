@@ -215,6 +215,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
     assertThat(recommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
     assertThat(recommendationResponse.custodyStatus?.selected).isEqualTo(CustodyStatusValue.YES_PRISON)
+    assertThat(recommendationResponse.custodyStatus?.details).isEqualTo("Bromsgrove Police Station\r\nLondon")
     assertThat(recommendationResponse.custodyStatus?.allOptions!![0].value).isEqualTo("YES_PRISON")
     assertThat(recommendationResponse.custodyStatus?.allOptions!![0].text).isEqualTo("Yes, prison custody")
     assertThat(recommendationResponse.custodyStatus?.allOptions!![1].value).isEqualTo("YES_POLICE")

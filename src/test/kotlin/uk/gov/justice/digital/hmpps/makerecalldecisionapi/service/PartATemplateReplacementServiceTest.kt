@@ -62,7 +62,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, allOptions = null),
+          custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, details = "Bromsgrove Police Station\r\nLondon", allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
@@ -166,7 +166,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
       )
       val partA = PartAData(
-        custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
+        custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         whatLedToRecall = "Increasingly violent behaviour",
@@ -200,8 +200,9 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
 
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(53)
+      assertThat(result.size).isEqualTo(54)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
+      assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
       assertThat(result["recall_type_details"]).isEqualTo("My details")
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
@@ -244,7 +245,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
     runTest {
 
       val partA = PartAData(
-        custodyStatus = CustodyStatusValue.YES_POLICE.partADisplayValue,
+        custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         whatLedToRecall = "Increasingly violent behaviour",
