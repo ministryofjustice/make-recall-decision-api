@@ -48,6 +48,7 @@ class MrdTestDataBuilder {
           hasVictimsInContactScheme = victimsInContactSchemeData(),
           dateVloInformed = LocalDate.now(),
           hasArrestIssues = arrestIssues(),
+          hasContrabandRisk = contrabandRisk(),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -82,6 +83,7 @@ class MrdTestDataBuilder {
         dateVloInformed = LocalDate.now(),
         alternativesToRecallTried = alternativesToRecallTried(),
         hasArrestIssues = arrestIssues(),
+        hasContrabandRisk = contrabandRisk(),
         licenceConditionsBreached = licenceConditionsBreached(),
         underIntegratedOffenderManagement = integratedOffenderManagement(),
         localPoliceContact = localPoliceContact(),
@@ -141,6 +143,10 @@ class MrdTestDataBuilder {
 
     private fun arrestIssues(): SelectedWithDetails {
       return SelectedWithDetails(selected = true, details = "Arrest issue details")
+    }
+
+    private fun contrabandRisk(): SelectedWithDetails {
+      return SelectedWithDetails(selected = true, details = "Contraband risk details")
     }
 
     private fun licenceConditionsBreached(): LicenceConditionsBreached {

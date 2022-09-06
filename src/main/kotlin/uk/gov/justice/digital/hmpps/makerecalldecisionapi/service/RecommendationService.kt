@@ -76,6 +76,7 @@ internal class RecommendationService(
         hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,
         dateVloInformed = recommendationEntity.data.dateVloInformed,
         hasArrestIssues = recommendationEntity.data.hasArrestIssues,
+        hasContrabandRisk = recommendationEntity.data.hasContrabandRisk,
         personOnProbation = recommendationEntity.data.personOnProbation,
         alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
         licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,

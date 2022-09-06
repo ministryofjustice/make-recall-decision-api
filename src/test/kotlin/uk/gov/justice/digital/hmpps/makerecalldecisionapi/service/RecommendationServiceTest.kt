@@ -120,6 +120,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
           dateVloInformed = updateRecommendationRequest.dateVloInformed,
           hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
+          hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
           status = existingRecommendation.data.status,
           lastModifiedDate = "2022-07-26T09:48:27.443Z",
           lastModifiedBy = "Bill",
@@ -171,6 +172,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       dateVloInformed = null,
       alternativesToRecallTried = null,
       hasArrestIssues = null,
+      hasContrabandRisk = null,
       underIntegratedOffenderManagement = null
     )
 
@@ -226,6 +228,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
     assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
+    assertThat(recommendationResponse.hasContrabandRisk?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.hasContrabandRisk?.details).isEqualTo("Contraband risk details")
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.selected!![0]).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].value).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].text).isEqualTo("They had good behaviour")

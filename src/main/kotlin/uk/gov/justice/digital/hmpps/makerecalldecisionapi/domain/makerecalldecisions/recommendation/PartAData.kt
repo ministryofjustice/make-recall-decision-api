@@ -10,6 +10,7 @@ data class PartAData(
   val dateVloInformed: String? = null,
   val selectedAlternatives: List<ValueWithDetails>? = null,
   val hasArrestIssues: ValueWithDetails? = null,
+  val hasContrabandRisk: ValueWithDetails? = null,
   val selectedStandardConditionsBreached: List<String>? = null,
   val additionalConditionsBreached: String? = null,
   val isUnderIntegratedOffenderManagement: String? = null,

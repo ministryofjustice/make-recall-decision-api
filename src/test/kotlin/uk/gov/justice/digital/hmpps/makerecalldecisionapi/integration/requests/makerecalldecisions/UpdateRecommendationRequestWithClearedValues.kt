@@ -16,6 +16,10 @@ fun updateRecommendationRequestWithClearedValues(status: Status = Status.DRAFT) 
   "hasArrestIssues": {
     "selected": false,
     "details": null
+  },
+  "hasContrabandRisk": {
+    "selected": false,
+    "details": null
   }
 }
 """.trimIndent()

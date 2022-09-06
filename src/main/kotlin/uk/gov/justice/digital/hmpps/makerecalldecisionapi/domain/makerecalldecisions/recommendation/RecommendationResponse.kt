@@ -20,6 +20,7 @@ data class RecommendationResponse(
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
   val dateVloInformed: LocalDate? = null,
   val hasArrestIssues: SelectedWithDetails? = null,
+  val hasContrabandRisk: SelectedWithDetails? = null,
   val personOnProbation: PersonOnProbation? = null,
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
   val licenceConditionsBreached: LicenceConditionsBreached? = null,

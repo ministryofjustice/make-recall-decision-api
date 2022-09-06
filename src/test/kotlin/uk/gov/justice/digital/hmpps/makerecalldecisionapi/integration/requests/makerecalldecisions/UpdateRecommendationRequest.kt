@@ -89,6 +89,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "selected": true,
     "details": "Violent behaviour"
   },
+  "hasContrabandRisk": {
+    "selected": true,
+    "details": "Contraband risk details"
+  },
   "licenceConditionsBreached": {
     "standardLicenceConditions": {
       "selected": [
