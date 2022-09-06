@@ -16,7 +16,7 @@ class RecommendationToPartADataMapper {
   companion object Mapper {
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
       return PartAData(
-        custodyStatus = recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
+        custodyStatus = ValueWithDetails(recommendation.data.custodyStatus?.selected?.partADisplayValue, recommendation.data.custodyStatus?.details),
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
         responseToProbation = recommendation.data.responseToProbation,
         whatLedToRecall = recommendation.data.whatLedToRecall,

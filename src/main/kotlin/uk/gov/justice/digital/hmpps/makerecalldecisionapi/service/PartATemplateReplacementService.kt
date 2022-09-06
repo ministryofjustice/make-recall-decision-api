@@ -57,7 +57,8 @@ internal class PartATemplateReplacementService {
 
   fun mappingsForTemplate(partAData: PartAData): HashMap<String, String?> {
     val mappings = hashMapOf(
-      "custody_status" to partAData.custodyStatus,
+      "custody_status" to partAData.custodyStatus?.value,
+      "custody_status_details" to partAData.custodyStatus?.details?.replace("\r\n", ", "),
       "recall_type" to partAData.recallType?.value,
       "recall_type_details" to partAData.recallType?.details,
       "response_to_probation" to partAData.responseToProbation,

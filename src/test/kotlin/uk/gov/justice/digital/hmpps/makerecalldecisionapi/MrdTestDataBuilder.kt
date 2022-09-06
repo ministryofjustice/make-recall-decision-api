@@ -115,6 +115,7 @@ class MrdTestDataBuilder {
     private fun custodyStatusData(): CustodyStatus {
       return CustodyStatus(
         selected = CustodyStatusValue.YES_PRISON,
+        details = "Bromsgrove Police Station\r\nLondon",
         allOptions = listOf(
           TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
           TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
