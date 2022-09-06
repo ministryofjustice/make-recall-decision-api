@@ -4,6 +4,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 
 data class CustodyStatus(
   val selected: CustodyStatusValue? = null,
+  val details: String? = null,
   val allOptions: List<TextValueOption>? = null
 )
 
