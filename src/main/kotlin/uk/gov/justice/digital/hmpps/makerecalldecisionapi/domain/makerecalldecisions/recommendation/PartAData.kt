@@ -33,7 +33,9 @@ data class PartAData(
   val licenceExpiryDate: String? = null,
   val sentenceExpiryDate: String? = null,
   val custodialTerm: String? = null,
-  val extendedTerm: String? = null
+  val extendedTerm: String? = null,
+  val mappaLevel: String? = null,
+  val mappaCategory: String? = null
 )
 
 data class ValueWithDetails(
