@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import java.time.LocalDate
+
 data class PartAData(
   val custodyStatus: ValueWithDetails? = null,
   val recallType: ValueWithDetails? = null,
@@ -16,7 +18,14 @@ data class PartAData(
   val isUnderIntegratedOffenderManagement: String? = null,
   val localPoliceContact: LocalPoliceContact? = null,
   val vulnerabilities: Vulnerabilities? = null,
-  val gender: String? = null
+  val gender: String? = null,
+  val dateOfBirth: LocalDate? = null,
+  val name: String? = null,
+  val ethnicity: String? = null,
+  val croNumber: String? = null,
+  val pncNumber: String? = null,
+  val mostRecentPrisonerNumber: String? = null,
+  val nomsNumber: String? = null
 )
 
 data class ValueWithDetails(

@@ -23,7 +23,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
@@ -491,7 +493,9 @@ internal class RiskServiceTest {
     dateOfBirth = LocalDate.parse("1982-10-24"),
     firstName = "John",
     surname = "Smith",
+    middleNames = listOf("Homer", "Bart"),
     gender = "Male",
+    otherIds = OtherIds(crn = null, croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"),
     contactDetails = ContactDetails(
       addresses = listOf(
         Address(
@@ -538,6 +542,7 @@ internal class RiskServiceTest {
           description = "OMU A"
         )
       )
-    )
+    ),
+    offenderProfile = OffenderProfile(ethnicity = "Ainu")
   )
 }

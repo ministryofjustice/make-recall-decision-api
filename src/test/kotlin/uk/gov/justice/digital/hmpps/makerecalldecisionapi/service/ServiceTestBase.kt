@@ -27,7 +27,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
@@ -68,7 +70,7 @@ internal abstract class ServiceTestBase {
   fun userValidatorSetup() {
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(
       PersonDetailsResponse(
-        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", age = null, crn = null, dateOfBirth = null, gender = null)
+        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", age = null, crn = null, dateOfBirth = LocalDate.parse("1982-10-24"), gender = "Male", ethnicity = "Ainu", croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
       )
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
@@ -90,7 +92,9 @@ internal abstract class ServiceTestBase {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       firstName = "John",
       surname = "Smith",
+      middleNames = emptyList(),
       gender = "Male",
+      otherIds = OtherIds(crn = null, croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"),
       contactDetails = ContactDetails(
         addresses = listOf(
           Address(
@@ -139,7 +143,8 @@ internal abstract class ServiceTestBase {
             description = "OMU A"
           )
         )
-      )
+      ),
+      offenderProfile = OffenderProfile(ethnicity = "Ainu")
     )
   }
 

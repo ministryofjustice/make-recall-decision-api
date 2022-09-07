@@ -15,6 +15,9 @@ class RecommendationToPartADataMapper {
 
   companion object Mapper {
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
+      val firstName = recommendation.data.personOnProbation?.firstName
+      val middleNames = recommendation.data.personOnProbation?.middleNames
+      val lastName = recommendation.data.personOnProbation?.surname
       return PartAData(
         custodyStatus = ValueWithDetails(recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING, recommendation.data.custodyStatus?.details),
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
@@ -31,8 +34,24 @@ class RecommendationToPartADataMapper {
         isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected,
         localPoliceContact = recommendation.data.localPoliceContact,
         vulnerabilities = recommendation.data.vulnerabilities,
-        gender = recommendation.data.personOnProbation?.gender
+        gender = recommendation.data.personOnProbation?.gender,
+        dateOfBirth = recommendation.data.personOnProbation?.dateOfBirth,
+        name = formatFullName(firstName, middleNames, lastName),
+        ethnicity = recommendation.data.personOnProbation?.ethnicity,
+        croNumber = recommendation.data.personOnProbation?.croNumber,
+        pncNumber = recommendation.data.personOnProbation?.pncNumber,
+        mostRecentPrisonerNumber = recommendation.data.personOnProbation?.mostRecentPrisonerNumber,
+        nomsNumber = recommendation.data.personOnProbation?.nomsNumber
       )
+    }
+
+    private fun formatFullName(firstName: String?, middleNames: String?, surname: String?): String? {
+      val formattedField = if (firstName?.isEmpty() == true) {
+        surname
+      } else if (middleNames?.isEmpty() == true) {
+        "$firstName $surname"
+      } else "$firstName $middleNames $surname"
+      return formattedField
     }
 
     private fun findRecallTypeToDisplay(recallType: RecallType?): ValueWithDetails {

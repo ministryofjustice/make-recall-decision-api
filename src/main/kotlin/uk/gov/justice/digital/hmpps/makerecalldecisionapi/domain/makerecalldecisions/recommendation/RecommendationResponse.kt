@@ -37,5 +37,12 @@ data class PersonOnProbation(
   val name: String? = null,
   val firstName: String? = null,
   val surname: String? = null,
-  val gender: String? = null
+  val middleNames: String? = null,
+  val gender: String? = null,
+  val ethnicity: String? = null,
+  val dateOfBirth: LocalDate? = null,
+  val croNumber: String? = null,
+  val mostRecentPrisonerNumber: String? = null,
+  val nomsNumber: String? = null,
+  val pncNumber: String? = null
 )

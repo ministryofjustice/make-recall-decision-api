@@ -49,7 +49,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
-import java.time.LocalDate
+import java.time.LocalDate.now
+import java.time.LocalDate.parse
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -67,9 +68,9 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
-          personOnProbation = PersonOnProbation(gender = "Male"),
+          personOnProbation = PersonOnProbation(gender = "Male", dateOfBirth = parse("1982-10-24"), firstName = "Homer", middleNames = "Bart", surname = "Simpson", ethnicity = "Ainu", croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR"),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
-          dateVloInformed = LocalDate.now(),
+          dateVloInformed = now(),
           alternativesToRecallTried = AlternativesToRecallTried(
             selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
             allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
@@ -153,54 +154,14 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
   @Test
   fun `given recommendation data then build the mappings for the Part A template`() {
     runTest {
+      // given
+      val partA = partAData()
 
-      val alternativesList: List<ValueWithDetails> = listOf(
-        ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022"),
-        ValueWithDetails(value = SelectedAlternativeOptions.DRUG_TESTING.name, details = "drugs test passed"),
-        ValueWithDetails(value = SelectedAlternativeOptions.INCREASED_FREQUENCY.name, details = "increased frequency"),
-        ValueWithDetails(value = SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name, details = "licence conditions added"),
-        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name, details = "referred to approved premises"),
-        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name, details = "referral to other team"),
-        ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name, details = "referred to partner agency"),
-        ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
-        ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
-      )
-      val partA = PartAData(
-        custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
-        recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
-        responseToProbation = "They have not responded well",
-        whatLedToRecall = "Increasingly violent behaviour",
-        isThisAnEmergencyRecall = "Yes",
-        hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
-        dateVloInformed = "1 September 2022",
-        selectedAlternatives = alternativesList,
-        hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
-        hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
-        selectedStandardConditionsBreached = listOf(
-          SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
-          SelectedStandardLicenceConditions.NO_OFFENCE.name,
-          SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
-          SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
-          SelectedStandardLicenceConditions.ADDRESS_APPROVED.name,
-          SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
-          SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
-        ),
-        additionalConditionsBreached = "These are the additional conditions breached",
-        isUnderIntegratedOffenderManagement = "YES",
-        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
-        vulnerabilities = Vulnerabilities(
-          selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
-          allOptions = listOf(
-            TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
-            TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
-          )
-        ),
-        gender = "Male"
-      )
-
+      // when
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result.size).isEqualTo(54)
+      // then
+      assertThat(result.size).isEqualTo(61)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -237,6 +198,27 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["fax_number"]).isEqualTo("555-0199")
       assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
       assertThat(result["gender"]).isEqualTo("Male")
+      assertThat(result["name"]).isEqualTo("Homer Bart Simpson")
+      assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
+      assertThat(result["ethnicity"]).isEqualTo("Ainu")
+      assertThat(result["cro_number"]).isEqualTo("123456/04A")
+      assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
+      assertThat(result["most_recent_prisoner_number"]).isEqualTo("G12345")
+      assertThat(result["noms_number"]).isEqualTo("A1234CR")
+    }
+  }
+
+  @Test
+  fun `ethnicity in Part A should read 'Not Specified' when not available from Delius`() {
+    runTest {
+      // given
+      val partA = partAData().copy(ethnicity = null)
+
+      // when
+      val result = partATemplateReplacementService.mappingsForTemplate(partA)
+
+      // then
+      assertThat(result["ethnicity"]).isEqualTo("Not specified")
     }
   }
 
@@ -279,5 +261,59 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
     }
+  }
+
+  private fun partAData(): PartAData {
+    val alternativesList: List<ValueWithDetails> = listOf(
+      ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022"),
+      ValueWithDetails(value = SelectedAlternativeOptions.DRUG_TESTING.name, details = "drugs test passed"),
+      ValueWithDetails(value = SelectedAlternativeOptions.INCREASED_FREQUENCY.name, details = "increased frequency"),
+      ValueWithDetails(value = SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name, details = "licence conditions added"),
+      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name, details = "referred to approved premises"),
+      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name, details = "referral to other team"),
+      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name, details = "referred to partner agency"),
+      ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
+      ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
+    )
+    val partA = PartAData(
+      custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
+      recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
+      responseToProbation = "They have not responded well",
+      whatLedToRecall = "Increasingly violent behaviour",
+      isThisAnEmergencyRecall = "Yes",
+      hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
+      dateVloInformed = "1 September 2022",
+      selectedAlternatives = alternativesList,
+      hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
+      hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
+      selectedStandardConditionsBreached = listOf(
+        SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
+        SelectedStandardLicenceConditions.NO_OFFENCE.name,
+        SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
+        SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
+        SelectedStandardLicenceConditions.ADDRESS_APPROVED.name,
+        SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
+        SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
+      ),
+      additionalConditionsBreached = "These are the additional conditions breached",
+      isUnderIntegratedOffenderManagement = "YES",
+      localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+      vulnerabilities = Vulnerabilities(
+        selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
+        allOptions = listOf(
+          TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+          TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
+        )
+      ),
+      gender = "Male",
+      name = "Homer Bart Simpson",
+      ethnicity = "Ainu",
+      dateOfBirth = parse("1982-10-24"),
+      croNumber = "123456/04A",
+      pncNumber = "2004/0712343H",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = "A1234CR"
+    )
+    return partA
   }
 }

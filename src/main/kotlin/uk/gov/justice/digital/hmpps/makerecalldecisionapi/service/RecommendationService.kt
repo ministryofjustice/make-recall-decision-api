@@ -45,8 +45,31 @@ internal class RecommendationService(
       val firstName = personDetails?.personalDetailsOverview?.firstName
       val surname = personDetails?.personalDetailsOverview?.surname
       val gender = personDetails?.personalDetailsOverview?.gender
+      val ethnicity = personDetails?.personalDetailsOverview?.ethnicity
+      val middleNames = personDetails?.personalDetailsOverview?.middleNames
+      val dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth
+      val croNumber = personDetails?.personalDetailsOverview?.croNumber
+      val mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber
+      val nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber
+      val pncNumber = personDetails?.personalDetailsOverview?.pncNumber
 
-      val savedRecommendation = saveNewRecommendationEntity(recommendationRequest, username, PersonOnProbation(name = name, firstName = firstName, surname = surname, gender = gender))
+      val savedRecommendation = saveNewRecommendationEntity(
+        recommendationRequest,
+        username,
+        PersonOnProbation(
+          croNumber = croNumber,
+          mostRecentPrisonerNumber = mostRecentPrisonerNumber,
+          nomsNumber = nomsNumber,
+          pncNumber = pncNumber,
+          name = name,
+          firstName = firstName,
+          middleNames = middleNames,
+          surname = surname,
+          gender = gender,
+          ethnicity = ethnicity,
+          dateOfBirth = dateOfBirth
+        )
+      )
 
       return RecommendationResponse(
         id = savedRecommendation?.id,

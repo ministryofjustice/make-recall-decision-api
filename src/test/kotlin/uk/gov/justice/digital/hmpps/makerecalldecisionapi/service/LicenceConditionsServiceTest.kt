@@ -204,7 +204,13 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       dateOfBirth = dateOfBirth,
       age = dateOfBirth?.until(LocalDate.now())?.years,
       gender = "Male",
-      crn = "12345"
+      crn = "12345",
+      ethnicity = "Ainu",
+      middleNames = "",
+      croNumber = "123456/04A",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = "A1234CR",
+      pncNumber = "2004/0712343H"
     )
   }
 

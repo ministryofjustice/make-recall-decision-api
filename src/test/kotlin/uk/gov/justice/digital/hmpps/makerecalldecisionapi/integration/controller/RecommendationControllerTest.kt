@@ -48,6 +48,12 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("status")).isEqualTo("DRAFT")
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("name")).isEqualTo("John Smith")
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("gender")).isEqualTo("Male")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("ethnicity")).isEqualTo("Ainu")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("dateOfBirth")).isEqualTo("1982-10-24")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mostRecentPrisonerNumber")).isEqualTo("G12345")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("croNumber")).isEqualTo("123456/04A")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("nomsNumber")).isEqualTo("A1234CR")
+    assertThat(JSONObject(response.get("personOnProbation").toString()).get("pncNumber")).isEqualTo("2004/0712343H")
   }
 
   @Test

@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.time.LocalDate
 
 @Service
@@ -64,15 +65,22 @@ internal class PersonDetailsService(
   fun buildPersonalDetails(crn: String, offenderDetails: AllOffenderDetailsResponse): PersonDetails {
     val firstName = offenderDetails.firstName ?: ""
     val surname = offenderDetails.surname ?: ""
+    val middleNames = offenderDetails.middleNames?.joinToString(WHITE_SPACE) ?: ""
 
     return PersonDetails(
       name = formatTwoWordField(firstName, surname),
       firstName = firstName,
       surname = surname,
+      middleNames = middleNames,
       dateOfBirth = offenderDetails.dateOfBirth,
       age = age(offenderDetails),
       gender = offenderDetails.gender ?: "",
-      crn = crn
+      crn = crn,
+      ethnicity = offenderDetails.offenderProfile?.ethnicity ?: "",
+      croNumber = offenderDetails.otherIds?.croNumber ?: "",
+      pncNumber = offenderDetails.otherIds?.pncNumber ?: "",
+      nomsNumber = offenderDetails.otherIds?.nomsNumber ?: "",
+      mostRecentPrisonerNumber = offenderDetails.otherIds?.mostRecentPrisonerNumber ?: ""
     )
   }
 
