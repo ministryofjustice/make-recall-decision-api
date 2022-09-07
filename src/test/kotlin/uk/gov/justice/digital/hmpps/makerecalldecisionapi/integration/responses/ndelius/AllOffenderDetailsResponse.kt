@@ -78,7 +78,8 @@ fun allOffenderDetailsResponse() = """
   "firstName": "John",
   "gender": "Male",
   "middleNames": [
-    "string"
+    "Homer",
+    "Bart"
   ],
   "offenderAliases": [
     {
@@ -326,7 +327,7 @@ fun allOffenderDetailsResponse() = """
         "startDate": "2022-04-26"
       }
     ],
-    "ethnicity": "string",
+    "ethnicity": "Ainu",
     "genderIdentity": "Prefer to self-describe",
     "immigrationStatus": "string",
     "nationality": "string",

@@ -31,7 +31,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = "Pontius",
           surname = "Pilate",
           dateOfBirth = LocalDate.parse("2000-11-09"),
-          otherIds = OtherIds(crn)
+          otherIds = OtherIds(crn, null, null, null, null)
         )
       )
     )
@@ -61,7 +61,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = null,
           surname = null,
           dateOfBirth = null,
-          otherIds = OtherIds(crn)
+          otherIds = OtherIds(crn, null, null, null, null)
         )
       )
     )

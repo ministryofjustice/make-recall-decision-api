@@ -131,7 +131,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         firstName = "John",
         surname = "Blair",
         dateOfBirth = LocalDate.parse("1982-10-24"),
-        otherIds = OtherIds(crn = "X12345")
+        otherIds = OtherIds(crn = "X12345", null, null, null, null)
       )
     )
   )
@@ -142,7 +142,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         firstName = null,
         surname = null,
         dateOfBirth = null,
-        otherIds = OtherIds(crn = "X12345")
+        otherIds = OtherIds(crn = "X12345", null, null, null, null)
       )
     )
   )

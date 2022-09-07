@@ -87,7 +87,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(middleNames = listOf("Homer Bart")) })
 
       val response = personDetailsService.getPersonDetails(crn)
 
@@ -127,6 +127,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         .willReturn(
           Mono.fromCallable {
             allOffenderDetailsResponse().copy(
+              middleNames = listOf("Homer Bart"),
               contactDetails = ContactDetails(
                 addresses = emptyList()
               )
@@ -172,6 +173,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         .willReturn(
           Mono.fromCallable {
             allOffenderDetailsResponse().copy(
+              middleNames = listOf("Homer Bart"),
               contactDetails = ContactDetails(
                 addresses = listOf(
                   Address(
@@ -218,7 +220,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(middleNames = listOf("Homer Bart")) })
 
       val response = personDetailsService.getPersonDetails(crn)
 
@@ -235,6 +237,10 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.croNumber).isEqualTo("123456/04A")
+      assertThat(personalDetails.mostRecentPrisonerNumber).isEqualTo("G12345")
+      assertThat(personalDetails.nomsNumber).isEqualTo("A1234CR")
+      assertThat(personalDetails.pncNumber).isEqualTo("2004/0712343H")
       assertThat(currentAddress.line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
       assertThat(currentAddress.line2).isEqualTo("Sheffield City Centre")
       assertThat(currentAddress.town).isEqualTo("Sheffield")
@@ -327,7 +333,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val crn = "12345"
 
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(middleNames = listOf("Homer Bart")) })
 
       val response = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
 
@@ -347,7 +353,13 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       dateOfBirth = dateOfBirth,
       age = dateOfBirth?.until(LocalDate.now())?.years,
       gender = "Male",
-      crn = "12345"
+      crn = "12345",
+      ethnicity = "Ainu",
+      middleNames = "Homer Bart",
+      croNumber = "123456/04A",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = "A1234CR",
+      pncNumber = "2004/0712343H"
     )
   }
 }
