@@ -46,9 +46,9 @@ class RecommendationToPartADataMapper {
     }
 
     private fun formatFullName(firstName: String?, middleNames: String?, surname: String?): String? {
-      val formattedField = if (firstName?.isEmpty() == true) {
+      val formattedField = if (firstName.isNullOrBlank()) {
         surname
-      } else if (middleNames?.isEmpty() == true) {
+      } else if (middleNames.isNullOrBlank()) {
         "$firstName $surname"
       } else "$firstName $middleNames $surname"
       return formattedField
