@@ -140,6 +140,20 @@ class RecommendationToPartADataMapperTest {
   }
 
   @Test
+  fun `given has no arrest issues data then should map in part A text`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = null))
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.hasArrestIssues?.value).isEqualTo("")
+    }
+  }
+
+  @Test
   fun `given has contraband risk data then should map in part A text`() {
     runTest {
       val recommendation = RecommendationEntity(
