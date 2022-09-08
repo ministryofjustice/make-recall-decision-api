@@ -95,7 +95,9 @@ internal class PartATemplateReplacementService {
       "licence_expiry_date" to partAData.licenceExpiryDate,
       "sentence_expiry_date" to partAData.sentenceExpiryDate,
       "custodial_term" to partAData.custodialTerm,
-      "extended_term" to partAData.extendedTerm
+      "extended_term" to partAData.extendedTerm,
+      "mappa_level" to partAData.mappaLevel,
+      "mappa_category" to partAData.mappaCategory
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

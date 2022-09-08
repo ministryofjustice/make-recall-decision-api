@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OverviewConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
+import kotlin.streams.toList
 
 @Service
 internal class ConvictionService(
