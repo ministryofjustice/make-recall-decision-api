@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
@@ -24,9 +23,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDateTime
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -61,8 +57,7 @@ internal class RecommendationService(
       val nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber
       val pncNumber = personDetails?.personalDetailsOverview?.pncNumber
       val riskResponse = recommendationRequest.crn?.let { riskService?.getRisk(it) }
-      val mappaCategory = fetchMappaCategory(riskResponse)
-      val mappaLevel = fetchMappaLevel(riskResponse)
+      val mappa = riskResponse?.mappa
 
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation = buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -82,8 +77,7 @@ internal class RecommendationService(
           gender = gender,
           ethnicity = ethnicity,
           dateOfBirth = dateOfBirth,
-          mappaCategory = mappaCategory,
-          mappaLevel = mappaLevel
+          mappa = mappa
         ),
         convictionForRecommendation
       )
@@ -243,28 +237,5 @@ internal class RecommendationService(
       )
     }
     return null
-  }
-
-  fun extendedSentenceDetails(convictionResponse: ConvictionResponse): Pair<String, String> {
-    return if (convictionResponse.sentenceDescription.equals("Extended Determinate Sentence") ||
-      convictionResponse.sentenceDescription.equals("CJA - Extended Sentence")
-    ) {
-      Pair(
-        convictionResponse.sentenceOriginalLength.toString() + " " + convictionResponse.sentenceOriginalLengthUnits,
-        convictionResponse.sentenceSecondLength.toString() + " " + convictionResponse.sentenceSecondLengthUnits
-      )
-    } else Pair("", "")
-  }
-
-  private fun fetchMappaCategory(riskResponse: RiskResponse?): String {
-    return if (riskResponse?.mappa == null) EMPTY_STRING
-    else if (riskResponse.mappa.category == null) NOT_APPLICABLE
-    else "Category$WHITE_SPACE${(riskResponse.mappa.category)}"
-  }
-
-  private fun fetchMappaLevel(riskResponse: RiskResponse?): String {
-    return if (riskResponse?.mappa == null) EMPTY_STRING
-    else if (riskResponse.mappa.category == null) NOT_APPLICABLE
-    else "Level$WHITE_SPACE${(riskResponse.mappa.level)}"
   }
 }

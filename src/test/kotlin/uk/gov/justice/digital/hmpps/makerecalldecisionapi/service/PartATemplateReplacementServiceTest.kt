@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
@@ -81,8 +82,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             pncNumber = "2004/0712343H",
             mostRecentPrisonerNumber = "G12345",
             nomsNumber = "A1234CR",
-            mappaLevel = "Level 1",
-            mappaCategory = "Category 1"
+            mappa = Mappa(level = null, category = null, isNominal = null, lastUpdated = null)
           ),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
           dateVloInformed = now(),
@@ -357,8 +357,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       sentenceExpiryDate = "07/09/2022",
       custodialTerm = "6 days",
       extendedTerm = "20 days",
-      mappaCategory = "Category 1",
-      mappaLevel = "Level 1"
+      mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null)
     )
     return partA
   }

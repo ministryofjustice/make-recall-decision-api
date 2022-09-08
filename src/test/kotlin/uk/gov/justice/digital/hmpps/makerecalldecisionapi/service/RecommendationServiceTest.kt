@@ -70,7 +70,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
-          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappaCategory = "Category 1", mappaLevel = "Level 1")
+          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null))
         )
       )
 
@@ -92,7 +92,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
       assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
-      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H", mappaLevel = "Level 1", mappaCategory = "Category 1"))
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null)))
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
         ConvictionDetail(
           indexOffenceDescription = "Robbery (other than armed robbery)",

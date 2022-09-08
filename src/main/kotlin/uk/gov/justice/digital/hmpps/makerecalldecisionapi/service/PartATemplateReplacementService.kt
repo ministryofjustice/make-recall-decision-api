@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.deepoove.poi.XWPFTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
@@ -27,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
@@ -96,8 +98,8 @@ internal class PartATemplateReplacementService {
       "sentence_expiry_date" to partAData.sentenceExpiryDate,
       "custodial_term" to partAData.custodialTerm,
       "extended_term" to partAData.extendedTerm,
-      "mappa_level" to partAData.mappaLevel,
-      "mappa_category" to partAData.mappaCategory
+      "mappa_level" to formatMappaLevel(partAData.mappa),
+      "mappa_category" to formatMappaCategory(partAData.mappa)
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
@@ -173,5 +175,17 @@ internal class PartATemplateReplacementService {
     } else {
       EMPTY_STRING
     }
+  }
+
+  private fun formatMappaCategory(mappa: Mappa?): String {
+    return if (mappa == null) EMPTY_STRING
+    else if (mappa.category == null) MrdTextConstants.NOT_APPLICABLE
+    else "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
+  }
+
+  private fun formatMappaLevel(mappa: Mappa?): String {
+    return if (mappa == null) EMPTY_STRING
+    else if (mappa.level == null) MrdTextConstants.NOT_APPLICABLE
+    else "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
   }
 }

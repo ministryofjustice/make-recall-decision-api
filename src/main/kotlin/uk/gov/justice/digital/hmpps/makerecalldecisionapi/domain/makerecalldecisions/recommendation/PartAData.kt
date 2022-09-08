@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import java.time.LocalDate
 
 data class PartAData(
@@ -34,8 +35,7 @@ data class PartAData(
   val sentenceExpiryDate: String? = null,
   val custodialTerm: String? = null,
   val extendedTerm: String? = null,
-  val mappaLevel: String? = null,
-  val mappaCategory: String? = null
+  val mappa: Mappa? = null,
 )
 
 data class ValueWithDetails(

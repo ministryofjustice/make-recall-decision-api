@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -56,48 +55,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("croNumber")).isEqualTo("123456/04A")
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("nomsNumber")).isEqualTo("A1234CR")
     assertThat(JSONObject(response.get("personOnProbation").toString()).get("pncNumber")).isEqualTo("2004/0712343H")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaCategory")).isEqualTo("Category 1")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaLevel")).isEqualTo("Level 1")
-  }
-
-  @Test
-  fun `MAPPA fields NA on creating a recommendation when MAPPA information not present`() {
-    userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = null, level = null)
-    allOffenderDetailsResponse(crn)
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaCategory")).isEqualTo("N/A")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaLevel")).isEqualTo("N/A")
-  }
-
-  @Test
-  fun `MAPPA fields empty on creating a recommendation when there is an error talking to Delius`() {
-    userAccessAllowed(crn)
-    errorMappaDetailsResponse(crn)
-    allOffenderDetailsResponse(crn)
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaCategory")).isEqualTo(EMPTY_STRING)
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mappaLevel")).isEqualTo(EMPTY_STRING)
+    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("category")).isEqualTo(1)
+    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("level")).isEqualTo(1)
   }
 
   @Test
