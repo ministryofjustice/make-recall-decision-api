@@ -93,6 +93,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.responseToProbation").isEqualTo("They have not responded well")
       .jsonPath("$.whatLedToRecall").isEqualTo("Increasingly violent behaviour")
       .jsonPath("$.isThisAnEmergencyRecall").isEqualTo(true)
+      .jsonPath("$.isExtendedOrIndeterminateSentence").isEqualTo(true)
       .jsonPath("$.hasVictimsInContactScheme.selected").isEqualTo("YES")
       .jsonPath("$.hasVictimsInContactScheme.allOptions[0].value").isEqualTo("YES")
       .jsonPath("$.hasVictimsInContactScheme.allOptions[0].text").isEqualTo("Yes")

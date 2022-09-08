@@ -134,6 +134,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           responseToProbation = updateRecommendationRequest.responseToProbation,
           whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
+          isExtendedOrIndeterminateSentence = updateRecommendationRequest.isExtendedOrIndeterminateSentence,
           hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
           dateVloInformed = updateRecommendationRequest.dateVloInformed,
           hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
@@ -186,6 +187,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       responseToProbation = null,
       whatLedToRecall = null,
       isThisAnEmergencyRecall = null,
+      isExtendedOrIndeterminateSentence = null,
       hasVictimsInContactScheme = null,
       dateVloInformed = null,
       alternativesToRecallTried = null,
@@ -244,6 +246,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
     assertThat(recommendationResponse.whatLedToRecall).isEqualTo("Increasingly violent behaviour")
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
+    assertThat(recommendationResponse.isExtendedOrIndeterminateSentence).isEqualTo(true)
     assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(YesNoNotApplicableOptions.YES)
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
