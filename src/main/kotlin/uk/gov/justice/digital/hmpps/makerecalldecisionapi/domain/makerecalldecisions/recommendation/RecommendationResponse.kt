@@ -46,7 +46,9 @@ data class PersonOnProbation(
   val croNumber: String? = null,
   val mostRecentPrisonerNumber: String? = null,
   val nomsNumber: String? = null,
-  val pncNumber: String? = null
+  val pncNumber: String? = null,
+  val mappaCategory: String? = null,
+  val mappaLevel: String? = null
 )
 
 data class ConvictionDetail(

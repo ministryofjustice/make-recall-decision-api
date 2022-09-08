@@ -15,14 +15,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
+import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -50,16 +54,23 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     DateTimeUtils.setCurrentMillisFixed(1658828907443)
   }
 
+  @Mock
+  protected open lateinit var riskService: RiskService
+
   @Test
   fun `creates a new recommendation in the database`() {
     runTest {
       // given
+      given(riskService.getRisk(BDDMockito.anyString())).willReturn(RiskResponse(mappa = Mappa(category = 1, level = 1, isNominal = null, lastUpdated = null)))
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, riskService)
+
+      // and
       val recommendationToSave = RecommendationEntity(
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
-          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
+          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappaCategory = "Category 1", mappaLevel = "Level 1")
         )
       )
 
@@ -81,7 +92,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
       assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
-      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"))
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H", mappaLevel = "Level 1", mappaCategory = "Category 1"))
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
         ConvictionDetail(
           indexOffenceDescription = "Robbery (other than armed robbery)",
