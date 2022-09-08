@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -20,8 +23,10 @@ import org.mockito.BDDMockito.times
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -47,50 +52,56 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     DateTimeUtils.setCurrentMillisFixed(1658828907443)
   }
 
-  @Test
-  fun `creates a new recommendation in the database`() {
-    // given
-    val recommendationToSave = RecommendationEntity(
-      data = RecommendationModel(
-        crn = crn,
-        status = Status.DRAFT,
-        lastModifiedBy = "Bill",
-        personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
+  @ParameterizedTest()
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  fun `creates a new recommendation in the database`(sentenceDescription: String) {
+    runTest {
+      // given
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+          status = Status.DRAFT,
+          lastModifiedBy = "Bill",
+          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
+        )
       )
-    )
 
-    // and
-    given(recommendationRepository.save(any()))
-      .willReturn(recommendationToSave)
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
+        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
 
-    // when
-    val result = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      // and
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
 
-    // then
-    assertThat(result.id).isNotNull
-    assertThat(result.status).isEqualTo(Status.DRAFT)
-    assertThat(result.personOnProbation?.name).isEqualTo("John Smith")
-    assertThat(result.personOnProbation?.ethnicity).isEqualTo("Ainu")
-    assertThat(result.personOnProbation?.gender).isEqualTo("Male")
-    assertThat(result.personOnProbation?.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-    assertThat(result.personOnProbation?.croNumber).isEqualTo("123456/04A")
-    assertThat(result.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
-    assertThat(result.personOnProbation?.nomsNumber).isEqualTo("A1234CR")
-    assertThat(result.personOnProbation?.pncNumber).isEqualTo("2004/0712343H")
+      // when
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
 
-    // and
-    val captor = argumentCaptor<RecommendationEntity>()
-    then(recommendationRepository).should().save(captor.capture())
-    val recommendationEntity = captor.firstValue
+      // then
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
 
-    assertThat(recommendationEntity.id).isNotNull()
-    assertThat(recommendationEntity.data.crn).isEqualTo(crn)
-    assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
-    assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"))
-    assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
-    assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
-    assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
-    assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.id).isNotNull()
+      assertThat(recommendationEntity.data.crn).isEqualTo(crn)
+      assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"))
+      assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
+        ConvictionDetail(
+          indexOffenceDescription = "Robbery (other than armed robbery)",
+          dateOfOriginalOffence = "2022-08-26",
+          dateOfSentence = "2022-04-26",
+          lengthOfSentence = "6 Days",
+          licenceExpiryDate = "2022-05-10",
+          sentenceExpiryDate = "2022-06-10",
+          custodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else "",
+          extendedTerm = if (sentenceDescription != "Random sentence description") "10 Days" else ""
+        )
+      )
+      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+    }
   }
 
   @Test
@@ -137,7 +148,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
           underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
           localPoliceContact = updateRecommendationRequest.localPoliceContact,
-          vulnerabilities = updateRecommendationRequest.vulnerabilities
+          vulnerabilities = updateRecommendationRequest.vulnerabilities,
+          convictionDetail = updateRecommendationRequest.convictionDetail
         )
       )
 
@@ -180,7 +192,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       alternativesToRecallTried = null,
       hasArrestIssues = null,
       hasContrabandRisk = null,
-      underIntegratedOffenderManagement = null
+      underIntegratedOffenderManagement = null,
+      convictionDetail = null
     )
 
     val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
@@ -258,6 +271,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.localPoliceContact?.phoneNumber).isEqualTo("555-0100")
     assertThat(recommendationResponse.localPoliceContact?.faxNumber).isEqualTo("555-0199")
     assertThat(recommendationResponse.localPoliceContact?.emailAddress).isEqualTo("thomas.magnum@gmail.com")
+    assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
+    assertThat(recommendationResponse.convictionDetail?.dateOfOriginalOffence).isEqualTo("2022-09-01")
+    assertThat(recommendationResponse.convictionDetail?.dateOfSentence).isEqualTo("2022-09-02")
+    assertThat(recommendationResponse.convictionDetail?.lengthOfSentence).isEqualTo("6 days")
+    assertThat(recommendationResponse.convictionDetail?.licenceExpiryDate).isEqualTo("2022-09-03")
+    assertThat(recommendationResponse.convictionDetail?.sentenceExpiryDate).isEqualTo("2022-09-04")
+    assertThat(recommendationResponse.convictionDetail?.custodialTerm).isEqualTo("10 days")
+    assertThat(recommendationResponse.convictionDetail?.extendedTerm).isEqualTo("12 days")
   }
 
   @Test
@@ -417,5 +438,61 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___.docx")
     assertThat(result.fileContents).isNotNull()
+  }
+
+  @Test
+  fun `return empty conviction detail when conviction is non custodial`() {
+    runTest {
+      // given
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
+        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
+
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // when
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+
+      // then
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
+
+      assertThat(recommendationEntity.data.convictionDetail).isNull()
+    }
+  }
+
+  @Test
+  fun `return empty conviction detail when there are multiple convictions`() {
+    runTest {
+      // given
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
+        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(), custodialConvictionResponse()) })
+
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // when
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+
+      // then
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
+
+      assertThat(recommendationEntity.data.convictionDetail).isNull()
+    }
   }
 }

@@ -80,14 +80,18 @@ class CommunityApiClientTest : IntegrationTestBase() {
         startDate = LocalDate.parse("2022-04-26"),
         terminationDate = LocalDate.parse("2022-04-26"),
         expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-        description = "sentence description", originalLength = 12,
+        description = "Extended Determinate Sentence",
+        originalLength = 12,
         originalLengthUnits = "days",
+        secondLength = 19,
+        secondLengthUnits = "days",
         sentenceType = SentenceType(code = "ABC123")
       ),
       active = true,
       offences = listOf(
         Offence(
           mainOffence = true,
+          offenceDate = LocalDate.parse("2022-04-24"),
           detail = OffenceDetail(
             mainCategoryDescription = "string", subCategoryDescription = "string",
             description = "Robbery (other than armed robbery)",

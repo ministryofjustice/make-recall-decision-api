@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
@@ -29,13 +31,14 @@ internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   @Lazy val personDetailsService: PersonDetailsService,
   val partATemplateReplacementService: PartATemplateReplacementService,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
+  private val convictionService: ConvictionService
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
+  suspend fun createRecommendation(recommendationRequest: CreateRecommendationRequest, username: String?): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -53,6 +56,9 @@ internal class RecommendationService(
       val nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber
       val pncNumber = personDetails?.personalDetailsOverview?.pncNumber
 
+      val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
+      val convictionForRecommendation = buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
+
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
         username,
@@ -68,7 +74,8 @@ internal class RecommendationService(
           gender = gender,
           ethnicity = ethnicity,
           dateOfBirth = dateOfBirth
-        )
+        ),
+        convictionForRecommendation
       )
 
       return RecommendationResponse(
@@ -105,7 +112,8 @@ internal class RecommendationService(
         licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
         underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
         localPoliceContact = recommendationEntity.data.localPoliceContact,
-        vulnerabilities = recommendationEntity.data.vulnerabilities
+        vulnerabilities = recommendationEntity.data.vulnerabilities,
+        convictionDetail = recommendationEntity.data.convictionDetail
       )
     }
   }
@@ -172,8 +180,8 @@ internal class RecommendationService(
   private fun generatePartAFileName(recommendation: RecommendationModel): String {
 
     val surname = recommendation.personOnProbation?.surname ?: ""
-    val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation?.firstName.isNotEmpty()) {
-      recommendation.personOnProbation?.firstName.subSequence(0, 1)
+    val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
+      recommendation.personOnProbation.firstName.subSequence(0, 1)
     } else ""
     val crn = recommendation.crn ?: ""
 
@@ -183,7 +191,8 @@ internal class RecommendationService(
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
     createdByUserName: String?,
-    personOnProbation: PersonOnProbation?
+    personOnProbation: PersonOnProbation?,
+    convictionForRecommendation: ConvictionDetail?
   ): RecommendationEntity? {
 
     val now = nowDateTime()
@@ -197,9 +206,41 @@ internal class RecommendationService(
           lastModifiedDate = now,
           createdBy = createdByUserName,
           createdDate = now,
-          personOnProbation = personOnProbation
+          personOnProbation = personOnProbation,
+          convictionDetail = convictionForRecommendation
         )
       )
     )
+  }
+
+  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?): ConvictionDetail? {
+    if (convictionResponse?.size == 1) {
+
+      val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
+      val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0])
+
+      return ConvictionDetail(
+        mainOffence?.description,
+        mainOffence?.offenceDate.toString(),
+        convictionResponse[0].sentenceStartDate.toString(),
+        convictionResponse[0].sentenceOriginalLength.toString() + " " + convictionResponse[0].sentenceOriginalLengthUnits,
+        convictionResponse[0].licenceExpiryDate.toString(),
+        convictionResponse[0].sentenceExpiryDate.toString(),
+        custodialTerm,
+        extendedTerm,
+      )
+    }
+    return null
+  }
+
+  fun extendedSentenceDetails(convictionResponse: ConvictionResponse): Pair<String, String> {
+    return if (convictionResponse.sentenceDescription.equals("Extended Determinate Sentence") ||
+      convictionResponse.sentenceDescription.equals("CJA - Extended Sentence")
+    ) {
+      Pair(
+        convictionResponse.sentenceOriginalLength.toString() + " " + convictionResponse.sentenceOriginalLengthUnits,
+        convictionResponse.sentenceSecondLength.toString() + " " + convictionResponse.sentenceSecondLengthUnits
+      )
+    } else Pair("", "")
   }
 }

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -62,7 +63,8 @@ class MrdTestDataBuilder {
               TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
             )
           ),
-          localPoliceContact = localPoliceContact()
+          localPoliceContact = localPoliceContact(),
+          convictionDetail = convictionDetail()
         )
       )
     }
@@ -87,7 +89,8 @@ class MrdTestDataBuilder {
         licenceConditionsBreached = licenceConditionsBreached(),
         underIntegratedOffenderManagement = integratedOffenderManagement(),
         localPoliceContact = localPoliceContact(),
-        vulnerabilities = vulnerabilities()
+        vulnerabilities = vulnerabilities(),
+        convictionDetail = convictionDetail()
       )
     }
 
@@ -98,6 +101,19 @@ class MrdTestDataBuilder {
           TextValueOption(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
           TextValueOption(value = VulnerabilityOptions.RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
         )
+      )
+    }
+
+    private fun convictionDetail(): ConvictionDetail {
+      return ConvictionDetail(
+        indexOffenceDescription = "This is the index offence",
+        dateOfOriginalOffence = "2022-09-01",
+        dateOfSentence = "2022-09-02",
+        lengthOfSentence = "6 days",
+        licenceExpiryDate = "2022-09-03",
+        sentenceExpiryDate = "2022-09-04",
+        custodialTerm = "10 days",
+        extendedTerm = "12 days"
       )
     }
 

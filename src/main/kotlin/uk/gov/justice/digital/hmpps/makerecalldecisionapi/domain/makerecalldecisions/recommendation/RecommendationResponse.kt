@@ -25,7 +25,8 @@ data class RecommendationResponse(
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
-  val vulnerabilities: Vulnerabilities? = null
+  val vulnerabilities: Vulnerabilities? = null,
+  val convictionDetail: ConvictionDetail? = null
 )
 
 data class UnderIntegratedOffenderManagement(
@@ -45,4 +46,15 @@ data class PersonOnProbation(
   val mostRecentPrisonerNumber: String? = null,
   val nomsNumber: String? = null,
   val pncNumber: String? = null
+)
+
+data class ConvictionDetail(
+  val indexOffenceDescription: String? = null,
+  val dateOfOriginalOffence: String? = null,
+  val dateOfSentence: String? = null,
+  val lengthOfSentence: String? = null,
+  val licenceExpiryDate: String? = null,
+  val sentenceExpiryDate: String? = null,
+  val custodialTerm: String? = null,
+  val extendedTerm: String? = null
 )

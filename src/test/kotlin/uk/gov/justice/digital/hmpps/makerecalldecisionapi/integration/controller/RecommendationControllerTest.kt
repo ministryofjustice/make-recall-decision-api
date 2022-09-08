@@ -60,6 +60,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `update and get recommendation`() {
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationRequest())
     updateRecommendation(secondUpdateRecommendationRequest())
@@ -144,6 +146,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.vulnerabilities.allOptions[0].value").isEqualTo("RISK_OF_SUICIDE_OR_SELF_HARM")
       .jsonPath("$.vulnerabilities.allOptions[1].text").isEqualTo("Relationship breakdown")
       .jsonPath("$.vulnerabilities.allOptions[1].value").isEqualTo("RELATIONSHIP_BREAKDOWN")
+      .jsonPath("$.convictionDetail.indexOffenceDescription").isEqualTo("Robbery (other than armed robbery)")
+      .jsonPath("$.convictionDetail.dateOfOriginalOffence").isEqualTo("2022-04-24")
+      .jsonPath("$.convictionDetail.dateOfSentence").isEqualTo("2022-04-26")
+      .jsonPath("$.convictionDetail.lengthOfSentence").isEqualTo("12 days")
+      .jsonPath("$.convictionDetail.licenceExpiryDate").isEqualTo("2020-06-25")
+      .jsonPath("$.convictionDetail.sentenceExpiryDate").isEqualTo("2020-06-28")
+      .jsonPath("$.convictionDetail.custodialTerm").isEqualTo("12 days")
+      .jsonPath("$.convictionDetail.extendedTerm").isEqualTo("19 days")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))

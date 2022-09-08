@@ -38,7 +38,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, personDetailsService, userAccessValidator, recommendationService)
+    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, personDetailsService, userAccessValidator, convictionService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -73,7 +73,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].active).isTrue
       assertThat(convictions[0].offences!![0].mainOffence).isTrue
       assertThat(convictions[0].offences!![0].description).isEqualTo("Robbery (other than armed robbery)")
-      assertThat(convictions[0].sentenceDescription).isEqualTo("Sentence description")
+      assertThat(convictions[0].sentenceDescription).isEqualTo("CJA - Extended Sentence")
       assertThat(convictions[0].sentenceOriginalLength).isEqualTo(6)
       assertThat(convictions[0].sentenceOriginalLengthUnits).isEqualTo("Days")
       assertThat(convictions[0].sentenceExpiryDate).isEqualTo("2022-06-10")
@@ -207,10 +207,11 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
                 offences = listOf(
                   Offence(
                     mainOffence = true,
+                    offenceDate = null,
                     detail = OffenceDetail(
                       mainCategoryDescription = null, subCategoryDescription = null,
                       description = null,
-                      code = null
+                      code = null,
                     )
                   )
                 )
