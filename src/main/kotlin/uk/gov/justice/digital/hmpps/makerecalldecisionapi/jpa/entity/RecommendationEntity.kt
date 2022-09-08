@@ -6,6 +6,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
@@ -57,6 +58,7 @@ data class RecommendationModel(
   val createdBy: String? = null,
   val createdDate: String? = null,
   val personOnProbation: PersonOnProbation? = null,
+  val convictionDetail: ConvictionDetail? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
   var vulnerabilities: Vulnerabilities? = null,

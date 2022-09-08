@@ -25,7 +25,15 @@ data class PartAData(
   val croNumber: String? = null,
   val pncNumber: String? = null,
   val mostRecentPrisonerNumber: String? = null,
-  val nomsNumber: String? = null
+  val nomsNumber: String? = null,
+  val indexOffenceDescription: String? = null,
+  val dateOfOriginalOffence: String? = null,
+  val dateOfSentence: String? = null,
+  val lengthOfSentence: String? = null,
+  val licenceExpiryDate: String? = null,
+  val sentenceExpiryDate: String? = null,
+  val custodialTerm: String? = null,
+  val extendedTerm: String? = null
 )
 
 data class ValueWithDetails(

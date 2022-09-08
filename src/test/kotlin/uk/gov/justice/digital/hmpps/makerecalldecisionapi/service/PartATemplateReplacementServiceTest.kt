@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -49,6 +50,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
+import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
 
@@ -143,6 +145,18 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
               TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
               TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences")
             )
+          ),
+          convictionDetail = ConvictionDetail(
+            indexOffenceDescription = "Armed robbery",
+            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+            dateOfSentence = LocalDate.parse("2022-09-05"),
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = "Extended Determinate Sentence",
+            licenceExpiryDate = LocalDate.parse("2022-09-06"),
+            sentenceExpiryDate = LocalDate.parse("2022-09-07"),
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
           )
         )
       )
@@ -161,7 +175,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(61)
+      assertThat(result.size).isEqualTo(69)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -205,6 +219,14 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
       assertThat(result["most_recent_prisoner_number"]).isEqualTo("G12345")
       assertThat(result["noms_number"]).isEqualTo("A1234CR")
+      assertThat(result["index_offence_description"]).isEqualTo("Armed robbery")
+      assertThat(result["date_of_original_offence"]).isEqualTo("01/09/2022")
+      assertThat(result["date_of_sentence"]).isEqualTo("05/09/2022")
+      assertThat(result["length_of_sentence"]).isEqualTo("6 days")
+      assertThat(result["licence_expiry_date"]).isEqualTo("06/09/2022")
+      assertThat(result["sentence_expiry_date"]).isEqualTo("07/09/2022")
+      assertThat(result["custodial_term"]).isEqualTo("6 days")
+      assertThat(result["extended_term"]).isEqualTo("20 days")
     }
   }
 
@@ -312,7 +334,15 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
-      nomsNumber = "A1234CR"
+      nomsNumber = "A1234CR",
+      indexOffenceDescription = "Armed robbery",
+      dateOfOriginalOffence = "01/09/2022",
+      dateOfSentence = "05/09/2022",
+      lengthOfSentence = "6 days",
+      licenceExpiryDate = "06/09/2022",
+      sentenceExpiryDate = "07/09/2022",
+      custodialTerm = "6 days",
+      extendedTerm = "20 days"
     )
     return partA
   }
