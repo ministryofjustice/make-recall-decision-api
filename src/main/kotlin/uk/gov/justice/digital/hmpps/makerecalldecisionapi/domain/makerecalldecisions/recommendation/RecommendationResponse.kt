@@ -50,13 +50,13 @@ data class PersonOnProbation(
 
 data class ConvictionDetail(
   val indexOffenceDescription: String? = null,
-  val dateOfOriginalOffence: String? = null,
-  val dateOfSentence: String? = null,
+  val dateOfOriginalOffence: LocalDate? = null,
+  val dateOfSentence: LocalDate? = null,
   val lengthOfSentence: Int? = null,
   val lengthOfSentenceUnits: String? = null,
   val sentenceDescription: String? = null,
-  val licenceExpiryDate: String? = null,
-  val sentenceExpiryDate: String? = null,
+  val licenceExpiryDate: LocalDate? = null,
+  val sentenceExpiryDate: LocalDate? = null,
   val sentenceSecondLength: Int? = null,
   val sentenceSecondLengthUnits: String? = null
 )

@@ -2,12 +2,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -70,25 +68,14 @@ class CaseOverviewControllerTest(
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
 
-      val response = convertResponseToJSONObject(
-        webTestClient.get()
-          .uri("/cases/$crn/overview")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus().isOk
-      )
-      // .isOk
-      // .expectBody()
-      // .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
     }
-  }
-
-  // FIXME: REMOVE
-  fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
-    val responseBodySpec = response.expectBody<String>()
-    val responseEntityExchangeResult = responseBodySpec.returnResult()
-    val responseString = responseEntityExchangeResult.responseBody
-    return JSONObject(responseString)
   }
 
   @Test

@@ -220,13 +220,13 @@ internal class RecommendationService(
 
       return ConvictionDetail(
         mainOffence?.description,
-        mainOffence?.offenceDate.toString(),
-        convictionResponse[0].sentenceStartDate.toString(),
+        mainOffence?.offenceDate,
+        convictionResponse[0].sentenceStartDate,
         convictionResponse[0].sentenceOriginalLength,
         convictionResponse[0].sentenceOriginalLengthUnits,
         convictionResponse[0].sentenceDescription,
-        convictionResponse[0].licenceExpiryDate.toString(),
-        convictionResponse[0].sentenceExpiryDate.toString(),
+        convictionResponse[0].licenceExpiryDate,
+        convictionResponse[0].sentenceExpiryDate,
         convictionResponse[0].sentenceSecondLength,
         convictionResponse[0].sentenceOriginalLengthUnits,
       )

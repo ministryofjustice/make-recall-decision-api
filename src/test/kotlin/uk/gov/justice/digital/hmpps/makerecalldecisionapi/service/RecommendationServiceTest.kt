@@ -85,13 +85,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
         ConvictionDetail(
           indexOffenceDescription = "Robbery (other than armed robbery)",
-          dateOfOriginalOffence = "2022-08-26",
-          dateOfSentence = "2022-04-26",
+          dateOfOriginalOffence = LocalDate.parse("2022-08-26"),
+          dateOfSentence = LocalDate.parse("2022-04-26"),
           lengthOfSentence = 6,
           lengthOfSentenceUnits = "Days",
           sentenceDescription = "CJA - Extended Sentence",
-          licenceExpiryDate = "2022-05-10",
-          sentenceExpiryDate = "2022-06-10",
+          licenceExpiryDate = LocalDate.parse("2022-05-10"),
+          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
           sentenceSecondLength = 10,
           sentenceSecondLengthUnits = "Days"
         )

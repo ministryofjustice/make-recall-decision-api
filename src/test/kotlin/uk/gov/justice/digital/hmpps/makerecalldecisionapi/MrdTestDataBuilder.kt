@@ -107,13 +107,13 @@ class MrdTestDataBuilder {
     private fun convictionDetail(): ConvictionDetail {
       return ConvictionDetail(
         indexOffenceDescription = "This is the index offence",
-        dateOfOriginalOffence = "2022-09-01",
-        dateOfSentence = "2022-09-02",
+        dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+        dateOfSentence = LocalDate.parse("2022-09-02"),
         lengthOfSentence = 6,
         lengthOfSentenceUnits = "days",
         sentenceDescription = "CJA - Extended Sentence",
-        licenceExpiryDate = "2022-09-03",
-        sentenceExpiryDate = "2022-09-04",
+        licenceExpiryDate = LocalDate.parse("2022-09-03"),
+        sentenceExpiryDate = LocalDate.parse("2022-09-04"),
         sentenceSecondLength = 12,
         sentenceSecondLengthUnits = "days"
       )

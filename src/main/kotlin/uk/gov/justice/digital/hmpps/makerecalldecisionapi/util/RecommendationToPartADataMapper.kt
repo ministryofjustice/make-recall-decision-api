@@ -106,9 +106,9 @@ class RecommendationToPartADataMapper {
         ?: EMPTY_STRING
     }
 
-    private fun buildFormattedLocalDate(dateToConvert: String?): String {
+    private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {
       return if (null != dateToConvert)
-        convertLocalDateToDateWithSlashes(LocalDate.parse(dateToConvert))
+        convertLocalDateToDateWithSlashes(dateToConvert)
       else EMPTY_STRING
     }
 

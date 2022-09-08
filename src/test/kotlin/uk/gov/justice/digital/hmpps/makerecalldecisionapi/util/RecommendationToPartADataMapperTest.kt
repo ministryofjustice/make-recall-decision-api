@@ -345,13 +345,13 @@ class RecommendationToPartADataMapperTest {
           crn = "ABC123",
           convictionDetail = ConvictionDetail(
             indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = "2022-09-01",
-            dateOfSentence = "2022-09-04",
+            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+            dateOfSentence = LocalDate.parse("2022-09-04"),
             lengthOfSentence = 6,
             lengthOfSentenceUnits = "days",
             sentenceDescription = sentenceDescription,
-            licenceExpiryDate = "2022-09-05",
-            sentenceExpiryDate = "2022-09-06",
+            licenceExpiryDate = LocalDate.parse("2022-09-05"),
+            sentenceExpiryDate = LocalDate.parse("2022-09-06"),
             sentenceSecondLength = 20,
             sentenceSecondLengthUnits = "days"
           )

@@ -50,6 +50,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
+import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
 
@@ -147,13 +148,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           ),
           convictionDetail = ConvictionDetail(
             indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = "2022-09-01",
-            dateOfSentence = "2022-09-05",
+            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+            dateOfSentence = LocalDate.parse("2022-09-05"),
             lengthOfSentence = 6,
             lengthOfSentenceUnits = "days",
             sentenceDescription = "Extended Determinate Sentence",
-            licenceExpiryDate = "2022-09-06",
-            sentenceExpiryDate = "2022-09-07",
+            licenceExpiryDate = LocalDate.parse("2022-09-06"),
+            sentenceExpiryDate = LocalDate.parse("2022-09-07"),
             sentenceSecondLength = 20,
             sentenceSecondLengthUnits = "days"
           )
