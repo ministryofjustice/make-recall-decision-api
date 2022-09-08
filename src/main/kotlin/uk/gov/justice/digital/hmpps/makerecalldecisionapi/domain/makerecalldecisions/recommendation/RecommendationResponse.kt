@@ -52,9 +52,11 @@ data class ConvictionDetail(
   val indexOffenceDescription: String? = null,
   val dateOfOriginalOffence: String? = null,
   val dateOfSentence: String? = null,
-  val lengthOfSentence: String? = null,
+  val lengthOfSentence: Int? = null,
+  val lengthOfSentenceUnits: String? = null,
+  val sentenceDescription: String? = null,
   val licenceExpiryDate: String? = null,
   val sentenceExpiryDate: String? = null,
-  val custodialTerm: String? = null,
-  val extendedTerm: String? = null
+  val sentenceSecondLength: Int? = null,
+  val sentenceSecondLengthUnits: String? = null
 )

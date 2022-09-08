@@ -109,11 +109,13 @@ class MrdTestDataBuilder {
         indexOffenceDescription = "This is the index offence",
         dateOfOriginalOffence = "2022-09-01",
         dateOfSentence = "2022-09-02",
-        lengthOfSentence = "6 days",
+        lengthOfSentence = 6,
+        lengthOfSentenceUnits = "days",
+        sentenceDescription = "CJA - Extended Sentence",
         licenceExpiryDate = "2022-09-03",
         sentenceExpiryDate = "2022-09-04",
-        custodialTerm = "10 days",
-        extendedTerm = "12 days"
+        sentenceSecondLength = 12,
+        sentenceSecondLengthUnits = "days"
       )
     }
 

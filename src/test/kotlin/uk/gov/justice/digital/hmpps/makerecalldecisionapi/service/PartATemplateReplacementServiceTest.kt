@@ -149,11 +149,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             indexOffenceDescription = "Armed robbery",
             dateOfOriginalOffence = "2022-09-01",
             dateOfSentence = "2022-09-05",
-            lengthOfSentence = "6 days",
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = "Extended Determinate Sentence",
             licenceExpiryDate = "2022-09-06",
             sentenceExpiryDate = "2022-09-07",
-            custodialTerm = "6 days",
-            extendedTerm = "20 days"
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
           )
         )
       )

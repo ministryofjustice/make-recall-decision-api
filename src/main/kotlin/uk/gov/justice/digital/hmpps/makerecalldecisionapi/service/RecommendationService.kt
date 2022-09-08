@@ -217,30 +217,20 @@ internal class RecommendationService(
     if (convictionResponse?.size == 1) {
 
       val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
-      val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0])
 
       return ConvictionDetail(
         mainOffence?.description,
         mainOffence?.offenceDate.toString(),
         convictionResponse[0].sentenceStartDate.toString(),
-        convictionResponse[0].sentenceOriginalLength.toString() + " " + convictionResponse[0].sentenceOriginalLengthUnits,
+        convictionResponse[0].sentenceOriginalLength,
+        convictionResponse[0].sentenceOriginalLengthUnits,
+        convictionResponse[0].sentenceDescription,
         convictionResponse[0].licenceExpiryDate.toString(),
         convictionResponse[0].sentenceExpiryDate.toString(),
-        custodialTerm,
-        extendedTerm,
+        convictionResponse[0].sentenceSecondLength,
+        convictionResponse[0].sentenceOriginalLengthUnits,
       )
     }
     return null
-  }
-
-  fun extendedSentenceDetails(convictionResponse: ConvictionResponse): Pair<String, String> {
-    return if (convictionResponse.sentenceDescription.equals("Extended Determinate Sentence") ||
-      convictionResponse.sentenceDescription.equals("CJA - Extended Sentence")
-    ) {
-      Pair(
-        convictionResponse.sentenceOriginalLength.toString() + " " + convictionResponse.sentenceOriginalLengthUnits,
-        convictionResponse.sentenceSecondLength.toString() + " " + convictionResponse.sentenceSecondLengthUnits
-      )
-    } else Pair("", "")
   }
 }

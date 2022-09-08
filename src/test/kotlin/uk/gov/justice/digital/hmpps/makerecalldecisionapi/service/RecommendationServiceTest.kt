@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
@@ -52,9 +50,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     DateTimeUtils.setCurrentMillisFixed(1658828907443)
   }
 
-  @ParameterizedTest()
-  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
-  fun `creates a new recommendation in the database`(sentenceDescription: String) {
+  @Test
+  fun `creates a new recommendation in the database`() {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -67,7 +64,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
+        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
 
       // and
       given(recommendationRepository.save(any()))
@@ -90,11 +87,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           indexOffenceDescription = "Robbery (other than armed robbery)",
           dateOfOriginalOffence = "2022-08-26",
           dateOfSentence = "2022-04-26",
-          lengthOfSentence = "6 Days",
+          lengthOfSentence = 6,
+          lengthOfSentenceUnits = "Days",
+          sentenceDescription = "CJA - Extended Sentence",
           licenceExpiryDate = "2022-05-10",
           sentenceExpiryDate = "2022-06-10",
-          custodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else "",
-          extendedTerm = if (sentenceDescription != "Random sentence description") "10 Days" else ""
+          sentenceSecondLength = 10,
+          sentenceSecondLengthUnits = "Days"
         )
       )
       assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
@@ -274,11 +273,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
     assertThat(recommendationResponse.convictionDetail?.dateOfOriginalOffence).isEqualTo("2022-09-01")
     assertThat(recommendationResponse.convictionDetail?.dateOfSentence).isEqualTo("2022-09-02")
-    assertThat(recommendationResponse.convictionDetail?.lengthOfSentence).isEqualTo("6 days")
+    assertThat(recommendationResponse.convictionDetail?.lengthOfSentence).isEqualTo(6)
+    assertThat(recommendationResponse.convictionDetail?.lengthOfSentenceUnits).isEqualTo("days")
+    assertThat(recommendationResponse.convictionDetail?.sentenceDescription).isEqualTo("CJA - Extended Sentence")
     assertThat(recommendationResponse.convictionDetail?.licenceExpiryDate).isEqualTo("2022-09-03")
     assertThat(recommendationResponse.convictionDetail?.sentenceExpiryDate).isEqualTo("2022-09-04")
-    assertThat(recommendationResponse.convictionDetail?.custodialTerm).isEqualTo("10 days")
-    assertThat(recommendationResponse.convictionDetail?.extendedTerm).isEqualTo("12 days")
+    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLength).isEqualTo(12)
+    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("days")
   }
 
   @Test

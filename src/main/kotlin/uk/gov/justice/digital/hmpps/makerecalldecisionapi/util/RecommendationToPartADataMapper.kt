@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -21,6 +22,8 @@ class RecommendationToPartADataMapper {
       val firstName = recommendation.data.personOnProbation?.firstName
       val middleNames = recommendation.data.personOnProbation?.middleNames
       val lastName = recommendation.data.personOnProbation?.surname
+      val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
+
       return PartAData(
         custodyStatus = ValueWithDetails(recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING, recommendation.data.custodyStatus?.details),
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
@@ -48,11 +51,11 @@ class RecommendationToPartADataMapper {
         indexOffenceDescription = recommendation.data.convictionDetail?.indexOffenceDescription,
         dateOfOriginalOffence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfOriginalOffence),
         dateOfSentence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfSentence),
-        lengthOfSentence = recommendation.data.convictionDetail?.lengthOfSentence,
+        lengthOfSentence = recommendation.data.convictionDetail?.lengthOfSentence.toString() + " " + recommendation.data.convictionDetail?.lengthOfSentenceUnits,
         licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
         sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
-        custodialTerm = recommendation.data.convictionDetail?.custodialTerm,
-        extendedTerm = recommendation.data.convictionDetail?.extendedTerm
+        custodialTerm = custodialTerm,
+        extendedTerm = extendedTerm
       )
     }
 
@@ -107,6 +110,17 @@ class RecommendationToPartADataMapper {
       return if (null != dateToConvert)
         convertLocalDateToDateWithSlashes(LocalDate.parse(dateToConvert))
       else EMPTY_STRING
+    }
+
+    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String, String> {
+      return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
+        convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
+      ) {
+        Pair(
+          convictionDetail?.lengthOfSentence.toString() + " " + convictionDetail?.lengthOfSentenceUnits,
+          convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
+        )
+      } else Pair("", "")
     }
   }
 }

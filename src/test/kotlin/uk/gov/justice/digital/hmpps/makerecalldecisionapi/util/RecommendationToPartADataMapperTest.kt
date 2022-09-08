@@ -335,8 +335,9 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
-  @Test
-  fun `given conviction details then convert dates in the part A`() {
+  @ParameterizedTest()
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  fun `given conviction details then convert dates and sentence lengths in the part A`(sentenceDescription: String) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
@@ -346,11 +347,13 @@ class RecommendationToPartADataMapperTest {
             indexOffenceDescription = "Armed robbery",
             dateOfOriginalOffence = "2022-09-01",
             dateOfSentence = "2022-09-04",
-            lengthOfSentence = "6 days",
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = sentenceDescription,
             licenceExpiryDate = "2022-09-05",
             sentenceExpiryDate = "2022-09-06",
-            custodialTerm = "6 days",
-            extendedTerm = "20 days"
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
           )
         )
       )
@@ -363,8 +366,14 @@ class RecommendationToPartADataMapperTest {
       assertThat(result.lengthOfSentence).isEqualTo("6 days")
       assertThat(result.licenceExpiryDate).isEqualTo("05/09/2022")
       assertThat(result.sentenceExpiryDate).isEqualTo("06/09/2022")
-      assertThat(result.custodialTerm).isEqualTo("6 days")
-      assertThat(result.extendedTerm).isEqualTo("20 days")
+
+      if (sentenceDescription != "Random sentence description") {
+        assertThat(result.custodialTerm).isEqualTo("6 days")
+        assertThat(result.extendedTerm).isEqualTo("20 days")
+      } else {
+        assertThat(result.custodialTerm).isEqualTo("")
+        assertThat(result.extendedTerm).isEqualTo("")
+      }
     }
   }
 
@@ -379,11 +388,13 @@ class RecommendationToPartADataMapperTest {
             indexOffenceDescription = "Armed robbery",
             dateOfOriginalOffence = null,
             dateOfSentence = null,
-            lengthOfSentence = "6 days",
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = "Extended Determinate Sentence",
             licenceExpiryDate = null,
             sentenceExpiryDate = null,
-            custodialTerm = "6 days",
-            extendedTerm = "20 days"
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
           )
         )
       )
