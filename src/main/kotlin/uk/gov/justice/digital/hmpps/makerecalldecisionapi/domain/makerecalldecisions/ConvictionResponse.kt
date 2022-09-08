@@ -11,6 +11,8 @@ data class ConvictionResponse(
   val sentenceDescription: String? = null,
   val sentenceOriginalLength: Int? = null,
   val sentenceOriginalLengthUnits: String? = null,
+  val sentenceSecondLength: Int? = null,
+  val sentenceSecondLengthUnits: String? = null,
   val sentenceStartDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
   val licenceExpiryDate: LocalDate? = null,

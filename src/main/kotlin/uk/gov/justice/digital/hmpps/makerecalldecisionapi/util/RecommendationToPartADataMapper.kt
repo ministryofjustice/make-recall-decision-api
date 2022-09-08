@@ -1,23 +1,29 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import java.time.LocalDate
 
 class RecommendationToPartADataMapper {
 
   companion object Mapper {
+
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
       val firstName = recommendation.data.personOnProbation?.firstName
       val middleNames = recommendation.data.personOnProbation?.middleNames
       val lastName = recommendation.data.personOnProbation?.surname
+      val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
+
       return PartAData(
         custodyStatus = ValueWithDetails(recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING, recommendation.data.custodyStatus?.details),
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
@@ -41,7 +47,15 @@ class RecommendationToPartADataMapper {
         croNumber = recommendation.data.personOnProbation?.croNumber,
         pncNumber = recommendation.data.personOnProbation?.pncNumber,
         mostRecentPrisonerNumber = recommendation.data.personOnProbation?.mostRecentPrisonerNumber,
-        nomsNumber = recommendation.data.personOnProbation?.nomsNumber
+        nomsNumber = recommendation.data.personOnProbation?.nomsNumber,
+        indexOffenceDescription = recommendation.data.convictionDetail?.indexOffenceDescription,
+        dateOfOriginalOffence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfOriginalOffence),
+        dateOfSentence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfSentence),
+        lengthOfSentence = recommendation.data.convictionDetail?.lengthOfSentence.toString() + " " + recommendation.data.convictionDetail?.lengthOfSentenceUnits,
+        licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
+        sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
+        custodialTerm = custodialTerm,
+        extendedTerm = extendedTerm
       )
     }
 
@@ -90,6 +104,23 @@ class RecommendationToPartADataMapper {
         builder
       }?.toString()
         ?: EMPTY_STRING
+    }
+
+    private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {
+      return if (null != dateToConvert)
+        convertLocalDateToDateWithSlashes(dateToConvert)
+      else EMPTY_STRING
+    }
+
+    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String, String> {
+      return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
+        convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
+      ) {
+        Pair(
+          convictionDetail?.lengthOfSentence.toString() + " " + convictionDetail?.lengthOfSentenceUnits,
+          convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
+        )
+      } else Pair("", "")
     }
   }
 }

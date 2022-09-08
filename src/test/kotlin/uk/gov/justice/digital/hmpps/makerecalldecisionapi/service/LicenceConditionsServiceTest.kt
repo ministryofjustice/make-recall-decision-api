@@ -34,9 +34,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    documentService = DocumentService(communityApiClient)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
+    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -223,17 +222,21 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
             mainOffence = true,
             description = "Robbery (other than armed robbery)",
-            code = "ABC123"
+            code = "ABC123",
+            offenceDate = LocalDate.parse("2022-08-26")
           ),
           uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
             mainOffence = false,
             description = "Arson",
-            code = "ZYX789"
+            code = "ZYX789",
+            offenceDate = LocalDate.parse("2022-08-26")
           )
         ),
-        sentenceDescription = "Sentence description",
+        sentenceDescription = "CJA - Extended Sentence",
         sentenceOriginalLength = 6,
         sentenceOriginalLengthUnits = "Days",
+        sentenceSecondLength = 10,
+        sentenceSecondLengthUnits = "Days",
         sentenceStartDate = LocalDate.parse("2022-04-26"),
         sentenceExpiryDate = LocalDate.parse("2022-06-10"),
         licenceExpiryDate = LocalDate.parse("2022-05-10"),

@@ -15,7 +15,6 @@ class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
   val staffCode = "STFFCDEU"
-  val convictionId = 2500614567
 
   @Test
   fun `retrieves licence condition details for case with custodial conviction`() {
@@ -42,7 +41,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions.length()").isEqualTo(1)
         .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(2)
         .jsonPath("$.convictions[0].convictionId").isEqualTo(convictionId)
-        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("sentence description")
+        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("Extended Determinate Sentence")
         .jsonPath("$.convictions[0].sentenceOriginalLength").isEqualTo("12")
         .jsonPath("$.convictions[0].sentenceOriginalLengthUnits").isEqualTo("days")
         .jsonPath("$.convictions[0].sentenceStartDate").isEqualTo("2022-04-26")

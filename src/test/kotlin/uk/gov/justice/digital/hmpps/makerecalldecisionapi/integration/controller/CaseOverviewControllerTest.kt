@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
@@ -42,7 +43,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.convictions[0].offences.length()").isEqualTo(1)
         .jsonPath("$.convictions[0].offences[0].mainOffence").isEqualTo("true")
         .jsonPath("$.convictions[0].offences[0].description").isEqualTo("Robbery (other than armed robbery)")
-        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("sentence description")
+        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("Extended Determinate Sentence")
         .jsonPath("$.convictions[0].sentenceOriginalLength").isEqualTo("12")
         .jsonPath("$.convictions[0].sentenceOriginalLengthUnits").isEqualTo("days")
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")

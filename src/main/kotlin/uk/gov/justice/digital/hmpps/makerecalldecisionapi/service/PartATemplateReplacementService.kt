@@ -86,7 +86,16 @@ internal class PartATemplateReplacementService {
       "cro_number" to partAData.croNumber,
       "pnc_number" to partAData.pncNumber,
       "most_recent_prisoner_number" to partAData.mostRecentPrisonerNumber,
-      "noms_number" to partAData.nomsNumber
+      "noms_number" to partAData.nomsNumber,
+      "gender" to partAData.gender,
+      "index_offence_description" to partAData.indexOffenceDescription,
+      "date_of_original_offence" to partAData.dateOfOriginalOffence,
+      "date_of_sentence" to partAData.dateOfSentence,
+      "length_of_sentence" to partAData.lengthOfSentence,
+      "licence_expiry_date" to partAData.licenceExpiryDate,
+      "sentence_expiry_date" to partAData.sentenceExpiryDate,
+      "custodial_term" to partAData.custodialTerm,
+      "extended_term" to partAData.extendedTerm
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

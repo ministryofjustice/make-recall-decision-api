@@ -60,6 +60,8 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var documentService: DocumentService
 
+  protected lateinit var convictionService: ConvictionService
+
   protected lateinit var recommendationService: RecommendationService
 
   protected lateinit var partATemplateReplacementService: PartATemplateReplacementService
@@ -75,7 +77,9 @@ internal abstract class ServiceTestBase {
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
     partATemplateReplacementService = PartATemplateReplacementService()
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator)
+    documentService = DocumentService(communityApiClient)
+    convictionService = ConvictionService(communityApiClient, documentService)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
 
@@ -176,28 +180,33 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun custodialConvictionResponse() = Conviction(
+  protected fun custodialConvictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = Conviction(
     convictionDate = LocalDate.parse("2021-06-10"),
     sentence = Sentence(
       startDate = LocalDate.parse("2022-04-26"),
       terminationDate = LocalDate.parse("2022-04-26"),
       expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "Sentence description", originalLength = 6,
+      description = sentenceDescription,
+      originalLength = 6,
       originalLengthUnits = "Days",
+      secondLength = 10,
+      secondLengthUnits = "Days",
       sentenceType = SentenceType(code = "ABC123")
     ),
     active = true,
     offences = listOf(
       Offence(
         mainOffence = true,
+        offenceDate = LocalDate.parse("2022-08-26"),
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
           description = "Robbery (other than armed robbery)",
-          code = "ABC123"
+          code = "ABC123",
         )
       ),
       Offence(
         mainOffence = false,
+        offenceDate = LocalDate.parse("2022-08-26"),
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
           description = "Arson",
@@ -252,14 +261,18 @@ internal abstract class ServiceTestBase {
       startDate = LocalDate.parse("2022-04-26"),
       terminationDate = LocalDate.parse("2022-04-26"),
       expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "Sentence description", originalLength = 6,
+      description = "Sentence description",
+      originalLength = 6,
       originalLengthUnits = "Days",
+      secondLength = 10,
+      secondLengthUnits = "Days",
       sentenceType = SentenceType(code = "ABC123")
     ),
     active = true,
     offences = listOf(
       Offence(
         mainOffence = true,
+        offenceDate = LocalDate.parse("2022-08-26"),
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
           description = "Robbery (other than armed robbery)",
@@ -268,6 +281,7 @@ internal abstract class ServiceTestBase {
       ),
       Offence(
         mainOffence = false,
+        offenceDate = LocalDate.parse("2022-08-26"),
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
           description = "Arson",

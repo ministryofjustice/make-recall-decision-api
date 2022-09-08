@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
-import org.mockserver.matchers.Times
 import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
@@ -79,6 +78,7 @@ abstract class IntegrationTestBase {
   private val gson: Gson = Gson()
 
   val crn = "A12345"
+  val convictionId = 2500614567
 
   var createdRecommendationId: Int = 0
 
@@ -140,6 +140,8 @@ abstract class IntegrationTestBase {
   }
 
   private fun createRecommendation() {
+    licenceConditionsResponse(crn, convictionId)
+
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -296,7 +298,7 @@ abstract class IntegrationTestBase {
     val allOffenderDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/all")
 
-    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
+    communityApi.`when`(allOffenderDetailsRequest).respond(
       response().withStatusCode(404)
     )
   }
@@ -305,7 +307,7 @@ abstract class IntegrationTestBase {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
 
-    oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
+    oasysARNApi.`when`(roSHSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(roSHSummaryResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -331,7 +333,7 @@ abstract class IntegrationTestBase {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/registrations")
 
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(registrationsDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -340,7 +342,7 @@ abstract class IntegrationTestBase {
   protected fun noActiveConvictionResponse(crn: String) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(convictionsRequest).respond(
       response().withStatusCode(404)
     )
   }
@@ -349,7 +351,7 @@ abstract class IntegrationTestBase {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -359,7 +361,7 @@ abstract class IntegrationTestBase {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(nonCustodialConvictionsResponse(crn, staffCode))
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -369,7 +371,7 @@ abstract class IntegrationTestBase {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(multipleConvictionsResponse(crn, staffCode))
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -379,7 +381,7 @@ abstract class IntegrationTestBase {
     val licenceConditions =
       request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
 
-    communityApi.`when`(licenceConditions, exactly(1)).respond(
+    communityApi.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse(convictionId))
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -389,24 +391,24 @@ abstract class IntegrationTestBase {
     val licenceConditions =
       request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
 
-    communityApi.`when`(licenceConditions, exactly(1)).respond(
+    communityApi.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(multipleLicenceResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun noActiveLicenceConditions(crn: String, convictionId: Long) {
-    val convictionsRequest =
+    val licenceConditions =
       request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(noActiveOrInactiveLicences())
     )
   }
 
   protected fun allOffenderDetailsResponseWithNoOffender(crn: String) {
-    val convictionsRequest =
+    val personalDetails =
       request().withPath("/cases/$crn/personal-details")
-    communityApi.`when`(convictionsRequest, exactly(1)).respond(
+    communityApi.`when`(personalDetails, exactly(1)).respond(
       response().withStatusCode(404)
     )
   }
@@ -417,7 +419,7 @@ abstract class IntegrationTestBase {
         .withPath("/phrase")
         .withQueryStringParameter("paged", "false")
 
-    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+    offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse(crn))
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -460,7 +462,7 @@ abstract class IntegrationTestBase {
     val releaseSummaryRequest =
       request().withPath("/secure/offenders/crn/$crn/release")
 
-    communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
+    communityApi.`when`(releaseSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
     )
   }
@@ -513,7 +515,7 @@ abstract class IntegrationTestBase {
     val groupedDocumentsRequest =
       request().withPath("/secure/offenders/crn/$crn/documents/grouped")
 
-    communityApi.`when`(groupedDocumentsRequest, exactly(1)).respond(
+    communityApi.`when`(groupedDocumentsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(groupedDocumentsDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -523,7 +525,7 @@ abstract class IntegrationTestBase {
     val documentRequest =
       request().withPath("/secure/offenders/crn/$crn/documents/$documentId")
 
-    communityApi.`when`(documentRequest, Times.exactly(1)).respond(
+    communityApi.`when`(documentRequest).respond(
       response()
         .withHeader(HttpHeaders.CONTENT_TYPE, "application/pdf;charset=UTF-8")
         .withHeader(HttpHeaders.ACCEPT_RANGES, "bytes")

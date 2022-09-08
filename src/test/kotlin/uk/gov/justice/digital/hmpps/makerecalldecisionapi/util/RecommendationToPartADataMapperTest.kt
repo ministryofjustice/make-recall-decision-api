@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -331,6 +332,83 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.selectedStandardConditionsBreached?.get(0)).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+    }
+  }
+
+  @ParameterizedTest()
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  fun `given conviction details then convert dates and sentence lengths in the part A`(sentenceDescription: String) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          convictionDetail = ConvictionDetail(
+            indexOffenceDescription = "Armed robbery",
+            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+            dateOfSentence = LocalDate.parse("2022-09-04"),
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = sentenceDescription,
+            licenceExpiryDate = LocalDate.parse("2022-09-05"),
+            sentenceExpiryDate = LocalDate.parse("2022-09-06"),
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.indexOffenceDescription).isEqualTo("Armed robbery")
+      assertThat(result.dateOfOriginalOffence).isEqualTo("01/09/2022")
+      assertThat(result.dateOfSentence).isEqualTo("04/09/2022")
+      assertThat(result.lengthOfSentence).isEqualTo("6 days")
+      assertThat(result.licenceExpiryDate).isEqualTo("05/09/2022")
+      assertThat(result.sentenceExpiryDate).isEqualTo("06/09/2022")
+
+      if (sentenceDescription != "Random sentence description") {
+        assertThat(result.custodialTerm).isEqualTo("6 days")
+        assertThat(result.extendedTerm).isEqualTo("20 days")
+      } else {
+        assertThat(result.custodialTerm).isEqualTo("")
+        assertThat(result.extendedTerm).isEqualTo("")
+      }
+    }
+  }
+
+  @Test
+  fun `given conviction details with empty dates then set empty dates in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          convictionDetail = ConvictionDetail(
+            indexOffenceDescription = "Armed robbery",
+            dateOfOriginalOffence = null,
+            dateOfSentence = null,
+            lengthOfSentence = 6,
+            lengthOfSentenceUnits = "days",
+            sentenceDescription = "Extended Determinate Sentence",
+            licenceExpiryDate = null,
+            sentenceExpiryDate = null,
+            sentenceSecondLength = 20,
+            sentenceSecondLengthUnits = "days"
+          )
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.indexOffenceDescription).isEqualTo("Armed robbery")
+      assertThat(result.dateOfOriginalOffence).isEqualTo(EMPTY_STRING)
+      assertThat(result.dateOfSentence).isEqualTo(EMPTY_STRING)
+      assertThat(result.lengthOfSentence).isEqualTo("6 days")
+      assertThat(result.licenceExpiryDate).isEqualTo(EMPTY_STRING)
+      assertThat(result.sentenceExpiryDate).isEqualTo(EMPTY_STRING)
+      assertThat(result.custodialTerm).isEqualTo("6 days")
+      assertThat(result.extendedTerm).isEqualTo("20 days")
     }
   }
 }
