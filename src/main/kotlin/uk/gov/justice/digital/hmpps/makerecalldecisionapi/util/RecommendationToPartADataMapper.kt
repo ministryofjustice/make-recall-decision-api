@@ -65,7 +65,7 @@ class RecommendationToPartADataMapper {
     }
 
     private fun convertBooleanToYesNo(value: Boolean?): String {
-      return if (value == true) YES else NO
+      if (value == true) return YES else if (value == false) return NO else return EMPTY_STRING
     }
 
     private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: AdditionalLicenceConditions?): String {
