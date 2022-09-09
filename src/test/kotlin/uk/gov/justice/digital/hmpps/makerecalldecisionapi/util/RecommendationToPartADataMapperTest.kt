@@ -7,12 +7,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -40,9 +42,18 @@ class RecommendationToPartADataMapperTest {
 
   @ParameterizedTest(name = "given custody status {0} in recommendation data should map to the part A text {1}")
   @CsvSource("YES_POLICE,Police Custody", "YES_PRISON,Prison Custody", "NO,No")
-  fun `given custody status in recommendation data then should map to the part A text`(custodyValue: CustodyStatusValue, partADisplayText: String) {
+  fun `given custody status in recommendation data then should map to the part A text`(
+    custodyValue: CustodyStatusValue,
+    partADisplayText: String
+  ) {
     runTest {
-      val recommendation = RecommendationEntity(id = 1, data = RecommendationModel(crn = "ABC123", custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)))
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)
+        )
+      )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
@@ -53,11 +64,20 @@ class RecommendationToPartADataMapperTest {
 
   @ParameterizedTest(name = "given recall type {0} in recommendation data should map to the part A text {1}")
   @CsvSource("STANDARD,Standard", "FIXED_TERM,Fixed", "NO_RECALL,")
-  fun `given recall type in recommendation data then should map to the part A text`(recallValue: RecallTypeValue, partADisplayText: String?) {
+  fun `given recall type in recommendation data then should map to the part A text`(
+    recallValue: RecallTypeValue,
+    partADisplayText: String?
+  ) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", recallType = RecallType(selected = RecallTypeSelectedValue(value = recallValue, details = "My details"), allOptions = null))
+        data = RecommendationModel(
+          crn = "ABC123",
+          recallType = RecallType(
+            selected = RecallTypeSelectedValue(value = recallValue, details = "My details"),
+            allOptions = null
+          )
+        )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
@@ -69,7 +89,10 @@ class RecommendationToPartADataMapperTest {
 
   @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("true,Yes", "false,No", "null,No")
-  fun `given is emergency recall data then should map to the part A text`(isThisAnEmergencyRecall: Boolean, partADisplayText: String?) {
+  fun `given is emergency recall data then should map to the part A text`(
+    isThisAnEmergencyRecall: Boolean,
+    partADisplayText: String?
+  ) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
@@ -84,11 +107,17 @@ class RecommendationToPartADataMapperTest {
 
   @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("YES,Yes", "NO,No", "NOT_APPLICABLE,N/A")
-  fun `given victims in contact scheme data then should map to the part A text`(victimsInContactScheme: YesNoNotApplicableOptions, partADisplayText: String?) {
+  fun `given victims in contact scheme data then should map to the part A text`(
+    victimsInContactScheme: YesNoNotApplicableOptions,
+    partADisplayText: String?
+  ) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme))
+        data = RecommendationModel(
+          crn = "ABC123",
+          hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme)
+        )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
@@ -130,7 +159,10 @@ class RecommendationToPartADataMapperTest {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details"))
+        data = RecommendationModel(
+          crn = "ABC123",
+          hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details")
+        )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
@@ -159,7 +191,10 @@ class RecommendationToPartADataMapperTest {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details"))
+        data = RecommendationModel(
+          crn = "ABC123",
+          hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details")
+        )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
@@ -194,7 +229,8 @@ class RecommendationToPartADataMapperTest {
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1")
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
+        .append(System.lineSeparator()).append("Note: note1")
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
     }
   }
@@ -229,9 +265,11 @@ class RecommendationToPartADataMapperTest {
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator())
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
+        .append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator())
         .append(System.lineSeparator())
-        .append("I am another title").append(System.lineSeparator()).append("details2").append(System.lineSeparator()).append("Note: note2")
+        .append("I am another title").append(System.lineSeparator()).append("details2").append(System.lineSeparator())
+        .append("Note: note2")
 
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
     }
@@ -267,7 +305,8 @@ class RecommendationToPartADataMapperTest {
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1").append(System.lineSeparator()).append(System.lineSeparator())
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
+        .append(System.lineSeparator()).append(System.lineSeparator())
         .append("I am another title").append(System.lineSeparator()).append("details2")
 
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
@@ -283,7 +322,11 @@ class RecommendationToPartADataMapperTest {
           crn = "ABC123",
           underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
             selected = "YES",
-            allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
+            allOptions = listOf(
+              TextValueOption(value = "YES", text = "Yes"),
+              TextValueOption(value = "NO", text = "No"),
+              TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
+            )
           )
         )
       )
@@ -409,6 +452,145 @@ class RecommendationToPartADataMapperTest {
       assertThat(result.sentenceExpiryDate).isEqualTo(EMPTY_STRING)
       assertThat(result.custodialTerm).isEqualTo("6 days")
       assertThat(result.extendedTerm).isEqualTo("20 days")
+    }
+  }
+
+  @Test
+  fun `given main address details then set address details in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Address town",
+                postcode = "TS1 1ST",
+                noFixedAbode = false
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Line 2 address, Address town, TS1 1ST")
+      assertThat(result.noFixedAbode).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given address is no fixed abode then clear address in the part A and set no fixed abode field`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Address town",
+                postcode = "TS1 1ST",
+                noFixedAbode = true
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("")
+      assertThat(result.noFixedAbode).isEqualTo("No fixed abode")
+    }
+  }
+
+  @Test
+  fun `given multiple main address details then set address details in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Address town",
+                postcode = "TS1 1ST",
+                noFixedAbode = false
+              ),
+              Address(
+                line1 = "Line 1 second address",
+                line2 = "Line 2 second address",
+                town = "Address second town",
+                postcode = "TS1 2ST",
+                noFixedAbode = false
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Line 2 address, Address town, TS1 1ST\nLine 1 second address, Line 2 second address, Address second town, TS1 2ST")
+      assertThat(result.noFixedAbode).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given multiple main address details with contradicting no fixed abode values then clear the address details in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Address town",
+                postcode = "TS1 1ST",
+                noFixedAbode = true
+              ),
+              Address(
+                line1 = "Line 1 second address",
+                line2 = "Line 2 second address",
+                town = "Address second town",
+                postcode = "TS1 2ST",
+                noFixedAbode = false
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("")
+      assertThat(result.noFixedAbode).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given empty address details then clear the address details in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation()
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("")
+      assertThat(result.noFixedAbode).isEqualTo("")
     }
   }
 }

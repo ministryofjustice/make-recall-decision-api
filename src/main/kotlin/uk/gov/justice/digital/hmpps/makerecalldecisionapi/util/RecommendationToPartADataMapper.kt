@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
@@ -23,18 +24,29 @@ class RecommendationToPartADataMapper {
       val middleNames = recommendation.data.personOnProbation?.middleNames
       val lastName = recommendation.data.personOnProbation?.surname
       val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
+      val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.data.personOnProbation?.addresses)
 
       return PartAData(
-        custodyStatus = ValueWithDetails(recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING, recommendation.data.custodyStatus?.details),
+        custodyStatus = ValueWithDetails(
+          recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
+          recommendation.data.custodyStatus?.details
+        ),
         recallType = findRecallTypeToDisplay(recommendation.data.recallType),
         responseToProbation = recommendation.data.responseToProbation,
         whatLedToRecall = recommendation.data.whatLedToRecall,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
-        hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue ?: EMPTY_STRING,
+        hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue
+          ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
         selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
-        hasArrestIssues = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected), recommendation.data.hasArrestIssues?.details),
-        hasContrabandRisk = ValueWithDetails(convertBooleanToYesNo(recommendation.data.hasContrabandRisk?.selected), recommendation.data.hasContrabandRisk?.details),
+        hasArrestIssues = ValueWithDetails(
+          convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected),
+          recommendation.data.hasArrestIssues?.details
+        ),
+        hasContrabandRisk = ValueWithDetails(
+          convertBooleanToYesNo(recommendation.data.hasContrabandRisk?.selected),
+          recommendation.data.hasContrabandRisk?.details
+        ),
         selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
         additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
         isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected,
@@ -55,7 +67,9 @@ class RecommendationToPartADataMapper {
         licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
         sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
         custodialTerm = custodialTerm,
-        extendedTerm = extendedTerm
+        extendedTerm = extendedTerm,
+        lastRecordedAddress = lastRecordedAddress,
+        noFixedAbode = noFixedAbode
       )
     }
 
@@ -121,6 +135,25 @@ class RecommendationToPartADataMapper {
           convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
         )
       } else Pair("", "")
+    }
+
+    private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {
+      val mainAddresses = addresses?.filter { !it.noFixedAbode }
+      val noFixedAbodeAddresses = addresses?.filter { it.noFixedAbode }
+
+      return if (mainAddresses?.isNotEmpty() == true && noFixedAbodeAddresses?.isEmpty() == true) {
+        val addressConcat = mainAddresses.map {
+          it.line1 + ", " + it.line2 + ", " + it.town + ", " + it.postcode
+        }
+        Pair(addressConcat.joinToString("\n") { "$it" }, "")
+      } else if (mainAddresses?.isEmpty() == true && noFixedAbodeAddresses?.isNotEmpty() == true) {
+        Pair(
+          "",
+          "No fixed abode"
+        )
+      } else {
+        Pair("", "")
+      }
     }
   }
 }

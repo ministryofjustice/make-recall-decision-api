@@ -83,6 +83,8 @@ internal class PartATemplateReplacementService {
       "date_of_birth" to partAData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       "name" to partAData.name,
       "ethnicity" to if (partAData.ethnicity.isNullOrBlank()) NOT_SPECIFIED else partAData.ethnicity,
+      "last_recorded_address" to partAData.lastRecordedAddress,
+      "no_fixed_abode" to partAData.noFixedAbode,
       "cro_number" to partAData.croNumber,
       "pnc_number" to partAData.pncNumber,
       "most_recent_prisoner_number" to partAData.mostRecentPrisonerNumber,
