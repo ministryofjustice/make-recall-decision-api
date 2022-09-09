@@ -30,6 +30,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation`() {
     userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -56,6 +57,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
     assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
     assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
+    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("category")).isEqualTo(1)
+    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("level")).isEqualTo(1)
 
     val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
     val address = JSONObject(personOnProbationAddress.get(0).toString())
@@ -68,6 +71,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `update and get recommendation`() {
+    mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     convictionResponse(crn, "011")
@@ -174,6 +178,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `given an update that clears hidden fields then save in database and get recommendation with null values for hidden fields`() {
+    mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     deleteAndCreateRecommendation()
@@ -293,6 +298,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
       userAccessAllowedOnce(crn)
+      mappaDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
       webTestClient.get()
@@ -332,8 +339,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `given case is excluded when updating a recommendation then only return user access details`() {
     runTest {
+      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
+      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessAllowedOnce(crn)
@@ -364,8 +374,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {
+      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
+      userAccessAllowedOnce(crn)
+      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessAllowedOnce(crn)

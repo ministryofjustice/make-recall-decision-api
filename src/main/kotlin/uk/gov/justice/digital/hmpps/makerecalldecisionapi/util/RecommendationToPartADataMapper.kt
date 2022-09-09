@@ -68,6 +68,7 @@ class RecommendationToPartADataMapper {
         sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
         custodialTerm = custodialTerm,
         extendedTerm = extendedTerm,
+        mappa = recommendation.data.personOnProbation?.mappa,
         lastRecordedAddress = lastRecordedAddress,
         noFixedAbode = noFixedAbode
       )

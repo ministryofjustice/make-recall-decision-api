@@ -1,10 +1,10 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun mappaDetailsResponse(level: Int?, category: Int?) = """
+fun mappaDetailsCategory1Response() = """
 {
-    "level": $level,
+    "level": 1,
     "levelDescription": "MAPPA Level 1",
-    "category": $category,
+    "category": 1,
     "categoryDescription": "All - Category to be determined",
     "startDate": "2021-02-10",
     "reviewDate": "2021-05-10",

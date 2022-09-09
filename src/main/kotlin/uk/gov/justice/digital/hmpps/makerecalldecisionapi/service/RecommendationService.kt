@@ -32,7 +32,8 @@ internal class RecommendationService(
   @Lazy val personDetailsService: PersonDetailsService,
   val partATemplateReplacementService: PartATemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
-  private val convictionService: ConvictionService
+  private val convictionService: ConvictionService,
+  @Lazy private val riskService: RiskService?
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -44,6 +45,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      val riskResponse = recommendationRequest.crn?.let { riskService?.getRisk(it) }
 
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation = buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -63,6 +65,7 @@ internal class RecommendationService(
           gender = personDetails?.personalDetailsOverview?.gender,
           ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
           dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
+          mappa = riskResponse?.mappa,
           addresses = personDetails?.addresses
         ),
         convictionForRecommendation

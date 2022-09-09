@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
@@ -81,6 +82,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             pncNumber = "2004/0712343H",
             mostRecentPrisonerNumber = "G12345",
             nomsNumber = "A1234CR",
+            mappa = Mappa(level = null, category = null, isNominal = null, lastUpdated = null),
             addresses = listOf(
               Address(
                 line1 = "Address line 1",
@@ -180,7 +182,6 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           )
         )
       )
-
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
     }
   }
@@ -195,7 +196,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(71)
+      assertThat(result.size).isEqualTo(73)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -247,6 +248,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["sentence_expiry_date"]).isEqualTo("07/09/2022")
       assertThat(result["custodial_term"]).isEqualTo("6 days")
       assertThat(result["extended_term"]).isEqualTo("20 days")
+      assertThat(result["mappa_level"]).isEqualTo("Level 1")
+      assertThat(result["mappa_category"]).isEqualTo("Category 1")
       assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
       assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
     }
@@ -365,6 +368,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       sentenceExpiryDate = "07/09/2022",
       custodialTerm = "6 days",
       extendedTerm = "20 days",
+      mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
       noFixedAbode = ""
     )

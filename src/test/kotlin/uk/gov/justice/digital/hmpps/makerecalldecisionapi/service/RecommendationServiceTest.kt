@@ -15,14 +15,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
+import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -51,16 +55,23 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     DateTimeUtils.setCurrentMillisFixed(1658828907443)
   }
 
+  @Mock
+  protected open lateinit var riskService: RiskService
+
   @Test
   fun `creates a new recommendation in the database`() {
     runTest {
       // given
+      given(riskService.getRisk(BDDMockito.anyString())).willReturn(RiskResponse(mappa = Mappa(category = 1, level = 1, isNominal = null, lastUpdated = null)))
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, riskService)
+
+      // and
       val recommendationToSave = RecommendationEntity(
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
-          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false)))
+          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null), addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false)))
         )
       )
 
@@ -95,6 +106,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mostRecentPrisonerNumber = "G12345",
           nomsNumber = "A1234CR",
           pncNumber = "2004/0712343H",
+          mappa = Mappa(
+            level = 1,
+            category = 1,
+            isNominal = null,
+            lastUpdated = null
+          ),
           addresses = listOf(
             Address(
               line1 = "Line 1 address",
