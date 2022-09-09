@@ -76,7 +76,7 @@ internal class RiskServiceTest {
   @BeforeEach
   fun setup() {
     userAccessValidator = UserAccessValidator(communityApiClient)
-    recommendationService = RecommendationService(recommendationRepository, personDetailsService, partATemplateReplacementService, userAccessValidator, convictionService)
+    recommendationService = RecommendationService(recommendationRepository, personDetailsService, partATemplateReplacementService, userAccessValidator, convictionService, null)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 

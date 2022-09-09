@@ -180,7 +180,7 @@ abstract class IntegrationTestBase {
     val currentScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/all")
 
-    oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
+    oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(currentRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -223,7 +223,7 @@ abstract class IntegrationTestBase {
   protected fun contingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
     val contingencyPlanRequest =
       request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
-    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
+    oasysARNApi.`when`(contingencyPlanRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(contingencyPlanResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -242,7 +242,7 @@ abstract class IntegrationTestBase {
     val historicalScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/rsr/history")
 
-    oasysARNApi.`when`(historicalScoresRequest, exactly(1)).respond(
+    oasysARNApi.`when`(historicalScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(historicalRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
@@ -266,12 +266,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0, level: Int? = 1, category: Int? = 0) {
     val mappaDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
 
-    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse())
+    communityApi.`when`(mappaDetailsRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse(level, category))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -281,6 +281,14 @@ abstract class IntegrationTestBase {
       request().withPath("/secure/offenders/crn/$crn/risk/mappa")
     communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun errorMappaDetailsResponse(crn: String) {
+    val mappaDetailsRequest =
+      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
+    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
+      response().withStatusCode(500)
     )
   }
 
