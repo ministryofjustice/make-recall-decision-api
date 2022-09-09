@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -47,16 +48,25 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("name")).isEqualTo("John Smith")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("gender")).isEqualTo("Male")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("ethnicity")).isEqualTo("Ainu")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("dateOfBirth")).isEqualTo("1982-10-24")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("mostRecentPrisonerNumber")).isEqualTo("G12345")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("croNumber")).isEqualTo("123456/04A")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("nomsNumber")).isEqualTo("A1234CR")
-    assertThat(JSONObject(response.get("personOnProbation").toString()).get("pncNumber")).isEqualTo("2004/0712343H")
+    val personOnProbation = JSONObject(response.get("personOnProbation").toString())
+    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
+    assertThat(personOnProbation.get("gender")).isEqualTo("Male")
+    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
+    assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
+    assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
+    assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
+    assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
     assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("category")).isEqualTo(1)
     assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("level")).isEqualTo(1)
+
+    val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
+    val address = JSONObject(personOnProbationAddress.get(0).toString())
+    assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
+    assertThat(address.get("town")).isEqualTo("Sheffield")
+    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("noFixedAbode")).isEqualTo(false)
   }
 
   @Test

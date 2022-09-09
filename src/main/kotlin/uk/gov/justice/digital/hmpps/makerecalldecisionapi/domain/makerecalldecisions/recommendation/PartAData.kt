@@ -36,6 +36,8 @@ data class PartAData(
   val custodialTerm: String? = null,
   val extendedTerm: String? = null,
   val mappa: Mappa? = null,
+  val lastRecordedAddress: String? = null,
+  val noFixedAbode: String? = null
 )
 
 data class ValueWithDetails(

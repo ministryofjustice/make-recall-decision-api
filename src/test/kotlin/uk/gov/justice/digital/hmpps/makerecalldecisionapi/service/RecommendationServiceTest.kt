@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -70,7 +71,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
-          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null))
+          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null), addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false)))
         )
       )
 
@@ -92,7 +93,36 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
       assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
-      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(PersonOnProbation(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null)))
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
+        PersonOnProbation(
+          name = "John Smith",
+          firstName = "John",
+          middleNames = "Homer Bart",
+          surname = "Smith",
+          gender = "Male",
+          ethnicity = "Ainu",
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          croNumber = "123456/04A",
+          mostRecentPrisonerNumber = "G12345",
+          nomsNumber = "A1234CR",
+          pncNumber = "2004/0712343H",
+          mappa = Mappa(
+            level = 1,
+            category = 1,
+            isNominal = null,
+            lastUpdated = null
+          ),
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Town address",
+              postcode = "TS1 1ST",
+              noFixedAbode = false
+            )
+          )
+        )
+      )
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
         ConvictionDetail(
           indexOffenceDescription = "Robbery (other than armed robbery)",
@@ -236,7 +266,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(recommendationResponse.personOnProbation?.name).isEqualTo(recommendation.get().data.personOnProbation?.name)
+    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation)
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
     assertThat(recommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.FIXED_TERM)
     assertThat(recommendationResponse.recallType?.selected?.details).isEqualTo("My details")

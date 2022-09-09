@@ -8,5 +8,6 @@ data class Address(
   val status: AddressStatus? = null,
   val postcode: String? = null,
   val addressNumber: String? = null,
-  val buildingName: String? = null
+  val buildingName: String? = null,
+  val noFixedAbode: Boolean? = null
 )

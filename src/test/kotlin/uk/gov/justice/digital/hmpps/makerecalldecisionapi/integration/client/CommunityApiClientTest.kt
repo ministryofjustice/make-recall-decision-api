@@ -334,7 +334,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
             addressNumber = "45",
             buildingName = "Death Row Records",
             town = "Compton",
-            county = "LA", status = AddressStatus(code = "ABC123", description = "Not Main")
+            county = "LA", status = AddressStatus(code = "ABC123", description = "Not Main"),
+            noFixedAbode = false
           ),
           Address(
             town = "Sheffield",
@@ -344,7 +345,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
             streetName = "Scotland Street",
             status = AddressStatus(code = "ABC123", description = "Main"),
             postcode = "S3 7BS",
-            addressNumber = "33"
+            addressNumber = "33",
+            noFixedAbode = false
           )
         )
       ),

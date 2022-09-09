@@ -92,7 +92,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val currentAddress = response.currentAddress!!
+      val currentAddresses = response.addresses!!
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -104,10 +104,10 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
-      assertThat(currentAddress.line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
-      assertThat(currentAddress.line2).isEqualTo("Sheffield City Centre")
-      assertThat(currentAddress.town).isEqualTo("Sheffield")
-      assertThat(currentAddress.postcode).isEqualTo("S3 7BS")
+      assertThat(currentAddresses[0].line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
+      assertThat(currentAddresses[0].line2).isEqualTo("Sheffield City Centre")
+      assertThat(currentAddresses[0].town).isEqualTo("Sheffield")
+      assertThat(currentAddresses[0].postcode).isEqualTo("S3 7BS")
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
@@ -138,7 +138,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val currentAddress = response.currentAddress!!
+      val currentAddresses = response.addresses!!
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -150,10 +150,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
-      assertThat(currentAddress.line1).isEqualTo("")
-      assertThat(currentAddress.line2).isEqualTo("")
-      assertThat(currentAddress.town).isEqualTo("")
-      assertThat(currentAddress.postcode).isEqualTo("")
+      assertThat(currentAddresses).isEmpty()
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
@@ -188,7 +185,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val currentAddress = response.currentAddress!!
+      val currentAddresses = response.addresses!!
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -200,10 +197,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
-      assertThat(currentAddress.line1).isEqualTo("")
-      assertThat(currentAddress.line2).isEqualTo("")
-      assertThat(currentAddress.town).isEqualTo("")
-      assertThat(currentAddress.postcode).isEqualTo("")
+      assertThat(currentAddresses).isEmpty()
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
@@ -225,7 +219,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val currentAddress = response.currentAddress!!
+      val currentAddresses = response.addresses!!
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -241,10 +235,10 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.mostRecentPrisonerNumber).isEqualTo("G12345")
       assertThat(personalDetails.nomsNumber).isEqualTo("A1234CR")
       assertThat(personalDetails.pncNumber).isEqualTo("2004/0712343H")
-      assertThat(currentAddress.line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
-      assertThat(currentAddress.line2).isEqualTo("Sheffield City Centre")
-      assertThat(currentAddress.town).isEqualTo("Sheffield")
-      assertThat(currentAddress.postcode).isEqualTo("S3 7BS")
+      assertThat(currentAddresses[0].line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
+      assertThat(currentAddresses[0].line2).isEqualTo("Sheffield City Centre")
+      assertThat(currentAddresses[0].town).isEqualTo("Sheffield")
+      assertThat(currentAddresses[0].postcode).isEqualTo("S3 7BS")
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
@@ -302,7 +296,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       val response = personDetailsService.getPersonDetails(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val currentAddress = response.currentAddress!!
+      val currentAddresses = response.addresses!!
       val offenderManager = response.offenderManager!!
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -313,10 +307,10 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("")
       assertThat(personalDetails.gender).isEqualTo("")
-      assertThat(currentAddress.line1).isEqualTo("")
-      assertThat(currentAddress.line2).isEqualTo("")
-      assertThat(currentAddress.town).isEqualTo("")
-      assertThat(currentAddress.postcode).isEqualTo("")
+      assertThat(currentAddresses[0].line1).isEqualTo("")
+      assertThat(currentAddresses[0].line2).isEqualTo("")
+      assertThat(currentAddresses[0].town).isEqualTo("")
+      assertThat(currentAddresses[0].postcode).isEqualTo("")
       assertThat(offenderManager.name).isEqualTo("")
       assertThat(offenderManager.email).isEqualTo("")
       assertThat(offenderManager.phoneNumber).isEqualTo("")

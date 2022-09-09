@@ -45,19 +45,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      val name = personDetails?.personalDetailsOverview?.name
-      val firstName = personDetails?.personalDetailsOverview?.firstName
-      val surname = personDetails?.personalDetailsOverview?.surname
-      val gender = personDetails?.personalDetailsOverview?.gender
-      val ethnicity = personDetails?.personalDetailsOverview?.ethnicity
-      val middleNames = personDetails?.personalDetailsOverview?.middleNames
-      val dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth
-      val croNumber = personDetails?.personalDetailsOverview?.croNumber
-      val mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber
-      val nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber
-      val pncNumber = personDetails?.personalDetailsOverview?.pncNumber
       val riskResponse = recommendationRequest.crn?.let { riskService?.getRisk(it) }
-      val mappa = riskResponse?.mappa
 
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation = buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -66,18 +54,19 @@ internal class RecommendationService(
         recommendationRequest,
         username,
         PersonOnProbation(
-          croNumber = croNumber,
-          mostRecentPrisonerNumber = mostRecentPrisonerNumber,
-          nomsNumber = nomsNumber,
-          pncNumber = pncNumber,
-          name = name,
-          firstName = firstName,
-          middleNames = middleNames,
-          surname = surname,
-          gender = gender,
-          ethnicity = ethnicity,
-          dateOfBirth = dateOfBirth,
-          mappa = mappa
+          croNumber = personDetails?.personalDetailsOverview?.croNumber,
+          mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber,
+          nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber,
+          pncNumber = personDetails?.personalDetailsOverview?.pncNumber,
+          name = personDetails?.personalDetailsOverview?.name,
+          firstName = personDetails?.personalDetailsOverview?.firstName,
+          middleNames = personDetails?.personalDetailsOverview?.middleNames,
+          surname = personDetails?.personalDetailsOverview?.surname,
+          gender = personDetails?.personalDetailsOverview?.gender,
+          ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
+          dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
+          mappa = riskResponse?.mappa,
+          addresses = personDetails?.addresses
         ),
         convictionForRecommendation
       )

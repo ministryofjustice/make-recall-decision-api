@@ -72,7 +72,16 @@ internal abstract class ServiceTestBase {
   fun userValidatorSetup() {
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(
       PersonDetailsResponse(
-        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", age = null, crn = null, dateOfBirth = LocalDate.parse("1982-10-24"), gender = "Male", ethnicity = "Ainu", croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR")
+        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", age = null, crn = null, dateOfBirth = LocalDate.parse("1982-10-24"), gender = "Male", ethnicity = "Ainu", croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR"),
+        addresses = listOf(
+          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
+            line1 = "Line 1 address",
+            line2 = "Line 2 address",
+            town = "Town address",
+            postcode = "TS1 1ST",
+            noFixedAbode = false
+          )
+        )
       )
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
