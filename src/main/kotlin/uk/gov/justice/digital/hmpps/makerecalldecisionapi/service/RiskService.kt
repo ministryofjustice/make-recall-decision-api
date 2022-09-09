@@ -44,7 +44,6 @@ internal class RiskService(
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
   private val recommendationService: RecommendationService
-
 ) {
   suspend fun getRisk(crn: String): RiskResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
