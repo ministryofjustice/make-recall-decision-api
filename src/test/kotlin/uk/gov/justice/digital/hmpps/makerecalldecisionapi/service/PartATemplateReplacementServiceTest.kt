@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
@@ -51,7 +52,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
-import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
 
@@ -82,7 +82,16 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             pncNumber = "2004/0712343H",
             mostRecentPrisonerNumber = "G12345",
             nomsNumber = "A1234CR",
-            mappa = Mappa(level = null, category = null, isNominal = null, lastUpdated = null)
+            mappa = Mappa(level = null, category = null, isNominal = null, lastUpdated = null),
+            addresses = listOf(
+              Address(
+                line1 = "Address line 1",
+                line2 = "Address line 2",
+                town = "Address line town",
+                postcode = "TS1 1ST",
+                noFixedAbode = false,
+              )
+            )
           ),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
           dateVloInformed = now(),
@@ -161,13 +170,13 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           ),
           convictionDetail = ConvictionDetail(
             indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
-            dateOfSentence = LocalDate.parse("2022-09-05"),
+            dateOfOriginalOffence = parse("2022-09-01"),
+            dateOfSentence = parse("2022-09-05"),
             lengthOfSentence = 6,
             lengthOfSentenceUnits = "days",
             sentenceDescription = "Extended Determinate Sentence",
-            licenceExpiryDate = LocalDate.parse("2022-09-06"),
-            sentenceExpiryDate = LocalDate.parse("2022-09-07"),
+            licenceExpiryDate = parse("2022-09-06"),
+            sentenceExpiryDate = parse("2022-09-07"),
             sentenceSecondLength = 20,
             sentenceSecondLengthUnits = "days"
           )
@@ -187,7 +196,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(71)
+      assertThat(result.size).isEqualTo(73)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -241,6 +250,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["extended_term"]).isEqualTo("20 days")
       assertThat(result["mappa_level"]).isEqualTo("Level 1")
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
+      assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
+      assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
     }
   }
 
@@ -311,7 +322,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
       ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
     )
-    val partA = PartAData(
+    return PartAData(
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
       responseToProbation = "They have not responded well",
@@ -357,8 +368,9 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       sentenceExpiryDate = "07/09/2022",
       custodialTerm = "6 days",
       extendedTerm = "20 days",
-      mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null)
+      mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
+      lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
+      noFixedAbode = ""
     )
-    return partA
   }
 }

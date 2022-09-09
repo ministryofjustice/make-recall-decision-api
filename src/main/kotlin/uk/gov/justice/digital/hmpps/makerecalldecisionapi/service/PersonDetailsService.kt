@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CurrentAddress
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
@@ -26,23 +26,13 @@ internal class PersonDetailsService(
     } else {
       val offenderDetails = getPersonalDetailsOverview(crn)
       val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
-      val activeAddress = offenderDetails.contactDetails?.addresses
-        ?.firstOrNull { it.status?.description?.lowercase().equals("main") }
-      val addressNumber = activeAddress?.addressNumber ?: ""
-      val streetName = activeAddress?.streetName ?: ""
-      val buildingName = activeAddress?.buildingName ?: ""
       val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
       val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return PersonDetailsResponse(
         personalDetailsOverview = buildPersonalDetails(crn, offenderDetails),
-        currentAddress = CurrentAddress(
-          line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
-          line2 = activeAddress?.district ?: "",
-          town = activeAddress?.town ?: "",
-          postcode = activeAddress?.postcode ?: ""
-        ),
+        addresses = buildAddressDetails(offenderDetails.contactDetails?.addresses?.filter { it.status?.description?.lowercase().equals("main") }),
         offenderManager = OffenderManager(
           name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
           phoneNumber = activeOffenderManager?.team?.telephone ?: "",
@@ -53,6 +43,22 @@ internal class PersonDetailsService(
           )
         ),
         activeRecommendation = recommendationDetails
+      )
+    }
+  }
+
+  private fun buildAddressDetails(addresses: List<uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address>?): List<Address>? {
+    return addresses?.map {
+      val addressNumber = it.addressNumber ?: ""
+      val streetName = it.streetName ?: ""
+      val buildingName = it.buildingName ?: ""
+
+      Address(
+        line1 = formatTwoWordField(buildingName, formatTwoWordField(addressNumber, streetName)),
+        line2 = it.district ?: "",
+        town = it.town ?: "",
+        postcode = it.postcode ?: "",
+        noFixedAbode = it.noFixedAbode ?: false
       )
     }
   }

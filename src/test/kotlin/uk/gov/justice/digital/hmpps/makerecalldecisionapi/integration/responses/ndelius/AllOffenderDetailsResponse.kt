@@ -14,7 +14,7 @@ fun allOffenderDetailsResponse() = """
         "from": "2021-06-10",
         "lastUpdatedDatetime": "2021-06-11T14:00:00",
         "latestAssessmentDate": "2021-06-11T12:00:00",
-        "noFixedAbode": true,
+        "noFixedAbode": false,
         "notes": "Some address notes",
         "postcode": "90220",
         "status": {
@@ -40,7 +40,7 @@ fun allOffenderDetailsResponse() = """
         "from": "2020-06-10",
         "lastUpdatedDatetime": "2021-06-11T14:00:00",
         "latestAssessmentDate": "2021-06-11T12:00:00",
-        "noFixedAbode": true,
+        "noFixedAbode": false,
         "notes": "Some address notes",
         "postcode": "S3 7BS",
         "status": {
