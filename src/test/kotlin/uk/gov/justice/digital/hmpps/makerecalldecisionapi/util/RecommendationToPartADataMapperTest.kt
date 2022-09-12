@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -105,7 +107,7 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
+  @ParameterizedTest(name = "given is victim contact scheme field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("YES,Yes", "NO,No", "NOT_APPLICABLE,N/A")
   fun `given victims in contact scheme data then should map to the part A text`(
     victimsInContactScheme: YesNoNotApplicableOptions,
@@ -151,6 +153,27 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.dateVloInformed).isEqualTo("")
+    }
+  }
+
+  @ParameterizedTest(name = "given is indeterminate sentence type field {0} in recommendation data should map to the part A text {1}")
+  @CsvSource("LIFE,Life sentence", "IPP,Imprisonment for Public Protection (IPP) sentence", "DPP,Detention for Public Protection (DPP) sentence", "NO,No")
+  fun `given  indeterminate sentence type data then should map to the part A text`(
+    indeterminateSentenceType: IndeterminateSentenceTypeOptions,
+    partADisplayText: String?
+  ) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType)
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.indeterminateSentenceType).isEqualTo(partADisplayText)
     }
   }
 
