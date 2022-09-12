@@ -96,7 +96,6 @@ internal class RecommendationService(
         responseToProbation = recommendationEntity.data.responseToProbation,
         whatLedToRecall = recommendationEntity.data.whatLedToRecall,
         isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
-        isExtendedOrIndeterminateSentence = recommendationEntity.data.isExtendedOrIndeterminateSentence,
         isDeterminateSentence = recommendationEntity.data.isDeterminateSentence,
         activeCustodialConvictionCount = recommendationEntity.data.activeCustodialConvictionCount,
         hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,

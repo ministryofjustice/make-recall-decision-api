@@ -19,7 +19,6 @@ data class RecommendationResponse(
   val responseToProbation: String? = null,
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
-  val isExtendedOrIndeterminateSentence: Boolean? = null,
   val isDeterminateSentence: Boolean? = null,
   val activeCustodialConvictionCount: Number? = null,
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
