@@ -8,8 +8,8 @@ data class IndeterminateSentenceType(
 )
 
 enum class IndeterminateSentenceTypeOptions(val partADisplayValue: String) {
-  LIFE("Life sentence"),
-  IPP("Imprisonment for Public Protection (IPP) sentence"),
-  DPP("Detention for Public Protection (DPP) sentence"),
+  LIFE("Yes - Lifer"),
+  IPP("Yes - IPP"),
+  DPP("Yes - DPP"),
   NO("No")
 }

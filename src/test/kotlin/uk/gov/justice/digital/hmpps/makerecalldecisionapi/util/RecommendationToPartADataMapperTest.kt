@@ -157,7 +157,7 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given is indeterminate sentence type field {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("LIFE,Life sentence", "IPP,Imprisonment for Public Protection (IPP) sentence", "DPP,Detention for Public Protection (DPP) sentence", "NO,No")
+  @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "NO,No")
   fun `given  indeterminate sentence type data then should map to the part A text`(
     indeterminateSentenceType: IndeterminateSentenceTypeOptions,
     partADisplayText: String?
