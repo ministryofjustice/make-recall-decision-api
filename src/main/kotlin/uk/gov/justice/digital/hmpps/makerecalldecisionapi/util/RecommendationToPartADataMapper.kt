@@ -64,7 +64,7 @@ class RecommendationToPartADataMapper {
         indexOffenceDescription = recommendation.data.convictionDetail?.indexOffenceDescription,
         dateOfOriginalOffence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfOriginalOffence),
         dateOfSentence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfSentence),
-        lengthOfSentence = recommendation.data.convictionDetail?.lengthOfSentence.toString() + " " + recommendation.data.convictionDetail?.lengthOfSentenceUnits,
+        lengthOfSentence = buildLengthOfSentence(recommendation.data.convictionDetail),
         licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
         sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
         custodialTerm = custodialTerm,
@@ -128,7 +128,7 @@ class RecommendationToPartADataMapper {
       else EMPTY_STRING
     }
 
-    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String, String> {
+    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String?, String?> {
       return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
         convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
       ) {
@@ -136,7 +136,7 @@ class RecommendationToPartADataMapper {
           convictionDetail?.lengthOfSentence.toString() + " " + convictionDetail?.lengthOfSentenceUnits,
           convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
         )
-      } else Pair("", "")
+      } else Pair(null, null)
     }
 
     private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {
@@ -156,6 +156,10 @@ class RecommendationToPartADataMapper {
       } else {
         Pair("", "")
       }
+    }
+
+    private fun buildLengthOfSentence(convictionDetail: ConvictionDetail?): String? {
+      return convictionDetail?.let { it.lengthOfSentence.toString() + " " + it.lengthOfSentenceUnits }
     }
   }
 }
