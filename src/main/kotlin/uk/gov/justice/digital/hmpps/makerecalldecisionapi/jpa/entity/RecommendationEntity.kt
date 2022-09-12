@@ -49,6 +49,7 @@ data class RecommendationModel(
   var whatLedToRecall: String? = null,
   @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
   @JsonProperty("isExtendedOrIndeterminateSentence") var isExtendedOrIndeterminateSentence: Boolean? = null,
+  var activeCustodialConvictionCount: Number? = null,
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   @JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
   var hasArrestIssues: SelectedWithDetails? = null,
