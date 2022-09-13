@@ -108,6 +108,24 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
+  @ParameterizedTest(name = "given is an extended sentence {0} in recommendation data should map to the part A text {1}")
+  @CsvSource("true,Yes", "false,No", "null,No")
+  fun `given is extended sentence data then should map to the part A text`(
+    isExtendedSentence: Boolean,
+    partADisplayText: String?
+  ) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", isExtendedSentence = isExtendedSentence)
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.isExtendedSentence).isEqualTo(partADisplayText)
+    }
+  }
+
   @ParameterizedTest(name = "given is victim contact scheme field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("YES,Yes", "NO,No", "NOT_APPLICABLE,N/A")
   fun `given victims in contact scheme data then should map to the part A text`(

@@ -73,6 +73,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
+          isExtendedSentence = true,
           personOnProbation = PersonOnProbation(
             gender = "Male",
             dateOfBirth = parse("1982-10-24"),
@@ -207,6 +208,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
       assertThat(result["what_led_to_recall"]).isEqualTo("Increasingly violent behaviour")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
+      assertThat(result["is_extended_sentence"]).isEqualTo("Yes")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
       assertThat(result["indeterminate_sentence_type"]).isEqualTo("Yes - Lifer")
       assertThat(result["date_vlo_informed"]).isEqualTo("1 September 2022")
@@ -283,6 +285,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         responseToProbation = "They have not responded well",
         whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = "Yes",
+        isExtendedSentence = "Yes",
         hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
         indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
         dateVloInformed = "1 September 2022",
@@ -333,6 +336,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       responseToProbation = "They have not responded well",
       whatLedToRecall = "Increasingly violent behaviour",
       isThisAnEmergencyRecall = "Yes",
+      isExtendedSentence = "Yes",
       hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
       indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
       dateVloInformed = "1 September 2022",

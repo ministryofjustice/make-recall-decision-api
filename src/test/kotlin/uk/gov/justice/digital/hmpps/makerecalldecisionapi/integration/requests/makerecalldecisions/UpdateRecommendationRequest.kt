@@ -46,6 +46,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
   "isDeterminateSentence": true,
+  "isExtendedSentence": true,
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",
