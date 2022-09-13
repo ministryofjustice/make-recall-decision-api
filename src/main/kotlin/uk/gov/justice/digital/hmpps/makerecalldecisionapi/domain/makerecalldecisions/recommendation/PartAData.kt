@@ -9,6 +9,7 @@ data class PartAData(
   val responseToProbation: String? = null,
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: String? = null,
+  val isExtendedSentence: String? = null,
   val hasVictimsInContactScheme: String? = null,
   val indeterminateSentenceType: String? = null,
   val dateVloInformed: String? = null,
