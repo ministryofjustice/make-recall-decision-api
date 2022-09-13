@@ -64,6 +64,27 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       }
     ]
   },
+  "indeterminateSentenceType": {
+    "selected": "LIFE",
+    "allOptions": [
+      {
+        "value": "LIFE",
+        "text": "Life sentence"
+      },
+      {
+        "value": "IPP",
+        "text": "Imprisonment for Public Protection (IPP) sentence"
+      },
+      {
+        "value": "DPP",
+        "text": "Detention for Public Protection (DPP) sentence"
+      },
+      {
+        "value": "NO",
+        "text": "No"
+      }
+    ]
+  },
   "dateVloInformed": "2022-08-01",
   "status": "$status",
   "alternativesToRecallTried": {

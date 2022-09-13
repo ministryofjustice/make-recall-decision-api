@@ -22,6 +22,7 @@ data class RecommendationResponse(
   val isDeterminateSentence: Boolean? = null,
   val activeCustodialConvictionCount: Number? = null,
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
+  val indeterminateSentenceType: IndeterminateSentenceType? = null,
   val dateVloInformed: LocalDate? = null,
   val hasArrestIssues: SelectedWithDetails? = null,
   val hasContrabandRisk: SelectedWithDetails? = null,

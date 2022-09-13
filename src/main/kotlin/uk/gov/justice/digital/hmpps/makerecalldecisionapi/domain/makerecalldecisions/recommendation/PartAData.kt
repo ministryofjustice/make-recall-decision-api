@@ -10,6 +10,7 @@ data class PartAData(
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: String? = null,
   val hasVictimsInContactScheme: String? = null,
+  val indeterminateSentenceType: String? = null,
   val dateVloInformed: String? = null,
   val selectedAlternatives: List<ValueWithDetails>? = null,
   val hasArrestIssues: ValueWithDetails? = null,

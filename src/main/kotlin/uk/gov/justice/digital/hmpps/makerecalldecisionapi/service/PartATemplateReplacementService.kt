@@ -69,6 +69,7 @@ internal class PartATemplateReplacementService {
       "what_led_to_recall" to partAData.whatLedToRecall,
       "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
       "has_victims_in_contact_scheme" to partAData.hasVictimsInContactScheme,
+      "indeterminate_sentence_type" to partAData.indeterminateSentenceType,
       "date_vlo_informed" to partAData.dateVloInformed,
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,

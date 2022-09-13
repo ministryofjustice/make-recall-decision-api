@@ -99,6 +99,7 @@ internal class RecommendationService(
         isDeterminateSentence = recommendationEntity.data.isDeterminateSentence,
         activeCustodialConvictionCount = recommendationEntity.data.activeCustodialConvictionCount,
         hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,
+        indeterminateSentenceType = recommendationEntity.data.indeterminateSentenceType,
         dateVloInformed = recommendationEntity.data.dateVloInformed,
         hasArrestIssues = recommendationEntity.data.hasArrestIssues,
         hasContrabandRisk = recommendationEntity.data.hasContrabandRisk,

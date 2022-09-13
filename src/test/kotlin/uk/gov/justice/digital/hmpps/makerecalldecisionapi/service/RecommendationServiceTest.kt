@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
@@ -178,6 +179,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           isDeterminateSentence = updateRecommendationRequest.isDeterminateSentence,
           activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
           hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
+          indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
           dateVloInformed = updateRecommendationRequest.dateVloInformed,
           hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
           hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
@@ -232,6 +234,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       isDeterminateSentence = null,
       activeCustodialConvictionCount = null,
       hasVictimsInContactScheme = null,
+      indeterminateSentenceType = null,
       dateVloInformed = null,
       alternativesToRecallTried = null,
       hasArrestIssues = null,
@@ -292,6 +295,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.isDeterminateSentence).isEqualTo(true)
     assertThat(recommendationResponse.activeCustodialConvictionCount).isEqualTo(1)
     assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(YesNoNotApplicableOptions.YES)
+    assertThat(recommendationResponse.indeterminateSentenceType?.selected).isEqualTo(IndeterminateSentenceTypeOptions.LIFE)
     assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
     assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")

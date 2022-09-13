@@ -37,6 +37,7 @@ class RecommendationToPartADataMapper {
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue
           ?: EMPTY_STRING,
+        indeterminateSentenceType = recommendation.data.indeterminateSentenceType?.selected?.partADisplayValue ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
         selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
         hasArrestIssues = ValueWithDetails(

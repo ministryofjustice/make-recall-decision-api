@@ -6,6 +6,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
@@ -49,6 +51,7 @@ class MrdTestDataBuilder {
           isDeterminateSentence = true,
           activeCustodialConvictionCount = 1,
           hasVictimsInContactScheme = victimsInContactSchemeData(),
+          indeterminateSentenceType = indeterminateSentenceType(),
           dateVloInformed = LocalDate.now(),
           hasArrestIssues = arrestIssues(),
           hasContrabandRisk = contrabandRisk(),
@@ -86,6 +89,7 @@ class MrdTestDataBuilder {
         isDeterminateSentence = true,
         activeCustodialConvictionCount = 1,
         hasVictimsInContactScheme = victimsInContactSchemeData(),
+        indeterminateSentenceType = indeterminateSentenceType(),
         dateVloInformed = LocalDate.now(),
         alternativesToRecallTried = alternativesToRecallTried(),
         hasArrestIssues = arrestIssues(),
@@ -153,6 +157,18 @@ class MrdTestDataBuilder {
           TextValueOption(value = "YES", text = "Yes"),
           TextValueOption(value = "NO", text = "No"),
           TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
+        )
+      )
+    }
+
+    private fun indeterminateSentenceType(): IndeterminateSentenceType {
+      return IndeterminateSentenceType(
+        selected = IndeterminateSentenceTypeOptions.LIFE,
+        allOptions = listOf(
+          TextValueOption(value = "LIFE", text = "Life sentence"),
+          TextValueOption(value = "IPP", text = "Imprisonment for Public Protection (IPP) sentence"),
+          TextValueOption(value = "DPP", text = "Detention for Public Protection (DPP) sentence"),
+          TextValueOption(value = "NO", text = "No")
         )
       )
     }

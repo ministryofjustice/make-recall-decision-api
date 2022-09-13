@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
@@ -94,6 +96,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             )
           ),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
+          indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
           dateVloInformed = now(),
           alternativesToRecallTried = AlternativesToRecallTried(
             selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
@@ -196,7 +199,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(73)
+      assertThat(result.size).isEqualTo(74)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -205,6 +208,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["what_led_to_recall"]).isEqualTo("Increasingly violent behaviour")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
+      assertThat(result["indeterminate_sentence_type"]).isEqualTo("Yes - Lifer")
       assertThat(result["date_vlo_informed"]).isEqualTo("1 September 2022")
       assertThat(result["warning_letter_details"]).isEqualTo("We sent a warning letter on 27th July 2022")
       assertThat(result["drug_testing_details"]).isEqualTo("drugs test passed")
@@ -280,6 +284,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = "Yes",
         hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
+        indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
         dateVloInformed = "1 September 2022",
         selectedAlternatives = listOf(),
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
@@ -329,6 +334,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       whatLedToRecall = "Increasingly violent behaviour",
       isThisAnEmergencyRecall = "Yes",
       hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
+      indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
       dateVloInformed = "1 September 2022",
       selectedAlternatives = alternativesList,
       hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
