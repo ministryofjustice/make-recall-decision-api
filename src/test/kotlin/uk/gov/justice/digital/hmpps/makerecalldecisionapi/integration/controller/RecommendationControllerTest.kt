@@ -230,6 +230,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `generate a Part A from recommendation data`() {
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationRequest())
 

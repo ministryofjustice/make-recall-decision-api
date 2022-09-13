@@ -120,7 +120,7 @@ internal class ConvictionServiceTest : ServiceTestBase() {
         sentenceOriginalLength = 6,
         sentenceOriginalLengthUnits = "Days",
         sentenceSecondLength = 10,
-        sentenceSecondLengthUnits = "Days",
+        sentenceSecondLengthUnits = "Months",
         sentenceStartDate = LocalDate.parse("2022-04-26"),
         sentenceExpiryDate = LocalDate.parse("2022-06-10"),
         licenceExpiryDate = LocalDate.parse("2022-05-10"),
