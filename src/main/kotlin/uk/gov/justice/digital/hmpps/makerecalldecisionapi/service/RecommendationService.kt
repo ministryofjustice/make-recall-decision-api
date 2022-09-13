@@ -224,7 +224,7 @@ internal class RecommendationService(
         convictionResponse[0].licenceExpiryDate,
         convictionResponse[0].sentenceExpiryDate,
         convictionResponse[0].sentenceSecondLength,
-        convictionResponse[0].sentenceOriginalLengthUnits,
+        convictionResponse[0].sentenceSecondLengthUnits,
       )
     }
     return null

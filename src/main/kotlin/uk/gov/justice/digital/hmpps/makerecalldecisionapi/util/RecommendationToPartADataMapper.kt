@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
 
@@ -64,7 +65,7 @@ class RecommendationToPartADataMapper {
         indexOffenceDescription = recommendation.data.convictionDetail?.indexOffenceDescription,
         dateOfOriginalOffence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfOriginalOffence),
         dateOfSentence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfSentence),
-        lengthOfSentence = recommendation.data.convictionDetail?.lengthOfSentence.toString() + " " + recommendation.data.convictionDetail?.lengthOfSentenceUnits,
+        lengthOfSentence = buildLengthOfSentence(recommendation.data.convictionDetail),
         licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
         sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
         custodialTerm = custodialTerm,
@@ -128,15 +129,16 @@ class RecommendationToPartADataMapper {
       else EMPTY_STRING
     }
 
-    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String, String> {
+    private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String?, String?> {
       return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
         convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
       ) {
-        Pair(
-          convictionDetail?.lengthOfSentence.toString() + " " + convictionDetail?.lengthOfSentenceUnits,
-          convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
-        )
-      } else Pair("", "")
+        val lengthOfSentence = buildLengthOfSentence(convictionDetail)
+        val sentenceSecondLength = convictionDetail?.sentenceSecondLength?.toString() ?: EMPTY_STRING
+        val sentenceSecondLengthUnits = convictionDetail?.sentenceSecondLengthUnits ?: EMPTY_STRING
+
+        Pair(lengthOfSentence, sentenceSecondLength + WHITE_SPACE + sentenceSecondLengthUnits)
+      } else Pair(null, null)
     }
 
     private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {
@@ -155,6 +157,15 @@ class RecommendationToPartADataMapper {
         )
       } else {
         Pair("", "")
+      }
+    }
+
+    private fun buildLengthOfSentence(convictionDetail: ConvictionDetail?): String? {
+      return convictionDetail?.let {
+        val lengthOfSentence = it.lengthOfSentence?.toString() ?: EMPTY_STRING
+        val lengthOfSentenceUnits = it.lengthOfSentenceUnits ?: EMPTY_STRING
+
+        "$lengthOfSentence $lengthOfSentenceUnits"
       }
     }
   }

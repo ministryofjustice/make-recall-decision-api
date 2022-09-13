@@ -123,7 +123,7 @@ class MrdTestDataBuilder {
         licenceExpiryDate = LocalDate.parse("2022-09-03"),
         sentenceExpiryDate = LocalDate.parse("2022-09-04"),
         sentenceSecondLength = 12,
-        sentenceSecondLengthUnits = "days"
+        sentenceSecondLengthUnits = "months"
       )
     }
 

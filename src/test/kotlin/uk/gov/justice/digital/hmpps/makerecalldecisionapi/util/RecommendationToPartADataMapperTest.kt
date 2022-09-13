@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
@@ -437,8 +438,8 @@ class RecommendationToPartADataMapperTest {
         assertThat(result.custodialTerm).isEqualTo("6 days")
         assertThat(result.extendedTerm).isEqualTo("20 days")
       } else {
-        assertThat(result.custodialTerm).isEqualTo("")
-        assertThat(result.extendedTerm).isEqualTo("")
+        assertThat(result.custodialTerm).isNull()
+        assertThat(result.extendedTerm).isNull()
       }
     }
   }
@@ -454,13 +455,13 @@ class RecommendationToPartADataMapperTest {
             indexOffenceDescription = "Armed robbery",
             dateOfOriginalOffence = null,
             dateOfSentence = null,
-            lengthOfSentence = 6,
-            lengthOfSentenceUnits = "days",
+            lengthOfSentence = null,
+            lengthOfSentenceUnits = null,
             sentenceDescription = "Extended Determinate Sentence",
             licenceExpiryDate = null,
             sentenceExpiryDate = null,
-            sentenceSecondLength = 20,
-            sentenceSecondLengthUnits = "days"
+            sentenceSecondLength = null,
+            sentenceSecondLengthUnits = null
           )
         )
       )
@@ -470,11 +471,35 @@ class RecommendationToPartADataMapperTest {
       assertThat(result.indexOffenceDescription).isEqualTo("Armed robbery")
       assertThat(result.dateOfOriginalOffence).isEqualTo(EMPTY_STRING)
       assertThat(result.dateOfSentence).isEqualTo(EMPTY_STRING)
-      assertThat(result.lengthOfSentence).isEqualTo("6 days")
+      assertThat(result.lengthOfSentence).isEqualTo(WHITE_SPACE)
       assertThat(result.licenceExpiryDate).isEqualTo(EMPTY_STRING)
       assertThat(result.sentenceExpiryDate).isEqualTo(EMPTY_STRING)
-      assertThat(result.custodialTerm).isEqualTo("6 days")
-      assertThat(result.extendedTerm).isEqualTo("20 days")
+      assertThat(result.custodialTerm).isEqualTo(WHITE_SPACE)
+      assertThat(result.extendedTerm).isEqualTo(WHITE_SPACE)
+    }
+  }
+
+  @Test
+  fun `given empty conviction details then set empty conviction in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          convictionDetail = null
+        )
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.indexOffenceDescription).isNull()
+      assertThat(result.dateOfOriginalOffence).isEqualTo(EMPTY_STRING)
+      assertThat(result.dateOfSentence).isEqualTo(EMPTY_STRING)
+      assertThat(result.lengthOfSentence).isNull()
+      assertThat(result.licenceExpiryDate).isEqualTo(EMPTY_STRING)
+      assertThat(result.sentenceExpiryDate).isEqualTo(EMPTY_STRING)
+      assertThat(result.custodialTerm).isNull()
+      assertThat(result.extendedTerm).isNull()
     }
   }
 
