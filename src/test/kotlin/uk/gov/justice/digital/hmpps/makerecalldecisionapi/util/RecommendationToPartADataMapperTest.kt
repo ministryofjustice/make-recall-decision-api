@@ -91,9 +91,9 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("true,Yes", "false,No", "null,No")
+  @CsvSource("true,Yes", "false,No", "null,''", nullValues=["null"])
   fun `given is emergency recall data then should map to the part A text`(
-    isThisAnEmergencyRecall: Boolean,
+    isThisAnEmergencyRecall: Boolean?,
     partADisplayText: String?
   ) {
     runTest {
@@ -109,7 +109,7 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given is an extended sentence {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("true,Yes", "false,No", "null,No")
+  @CsvSource("true,Yes", "false,No", "null,''", nullValues=["null"])
   fun `given is extended sentence data then should map to the part A text`(
     isExtendedSentence: Boolean,
     partADisplayText: String?
