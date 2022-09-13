@@ -20,6 +20,7 @@ data class RecommendationResponse(
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isDeterminateSentence: Boolean? = null,
+  val isIndeterminateSentence: Boolean? = null,
   val isExtendedSentence: Boolean? = null,
   val activeCustodialConvictionCount: Number? = null,
   val hasVictimsInContactScheme: VictimsInContactScheme? = null,
