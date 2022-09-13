@@ -177,6 +177,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
           isDeterminateSentence = updateRecommendationRequest.isDeterminateSentence,
+          isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
           activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
           hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
           indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
@@ -232,6 +233,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       whatLedToRecall = null,
       isThisAnEmergencyRecall = null,
       isDeterminateSentence = null,
+      isExtendedSentence = null,
       activeCustodialConvictionCount = null,
       hasVictimsInContactScheme = null,
       indeterminateSentenceType = null,
@@ -293,6 +295,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.whatLedToRecall).isEqualTo("Increasingly violent behaviour")
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
     assertThat(recommendationResponse.isDeterminateSentence).isEqualTo(true)
+    assertThat(recommendationResponse.isExtendedSentence).isEqualTo(true)
     assertThat(recommendationResponse.activeCustodialConvictionCount).isEqualTo(1)
     assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(YesNoNotApplicableOptions.YES)
     assertThat(recommendationResponse.indeterminateSentenceType?.selected).isEqualTo(IndeterminateSentenceTypeOptions.LIFE)

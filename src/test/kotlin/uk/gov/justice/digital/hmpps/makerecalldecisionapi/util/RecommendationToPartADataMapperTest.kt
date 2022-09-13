@@ -91,9 +91,9 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given is emergency recall field {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("true,Yes", "false,No", "null,No")
+  @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
   fun `given is emergency recall data then should map to the part A text`(
-    isThisAnEmergencyRecall: Boolean,
+    isThisAnEmergencyRecall: Boolean?,
     partADisplayText: String?
   ) {
     runTest {
@@ -105,6 +105,24 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.isThisAnEmergencyRecall).isEqualTo(partADisplayText)
+    }
+  }
+
+  @ParameterizedTest(name = "given is an extended sentence {0} in recommendation data should map to the part A text {1}")
+  @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
+  fun `given is extended sentence data then should map to the part A text`(
+    isExtendedSentence: Boolean?,
+    partADisplayText: String?
+  ) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(crn = "ABC123", isExtendedSentence = isExtendedSentence)
+      )
+
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.isExtendedSentence).isEqualTo(partADisplayText)
     }
   }
 

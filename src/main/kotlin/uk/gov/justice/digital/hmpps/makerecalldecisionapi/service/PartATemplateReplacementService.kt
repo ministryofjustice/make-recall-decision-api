@@ -70,6 +70,7 @@ internal class PartATemplateReplacementService {
       "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
       "has_victims_in_contact_scheme" to partAData.hasVictimsInContactScheme,
       "indeterminate_sentence_type" to partAData.indeterminateSentenceType,
+      "is_extended_sentence" to partAData.isExtendedSentence,
       "date_vlo_informed" to partAData.dateVloInformed,
       "has_arrest_issues" to partAData.hasArrestIssues?.value,
       "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
