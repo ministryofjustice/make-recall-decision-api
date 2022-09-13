@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
 
@@ -132,10 +133,11 @@ class RecommendationToPartADataMapper {
       return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
         convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
       ) {
-        Pair(
-          convictionDetail?.lengthOfSentence.toString() + " " + convictionDetail?.lengthOfSentenceUnits,
-          convictionDetail?.sentenceSecondLength.toString() + " " + convictionDetail?.sentenceSecondLengthUnits
-        )
+        val lengthOfSentence = buildLengthOfSentence(convictionDetail)
+        val sentenceSecondLength = convictionDetail?.sentenceSecondLength?.toString() ?: EMPTY_STRING
+        val sentenceSecondLengthUnits = convictionDetail?.sentenceSecondLengthUnits ?: EMPTY_STRING
+
+        Pair(lengthOfSentence, sentenceSecondLength + WHITE_SPACE + sentenceSecondLengthUnits)
       } else Pair(null, null)
     }
 
@@ -159,7 +161,12 @@ class RecommendationToPartADataMapper {
     }
 
     private fun buildLengthOfSentence(convictionDetail: ConvictionDetail?): String? {
-      return convictionDetail?.let { it.lengthOfSentence.toString() + " " + it.lengthOfSentenceUnits }
+      return convictionDetail?.let {
+        val lengthOfSentence = it.lengthOfSentence?.toString() ?: EMPTY_STRING
+        val lengthOfSentenceUnits = it.lengthOfSentenceUnits ?: EMPTY_STRING
+
+        "$lengthOfSentence $lengthOfSentenceUnits"
+      }
     }
   }
 }

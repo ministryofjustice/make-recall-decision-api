@@ -199,7 +199,7 @@ internal abstract class ServiceTestBase {
       originalLength = 6,
       originalLengthUnits = "Days",
       secondLength = 10,
-      secondLengthUnits = "Days",
+      secondLengthUnits = "Months",
       sentenceType = SentenceType(code = "ABC123")
     ),
     active = true,

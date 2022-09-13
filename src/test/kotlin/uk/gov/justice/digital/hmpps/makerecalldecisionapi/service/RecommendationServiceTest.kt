@@ -135,7 +135,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           licenceExpiryDate = LocalDate.parse("2022-05-10"),
           sentenceExpiryDate = LocalDate.parse("2022-06-10"),
           sentenceSecondLength = 10,
-          sentenceSecondLengthUnits = "Days"
+          sentenceSecondLengthUnits = "Months"
         )
       )
       assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
@@ -330,7 +330,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.convictionDetail?.licenceExpiryDate).isEqualTo("2022-09-03")
     assertThat(recommendationResponse.convictionDetail?.sentenceExpiryDate).isEqualTo("2022-09-04")
     assertThat(recommendationResponse.convictionDetail?.sentenceSecondLength).isEqualTo(12)
-    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("days")
+    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("months")
   }
 
   @Test
