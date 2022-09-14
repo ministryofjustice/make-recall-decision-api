@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.description
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -35,6 +36,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
@@ -353,6 +355,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
       offenderManagers = listOf(
         OffenderManager(
           active = true,
+          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
           trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
           staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
           providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -360,11 +363,13 @@ class CommunityApiClientTest : IntegrationTestBase() {
             telephone = "09056714321",
             emailAddress = "first.last@digital.justice.gov.uk",
             code = "C01T04",
-            description = "OMU A"
+            description = "OMU A",
+            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 2")
           )
         ),
         OffenderManager(
           active = false,
+          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
           trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
           staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
           providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -372,7 +377,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
             telephone = "123",
             emailAddress = "dua.lipa@digital.justice.gov.uk",
             code = "C01T04",
-            description = "OMU A"
+            description = "OMU A",
+            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 4")
           )
         )
 
@@ -404,7 +410,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
         code = "N07CHT",
         description = "Automation SPG",
         emailAddress = null,
-        telephone = null
+        telephone = null,
+        localDeliveryUnit = null
       ),
       officer = Officer(
         code = "N07A060",

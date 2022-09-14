@@ -278,6 +278,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
                 offenderManagers = listOf(
                   OffenderManager(
                     active = true,
+                    probationArea = null,
                     trustOfficer = TrustOfficer(forenames = null, surname = null),
                     staff = Staff(forenames = null, surname = null),
                     providerEmployee = ProviderEmployee(forenames = null, surname = null),
@@ -285,7 +286,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
                       telephone = null,
                       emailAddress = null,
                       code = null,
-                      description = null
+                      description = null,
+                      localDeliveryUnit = null
                     )
                   )
                 )

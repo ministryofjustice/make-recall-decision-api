@@ -37,9 +37,11 @@ internal class PersonDetailsService(
           name = formatTwoWordField(trustOfficerForenames, trustOfficerSurname),
           phoneNumber = activeOffenderManager?.team?.telephone ?: "",
           email = activeOffenderManager?.team?.emailAddress ?: "",
+          probationAreaDescription = activeOffenderManager?.probationArea?.description,
           probationTeam = ProbationTeam(
             code = activeOffenderManager?.team?.code ?: "",
-            label = activeOffenderManager?.team?.description ?: ""
+            label = activeOffenderManager?.team?.description ?: "",
+            localDeliveryUnitDescription = activeOffenderManager?.team?.localDeliveryUnit?.description
           )
         ),
         activeRecommendation = recommendationDetails

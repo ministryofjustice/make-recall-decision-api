@@ -29,7 +29,8 @@ import java.security.Principal
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class RecommendationController(
-  private val recommendationService: RecommendationService
+  private val recommendationService: RecommendationService,
+  private val authenticationFacade: AuthenticationFacade
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -70,7 +71,7 @@ internal class RecommendationController(
   ): ResponseEntity<Unit> {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username)
+    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, false)
     return ResponseEntity<Unit>(OK)
   }
 
@@ -78,11 +79,12 @@ internal class RecommendationController(
   @PostMapping("/recommendations/{recommendationId}/part-a")
   @Operation(summary = "WIP: Generates a Part A document")
   suspend fun generatePartADocument(
-    @PathVariable("recommendationId") recommendationId: Long,
+    @PathVariable("recommendationId") recommendationId: Long
   ): ResponseEntity<PartAResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
+
     val responseEntity = try {
-      ResponseEntity(recommendationService.generatePartA(recommendationId), OK)
+      ResponseEntity(recommendationService.generatePartA(recommendationId, authenticationFacade.currentNameOfUser), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(PartAResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }

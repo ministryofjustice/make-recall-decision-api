@@ -8,6 +8,7 @@ import org.mockito.kotlin.doReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
@@ -24,12 +25,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institu
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
@@ -81,7 +84,8 @@ internal abstract class ServiceTestBase {
             postcode = "TS1 1ST",
             noFixedAbode = false
           )
-        )
+        ),
+        offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(name = "John Smith", phoneNumber = "01234567654", email = "tester@test.com", probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"), probationAreaDescription = "Probation area description")
       )
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
@@ -134,6 +138,7 @@ internal abstract class ServiceTestBase {
       offenderManagers = listOf(
         OffenderManager(
           active = true,
+          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
           trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
           staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
           providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -141,11 +146,13 @@ internal abstract class ServiceTestBase {
             telephone = "09056714321",
             emailAddress = "first.last@digital.justice.gov.uk",
             code = "C01T04",
-            description = "OMU A"
+            description = "OMU A",
+            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
           )
         ),
         OffenderManager(
           active = false,
+          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
           trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
           staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
           providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -153,7 +160,8 @@ internal abstract class ServiceTestBase {
             telephone = "123",
             emailAddress = "dua.lipa@digital.justice.gov.uk",
             code = "C01T04",
-            description = "OMU A"
+            description = "OMU A",
+            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 2")
           )
         )
       ),

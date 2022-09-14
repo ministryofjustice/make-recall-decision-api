@@ -142,6 +142,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
       assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
       assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
+      assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
+      assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
+      assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
     }
   }
 
@@ -210,7 +214,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
     // when
-    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill")
+    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", false)
 
     // then
     then(recommendationRepository).should().save(recommendationToSave)
@@ -253,7 +257,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.updateRecommendation(
           recommendationJsonNode,
           recommendationId = 456L,
-          "Bill"
+          "Bill",
+          false
         )
       }
     }.isInstanceOf(NoRecommendationFoundException::class.java)
@@ -334,6 +339,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.convictionDetail?.sentenceExpiryDate).isEqualTo("2022-09-04")
     assertThat(recommendationResponse.convictionDetail?.sentenceSecondLength).isEqualTo(12)
     assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("months")
+    assertThat(recommendationResponse.region).isEqualTo("London")
+    assertThat(recommendationResponse.localDeliveryUnit).isEqualTo("LDU London")
+    assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
+    assertThat(recommendationResponse.lastPartADownloadDateTime).isEqualTo("2022-09-01T15:22:24.567Z")
   }
 
   @Test
@@ -388,7 +397,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill")
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", false)
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
@@ -473,13 +482,29 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `generate Part A document from recommendation data`() {
     val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
+    val recommendationToSave = RecommendationEntity(
+      data = RecommendationModel(
+        crn = crn,
+        personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
+      )
+    )
+
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
 
-    val result = recommendationService.generatePartA(1L)
+    given(recommendationRepository.save(any()))
+      .willReturn(recommendationToSave)
+
+    val result = recommendationService.generatePartA(1L, "John Smith")
+
+    val captor = argumentCaptor<RecommendationEntity>()
+    then(recommendationRepository).should().save(captor.capture())
+    val recommendationEntity = captor.firstValue
 
     assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Long_J_$crn.docx")
-    assertThat(result.fileContents).isNotNull()
+    assertThat(result.fileContents).isNotNull
+    assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
+    assertThat(recommendationEntity.data.lastPartADownloadDateTime).isEqualTo("2022-07-26T09:48:27.443Z")
   }
 
   @Test
@@ -489,10 +514,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(any()))
       .willReturn(Optional.of(existingRecommendation))
 
-    val result = recommendationService.generatePartA(1L)
+    val recommendationToSave = RecommendationEntity(
+      data = RecommendationModel(
+        crn = crn
+      )
+    )
 
-    assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___.docx")
-    assertThat(result.fileContents).isNotNull()
+    given(recommendationRepository.save(any()))
+      .willReturn(recommendationToSave)
+
+    val result = recommendationService.generatePartA(1L, "John smith")
+
+    assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
+    assertThat(result.fileContents).isNotNull
   }
 
   @Test
