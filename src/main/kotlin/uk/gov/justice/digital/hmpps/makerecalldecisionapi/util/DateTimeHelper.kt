@@ -30,5 +30,11 @@ class DateTimeHelper {
 
       return date?.format(formatter) ?: ""
     }
+
+    fun splitDateTime(dateTime: String?): Pair<String, String> {
+      val parts = dateTime?.split("T")
+
+      return if (parts != null) Pair(parts[0], parts[1].substring(0, 8)) else Pair("", "")
+    }
   }
 }

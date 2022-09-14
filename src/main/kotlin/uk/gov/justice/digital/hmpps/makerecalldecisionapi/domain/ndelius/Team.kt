@@ -4,5 +4,6 @@ data class Team(
   val telephone: String?,
   val emailAddress: String?,
   val code: String?,
-  val description: String?
+  val description: String?,
+  val localDeliveryUnit: LocalDeliveryUnit?
 )

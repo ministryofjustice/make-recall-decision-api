@@ -32,7 +32,11 @@ data class RecommendationResponse(
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   val vulnerabilities: Vulnerabilities? = null,
-  val convictionDetail: ConvictionDetail? = null
+  val convictionDetail: ConvictionDetail? = null,
+  val region: String? = null,
+  val localDeliveryUnit: String? = null,
+  val userNamePartACompletedBy: String? = null,
+  val lastPartADownloadDateTime: String? = null
 )
 
 data class UnderIntegratedOffenderManagement(

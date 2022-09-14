@@ -15,11 +15,6 @@ data class MappaResponse(
   val notes: String?
 )
 
-data class ProbationArea(
-  val code: String?,
-  val description: String?
-)
-
 data class Officer(
   val code: String?,
   val forenames: String?,

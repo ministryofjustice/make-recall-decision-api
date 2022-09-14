@@ -659,4 +659,21 @@ class RecommendationToPartADataMapperTest {
       assertThat(result.noFixedAbode).isEqualTo("")
     }
   }
+
+  @Test
+  fun `given last downloaded date and time then split into separate fields in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          lastPartADownloadDateTime = "2022-09-13T08:26:31.349Z"
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.dateOfDecision).isEqualTo("2022-09-13")
+      assertThat(result.timeOfDecision).isEqualTo("08:26:31")
+    }
+  }
 }

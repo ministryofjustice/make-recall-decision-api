@@ -53,22 +53,26 @@ internal class RecommendationService(
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
         username,
-        PersonOnProbation(
-          croNumber = personDetails?.personalDetailsOverview?.croNumber,
-          mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber,
-          nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber,
-          pncNumber = personDetails?.personalDetailsOverview?.pncNumber,
-          name = personDetails?.personalDetailsOverview?.name,
-          firstName = personDetails?.personalDetailsOverview?.firstName,
-          middleNames = personDetails?.personalDetailsOverview?.middleNames,
-          surname = personDetails?.personalDetailsOverview?.surname,
-          gender = personDetails?.personalDetailsOverview?.gender,
-          ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
-          dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
-          mappa = riskResponse?.mappa,
-          addresses = personDetails?.addresses
-        ),
-        convictionForRecommendation
+        StaticRecommendationDataWrapper(
+          PersonOnProbation(
+            croNumber = personDetails?.personalDetailsOverview?.croNumber,
+            mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber,
+            nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber,
+            pncNumber = personDetails?.personalDetailsOverview?.pncNumber,
+            name = personDetails?.personalDetailsOverview?.name,
+            firstName = personDetails?.personalDetailsOverview?.firstName,
+            middleNames = personDetails?.personalDetailsOverview?.middleNames,
+            surname = personDetails?.personalDetailsOverview?.surname,
+            gender = personDetails?.personalDetailsOverview?.gender,
+            ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
+            dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
+            mappa = riskResponse?.mappa,
+            addresses = personDetails?.addresses
+          ),
+          convictionForRecommendation,
+          personDetails?.offenderManager?.probationAreaDescription,
+          personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription,
+        )
       )
 
       return RecommendationResponse(
@@ -110,14 +114,18 @@ internal class RecommendationService(
         underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
         localPoliceContact = recommendationEntity.data.localPoliceContact,
         vulnerabilities = recommendationEntity.data.vulnerabilities,
-        convictionDetail = recommendationEntity.data.convictionDetail
+        convictionDetail = recommendationEntity.data.convictionDetail,
+        region = recommendationEntity.data.region,
+        localDeliveryUnit = recommendationEntity.data.localDeliveryUnit,
+        userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
+        lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
       )
     }
   }
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode, recommendationId: Long, username: String?) {
+  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, isPartADownloaded: Boolean): RecommendationEntity {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -127,16 +135,21 @@ internal class RecommendationService(
       val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
         ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
-      val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
+      if (isPartADownloaded) {
+        existingRecommendationEntity.data.userNamePartACompletedBy = username
+        existingRecommendationEntity.data.lastPartADownloadDateTime = nowDateTime()
+      } else {
+        val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
+        val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
 
-      val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
-
-      existingRecommendationEntity.data = updateRecommendationRequest
+        existingRecommendationEntity.data = updateRecommendationRequest
+      }
       existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
       existingRecommendationEntity.data.lastModifiedBy = username
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
+      return savedRecommendation
     }
   }
 
@@ -159,9 +172,9 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun generatePartA(recommendationId: Long): PartAResponse {
-    val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
-      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+  fun generatePartA(recommendationId: Long, username: String?): PartAResponse {
+
+    val recommendationEntity = updateRecommendation(null, recommendationId, username, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -188,26 +201,27 @@ internal class RecommendationService(
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
     createdByUserName: String?,
-    personOnProbation: PersonOnProbation?,
-    convictionForRecommendation: ConvictionDetail?
+    recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
 
     val now = nowDateTime()
 
-    return recommendationRepository.save(
-      RecommendationEntity(
-        data = RecommendationModel(
-          crn = recommendationRequest.crn,
-          status = Status.DRAFT,
-          lastModifiedBy = createdByUserName,
-          lastModifiedDate = now,
-          createdBy = createdByUserName,
-          createdDate = now,
-          personOnProbation = personOnProbation,
-          convictionDetail = convictionForRecommendation
-        )
+    val recommendationEntity = RecommendationEntity(
+      data = RecommendationModel(
+        crn = recommendationRequest.crn,
+        status = Status.DRAFT,
+        lastModifiedBy = createdByUserName,
+        lastModifiedDate = now,
+        createdBy = createdByUserName,
+        createdDate = now,
+        personOnProbation = recommendationWrapper?.personOnProbation,
+        convictionDetail = recommendationWrapper?.convictionDetail,
+        region = recommendationWrapper?.region,
+        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
       )
     )
+
+    return recommendationRepository.save(recommendationEntity)
   }
 
   private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?): ConvictionDetail? {

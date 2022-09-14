@@ -183,7 +183,11 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             sentenceExpiryDate = parse("2022-09-07"),
             sentenceSecondLength = 20,
             sentenceSecondLengthUnits = "days"
-          )
+          ),
+          userNamePartACompletedBy = "Henry Richarlison",
+          region = "NPS London",
+          localDeliveryUnit = "All NPS London",
+          lastPartADownloadDateTime = "2022-09-13T08:26:31.349Z"
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -200,7 +204,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(75)
+      assertThat(result.size).isEqualTo(80)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -258,6 +262,11 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
       assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
       assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["last_person_completing_form"]).isEqualTo("Henry Richarlison")
+      assertThat(result["region"]).isEqualTo("NPS London")
+      assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
+      assertThat(result["date_of_decision"]).isEqualTo("2022-09-13")
+      assertThat(result["time_of_decision"]).isEqualTo("08:26:31")
     }
   }
 
@@ -380,7 +389,12 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       extendedTerm = "20 days",
       mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
-      noFixedAbode = ""
+      noFixedAbode = "",
+      lastPersonCompletingForm = "Henry Richarlison",
+      region = "NPS London",
+      localDeliveryUnit = "All NPS London",
+      dateOfDecision = "2022-09-13",
+      timeOfDecision = "08:26:31",
     )
   }
 }

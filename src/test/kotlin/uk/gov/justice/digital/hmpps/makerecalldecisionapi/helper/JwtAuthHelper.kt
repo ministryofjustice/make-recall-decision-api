@@ -52,6 +52,7 @@ class JwtAuthHelper {
     mutableMapOf<String, Any>()
       .also { subject?.let { subject -> it["user_name"] = subject } }
       .also { it["client_id"] = "make-recall-decision-client" }
+      .also { subject?.let { subject -> it["name"] = subject.lowercase() } }
       .also { roles?.let { roles -> it["authorities"] = roles } }
       .also { scope?.let { scope -> it["scope"] = scope } }
       .let {

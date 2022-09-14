@@ -2,5 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class ProbationTeam(
   val code: String?,
-  val label: String?
+  val label: String?,
+  val localDeliveryUnitDescription: String?
 )

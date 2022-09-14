@@ -4,5 +4,6 @@ data class OffenderManager(
   val name: String?,
   val phoneNumber: String?,
   val email: String?,
-  val probationTeam: ProbationTeam?
+  val probationTeam: ProbationTeam?,
+  val probationAreaDescription: String?
 )

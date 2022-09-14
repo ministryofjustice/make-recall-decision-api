@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
@@ -241,6 +242,7 @@ internal class RiskServiceTest {
               offenderManagers = listOf(
                 OffenderManager(
                   active = true,
+                  probationArea = null,
                   trustOfficer = TrustOfficer(forenames = null, surname = null),
                   staff = Staff(forenames = null, surname = null),
                   providerEmployee = ProviderEmployee(forenames = null, surname = null),
@@ -248,7 +250,8 @@ internal class RiskServiceTest {
                     telephone = null,
                     emailAddress = null,
                     code = null,
-                    description = null
+                    description = null,
+                    localDeliveryUnit = null
                   )
                 )
               )
@@ -477,7 +480,8 @@ internal class RiskServiceTest {
       code = "N07CHT",
       description = "Automation SPG",
       emailAddress = null,
-      telephone = null
+      telephone = null,
+      localDeliveryUnit = null
     ),
     officer = Officer(
       code = "N07A060",
@@ -523,6 +527,7 @@ internal class RiskServiceTest {
     offenderManagers = listOf(
       OffenderManager(
         active = true,
+        probationArea = ProbationArea(code = "N01", description = "NPS North West"),
         trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
         staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
         providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -530,11 +535,13 @@ internal class RiskServiceTest {
           telephone = "09056714321",
           emailAddress = "first.last@digital.justice.gov.uk",
           code = "C01T04",
-          description = "OMU A"
+          description = "OMU A",
+          localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
         )
       ),
       OffenderManager(
         active = false,
+        probationArea = ProbationArea(code = "N01", description = "NPS North West"),
         trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
         staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
         providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
@@ -542,7 +549,8 @@ internal class RiskServiceTest {
           telephone = "123",
           emailAddress = "dua.lipa@digital.justice.gov.uk",
           code = "C01T04",
-          description = "OMU A"
+          description = "OMU A",
+          localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
         )
       )
     ),

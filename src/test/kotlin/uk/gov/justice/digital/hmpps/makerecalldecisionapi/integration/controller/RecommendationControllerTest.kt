@@ -173,6 +173,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.convictionDetail.sentenceExpiryDate").isEqualTo("2020-06-28")
       .jsonPath("$.convictionDetail.sentenceSecondLength").isEqualTo("19")
       .jsonPath("$.convictionDetail.sentenceSecondLengthUnits").isEqualTo("days")
+      .jsonPath("$.region").isEqualTo("NPS North West")
+      .jsonPath("$.localDeliveryUnit").isEqualTo("Local delivery unit description 2")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
@@ -247,6 +249,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
+    assertNotNull(result[0].data.lastPartADownloadDateTime)
   }
 
   @Test

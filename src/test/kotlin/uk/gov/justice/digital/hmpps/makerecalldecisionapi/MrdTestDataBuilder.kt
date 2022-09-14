@@ -70,7 +70,11 @@ class MrdTestDataBuilder {
             )
           ),
           localPoliceContact = localPoliceContact(),
-          convictionDetail = convictionDetail()
+          convictionDetail = convictionDetail(),
+          region = "London",
+          localDeliveryUnit = "LDU London",
+          userNamePartACompletedBy = "Ben Baker",
+          lastPartADownloadDateTime = "2022-09-01T15:22:24.567Z"
         )
       )
     }
