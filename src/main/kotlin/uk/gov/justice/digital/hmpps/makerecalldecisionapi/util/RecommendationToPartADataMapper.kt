@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
@@ -26,6 +27,7 @@ class RecommendationToPartADataMapper {
       val lastName = recommendation.data.personOnProbation?.surname
       val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
       val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.data.personOnProbation?.addresses)
+      val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.data.lastPartADownloadDateTime)
 
       return PartAData(
         custodyStatus = ValueWithDetails(
@@ -73,7 +75,12 @@ class RecommendationToPartADataMapper {
         extendedTerm = extendedTerm,
         mappa = recommendation.data.personOnProbation?.mappa,
         lastRecordedAddress = lastRecordedAddress,
-        noFixedAbode = noFixedAbode
+        noFixedAbode = noFixedAbode,
+        lastPersonCompletingForm = recommendation.data.userNamePartACompletedBy,
+        region = recommendation.data.region,
+        localDeliveryUnit = recommendation.data.localDeliveryUnit,
+        dateOfDecision = lastDownloadDate,
+        timeOfDecision = lastDownloadTime
       )
     }
 

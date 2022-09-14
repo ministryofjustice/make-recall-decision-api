@@ -111,7 +111,7 @@ fun allOffenderDetailsResponse() = """
           "description": "string",
           "establishmentType": {
             "code": "ABC123",
-            "description": "Some description"
+            "description": "Local delivery unit description"
           },
           "institutionId": 0,
           "institutionName": "string",
@@ -144,7 +144,7 @@ fun allOffenderDetailsResponse() = """
             "isPrivate": true,
             "localDeliveryUnit": {
               "code": "ABC123",
-              "description": "Some description"
+              "description": "Local delivery unit description"
             },
             "name": "string",
             "providerTeamId": 0,
@@ -182,7 +182,7 @@ fun allOffenderDetailsResponse() = """
         "endDate": "2022-04-26",
         "localDeliveryUnit": {
           "code": "ABC123",
-          "description": "Some description"
+          "description": "Local delivery unit description 2"
         },
         "startDate": "2022-04-26",
         "teamType": {
@@ -246,7 +246,7 @@ fun allOffenderDetailsResponse() = """
             "isPrivate": true,
             "localDeliveryUnit": {
               "code": "ABC123",
-              "description": "Some description"
+              "description": "Local delivery unit description 3"
             },
             "name": "string",
             "providerTeamId": 0,
@@ -284,7 +284,7 @@ fun allOffenderDetailsResponse() = """
         "endDate": "2022-04-26",
         "localDeliveryUnit": {
           "code": "ABC123",
-          "description": "Some description"
+          "description": "Local delivery unit description 4"
         },
         "startDate": "2022-04-26",
         "teamType": {

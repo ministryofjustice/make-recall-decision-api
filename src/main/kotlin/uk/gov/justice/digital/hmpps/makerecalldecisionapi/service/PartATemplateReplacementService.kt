@@ -103,7 +103,12 @@ internal class PartATemplateReplacementService {
       "custodial_term" to partAData.custodialTerm,
       "extended_term" to partAData.extendedTerm,
       "mappa_level" to formatMappaLevel(partAData.mappa),
-      "mappa_category" to formatMappaCategory(partAData.mappa)
+      "mappa_category" to formatMappaCategory(partAData.mappa),
+      "last_person_completing_form" to partAData.lastPersonCompletingForm,
+      "region" to partAData.region,
+      "local_delivery_unit" to partAData.localDeliveryUnit,
+      "date_of_decision" to partAData.dateOfDecision,
+      "time_of_decision" to partAData.timeOfDecision,
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

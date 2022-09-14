@@ -39,7 +39,12 @@ data class PartAData(
   val extendedTerm: String? = null,
   val mappa: Mappa? = null,
   val lastRecordedAddress: String? = null,
-  val noFixedAbode: String? = null
+  val noFixedAbode: String? = null,
+  val lastPersonCompletingForm: String? = null,
+  val region: String? = null,
+  val localDeliveryUnit: String? = null,
+  var dateOfDecision: String? = null,
+  var timeOfDecision: String? = null
 )
 
 data class ValueWithDetails(
