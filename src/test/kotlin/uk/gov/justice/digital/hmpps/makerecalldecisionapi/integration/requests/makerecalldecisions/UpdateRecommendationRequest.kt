@@ -45,7 +45,6 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "responseToProbation": "They have not responded well",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
-  "isDeterminateSentence": true,
   "isIndeterminateSentence": true,
   "isExtendedSentence": true,
   "activeCustodialConvictionCount": 1,

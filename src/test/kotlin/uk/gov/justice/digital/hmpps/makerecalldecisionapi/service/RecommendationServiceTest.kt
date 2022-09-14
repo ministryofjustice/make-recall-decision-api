@@ -176,7 +176,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           responseToProbation = updateRecommendationRequest.responseToProbation,
           whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
           isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
-          isDeterminateSentence = updateRecommendationRequest.isDeterminateSentence,
           isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
           isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
           activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
@@ -233,7 +232,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       responseToProbation = null,
       whatLedToRecall = null,
       isThisAnEmergencyRecall = null,
-      isDeterminateSentence = null,
       isIndeterminateSentence = null,
       isExtendedSentence = null,
       activeCustodialConvictionCount = null,
@@ -296,7 +294,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
     assertThat(recommendationResponse.whatLedToRecall).isEqualTo("Increasingly violent behaviour")
     assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
-    assertThat(recommendationResponse.isDeterminateSentence).isEqualTo(true)
     assertThat(recommendationResponse.isIndeterminateSentence).isEqualTo(true)
     assertThat(recommendationResponse.isExtendedSentence).isEqualTo(true)
     assertThat(recommendationResponse.activeCustodialConvictionCount).isEqualTo(1)
