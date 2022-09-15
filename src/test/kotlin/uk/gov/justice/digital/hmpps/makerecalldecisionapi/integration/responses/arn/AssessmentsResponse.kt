@@ -9,9 +9,9 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       "assessmentId": 0,
       "assessmentType": "string",
       "partcompStatus": "string",
-      "dateCompleted": "2022-04-24T15:00:08.286Z",
-      "initiationDate": "2022-09-12T15:00:08.286Z",
-      "assessorSignedDate": "2022-09-12T15:00:08.286Z",
+      "dateCompleted": "2022-04-24T15:00:08",
+      "initiationDate": "2022-09-12T15:00:08",
+      "assessorSignedDate": "2022-09-12T15:00:08",
       "assessmentStatus": "COMPLETED",
       "superStatus": "COMPLETED",
       "offence": "Juicy offence details.",
@@ -31,7 +31,7 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       "offenceDetails": [
         {
           "type": "string",
-          "offenceDate": "2022-04-24T20:39:47.778Z",
+          "offenceDate": "2022-04-24T20:39:47",
           "offenceCode": "12",
           "offenceSubCode": "34",
           "offence": "string",
@@ -47,23 +47,23 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
         }
       ],
       "laterWIPAssessmentExists": false,
-      "latestWIPDate": "2022-09-12T15:00:08.286Z",
+      "latestWIPDate": "2022-09-12T15:00:08",
       "laterSignLockAssessmentExists": false,
-      "latestSignLockDate": "2022-09-12T15:00:08.286Z",
+      "latestSignLockDate": "2022-09-12T15:00:08",
       "laterPartCompUnsignedAssessmentExists": false,
-      "latestPartCompUnsignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompUnsignedDate": "2022-09-12T15:00:08",
       "laterPartCompSignedAssessmentExists": false,
-      "latestPartCompSignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompSignedDate": "2022-09-12T15:00:08",
       "laterCompleteAssessmentExists": $laterCompleteAssessmentExists,
-      "latestCompleteDate": "2022-09-12T15:00:08.286Z"
+      "latestCompleteDate": "2022-09-12T15:00:08"
     },
     {
       "assessmentId": 1,
       "assessmentType": "string",
       "partcompStatus": "string",
-      "dateCompleted": "2022-04-23T15:00:08.286Z",
-      "initiationDate": "2022-09-12T15:00:08.286Z",
-      "assessorSignedDate": "2022-09-12T15:00:08.286Z",
+      "dateCompleted": "2022-04-23T15:00:08",
+      "initiationDate": "2022-09-12T15:00:08",
+      "assessorSignedDate": "2022-09-12T15:00:08",
       "assessmentStatus": "COMPLETED",
       "superStatus": "COMPLETED",
       "offence": "Not so juicy offence details.",
@@ -83,7 +83,7 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       "offenceDetails": [
         {
           "type": "string",
-          "offenceDate": "2022-04-24T20:39:47.778Z",
+          "offenceDate": "2022-04-24T20:39:47",
           "offenceCode": "12",
           "offenceSubCode": "34",
           "offence": "string",
@@ -99,15 +99,15 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
         }
       ],
       "laterWIPAssessmentExists": false,
-      "latestWIPDate": "2022-09-12T15:00:08.286Z",
+      "latestWIPDate": "2022-09-12T15:00:08",
       "laterSignLockAssessmentExists": false,
-      "latestSignLockDate": "2022-09-12T15:00:08.286Z",
+      "latestSignLockDate": "2022-09-12T15:00:08",
       "laterPartCompUnsignedAssessmentExists": false,
-      "latestPartCompUnsignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompUnsignedDate": "2022-09-12T15:00:08",
       "laterPartCompSignedAssessmentExists": false,
-      "latestPartCompSignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompSignedDate": "2022-09-12T15:00:08",
       "laterCompleteAssessmentExists": $laterCompleteAssessmentExists,
-      "latestCompleteDate": "2022-09-12T15:00:08.286Z"
+      "latestCompleteDate": "2022-09-12T15:00:08"
     }
   ]
 }

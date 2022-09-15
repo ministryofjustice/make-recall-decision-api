@@ -102,7 +102,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       limitedAccessOffender = true,
       assessments = listOf(
         assessment(),
-        assessment().copy(dateCompleted = "2022-04-23T15:00:08.286Z", offence = "Not so juicy offence details.")
+        assessment().copy(dateCompleted = "2022-04-23T15:00:08", offence = "Not so juicy offence details.")
       )
     )
 
@@ -114,7 +114,7 @@ class ArnApiClientTest : IntegrationTestBase() {
   }
 
   private fun assessment() = Assessment(
-    dateCompleted = "2022-04-24T15:00:08.286Z",
+    dateCompleted = "2022-04-24T15:00:08",
     assessmentStatus = "COMPLETED",
     keyConsiderationsCurrentSituation = null,
     furtherConsiderationsCurrentSituation = null,
