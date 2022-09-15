@@ -77,8 +77,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when no active conviction available`() {
     licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011")
-    oasysAssessmentsResponse(crn, offenceType = "NOT_CURRENT")
+    oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
@@ -99,7 +98,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when offence type is not current`() {
     licenceConditionsResponse(crn, 2500614567)
-    oasysAssessmentsResponse(crn)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn, offenceType = "NOT_CURRENT")
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)

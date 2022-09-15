@@ -100,10 +100,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     val expected = AssessmentsResponse(
       crn = crn,
       limitedAccessOffender = true,
-      assessments = listOf(
-        assessment(),
-        assessment().copy(dateCompleted = "2022-04-23T15:00:08", offence = "Not so juicy offence details.")
-      )
+      assessments = assessments()
     )
 
     // when
@@ -113,30 +110,62 @@ class ArnApiClientTest : IntegrationTestBase() {
     assertThat(actual, equalTo(expected))
   }
 
-  private fun assessment() = Assessment(
-    dateCompleted = "2022-04-24T15:00:08",
-    assessmentStatus = "COMPLETED",
-    keyConsiderationsCurrentSituation = null,
-    furtherConsiderationsCurrentSituation = null,
-    supervision = null,
-    monitoringAndControl = null,
-    interventionsAndTreatment = null,
-    victimSafetyPlanning = null,
-    contingencyPlans = null,
-    offenceDetails = listOf(
-      AssessmentOffenceDetail(
-        type = "CURRENT",
-        offenceCode = "12",
-        offenceSubCode = "34"
-      )
+  private fun assessments() = listOf(
+    Assessment(
+      offenceDetails = listOf(
+        AssessmentOffenceDetail(
+          type = "NOT_CURRENT",
+          offenceCode = "88",
+          offenceSubCode = "88"
+        ),
+        AssessmentOffenceDetail(
+          type = "CURRENT",
+          offenceCode = "12",
+          offenceSubCode = "34"
+        )
+      ),
+      assessmentStatus = "COMPLETED",
+      superStatus = "COMPLETED",
+      dateCompleted = "2022-04-24T15:00:08",
+      laterWIPAssessmentExists = false,
+      laterSignLockAssessmentExists = false,
+      laterPartCompUnsignedAssessmentExists = false,
+      laterPartCompSignedAssessmentExists = false,
+      laterCompleteAssessmentExists = false,
+      offence = "Juicy offence details.",
+      keyConsiderationsCurrentSituation = null,
+      furtherConsiderationsCurrentSituation = null,
+      supervision = null,
+      monitoringAndControl = null,
+      interventionsAndTreatment = null,
+      victimSafetyPlanning = null,
+      contingencyPlans = null
     ),
-    offence = "Juicy offence details.",
-    laterCompleteAssessmentExists = false,
-    laterPartCompSignedAssessmentExists = false,
-    laterPartCompUnsignedAssessmentExists = false,
-    laterSignLockAssessmentExists = false,
-    laterWIPAssessmentExists = false,
-    superStatus = "COMPLETED"
+    Assessment(
+      offenceDetails = listOf(
+        AssessmentOffenceDetail(
+          type = "NOT_CURRENT",
+          offenceCode = "78",
+          offenceSubCode = "90"
+        )
+      ),
+      assessmentStatus = "COMPLETED",
+      superStatus = "COMPLETED",
+      dateCompleted = "2022-04-23T15:00:08",
+      laterWIPAssessmentExists = false,
+      laterSignLockAssessmentExists = false,
+      laterPartCompUnsignedAssessmentExists = false,
+      laterPartCompSignedAssessmentExists = false,
+      laterCompleteAssessmentExists = false,
+      offence = "Not so juicy offence details.",
+      keyConsiderationsCurrentSituation = null,
+      furtherConsiderationsCurrentSituation = null,
+      supervision = null,
+      monitoringAndControl = null,
+      interventionsAndTreatment = null,
+      victimSafetyPlanning = null,
+      contingencyPlans = null
+    )
   )
 
   @Test

@@ -21,20 +21,32 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EstablishmentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institution
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -177,6 +189,26 @@ internal class RiskServiceTest {
       then(arnApiClient).should().getContingencyPlan(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves assessments`() {
+    runTest {
+      // given
+      val crn = "my wonderful crn"
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { assessmentResponse(crn) })
+      given(communityApiClient.getActiveConvictions(anyString()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
+
+      // when
+      val response = riskService.fetchIndexOffenceDetails(crn)
+
+      // then
+      assertThat(response).isEqualTo("Juicy offence details.")
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn)
     }
   }
 
@@ -511,6 +543,36 @@ internal class RiskServiceTest {
     notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
   )
 
+  private fun assessmentResponse(crn: String): AssessmentsResponse {
+    return AssessmentsResponse(crn, false, listOf(assessment()))
+  }
+
+  private fun assessment() = Assessment(
+    dateCompleted = "2022-08-26T15:00:08",
+    assessmentStatus = "COMPLETED",
+    keyConsiderationsCurrentSituation = null,
+    furtherConsiderationsCurrentSituation = null,
+    supervision = null,
+    monitoringAndControl = null,
+    interventionsAndTreatment = null,
+    victimSafetyPlanning = null,
+    contingencyPlans = null,
+    offenceDetails = listOf(
+      AssessmentOffenceDetail(
+        type = "CURRENT",
+        offenceCode = "ABC123",
+        offenceSubCode = ""
+      )
+    ),
+    offence = "Juicy offence details.",
+    laterCompleteAssessmentExists = false,
+    laterPartCompSignedAssessmentExists = false,
+    laterPartCompUnsignedAssessmentExists = false,
+    laterSignLockAssessmentExists = false,
+    laterWIPAssessmentExists = false,
+    superStatus = "COMPLETED"
+  )
+
   private val allOffenderDetailsResponse = AllOffenderDetailsResponse(
     dateOfBirth = LocalDate.parse("1982-10-24"),
     firstName = "John",
@@ -570,5 +632,80 @@ internal class RiskServiceTest {
       )
     ),
     offenderProfile = OffenderProfile(ethnicity = "Ainu")
+  )
+
+  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = Conviction(
+    convictionDate = LocalDate.parse("2021-06-10"),
+    sentence = Sentence(
+      startDate = LocalDate.parse("2022-04-26"),
+      terminationDate = LocalDate.parse("2022-04-26"),
+      expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
+      description = sentenceDescription,
+      originalLength = 6,
+      originalLengthUnits = "Days",
+      secondLength = 10,
+      secondLengthUnits = "Months",
+      sentenceType = SentenceType(code = "ABC123")
+    ),
+    active = true,
+    offences = listOf(
+      Offence(
+        mainOffence = true,
+        offenceDate = LocalDate.parse("2022-08-26"),
+        detail = OffenceDetail(
+          mainCategoryDescription = "string", subCategoryDescription = "string",
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123",
+        )
+      ),
+      Offence(
+        mainOffence = false,
+        offenceDate = LocalDate.parse("2022-08-26"),
+        detail = OffenceDetail(
+          mainCategoryDescription = "string", subCategoryDescription = "string",
+          description = "Arson",
+          code = "ZYX789"
+        )
+      )
+    ),
+    convictionId = 2500614567,
+    orderManagers =
+    listOf(
+      OrderManager(
+        dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
+        name = "string",
+        staffCode = "STFFCDEU",
+        gradeCode = "string"
+      )
+    ),
+    custody = Custody(
+      bookingNumber = "12345",
+      institution = Institution(
+        code = "COMMUN",
+        description = "In the Community",
+        establishmentType = EstablishmentType(
+          code = "E",
+          description = "Prison"
+        ),
+        institutionId = 156,
+        institutionName = "In the Community",
+        isEstablishment = true,
+        isPrivate = false,
+        nomsPrisonInstitutionCode = "AB124",
+      ),
+      status = CustodyStatus(code = "ABC123", description = "custody status"),
+      keyDates = KeyDates(
+        conditionalReleaseDate = LocalDate.parse("2020-06-20"),
+        expectedPrisonOffenderManagerHandoverDate = LocalDate.parse("2020-06-21"),
+        expectedPrisonOffenderManagerHandoverStartDate = LocalDate.parse("2020-06-22"),
+        expectedReleaseDate = LocalDate.parse("2020-06-23"),
+        hdcEligibilityDate = LocalDate.parse("2020-06-24"),
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        paroleEligibilityDate = LocalDate.parse("2020-06-26"),
+        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
+      ),
+      sentenceStartDate = LocalDate.parse("2022-04-26")
+    )
   )
 }
