@@ -66,7 +66,7 @@ class RecommendationToPartADataMapperTest {
   }
 
   @ParameterizedTest(name = "given recall type {0}, recall details {1}, indeterminate sentence {2}, should map to the part A value {3} and details {4}")
-  @CsvSource("STANDARD,Standard details,false,Standard,Standard details", "FIXED_TERM,Fixed details,false,Fixed,Fixed details", "NO_RECALL,,false,,", "STANDARD,Standard details,true,N/A,N/A", "FIXED_TERM,Fixed details,true,N/A,N/A", "NO_RECALL,,true,N/A,N/A" )
+  @CsvSource("STANDARD,Standard details,false,Standard,Standard details", "FIXED_TERM,Fixed details,false,Fixed,Fixed details", "NO_RECALL,,false,,", "STANDARD,Standard details,true,N/A,N/A", "FIXED_TERM,Fixed details,true,N/A,N/A", "NO_RECALL,,true,N/A,N/A")
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
     recallTypeDetails: String?,
