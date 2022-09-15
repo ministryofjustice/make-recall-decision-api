@@ -103,6 +103,7 @@ internal class RiskService(
       ?.map { latestAssessment }
       ?.filter { it -> offenceCodesMatch(it, deliusCode) }
       ?.filter { isLatestAssessment(it) }
+      ?.filter { it?.offenceDetails?.firstOrNull()?.type == "CURRENT" }
       ?.map { it?.offence }
       ?.firstOrNull()
   }

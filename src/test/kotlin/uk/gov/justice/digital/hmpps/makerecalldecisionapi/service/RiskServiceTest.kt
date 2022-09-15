@@ -434,6 +434,7 @@ internal class RiskServiceTest {
         contingencyPlans = "contingency plans",
         offenceDetails = listOf(
           AssessmentOffenceDetail(
+            type = "CURRENT",
             offenceCode = "12",
             offenceSubCode = "34"
           )

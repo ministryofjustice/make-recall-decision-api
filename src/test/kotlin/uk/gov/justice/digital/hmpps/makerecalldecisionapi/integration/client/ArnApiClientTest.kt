@@ -94,7 +94,7 @@ class ArnApiClientTest : IntegrationTestBase() {
   fun `retrieves asessments`() {
     // given
     val crn = "X123456"
-    oasysAssessmentsResponse(crn)
+    oasysAssessmentsResponse(crn, offenceType = "CURRENT")
 
     // and
     val expected = AssessmentsResponse(
@@ -125,6 +125,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     contingencyPlans = null,
     offenceDetails = listOf(
       AssessmentOffenceDetail(
+        type = "CURRENT",
         offenceCode = "12",
         offenceSubCode = "34"
       )
