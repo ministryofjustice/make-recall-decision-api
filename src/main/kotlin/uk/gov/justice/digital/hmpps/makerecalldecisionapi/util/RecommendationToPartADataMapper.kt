@@ -34,7 +34,7 @@ class RecommendationToPartADataMapper {
           recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
           recommendation.data.custodyStatus?.details
         ),
-        recallType = findRecallTypeToDisplay(recommendation.data.recallType),
+        recallType = findRecallTypeToDisplay(recommendation.data.recallType, recommendation.data.isIndeterminateSentence),
         responseToProbation = recommendation.data.responseToProbation,
         whatLedToRecall = recommendation.data.whatLedToRecall,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
@@ -95,7 +95,10 @@ class RecommendationToPartADataMapper {
       return formattedField
     }
 
-    private fun findRecallTypeToDisplay(recallType: RecallType?): ValueWithDetails {
+    private fun findRecallTypeToDisplay(recallType: RecallType?, isIndeterminateSentence: Boolean?): ValueWithDetails {
+      if (isIndeterminateSentence == true) {
+        return ValueWithDetails("N/A", "N/A")
+      }
       val partAValue = when (recallType?.selected?.value) {
         RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
         RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
