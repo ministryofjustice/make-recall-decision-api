@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -68,7 +70,15 @@ class ArnApiClientTest : IntegrationTestBase() {
           monitoringAndControl = "monitoring and control",
           interventionsAndTreatment = "interventions and treatment",
           victimSafetyPlanning = "victim safety planning",
-          contingencyPlans = null
+          contingencyPlans = null,
+          offenceDetails = emptyList(),
+          offence = null,
+          laterCompleteAssessmentExists = null,
+          laterPartCompSignedAssessmentExists = null,
+          laterPartCompUnsignedAssessmentExists = null,
+          laterSignLockAssessmentExists = null,
+          laterWIPAssessmentExists = null,
+          superStatus = null
         )
       )
     )
@@ -79,6 +89,54 @@ class ArnApiClientTest : IntegrationTestBase() {
     // then
     assertThat(actual, equalTo(expected))
   }
+
+  @Test
+  fun `retrieves asessments`() {
+    // given
+    val crn = "X123456"
+    oasysAssessmentsResponse(crn)
+
+    // and
+    val expected = AssessmentsResponse(
+      crn = crn,
+      limitedAccessOffender = true,
+      assessments = listOf(
+        assessment(),
+        assessment().copy(dateCompleted = "2022-04-23T15:00:08.286Z", offence = "Not so juicy offence details.")
+      )
+    )
+
+    // when
+    val actual = arnApiClient.getAssessments(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  private fun assessment() = Assessment(
+    dateCompleted = "2022-04-24T15:00:08.286Z",
+    assessmentStatus = "COMPLETED",
+    keyConsiderationsCurrentSituation = null,
+    furtherConsiderationsCurrentSituation = null,
+    supervision = null,
+    monitoringAndControl = null,
+    interventionsAndTreatment = null,
+    victimSafetyPlanning = null,
+    contingencyPlans = null,
+    offenceDetails = listOf(
+      AssessmentOffenceDetail(
+        offenceCode = "12",
+        offenceSubCode = "34"
+      )
+    ),
+    offence = "Juicy offence details.",
+    laterCompleteAssessmentExists = false,
+    laterPartCompSignedAssessmentExists = false,
+    laterPartCompUnsignedAssessmentExists = false,
+    laterSignLockAssessmentExists = false,
+    laterWIPAssessmentExists = false,
+    superStatus = "COMPLETED"
+  )
 
   @Test
   fun `retrieves current scores`() {

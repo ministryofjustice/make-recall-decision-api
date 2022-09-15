@@ -110,6 +110,7 @@ internal class PartATemplateReplacementService {
       "local_delivery_unit" to partAData.localDeliveryUnit,
       "date_of_decision" to partAData.dateOfDecision,
       "time_of_decision" to partAData.timeOfDecision,
+      "index_offence_details" to (partAData.indexOffenceDetails ?: EMPTY_STRING)
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

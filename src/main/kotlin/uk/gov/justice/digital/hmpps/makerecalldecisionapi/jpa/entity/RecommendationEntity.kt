@@ -72,7 +72,8 @@ data class RecommendationModel(
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
   var vulnerabilities: Vulnerabilities? = null,
-  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null
+  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
+  var indexOffenceDetails: String? = null
 ) : Serializable
 
 enum class Status {

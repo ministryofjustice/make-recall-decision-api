@@ -8,4 +8,5 @@ data class StaticRecommendationDataWrapper(
   val convictionDetail: ConvictionDetail? = null,
   val region: String? = null,
   val localDeliveryUnit: String? = null,
+  val indexOffenceDetails: String? = null
 )

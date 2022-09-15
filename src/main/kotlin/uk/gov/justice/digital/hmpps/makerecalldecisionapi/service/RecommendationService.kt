@@ -46,6 +46,7 @@ internal class RecommendationService(
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       val riskResponse = recommendationRequest.crn?.let { riskService?.getRisk(it) }
+      val indexOffenceDetails = recommendationRequest.crn?.let { riskService?.fetchIndexOffenceDetails(it) }
 
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation = buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -72,13 +73,15 @@ internal class RecommendationService(
           convictionForRecommendation,
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription,
+          indexOffenceDetails
         )
       )
 
       return RecommendationResponse(
         id = savedRecommendation?.id,
         status = savedRecommendation?.data?.status,
-        personOnProbation = savedRecommendation?.data?.personOnProbation
+        personOnProbation = savedRecommendation?.data?.personOnProbation,
+        indexOffenceDetails = indexOffenceDetails
       )
     }
   }
@@ -120,6 +123,7 @@ internal class RecommendationService(
         userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
         userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
+        indexOffenceDetails = recommendationEntity.data.indexOffenceDetails
       )
     }
   }
@@ -205,9 +209,7 @@ internal class RecommendationService(
     createdByUserName: String?,
     recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
-
     val now = nowDateTime()
-
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
         crn = recommendationRequest.crn,
@@ -219,7 +221,8 @@ internal class RecommendationService(
         personOnProbation = recommendationWrapper?.personOnProbation,
         convictionDetail = recommendationWrapper?.convictionDetail,
         region = recommendationWrapper?.region,
-        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
+        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
+        indexOffenceDetails = recommendationWrapper?.indexOffenceDetails
       )
     )
 
