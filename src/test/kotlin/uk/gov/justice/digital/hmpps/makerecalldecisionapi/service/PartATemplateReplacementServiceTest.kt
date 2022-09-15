@@ -74,6 +74,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
+          isIndeterminateSentence = true,
           isExtendedSentence = true,
           personOnProbation = PersonOnProbation(
             gender = "Male",

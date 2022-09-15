@@ -65,11 +65,14 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given recall type {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("STANDARD,Standard", "FIXED_TERM,Fixed", "NO_RECALL,")
-  fun `given recall type in recommendation data then should map to the part A text`(
+  @ParameterizedTest(name = "given recall type {0}, recall details {1}, indeterminate sentence {2}, should map to the part A value {3} and details {4}")
+  @CsvSource("STANDARD,Standard details,false,Standard,Standard details", "FIXED_TERM,Fixed details,false,Fixed,Fixed details", "NO_RECALL,,false,,", "STANDARD,Standard details,true,N/A,N/A", "FIXED_TERM,Fixed details,true,N/A,N/A", "NO_RECALL,,true,N/A,N/A" )
+  fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
-    partADisplayText: String?
+    recallTypeDetails: String?,
+    isIndeterminateSentence: Boolean,
+    partADisplayValue: String?,
+    partADisplayDetails: String?
   ) {
     runTest {
       val recommendation = RecommendationEntity(
@@ -77,16 +80,17 @@ class RecommendationToPartADataMapperTest {
         data = RecommendationModel(
           crn = "ABC123",
           recallType = RecallType(
-            selected = RecallTypeSelectedValue(value = recallValue, details = "My details"),
+            selected = RecallTypeSelectedValue(value = recallValue, details = recallTypeDetails),
             allOptions = null
-          )
+          ),
+          isIndeterminateSentence = isIndeterminateSentence
         )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.recallType?.value).isEqualTo(partADisplayText)
-      assertThat(result.recallType?.details).isEqualTo("My details")
+      assertThat(result.recallType?.value).isEqualTo(partADisplayValue)
+      assertThat(result.recallType?.details).isEqualTo(partADisplayDetails)
     }
   }
 
