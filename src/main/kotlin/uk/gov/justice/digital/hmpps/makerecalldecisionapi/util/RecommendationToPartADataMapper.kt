@@ -81,7 +81,8 @@ class RecommendationToPartADataMapper {
         region = recommendation.data.region,
         localDeliveryUnit = recommendation.data.localDeliveryUnit,
         dateOfDecision = lastDownloadDate,
-        timeOfDecision = lastDownloadTime
+        timeOfDecision = lastDownloadTime,
+        indexOffenceDetails = recommendation.data.indexOffenceDetails
       )
     }
 

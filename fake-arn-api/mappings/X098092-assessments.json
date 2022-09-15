@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/assessments/crn/X098092/offence"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-assessments.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

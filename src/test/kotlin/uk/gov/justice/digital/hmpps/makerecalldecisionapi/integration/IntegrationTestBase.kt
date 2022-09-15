@@ -28,6 +28,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanSimpleResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
@@ -182,6 +183,16 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(currentRiskScoresResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun oasysAssessmentsResponse(crn: String, delaySeconds: Long = 0, laterCompleteAssessmentExists: Boolean? = false) {
+    val assessmentsRequest =
+      request().withPath("/assessments/crn/$crn/offence")
+
+    oasysARNApi.`when`(assessmentsRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(assessmentsResponse(crn, laterCompleteAssessmentExists = laterCompleteAssessmentExists))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -355,12 +366,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
+  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0, active: Boolean? = true, offenceCode: String? = "1234") {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode))
+      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode, active, offenceCode))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -389,7 +400,7 @@ abstract class IntegrationTestBase {
     val licenceConditions =
       request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
 
-    communityApi.`when`(licenceConditions).respond(
+    communityApi.`when`(licenceConditions, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse(convictionId))
         .withDelay(Delay.seconds(delaySeconds))
     )

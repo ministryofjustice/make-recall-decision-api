@@ -30,6 +30,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create recommendation`() {
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
@@ -60,6 +63,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
     assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("category")).isEqualTo(1)
     assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("level")).isEqualTo(1)
+    assertThat(response.get("indexOffenceDetails").toString()).isEqualTo("Juicy offence details.")
 
     val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
     val address = JSONObject(personOnProbationAddress.get(0).toString())
@@ -68,6 +72,97 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(address.get("town")).isEqualTo("Sheffield")
     assertThat(address.get("postcode")).isEqualTo("S3 7BS")
     assertThat(address.get("noFixedAbode")).isEqualTo(false)
+  }
+
+  @Test
+  fun `create recommendation when no active conviction available`() {
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
+  fun `create recommendation when multiple active custodial convictions present`() {
+    val staffCode = "STFFCDEU"
+    licenceConditionsResponse(crn, 2500614567)
+    licenceConditionsResponse(crn, 123456789)
+    multipleConvictionResponse(crn, staffCode)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
+  fun `create recommendation when Delius and OASys offence codes do not match`() {
+    licenceConditionsResponse(crn, 2500614567)
+    val staffCode = "STFFCDEU"
+    convictionResponse(crn, "011", offenceCode = "not a match")
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
+  fun `create recommendation when there is a more recent assessment available from OASys than from Delius`() {
+    val staffCode = "STFFCDEU"
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn, laterCompleteAssessmentExists = true)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
   }
 
   @Test

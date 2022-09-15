@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
@@ -30,6 +31,22 @@ class ArnApiClient(
         handleTimeoutException(
           exception = ex,
           endPoint = "risk summary"
+        )
+      }
+  }
+
+  fun getAssessments(crn: String): Mono<AssessmentsResponse> {
+    val responseType = object : ParameterizedTypeReference<AssessmentsResponse>() {}
+    return webClient
+      .get()
+      .uri("/assessments/crn/$crn/offence")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "assessments"
         )
       }
   }

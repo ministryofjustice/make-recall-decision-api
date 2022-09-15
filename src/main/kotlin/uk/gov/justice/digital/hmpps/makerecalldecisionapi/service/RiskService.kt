@@ -24,7 +24,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -34,6 +37,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -45,6 +49,7 @@ internal class RiskService(
   private val userAccessValidator: UserAccessValidator,
   private val recommendationService: RecommendationService
 ) {
+
   suspend fun getRisk(crn: String): RiskResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
@@ -82,6 +87,40 @@ internal class RiskService(
     }
   }
 
+  suspend fun fetchIndexOffenceDetails(crn: String): String? {
+    val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
+    val assessmentsResponse = fetchAssessments(crn)
+
+    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { ZonedDateTime.parse(it.dateCompleted).toLocalDate() }
+    val assessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
+    val mainOffences: List<Offence>? = activeConvictionsFromDelius?.flatMap(this::extractMainOffences)
+    val mainOffence = mainOffences?.firstOrNull()
+    val deliusCode = mainOffence?.detail?.code
+
+    return activeConvictionsFromDelius
+      ?.flatMap(this::extractMainOffences)
+      ?.filter { assessmentCompleted }
+      ?.filter { mainOffences?.size == 1 }
+      ?.filter { datesMatch(latestAssessment, mainOffence) }
+      ?.map { latestAssessment }
+      ?.filter { it -> offenceCodesMatch(it, deliusCode) }
+      ?.filter { isLatestAssessment(it) }
+      ?.map { it?.offence }
+      ?.firstOrNull()
+  }
+
+  private fun isLatestAssessment(it: Assessment?) = (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
+
+  private fun datesMatch(
+    latestAssessment: Assessment?,
+    mainOffence: Offence?
+  ) = if (latestAssessment?.dateCompleted != null) {
+    mainOffence?.offenceDate == ZonedDateTime.parse(latestAssessment.dateCompleted).toLocalDate()
+  } else false
+
+  private fun offenceCodesMatch(it: Assessment?, deliusCode: String?) =
+    it?.offenceDetails?.any { (it.offenceCode + it.offenceSubCode) == deliusCode } == true
+
   private suspend fun fetchContingencyPlan(crn: String): ContingencyPlan {
     val contingencyPlanResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getContingencyPlan(crn))!!
@@ -113,6 +152,24 @@ internal class RiskService(
     val victimSafetyPlanning = latestCompletedAssessment?.victimSafetyPlanning ?: ""
     val contingencyPlans = latestCompletedAssessment?.contingencyPlans ?: ""
     return keyConsiderationsCurrentSituation + furtherConsiderationsCurrentSituation + supervision + monitoringAndControl + interventionsAndTreatment + victimSafetyPlanning + contingencyPlans
+  }
+
+  private fun fetchAssessments(crn: String): AssessmentsResponse {
+    val assessmentsResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getAssessments(crn))!!
+    } catch (e: WebClientResponseException.NotFound) {
+      log.info("No assessments available for CRN: $crn - ${e.message}")
+      AssessmentsResponse(crn = null, limitedAccessOffender = null, assessments = null)
+    } catch (e: WebClientResponseException.InternalServerError) {
+      log.info("No assessments scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      AssessmentsResponse(crn = null, limitedAccessOffender = null, assessments = null)
+    }
+    return assessmentsResponse
+  }
+
+  private fun extractMainOffences(it: Conviction): List<Offence> {
+    return it.offences
+      ?.filter { it.mainOffence == true } ?: emptyList()
   }
 
   private suspend fun fetchCurrentScores(crn: String): Scores {

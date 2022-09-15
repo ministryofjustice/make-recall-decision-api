@@ -48,6 +48,25 @@
         "lastUpdatedDatetime": "2022-01-17T15:30:23"
       }
     ],
+    "sentence": {
+      "sentenceId": 2500539955,
+      "description": "Absolute/Conditional Discharge",
+      "originalLength": 2,
+      "originalLengthUnits": "Months",
+      "defaultLength": 2,
+      "lengthInDays": 58,
+      "expectedSentenceEndDate": "2022-03-13",
+      "startDate": "2022-01-14",
+      "terminationDate": "2022-01-14",
+      "terminationReason": "Auto Terminated",
+      "sentenceType": {
+        "code": "NP",
+        "description": "Absolute/Conditional Discharge"
+      },
+      "failureToComplyLimit": 2,
+      "cja2003Order": true,
+      "legacyOrder": true
+    },
     "latestCourtAppearanceOutcome": {
       "code": "111",
       "description": "Adjourned For Reports"

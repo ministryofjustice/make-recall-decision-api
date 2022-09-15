@@ -68,6 +68,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
+          indexOffenceDetails = "Juicy details!",
           custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, details = "Bromsgrove Police Station\r\nLondon", allOptions = null),
           recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
           responseToProbation = "They did not respond well",
@@ -205,7 +206,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(81)
+      assertThat(result.size).isEqualTo(82)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -269,6 +270,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
       assertThat(result["date_of_decision"]).isEqualTo("2022-09-13")
       assertThat(result["time_of_decision"]).isEqualTo("08:26:31")
+      assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
     }
   }
 
@@ -342,6 +344,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
     )
     return PartAData(
+      indexOffenceDetails = "Juicy details!",
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
       responseToProbation = "They have not responded well",

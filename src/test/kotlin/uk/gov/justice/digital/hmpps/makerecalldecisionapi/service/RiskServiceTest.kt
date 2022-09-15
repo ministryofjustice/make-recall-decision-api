@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -430,7 +431,20 @@ internal class RiskServiceTest {
         monitoringAndControl = "monitoring and control\n",
         interventionsAndTreatment = "interventions and treatment\n",
         victimSafetyPlanning = "victim safety planning\n",
-        contingencyPlans = "contingency plans"
+        contingencyPlans = "contingency plans",
+        offenceDetails = listOf(
+          AssessmentOffenceDetail(
+            offenceCode = "12",
+            offenceSubCode = "34"
+          )
+        ),
+        offence = null,
+        laterCompleteAssessmentExists = null,
+        laterPartCompSignedAssessmentExists = null,
+        laterPartCompUnsignedAssessmentExists = null,
+        laterSignLockAssessmentExists = null,
+        laterWIPAssessmentExists = null,
+        superStatus = null
       )
     )
   )
