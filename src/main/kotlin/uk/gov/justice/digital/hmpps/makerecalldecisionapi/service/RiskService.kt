@@ -37,7 +37,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -90,8 +89,7 @@ internal class RiskService(
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
-
-    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { ZonedDateTime.parse(it.dateCompleted).toLocalDate() }
+    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
     val assessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
     val mainOffences: List<Offence>? = activeConvictionsFromDelius?.flatMap(this::extractMainOffences)
     val mainOffence = mainOffences?.firstOrNull()
@@ -115,7 +113,7 @@ internal class RiskService(
     latestAssessment: Assessment?,
     mainOffence: Offence?
   ) = if (latestAssessment?.dateCompleted != null) {
-    mainOffence?.offenceDate == ZonedDateTime.parse(latestAssessment.dateCompleted).toLocalDate()
+    mainOffence?.offenceDate == LocalDateTime.parse(latestAssessment.dateCompleted).toLocalDate()
   } else false
 
   private fun offenceCodesMatch(it: Assessment?, deliusCode: String?) =
