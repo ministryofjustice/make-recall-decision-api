@@ -16,10 +16,11 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 
@@ -242,6 +243,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")
         .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(createPartARequest())
+        )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -252,6 +256,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
+    assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)
   }
 
@@ -396,6 +401,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userAccessExcluded(crn)
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(createPartARequest())
+        )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isForbidden

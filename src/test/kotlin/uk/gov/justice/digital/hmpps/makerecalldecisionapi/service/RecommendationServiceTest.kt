@@ -214,7 +214,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
     // when
-    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", false)
+    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
 
     // then
     then(recommendationRepository).should().save(recommendationToSave)
@@ -258,6 +258,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           recommendationJsonNode,
           recommendationId = 456L,
           "Bill",
+          null,
           false
         )
       }
@@ -342,6 +343,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.region).isEqualTo("London")
     assertThat(recommendationResponse.localDeliveryUnit).isEqualTo("LDU London")
     assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
+    assertThat(recommendationResponse.userEmailPartACompletedBy).isEqualTo("Ben.Baker@test.com")
     assertThat(recommendationResponse.lastPartADownloadDateTime).isEqualTo("2022-09-01T15:22:24.567Z")
   }
 
@@ -397,7 +399,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", false)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
@@ -495,7 +497,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.save(any()))
       .willReturn(recommendationToSave)
 
-    val result = recommendationService.generatePartA(1L, "John Smith")
+    val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
 
     val captor = argumentCaptor<RecommendationEntity>()
     then(recommendationRepository).should().save(captor.capture())
@@ -504,6 +506,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Long_J_$crn.docx")
     assertThat(result.fileContents).isNotNull
     assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
+    assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
     assertThat(recommendationEntity.data.lastPartADownloadDateTime).isEqualTo("2022-07-26T09:48:27.443Z")
   }
 
@@ -523,7 +526,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.save(any()))
       .willReturn(recommendationToSave)
 
-    val result = recommendationService.generatePartA(1L, "John smith")
+    val result = recommendationService.generatePartA(1L, "John smith", "John.Smith@test.com")
 
     assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
     assertThat(result.fileContents).isNotNull

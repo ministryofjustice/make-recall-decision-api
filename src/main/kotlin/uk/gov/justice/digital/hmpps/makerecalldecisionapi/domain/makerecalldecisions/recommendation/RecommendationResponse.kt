@@ -36,6 +36,7 @@ data class RecommendationResponse(
   val region: String? = null,
   val localDeliveryUnit: String? = null,
   val userNamePartACompletedBy: String? = null,
+  val userEmailPartACompletedBy: String? = null,
   val lastPartADownloadDateTime: String? = null
 )
 
