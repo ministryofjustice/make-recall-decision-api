@@ -61,6 +61,7 @@ data class RecommendationModel(
   var region: String? = null,
   var localDeliveryUnit: String? = null,
   var userNamePartACompletedBy: String? = null,
+  var userEmailPartACompletedBy: String? = null,
   var lastPartADownloadDateTime: String? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,

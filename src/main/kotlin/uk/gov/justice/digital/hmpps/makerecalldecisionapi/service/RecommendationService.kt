@@ -118,6 +118,7 @@ internal class RecommendationService(
         region = recommendationEntity.data.region,
         localDeliveryUnit = recommendationEntity.data.localDeliveryUnit,
         userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
+        userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
       )
     }
@@ -125,7 +126,7 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, isPartADownloaded: Boolean): RecommendationEntity {
+  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, userEmail: String?, isPartADownloaded: Boolean): RecommendationEntity {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -137,6 +138,7 @@ internal class RecommendationService(
 
       if (isPartADownloaded) {
         existingRecommendationEntity.data.userNamePartACompletedBy = username
+        existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = nowDateTime()
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
@@ -172,9 +174,9 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun generatePartA(recommendationId: Long, username: String?): PartAResponse {
+  fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): PartAResponse {
 
-    val recommendationEntity = updateRecommendation(null, recommendationId, username, true)
+    val recommendationEntity = updateRecommendation(null, recommendationId, username, userEmail, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))

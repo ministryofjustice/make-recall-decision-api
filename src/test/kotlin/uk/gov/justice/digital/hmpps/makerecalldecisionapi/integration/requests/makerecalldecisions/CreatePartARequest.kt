@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions
 
-fun recommendationRequest(crn: String) = """
+fun createPartARequest() = """
   {
-    "crn": "$crn"
+    "userEmail": "some.user@email.com"
   }
 """.trimIndent()

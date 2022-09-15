@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreatePartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
@@ -71,7 +72,7 @@ internal class RecommendationController(
   ): ResponseEntity<Unit> {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, false)
+    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, null, false)
     return ResponseEntity<Unit>(OK)
   }
 
@@ -79,12 +80,13 @@ internal class RecommendationController(
   @PostMapping("/recommendations/{recommendationId}/part-a")
   @Operation(summary = "WIP: Generates a Part A document")
   suspend fun generatePartADocument(
-    @PathVariable("recommendationId") recommendationId: Long
+    @PathVariable("recommendationId") recommendationId: Long,
+    @RequestBody createPartARequest: CreatePartARequest,
   ): ResponseEntity<PartAResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
 
     val responseEntity = try {
-      ResponseEntity(recommendationService.generatePartA(recommendationId, authenticationFacade.currentNameOfUser), OK)
+      ResponseEntity(recommendationService.generatePartA(recommendationId, authenticationFacade.currentNameOfUser, createPartARequest.userEmail), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(PartAResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }
