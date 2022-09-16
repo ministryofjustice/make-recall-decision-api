@@ -96,6 +96,28 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `create recommendation when offence type is not current`() {
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn, offenceType = "NOT_CURRENT")
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
   fun `create recommendation when multiple active custodial convictions present`() {
     val staffCode = "STFFCDEU"
     licenceConditionsResponse(crn, 2500614567)

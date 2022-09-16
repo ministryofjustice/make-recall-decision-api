@@ -101,7 +101,7 @@ internal class RiskService(
       ?.filter { mainOffences?.size == 1 }
       ?.filter { datesMatch(latestAssessment, mainOffence) }
       ?.map { latestAssessment }
-      ?.filter { it -> offenceCodesMatch(it, deliusCode) }
+      ?.filter { it -> currentOffenceCodesMatch(it, deliusCode) }
       ?.filter { isLatestAssessment(it) }
       ?.map { it?.offence }
       ?.firstOrNull()
@@ -116,8 +116,8 @@ internal class RiskService(
     mainOffence?.offenceDate == LocalDateTime.parse(latestAssessment.dateCompleted).toLocalDate()
   } else false
 
-  private fun offenceCodesMatch(it: Assessment?, deliusCode: String?) =
-    it?.offenceDetails?.any { (it.offenceCode + it.offenceSubCode) == deliusCode } == true
+  private fun currentOffenceCodesMatch(it: Assessment?, deliusCode: String?) =
+    it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == deliusCode) && it.type == "CURRENT" } == true
 
   private suspend fun fetchContingencyPlan(crn: String): ContingencyPlan {
     val contingencyPlanResponse = try {
