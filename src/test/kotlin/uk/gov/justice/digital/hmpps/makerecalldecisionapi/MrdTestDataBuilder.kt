@@ -36,7 +36,7 @@ class MrdTestDataBuilder {
     fun recommendationDataEntityData(
       crn: String?,
       firstName: String = "Jim",
-      surname: String = "Long"
+      surname: String = "Long",
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
@@ -75,7 +75,7 @@ class MrdTestDataBuilder {
           localDeliveryUnit = "LDU London",
           userNamePartACompletedBy = "Ben Baker",
           userEmailPartACompletedBy = "Ben.Baker@test.com",
-          lastPartADownloadDateTime = "2022-09-01T15:22:24.567Z"
+          lastPartADownloadDateTime = null
         )
       )
     }
