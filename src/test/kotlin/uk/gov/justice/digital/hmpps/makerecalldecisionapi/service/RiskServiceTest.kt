@@ -549,7 +549,7 @@ internal class RiskServiceTest {
 
   private fun assessment() = Assessment(
     dateCompleted = "2022-08-26T15:00:08",
-    assessmentStatus = "COMPLETED",
+    assessmentStatus = "COMPLETE",
     keyConsiderationsCurrentSituation = null,
     furtherConsiderationsCurrentSituation = null,
     supervision = null,
@@ -570,7 +570,7 @@ internal class RiskServiceTest {
     laterPartCompUnsignedAssessmentExists = false,
     laterSignLockAssessmentExists = false,
     laterWIPAssessmentExists = false,
-    superStatus = "COMPLETED"
+    superStatus = "COMPLETE"
   )
 
   private val allOffenderDetailsResponse = AllOffenderDetailsResponse(

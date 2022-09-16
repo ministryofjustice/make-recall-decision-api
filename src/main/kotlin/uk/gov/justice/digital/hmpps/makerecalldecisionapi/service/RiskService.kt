@@ -90,7 +90,7 @@ internal class RiskService(
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
+    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
 
     return activeConvictionsFromDelius
       ?.filter { oasysAssessmentCompleted }

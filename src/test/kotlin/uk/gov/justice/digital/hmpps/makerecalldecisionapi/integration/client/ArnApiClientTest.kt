@@ -124,8 +124,8 @@ class ArnApiClientTest : IntegrationTestBase() {
           offenceSubCode = "34"
         )
       ),
-      assessmentStatus = "COMPLETED",
-      superStatus = "COMPLETED",
+      assessmentStatus = "COMPLETE",
+      superStatus = "COMPLETE",
       dateCompleted = "2022-04-24T15:00:08",
       laterWIPAssessmentExists = false,
       laterSignLockAssessmentExists = false,
@@ -149,8 +149,8 @@ class ArnApiClientTest : IntegrationTestBase() {
           offenceSubCode = "90"
         )
       ),
-      assessmentStatus = "COMPLETED",
-      superStatus = "COMPLETED",
+      assessmentStatus = "COMPLETE",
+      superStatus = "COMPLETE",
       dateCompleted = "2022-04-23T15:00:08",
       laterWIPAssessmentExists = false,
       laterSignLockAssessmentExists = false,
