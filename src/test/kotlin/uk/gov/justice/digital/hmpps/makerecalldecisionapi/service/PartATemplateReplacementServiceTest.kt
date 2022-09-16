@@ -192,7 +192,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           region = "NPS London",
           localDeliveryUnit = "All NPS London",
           lastPartADownloadDateTime = LocalDateTime.now(),
-          fixedTermAdditionalLicenceConditions = "This is an additional licence condition"
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -406,6 +406,6 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
       fixedTermAdditionalLicenceConditions = "This is an additional licence condition",
-      )
+    )
   }
 }

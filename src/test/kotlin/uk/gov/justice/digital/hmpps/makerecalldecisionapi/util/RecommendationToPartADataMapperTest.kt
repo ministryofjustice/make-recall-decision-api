@@ -66,18 +66,20 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions {2}, indeterminate sentence {3}, extended sentence {4}, should map in the part A with the recall value {5} and details {6} with additional licence conditions value {7}")
+  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, should map in the part A with the recall value {6} and details {7} with additional licence conditions value {8}")
   @CsvSource(
-    "STANDARD,Standard details,,false,false,Standard,Standard details,N/A (standard recall)",
-    "FIXED_TERM,Fixed details,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
-    "STANDARD,Standard details,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)"
+    "STANDARD,Standard details,false,,false,false,Standard,Standard details,N/A (standard recall)",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,Fixed,Fixed details,''",
+    "STANDARD,Standard details,false,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)"
   )
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
     recallTypeDetails: String?,
-    fixedTermAdditionalLicenceConditions: String?,
+    fixedTermAdditionalLicenceConditionsSelected: Boolean,
+    fixedTermAdditionalLicenceConditionsValue: String?,
     isIndeterminateSentence: Boolean,
     isExtendedSentence: Boolean,
     partARecallTypeDisplayValue: String?,
@@ -95,7 +97,7 @@ class RecommendationToPartADataMapperTest {
           ),
           isIndeterminateSentence = isIndeterminateSentence,
           isExtendedSentence = isExtendedSentence,
-          fixedTermAdditionalLicenceConditions = fixedTermAdditionalLicenceConditions,
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
         )
       )
 

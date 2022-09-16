@@ -76,7 +76,7 @@ class MrdTestDataBuilder {
           userNamePartACompletedBy = "Ben Baker",
           userEmailPartACompletedBy = "Ben.Baker@test.com",
           lastPartADownloadDateTime = null,
-          fixedTermAdditionalLicenceConditions = "This is an additional licence condition"
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
         )
       )
     }
@@ -107,7 +107,7 @@ class MrdTestDataBuilder {
         localPoliceContact = localPoliceContact(),
         vulnerabilities = vulnerabilities(),
         convictionDetail = convictionDetail(),
-        fixedTermAdditionalLicenceConditions = "This is an additional licence condition"
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
       )
     }
 

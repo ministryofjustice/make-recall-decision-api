@@ -346,7 +346,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
     assertThat(recommendationResponse.userEmailPartACompletedBy).isEqualTo("Ben.Baker@test.com")
     assertThat(recommendationResponse.lastPartADownloadDateTime).isNull()
-    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions).isEqualTo("This is an additional licence condition")
+    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.details).isEqualTo("This is an additional licence condition")
   }
 
   @Test

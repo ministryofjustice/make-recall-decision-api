@@ -195,6 +195,9 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       }
     ]
   },
-  "fixedTermAdditionalLicenceConditions": "This is an additional licence condition"
+  "fixedTermAdditionalLicenceConditions": {
+    "selected": true,
+    "details": "This is an additional licence condition"
+  }
 }
 """.trimIndent()

@@ -114,7 +114,7 @@ class RecommendationToPartADataMapper {
     private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationEntity): String? {
       val isStandardRecall: Boolean = recommendation.data.recallType?.selected?.value == RecallTypeValue.STANDARD
       return buildNotApplicableMessage(recommendation.data.isIndeterminateSentence, recommendation.data.isExtendedSentence, isStandardRecall)
-        ?: recommendation.data.fixedTermAdditionalLicenceConditions
+        ?: if (recommendation.data.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.data.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
     }
 
     private fun buildNotApplicableMessage(isIndeterminateSentence: Boolean?, isExtendedSentence: Boolean?, isStandardRecall: Boolean?): String? {
