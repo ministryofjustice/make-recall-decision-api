@@ -91,7 +91,7 @@ class ArnApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `retrieves asessments`() {
+  fun `retrieves assessments`() {
     // given
     val crn = "X123456"
     oasysAssessmentsResponse(crn, offenceType = "CURRENT")
@@ -116,12 +116,14 @@ class ArnApiClientTest : IntegrationTestBase() {
         AssessmentOffenceDetail(
           type = "NOT_CURRENT",
           offenceCode = "88",
-          offenceSubCode = "88"
+          offenceSubCode = "88",
+          offenceDate = "2022-04-24T20:39:47"
         ),
         AssessmentOffenceDetail(
           type = "CURRENT",
           offenceCode = "12",
-          offenceSubCode = "34"
+          offenceSubCode = "34",
+          offenceDate = "2022-04-24T20:39:47"
         )
       ),
       assessmentStatus = "COMPLETE",
@@ -146,7 +148,8 @@ class ArnApiClientTest : IntegrationTestBase() {
         AssessmentOffenceDetail(
           type = "NOT_CURRENT",
           offenceCode = "78",
-          offenceSubCode = "90"
+          offenceSubCode = "90",
+          offenceDate = "2022-04-24T20:39:47"
         )
       ),
       assessmentStatus = "COMPLETE",
