@@ -46,7 +46,8 @@ data class PartAData(
   val localDeliveryUnit: String? = null,
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
-  val indexOffenceDetails: String? = null
+  val indexOffenceDetails: String? = null,
+  val fixedTermAdditionalLicenceConditions: String? = null
 )
 
 data class ValueWithDetails(

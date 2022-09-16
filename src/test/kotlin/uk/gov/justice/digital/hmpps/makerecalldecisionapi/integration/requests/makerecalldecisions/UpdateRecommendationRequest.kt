@@ -194,6 +194,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
         "text": "Relationship breakdown"
       }
     ]
+  },
+  "fixedTermAdditionalLicenceConditions": {
+    "selected": true,
+    "details": "This is an additional licence condition"
   }
 }
 """.trimIndent()

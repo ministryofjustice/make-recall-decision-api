@@ -124,7 +124,8 @@ internal class RecommendationService(
         userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
         userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
-        indexOffenceDetails = recommendationEntity.data.indexOffenceDetails
+        indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
+        fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
       )
     }
   }

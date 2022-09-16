@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
@@ -34,7 +35,7 @@ class RecommendationToPartADataMapper {
           recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
           recommendation.data.custodyStatus?.details
         ),
-        recallType = findRecallTypeToDisplay(recommendation.data.recallType, recommendation.data.isIndeterminateSentence),
+        recallType = findRecallTypeToDisplay(recommendation.data.recallType, recommendation.data.isIndeterminateSentence, recommendation.data.isExtendedSentence),
         responseToProbation = recommendation.data.responseToProbation,
         whatLedToRecall = recommendation.data.whatLedToRecall,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
@@ -82,7 +83,8 @@ class RecommendationToPartADataMapper {
         localDeliveryUnit = recommendation.data.localDeliveryUnit,
         dateOfDecision = lastDownloadDate,
         timeOfDecision = lastDownloadTime,
-        indexOffenceDetails = recommendation.data.indexOffenceDetails
+        indexOffenceDetails = recommendation.data.indexOffenceDetails,
+        fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation)
       )
     }
 
@@ -95,21 +97,38 @@ class RecommendationToPartADataMapper {
       return formattedField
     }
 
-    private fun findRecallTypeToDisplay(recallType: RecallType?, isIndeterminateSentence: Boolean?): ValueWithDetails {
-      if (isIndeterminateSentence == true) {
-        return ValueWithDetails("N/A", "N/A")
+    private fun findRecallTypeToDisplay(recallType: RecallType?, isIndeterminateSentence: Boolean?, isExtendedSentence: Boolean?): ValueWithDetails {
+      return if (isIndeterminateSentence == true || isExtendedSentence == true) {
+        val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
+        ValueWithDetails(textToDisplay, textToDisplay)
+      } else {
+        val partAValue = when (recallType?.selected?.value) {
+          RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
+          RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
+          else -> null
+        }
+        ValueWithDetails(partAValue, recallType?.selected?.details)
       }
-      val partAValue = when (recallType?.selected?.value) {
-        RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
-        RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
-        else -> null
-      }
+    }
 
-      return ValueWithDetails(partAValue, recallType?.selected?.details)
+    private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationEntity): String? {
+      val isStandardRecall: Boolean = recommendation.data.recallType?.selected?.value == RecallTypeValue.STANDARD
+      return buildNotApplicableMessage(recommendation.data.isIndeterminateSentence, recommendation.data.isExtendedSentence, isStandardRecall)
+        ?: if (recommendation.data.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.data.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
+    }
+
+    private fun buildNotApplicableMessage(isIndeterminateSentence: Boolean?, isExtendedSentence: Boolean?, isStandardRecall: Boolean?): String? {
+      return if (isIndeterminateSentence == true) {
+        "$NOT_APPLICABLE (not a determinate recall)"
+      } else if (isExtendedSentence == true) {
+        "$NOT_APPLICABLE (extended sentence recall)"
+      } else if (isStandardRecall == true) {
+        "$NOT_APPLICABLE (standard recall)"
+      } else null
     }
 
     private fun convertBooleanToYesNo(value: Boolean?): String {
-      if (value == true) return YES else if (value == false) return NO else return EMPTY_STRING
+      return if (value == true) YES else if (value == false) NO else EMPTY_STRING
     }
 
     private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: AdditionalLicenceConditions?): String {

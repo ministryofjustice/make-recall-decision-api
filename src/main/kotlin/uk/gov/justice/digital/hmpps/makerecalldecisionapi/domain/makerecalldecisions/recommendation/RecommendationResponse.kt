@@ -39,7 +39,8 @@ data class RecommendationResponse(
   val userNamePartACompletedBy: String? = null,
   val userEmailPartACompletedBy: String? = null,
   val lastPartADownloadDateTime: LocalDateTime? = null,
-  val indexOffenceDetails: String? = null
+  val indexOffenceDetails: String? = null,
+  val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null
 )
 
 data class UnderIntegratedOffenderManagement(

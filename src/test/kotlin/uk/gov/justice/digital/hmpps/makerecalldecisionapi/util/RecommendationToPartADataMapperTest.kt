@@ -66,14 +66,25 @@ class RecommendationToPartADataMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given recall type {0}, recall details {1}, indeterminate sentence {2}, should map to the part A value {3} and details {4}")
-  @CsvSource("STANDARD,Standard details,false,Standard,Standard details", "FIXED_TERM,Fixed details,false,Fixed,Fixed details", "NO_RECALL,,false,,", "STANDARD,Standard details,true,N/A,N/A", "FIXED_TERM,Fixed details,true,N/A,N/A", "NO_RECALL,,true,N/A,N/A")
+  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, should map in the part A with the recall value {6} and details {7} with additional licence conditions value {8}")
+  @CsvSource(
+    "STANDARD,Standard details,false,,false,false,Standard,Standard details,N/A (standard recall)",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,Fixed,Fixed details,''",
+    "STANDARD,Standard details,false,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)"
+  )
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
     recallTypeDetails: String?,
+    fixedTermAdditionalLicenceConditionsSelected: Boolean,
+    fixedTermAdditionalLicenceConditionsValue: String?,
     isIndeterminateSentence: Boolean,
-    partADisplayValue: String?,
-    partADisplayDetails: String?
+    isExtendedSentence: Boolean,
+    partARecallTypeDisplayValue: String?,
+    partARecallTypeDisplayDetails: String?,
+    partAFixedTermLicenceConditionsDisplayValue: String?,
   ) {
     runTest {
       val recommendation = RecommendationEntity(
@@ -84,14 +95,17 @@ class RecommendationToPartADataMapperTest {
             selected = RecallTypeSelectedValue(value = recallValue, details = recallTypeDetails),
             allOptions = null
           ),
-          isIndeterminateSentence = isIndeterminateSentence
+          isIndeterminateSentence = isIndeterminateSentence,
+          isExtendedSentence = isExtendedSentence,
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
         )
       )
 
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.recallType?.value).isEqualTo(partADisplayValue)
-      assertThat(result.recallType?.details).isEqualTo(partADisplayDetails)
+      assertThat(result.recallType?.value).isEqualTo(partARecallTypeDisplayValue)
+      assertThat(result.recallType?.details).isEqualTo(partARecallTypeDisplayDetails)
+      assertThat(result.fixedTermAdditionalLicenceConditions).isEqualTo(partAFixedTermLicenceConditionsDisplayValue)
     }
   }
 
