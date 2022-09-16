@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @ExperimentalCoroutinesApi
 class RecommendationToPartADataMapperTest {
@@ -671,12 +672,12 @@ class RecommendationToPartADataMapperTest {
         id = 1,
         data = RecommendationModel(
           crn = "ABC123",
-          lastPartADownloadDateTime = "2022-09-13T08:26:31.349Z"
+          lastPartADownloadDateTime = LocalDateTime.of(2022, 9, 13, 8, 26, 31),
         )
       )
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.dateOfDecision).isEqualTo("2022-09-13")
+      assertThat(result.dateOfDecision).isEqualTo("13/09/2022")
       assertThat(result.timeOfDecision).isEqualTo("08:26:31")
     }
   }

@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class RecommendationResponse(
   val userAccessResponse: UserAccessResponse? = null,
@@ -37,7 +38,7 @@ data class RecommendationResponse(
   val localDeliveryUnit: String? = null,
   val userNamePartACompletedBy: String? = null,
   val userEmailPartACompletedBy: String? = null,
-  val lastPartADownloadDateTime: String? = null,
+  val lastPartADownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null
 )
 

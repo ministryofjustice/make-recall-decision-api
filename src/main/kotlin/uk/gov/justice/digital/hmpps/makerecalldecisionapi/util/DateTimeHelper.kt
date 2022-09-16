@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class DateTimeHelper {
@@ -14,9 +15,13 @@ class DateTimeHelper {
       return formatter.print(DateTime.now()).toString()
     }
 
-    fun nowDateTime(): String {
+    fun utcNowDateTimeString(): String {
       val formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
       return formatter.print(DateTime(DateTimeZone.UTC)).toString()
+    }
+
+    fun localNowDateTime(): LocalDateTime {
+      return LocalDateTime.now()
     }
 
     fun convertLocalDateToReadableDate(date: LocalDate?): String {
@@ -31,10 +36,10 @@ class DateTimeHelper {
       return date?.format(formatter) ?: ""
     }
 
-    fun splitDateTime(dateTime: String?): Pair<String, String> {
-      val parts = dateTime?.split("T")
-
-      return if (parts != null) Pair(parts[0], parts[1].substring(0, 8)) else Pair("", "")
+    fun splitDateTime(dateTime: LocalDateTime?): Pair<String?, String?> {
+      val formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+      val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+      return Pair(dateTime?.format(formatterDate), dateTime?.format(formatterTime))
     }
   }
 }
