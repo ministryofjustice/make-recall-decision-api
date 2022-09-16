@@ -56,6 +56,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
+import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -190,7 +191,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           userEmailPartACompletedBy = "Henry.Richarlison@test.com",
           region = "NPS London",
           localDeliveryUnit = "All NPS London",
-          lastPartADownloadDateTime = "2022-09-13T08:26:31.349Z"
+          lastPartADownloadDateTime = LocalDateTime.now(),
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -269,8 +270,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["last_person_completing_form_email"]).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result["region"]).isEqualTo("NPS London")
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
-      assertThat(result["date_of_decision"]).isEqualTo("2022-09-13")
-      assertThat(result["time_of_decision"]).isEqualTo("08:26:31")
+      assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
+      assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
     }
   }
@@ -400,8 +401,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       lastPersonCompletingFormEmail = "Henry.Richarlison@test.com",
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
-      dateOfDecision = "2022-09-13",
-      timeOfDecision = "08:26:31",
+      dateOfDecision = "13/09/2022",
+      timeOfDecision = "08:26",
     )
   }
 }
