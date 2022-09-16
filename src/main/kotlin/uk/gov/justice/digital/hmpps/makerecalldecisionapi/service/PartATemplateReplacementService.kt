@@ -111,7 +111,13 @@ internal class PartATemplateReplacementService {
       "date_of_decision" to partAData.dateOfDecision,
       "time_of_decision" to partAData.timeOfDecision,
       "index_offence_details" to (partAData.indexOffenceDetails ?: EMPTY_STRING),
-      "fixed_term_additional_licence_conditions" to partAData.fixedTermAdditionalLicenceConditions
+      "fixed_term_additional_licence_conditions" to partAData.fixedTermAdditionalLicenceConditions,
+      "behaviour_similar_to_index_offence" to partAData.behaviourSimilarToIndexOffence,
+      "behaviour_similar_to_index_offence_present" to partAData.behaviourSimilarToIndexOffencePresent,
+      "behaviour_leading_to_sexual_or_violent_offence" to partAData.behaviourLeadingToSexualOrViolentOffence,
+      "behaviour_leading_to_sexual_or_violent_offence_present" to partAData.behaviourLeadingToSexualOrViolentOffencePresent,
+      "out_of_touch" to partAData.outOfTouch,
+      "out_of_touch_present" to partAData.outOfTouchPresent
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

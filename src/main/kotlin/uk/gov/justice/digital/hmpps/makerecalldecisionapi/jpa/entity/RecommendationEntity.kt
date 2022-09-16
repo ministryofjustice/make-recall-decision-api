@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
@@ -75,7 +76,8 @@ data class RecommendationModel(
   var vulnerabilities: Vulnerabilities? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
-  var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null
+  var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
+  var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null
 ) : Serializable
 
 enum class Status {

@@ -40,7 +40,14 @@ data class RecommendationResponse(
   val userEmailPartACompletedBy: String? = null,
   val lastPartADownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
-  val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null
+  val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
+  val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null
+)
+
+data class IndeterminateOrExtendedSentenceDetails(
+  val behaviourSimilarToIndexOffence: String? = null,
+  val behaviourLeadingToSexualOrViolentOffence: String? = null,
+  val outOfTouch: String? = null
 )
 
 data class UnderIntegratedOffenderManagement(

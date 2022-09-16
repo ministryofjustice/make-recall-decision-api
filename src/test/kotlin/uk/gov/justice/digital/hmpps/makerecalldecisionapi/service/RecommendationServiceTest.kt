@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -161,7 +162,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z"
+        createdDate = "2022-07-01T15:22:24.567Z",
+        indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
+          behaviourSimilarToIndexOffence = "behaviour similar to index offence",
+          behaviourLeadingToSexualOrViolentOffence = "behaviour leading to sexual or violent offence",
+          outOfTouch = "out of touch"
+        )
       )
     )
 
@@ -199,7 +205,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           localPoliceContact = updateRecommendationRequest.localPoliceContact,
           vulnerabilities = updateRecommendationRequest.vulnerabilities,
           convictionDetail = updateRecommendationRequest.convictionDetail,
-          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions
+          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
+          indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails
         )
       )
 

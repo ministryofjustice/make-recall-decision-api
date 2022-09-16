@@ -98,9 +98,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create recommendation when no active conviction available`() {
+    userAccessAllowed(crn)
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
     val response = convertResponseToJSONObject(
@@ -317,7 +317,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.localDeliveryUnit").isEqualTo("Local delivery unit description 2")
       .jsonPath("$.fixedTermAdditionalLicenceConditions.selected").isEqualTo(true)
       .jsonPath("$.fixedTermAdditionalLicenceConditions.details").isEqualTo("This is an additional licence condition")
-
+      .jsonPath("$.indeterminateOrExtendedSentenceDetails.behaviourSimilarToIndexOffence").isEqualTo("some behaviour similar to index offence")
+      .jsonPath("$.indeterminateOrExtendedSentenceDetails.behaviourLeadingToSexualOrViolentOffence").isEqualTo("behaviour leading to sexual or violent behaviour")
+      .jsonPath("$.indeterminateOrExtendedSentenceDetails.outOfTouch").isEqualTo("out of touch")
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }

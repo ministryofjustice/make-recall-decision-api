@@ -84,7 +84,13 @@ class RecommendationToPartADataMapper {
         dateOfDecision = lastDownloadDate,
         timeOfDecision = lastDownloadTime,
         indexOffenceDetails = recommendation.data.indexOffenceDetails,
-        fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation)
+        fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation),
+        behaviourSimilarToIndexOffence = recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourSimilarToIndexOffence,
+        behaviourSimilarToIndexOffencePresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourSimilarToIndexOffence.isNullOrEmpty()) NO else YES,
+        behaviourLeadingToSexualOrViolentOffence = recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourLeadingToSexualOrViolentOffence,
+        behaviourLeadingToSexualOrViolentOffencePresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourLeadingToSexualOrViolentOffence.isNullOrEmpty()) NO else YES,
+        outOfTouch = recommendation.data.indeterminateOrExtendedSentenceDetails?.outOfTouch,
+        outOfTouchPresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.outOfTouch.isNullOrEmpty()) NO else YES
       )
     }
 

@@ -198,6 +198,11 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "fixedTermAdditionalLicenceConditions": {
     "selected": true,
     "details": "This is an additional licence condition"
+  },
+  "indeterminateOrExtendedSentenceDetails": {
+    "behaviourSimilarToIndexOffence": "some behaviour similar to index offence",
+    "behaviourLeadingToSexualOrViolentOffence": "behaviour leading to sexual or violent behaviour",
+    "outOfTouch": "out of touch"
   }
 }
 """.trimIndent()
