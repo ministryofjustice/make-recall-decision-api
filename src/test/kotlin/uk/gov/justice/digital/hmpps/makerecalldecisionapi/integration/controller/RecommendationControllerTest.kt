@@ -293,6 +293,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.convictionDetail.sentenceSecondLengthUnits").isEqualTo("days")
       .jsonPath("$.region").isEqualTo("NPS North West")
       .jsonPath("$.localDeliveryUnit").isEqualTo("Local delivery unit description 2")
+      .jsonPath("$.fixedTermAdditionalLicenceConditions.selected").isEqualTo(true)
+      .jsonPath("$.fixedTermAdditionalLicenceConditions.details").isEqualTo("This is an additional licence condition")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))

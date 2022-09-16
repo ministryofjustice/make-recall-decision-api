@@ -75,8 +75,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
-          isIndeterminateSentence = true,
-          isExtendedSentence = true,
+          isIndeterminateSentence = false,
+          isExtendedSentence = false,
           personOnProbation = PersonOnProbation(
             gender = "Male",
             dateOfBirth = parse("1982-10-24"),
@@ -192,6 +192,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           region = "NPS London",
           localDeliveryUnit = "All NPS London",
           lastPartADownloadDateTime = LocalDateTime.now(),
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -208,7 +209,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(82)
+      assertThat(result.size).isEqualTo(83)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -273,6 +274,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
+      assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
     }
   }
 
@@ -403,6 +405,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       localDeliveryUnit = "All NPS London",
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
+      fixedTermAdditionalLicenceConditions = "This is an additional licence condition",
     )
   }
 }
