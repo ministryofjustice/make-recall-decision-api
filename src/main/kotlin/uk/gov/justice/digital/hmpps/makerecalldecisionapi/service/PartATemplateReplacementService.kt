@@ -111,7 +111,7 @@ internal class PartATemplateReplacementService {
       "date_of_decision" to partAData.dateOfDecision,
       "time_of_decision" to partAData.timeOfDecision,
       "index_offence_details" to (partAData.indexOffenceDetails ?: EMPTY_STRING),
-      "additional_licence_conditions" to partAData.fixedTermAdditionalLicenceConditions
+      "fixed_term_additional_licence_conditions" to partAData.fixedTermAdditionalLicenceConditions
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

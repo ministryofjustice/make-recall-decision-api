@@ -70,7 +70,6 @@ class RecommendationToPartADataMapperTest {
   @CsvSource(
     "STANDARD,Standard details,,false,false,Standard,Standard details,N/A (standard recall)",
     "FIXED_TERM,Fixed details,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
-    "NO_RECALL,,,false,false,,,",
     "STANDARD,Standard details,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
     "STANDARD,Standard details,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
     "STANDARD,Standard details,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)"

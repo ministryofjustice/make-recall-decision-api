@@ -274,7 +274,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
-      assertThat(result["additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
+      assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
     }
   }
 
