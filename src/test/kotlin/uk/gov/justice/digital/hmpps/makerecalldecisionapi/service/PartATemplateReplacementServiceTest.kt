@@ -56,6 +56,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
+import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -74,8 +75,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           responseToProbation = "They did not respond well",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
-          isIndeterminateSentence = true,
-          isExtendedSentence = true,
+          isIndeterminateSentence = false,
+          isExtendedSentence = false,
           personOnProbation = PersonOnProbation(
             gender = "Male",
             dateOfBirth = parse("1982-10-24"),
@@ -190,7 +191,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           userEmailPartACompletedBy = "Henry.Richarlison@test.com",
           region = "NPS London",
           localDeliveryUnit = "All NPS London",
-          lastPartADownloadDateTime = "2022-09-13T08:26:31.349Z"
+          lastPartADownloadDateTime = LocalDateTime.now(),
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -207,7 +209,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(82)
+      assertThat(result.size).isEqualTo(83)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -269,9 +271,10 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["last_person_completing_form_email"]).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result["region"]).isEqualTo("NPS London")
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
-      assertThat(result["date_of_decision"]).isEqualTo("2022-09-13")
-      assertThat(result["time_of_decision"]).isEqualTo("08:26:31")
+      assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
+      assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
+      assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
     }
   }
 
@@ -400,8 +403,9 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       lastPersonCompletingFormEmail = "Henry.Richarlison@test.com",
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
-      dateOfDecision = "2022-09-13",
-      timeOfDecision = "08:26:31",
+      dateOfDecision = "13/09/2022",
+      timeOfDecision = "08:26",
+      fixedTermAdditionalLicenceConditions = "This is an additional licence condition",
     )
   }
 }

@@ -21,8 +21,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDateTime
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -123,7 +124,8 @@ internal class RecommendationService(
         userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
         userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
-        indexOffenceDetails = recommendationEntity.data.indexOffenceDetails
+        indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
+        fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
       )
     }
   }
@@ -143,14 +145,14 @@ internal class RecommendationService(
       if (isPartADownloaded) {
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
-        existingRecommendationEntity.data.lastPartADownloadDateTime = nowDateTime()
+        existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
 
         existingRecommendationEntity.data = updateRecommendationRequest
       }
-      existingRecommendationEntity.data.lastModifiedDate = nowDateTime()
+      existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
       existingRecommendationEntity.data.lastModifiedBy = username
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
@@ -209,7 +211,7 @@ internal class RecommendationService(
     createdByUserName: String?,
     recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
-    val now = nowDateTime()
+    val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
         crn = recommendationRequest.crn,

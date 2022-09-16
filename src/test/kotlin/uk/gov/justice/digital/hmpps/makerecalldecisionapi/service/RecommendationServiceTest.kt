@@ -198,7 +198,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
           localPoliceContact = updateRecommendationRequest.localPoliceContact,
           vulnerabilities = updateRecommendationRequest.vulnerabilities,
-          convictionDetail = updateRecommendationRequest.convictionDetail
+          convictionDetail = updateRecommendationRequest.convictionDetail,
+          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions
         )
       )
 
@@ -344,7 +345,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.localDeliveryUnit).isEqualTo("LDU London")
     assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
     assertThat(recommendationResponse.userEmailPartACompletedBy).isEqualTo("Ben.Baker@test.com")
-    assertThat(recommendationResponse.lastPartADownloadDateTime).isEqualTo("2022-09-01T15:22:24.567Z")
+    assertThat(recommendationResponse.lastPartADownloadDateTime).isNull()
+    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.details).isEqualTo("This is an additional licence condition")
   }
 
   @Test
@@ -507,7 +510,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(result.fileContents).isNotNull
     assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
     assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
-    assertThat(recommendationEntity.data.lastPartADownloadDateTime).isEqualTo("2022-07-26T09:48:27.443Z")
+    assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
   }
 
   @Test

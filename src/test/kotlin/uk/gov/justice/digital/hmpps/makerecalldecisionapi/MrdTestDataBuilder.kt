@@ -75,7 +75,8 @@ class MrdTestDataBuilder {
           localDeliveryUnit = "LDU London",
           userNamePartACompletedBy = "Ben Baker",
           userEmailPartACompletedBy = "Ben.Baker@test.com",
-          lastPartADownloadDateTime = "2022-09-01T15:22:24.567Z"
+          lastPartADownloadDateTime = null,
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
         )
       )
     }
@@ -105,7 +106,8 @@ class MrdTestDataBuilder {
         underIntegratedOffenderManagement = integratedOffenderManagement(),
         localPoliceContact = localPoliceContact(),
         vulnerabilities = vulnerabilities(),
-        convictionDetail = convictionDetail()
+        convictionDetail = convictionDetail(),
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
       )
     }
 

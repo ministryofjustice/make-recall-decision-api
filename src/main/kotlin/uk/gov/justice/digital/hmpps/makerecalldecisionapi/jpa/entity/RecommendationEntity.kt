@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import java.io.Serializable
 import java.security.SecureRandom
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -62,7 +63,7 @@ data class RecommendationModel(
   var localDeliveryUnit: String? = null,
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
-  var lastPartADownloadDateTime: String? = null,
+  var lastPartADownloadDateTime: LocalDateTime? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
@@ -73,7 +74,8 @@ data class RecommendationModel(
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
   var vulnerabilities: Vulnerabilities? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
-  var indexOffenceDetails: String? = null
+  var indexOffenceDetails: String? = null,
+  var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null
 ) : Serializable
 
 enum class Status {
