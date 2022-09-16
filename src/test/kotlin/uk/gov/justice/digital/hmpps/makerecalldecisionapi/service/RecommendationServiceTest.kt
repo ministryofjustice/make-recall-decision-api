@@ -198,7 +198,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
           localPoliceContact = updateRecommendationRequest.localPoliceContact,
           vulnerabilities = updateRecommendationRequest.vulnerabilities,
-          convictionDetail = updateRecommendationRequest.convictionDetail
+          convictionDetail = updateRecommendationRequest.convictionDetail,
+          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions
         )
       )
 
@@ -345,6 +346,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
     assertThat(recommendationResponse.userEmailPartACompletedBy).isEqualTo("Ben.Baker@test.com")
     assertThat(recommendationResponse.lastPartADownloadDateTime).isNull()
+    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions).isEqualTo("This is an additional licence condition")
   }
 
   @Test

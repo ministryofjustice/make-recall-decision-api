@@ -36,7 +36,7 @@ class MrdTestDataBuilder {
     fun recommendationDataEntityData(
       crn: String?,
       firstName: String = "Jim",
-      surname: String = "Long",
+      surname: String = "Long"
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
@@ -75,7 +75,8 @@ class MrdTestDataBuilder {
           localDeliveryUnit = "LDU London",
           userNamePartACompletedBy = "Ben Baker",
           userEmailPartACompletedBy = "Ben.Baker@test.com",
-          lastPartADownloadDateTime = null
+          lastPartADownloadDateTime = null,
+          fixedTermAdditionalLicenceConditions = "This is an additional licence condition"
         )
       )
     }
@@ -105,7 +106,8 @@ class MrdTestDataBuilder {
         underIntegratedOffenderManagement = integratedOffenderManagement(),
         localPoliceContact = localPoliceContact(),
         vulnerabilities = vulnerabilities(),
-        convictionDetail = convictionDetail()
+        convictionDetail = convictionDetail(),
+        fixedTermAdditionalLicenceConditions = "This is an additional licence condition"
       )
     }
 
