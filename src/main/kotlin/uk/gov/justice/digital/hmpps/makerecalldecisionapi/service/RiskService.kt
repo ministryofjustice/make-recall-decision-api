@@ -90,22 +90,22 @@ internal class RiskService(
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-    val assessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
-    val mainOffences: List<Offence>? = activeConvictionsFromDelius?.flatMap(this::extractMainOffences)
-    val mainOffence = mainOffences?.firstOrNull()
-    val deliusCode = mainOffence?.detail?.code
+    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
 
     return activeConvictionsFromDelius
+      ?.filter { oasysAssessmentCompleted }
+      ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
+      ?.filter { it.isCustodial && it.active == true }
       ?.flatMap(this::extractMainOffences)
-      ?.filter { assessmentCompleted }
-      ?.filter { mainOffences?.size == 1 }
-      ?.filter { datesMatch(latestAssessment, mainOffence) }
-      ?.map { latestAssessment }
-      ?.filter { it -> currentOffenceCodesMatch(it, deliusCode) }
-      ?.filter { isLatestAssessment(it) }
-      ?.map { it?.offence }
+      ?.filter { datesMatch(latestAssessment, it) }
+      ?.filter { currentOffenceCodesMatch(latestAssessment, it.detail?.code) }
+      ?.filter { isLatestAssessment(latestAssessment) }
+      ?.map { latestAssessment?.offence }
       ?.firstOrNull()
   }
+
+  private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
+    activeConvictionsFromDelius.count { it.isCustodial } == 1
 
   private fun isLatestAssessment(it: Assessment?) = (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
 
