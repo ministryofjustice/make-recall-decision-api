@@ -6,9 +6,9 @@
       "assessmentId": 0,
       "assessmentType": "string",
       "partcompStatus": "string",
-      "dateCompleted": "2022-01-17T15:00:08.286Z",
-      "initiationDate": "2022-09-12T15:00:08.286Z",
-      "assessorSignedDate": "2022-09-12T15:00:08.286Z",
+      "dateCompleted": "2022-04-24T20:39:47.778",
+      "initiationDate": "2022-09-12T15:00:08.286",
+      "assessorSignedDate": "2022-09-12T15:00:08.286",
       "assessmentStatus": "COMPLETED",
       "superStatus": "COMPLETED",
       "offence": "Juicy offence details.",
@@ -27,8 +27,8 @@
       ],
       "offenceDetails": [
         {
-          "type": "string",
-          "offenceDate": "2022-04-24T20:39:47.778Z",
+          "type": "CURRENT",
+          "offenceDate": "2022-04-24T20:39:47.778",
           "offenceCode": "12",
           "offenceSubCode": "34",
           "offence": "string",
@@ -44,15 +44,15 @@
         }
       ],
       "laterWIPAssessmentExists": false,
-      "latestWIPDate": "2022-09-12T15:00:08.286Z",
+      "latestWIPDate": "2022-09-12T15:00:08.286",
       "laterSignLockAssessmentExists": false,
-      "latestSignLockDate": "2022-09-12T15:00:08.286Z",
+      "latestSignLockDate": "2022-09-12T15:00:08.286",
       "laterPartCompUnsignedAssessmentExists": false,
-      "latestPartCompUnsignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompUnsignedDate": "2022-09-12T15:00:08.286",
       "laterPartCompSignedAssessmentExists": false,
-      "latestPartCompSignedDate": "2022-09-12T15:00:08.286Z",
+      "latestPartCompSignedDate": "2022-09-12T15:00:08.286",
       "laterCompleteAssessmentExists": false,
-      "latestCompleteDate": "2022-09-12T15:00:08.286Z"
+      "latestCompleteDate": "2022-09-12T15:00:08.286"
     }
   ]
 }

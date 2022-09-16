@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
 
-fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = false) = """
+fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = false, offenceType: String? = "CURRENT") = """
 {
   "crn": "$crn",
   "limitedAccessOffender": true,
@@ -30,7 +30,15 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       ],
       "offenceDetails": [
         {
-          "type": "string",
+          "type": "NOT_CURRENT",
+          "offenceDate": "2022-04-24T20:39:47",
+          "offenceCode": "88",
+          "offenceSubCode": "88",
+          "offence": "string",
+          "subOffence": "string"
+        },
+        {
+          "type": "$offenceType",
           "offenceDate": "2022-04-24T20:39:47",
           "offenceCode": "12",
           "offenceSubCode": "34",
@@ -82,10 +90,10 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       ],
       "offenceDetails": [
         {
-          "type": "string",
+          "type": "NOT_CURRENT",
           "offenceDate": "2022-04-24T20:39:47",
-          "offenceCode": "12",
-          "offenceSubCode": "34",
+          "offenceCode": "78",
+          "offenceSubCode": "90",
           "offence": "string",
           "subOffence": "string"
         }
