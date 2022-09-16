@@ -271,7 +271,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["region"]).isEqualTo("NPS London")
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
-      assertThat(result["time_of_decision"]).isEqualTo("08:26:31")
+      assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
     }
   }
@@ -402,7 +402,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
       dateOfDecision = "13/09/2022",
-      timeOfDecision = "08:26:31",
+      timeOfDecision = "08:26",
     )
   }
 }

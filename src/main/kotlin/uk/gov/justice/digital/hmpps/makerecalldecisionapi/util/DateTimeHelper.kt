@@ -38,7 +38,7 @@ class DateTimeHelper {
 
     fun splitDateTime(dateTime: LocalDateTime?): Pair<String?, String?> {
       val formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-      val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+      val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
       return Pair(dateTime?.format(formatterDate), dateTime?.format(formatterTime))
     }
   }

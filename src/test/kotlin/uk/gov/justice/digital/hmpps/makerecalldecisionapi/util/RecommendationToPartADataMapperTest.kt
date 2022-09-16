@@ -678,7 +678,7 @@ class RecommendationToPartADataMapperTest {
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.dateOfDecision).isEqualTo("13/09/2022")
-      assertThat(result.timeOfDecision).isEqualTo("08:26:31")
+      assertThat(result.timeOfDecision).isEqualTo("08:26")
     }
   }
 }
