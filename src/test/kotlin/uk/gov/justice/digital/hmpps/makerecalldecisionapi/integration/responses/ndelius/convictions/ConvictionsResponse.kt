@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions
 
-fun convictionsResponse(crn: String, staffCode: String, active: Boolean? = true, offenceCode: String? = "1234") = """
+fun convictionsResponse(crn: String, staffCode: String, active: Boolean? = true, offenceCode: String? = "1234", offenceDate: String? = "2022-04-24T20:39:47.778Z") = """
  [
    {
      "active": $active,
@@ -77,7 +77,7 @@ fun convictionsResponse(crn: String, staffCode: String, active: Boolean? = true,
          "lastUpdatedDatetime": "2022-04-26T20:39:47.778Z",
          "mainOffence": true,
          "offenceCount": 0,
-         "offenceDate": "2022-04-24T20:39:47.778Z",
+         "offenceDate": "$offenceDate",
          "offenceId": "string",
          "offenderId": 0,
          "tics": 0,

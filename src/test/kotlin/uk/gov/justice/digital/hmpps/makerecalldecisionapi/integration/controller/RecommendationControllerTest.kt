@@ -75,6 +75,28 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `create recommendation when oasys offence date doesn't match in delius`() {
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011", offenceDate = "1984-04-24T20:39:47.778Z")
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isCreated
+    )
+    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
   fun `create recommendation when no active conviction available`() {
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)

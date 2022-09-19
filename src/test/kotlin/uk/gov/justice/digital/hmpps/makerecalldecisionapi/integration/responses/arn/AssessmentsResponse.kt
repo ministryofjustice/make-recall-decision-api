@@ -12,8 +12,8 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       "dateCompleted": "2022-04-24T15:00:08",
       "initiationDate": "2022-09-12T15:00:08",
       "assessorSignedDate": "2022-09-12T15:00:08",
-      "assessmentStatus": "COMPLETED",
-      "superStatus": "COMPLETED",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
       "offence": "Juicy offence details.",
       "disinhibitors": [
         "string"
@@ -72,8 +72,8 @@ fun assessmentsResponse(crn: String?, laterCompleteAssessmentExists: Boolean? = 
       "dateCompleted": "2022-04-23T15:00:08",
       "initiationDate": "2022-09-12T15:00:08",
       "assessorSignedDate": "2022-09-12T15:00:08",
-      "assessmentStatus": "COMPLETED",
-      "superStatus": "COMPLETED",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
       "offence": "Not so juicy offence details.",
       "disinhibitors": [
         "string"

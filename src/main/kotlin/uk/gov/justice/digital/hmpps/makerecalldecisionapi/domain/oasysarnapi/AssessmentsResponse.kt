@@ -29,5 +29,6 @@ data class Assessment(
 data class AssessmentOffenceDetail(
   val type: String?,
   val offenceCode: String?,
-  val offenceSubCode: String?
+  val offenceSubCode: String?,
+  val offenceDate: String?
 )

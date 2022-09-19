@@ -468,7 +468,8 @@ internal class RiskServiceTest {
           AssessmentOffenceDetail(
             type = "CURRENT",
             offenceCode = "12",
-            offenceSubCode = "34"
+            offenceSubCode = "34",
+            offenceDate = "2022-08-26T12:00:00.000"
           )
         ),
         offence = null,
@@ -549,7 +550,7 @@ internal class RiskServiceTest {
 
   private fun assessment() = Assessment(
     dateCompleted = "2022-08-26T15:00:08",
-    assessmentStatus = "COMPLETED",
+    assessmentStatus = "COMPLETE",
     keyConsiderationsCurrentSituation = null,
     furtherConsiderationsCurrentSituation = null,
     supervision = null,
@@ -561,7 +562,8 @@ internal class RiskServiceTest {
       AssessmentOffenceDetail(
         type = "CURRENT",
         offenceCode = "ABC123",
-        offenceSubCode = ""
+        offenceSubCode = "",
+        offenceDate = "2022-08-26T12:00:00.000"
       )
     ),
     offence = "Juicy offence details.",
@@ -570,7 +572,7 @@ internal class RiskServiceTest {
     laterPartCompUnsignedAssessmentExists = false,
     laterSignLockAssessmentExists = false,
     laterWIPAssessmentExists = false,
-    superStatus = "COMPLETED"
+    superStatus = "COMPLETE"
   )
 
   private val allOffenderDetailsResponse = AllOffenderDetailsResponse(
