@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -195,9 +196,16 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           lastPartADownloadDateTime = LocalDateTime.now(),
           fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
           indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
-            behaviourSimilarToIndexOffence = "behaviour similar to index offence",
-            behaviourLeadingToSexualOrViolentOffence = "behaviour leading to sexual or violent offence",
-            outOfTouch = "out of touch"
+            selected = listOf(
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence"),
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, details = "behaviour leading to sexual or violent behaviour"),
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, details = "out of touch")
+            ),
+            allOptions = listOf(
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
+            )
           )
         )
       )

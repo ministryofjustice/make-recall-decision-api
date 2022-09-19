@@ -44,12 +44,6 @@ data class RecommendationResponse(
   val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null
 )
 
-data class IndeterminateOrExtendedSentenceDetails(
-  val behaviourSimilarToIndexOffence: String? = null,
-  val behaviourLeadingToSexualOrViolentOffence: String? = null,
-  val outOfTouch: String? = null
-)
-
 data class UnderIntegratedOffenderManagement(
   val selected: String? = null,
   val allOptions: List<TextValueOption>? = null

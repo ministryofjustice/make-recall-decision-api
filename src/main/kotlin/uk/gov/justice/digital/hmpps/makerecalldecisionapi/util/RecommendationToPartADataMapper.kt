@@ -3,6 +3,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -29,20 +33,28 @@ class RecommendationToPartADataMapper {
       val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
       val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.data.personOnProbation?.addresses)
       val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.data.lastPartADownloadDateTime)
+      val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
+      val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
+      val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
 
       return PartAData(
         custodyStatus = ValueWithDetails(
           recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
           recommendation.data.custodyStatus?.details
         ),
-        recallType = findRecallTypeToDisplay(recommendation.data.recallType, recommendation.data.isIndeterminateSentence, recommendation.data.isExtendedSentence),
+        recallType = findRecallTypeToDisplay(
+          recommendation.data.recallType,
+          recommendation.data.isIndeterminateSentence,
+          recommendation.data.isExtendedSentence
+        ),
         responseToProbation = recommendation.data.responseToProbation,
         whatLedToRecall = recommendation.data.whatLedToRecall,
         isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
         isExtendedSentence = convertBooleanToYesNo(recommendation.data.isExtendedSentence),
         hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue
           ?: EMPTY_STRING,
-        indeterminateSentenceType = recommendation.data.indeterminateSentenceType?.selected?.partADisplayValue ?: EMPTY_STRING,
+        indeterminateSentenceType = recommendation.data.indeterminateSentenceType?.selected?.partADisplayValue
+          ?: EMPTY_STRING,
         dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
         selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
         hasArrestIssues = ValueWithDetails(
@@ -85,12 +97,12 @@ class RecommendationToPartADataMapper {
         timeOfDecision = lastDownloadTime,
         indexOffenceDetails = recommendation.data.indexOffenceDetails,
         fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation),
-        behaviourSimilarToIndexOffence = recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourSimilarToIndexOffence,
-        behaviourSimilarToIndexOffencePresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourSimilarToIndexOffence.isNullOrEmpty()) NO else YES,
-        behaviourLeadingToSexualOrViolentOffence = recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourLeadingToSexualOrViolentOffence,
-        behaviourLeadingToSexualOrViolentOffencePresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.behaviourLeadingToSexualOrViolentOffence.isNullOrEmpty()) NO else YES,
-        outOfTouch = recommendation.data.indeterminateOrExtendedSentenceDetails?.outOfTouch,
-        outOfTouchPresent = if (recommendation.data.indeterminateOrExtendedSentenceDetails?.outOfTouch.isNullOrEmpty()) NO else YES
+        behaviourSimilarToIndexOffence = behaviourSimilarToIndexOffence,
+        behaviourSimilarToIndexOffencePresent = behaviourSimilarToIndexOffencePresent,
+        behaviourLeadingToSexualOrViolentOffence = behaviourLeadingToSexualOrViolentOffence,
+        behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
+        outOfTouch = outOfTouch,
+        outOfTouchPresent = outOfTouchPresent
       )
     }
 
@@ -103,7 +115,11 @@ class RecommendationToPartADataMapper {
       return formattedField
     }
 
-    private fun findRecallTypeToDisplay(recallType: RecallType?, isIndeterminateSentence: Boolean?, isExtendedSentence: Boolean?): ValueWithDetails {
+    private fun findRecallTypeToDisplay(
+      recallType: RecallType?,
+      isIndeterminateSentence: Boolean?,
+      isExtendedSentence: Boolean?
+    ): ValueWithDetails {
       return if (isIndeterminateSentence == true || isExtendedSentence == true) {
         val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
         ValueWithDetails(textToDisplay, textToDisplay)
@@ -119,11 +135,19 @@ class RecommendationToPartADataMapper {
 
     private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationEntity): String? {
       val isStandardRecall: Boolean = recommendation.data.recallType?.selected?.value == RecallTypeValue.STANDARD
-      return buildNotApplicableMessage(recommendation.data.isIndeterminateSentence, recommendation.data.isExtendedSentence, isStandardRecall)
+      return buildNotApplicableMessage(
+        recommendation.data.isIndeterminateSentence,
+        recommendation.data.isExtendedSentence,
+        isStandardRecall
+      )
         ?: if (recommendation.data.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.data.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
     }
 
-    private fun buildNotApplicableMessage(isIndeterminateSentence: Boolean?, isExtendedSentence: Boolean?, isStandardRecall: Boolean?): String? {
+    private fun buildNotApplicableMessage(
+      isIndeterminateSentence: Boolean?,
+      isExtendedSentence: Boolean?,
+      isStandardRecall: Boolean?
+    ): String? {
       return if (isIndeterminateSentence == true) {
         "$NOT_APPLICABLE (not a determinate recall)"
       } else if (isExtendedSentence == true) {
@@ -205,6 +229,13 @@ class RecommendationToPartADataMapper {
 
         "$lengthOfSentence $lengthOfSentenceUnits"
       }
+    }
+
+    private fun getIndeterminateOrExtendedSentenceDetails(indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails?, field: String): Pair<String, String?> {
+      if (indeterminateOrExtendedSentenceDetails?.selected?.any { it.value == field } == true) {
+        return Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
+      }
+      return Pair(NO, EMPTY_STRING)
     }
   }
 }

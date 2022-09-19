@@ -200,9 +200,34 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "details": "This is an additional licence condition"
   },
   "indeterminateOrExtendedSentenceDetails": {
-    "behaviourSimilarToIndexOffence": "some behaviour similar to index offence",
-    "behaviourLeadingToSexualOrViolentOffence": "behaviour leading to sexual or violent behaviour",
-    "outOfTouch": "out of touch"
+    "selected": [
+      {
+        "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
+        "details": "Some behaviour similar to index offence"
+      },
+      {
+        "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
+        "details": "Behaviour leading to sexual or violent behaviour"
+      },
+      {
+        "value": "OUT_OF_TOUCH",
+        "details": "Out of touch"
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "Some behaviour similar to index offence",
+        "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+      },
+      {
+        "text": "Behaviour leading to sexual or violent behaviour",
+        "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "Out of touch",
+        "value": "OUT_OF_TOUCH"
+      }
+    ]
   }
 }
 """.trimIndent()
