@@ -366,12 +366,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0, active: Boolean? = true, offenceCode: String? = "1234") {
+  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0, active: Boolean? = true, offenceCode: String? = "1234", offenceDate: String? = "2022-04-24T20:39:47.778Z") {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
 
     communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode, active, offenceCode))
+      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode, active, offenceCode, offenceDate))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

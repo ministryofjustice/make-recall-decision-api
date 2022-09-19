@@ -90,7 +90,7 @@ internal class RiskService(
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETED" && latestAssessment.superStatus == "COMPLETED"
+    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
 
     return activeConvictionsFromDelius
       ?.filter { oasysAssessmentCompleted }
@@ -98,7 +98,7 @@ internal class RiskService(
       ?.filter { it.isCustodial && it.active == true }
       ?.flatMap(this::extractMainOffences)
       ?.filter { datesMatch(latestAssessment, it) }
-      ?.filter { currentOffenceCodesMatch(latestAssessment, it.detail?.code) }
+      ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
       ?.filter { isLatestAssessment(latestAssessment) }
       ?.map { latestAssessment?.offence }
       ?.firstOrNull()
@@ -112,12 +112,10 @@ internal class RiskService(
   private fun datesMatch(
     latestAssessment: Assessment?,
     mainOffence: Offence?
-  ) = if (latestAssessment?.dateCompleted != null) {
-    mainOffence?.offenceDate == LocalDateTime.parse(latestAssessment.dateCompleted).toLocalDate()
-  } else false
+  ) = latestAssessment?.offenceDetails?.any { LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate } == true
 
-  private fun currentOffenceCodesMatch(it: Assessment?, deliusCode: String?) =
-    it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == deliusCode) && it.type == "CURRENT" } == true
+  private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
+    it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.detail?.code) && (it.type == "CURRENT") } == true
 
   private suspend fun fetchContingencyPlan(crn: String): ContingencyPlan {
     val contingencyPlanResponse = try {
