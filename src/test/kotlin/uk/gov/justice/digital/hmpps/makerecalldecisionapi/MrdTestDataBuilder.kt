@@ -6,6 +6,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -107,7 +109,8 @@ class MrdTestDataBuilder {
         localPoliceContact = localPoliceContact(),
         vulnerabilities = vulnerabilities(),
         convictionDetail = convictionDetail(),
-        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
+        indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails()
       )
     }
 
@@ -117,6 +120,18 @@ class MrdTestDataBuilder {
         allOptions = listOf(
           TextValueOption(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
           TextValueOption(value = VulnerabilityOptions.RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
+        )
+      )
+    }
+
+    private fun indeterminateOrExtendedSentenceDetails(): IndeterminateOrExtendedSentenceDetails {
+
+      return IndeterminateOrExtendedSentenceDetails(
+        selected = listOf(ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence")),
+        allOptions = listOf(
+          TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
+          TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
+          TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
         )
       )
     }
