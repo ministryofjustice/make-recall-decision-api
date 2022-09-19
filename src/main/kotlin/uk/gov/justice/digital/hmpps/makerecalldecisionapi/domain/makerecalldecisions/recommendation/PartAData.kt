@@ -47,7 +47,13 @@ data class PartAData(
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
   val indexOffenceDetails: String? = null,
-  val fixedTermAdditionalLicenceConditions: String? = null
+  val fixedTermAdditionalLicenceConditions: String? = null,
+  val behaviourSimilarToIndexOffence: String? = null,
+  val behaviourSimilarToIndexOffencePresent: String? = null,
+  val behaviourLeadingToSexualOrViolentOffence: String? = null,
+  val behaviourLeadingToSexualOrViolentOffencePresent: String? = null,
+  val outOfTouch: String? = null,
+  val outOfTouchPresent: String? = null
 )
 
 data class ValueWithDetails(

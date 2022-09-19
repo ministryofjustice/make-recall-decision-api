@@ -126,6 +126,7 @@ internal class RecommendationService(
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
         indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
         fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
+        indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails
       )
     }
   }

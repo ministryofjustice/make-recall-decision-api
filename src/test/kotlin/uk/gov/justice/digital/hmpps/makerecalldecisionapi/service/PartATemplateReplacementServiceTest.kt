@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -48,7 +50,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_HEALTH_CONCERNS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
@@ -99,7 +101,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
               )
             )
           ),
-          hasVictimsInContactScheme = VictimsInContactScheme(selected = YesNoNotApplicableOptions.YES, allOptions = null),
+          hasVictimsInContactScheme = VictimsInContactScheme(selected = YES, allOptions = null),
           indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
           dateVloInformed = now(),
           alternativesToRecallTried = AlternativesToRecallTried(
@@ -192,7 +194,19 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
           region = "NPS London",
           localDeliveryUnit = "All NPS London",
           lastPartADownloadDateTime = LocalDateTime.now(),
-          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
+          indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
+            selected = listOf(
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence"),
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, details = "behaviour leading to sexual or violent behaviour"),
+              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, details = "out of touch")
+            ),
+            allOptions = listOf(
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
+              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
+            )
+          )
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -209,7 +223,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(83)
+      assertThat(result.size).isEqualTo(89)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -275,6 +289,12 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
       assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
+      assertThat(result["behaviour_similar_to_index_offence"]).isEqualTo("behavior similar to index offence")
+      assertThat(result["behaviour_similar_to_index_offence_present"]).isEqualTo(YES.partADisplayValue)
+      assertThat(result["behaviour_leading_to_sexual_or_violent_offence"]).isEqualTo("behaviour leading to sexual or violent offence")
+      assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"]).isEqualTo(YES.partADisplayValue)
+      assertThat(result["out_of_touch"]).isEqualTo("out of touch")
+      assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
     }
   }
 
@@ -303,7 +323,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = "Yes",
         isExtendedSentence = "Yes",
-        hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
+        hasVictimsInContactScheme = YES.partADisplayValue,
         indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
         dateVloInformed = "1 September 2022",
         selectedAlternatives = listOf(),
@@ -355,7 +375,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       whatLedToRecall = "Increasingly violent behaviour",
       isThisAnEmergencyRecall = "Yes",
       isExtendedSentence = "Yes",
-      hasVictimsInContactScheme = YesNoNotApplicableOptions.YES.partADisplayValue,
+      hasVictimsInContactScheme = YES.partADisplayValue,
       indeterminateSentenceType = IndeterminateSentenceTypeOptions.LIFE.partADisplayValue,
       dateVloInformed = "1 September 2022",
       selectedAlternatives = alternativesList,
@@ -406,6 +426,12 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
       fixedTermAdditionalLicenceConditions = "This is an additional licence condition",
+      behaviourSimilarToIndexOffence = "behavior similar to index offence",
+      behaviourSimilarToIndexOffencePresent = YES.partADisplayValue,
+      behaviourLeadingToSexualOrViolentOffence = "behaviour leading to sexual or violent offence",
+      behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
+      outOfTouch = "out of touch",
+      outOfTouchPresent = YES.partADisplayValue
     )
   }
 }

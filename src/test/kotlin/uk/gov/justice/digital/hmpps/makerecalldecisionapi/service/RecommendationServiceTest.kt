@@ -161,7 +161,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         lastModifiedBy = "Jack",
         lastModifiedDate = "2022-07-01T15:22:24.567Z",
         createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z"
+        createdDate = "2022-07-01T15:22:24.567Z",
       )
     )
 
@@ -199,7 +199,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           localPoliceContact = updateRecommendationRequest.localPoliceContact,
           vulnerabilities = updateRecommendationRequest.vulnerabilities,
           convictionDetail = updateRecommendationRequest.convictionDetail,
-          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions
+          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
+          indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails
         )
       )
 
