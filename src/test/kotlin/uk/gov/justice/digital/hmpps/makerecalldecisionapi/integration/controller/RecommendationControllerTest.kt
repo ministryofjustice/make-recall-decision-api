@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -380,6 +381,33 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
+  }
+
+  // TODO BS create DNTR
+  @Test
+  fun `generate a DNTR document from recommendation data`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
+    deleteAndCreateRecommendation()
+    updateRecommendation(updateRecommendationForNoRecallRequest())
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/task-list-no-recall")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    assertThat(response.get("fileName")).isEqualTo("No_Recall" + nowDate() + "_Smith_J_A12345.docx")
+    assertNotNull(response.get("fileContents"))
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    assertThat(result[0].data.userNameDNTRLetterCompletedBy, equalTo("some_user"))
+    assertNotNull(result[0].data.lastDNTRLetterADownloadDateTime)
   }
 
   @Test

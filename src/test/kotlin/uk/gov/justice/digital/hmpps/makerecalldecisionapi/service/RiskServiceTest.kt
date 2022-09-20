@@ -83,6 +83,9 @@ internal class RiskServiceTest {
   @Mock
   private lateinit var partATemplateReplacementService: PartATemplateReplacementService
 
+  @Mock
+  private lateinit var dntrTemplateReplacementService: DNTRTemplateReplacementService
+
   protected lateinit var userAccessValidator: UserAccessValidator
 
   protected lateinit var recommendationService: RecommendationService
@@ -90,7 +93,7 @@ internal class RiskServiceTest {
   @BeforeEach
   fun setup() {
     userAccessValidator = UserAccessValidator(communityApiClient)
-    recommendationService = RecommendationService(recommendationRepository, personDetailsService, partATemplateReplacementService, userAccessValidator, convictionService, null)
+    recommendationService = RecommendationService(recommendationRepository, personDetailsService, partATemplateReplacementService, userAccessValidator, convictionService, null, dntrTemplateReplacementService)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
