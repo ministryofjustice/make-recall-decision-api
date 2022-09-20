@@ -65,6 +65,8 @@ data class RecommendationModel(
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
   var lastPartADownloadDateTime: LocalDateTime? = null,
+  var userNameDNTRLetterCompletedBy: String? = null,
+  var lastDNTRLetterADownloadDateTime: LocalDateTime? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,

@@ -69,6 +69,8 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var partATemplateReplacementService: PartATemplateReplacementService
 
+  protected lateinit var dntrTemplateReplacementService: DNTRTemplateReplacementService
+
   protected val crn = "12345"
 
   @BeforeEach
@@ -90,9 +92,10 @@ internal abstract class ServiceTestBase {
     )
     userAccessValidator = UserAccessValidator(communityApiClient)
     partATemplateReplacementService = PartATemplateReplacementService()
+    dntrTemplateReplacementService = DNTRTemplateReplacementService()
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, null)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, null, dntrTemplateReplacementService)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
 

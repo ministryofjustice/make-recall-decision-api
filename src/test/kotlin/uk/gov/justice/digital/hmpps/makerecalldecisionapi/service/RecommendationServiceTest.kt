@@ -64,7 +64,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     runTest {
       // given
       given(riskService.getRisk(BDDMockito.anyString())).willReturn(RiskResponse(mappa = Mappa(category = 1, level = 1, isNominal = null, lastUpdated = null)))
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, riskService)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, partATemplateReplacementService, userAccessValidator, convictionService, riskService, dntrTemplateReplacementService)
 
       // and
       val recommendationToSave = RecommendationEntity(
