@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -34,7 +34,8 @@ internal class RecommendationService(
   val partATemplateReplacementService: PartATemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   private val convictionService: ConvictionService,
-  @Lazy private val riskService: RiskService?
+  @Lazy private val riskService: RiskService?,
+  val dntrTemplateReplacementService: DntrTemplateReplacementService
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -127,14 +128,15 @@ internal class RecommendationService(
         indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
         fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
         indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
-        mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound
+        mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
+        whyConsideredRecall = recommendationEntity.data.whyConsideredRecall
       )
     }
   }
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, userEmail: String?, isPartADownloaded: Boolean): RecommendationEntity {
+  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, userEmail: String?, isPartADownloaded: Boolean, isDNTRDownloaded: Boolean = false): RecommendationEntity {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -148,6 +150,9 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+      } else if (isDNTRDownloaded) {
+        existingRecommendationEntity.data.userNameDNTRLetterCompletedBy = username
+        existingRecommendationEntity.data.lastDNTRLetterADownloadDateTime = localNowDateTime()
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
@@ -182,7 +187,22 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): PartAResponse {
+  fun generateDNTR(recommendationId: Long, username: String?): DocumentResponse {
+    val recommendationEntity = updateRecommendation(null, recommendationId, username, null, false, true)
+    val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
+    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
+    } else {
+      val fileContents = dntrTemplateReplacementService.generateDocFromTemplate(recommendationEntity)
+      return DocumentResponse(
+        fileName = generateDNTRFileName(recommendationEntity.data),
+        fileContents = fileContents
+      )
+    }
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
 
     val recommendationEntity = updateRecommendation(null, recommendationId, username, userEmail, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -190,7 +210,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents = partATemplateReplacementService.generateDocFromTemplate(recommendationEntity)
-      return PartAResponse(
+      return DocumentResponse(
         fileName = generatePartAFileName(recommendationEntity.data),
         fileContents = fileContents
       )
@@ -206,6 +226,15 @@ internal class RecommendationService(
     val crn = recommendation.crn ?: ""
 
     return "NAT_Recall_Part_A_${nowDate()}_${surname}_${firstName}_$crn.docx"
+  }
+
+  private fun generateDNTRFileName(recommendation: RecommendationModel): String {
+    val surname = recommendation.personOnProbation?.surname ?: ""
+    val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
+      recommendation.personOnProbation.firstName.subSequence(0, 1)
+    } else ""
+    val crn = recommendation.crn ?: ""
+    return "No_Recall${nowDate()}_${surname}_${firstName}_$crn.docx"
   }
 
   private fun saveNewRecommendationEntity(

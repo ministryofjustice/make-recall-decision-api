@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreatePartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -82,13 +82,29 @@ internal class RecommendationController(
   suspend fun generatePartADocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody createPartARequest: CreatePartARequest,
-  ): ResponseEntity<PartAResponse> {
+  ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
 
     val responseEntity = try {
       ResponseEntity(recommendationService.generatePartA(recommendationId, authenticationFacade.currentNameOfUser, createPartARequest.userEmail), OK)
     } catch (e: UserAccessException) {
-      ResponseEntity(PartAResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
+      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
+    }
+    return responseEntity
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("/recommendations/{recommendationId}/task-list-no-recall")
+  @Operation(summary = "Generates a DNTR document")
+  suspend fun generateDNTRDocument(
+    @PathVariable("recommendationId") recommendationId: Long
+  ): ResponseEntity<DocumentResponse> {
+    log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
+
+    val responseEntity = try {
+      ResponseEntity(recommendationService.generateDNTR(recommendationId, authenticationFacade.currentNameOfUser), OK)
+    } catch (e: UserAccessException) {
+      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }
     return responseEntity
   }
