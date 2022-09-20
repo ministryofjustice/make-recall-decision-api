@@ -680,6 +680,60 @@ class RecommendationToPartADataMapperTest {
   }
 
   @Test
+  fun `given main address with all empty lines then clear the address details in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "",
+                line2 = "",
+                town = "",
+                postcode = "",
+                noFixedAbode = false
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("")
+      assertThat(result.noFixedAbode).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given main address with some empty lines then correctly format the address in the part A`() {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          personOnProbation = PersonOnProbation(
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "",
+                town = "Address town",
+                postcode = "TS1 1ST",
+                noFixedAbode = false
+              )
+            )
+          )
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Address town, TS1 1ST")
+      assertThat(result.noFixedAbode).isEqualTo("")
+    }
+  }
+
+  @Test
   fun `given last downloaded date and time then split into separate fields in the part A`() {
     runTest {
       val recommendation = RecommendationEntity(
