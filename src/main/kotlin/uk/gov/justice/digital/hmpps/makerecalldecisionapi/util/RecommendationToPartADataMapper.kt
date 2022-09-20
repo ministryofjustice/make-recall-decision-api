@@ -209,7 +209,7 @@ class RecommendationToPartADataMapper {
 
       return if (mainAddresses?.isNotEmpty() == true && noFixedAbodeAddresses?.isEmpty() == true) {
         val addressConcat = mainAddresses.map {
-          it.line1 + ", " + it.line2 + ", " + it.town + ", " + it.postcode
+          it.commaFormattedAddress()
         }
         Pair(addressConcat.joinToString("\n") { "$it" }, "")
       } else if (mainAddresses?.isEmpty() == true && noFixedAbodeAddresses?.isNotEmpty() == true) {
