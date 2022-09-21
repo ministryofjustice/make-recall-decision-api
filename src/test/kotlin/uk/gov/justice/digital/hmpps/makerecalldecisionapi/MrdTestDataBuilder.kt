@@ -78,7 +78,8 @@ class MrdTestDataBuilder {
           userNamePartACompletedBy = "Ben Baker",
           userEmailPartACompletedBy = "Ben.Baker@test.com",
           lastPartADownloadDateTime = null,
-          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition")
+          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
+          mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound()
         )
       )
     }
@@ -110,7 +111,8 @@ class MrdTestDataBuilder {
         vulnerabilities = vulnerabilities(),
         convictionDetail = convictionDetail(),
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
-        indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails()
+        indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails(),
+        mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound()
       )
     }
 
@@ -210,6 +212,10 @@ class MrdTestDataBuilder {
 
     private fun contrabandRisk(): SelectedWithDetails {
       return SelectedWithDetails(selected = true, details = "Contraband risk details")
+    }
+
+    private fun isMainAddressWherePersonCanBeFound(): SelectedWithDetails {
+      return SelectedWithDetails(selected = false, details = "123 Acacia Avenue, Birmingham, B23 1AV")
     }
 
     private fun licenceConditionsBreached(): LicenceConditionsBreached {

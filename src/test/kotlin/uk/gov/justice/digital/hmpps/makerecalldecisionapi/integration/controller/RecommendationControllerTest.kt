@@ -166,7 +166,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when Delius and OASys offence codes do not match`() {
     licenceConditionsResponse(crn, 2500614567)
-    val staffCode = "STFFCDEU"
     convictionResponse(crn, "011", offenceCode = "not a match")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
@@ -188,7 +187,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create recommendation when there is a more recent assessment available from OASys than from Delius`() {
-    val staffCode = "STFFCDEU"
     licenceConditionsResponse(crn, 2500614567)
     convictionResponse(crn, "011")
     oasysAssessmentsResponse(crn, laterCompleteAssessmentExists = true)
@@ -329,6 +327,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.indeterminateOrExtendedSentenceDetails.allOptions[1].value").isEqualTo("BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE")
       .jsonPath("$.indeterminateOrExtendedSentenceDetails.allOptions[2].text").isEqualTo("Out of touch")
       .jsonPath("$.indeterminateOrExtendedSentenceDetails.allOptions[2].value").isEqualTo("OUT_OF_TOUCH")
+      .jsonPath("$.isMainAddressWherePersonCanBeFound.selected").isEqualTo(false)
+      .jsonPath("$.isMainAddressWherePersonCanBeFound.details").isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
@@ -514,7 +514,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessAllowedOnce(crn)
-      val original = getRecommendation()
+      getRecommendation()
       userAccessExcluded(crn)
 
       webTestClient.patch()
