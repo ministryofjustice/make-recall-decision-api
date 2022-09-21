@@ -13,7 +13,7 @@ internal class DntrTemplateReplacementService {
   val resource = ClassPathResource("DNTR Template.docx")
 
   fun generateDocFromTemplate(recommendation: RecommendationEntity): String {
-    val dntrData = RecommendationToDocumentMapper.mapRecommendationDataToDNTRDocumentData(recommendation)
+    val dntrData = RecommendationToDocumentMapper.mapRecommendationDataToDntrDocumentData(recommendation)
 
     val file = XWPFTemplate.compile(resource.inputStream).render(
       mappingsForTemplate(dntrData)

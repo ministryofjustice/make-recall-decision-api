@@ -136,7 +136,7 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   @Transactional
-  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, userEmail: String?, isPartADownloaded: Boolean, isDNTRDownloaded: Boolean = false): RecommendationEntity {
+  fun updateRecommendation(jsonRequest: JsonNode?, recommendationId: Long, username: String?, userEmail: String?, isPartADownloaded: Boolean, isDntrDownloaded: Boolean = false): RecommendationEntity {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -150,9 +150,9 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
-      } else if (isDNTRDownloaded) {
-        existingRecommendationEntity.data.userNameDNTRLetterCompletedBy = username
-        existingRecommendationEntity.data.lastDNTRLetterADownloadDateTime = localNowDateTime()
+      } else if (isDntrDownloaded) {
+        existingRecommendationEntity.data.userNameDntrLetterCompletedBy = username
+        existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
@@ -187,7 +187,7 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun generateDNTR(recommendationId: Long, username: String?): DocumentResponse {
+  fun generateDntr(recommendationId: Long, username: String?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, null, false, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
@@ -195,7 +195,7 @@ internal class RecommendationService(
     } else {
       val fileContents = dntrTemplateReplacementService.generateDocFromTemplate(recommendationEntity)
       return DocumentResponse(
-        fileName = generateDNTRFileName(recommendationEntity.data),
+        fileName = generateDntrFileName(recommendationEntity.data),
         fileContents = fileContents
       )
     }
@@ -228,7 +228,7 @@ internal class RecommendationService(
     return "NAT_Recall_Part_A_${nowDate()}_${surname}_${firstName}_$crn.docx"
   }
 
-  private fun generateDNTRFileName(recommendation: RecommendationModel): String {
+  private fun generateDntrFileName(recommendation: RecommendationModel): String {
     val surname = recommendation.personOnProbation?.surname ?: ""
     val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
       recommendation.personOnProbation.firstName.subSequence(0, 1)

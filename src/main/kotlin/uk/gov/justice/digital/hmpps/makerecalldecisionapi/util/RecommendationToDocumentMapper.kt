@@ -28,7 +28,7 @@ class RecommendationToDocumentMapper {
 
   companion object Mapper {
 
-    fun mapRecommendationDataToDNTRDocumentData(recommendation: RecommendationEntity): DntrData {
+    fun mapRecommendationDataToDntrDocumentData(recommendation: RecommendationEntity): DntrData {
       return DntrData(
         whyConsideredRecall = getDisplayTextFromWhyConsideredRecall(recommendation.data.whyConsideredRecall)
       )

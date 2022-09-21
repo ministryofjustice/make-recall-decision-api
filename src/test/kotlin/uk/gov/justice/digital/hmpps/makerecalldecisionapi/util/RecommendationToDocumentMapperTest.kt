@@ -66,7 +66,7 @@ class RecommendationToDocumentMapperTest {
           )
         )
       )
-      val result = RecommendationToDocumentMapper.mapRecommendationDataToDNTRDocumentData(recommendation)
+      val result = RecommendationToDocumentMapper.mapRecommendationDataToDntrDocumentData(recommendation)
       assertThat(result.whyConsideredRecall).isEqualTo(dntrDisplayText)
     }
   }

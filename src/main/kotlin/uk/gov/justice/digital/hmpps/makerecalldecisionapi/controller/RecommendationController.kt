@@ -96,13 +96,13 @@ internal class RecommendationController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/recommendations/{recommendationId}/task-list-no-recall")
   @Operation(summary = "Generates a DNTR document")
-  suspend fun generateDNTRDocument(
+  suspend fun generateDntrDocument(
     @PathVariable("recommendationId") recommendationId: Long
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
 
     val responseEntity = try {
-      ResponseEntity(recommendationService.generateDNTR(recommendationId, authenticationFacade.currentNameOfUser), OK)
+      ResponseEntity(recommendationService.generateDntr(recommendationId, authenticationFacade.currentNameOfUser), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }

@@ -413,8 +413,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
-    assertThat(result[0].data.userNameDNTRLetterCompletedBy, equalTo("some_user"))
-    assertNotNull(result[0].data.lastDNTRLetterADownloadDateTime)
+    assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
+    assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
   }
 
   @Test
