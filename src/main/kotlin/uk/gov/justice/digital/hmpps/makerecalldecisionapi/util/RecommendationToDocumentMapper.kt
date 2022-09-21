@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
@@ -29,8 +30,14 @@ class RecommendationToDocumentMapper {
 
     fun mapRecommendationDataToDNTRDocumentData(recommendation: RecommendationEntity): DntrData {
       return DntrData(
-        whyConsideredRecall = recommendation.data.whyConsideredRecall?.selected?.displayValue ?: EMPTY_STRING
+        whyConsideredRecall = getDisplayTextFromWhyConsideredRecall(recommendation.data.whyConsideredRecall)
       )
+    }
+
+    private fun getDisplayTextFromWhyConsideredRecall(whyConsideredRecall: WhyConsideredRecall?): String {
+      return whyConsideredRecall?.allOptions
+        ?.associate { it.value to it.text }
+        ?.get(whyConsideredRecall.selected?.name) ?: EMPTY_STRING
     }
 
     fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
