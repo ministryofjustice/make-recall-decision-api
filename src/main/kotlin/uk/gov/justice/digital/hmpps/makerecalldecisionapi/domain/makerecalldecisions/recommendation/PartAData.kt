@@ -53,7 +53,8 @@ data class PartAData(
   val behaviourLeadingToSexualOrViolentOffence: String? = null,
   val behaviourLeadingToSexualOrViolentOffencePresent: String? = null,
   val outOfTouch: String? = null,
-  val outOfTouchPresent: String? = null
+  val outOfTouchPresent: String? = null,
+  val otherPossibleAddresses: String? = null
 )
 
 data class ValueWithDetails(

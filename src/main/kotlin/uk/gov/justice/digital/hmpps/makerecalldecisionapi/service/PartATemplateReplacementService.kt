@@ -117,7 +117,8 @@ internal class PartATemplateReplacementService {
       "behaviour_leading_to_sexual_or_violent_offence" to partAData.behaviourLeadingToSexualOrViolentOffence,
       "behaviour_leading_to_sexual_or_violent_offence_present" to partAData.behaviourLeadingToSexualOrViolentOffencePresent,
       "out_of_touch" to partAData.outOfTouch,
-      "out_of_touch_present" to partAData.outOfTouchPresent
+      "out_of_touch_present" to partAData.outOfTouchPresent,
+      "other_possible_addresses" to partAData.otherPossibleAddresses
     )
 
     mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))

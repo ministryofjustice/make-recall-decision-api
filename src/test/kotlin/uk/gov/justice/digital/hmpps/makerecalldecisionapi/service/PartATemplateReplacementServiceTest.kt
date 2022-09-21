@@ -206,7 +206,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
               TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
               TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
             )
-          )
+          ),
+          mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = false, "123 Acacia Avenue, Birmingham, B23 1AV"),
         )
       )
       partATemplateReplacementService.generateDocFromTemplate(recommendation)
@@ -223,7 +224,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       val result = partATemplateReplacementService.mappingsForTemplate(partA)
 
       // then
-      assertThat(result.size).isEqualTo(89)
+      assertThat(result.size).isEqualTo(90)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -295,6 +296,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"]).isEqualTo(YES.partADisplayValue)
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
+      assertThat(result["other_possible_addresses"]).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
     }
   }
 
@@ -431,7 +433,8 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffence = "behaviour leading to sexual or violent offence",
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
-      outOfTouchPresent = YES.partADisplayValue
+      outOfTouchPresent = YES.partADisplayValue,
+      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV"
     )
   }
 }

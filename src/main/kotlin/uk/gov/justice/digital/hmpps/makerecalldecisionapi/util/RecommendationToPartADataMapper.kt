@@ -102,7 +102,8 @@ class RecommendationToPartADataMapper {
         behaviourLeadingToSexualOrViolentOffence = behaviourLeadingToSexualOrViolentOffence,
         behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
         outOfTouch = outOfTouch,
-        outOfTouchPresent = outOfTouchPresent
+        outOfTouchPresent = outOfTouchPresent,
+        otherPossibleAddresses = recommendation.data.mainAddressWherePersonCanBeFound?.details
       )
     }
 

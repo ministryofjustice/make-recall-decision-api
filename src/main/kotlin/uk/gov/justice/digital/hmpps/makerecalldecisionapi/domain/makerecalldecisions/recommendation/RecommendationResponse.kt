@@ -41,7 +41,8 @@ data class RecommendationResponse(
   val lastPartADownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
   val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
-  val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null
+  val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
+  @JsonProperty("isMainAddressWherePersonCanBeFound") val mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

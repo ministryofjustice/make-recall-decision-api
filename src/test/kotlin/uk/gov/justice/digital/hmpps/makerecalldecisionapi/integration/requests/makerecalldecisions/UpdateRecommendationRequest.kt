@@ -228,6 +228,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
         "value": "OUT_OF_TOUCH"
       }
     ]
+  },
+  "isMainAddressWherePersonCanBeFound": {
+    "selected": false,
+    "details": "123 Acacia Avenue, Birmingham, B23 1AV"
   }
 }
 """.trimIndent()
