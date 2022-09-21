@@ -200,7 +200,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           vulnerabilities = updateRecommendationRequest.vulnerabilities,
           convictionDetail = updateRecommendationRequest.convictionDetail,
           fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
-          indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails
+          indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
+          mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound
         )
       )
 
@@ -349,6 +350,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.lastPartADownloadDateTime).isNull()
     assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.selected).isEqualTo(true)
     assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.details).isEqualTo("This is an additional licence condition")
+    assertThat(recommendationResponse.mainAddressWherePersonCanBeFound?.selected).isEqualTo(false)
+    assertThat(recommendationResponse.mainAddressWherePersonCanBeFound?.details).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
   }
 
   @Test

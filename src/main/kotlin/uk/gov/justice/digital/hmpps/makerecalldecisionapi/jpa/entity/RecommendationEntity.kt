@@ -77,7 +77,8 @@ data class RecommendationModel(
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
-  var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null
+  var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
+  @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null
 ) : Serializable
 
 enum class Status {
