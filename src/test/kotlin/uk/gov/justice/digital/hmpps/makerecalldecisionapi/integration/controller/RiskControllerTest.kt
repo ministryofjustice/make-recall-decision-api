@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -189,6 +190,7 @@ class RiskControllerTest(
       historicalRiskScoresResponse(crn)
       currentRiskScoresResponse(crn)
       deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
       contingencyPlanResponse(crn)
 
       val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
@@ -262,6 +264,7 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
         .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
         .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
         .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
