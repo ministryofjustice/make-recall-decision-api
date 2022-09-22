@@ -249,6 +249,12 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
         "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down"
       }
     ]
+  },
+  "reasonsForNoRecall": {
+    "licenceBreach": "Reason for breaching licence",
+    "noRecallRationale": "Rationale for no recall",
+    "popProgressMade": "Progress made so far detail",
+    "futureExpectations": "Future expectations detail"
   }
 }
 """.trimIndent()

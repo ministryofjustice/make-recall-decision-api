@@ -4,7 +4,8 @@ import com.deepoove.poi.XWPFTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -38,92 +39,96 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToD
 import java.time.format.DateTimeFormatter
 
 @Service
-internal class PartATemplateReplacementService {
-  val resource = ClassPathResource("NAT Recall Part A London Template - obtained 131021.docx")
+internal class TemplateReplacementService {
 
-  fun generateDocFromTemplate(recommendation: RecommendationEntity): String {
+  fun generateDocFromTemplate(recommendation: RecommendationEntity, documentType: DocumentType): String {
 
-    val partAData = RecommendationToDocumentMapper.mapRecommendationDataToPartAData(recommendation)
+    val documentData = RecommendationToDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
-    val file = XWPFTemplate.compile(resource.inputStream).render(
-      mappingsForTemplate(partAData)
+    val file = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream).render(
+      mappingsForTemplate(documentData)
     )
 //    ).writeToFile("out_template.docx")
 
     return writeDataToFile(file)
   }
 
-  fun mappingsForTemplate(partAData: PartAData): HashMap<String, String?> {
+  fun mappingsForTemplate(documentData: DocumentData): HashMap<String, String?> {
     val mappings = hashMapOf(
-      "custody_status" to partAData.custodyStatus?.value,
-      "custody_status_details" to partAData.custodyStatus?.details?.replace("\r\n", ", "),
-      "recall_type" to partAData.recallType?.value,
-      "recall_type_details" to partAData.recallType?.details,
-      "response_to_probation" to partAData.responseToProbation,
-      "what_led_to_recall" to partAData.whatLedToRecall,
-      "is_this_an_emergency_recall" to partAData.isThisAnEmergencyRecall,
-      "has_victims_in_contact_scheme" to partAData.hasVictimsInContactScheme,
-      "indeterminate_sentence_type" to partAData.indeterminateSentenceType,
-      "is_extended_sentence" to partAData.isExtendedSentence,
-      "date_vlo_informed" to partAData.dateVloInformed,
-      "has_arrest_issues" to partAData.hasArrestIssues?.value,
-      "has_arrest_issues_details" to partAData.hasArrestIssues?.details,
-      "has_contraband_risk" to partAData.hasContrabandRisk?.value,
-      "has_contraband_risk_details" to partAData.hasContrabandRisk?.details,
-      "additional_conditions_breached" to partAData.additionalConditionsBreached,
-      "is_under_integrated_offender_management" to partAData.isUnderIntegratedOffenderManagement?.let { YesNoNotApplicableOptions.valueOf(it).partADisplayValue },
-      "contact_name" to partAData.localPoliceContact?.contactName,
-      "phone_number" to partAData.localPoliceContact?.phoneNumber,
-      "fax_number" to partAData.localPoliceContact?.faxNumber,
-      "email_address" to partAData.localPoliceContact?.emailAddress,
-      "has_vulnerabilities" to if (hasVulnerabilities(partAData)) YES else NO,
-      "gender" to partAData.gender,
-      "date_of_birth" to partAData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-      "name" to partAData.name,
-      "ethnicity" to if (partAData.ethnicity.isNullOrBlank()) NOT_SPECIFIED else partAData.ethnicity,
-      "last_recorded_address" to partAData.lastRecordedAddress,
-      "no_fixed_abode" to partAData.noFixedAbode,
-      "cro_number" to partAData.croNumber,
-      "pnc_number" to partAData.pncNumber,
-      "most_recent_prisoner_number" to partAData.mostRecentPrisonerNumber,
-      "noms_number" to partAData.nomsNumber,
-      "gender" to partAData.gender,
-      "index_offence_description" to partAData.indexOffenceDescription,
-      "date_of_original_offence" to partAData.dateOfOriginalOffence,
-      "date_of_sentence" to partAData.dateOfSentence,
-      "length_of_sentence" to partAData.lengthOfSentence,
-      "licence_expiry_date" to partAData.licenceExpiryDate,
-      "sentence_expiry_date" to partAData.sentenceExpiryDate,
-      "custodial_term" to partAData.custodialTerm,
-      "extended_term" to partAData.extendedTerm,
-      "mappa_level" to formatMappaLevel(partAData.mappa),
-      "mappa_category" to formatMappaCategory(partAData.mappa),
-      "last_person_completing_form_name" to partAData.lastPersonCompletingFormName,
-      "last_person_completing_form_email" to partAData.lastPersonCompletingFormEmail,
-      "region" to partAData.region,
-      "local_delivery_unit" to partAData.localDeliveryUnit,
-      "date_of_decision" to partAData.dateOfDecision,
-      "time_of_decision" to partAData.timeOfDecision,
-      "index_offence_details" to (partAData.indexOffenceDetails ?: EMPTY_STRING),
-      "fixed_term_additional_licence_conditions" to partAData.fixedTermAdditionalLicenceConditions,
-      "behaviour_similar_to_index_offence" to partAData.behaviourSimilarToIndexOffence,
-      "behaviour_similar_to_index_offence_present" to partAData.behaviourSimilarToIndexOffencePresent,
-      "behaviour_leading_to_sexual_or_violent_offence" to partAData.behaviourLeadingToSexualOrViolentOffence,
-      "behaviour_leading_to_sexual_or_violent_offence_present" to partAData.behaviourLeadingToSexualOrViolentOffencePresent,
-      "out_of_touch" to partAData.outOfTouch,
-      "out_of_touch_present" to partAData.outOfTouchPresent,
-      "other_possible_addresses" to partAData.otherPossibleAddresses
+      "custody_status" to documentData.custodyStatus?.value,
+      "custody_status_details" to documentData.custodyStatus?.details?.replace("\r\n", ", "),
+      "recall_type" to documentData.recallType?.value,
+      "recall_type_details" to documentData.recallType?.details,
+      "response_to_probation" to documentData.responseToProbation,
+      "what_led_to_recall" to documentData.whatLedToRecall,
+      "is_this_an_emergency_recall" to documentData.isThisAnEmergencyRecall,
+      "has_victims_in_contact_scheme" to documentData.hasVictimsInContactScheme,
+      "indeterminate_sentence_type" to documentData.indeterminateSentenceType,
+      "is_extended_sentence" to documentData.isExtendedSentence,
+      "date_vlo_informed" to documentData.dateVloInformed,
+      "has_arrest_issues" to documentData.hasArrestIssues?.value,
+      "has_arrest_issues_details" to documentData.hasArrestIssues?.details,
+      "has_contraband_risk" to documentData.hasContrabandRisk?.value,
+      "has_contraband_risk_details" to documentData.hasContrabandRisk?.details,
+      "additional_conditions_breached" to documentData.additionalConditionsBreached,
+      "is_under_integrated_offender_management" to documentData.isUnderIntegratedOffenderManagement?.let { YesNoNotApplicableOptions.valueOf(it).partADisplayValue },
+      "contact_name" to documentData.localPoliceContact?.contactName,
+      "phone_number" to documentData.localPoliceContact?.phoneNumber,
+      "fax_number" to documentData.localPoliceContact?.faxNumber,
+      "email_address" to documentData.localPoliceContact?.emailAddress,
+      "has_vulnerabilities" to if (hasVulnerabilities(documentData.vulnerabilities)) YES else NO,
+      "gender" to documentData.gender,
+      "date_of_birth" to documentData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+      "name" to documentData.name,
+      "ethnicity" to if (documentData.ethnicity.isNullOrBlank()) NOT_SPECIFIED else documentData.ethnicity,
+      "last_recorded_address" to documentData.lastRecordedAddress,
+      "no_fixed_abode" to documentData.noFixedAbode,
+      "cro_number" to documentData.croNumber,
+      "pnc_number" to documentData.pncNumber,
+      "most_recent_prisoner_number" to documentData.mostRecentPrisonerNumber,
+      "noms_number" to documentData.nomsNumber,
+      "gender" to documentData.gender,
+      "index_offence_description" to documentData.indexOffenceDescription,
+      "date_of_original_offence" to documentData.dateOfOriginalOffence,
+      "date_of_sentence" to documentData.dateOfSentence,
+      "length_of_sentence" to documentData.lengthOfSentence,
+      "licence_expiry_date" to documentData.licenceExpiryDate,
+      "sentence_expiry_date" to documentData.sentenceExpiryDate,
+      "custodial_term" to documentData.custodialTerm,
+      "extended_term" to documentData.extendedTerm,
+      "mappa_level" to formatMappaLevel(documentData.mappa),
+      "mappa_category" to formatMappaCategory(documentData.mappa),
+      "last_person_completing_form_name" to documentData.lastPersonCompletingFormName,
+      "last_person_completing_form_email" to documentData.lastPersonCompletingFormEmail,
+      "region" to documentData.region,
+      "local_delivery_unit" to documentData.localDeliveryUnit,
+      "date_of_decision" to documentData.dateOfDecision,
+      "time_of_decision" to documentData.timeOfDecision,
+      "index_offence_details" to (documentData.indexOffenceDetails ?: EMPTY_STRING),
+      "fixed_term_additional_licence_conditions" to documentData.fixedTermAdditionalLicenceConditions,
+      "behaviour_similar_to_index_offence" to documentData.behaviourSimilarToIndexOffence,
+      "behaviour_similar_to_index_offence_present" to documentData.behaviourSimilarToIndexOffencePresent,
+      "behaviour_leading_to_sexual_or_violent_offence" to documentData.behaviourLeadingToSexualOrViolentOffence,
+      "behaviour_leading_to_sexual_or_violent_offence_present" to documentData.behaviourLeadingToSexualOrViolentOffencePresent,
+      "out_of_touch" to documentData.outOfTouch,
+      "out_of_touch_present" to documentData.outOfTouchPresent,
+      "other_possible_addresses" to documentData.otherPossibleAddresses,
+      "why_considered_recall" to (documentData.whyConsideredRecall ?: EMPTY_STRING),
+      "licence_breach" to documentData.licenceBreach,
+      "no_recall_rationale" to documentData.noRecallRationale,
+      "pop_progress_made" to documentData.popProgressMade,
+      "future_expectations" to documentData.futureExpectations
     )
 
-    mappings.putAll(convertToSelectedAlternativesMap(partAData.selectedAlternatives))
-    mappings.putAll(convertToSelectedStandardConditionsBreachedMap(partAData.selectedStandardConditionsBreached))
-    mappings.putAll(convertToSelectedVulnerabilitiesMap(partAData.vulnerabilities))
+    mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
+    mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
+    mappings.putAll(convertToSelectedVulnerabilitiesMap(documentData.vulnerabilities))
 
     return mappings
   }
 
-  private fun hasVulnerabilities(partAData: PartAData) =
-    partAData.vulnerabilities?.selected?.isNotEmpty() == true && !partAData.vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
+  private fun hasVulnerabilities(vulnerabilities: Vulnerabilities?) =
+    vulnerabilities?.selected?.isNotEmpty() == true && !vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()

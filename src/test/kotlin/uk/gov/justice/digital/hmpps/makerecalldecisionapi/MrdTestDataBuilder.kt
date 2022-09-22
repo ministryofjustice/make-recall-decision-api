@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -81,7 +82,9 @@ class MrdTestDataBuilder {
           userEmailPartACompletedBy = "Ben.Baker@test.com",
           lastPartADownloadDateTime = null,
           fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
-          mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound()
+          mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
+          whyConsideredRecall = whyConsideredRecall(),
+          reasonsForNoRecall = reasonForNoRecall()
         )
       )
     }
@@ -115,7 +118,8 @@ class MrdTestDataBuilder {
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
         indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails(),
         mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
-        whyConsideredRecall = whyConsideredRecall()
+        whyConsideredRecall = whyConsideredRecall(),
+        reasonsForNoRecall = reasonForNoRecall()
       )
     }
 
@@ -260,6 +264,10 @@ class MrdTestDataBuilder {
         selected = "YES",
         allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
       )
+    }
+
+    private fun reasonForNoRecall(): ReasonsForNoRecall {
+      return ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
     }
   }
 }
