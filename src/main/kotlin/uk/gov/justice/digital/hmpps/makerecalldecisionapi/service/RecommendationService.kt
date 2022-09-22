@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -31,11 +32,10 @@ import kotlin.jvm.optionals.getOrNull
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   @Lazy val personDetailsService: PersonDetailsService,
-  val partATemplateReplacementService: PartATemplateReplacementService,
+  val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   private val convictionService: ConvictionService,
-  @Lazy private val riskService: RiskService?,
-  val dntrTemplateReplacementService: DntrTemplateReplacementService
+  @Lazy private val riskService: RiskService?
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -129,7 +129,8 @@ internal class RecommendationService(
         fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
         indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
         mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
-        whyConsideredRecall = recommendationEntity.data.whyConsideredRecall
+        whyConsideredRecall = recommendationEntity.data.whyConsideredRecall,
+        reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall
       )
     }
   }
@@ -193,7 +194,7 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val fileContents = dntrTemplateReplacementService.generateDocFromTemplate(recommendationEntity)
+      val fileContents = templateReplacementService.generateDocFromTemplate(recommendationEntity, DocumentType.DNTR_DOCUMENT)
       return DocumentResponse(
         fileName = generateDntrFileName(recommendationEntity.data),
         fileContents = fileContents
@@ -209,7 +210,7 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val fileContents = partATemplateReplacementService.generateDocFromTemplate(recommendationEntity)
+      val fileContents = templateReplacementService.generateDocFromTemplate(recommendationEntity, DocumentType.PART_A_DOCUMENT)
       return DocumentResponse(
         fileName = generatePartAFileName(recommendationEntity.data),
         fileContents = fileContents

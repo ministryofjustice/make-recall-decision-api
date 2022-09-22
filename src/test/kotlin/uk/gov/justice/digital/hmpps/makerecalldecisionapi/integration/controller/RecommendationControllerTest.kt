@@ -337,6 +337,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.whyConsideredRecall.allOptions[1].text").isEqualTo("Contact with your probation practitioner has broken down")
       .jsonPath("$.whyConsideredRecall.allOptions[2].value").isEqualTo("RISK_INCREASED_AND_CONTACT_STOPPED")
       .jsonPath("$.whyConsideredRecall.allOptions[2].text").isEqualTo("Your risk is assessed as increased and contact with your probation practitioner has broken down")
+      .jsonPath("$.reasonsForNoRecall.licenceBreach").isEqualTo("Reason for breaching licence")
+      .jsonPath("$.reasonsForNoRecall.noRecallRationale").isEqualTo("Rationale for no recall")
+      .jsonPath("$.reasonsForNoRecall.popProgressMade").isEqualTo("Progress made so far detail")
+      .jsonPath("$.reasonsForNoRecall.futureExpectations").isEqualTo("Future expectations detail")
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))

@@ -3,12 +3,11 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DntrData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -28,19 +27,7 @@ class RecommendationToDocumentMapper {
 
   companion object Mapper {
 
-    fun mapRecommendationDataToDntrDocumentData(recommendation: RecommendationEntity): DntrData {
-      return DntrData(
-        whyConsideredRecall = getDisplayTextFromWhyConsideredRecall(recommendation.data.whyConsideredRecall)
-      )
-    }
-
-    private fun getDisplayTextFromWhyConsideredRecall(whyConsideredRecall: WhyConsideredRecall?): String {
-      return whyConsideredRecall?.allOptions
-        ?.associate { it.value to it.text }
-        ?.get(whyConsideredRecall.selected?.name) ?: EMPTY_STRING
-    }
-
-    fun mapRecommendationDataToPartAData(recommendation: RecommendationEntity): PartAData {
+    fun mapRecommendationDataToDocumentData(recommendation: RecommendationEntity): DocumentData {
       val firstName = recommendation.data.personOnProbation?.firstName
       val middleNames = recommendation.data.personOnProbation?.middleNames
       val lastName = recommendation.data.personOnProbation?.surname
@@ -51,7 +38,7 @@ class RecommendationToDocumentMapper {
       val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
       val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
 
-      return PartAData(
+      return DocumentData(
         custodyStatus = ValueWithDetails(
           recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
           recommendation.data.custodyStatus?.details
@@ -117,7 +104,12 @@ class RecommendationToDocumentMapper {
         behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
         outOfTouch = outOfTouch,
         outOfTouchPresent = outOfTouchPresent,
-        otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details)
+        otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details),
+        whyConsideredRecall = getDisplayTextFromWhyConsideredRecall(recommendation.data.whyConsideredRecall),
+        licenceBreach = recommendation.data.reasonsForNoRecall?.licenceBreach,
+        noRecallRationale = recommendation.data.reasonsForNoRecall?.noRecallRationale,
+        popProgressMade = recommendation.data.reasonsForNoRecall?.popProgressMade,
+        futureExpectations = recommendation.data.reasonsForNoRecall?.futureExpectations
       )
     }
 
@@ -255,6 +247,12 @@ class RecommendationToDocumentMapper {
 
     private fun formatAddressWherePersonCanBeFound(details: String?): String? {
       return if (details?.isNullOrBlank() == false) "Police can find this person at: $details" else null
+    }
+
+    private fun getDisplayTextFromWhyConsideredRecall(whyConsideredRecall: WhyConsideredRecall?): String {
+      return whyConsideredRecall?.allOptions
+        ?.associate { it.value to it.text }
+        ?.get(whyConsideredRecall.selected?.name) ?: EMPTY_STRING
     }
   }
 }
