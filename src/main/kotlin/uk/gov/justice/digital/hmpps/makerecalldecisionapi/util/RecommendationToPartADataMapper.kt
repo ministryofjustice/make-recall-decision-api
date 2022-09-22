@@ -103,7 +103,7 @@ class RecommendationToPartADataMapper {
         behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
         outOfTouch = outOfTouch,
         outOfTouchPresent = outOfTouchPresent,
-        otherPossibleAddresses = recommendation.data.mainAddressWherePersonCanBeFound?.details
+        otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details)
       )
     }
 
@@ -237,6 +237,10 @@ class RecommendationToPartADataMapper {
         return Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
       }
       return Pair(NO, EMPTY_STRING)
+    }
+
+    private fun formatAddressWherePersonCanBeFound(details: String?): String? {
+      return if (details?.isNullOrBlank() == false) "Police can find this person at: $details" else null
     }
   }
 }

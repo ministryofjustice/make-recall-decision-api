@@ -32,7 +32,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ExperimentalCoroutinesApi
 class RecommendationToPartADataMapperTest {
@@ -734,19 +733,38 @@ class RecommendationToPartADataMapperTest {
   }
 
   @Test
-  fun `given last downloaded date and time then split into separate fields in the part A`() {
+  fun `given other possible address field is populated then format it for the Part A`() {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = "ABC123",
-          lastPartADownloadDateTime = LocalDateTime.of(2022, 9, 13, 8, 26, 31),
+          mainAddressWherePersonCanBeFound = SelectedWithDetails(
+            selected = false,
+            details = "123 Acacia Avenue, Birmingham, B23 1AV"
+          ),
         )
       )
       val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
 
-      assertThat(result.dateOfDecision).isEqualTo("13/09/2022")
-      assertThat(result.timeOfDecision).isEqualTo("08:26")
+      assertThat(result.otherPossibleAddresses).isEqualTo("Police can find this person at: 123 Acacia Avenue, Birmingham, B23 1AV")
+    }
+  }
+
+  @ParameterizedTest(name = "given empty adress value is {0} then leave this field empty in the Part A")
+  @CsvSource("''", "null", nullValues = ["null"])
+  fun `given empty other possible address field then leave this field empty in the Part A`(addressValue: String?) {
+    runTest {
+      val recommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = "ABC123",
+          mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = true, details = addressValue),
+        )
+      )
+      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+
+      assertThat(result.otherPossibleAddresses).isEqualTo(null)
     }
   }
 }
