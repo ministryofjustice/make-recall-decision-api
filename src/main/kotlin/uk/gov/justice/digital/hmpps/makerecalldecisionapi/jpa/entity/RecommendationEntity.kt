@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import java.io.Serializable
 import java.security.SecureRandom
 import java.time.LocalDate
@@ -65,6 +66,8 @@ data class RecommendationModel(
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
   var lastPartADownloadDateTime: LocalDateTime? = null,
+  var userNameDntrLetterCompletedBy: String? = null,
+  var lastDntrLetterADownloadDateTime: LocalDateTime? = null,
   var lastModifiedBy: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
@@ -78,7 +81,8 @@ data class RecommendationModel(
   var indexOffenceDetails: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
-  @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null
+  @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
+  var whyConsideredRecall: WhyConsideredRecall? = null
 ) : Serializable
 
 enum class Status {

@@ -25,6 +25,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -112,7 +114,8 @@ class MrdTestDataBuilder {
         convictionDetail = convictionDetail(),
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
         indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails(),
-        mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound()
+        mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
+        whyConsideredRecall = whyConsideredRecall()
       )
     }
 
@@ -172,6 +175,17 @@ class MrdTestDataBuilder {
           TextValueOption(value = "YES_PRISON", text = "Yes, prison custody"),
           TextValueOption(value = "YES_POLICE", text = "Yes, police custody"),
           TextValueOption(value = "NO", text = "No")
+        )
+      )
+    }
+
+    private fun whyConsideredRecall(): WhyConsideredRecall {
+      return WhyConsideredRecall(
+        selected = WhyConsideredRecallValue.RISK_INCREASED,
+        allOptions = listOf(
+          TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
+          TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
+          TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
         )
       )
     }

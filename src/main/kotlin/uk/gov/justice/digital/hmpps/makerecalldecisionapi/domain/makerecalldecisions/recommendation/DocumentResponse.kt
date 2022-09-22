@@ -2,9 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 
-data class PartAResponse(
+data class DocumentResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val fileName: String? = null,
   val fileContents: String? = null
-
 )

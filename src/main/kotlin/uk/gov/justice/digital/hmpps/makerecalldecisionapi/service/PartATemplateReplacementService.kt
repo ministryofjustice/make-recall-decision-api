@@ -34,10 +34,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToPartADataMapper
-import java.io.ByteArrayOutputStream
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToDocumentMapper
 import java.time.format.DateTimeFormatter
-import java.util.Base64
 
 @Service
 internal class PartATemplateReplacementService {
@@ -45,18 +43,14 @@ internal class PartATemplateReplacementService {
 
   fun generateDocFromTemplate(recommendation: RecommendationEntity): String {
 
-    val partAData = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+    val partAData = RecommendationToDocumentMapper.mapRecommendationDataToPartAData(recommendation)
 
     val file = XWPFTemplate.compile(resource.inputStream).render(
       mappingsForTemplate(partAData)
     )
 //    ).writeToFile("out_template.docx")
 
-    val out = ByteArrayOutputStream()
-    file.write(out)
-    file.close()
-
-    return Base64.getEncoder().encodeToString(out.toByteArray())
+    return writeDataToFile(file)
   }
 
   fun mappingsForTemplate(partAData: PartAData): HashMap<String, String?> {
