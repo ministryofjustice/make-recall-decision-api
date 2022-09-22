@@ -4,24 +4,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
 {
-  "custodyStatus": {
-    "selected": "YES_PRISON",
-    "details": "Bromsgrove Police Station\r\nLondon",
-    "allOptions": [
-      {
-        "value": "YES_PRISON",
-        "text": "Yes, prison custody"
-      },
-      {
-        "value": "YES_POLICE",
-        "text": "Yes, police custody"
-      },
-      {
-        "value": "NO",
-        "text": "No"
-      }
-    ]
-  },
   "recallType": {
     "selected": {
       "value": "NO_RECALL",
@@ -43,8 +25,6 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "responseToProbation": "They have not responded well",
-  "whatLedToRecall": "Increasingly violent behaviour",
-  "isThisAnEmergencyRecall": false,
   "isIndeterminateSentence": false,
   "isExtendedSentence": false,
   "activeCustodialConvictionCount": 1,
@@ -195,10 +175,6 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
       }
     ]
   },
-  "fixedTermAdditionalLicenceConditions": {
-    "selected": true,
-    "details": "This is an additional licence condition"
-  },
   "indeterminateOrExtendedSentenceDetails": {
     "selected": [
       {
@@ -228,6 +204,12 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
         "value": "OUT_OF_TOUCH"
       }
     ]
+  },
+  "reasonsForNoRecall": {
+    "licenceBreach": "Reason for breaching licence",
+    "noRecallRationale": "Rationale for no recall",
+    "popProgressMade": "Progress made so far detail",
+    "futureExpectations": "Future expectations detail"
   }
 }
 """.trimIndent()
