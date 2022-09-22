@@ -5,6 +5,8 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
@@ -14,14 +16,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PartAData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -50,6 +54,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_HEALTH_CONCERNS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -62,10 +68,11 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
+internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
-  @Test
-  fun `given recommendation data then build the part A document`() {
+  @ParameterizedTest()
+  @CsvSource("PART_A_DOCUMENT", "DNTR_DOCUMENT")
+  fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
@@ -208,23 +215,32 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
             )
           ),
           mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = false, "123 Acacia Avenue, Birmingham, B23 1AV"),
+          whyConsideredRecall = WhyConsideredRecall(
+            selected = WhyConsideredRecallValue.RISK_INCREASED,
+            allOptions = listOf(
+              TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
+              TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
+              TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
+            )
+          ),
+          reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
         )
       )
-      partATemplateReplacementService.generateDocFromTemplate(recommendation)
+      templateReplacementService.generateDocFromTemplate(recommendation, documentType)
     }
   }
 
   @Test
-  fun `given recommendation data then build the mappings for the Part A template`() {
+  fun `given recommendation data then build the mappings for the document template`() {
     runTest {
       // given
-      val partA = partAData()
+      val document = documentData()
 
       // when
-      val result = partATemplateReplacementService.mappingsForTemplate(partA)
+      val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(90)
+      assertThat(result.size).isEqualTo(95)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -297,6 +313,11 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
       assertThat(result["other_possible_addresses"]).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
+      assertThat(result["why_considered_recall"]).isEqualTo("Your risk is assessed as increased")
+      assertThat(result["licence_breach"]).isEqualTo("Reason for breaching licence")
+      assertThat(result["no_recall_rationale"]).isEqualTo("Rationale for no recall")
+      assertThat(result["pop_progress_made"]).isEqualTo("Progress made so far detail")
+      assertThat(result["future_expectations"]).isEqualTo("Future expectations detail")
     }
   }
 
@@ -304,10 +325,10 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
   fun `ethnicity in Part A should read 'Not Specified' when not available from Delius`() {
     runTest {
       // given
-      val partA = partAData().copy(ethnicity = null)
+      val partA = documentData().copy(ethnicity = null)
 
       // when
-      val result = partATemplateReplacementService.mappingsForTemplate(partA)
+      val result = templateReplacementService.mappingsForTemplate(partA)
 
       // then
       assertThat(result["ethnicity"]).isEqualTo("Not specified")
@@ -318,7 +339,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
   fun `given empty some data then build the mappings with blank strings for the Part A template`() {
     runTest {
 
-      val partA = PartAData(
+      val partA = DocumentData(
         custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
@@ -332,10 +353,11 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
         hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
         selectedStandardConditionsBreached = null,
-        additionalConditionsBreached = EMPTY_STRING
+        additionalConditionsBreached = EMPTY_STRING,
+        whyConsideredRecall = null
       )
 
-      val result = partATemplateReplacementService.mappingsForTemplate(partA)
+      val result = templateReplacementService.mappingsForTemplate(partA)
 
       assertThat(result["warning_letter_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["drug_testing_details"]).isEqualTo(EMPTY_STRING)
@@ -354,10 +376,11 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["why_considered_recall"]).isEqualTo(EMPTY_STRING)
     }
   }
 
-  private fun partAData(): PartAData {
+  private fun documentData(): DocumentData {
     val alternativesList: List<ValueWithDetails> = listOf(
       ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022"),
       ValueWithDetails(value = SelectedAlternativeOptions.DRUG_TESTING.name, details = "drugs test passed"),
@@ -369,7 +392,7 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
       ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
     )
-    return PartAData(
+    return DocumentData(
       indexOffenceDetails = "Juicy details!",
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
@@ -434,7 +457,12 @@ internal class PartATemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
-      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV"
+      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
+      whyConsideredRecall = "Your risk is assessed as increased",
+      licenceBreach = "Reason for breaching licence",
+      noRecallRationale = "Rationale for no recall",
+      popProgressMade = "Progress made so far detail",
+      futureExpectations = "Future expectations detail"
     )
   }
 }

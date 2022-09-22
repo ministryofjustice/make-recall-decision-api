@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import java.time.LocalDate
 
-data class PartAData(
+data class DocumentData(
   val custodyStatus: ValueWithDetails? = null,
   val recallType: ValueWithDetails? = null,
   val responseToProbation: String? = null,
@@ -54,7 +54,12 @@ data class PartAData(
   val behaviourLeadingToSexualOrViolentOffencePresent: String? = null,
   val outOfTouch: String? = null,
   val outOfTouchPresent: String? = null,
-  val otherPossibleAddresses: String? = null
+  val otherPossibleAddresses: String? = null,
+  val whyConsideredRecall: String? = null,
+  val licenceBreach: String? = null,
+  val noRecallRationale: String? = null,
+  val popProgressMade: String? = null,
+  val futureExpectations: String? = null
 )
 
 data class ValueWithDetails(
