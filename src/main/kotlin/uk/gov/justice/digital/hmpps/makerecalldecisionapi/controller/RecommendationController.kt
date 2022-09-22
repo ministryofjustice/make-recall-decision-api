@@ -94,7 +94,7 @@ internal class RecommendationController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PostMapping("/recommendations/{recommendationId}/task-list-no-recall")
+  @PostMapping("/recommendations/{recommendationId}/no-recall-letter")
   @Operation(summary = "Generates a DNTR document")
   suspend fun generateDntrDocument(
     @PathVariable("recommendationId") recommendationId: Long

@@ -773,7 +773,7 @@ class RecommendationToDocumentMapperTest {
           ),
         )
       )
-      val result = RecommendationToPartADataMapper.mapRecommendationDataToPartAData(recommendation)
+      val result = RecommendationToDocumentMapper.mapRecommendationDataToPartAData(recommendation)
 
       assertThat(result.otherPossibleAddresses).isEqualTo("Police can find this person at: 123 Acacia Avenue, Birmingham, B23 1AV")
     }

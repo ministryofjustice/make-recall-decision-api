@@ -402,7 +402,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
-        .uri("/recommendations/$createdRecommendationId/task-list-no-recall")
+        .uri("/recommendations/$createdRecommendationId/no-recall-letter")
         .contentType(MediaType.APPLICATION_JSON)
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
