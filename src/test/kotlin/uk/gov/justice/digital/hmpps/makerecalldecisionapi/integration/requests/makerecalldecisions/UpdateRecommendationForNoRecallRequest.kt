@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
-fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
+fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
 {
   "custodyStatus": {
     "selected": "YES_PRISON",
@@ -24,7 +24,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "recallType": {
     "selected": {
-      "value": "FIXED_TERM",
+      "value": "NO_RECALL",
       "details": "My details"
     },
     "allOptions": [
@@ -44,9 +44,9 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "responseToProbation": "They have not responded well",
   "whatLedToRecall": "Increasingly violent behaviour",
-  "isThisAnEmergencyRecall": true,
-  "isIndeterminateSentence": true,
-  "isExtendedSentence": true,
+  "isThisAnEmergencyRecall": false,
+  "isIndeterminateSentence": false,
+  "isExtendedSentence": false,
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",
@@ -66,7 +66,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "indeterminateSentenceType": {
-    "selected": "LIFE",
+    "selected": "NO",
     "allOptions": [
       {
         "value": "LIFE",
@@ -226,27 +226,6 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       {
         "text": "Out of touch",
         "value": "OUT_OF_TOUCH"
-      }
-    ]
-  },
-  "isMainAddressWherePersonCanBeFound": {
-    "selected": false,
-    "details": "123 Acacia Avenue, Birmingham, B23 1AV"
-  },
-  "whyConsideredRecall": {
-    "selected": "RISK_INCREASED",
-    "allOptions": [
-      {
-        "value": "RISK_INCREASED",
-        "text": "Your risk is assessed as increased"
-      },
-      {
-        "value": "CONTACT_STOPPED",
-        "text": "Contact with your probation practitioner has broken down"
-      },
-      {
-        "value": "RISK_INCREASED_AND_CONTACT_STOPPED",
-        "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down"
       }
     ]
   }
