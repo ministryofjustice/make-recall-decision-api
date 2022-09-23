@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -26,6 +27,7 @@ class LicenceConditionsControllerTest(
       groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -84,6 +86,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
     }
   }
 

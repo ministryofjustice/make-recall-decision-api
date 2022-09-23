@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -605,12 +604,5 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
-  }
-
-  private fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
-    val responseBodySpec = response.expectBody<String>()
-    val responseEntityExchangeResult = responseBodySpec.returnResult()
-    val responseString = responseEntityExchangeResult.responseBody
-    return JSONObject(responseString)
   }
 }

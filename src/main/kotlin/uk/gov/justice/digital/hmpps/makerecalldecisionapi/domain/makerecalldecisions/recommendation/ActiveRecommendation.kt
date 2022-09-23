@@ -3,5 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 data class ActiveRecommendation(
   val recommendationId: Long?,
   val lastModifiedDate: String?,
-  val lastModifiedBy: String?
+  val lastModifiedBy: String?,
+  val recallType: RecallType?
 )

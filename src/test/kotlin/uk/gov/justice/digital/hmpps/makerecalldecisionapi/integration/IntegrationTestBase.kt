@@ -170,7 +170,7 @@ abstract class IntegrationTestBase {
       .expectStatus().is2xxSuccessful
   }
 
-  private fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
+  fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
     val responseBodySpec = response.expectBody<String>()
     val responseEntityExchangeResult = responseBodySpec.returnResult()
     val responseString = responseEntityExchangeResult.responseBody

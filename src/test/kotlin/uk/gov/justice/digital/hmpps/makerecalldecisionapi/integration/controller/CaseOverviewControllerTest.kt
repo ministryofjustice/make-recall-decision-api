@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
@@ -27,6 +26,7 @@ class CaseOverviewControllerTest(
       registrationsResponse()
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -55,6 +55,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
     }
   }
 
@@ -139,7 +140,7 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.activeRecommendation").isEmpty()
+        .jsonPath("$.activeRecommendation").isEmpty
     }
   }
 
@@ -160,7 +161,7 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.activeRecommendation").isEmpty()
+        .jsonPath("$.activeRecommendation").isEmpty
     }
   }
 

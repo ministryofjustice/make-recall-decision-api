@@ -374,6 +374,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(result?.recommendationId).isEqualTo(recommendation.id)
     assertThat(result?.lastModifiedBy).isEqualTo(recommendation.data.lastModifiedBy)
     assertThat(result?.lastModifiedDate).isEqualTo(recommendation.data.lastModifiedDate)
+    assertThat(result?.recallType).isEqualTo(recommendation.data.recallType)
   }
 
   @Test

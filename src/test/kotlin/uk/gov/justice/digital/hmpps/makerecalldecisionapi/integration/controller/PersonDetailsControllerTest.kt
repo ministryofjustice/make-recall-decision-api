@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -21,6 +22,7 @@ class PersonDetailsControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -45,6 +47,7 @@ class PersonDetailsControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
     }
   }
 
