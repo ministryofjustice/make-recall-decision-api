@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -29,6 +30,7 @@ class ContactHistoryControllerTest(
       groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
@@ -86,6 +88,7 @@ class ContactHistoryControllerTest(
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
     }
   }
 
