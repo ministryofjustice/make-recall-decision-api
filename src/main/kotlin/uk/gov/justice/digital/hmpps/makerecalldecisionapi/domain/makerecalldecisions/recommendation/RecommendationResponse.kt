@@ -44,7 +44,8 @@ data class RecommendationResponse(
   val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
   @JsonProperty("isMainAddressWherePersonCanBeFound") val mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
   val whyConsideredRecall: WhyConsideredRecall? = null,
-  val reasonsForNoRecall: ReasonsForNoRecall? = null
+  val reasonsForNoRecall: ReasonsForNoRecall? = null,
+  val nextAppointment: NextAppointment? = null
 )
 
 data class UnderIntegratedOffenderManagement(

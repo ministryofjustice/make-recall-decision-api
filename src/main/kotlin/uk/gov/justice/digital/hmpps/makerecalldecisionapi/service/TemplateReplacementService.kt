@@ -117,9 +117,10 @@ internal class TemplateReplacementService {
       "licence_breach" to documentData.licenceBreach,
       "no_recall_rationale" to documentData.noRecallRationale,
       "pop_progress_made" to documentData.popProgressMade,
-      "future_expectations" to documentData.futureExpectations
+      "future_expectations" to documentData.futureExpectations,
+      "next_appointment_by" to documentData.nextAppointmentBy,
+      "next_appointment_date" to documentData.nextAppointmentDate
     )
-
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
     mappings.putAll(convertToSelectedVulnerabilitiesMap(documentData.vulnerabilities))

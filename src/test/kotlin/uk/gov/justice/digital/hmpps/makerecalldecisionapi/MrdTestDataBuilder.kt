@@ -6,12 +6,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HowWillAppointmentHappen
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -84,7 +87,8 @@ class MrdTestDataBuilder {
           fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
           mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
           whyConsideredRecall = whyConsideredRecall(),
-          reasonsForNoRecall = reasonForNoRecall()
+          reasonsForNoRecall = reasonForNoRecall(),
+          nextAppointment = nextAppointment()
         )
       )
     }
@@ -119,7 +123,8 @@ class MrdTestDataBuilder {
         indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails(),
         mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
         whyConsideredRecall = whyConsideredRecall(),
-        reasonsForNoRecall = reasonForNoRecall()
+        reasonsForNoRecall = reasonForNoRecall(),
+        nextAppointment = nextAppointment()
       )
     }
 
@@ -263,6 +268,22 @@ class MrdTestDataBuilder {
       return UnderIntegratedOffenderManagement(
         selected = "YES",
         allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
+      )
+    }
+
+    private fun nextAppointment(): NextAppointment {
+      return NextAppointment(
+        HowWillAppointmentHappen(
+          selected = NextAppointmentValue.TELEPHONE,
+          allOptions = listOf(
+            TextValueOption(text = "Telephone", value = "TELEPHONE"),
+            TextValueOption(text = "Video call", value = "VIDEO_CALL"),
+            TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
+            TextValueOption(text = "Home visit", value = "HOME_VISIT")
+          )
+        ),
+        dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
+        probationPhoneNumber = "01238282838"
       )
     }
 

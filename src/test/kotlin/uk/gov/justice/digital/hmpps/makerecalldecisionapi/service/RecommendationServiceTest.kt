@@ -73,7 +73,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
-          personOnProbation = PersonOnProbation(name = "John Smith", gender = "Male", ethnicity = "Ainu", dateOfBirth = LocalDate.parse("1982-10-24"), croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null), addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false)))
+          personOnProbation = PersonOnProbation(
+            name = "John Smith",
+            gender = "Male",
+            ethnicity = "Ainu",
+            dateOfBirth = LocalDate.parse("1982-10-24"),
+            croNumber = "123456/04A",
+            pncNumber = "2004/0712343H",
+            mostRecentPrisonerNumber = "G12345",
+            nomsNumber = "A1234CR",
+            mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
+            addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false))
+          )
         )
       )
 
@@ -204,7 +215,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
           mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
           whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
-          reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall
+          reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
+          nextAppointment = updateRecommendationRequest.nextAppointment
         )
       )
 
@@ -360,6 +372,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.reasonsForNoRecall?.noRecallRationale).isEqualTo("Rationale for no recall")
     assertThat(recommendationResponse.reasonsForNoRecall?.popProgressMade).isEqualTo("Progress made so far detail")
     assertThat(recommendationResponse.reasonsForNoRecall?.futureExpectations).isEqualTo("Future expectations detail")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.selected.toString()).isEqualTo("TELEPHONE")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(0)?.text).isEqualTo("Telephone")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(0)?.value.toString()).isEqualTo("TELEPHONE")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(1)?.text).isEqualTo("Video call")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(1)?.value).isEqualTo("VIDEO_CALL")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(2)?.text).isEqualTo("Office visit")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(2)?.value).isEqualTo("OFFICE_VISIT")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(3)?.text).isEqualTo("Home visit")
+    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(3)?.value).isEqualTo("HOME_VISIT")
+    assertThat(recommendationResponse.nextAppointment?.dateTimeOfAppointment).isEqualTo("2022-04-24T20:39:00.000Z")
+    assertThat(recommendationResponse.nextAppointment?.probationPhoneNumber).isEqualTo("01238282838")
   }
 
   @Test

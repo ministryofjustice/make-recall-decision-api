@@ -21,7 +21,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 class RecommendationToDocumentMapper {
 
@@ -109,8 +111,39 @@ class RecommendationToDocumentMapper {
         licenceBreach = recommendation.data.reasonsForNoRecall?.licenceBreach,
         noRecallRationale = recommendation.data.reasonsForNoRecall?.noRecallRationale,
         popProgressMade = recommendation.data.reasonsForNoRecall?.popProgressMade,
-        futureExpectations = recommendation.data.reasonsForNoRecall?.futureExpectations
+        futureExpectations = recommendation.data.reasonsForNoRecall?.futureExpectations,
+        nextAppointmentBy = nextAppointmentBy(recommendation),
+        nextAppointmentDate = generateLongDateAndTime(recommendation.data.nextAppointment?.dateTimeOfAppointment)
       )
+    }
+
+    fun generateLongDateAndTime(dateTimeString: String?): String {
+      val formattedDateTime = if (dateTimeString == null) {
+        EMPTY_STRING
+      } else {
+        val dateTime = ZonedDateTime.parse(dateTimeString)
+        val month = getAbbreviatedFromDateTime(dateTime, "MMMM")
+        val dayOfWeek = getAbbreviatedFromDateTime(dateTime, "EEEE")
+        val year = getAbbreviatedFromDateTime(dateTime, "YYYY")
+        val dayOfMonth = getAbbreviatedFromDateTime(dateTime, "dd")
+        val hour = getAbbreviatedFromDateTime(dateTime, "HH")
+        val minute = getAbbreviatedFromDateTime(dateTime, "mm")
+        "$dayOfWeek $dayOfMonth $month $year at $hour:$minute"
+      }
+      return formattedDateTime
+    }
+
+    fun getAbbreviatedFromDateTime(dateTime: ZonedDateTime, field: String): String? {
+      val output = SimpleDateFormat(field)
+      return output.format(dateTime.toInstant().toEpochMilli())
+    }
+
+    private fun nextAppointmentBy(recommendation: RecommendationEntity): String? {
+      val selected = recommendation.data.nextAppointment?.howWillAppointmentHappen?.selected
+      return recommendation.data.nextAppointment?.howWillAppointmentHappen?.allOptions
+        ?.filter { it.value == selected?.name }
+        ?.map { it.text }
+        ?.first()
     }
 
     private fun formatFullName(firstName: String?, middleNames: String?, surname: String?): String? {

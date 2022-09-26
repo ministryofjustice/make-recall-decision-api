@@ -130,7 +130,8 @@ internal class RecommendationService(
         indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
         mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
         whyConsideredRecall = recommendationEntity.data.whyConsideredRecall,
-        reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall
+        reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall,
+        nextAppointment = recommendationEntity.data.nextAppointment
       )
     }
   }
