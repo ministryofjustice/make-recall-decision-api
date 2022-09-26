@@ -59,7 +59,9 @@ data class DocumentData(
   val licenceBreach: String? = null,
   val noRecallRationale: String? = null,
   val popProgressMade: String? = null,
-  val futureExpectations: String? = null
+  val futureExpectations: String? = null,
+  val nextAppointmentBy: String? = null,
+  val nextAppointmentDate: String? = null
 )
 
 data class ValueWithDetails(

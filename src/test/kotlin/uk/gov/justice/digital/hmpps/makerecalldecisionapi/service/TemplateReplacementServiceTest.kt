@@ -18,12 +18,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HowWillAppointmentHappen
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -223,7 +226,20 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
               TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
             )
           ),
-          reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
+          reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
+          nextAppointment = NextAppointment(
+            HowWillAppointmentHappen(
+              selected = NextAppointmentValue.TELEPHONE,
+              allOptions = listOf(
+                TextValueOption(text = "Telephone", value = "TELEPHONE"),
+                TextValueOption(text = "Video call", value = "VIDEO_CALL"),
+                TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
+                TextValueOption(text = "Home visit", value = "HOME_VISIT")
+              )
+            ),
+            dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
+            probationPhoneNumber = "01238282838"
+          )
         )
       )
       templateReplacementService.generateDocFromTemplate(recommendation, documentType)
@@ -240,7 +256,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(95)
+      assertThat(result.size).isEqualTo(97)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -318,6 +334,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_recall_rationale"]).isEqualTo("Rationale for no recall")
       assertThat(result["pop_progress_made"]).isEqualTo("Progress made so far detail")
       assertThat(result["future_expectations"]).isEqualTo("Future expectations detail")
+      assertThat(result["next_appointment_date"]).isEqualTo("2022-04-24T20:39:00.000Z")
+      assertThat(result["next_appointment_by"]).isEqualTo("TELEPHONE")
     }
   }
 
@@ -462,7 +480,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       licenceBreach = "Reason for breaching licence",
       noRecallRationale = "Rationale for no recall",
       popProgressMade = "Progress made so far detail",
-      futureExpectations = "Future expectations detail"
+      futureExpectations = "Future expectations detail",
+      nextAppointmentDate = "2022-04-24T20:39:00.000Z",
+      nextAppointmentBy = "TELEPHONE"
     )
   }
 }
