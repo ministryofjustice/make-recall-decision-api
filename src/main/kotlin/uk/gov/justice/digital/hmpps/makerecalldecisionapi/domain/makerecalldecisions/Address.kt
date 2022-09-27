@@ -8,7 +8,7 @@ data class Address(
   val noFixedAbode: Boolean
 ) {
 
-  fun commaFormattedAddress(): String {
+  fun separatorFormattedAddress(separator: String): String {
 
     val addressLines: MutableList<String> = ArrayList()
 
@@ -25,6 +25,6 @@ data class Address(
       addressLines.add(postcode)
     }
 
-    return addressLines.joinToString(", ") { "$it" }
+    return addressLines.joinToString(separator) { "$it" }
   }
 }

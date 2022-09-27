@@ -29,13 +29,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.RecommendationToDocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.PartADocumentMapper
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -43,7 +44,11 @@ internal class TemplateReplacementService {
 
   fun generateDocFromTemplate(recommendation: RecommendationEntity, documentType: DocumentType): String {
 
-    val documentData = RecommendationToDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
+      PartADocumentMapper().mapRecommendationDataToDocumentData(recommendation)
+    } else {
+      DecisionNotToRecallLetterDocumentMapper().mapRecommendationDataToDocumentData(recommendation)
+    }
 
     val file = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream).render(
       mappingsForTemplate(documentData)
@@ -113,13 +118,14 @@ internal class TemplateReplacementService {
       "out_of_touch" to documentData.outOfTouch,
       "out_of_touch_present" to documentData.outOfTouchPresent,
       "other_possible_addresses" to documentData.otherPossibleAddresses,
-      "why_considered_recall" to (documentData.whyConsideredRecall ?: EMPTY_STRING),
-      "licence_breach" to documentData.licenceBreach,
-      "no_recall_rationale" to documentData.noRecallRationale,
-      "pop_progress_made" to documentData.popProgressMade,
-      "future_expectations" to documentData.futureExpectations,
-      "next_appointment_by" to documentData.nextAppointmentBy,
-      "next_appointment_date" to documentData.nextAppointmentDate
+      "salutation" to documentData.salutation,
+      "letter_address" to documentData.letterAddress,
+      "letter_title" to documentData.letterTitle,
+      "letter_date" to documentData.letterDate,
+      "section_1" to documentData.paragraph1,
+      "section_2" to documentData.paragraph2,
+      "section_3" to documentData.paragraph3,
+      "letter_signed_by_paragraph" to documentData.signedByParagraph,
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
