@@ -60,7 +60,7 @@ internal class PersonDetailsService(
         line2 = it.district ?: "",
         town = it.town ?: "",
         postcode = it.postcode ?: "",
-        noFixedAbode = it.noFixedAbode ?: false
+        noFixedAbode = isNoFixedAbode(it)
       )
     }
   }
@@ -90,6 +90,13 @@ internal class PersonDetailsService(
       nomsNumber = offenderDetails.otherIds?.nomsNumber ?: "",
       mostRecentPrisonerNumber = offenderDetails.otherIds?.mostRecentPrisonerNumber ?: ""
     )
+  }
+
+  private fun isNoFixedAbode(it: uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address): Boolean {
+    val postcodeUppercasedNoWhiteSpace = it.postcode
+      ?.filter { !it.isWhitespace() }
+      ?.uppercase()
+    return postcodeUppercasedNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
   }
 
   private fun formatTwoWordField(part1: String, part2: String): String {

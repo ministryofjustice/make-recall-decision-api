@@ -208,6 +208,27 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `returns noFixedAbode as true when noFixedAbode postcode present`() {
+    runTest {
+      // given
+      val crn = "12345"
+      given(communityApiClient.getUserAccess(anyString()))
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(contactDetails = ContactDetails(addresses = listOf(Address(postcode = "Nf1 1nf", status = AddressStatus(code = "ABC123", description = "Main"))))) })
+
+      // when
+      val response = personDetailsService.getPersonDetails(crn)
+
+      // then
+      val currentAddresses = response.addresses!!
+      assertThat(currentAddresses[0].postcode).isEqualTo("Nf1 1nf")
+      assertThat(currentAddresses[0].noFixedAbode).isEqualTo(true)
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
   fun `retrieves person details when registration available`() {
     runTest {
       val crn = "12345"
@@ -239,6 +260,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(currentAddresses[0].line2).isEqualTo("Sheffield City Centre")
       assertThat(currentAddresses[0].town).isEqualTo("Sheffield")
       assertThat(currentAddresses[0].postcode).isEqualTo("S3 7BS")
+      assertThat(currentAddresses[0].noFixedAbode).isEqualTo(false)
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
       assertThat(offenderManager.phoneNumber).isEqualTo("09056714321")
