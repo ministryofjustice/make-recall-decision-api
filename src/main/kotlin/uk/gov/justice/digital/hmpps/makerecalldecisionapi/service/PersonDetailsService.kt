@@ -93,10 +93,10 @@ internal class PersonDetailsService(
   }
 
   private fun isNoFixedAbode(it: uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address): Boolean {
-    val postcodeNoWhiteSpace = it.postcode
-      ?.filter { postcodeCharacter -> !postcodeCharacter.isWhitespace() }
-    val noFixedAbode = postcodeNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
-    return noFixedAbode
+    val postcodeUppercasedNoWhiteSpace = it.postcode
+      ?.filter { !it.isWhitespace() }
+      ?.uppercase()
+    return postcodeUppercasedNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
   }
 
   private fun formatTwoWordField(part1: String, part2: String): String {

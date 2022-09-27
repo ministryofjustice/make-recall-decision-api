@@ -215,14 +215,14 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(contactDetails = ContactDetails(addresses = listOf(Address(postcode = "NF1 1NF", status = AddressStatus(code = "ABC123", description = "Main"))))) })
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(contactDetails = ContactDetails(addresses = listOf(Address(postcode = "Nf1 1nf", status = AddressStatus(code = "ABC123", description = "Main"))))) })
 
       // when
       val response = personDetailsService.getPersonDetails(crn)
 
       // then
       val currentAddresses = response.addresses!!
-      assertThat(currentAddresses[0].postcode).isEqualTo("NF1 1NF")
+      assertThat(currentAddresses[0].postcode).isEqualTo("Nf1 1nf")
       assertThat(currentAddresses[0].noFixedAbode).isEqualTo(true)
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
