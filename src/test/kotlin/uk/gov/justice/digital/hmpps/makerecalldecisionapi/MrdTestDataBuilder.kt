@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
@@ -68,7 +70,7 @@ class MrdTestDataBuilder {
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
-          personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
+          personOnProbation = PersonOnProbation(firstName = firstName, surname = surname, mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null), addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false))),
           alternativesToRecallTried = alternativesToRecallTried(),
           licenceConditionsBreached = licenceConditionsBreached(),
           underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
@@ -88,7 +90,8 @@ class MrdTestDataBuilder {
           mainAddressWherePersonCanBeFound = isMainAddressWherePersonCanBeFound(),
           whyConsideredRecall = whyConsideredRecall(),
           reasonsForNoRecall = reasonForNoRecall(),
-          nextAppointment = nextAppointment()
+          nextAppointment = nextAppointment(),
+          indexOffenceDetails = "Juicy details"
         )
       )
     }
