@@ -82,7 +82,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       assertThat(result.letterTitle).isEqualTo("DECISION NOT TO RECALL")
       assertThat(result.letterDate).isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 
-      assertThat(result.paragraph1).isEqualTo(
+      assertThat(result.section1).isEqualTo(
         "I am writing to you because you have breached your licence conditions in such a way that your risk is assessed as increased.\n\n" +
           "This breach has been discussed with a Probation manager and a decision has been made that you will not be recalled to prison. This letter explains this decision. If you have any questions, please contact me.\n\n" +
           "Reason for breaching licence\n\n" +
@@ -94,9 +94,9 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       )
 
       // FIXME: This should be the 24th - Bill to fix as part of later task
-      assertThat(result.paragraph2).isEqualTo("Friday 24 February 2023 at 1:00pm\n")
+      assertThat(result.section2).isEqualTo("Friday 24 February 2023 at 1:00pm\n")
 
-      assertThat(result.paragraph3).isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
+      assertThat(result.section3).isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
 
       assertThat(result.signedByParagraph).isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
     }

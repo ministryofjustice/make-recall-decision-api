@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -40,14 +41,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import java.time.format.DateTimeFormatter
 
 @Service
-internal class TemplateReplacementService {
+internal class TemplateReplacementService(
+  val partADocumentMapper: PartADocumentMapper,
+  val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+) {
 
-  fun generateDocFromTemplate(recommendation: RecommendationEntity, documentType: DocumentType): String {
+  fun generateDocFromRecommendation(recommendation: RecommendationEntity, documentType: DocumentType): String {
 
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
-      PartADocumentMapper().mapRecommendationDataToDocumentData(recommendation)
+      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     } else {
-      DecisionNotToRecallLetterDocumentMapper().mapRecommendationDataToDocumentData(recommendation)
+      decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     }
 
     val file = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream).render(
@@ -56,6 +60,22 @@ internal class TemplateReplacementService {
 //    ).writeToFile("out_template.docx")
 
     return writeDataToFile(file)
+  }
+
+  fun generateLetterContentForPreviewFromRecommendation(recommendation: RecommendationEntity): LetterContent {
+
+    val documentData = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+    return LetterContent(
+      letterAddress = documentData.letterAddress,
+      letterDate = documentData.letterDate,
+      salutation = documentData.salutation,
+      letterTitle = documentData.letterTitle,
+      section1 = documentData.section1,
+      section2 = documentData.section2,
+      section3 = documentData.section3,
+      signedByParagraph = documentData.signedByParagraph
+    )
   }
 
   fun mappingsForTemplate(documentData: DocumentData): HashMap<String, String?> {
@@ -122,9 +142,9 @@ internal class TemplateReplacementService {
       "letter_address" to documentData.letterAddress,
       "letter_title" to documentData.letterTitle,
       "letter_date" to documentData.letterDate,
-      "section_1" to documentData.paragraph1,
-      "section_2" to documentData.paragraph2,
-      "section_3" to documentData.paragraph3,
+      "section_1" to documentData.section1,
+      "section_2" to documentData.section2,
+      "section_3" to documentData.section3,
       "letter_signed_by_paragraph" to documentData.signedByParagraph,
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))

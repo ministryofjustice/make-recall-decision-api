@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
+import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -22,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
 
+@Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
   fun mapRecommendationDataToDocumentData(recommendation: RecommendationEntity): DocumentData {

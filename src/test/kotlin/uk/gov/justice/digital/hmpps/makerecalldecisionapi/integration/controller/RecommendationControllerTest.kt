@@ -6,16 +6,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
+import org.joda.time.DateTimeFieldType
+import org.joda.time.LocalDateTime
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
@@ -23,6 +25,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
+import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -418,17 +423,61 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/no-recall-letter")
         .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(documentRequestQuery("download-docx"))
+        )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
     )
 
-    assertThat(response.get("fileName")).isEqualTo("No_Recall" + nowDate() + "_Smith_J_A12345.docx")
+    assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
     assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
+  }
+
+  @Test
+  fun `preview a DNTR document from recommendation data`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponse(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
+    deleteAndCreateRecommendation()
+    updateRecommendation(updateRecommendationForNoRecallRequest())
+
+    val nextAppointmentDateTimeString = JSONObject(updateRecommendationForNoRecallRequest()).getJSONObject("nextAppointment").getString("dateTimeOfAppointment")
+    val nextAppointmentDateTime = LocalDateTime(ZonedDateTime.parse(nextAppointmentDateTimeString).toInstant().toEpochMilli())
+
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/no-recall-letter")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(documentRequestQuery("preview"))
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.letterContent.letterAddress").isEqualTo("John Smith\nHMPPS Digital Studio 33 Scotland Street\nSheffield City Centre\nSheffield\nS3 7BS")
+      .jsonPath("$.letterContent.letterDate").isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+      .jsonPath("$.letterContent.salutation").isEqualTo("Dear John Smith,")
+      .jsonPath("$.letterContent.letterTitle").isEqualTo("DECISION NOT TO RECALL")
+      .jsonPath("$.letterContent.section1").isEqualTo(
+        "I am writing to you because you have breached your licence conditions in such a way that .\n\n" +
+          "This breach has been discussed with a Probation manager and a decision has been made that you will not be recalled to prison. This letter explains this decision. If you have any questions, please contact me.\n\n" +
+          "Reason for breaching licence\n\n" +
+          "Rationale for no recall\n\n" +
+          "Progress made so far detail\n\n" +
+          "Future expectations detail\n\n" +
+          "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
+          "Your next appointment is by telephone on:"
+      )
+      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24 April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
+      .jsonPath("$.letterContent.section3").isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
+      .jsonPath("$.letterContent.signedByParagraph").isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
   }
 
   @Test

@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
+import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DecisionNotToRecallLetter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
+@Component
 class DecisionNotToRecallLetterDocumentMapper : LetterDocumentMapper() {
 
   fun mapRecommendationDataToDocumentData(
