@@ -233,7 +233,7 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
         }
       ]
     },
-    "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
+    "dateTimeOfAppointment": "2022-04-24T08:39:00.000Z",
     "probationPhoneNumber": "01238282838"
   }
 }
