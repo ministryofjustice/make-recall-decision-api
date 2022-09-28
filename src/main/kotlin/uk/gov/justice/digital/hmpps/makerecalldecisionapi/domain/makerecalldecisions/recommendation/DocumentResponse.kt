@@ -5,5 +5,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 data class DocumentResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val fileName: String? = null,
-  val fileContents: String? = null
+  val fileContents: String? = null,
+  val letterContent: LetterContent? = null
 )
