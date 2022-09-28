@@ -1,9 +1,10 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DecisionNotToRecallLetter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 class DecisionNotToRecallLetterDocumentMapper : LetterDocumentMapper() {
 

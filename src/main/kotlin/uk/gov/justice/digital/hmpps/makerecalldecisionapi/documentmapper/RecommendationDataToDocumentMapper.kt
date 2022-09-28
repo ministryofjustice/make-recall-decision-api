@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 open class RecommendationDataToDocumentMapper {
 

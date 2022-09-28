@@ -1,9 +1,10 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -22,7 +23,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       letterTitle = buildLetterTitle(),
       letterDate = convertLocalDateToDateWithSlashes(LocalDate.now()),
       signedByParagraph = buildSignedByParagraph(),
-      letterAddress = getLetterAddressDetails(recommendation.data.personOnProbation?.addresses),
+      letterAddress = getLetterAddressDetails(recommendation.data.personOnProbation?.addresses, name),
       paragraph1 = paragraph1,
       paragraph2 = paragraph2,
       paragraph3 = paragraph3
@@ -61,12 +62,12 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       ?.first()
   }
 
-  private fun getLetterAddressDetails(addresses: List<Address>?): String {
+  private fun getLetterAddressDetails(addresses: List<Address>?, name: String?): String {
     val mainAddresses = addresses?.filter { !it.noFixedAbode }
 
     return if (mainAddresses?.isNotEmpty() == true && mainAddresses.size == 1) {
       val addressConcat = mainAddresses.map {
-        it.separatorFormattedAddress("\n")
+        it.separatorFormattedAddress("\n", true, name)
       }
       addressConcat[0]
     } else ""

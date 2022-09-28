@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -68,7 +68,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
                 TextValueOption(text = "Home visit", value = "HOME_VISIT")
               )
             ),
-            dateTimeOfAppointment = "2022-04-24T13:00:00.000Z",
+            dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
             probationPhoneNumber = "01238282838"
           ),
           reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
@@ -78,7 +78,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       val result = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.salutation).isEqualTo("Dear Cliff Rowland,")
-      assertThat(result.letterAddress).isEqualTo("Address line 1\nAddress line 2\nAddress line town\nTS1 1ST")
+      assertThat(result.letterAddress).isEqualTo("Cliff Rowland\nAddress line 1\nAddress line 2\nAddress line town\nTS1 1ST")
       assertThat(result.letterTitle).isEqualTo("DECISION NOT TO RECALL")
       assertThat(result.letterDate).isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 
@@ -94,7 +94,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       )
 
       // FIXME: This should be the 24th - Bill to fix as part of later task
-      assertThat(result.paragraph2).isEqualTo("Sunday 24 April 2022 at 2:00pm\n")
+      assertThat(result.paragraph2).isEqualTo("Friday 24 February 2023 at 1:00pm\n")
 
       assertThat(result.paragraph3).isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
 
