@@ -7,7 +7,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.BDDMockito
+import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
@@ -72,6 +76,12 @@ import java.time.LocalDateTime
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class TemplateReplacementServiceTest : ServiceTestBase() {
+
+  @Mock
+  private lateinit var partADocumentMapperMocked: PartADocumentMapper
+
+  @Mock
+  private lateinit var decisionNotToRecallLetterDocumentMapperMocked: DecisionNotToRecallLetterDocumentMapper
 
   @ParameterizedTest()
   @CsvSource(
@@ -245,7 +255,39 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           )
         )
       )
-      templateReplacementService.generateDocFromTemplate(recommendation, documentType)
+      templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
+    }
+  }
+
+  @Test
+  fun `given recommendation data then build a preview of the DNTR document`() {
+    runTest {
+      val recommendation = RecommendationEntity(data = RecommendationModel(crn = "123456"))
+
+      val documentData = DocumentData(
+        salutation = "Dear John Smith",
+        letterTitle = "Decision not to recall",
+        letterDate = "12/09/2022",
+        letterAddress = "My address",
+        section1 = "Section 1",
+        section2 = "Section 2",
+        section3 = "Section 3",
+        signedByParagraph = "Signed by"
+      )
+
+      BDDMockito.given(decisionNotToRecallLetterDocumentMapperMocked.mapRecommendationDataToDocumentData(recommendation))
+        .willReturn(documentData)
+
+      val letterContent = TemplateReplacementService(partADocumentMapperMocked, decisionNotToRecallLetterDocumentMapperMocked).generateLetterContentForPreviewFromRecommendation(recommendation)
+
+      assertThat(letterContent.letterAddress).isEqualTo("My address")
+      assertThat(letterContent.letterDate).isEqualTo("12/09/2022")
+      assertThat(letterContent.salutation).isEqualTo("Dear John Smith")
+      assertThat(letterContent.letterTitle).isEqualTo("Decision not to recall")
+      assertThat(letterContent.section1).isEqualTo("Section 1")
+      assertThat(letterContent.section2).isEqualTo("Section 2")
+      assertThat(letterContent.section3).isEqualTo("Section 3")
+      assertThat(letterContent.signedByParagraph).isEqualTo("Signed by")
     }
   }
 
@@ -416,9 +458,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       salutation = "Dear Duncan Edwards",
       letterTitle = "DECISION NOT TO RECALL",
       letterDate = "27/09/2022",
-      paragraph1 = "This is the first paragraph",
-      paragraph2 = "This is the second paragraph",
-      paragraph3 = "This is the third paragraph",
+      section1 = "This is the first paragraph",
+      section2 = "This is the second paragraph",
+      section3 = "This is the third paragraph",
       signedByParagraph = "Yours faithfully, Jim Smith",
       indexOffenceDetails = "Juicy details!",
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),

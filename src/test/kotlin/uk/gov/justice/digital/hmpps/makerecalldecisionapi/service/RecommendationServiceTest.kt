@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -58,7 +59,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Mock
-  protected open lateinit var riskService: RiskService
+  protected lateinit var riskService: RiskService
 
   @Test
   fun `creates a new recommendation in the database`() {
@@ -517,6 +518,47 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       .hasMessage("No recommendation found for id: 456")
 
     then(recommendationRepository).should().findById(456L)
+  }
+
+  @Test
+  fun `generate DNTR letter from recommendation data`() {
+    val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+
+    val recommendationToSave = RecommendationEntity(
+      data = RecommendationModel(
+        crn = crn,
+        personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
+      )
+    )
+
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    given(recommendationRepository.save(any()))
+      .willReturn(recommendationToSave)
+
+    val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X)
+
+    val captor = argumentCaptor<RecommendationEntity>()
+    then(recommendationRepository).should().save(captor.capture())
+    val recommendationEntity = captor.firstValue
+
+    assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
+    assertThat(result.fileContents).isNotNull
+    assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+    assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+  }
+
+  @Test
+  fun `generate DNTR letter preview from recommendation data`() {
+    val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+
+    given(recommendationRepository.findById(any()))
+      .willReturn(Optional.of(existingRecommendation))
+
+    val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.PREVIEW)
+
+    assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
   }
 
   @Test
