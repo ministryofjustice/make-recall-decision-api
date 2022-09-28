@@ -6,6 +6,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
+import org.joda.time.DateTimeFieldType
+import org.joda.time.LocalDateTime
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
@@ -24,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @ActiveProfiles("test")
@@ -445,6 +448,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationForNoRecallRequest())
 
+    val nextAppointmentDateTimeString = JSONObject(updateRecommendationForNoRecallRequest()).getJSONObject("nextAppointment").getString("dateTimeOfAppointment")
+    val nextAppointmentDateTime = LocalDateTime(ZonedDateTime.parse(nextAppointmentDateTimeString).toInstant().toEpochMilli())
+
     webTestClient.post()
       .uri("/recommendations/$createdRecommendationId/no-recall-letter")
       .contentType(MediaType.APPLICATION_JSON)
@@ -469,7 +475,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
           "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
           "Your next appointment is by telephone on:"
       )
-      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24 April 2022 at 9:39pm\n")
+      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24 April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
       .jsonPath("$.letterContent.section3").isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
       .jsonPath("$.letterContent.signedByParagraph").isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
   }
