@@ -210,6 +210,31 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
     "noRecallRationale": "Rationale for no recall",
     "popProgressMade": "Progress made so far detail",
     "futureExpectations": "Future expectations detail"
+  },
+  "nextAppointment": {
+    "howWillAppointmentHappen": {
+      "selected": "TELEPHONE",
+      "allOptions": [
+        {
+          "value": "TELEPHONE",
+          "text": "Telephone"
+        },
+        {
+          "value": "VIDEO_CALL",
+          "text": "Video call"
+        },
+        {
+          "value": "OFFICE_VISIT",
+          "text": "Office visit"
+        },
+        {
+          "value": "HOME_VISIT",
+          "text": "Home visit"
+        }
+      ]
+    },
+    "dateTimeOfAppointment": "2022-04-24T08:39:00.000Z",
+    "probationPhoneNumber": "01238282838"
   }
 }
 """.trimIndent()

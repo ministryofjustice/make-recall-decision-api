@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -190,16 +191,40 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun generateDntr(recommendationId: Long, username: String?): DocumentResponse {
+  fun generateDntr(recommendationId: Long, username: String?, documentRequestType: DocumentRequestType?): DocumentResponse {
+    return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
+      generateDntrDownload(recommendationId, username)
+    } else {
+      generateDntrPreview(recommendationId)
+    }
+  }
+
+  private fun generateDntrDownload(recommendationId: Long, username: String?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, null, false, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val fileContents = templateReplacementService.generateDocFromTemplate(recommendationEntity, DocumentType.DNTR_DOCUMENT)
-      return DocumentResponse(
-        fileName = generateDntrFileName(recommendationEntity.data),
+      val fileContents = templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.DNTR_DOCUMENT)
+      DocumentResponse(
+        fileName = generateDocumentFileName(recommendationEntity.data, "No_Recall"),
         fileContents = fileContents
+      )
+    }
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  private fun generateDntrPreview(recommendationId: Long): DocumentResponse {
+    val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
+      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+
+    val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
+    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
+    } else {
+      val letterContent = templateReplacementService.generateLetterContentForPreviewFromRecommendation(recommendationEntity)
+      DocumentResponse(
+        letterContent = letterContent
       )
     }
   }
@@ -212,15 +237,15 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val fileContents = templateReplacementService.generateDocFromTemplate(recommendationEntity, DocumentType.PART_A_DOCUMENT)
+      val fileContents = templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.PART_A_DOCUMENT)
       return DocumentResponse(
-        fileName = generatePartAFileName(recommendationEntity.data),
+        fileName = generateDocumentFileName(recommendationEntity.data, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
   }
 
-  private fun generatePartAFileName(recommendation: RecommendationModel): String {
+  private fun generateDocumentFileName(recommendation: RecommendationModel, prefix: String): String {
 
     val surname = recommendation.personOnProbation?.surname ?: ""
     val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
@@ -228,16 +253,7 @@ internal class RecommendationService(
     } else ""
     val crn = recommendation.crn ?: ""
 
-    return "NAT_Recall_Part_A_${nowDate()}_${surname}_${firstName}_$crn.docx"
-  }
-
-  private fun generateDntrFileName(recommendation: RecommendationModel): String {
-    val surname = recommendation.personOnProbation?.surname ?: ""
-    val firstName = if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
-      recommendation.personOnProbation.firstName.subSequence(0, 1)
-    } else ""
-    val crn = recommendation.crn ?: ""
-    return "No_Recall${nowDate()}_${surname}_${firstName}_$crn.docx"
+    return "${prefix}_${nowDate()}_${surname}_${firstName}_$crn.docx"
   }
 
   private fun saveNewRecommendationEntity(

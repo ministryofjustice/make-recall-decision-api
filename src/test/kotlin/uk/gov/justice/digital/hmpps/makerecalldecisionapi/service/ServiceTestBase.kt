@@ -6,6 +6,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.lenient
 import org.mockito.kotlin.doReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
@@ -69,6 +71,10 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var templateReplacementService: TemplateReplacementService
 
+  protected lateinit var partADocumentMapper: PartADocumentMapper
+
+  protected lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+
   protected val crn = "12345"
 
   @BeforeEach
@@ -88,8 +94,10 @@ internal abstract class ServiceTestBase {
         offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(name = "John Smith", phoneNumber = "01234567654", email = "tester@test.com", probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"), probationAreaDescription = "Probation area description")
       )
     )
+    partADocumentMapper = PartADocumentMapper()
+    decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(communityApiClient)
-    templateReplacementService = TemplateReplacementService()
+    templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)

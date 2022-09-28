@@ -24,9 +24,9 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       letterDate = convertLocalDateToDateWithSlashes(LocalDate.now()),
       signedByParagraph = buildSignedByParagraph(),
       letterAddress = getLetterAddressDetails(recommendation.data.personOnProbation?.addresses, name),
-      paragraph1 = paragraph1,
-      paragraph2 = paragraph2,
-      paragraph3 = paragraph3
+      section1 = paragraph1,
+      section2 = paragraph2,
+      section3 = paragraph3
     )
   }
 
