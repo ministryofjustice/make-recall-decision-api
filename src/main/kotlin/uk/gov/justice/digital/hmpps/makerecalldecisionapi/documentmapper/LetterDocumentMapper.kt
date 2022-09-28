@@ -37,7 +37,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       val dateTime = ZonedDateTime.parse(dateTimeString)
       val month = getAbbreviatedFromDateTime(dateTime, "MMMM")
       val dayOfWeek = getAbbreviatedFromDateTime(dateTime, "EEEE")
-      val year = getAbbreviatedFromDateTime(dateTime, "YYYY")
+      val year = getAbbreviatedFromDateTime(dateTime, "yyyy")
       val dayOfMonth = getAbbreviatedFromDateTime(dateTime, "dd")
       val hour = getAbbreviatedFromDateTime(dateTime, "h")
       val minute = getAbbreviatedFromDateTime(dateTime, "mm")
