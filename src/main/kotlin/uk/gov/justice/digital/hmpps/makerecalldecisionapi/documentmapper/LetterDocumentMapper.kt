@@ -44,7 +44,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       val ampm = getAbbreviatedFromDateTime(dateTime, "a")
 
       // FIXME: add ordinal number to the day part of the formatted date
-      "$dayOfWeek $dayOfMonth $month $year at $hour:$minute$ampm"
+      "$dayOfWeek $dayOfMonth $month $year at $hour:$minute${ampm?.lowercase()}"
     }
     return formattedDateTime
   }
