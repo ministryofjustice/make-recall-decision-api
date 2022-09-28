@@ -8,10 +8,13 @@ data class Address(
   val noFixedAbode: Boolean
 ) {
 
-  fun commaFormattedAddress(): String {
+  fun separatorFormattedAddress(separator: String, includeName: Boolean = false, name: String? = null): String {
 
     val addressLines: MutableList<String> = ArrayList()
 
+    if (includeName && !name.isNullOrEmpty()) {
+      addressLines.add(name)
+    }
     if (!line1.isNullOrEmpty()) {
       addressLines.add(line1)
     }
@@ -25,6 +28,6 @@ data class Address(
       addressLines.add(postcode)
     }
 
-    return addressLines.joinToString(", ") { "$it" }
+    return addressLines.joinToString(separator) { "$it" }
   }
 }
