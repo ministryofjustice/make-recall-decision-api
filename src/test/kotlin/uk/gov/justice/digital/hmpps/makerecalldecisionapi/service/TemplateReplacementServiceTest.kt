@@ -74,7 +74,10 @@ import java.time.LocalDateTime
 internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
   @ParameterizedTest()
-  @CsvSource("PART_A_DOCUMENT", "DNTR_DOCUMENT")
+  @CsvSource(
+    "PART_A_DOCUMENT",
+    "DNTR_DOCUMENT"
+  )
   fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
       val recommendation = RecommendationEntity(
@@ -256,7 +259,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(97)
+      assertThat(result.size).isEqualTo(98)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -329,13 +332,14 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
       assertThat(result["other_possible_addresses"]).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
-      assertThat(result["why_considered_recall"]).isEqualTo("Your risk is assessed as increased")
-      assertThat(result["licence_breach"]).isEqualTo("Reason for breaching licence")
-      assertThat(result["no_recall_rationale"]).isEqualTo("Rationale for no recall")
-      assertThat(result["pop_progress_made"]).isEqualTo("Progress made so far detail")
-      assertThat(result["future_expectations"]).isEqualTo("Future expectations detail")
-      assertThat(result["next_appointment_date"]).isEqualTo("2022-04-24T20:39:00.000Z")
-      assertThat(result["next_appointment_by"]).isEqualTo("TELEPHONE")
+      assertThat(result["salutation"]).isEqualTo("Dear Duncan Edwards")
+      assertThat(result["letter_address"]).isEqualTo("123 Acacia Avenue, Birmingham B23 1AB")
+      assertThat(result["letter_title"]).isEqualTo("DECISION NOT TO RECALL")
+      assertThat(result["letter_date"]).isEqualTo("27/09/2022")
+      assertThat(result["section_1"]).isEqualTo("This is the first paragraph")
+      assertThat(result["section_2"]).isEqualTo("This is the second paragraph")
+      assertThat(result["section_3"]).isEqualTo("This is the third paragraph")
+      assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Jim Smith")
     }
   }
 
@@ -371,8 +375,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
         hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
         selectedStandardConditionsBreached = null,
-        additionalConditionsBreached = EMPTY_STRING,
-        whyConsideredRecall = null
+        additionalConditionsBreached = EMPTY_STRING
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
@@ -394,7 +397,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["why_considered_recall"]).isEqualTo(EMPTY_STRING)
     }
   }
 
@@ -411,6 +413,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
     )
     return DocumentData(
+      salutation = "Dear Duncan Edwards",
+      letterTitle = "DECISION NOT TO RECALL",
+      letterDate = "27/09/2022",
+      paragraph1 = "This is the first paragraph",
+      paragraph2 = "This is the second paragraph",
+      paragraph3 = "This is the third paragraph",
+      signedByParagraph = "Yours faithfully, Jim Smith",
       indexOffenceDetails = "Juicy details!",
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
@@ -461,6 +470,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       extendedTerm = "20 days",
       mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
+      letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
       noFixedAbode = "",
       lastPersonCompletingFormName = "Henry Richarlison",
       lastPersonCompletingFormEmail = "Henry.Richarlison@test.com",
@@ -475,14 +485,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
-      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
-      whyConsideredRecall = "Your risk is assessed as increased",
-      licenceBreach = "Reason for breaching licence",
-      noRecallRationale = "Rationale for no recall",
-      popProgressMade = "Progress made so far detail",
-      futureExpectations = "Future expectations detail",
-      nextAppointmentDate = "2022-04-24T20:39:00.000Z",
-      nextAppointmentBy = "TELEPHONE"
+      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV"
     )
   }
 }

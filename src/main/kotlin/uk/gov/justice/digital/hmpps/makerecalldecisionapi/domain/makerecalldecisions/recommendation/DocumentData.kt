@@ -4,6 +4,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import java.time.LocalDate
 
 data class DocumentData(
+  val salutation: String? = null,
+  val letterTitle: String? = null,
+  val letterDate: String? = null,
+  val paragraph1: String? = null,
+  val paragraph2: String? = null,
+  val paragraph3: String? = null,
+  val signedByParagraph: String? = null,
   val custodyStatus: ValueWithDetails? = null,
   val recallType: ValueWithDetails? = null,
   val responseToProbation: String? = null,
@@ -39,6 +46,7 @@ data class DocumentData(
   val extendedTerm: String? = null,
   val mappa: Mappa? = null,
   val lastRecordedAddress: String? = null,
+  val letterAddress: String? = null,
   val noFixedAbode: String? = null,
   val lastPersonCompletingFormName: String? = null,
   val lastPersonCompletingFormEmail: String? = null,
@@ -55,13 +63,6 @@ data class DocumentData(
   val outOfTouch: String? = null,
   val outOfTouchPresent: String? = null,
   val otherPossibleAddresses: String? = null,
-  val whyConsideredRecall: String? = null,
-  val licenceBreach: String? = null,
-  val noRecallRationale: String? = null,
-  val popProgressMade: String? = null,
-  val futureExpectations: String? = null,
-  val nextAppointmentBy: String? = null,
-  val nextAppointmentDate: String? = null
 )
 
 data class ValueWithDetails(
