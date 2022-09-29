@@ -93,8 +93,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
           "Your next appointment is by telephone on:"
       )
 
-      // FIXME: This should be the 24th - Bill to fix as part of later task
-      assertThat(result.section2).isEqualTo("Friday 24 February 2023 at 1:00pm\n")
+      assertThat(result.section2).isEqualTo("Friday 24th February 2023 at 1:00pm\n")
 
       assertThat(result.section3).isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
 
