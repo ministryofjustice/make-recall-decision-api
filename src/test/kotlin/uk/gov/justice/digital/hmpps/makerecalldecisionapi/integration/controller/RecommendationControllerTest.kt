@@ -475,7 +475,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
           "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
           "Your next appointment is by telephone on:"
       )
-      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24 April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
+      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24th April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
       .jsonPath("$.letterContent.section3").isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
       .jsonPath("$.letterContent.signedByParagraph").isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
   }

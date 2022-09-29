@@ -37,16 +37,26 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       val dateTime = ZonedDateTime.parse(dateTimeString)
       val month = getAbbreviatedFromDateTime(dateTime, "MMMM")
       val dayOfWeek = getAbbreviatedFromDateTime(dateTime, "EEEE")
-      val year = getAbbreviatedFromDateTime(dateTime, "YYYY")
-      val dayOfMonth = getAbbreviatedFromDateTime(dateTime, "dd")
+      val year = getAbbreviatedFromDateTime(dateTime, "yyyy")
+      val dayOfMonth = getAbbreviatedFromDateTime(dateTime, "d")
       val hour = getAbbreviatedFromDateTime(dateTime, "h")
       val minute = getAbbreviatedFromDateTime(dateTime, "mm")
       val ampm = getAbbreviatedFromDateTime(dateTime, "a")
 
-      // FIXME: add ordinal number to the day part of the formatted date
-      "$dayOfWeek $dayOfMonth $month $year at $hour:$minute${ampm?.lowercase()}"
+      "$dayOfWeek $dayOfMonth${getDayOfMonthSuffix(Integer.valueOf(dayOfMonth))} $month $year at $hour:$minute${ampm?.lowercase()}"
     }
     return formattedDateTime
+  }
+
+  fun getDayOfMonthSuffix(n: Int): String? {
+    return if (n in 11..13) {
+      "th"
+    } else when (n % 10) {
+      1 -> "st"
+      2 -> "nd"
+      3 -> "rd"
+      else -> "th"
+    }
   }
 
   private fun getAbbreviatedFromDateTime(dateTime: ZonedDateTime, field: String): String? {
