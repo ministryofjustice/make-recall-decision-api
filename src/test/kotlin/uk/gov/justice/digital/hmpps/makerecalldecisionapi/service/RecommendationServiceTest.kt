@@ -577,6 +577,84 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `generate Part A document from recommendation data when optional fields missing`() {
+    runTest {
+      // given
+      given(riskService.getRisk(anyString())).willReturn(
+        RiskResponse(
+          mappa = null
+        )
+      )
+      given(riskService.fetchIndexOffenceDetails(anyString())).willReturn(null)
+      given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
+        personDetailsResponse().copy(
+          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = null),
+          addresses = null
+        )
+      }
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        mockPersonDetailService,
+        templateReplacementService,
+        userAccessValidator,
+        convictionService,
+        riskService
+      )
+      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+        .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
+      val data = existingRecommendation.data
+      val pop = data.personOnProbation
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation.copy(data = data.copy(indexOffenceDetails = null, personOnProbation = pop?.copy(mappa = null, mostRecentPrisonerNumber = null)))))
+
+      // and
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(
+            name = "John Smith",
+            firstName = "John",
+            surname = "Smith",
+            mappa = null,
+            addresses = null
+          ),
+          indexOffenceDetails = null
+        )
+      )
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // when
+      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
+
+      // then
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should(times(2)).save(captor.capture())
+      val recommendationEntity = captor.firstValue
+      val recommendationUpdatedWithExtraFields = captor.secondValue
+
+      assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
+      assertThat(result.fileContents).isNotNull
+      assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
+      assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
+      assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
+      assertThat(recommendationUpdatedWithExtraFields.data.indexOffenceDetails).isEqualTo(null)
+      assertThat(recommendationUpdatedWithExtraFields.data.personOnProbation).isEqualTo(
+        PersonOnProbation(
+          name = "John Smith",
+          firstName = "John",
+          surname = "Smith",
+          mostRecentPrisonerNumber = null,
+          mappa = null,
+          addresses = null
+        )
+      )
+    }
+  }
+
+  @Test
   fun `generate Part A document from recommendation data`() {
     runTest {
       // given
