@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
 import org.joda.time.DateTimeFieldType
 import org.joda.time.LocalDateTime
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -65,6 +66,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
     assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
     assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
+    val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
+    val address = JSONObject(personOnProbationAddress.get(0).toString())
+    assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
+    assertThat(address.get("town")).isEqualTo("Sheffield")
+    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("noFixedAbode")).isEqualTo(false)
   }
 
   @Test

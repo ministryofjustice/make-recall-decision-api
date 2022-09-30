@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -67,14 +68,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `creates a new recommendation in the database`() {
     runTest {
       // given
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskService)
-
-      // and
       val recommendationToSave = RecommendationEntity(
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
           lastModifiedBy = "Bill",
+          region = "London",
+          localDeliveryUnit = "LDU London",
           personOnProbation = PersonOnProbation(
             name = "John Smith",
             gender = "Male",
@@ -83,22 +83,26 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             croNumber = "123456/04A",
             pncNumber = "2004/0712343H",
             mostRecentPrisonerNumber = "G12345",
-            nomsNumber = "A1234CR"
+            nomsNumber = "A1234CR",
+            addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false))
           )
         )
       )
 
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
-
       // and
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
+      given(recommendationRepository.save(any())).willReturn(recommendationToSave)
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskService)
 
       // when
-      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
 
       // then
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation)
+      assertThat(response.indexOffenceDetails).isEqualTo(recommendationToSave.data.indexOffenceDetails)
+
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
       val recommendationEntity = captor.firstValue
@@ -118,7 +122,16 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           croNumber = "123456/04A",
           mostRecentPrisonerNumber = "G12345",
           nomsNumber = "A1234CR",
-          pncNumber = "2004/0712343H"
+          pncNumber = "2004/0712343H",
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Town address",
+              postcode = "TS1 1ST",
+              noFixedAbode = false
+            )
+          )
         )
       )
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
@@ -386,6 +399,28 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `given case is excluded when fetching a recommendation for user then return user access response details`() {
+    runTest {
+      // given
+      given(communityApiClient.getUserAccess(anyString())).willThrow(WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null))
+      given(recommendationRepository.findById(anyLong())).willReturn { Optional.of(RecommendationEntity(data = RecommendationModel(crn = crn))) }
+
+      // when
+      val response = recommendationService.getRecommendation(123L)
+
+      // then
+      assertThat(response.userAccessResponse).isEqualTo(
+        UserAccessResponse(
+          userRestricted = false,
+          userExcluded = true,
+          exclusionMessage = "I am an exclusion message",
+          restrictionMessage = null
+        )
+      )
+    }
+  }
+
+  @Test
   fun `given case is excluded when creating a recommendation for user then return user access response details`() {
     runTest {
       given(communityApiClient.getUserAccess(crn)).willThrow(
@@ -588,8 +623,28 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(riskService.fetchIndexOffenceDetails(anyString())).willReturn(null)
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = null),
-          addresses = null
+          personalDetailsOverview = PersonDetails(
+            name = "John Smith",
+            firstName = "John",
+            surname = "Smith",
+            crn = crn,
+            age = 21,
+            croNumber = "",
+            dateOfBirth = null,
+            ethnicity = "",
+            gender = "",
+            middleNames = "",
+            nomsNumber = "",
+            pncNumber = "",
+            mostRecentPrisonerNumber = null
+          ),
+          addresses = null,
+          offenderManager = personDetailsResponse().offenderManager?.copy(
+            probationAreaDescription = null,
+            probationTeam = personDetailsResponse().offenderManager?.probationTeam?.copy(
+              localDeliveryUnitDescription = null
+            )
+          )
         )
       }
 
@@ -618,7 +673,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             firstName = "John",
             surname = "Smith",
             mappa = null,
-            addresses = null
+            addresses = null,
+            dateOfBirth = null
           ),
           indexOffenceDetails = null
         )
@@ -641,6 +697,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
       assertThat(recommendationUpdatedWithExtraFields.data.indexOffenceDetails).isEqualTo(null)
+      assertThat(recommendationUpdatedWithExtraFields.data.region).isEqualTo(null)
+      assertThat(recommendationUpdatedWithExtraFields.data.localDeliveryUnit).isEqualTo(null)
       assertThat(recommendationUpdatedWithExtraFields.data.personOnProbation).isEqualTo(
         PersonOnProbation(
           name = "John Smith",
@@ -648,7 +706,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           surname = "Smith",
           mostRecentPrisonerNumber = null,
           mappa = null,
-          addresses = null
+          addresses = null,
+          dateOfBirth = null
         )
       )
     }

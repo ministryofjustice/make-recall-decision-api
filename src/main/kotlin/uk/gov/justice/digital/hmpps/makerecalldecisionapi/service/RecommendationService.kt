@@ -67,7 +67,8 @@ internal class RecommendationService(
             surname = personDetails?.personalDetailsOverview?.surname,
             gender = personDetails?.personalDetailsOverview?.gender,
             ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
-            dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth
+            dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
+            addresses = personDetails?.addresses
           ),
           convictionForRecommendation,
           personDetails?.offenderManager?.probationAreaDescription,
@@ -213,7 +214,7 @@ internal class RecommendationService(
   suspend fun generateDntrPreview(recommendationId: Long): DocumentResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-    updateRecommendation(recommendationEntity)
+    pathchRecommendationWithExtraData(recommendationEntity)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -225,6 +226,7 @@ internal class RecommendationService(
     }
   }
 
+  @Transactional
   @OptIn(ExperimentalStdlibApi::class)
   suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, userEmail, true)
@@ -232,16 +234,16 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val updatedRecommendation = updateRecommendation(recommendationEntity)
-      val fileContents = templateReplacementService.generateDocFromRecommendation(updatedRecommendation, DocumentType.PART_A_DOCUMENT)
+      val enrichedRecommendation = pathchRecommendationWithExtraData(recommendationEntity)
+      val fileContents = templateReplacementService.generateDocFromRecommendation(enrichedRecommendation, DocumentType.PART_A_DOCUMENT)
       return DocumentResponse(
-        fileName = generateDocumentFileName(updatedRecommendation.data, "NAT_Recall_Part_A"),
+        fileName = generateDocumentFileName(enrichedRecommendation.data, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
   }
 
-  suspend fun updateRecommendation(recommendationEntity: RecommendationEntity): RecommendationEntity {
+  suspend fun pathchRecommendationWithExtraData(recommendationEntity: RecommendationEntity): RecommendationEntity {
     val crn = recommendationEntity.data.crn
     val riskResponse = crn?.let { riskService?.getRisk(it) }
     val personDetails = crn?.let { personDetailsService.getPersonDetails(it) }
