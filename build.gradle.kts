@@ -56,7 +56,7 @@ dependencies {
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
