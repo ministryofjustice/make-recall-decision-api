@@ -18,7 +18,6 @@ allOpen {
 }
 
 val springDocVersion = "1.6.11"
-val restAssuredVersion = "5.2.0"
 
 dependencies {
 
@@ -62,9 +61,8 @@ dependencies {
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
 
-  testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
-  implementation("io.rest-assured:json-path:$restAssuredVersion")
-  implementation("io.rest-assured:xml-path:$restAssuredVersion")
+  testImplementation("io.rest-assured:json-path")
+  testImplementation("io.rest-assured:xml-path")
 }
 
 java {
