@@ -35,7 +35,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:8.5.13")
+  implementation("org.flywaydb:flyway-core:9.4.0")
   implementation("org.postgresql:postgresql:42.5.0")
 
   implementation("io.sentry:sentry-spring-boot-starter:6.4.2")
