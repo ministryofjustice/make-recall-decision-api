@@ -3,12 +3,54 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 1,Administrative,C113,Clerical Officer Contact
 1,Administrative,C256,Order/ Licence Received
 1,Administrative,CCTR,Component Termination Removed
-1,Administrative,CMS02,CMS - Sentence Plan Intervention Delivery - Medium
-1,Administrative,CMS03,CMS - Sentence Plan Intervention Delivery - High
+1,Administrative,CMS29,CMS - Case Related Communication - Medium
 1,Administrative,CMS28,CMS - Case Related Communication - Low
 1,Administrative,CMS30,CMS - Case Related Communication - High
-1,Administrative,CMS32,CMS - Assistance with Assessments - Medium
 1,Administrative,CMS33,CMS - Assistance with Assessments - High
+1,Administrative,CMS02,CMS - Sentence Plan Intervention Delivery - Medium
+1,Administrative,CMS03,CMS - Sentence Plan Intervention Delivery - High
+1,Administrative,CMS05,CMS - Completing & Assisting with Referrals-Medium
+1,Administrative,CMS04,CMS - Completing & Assisting with Referrals - Low
+1,Administrative,CMS06,CMS - Completing & Assisting with Referrals - High
+1,Administrative,CMS01,CMS - Sentence Plan Intervention Delivery - Low
+1,Administrative,CMS32,CMS - Assistance with Assessments - Medium
+1,Administrative,CMS13,CMS - Information & Intelligence Gathering - Low
+1,Administrative,CMS14,CMS - Information & Intelligence Gathering- Medium
+1,Administrative,CMS15,CMS - Information & Intelligence Gathering - High
+1,Administrative,CMS31,CMS - Assistance with Assessments - Low
+1,Administrative,CMS18,CMS - Home & Prison Visits - High
+1,Administrative,CMS11,CMS - Assistance with Case Conferencing - Medium
+1,Administrative,CMS12,CMS - Assistance with Case Conferencing - High
+1,Administrative,CMS08,CMS - Attending Partnership Meetings - Medium
+1,Administrative,CMS17,CMS - Home & Prison Visits - Medium
+1,Administrative,CMS09,CMS - Attending Partnership Meetings - High
+1,Administrative,CMS27,CMS - Court Liaison & Applications to Court - High
+1,Administrative,CMS10,CMS - Assistance with Case Conferencing - Low
+1,Administrative,CMS26,CMS - Court Liaison & Applications to Court-Medium
+1,Administrative,CMS07,CMS - Attending Partnership Meetings - Low
+1,Administrative,CMS16,CMS - Home & Prison Visits - Low
+1,Administrative,CMS36,CMS - ROTL Assessments & Support - High
+1,Administrative,CMS35,CMS - ROTL Assessments & Support - Medium
+1,Administrative,CMS25,CMS - Court Liaison & Applications to Court - Low
+1,Administrative,CMS34,CMS - ROTL Assessments & Support - Low
+1,Administrative,CMS21,CMS - HDC Assessments & Support - High
+1,Administrative,CMS20,CMS - HDC Assessments & Support - Medium
+1,Administrative,CMS22,CMS - Victims Services Liaison - Low
+1,Administrative,CMS23,CMS - Victims Services Liaison - Medium
+1,Administrative,CMS19,CMS - HDC Assessments & Support - Low
+1,Administrative,CMS24,CMS - Victims Services Liaison - High
+1,Administrative,CMS40,CMS - Assistance with Assessments
+1,Administrative,CMS41,CMS - Assistance with Case Conferencing
+1,Administrative,CMS42,CMS - Attending Partnership Meetings
+1,Administrative,CMS43,CMS - Case Related Communication
+1,Administrative,CMS44,CMS - Completing & Assisting with Referrals
+1,Administrative,CMS45,CMS - Court Liaison & Applications to Court
+1,Administrative,CMS46,CMS - HDC Assessments & Support
+1,Administrative,CMS47,CMS - Home & Prison Visits
+1,Administrative,CMS48,CMS - Information & Intelligence Gathering
+1,Administrative,CMS49,CMS - ROTL Assessments & Support
+1,Administrative,CMS50,CMS - Sentence Plan Intervention Delivery
+1,Administrative,CMS51,CMS - Victims Services Liaison
 1,Administrative,CRCC,Completed
 1,Administrative,CSTR,Sentence Termination Removed
 1,Administrative,DPRE,Pre Cons Received
@@ -44,6 +86,7 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 3,Appointments,OFF8,Emotional Well-Being (NS)
 3,Appointments,POLY16,CT Polygraph Exam
 3,Appointments,RARP,RAR Programme Day
+4,Approved premises,APSC4,AP - Welfare Check
 4,Approved premises,APBR,Breach of AP Rules
 4,Approved premises,APMH,AP - Mental Health Concerns
 4,Approved premises,APNC,AP – Notice of Concern
@@ -70,6 +113,34 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 4,Approved premises,C466,AP - 2nd Stage Induction
 4,Approved premises,EAP0,AP INCIDENT - register
 4,Approved premises,EAPC,Other App Prem Contact
+4,Approved premises,C492,AP - PA Session - First Weeks Out 1
+4,Approved premises,APNA,AP - Naloxone Administered by staff
+4,Approved premises,C493,AP - PA Session - First Weeks Out 2
+4,Approved premises,C504,AP - PA Session - College Attendance
+4,Approved premises,C190,AP - MAPPA/ MARAC Report
+4,Approved premises,APNI1,AP - Naloxone – Issued to Resident
+4,Approved premises,C119,AP - Caution (enforceable)
+4,Approved premises,C188,AP - PO Session
+4,Approved premises,C489,AP - PA Session - Evening/Weekend
+4,Approved premises,C189,AP - Enhanced Regime
+4,Approved premises,APSC2,AP - CARE Assessment
+4,Approved premises,APSC11,AP - CARE Immediate Action Plan
+4,Approved premises,C499,AP - Resident Feedback Form
+4,Approved premises,APSC7,AP - CARE Plan
+4,Approved premises,C491,AP - PA Session - ETE
+4,Approved premises,APSC9,AP - CARE review
+4,Approved premises,C388,AP - Meeting with AP Manager
+4,Approved premises,C490,AP - PA Session - Accommodation
+4,Approved premises,APRS3,AP - Room Search - Welfare Concerns
+4,Approved premises,APCA,AP - Care Act
+4,Approved premises,APRS1,AP - Room Search - Risk
+4,Approved premises,C481,AP - Home Leave
+4,Approved premises,APMP1,AP - Medication in Possession Monitoring
+4,Approved premises,APSC10,AP - SaSP review
+4,Approved premises,APSC1,AP - SaSP Assessment
+4,Approved premises,C121,AP - Room Search - Routine
+4,Approved premises,APIN,AP - 1st Stage Induction
+4,Approved premises,APMP2,AP - Medication not in Possession
 4,Approved premises,EAPK,AP - Keyworker Session (NS)
 5,Breaches and warnings,AWL2,Breach Action - Second Warning Letter Sent
 5,Breaches and warnings,AWLF,Breach Action - Final Warning Letter Sent
@@ -79,13 +150,14 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 5,Breaches and warnings,C040,Breach Action - Withdraw Warning Letter
 5,Breaches and warnings,C041,Breach Action - Recall Requested
 5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
+5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
 5,Breaches and warnings,CLBW,Withdrawal of Warning
 5,Breaches and warnings,LCL,Licence Compliance Letter
 6,Case discussion ,C053,Case Decisions
 6,Case discussion ,C238,Case Discussion
-6,Case discussion ,CRCO,Case Reviewed by Case Manager 
+6,Case discussion ,CRCO,Case Reviewed by Case Manager
 6,Case discussion ,CSPO,Consultation with Manager
-6,Case discussion ,CTPJ,Professional Judgement 
+6,Case discussion ,CTPJ,Professional Judgement
 6,Case discussion ,RROD,Risk Review Discussion
 7,Communication,C101,Appointment with External Agency
 7,Communication,C129,Use of Video Link / Teleconference
@@ -136,6 +208,25 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 9,Custody ,NOMIS031,NOMIS Case Note - OMIC Sentence Planning
 9,Custody ,NOMISD,NOMIS Case Notes - General
 9,Custody ,POM1,POM-COM handover
+9,Custody ,NOMIS001,NOMIS Alert Made Active
+9,Custody ,NOMIS002,NOMIS Alert Made Inactive
+9,Custody ,NOMIS004,NOMIS Case Note - Transfer
+9,Custody ,NOMIS003,NOMIS Case Note - Release
+9,Custody ,NOMIS005,NOMIS case note – offender supervisor entry
+9,Custody ,NOMIS006,NOMIS case note – key worker entry
+9,Custody ,NOMIS008,NOMIS Case Note - OPD Triage Contact
+9,Custody ,NOMIS013,NOMIS Case Note - Activity Joint Working with OM
+9,Custody ,NOMIS022,NOMIS Case Note - Pathway Left Service
+9,Custody ,NOMIS027,NOMIS Case Note - Consultation with Head of OM Del
+9,Custody ,NOMIS019,NOMIS Case Note - Pathway Plan Engaged in Service
+9,Custody ,NOMIS018,NOMIS Case Note - Pathway Plan Referral Accepted
+9,Custody ,NOMIS015,NOMIS Case Note - Activity Other Activity
+9,Custody ,NOMIS024,NOMIS Case Note - OPD Risk Management Plan
+9,Custody ,NOMIS014,NOMIS Case Note - Activity OM Practice Support
+9,Custody ,NOMIS023,NOMIS Case Note - Pathway Review of Existing Plan
+9,Custody ,NOMIS011,NOMIS Case Note - OPD Case Formulation L2
+9,Custody ,NOMIS017,NOMIS Case Note - Pathway Plan Referral
+9,Custody ,NOMIS010,NOMIS Case Note - OPD  Case Formulation L1
 10,Drugs and alcohol,AAM3,Alcohol Consumption and Tamper
 10,Drugs and alcohol,AAM4,Multi-Day Alcohol Consumption with Tamper
 10,Drugs and alcohol,APNO,AP - Suspected Overdose Incident
@@ -175,6 +266,7 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 14,Mappa / IOM / Marac,C005,Marac meeting
 14,Mappa / IOM / Marac,C200,MAPPA Information
 14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
+14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
 14,Mappa / IOM / Marac,C318,IOM Other Contact
 14,Mappa / IOM / Marac,CAIL,IOM Correspondence/Mail Contact
 14,Mappa / IOM / Marac,CCMM,MAPPA Meeting
@@ -212,6 +304,7 @@ Group id,Group,Code,Contact name (for reference only - will not be used in UI)
 19,Recall,C041,Breach Action - Recall Requested
 19,Recall,C122,AP - Out of hours recall
 19,Recall,C439,Recall - Review Report submitted to RR Section
+19,Recall,CNPS,NPS Recall Decision - Enforcement
 19,Recall,CNPS,PS Recall Decision
 19,Recall,LCL,Licence Compliance Letter
 19,Recall,MO5,Management Oversight - Recall
