@@ -1,10 +1,10 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.1"
-  kotlin("jvm") version "1.7.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.1"
+  kotlin("jvm") version "1.7.20"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.7.10"
+  kotlin("plugin.jpa") version "1.7.20"
   id("org.sonarqube") version "3.4.0.2513"
-  kotlin("plugin.spring") version "1.7.10"
+  kotlin("plugin.spring") version "1.7.20"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -18,7 +18,7 @@ allOpen {
 }
 
 val springDocVersion = "1.6.11"
-val restAssuredVersion = "5.1.1"
+val restAssuredVersion = "5.2.0"
 
 dependencies {
 
@@ -28,7 +28,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.3")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.4")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.4")
   implementation("io.opentelemetry:opentelemetry-api:1.18.0")
   implementation("joda-time:joda-time:2.11.2")
@@ -51,12 +51,12 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.6.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.18.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.19.2")
 
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
