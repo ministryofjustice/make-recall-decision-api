@@ -161,80 +161,82 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Test
   fun `updates a recommendation to the database`() {
-    // given
-    val existingRecommendation = RecommendationEntity(
-      id = 1,
-      data = RecommendationModel(
-        crn = crn,
-        status = Status.DRAFT,
-        personOnProbation = PersonOnProbation(name = "John Smith"),
-        lastModifiedBy = "Jack",
-        lastModifiedDate = "2022-07-01T15:22:24.567Z",
-        createdBy = "Jack",
-        createdDate = "2022-07-01T15:22:24.567Z",
-      )
-    )
-
-    // and
-    val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-
-    // and
-    val recommendationToSave =
-      existingRecommendation.copy(
-        id = existingRecommendation.id,
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
         data = RecommendationModel(
-          crn = existingRecommendation.data.crn,
+          crn = crn,
+          status = Status.DRAFT,
           personOnProbation = PersonOnProbation(name = "John Smith"),
-          recallType = updateRecommendationRequest.recallType,
-          custodyStatus = updateRecommendationRequest.custodyStatus,
-          responseToProbation = updateRecommendationRequest.responseToProbation,
-          whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
-          isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
-          isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
-          isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
-          activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
-          hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
-          indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
-          dateVloInformed = updateRecommendationRequest.dateVloInformed,
-          hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
-          hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
-          status = existingRecommendation.data.status,
-          lastModifiedDate = "2022-07-26T09:48:27.443Z",
-          lastModifiedBy = "Bill",
-          createdBy = existingRecommendation.data.createdBy,
-          createdDate = existingRecommendation.data.createdDate,
-          alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
-          licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
-          underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
-          localPoliceContact = updateRecommendationRequest.localPoliceContact,
-          vulnerabilities = updateRecommendationRequest.vulnerabilities,
-          convictionDetail = updateRecommendationRequest.convictionDetail,
-          fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
-          indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
-          mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
-          whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
-          reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
-          nextAppointment = updateRecommendationRequest.nextAppointment
+          lastModifiedBy = "Jack",
+          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z",
         )
       )
 
-    // and
-    given(recommendationRepository.save(any()))
-      .willReturn(recommendationToSave)
+      // and
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
-    // and
-    given(recommendationRepository.findById(any()))
-      .willReturn(Optional.of(existingRecommendation))
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(name = "John Smith"),
+            recallType = updateRecommendationRequest.recallType,
+            custodyStatus = updateRecommendationRequest.custodyStatus,
+            responseToProbation = updateRecommendationRequest.responseToProbation,
+            whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
+            isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
+            isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
+            isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
+            activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
+            hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
+            indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
+            dateVloInformed = updateRecommendationRequest.dateVloInformed,
+            hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
+            hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
+            status = existingRecommendation.data.status,
+            lastModifiedDate = "2022-07-26T09:48:27.443Z",
+            lastModifiedBy = "Bill",
+            createdBy = existingRecommendation.data.createdBy,
+            createdDate = existingRecommendation.data.createdDate,
+            alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
+            licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
+            underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
+            localPoliceContact = updateRecommendationRequest.localPoliceContact,
+            vulnerabilities = updateRecommendationRequest.vulnerabilities,
+            convictionDetail = updateRecommendationRequest.convictionDetail,
+            fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
+            indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
+            mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
+            whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
+            reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
+            nextAppointment = updateRecommendationRequest.nextAppointment
+          )
+        )
 
-    val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
-    val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+      // and
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
 
-    // when
-    recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
 
-    // then
-    then(recommendationRepository).should().save(recommendationToSave)
-    then(recommendationRepository).should(times(2)).findById(1)
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // when
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+
+      // then
+      then(recommendationRepository).should().save(recommendationToSave)
+      then(recommendationRepository).should(times(2)).findById(1)
+    }
   }
 
   @Test
@@ -595,8 +597,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
-      given(recommendationRepository.save(any()))
-        .willReturn(existingRecommendation)
 
       val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.PREVIEW)
 
@@ -687,29 +687,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should(times(2)).save(captor.capture())
+      then(recommendationRepository).should(times(1)).save(captor.capture())
       val recommendationEntity = captor.firstValue
-      val recommendationUpdatedWithExtraFields = captor.secondValue
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
-      assertThat(recommendationUpdatedWithExtraFields.data.indexOffenceDetails).isEqualTo(null)
-      assertThat(recommendationUpdatedWithExtraFields.data.region).isEqualTo(null)
-      assertThat(recommendationUpdatedWithExtraFields.data.localDeliveryUnit).isEqualTo(null)
-      assertThat(recommendationUpdatedWithExtraFields.data.personOnProbation).isEqualTo(
-        PersonOnProbation(
-          name = "John Smith",
-          firstName = "John",
-          surname = "Smith",
-          mostRecentPrisonerNumber = null,
-          mappa = null,
-          addresses = null,
-          dateOfBirth = null
-        )
-      )
     }
   }
 
@@ -782,39 +767,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should(times(2)).save(captor.capture())
+      then(recommendationRepository).should(times(1)).save(captor.capture())
       val recommendationEntity = captor.firstValue
-      val recommendationUpdatedWithExtraFields = captor.secondValue
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
-      assertThat(recommendationUpdatedWithExtraFields.data.indexOffenceDetails).isEqualTo("Juicy details")
-      assertThat(recommendationUpdatedWithExtraFields.data.personOnProbation).isEqualTo(
-        PersonOnProbation(
-          name = "John Smith",
-          firstName = "John",
-          surname = "Smith",
-          mostRecentPrisonerNumber = "G12345",
-          mappa = Mappa(
-            level = 2,
-            category = 2,
-            isNominal = null,
-            lastUpdated = null
-          ),
-          addresses = listOf(
-            Address(
-              line1 = "Line 1 addressXYZ",
-              line2 = "Line 2 addressXYZ",
-              town = "Town address",
-              postcode = "ABC CBA",
-              noFixedAbode = false
-            )
-          )
-        )
-      )
     }
   }
 
