@@ -18,7 +18,7 @@ allOpen {
 }
 
 val springDocVersion = "1.6.11"
-val restAssuredVersion = "5.1.1"
+val restAssuredVersion = "5.2.0"
 
 dependencies {
 
