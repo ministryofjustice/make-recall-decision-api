@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun allOffenderDetailsResponse() = """
+fun allOffenderDetailsResponse(district: String?="Sheffield City Centre") = """
 {
   "activeProbationManagedSentence": true,
   "contactDetails": {
@@ -36,7 +36,7 @@ fun allOffenderDetailsResponse() = """
         "buildingName": "HMPPS Digital Studio",
         "county": "South Yorkshire",
         "createdDatetime": "2021-06-11T13:00:00",
-        "district": "Sheffield City Centre",
+        "district": "$district",
         "from": "2020-06-10",
         "lastUpdatedDatetime": "2021-06-11T14:00:00",
         "latestAssessmentDate": "2021-06-11T12:00:00",
