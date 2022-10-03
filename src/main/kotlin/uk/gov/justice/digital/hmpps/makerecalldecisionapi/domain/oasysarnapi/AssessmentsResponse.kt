@@ -11,6 +11,7 @@ data class Assessment(
   val assessmentStatus: String?,
   val superStatus: String?,
   val dateCompleted: String?,
+  val initiationDate: String?,
   val laterWIPAssessmentExists: Boolean?,
   val laterSignLockAssessmentExists: Boolean?,
   val laterPartCompUnsignedAssessmentExists: Boolean?,

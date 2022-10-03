@@ -187,12 +187,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun oasysAssessmentsResponse(crn: String, delaySeconds: Long = 0, laterCompleteAssessmentExists: Boolean? = false, offenceType: String? = "CURRENT") {
+  protected fun oasysAssessmentsResponse(crn: String, delaySeconds: Long = 0, laterCompleteAssessmentExists: Boolean? = false, offenceType: String? = "CURRENT", superStatus: String? = "COMPLETE") {
     val assessmentsRequest =
       request().withPath("/assessments/crn/$crn/offence")
 
     oasysARNApi.`when`(assessmentsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(assessmentsResponse(crn, laterCompleteAssessmentExists = laterCompleteAssessmentExists, offenceType = offenceType))
+      response().withContentType(APPLICATION_JSON).withBody(assessmentsResponse(crn, laterCompleteAssessmentExists = laterCompleteAssessmentExists, offenceType = offenceType, superStatus = superStatus))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

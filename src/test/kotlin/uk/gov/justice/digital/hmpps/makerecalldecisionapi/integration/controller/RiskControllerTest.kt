@@ -184,6 +184,7 @@ class RiskControllerTest(
     runTest {
       val crn = "A12345"
       userAccessAllowed(crn)
+      oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
@@ -268,6 +269,38 @@ class RiskControllerTest(
         .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
         .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
         .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
+        .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
+    }
+  }
+
+  @Test
+  fun `retrieves risk data when assessment status is incomplete`() {
+    runTest {
+      val crn = "A12345"
+      userAccessAllowed(crn)
+      oasysAssessmentsResponse(crn, superStatus = "INCOMPLETE")
+      roSHSummaryResponse(crn)
+      allOffenderDetailsResponse(crn)
+      mappaDetailsResponse(crn)
+      historicalRiskScoresResponse(crn)
+      currentRiskScoresResponse(crn)
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
+      contingencyPlanResponse(crn)
+
+      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
+      val assessmentsFromArnContingencyPlanResponse = JSONArray(arnContingencyPlanResponse.get("assessments").toString())
+      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
+
+      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation").toString() + latestCompleteAssessment.get("monitoringAndControl").toString() + latestCompleteAssessment.get("interventionsAndTreatment").toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.assessmentStatus").isEqualTo("INCOMPLETE")
     }
   }
 

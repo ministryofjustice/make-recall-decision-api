@@ -62,6 +62,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     val expected = ContingencyPlanResponse(
       assessments = listOf(
         Assessment(
+          initiationDate = "2020-07-03T11:42:01",
           dateCompleted = "2020-07-03T11:42:01",
           assessmentStatus = "COMPLETE",
           keyConsiderationsCurrentSituation = "key considerations for current situation",
@@ -129,6 +130,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       assessmentStatus = "COMPLETE",
       superStatus = "COMPLETE",
       dateCompleted = "2022-04-24T15:00:08",
+      initiationDate = "2022-09-12T15:00:08",
       laterWIPAssessmentExists = false,
       laterSignLockAssessmentExists = false,
       laterPartCompUnsignedAssessmentExists = false,
@@ -154,6 +156,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       ),
       assessmentStatus = "COMPLETE",
       superStatus = "COMPLETE",
+      initiationDate = "2022-08-12T15:00:08",
       dateCompleted = "2022-04-23T15:00:08",
       laterWIPAssessmentExists = false,
       laterSignLockAssessmentExists = false,

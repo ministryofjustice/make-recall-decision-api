@@ -81,9 +81,16 @@ internal class RiskService(
         circumstancesIncreaseRisk = circumstancesIncreaseRisk,
         factorsToReduceRisk = factorsToReduceRisk,
         whenRiskHighest = whenRiskHighest,
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
+        assessmentStatus = getAssessmentStatus(crn)
       )
     }
+  }
+
+  suspend fun getAssessmentStatus(crn: String): String {
+    val assessmentsResponse = fetchAssessments(crn)
+    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    return if (latestAssessment?.superStatus == "COMPLETE") "COMPLETE" else "INCOMPLETE"
   }
 
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
