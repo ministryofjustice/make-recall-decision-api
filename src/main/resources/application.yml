@@ -14,7 +14,7 @@ spring:
   application:
     name: make-recall-decision-api
   codec:
-    max-in-memory-size: 10MB
+    max-in-memory-size: 30MB
   security:
     oauth2:
       client:
