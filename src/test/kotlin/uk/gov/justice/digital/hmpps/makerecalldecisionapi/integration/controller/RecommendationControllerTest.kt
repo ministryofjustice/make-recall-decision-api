@@ -66,10 +66,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
     assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
     assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
-    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("category")).isEqualTo(1)
-    assertThat(JSONObject(JSONObject(response.get("personOnProbation").toString()).get("mappa").toString()).get("level")).isEqualTo(1)
-    assertThat(response.get("indexOffenceDetails").toString()).isEqualTo("Juicy offence details.")
-
     val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
     val address = JSONObject(personOnProbationAddress.get(0).toString())
     assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
@@ -356,9 +352,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.nextAppointment.howWillAppointmentHappen.allOptions[3].text").isEqualTo("Home visit")
       .jsonPath("$.nextAppointment.dateTimeOfAppointment").isEqualTo("2022-04-24T20:39:00.000Z")
       .jsonPath("$.nextAppointment.probationPhoneNumber").isEqualTo("01238282838")
-
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
-    assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
 
   @Test
@@ -413,11 +406,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `generate a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
-    allOffenderDetailsResponse(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationForNoRecallRequest())
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    updateRecommendation(updateRecommendationRequest())
+    allOffenderDetailsResponseOneTimeOnly(crn)
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -436,12 +431,57 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
+
+    assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
+  }
+
+  @Test
+  fun `generate a DNTR document from recommendation data when details change between save and return`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
+    deleteAndCreateRecommendation()
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    updateRecommendation(updateRecommendationRequest())
+    allOffenderDetailsResponseOneTimeOnly(crn, district = "MegaCity1")
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/no-recall-letter")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(documentRequestQuery("download-docx"))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
+    assertNotNull(response.get("fileContents"))
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("MegaCity1"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
+
     assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
   }
 
   @Test
   fun `preview a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
+    oasysAssessmentsResponse(crn)
+    mappaDetailsResponse(crn)
     allOffenderDetailsResponse(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
@@ -481,12 +521,16 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `generate a Part A from recommendation data`() {
+  fun `generate a Part A from recommendation data when details change between save and return`() {
+    oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
-    allOffenderDetailsResponse(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
+    allOffenderDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation()
+    allOffenderDetailsResponseOneTimeOnly(crn, district = "MegaCity1")
     updateRecommendation(updateRecommendationRequest())
 
     val response = convertResponseToJSONObject(
@@ -508,6 +552,58 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
     assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)
+    assertThat(result[0].data.personOnProbation?.mappa?.category).isEqualTo(1)
+    assertThat(result[0].data.personOnProbation?.mappa?.level).isEqualTo(1)
+    assertThat(result[0].data.indexOffenceDetails).isEqualTo("Juicy offence details.")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2).isEqualTo("MegaCity1")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town).isEqualTo("Sheffield")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode).isEqualTo("S3 7BS")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode).isEqualTo(false)
+    assertThat(result[0].data.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
+  }
+
+  @Test
+  fun `generate a Part A from recommendation data`() {
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation()
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    updateRecommendation(updateRecommendationRequest())
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/part-a")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(createPartARequest())
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
+    assertNotNull(response.get("fileContents"))
+
+    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
+    assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
+    assertNotNull(result[0].data.lastPartADownloadDateTime)
+    assertThat(result[0].data.personOnProbation?.mappa?.category).isEqualTo(1)
+    assertThat(result[0].data.personOnProbation?.mappa?.level).isEqualTo(1)
+    assertThat(result[0].data.indexOffenceDetails).isEqualTo("Juicy offence details.")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2).isEqualTo("Sheffield City Centre")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town).isEqualTo("Sheffield")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode).isEqualTo("S3 7BS")
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode).isEqualTo(false)
+    assertThat(result[0].data.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
   }
 
   @Test
@@ -563,8 +659,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
       userAccessAllowedOnce(crn)
-      mappaDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
       webTestClient.get()
@@ -604,15 +698,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `given case is excluded when updating a recommendation then only return user access details`() {
     runTest {
-      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
       userAccessAllowedOnce(crn)
-      mappaDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
-      userAccessAllowedOnce(crn)
-      getRecommendation()
       userAccessExcluded(crn)
 
       webTestClient.patch()
@@ -639,15 +728,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {
-      mappaDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       allOffenderDetailsResponse(crn)
       userAccessAllowedOnce(crn)
-      mappaDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
-      userAccessAllowedOnce(crn)
-      updateRecommendation(updateRecommendationRequest())
       userAccessExcluded(crn)
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")

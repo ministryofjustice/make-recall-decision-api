@@ -62,7 +62,7 @@ data class DocumentData(
   val behaviourLeadingToSexualOrViolentOffencePresent: String? = null,
   val outOfTouch: String? = null,
   val outOfTouchPresent: String? = null,
-  val otherPossibleAddresses: String? = null,
+  val otherPossibleAddresses: String? = null
 )
 
 data class ValueWithDetails(
