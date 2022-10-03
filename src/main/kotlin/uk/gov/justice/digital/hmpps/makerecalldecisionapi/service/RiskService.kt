@@ -67,7 +67,7 @@ internal class RiskService(
         current = fetchCurrentScores(crn),
         historical = fetchHistoricalScores(crn)
       )
-      val contingencyPlan = fetchContingencyPlan(crn) // TODO reintroduce once ARN-1026 is complete
+      val contingencyPlan = fetchContingencyPlan(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return RiskResponse(

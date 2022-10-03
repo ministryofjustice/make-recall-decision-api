@@ -79,21 +79,7 @@ internal abstract class ServiceTestBase {
 
   @BeforeEach
   fun userValidatorSetup() {
-    lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(
-      PersonDetailsResponse(
-        personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", middleNames = "Homer Bart", surname = "Smith", age = null, crn = null, dateOfBirth = LocalDate.parse("1982-10-24"), gender = "Male", ethnicity = "Ainu", croNumber = "123456/04A", pncNumber = "2004/0712343H", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR"),
-        addresses = listOf(
-          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
-            line1 = "Line 1 address",
-            line2 = "Line 2 address",
-            town = "Town address",
-            postcode = "TS1 1ST",
-            noFixedAbode = false
-          )
-        ),
-        offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(name = "John Smith", phoneNumber = "01234567654", email = "tester@test.com", probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"), probationAreaDescription = "Probation area description")
-      )
-    )
+    lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(personDetailsResponse())
     partADocumentMapper = PartADocumentMapper()
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(communityApiClient)
@@ -103,6 +89,40 @@ internal abstract class ServiceTestBase {
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
   }
+
+  fun personDetailsResponse() = PersonDetailsResponse(
+    personalDetailsOverview = PersonDetails(
+      name = "John Smith",
+      firstName = "John",
+      middleNames = "Homer Bart",
+      surname = "Smith",
+      age = null,
+      crn = null,
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = "Ainu",
+      croNumber = "123456/04A",
+      pncNumber = "2004/0712343H",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = "A1234CR"
+    ),
+    addresses = listOf(
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
+        line1 = "Line 1 address",
+        line2 = "Line 2 address",
+        town = "Town address",
+        postcode = "TS1 1ST",
+        noFixedAbode = false
+      )
+    ),
+    offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(
+      name = "John Smith",
+      phoneNumber = "01234567654",
+      email = "tester@test.com",
+      probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"),
+      probationAreaDescription = "Probation area description"
+    )
+  )
 
   protected fun allReleaseSummariesResponse(): ReleaseSummaryResponse {
 
