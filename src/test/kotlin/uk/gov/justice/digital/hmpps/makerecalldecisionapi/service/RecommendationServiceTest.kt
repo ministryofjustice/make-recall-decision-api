@@ -28,6 +28,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
@@ -619,7 +620,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = null
         )
       )
-      given(riskServiceMocked.fetchIndexOffenceDetails(anyString())).willReturn(null)
+      given(riskServiceMocked.fetchAsessmentInfo(anyString())).willReturn(null)
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(
@@ -706,7 +707,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
         )
       )
-      given(riskServiceMocked.fetchIndexOffenceDetails(anyString())).willReturn("Juicy details")
+      given(riskServiceMocked.fetchAsessmentInfo(anyString())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),

@@ -43,8 +43,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentenc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
@@ -250,10 +248,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchIndexOffenceDetails(crn)
+      val response = riskService.fetchAsessmentInfo(crn)
 
       // then
-      assertThat(response).isEqualTo("Juicy offence details.")
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offenceCodesMatch).isEqualTo(true)
+      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
     }
@@ -791,38 +792,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       description = "NPS London"
     ),
     notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
-  )
-
-  private fun assessmentResponse(crn: String): AssessmentsResponse {
-    return AssessmentsResponse(crn, false, listOf(assessment()))
-  }
-
-  private fun assessment() = Assessment(
-    dateCompleted = "2022-08-26T15:00:08",
-    initiationDate = "2020-06-03T11:42:01",
-    assessmentStatus = "COMPLETE",
-    keyConsiderationsCurrentSituation = null,
-    furtherConsiderationsCurrentSituation = null,
-    supervision = null,
-    monitoringAndControl = null,
-    interventionsAndTreatment = null,
-    victimSafetyPlanning = null,
-    contingencyPlans = null,
-    offenceDetails = listOf(
-      AssessmentOffenceDetail(
-        type = "CURRENT",
-        offenceCode = "ABC123",
-        offenceSubCode = "",
-        offenceDate = "2022-08-26T12:00:00.000"
-      )
-    ),
-    offence = "Juicy offence details.",
-    laterCompleteAssessmentExists = false,
-    laterPartCompSignedAssessmentExists = false,
-    laterPartCompUnsignedAssessmentExists = false,
-    laterSignLockAssessmentExists = false,
-    laterWIPAssessmentExists = false,
-    superStatus = "COMPLETE"
   )
 
   private val allOffenderDetailsResponse = AllOffenderDetailsResponse(

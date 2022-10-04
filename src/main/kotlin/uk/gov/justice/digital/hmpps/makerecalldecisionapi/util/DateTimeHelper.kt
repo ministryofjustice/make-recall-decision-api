@@ -5,12 +5,21 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class DateTimeHelper {
 
   companion object Helper {
+
+    fun oaSysUtcDateTimeFormatCorrecter(input: String): String {
+      val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
+      val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
+      return offsetDateTime.format(formatter)
+    }
+
     fun nowDate(): String {
       val formatter = DateTimeFormat.forPattern("ddMMyyyy")
       return formatter.print(DateTime.now()).toString()

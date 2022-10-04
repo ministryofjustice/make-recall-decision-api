@@ -30,6 +30,7 @@ internal class CaseSummaryOverviewService(
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
+      val assessmentInfo = riskService.fetchAsessmentInfo(crn)
 
       val releaseSummary = getReleaseSummary(crn)
 
@@ -38,7 +39,8 @@ internal class CaseSummaryOverviewService(
         convictions = convictionService.buildConvictionResponseForOverview(crn),
         releaseSummary = releaseSummary,
         risk = Risk(flags = riskFlags, riskManagementPlan = riskManagementPlan),
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
+        assessmentInfo = assessmentInfo
       )
     }
   }

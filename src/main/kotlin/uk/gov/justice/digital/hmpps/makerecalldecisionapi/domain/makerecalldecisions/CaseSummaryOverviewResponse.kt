@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
@@ -11,4 +12,6 @@ data class CaseSummaryOverviewResponse(
   val releaseSummary: ReleaseSummaryResponse? = null,
   val risk: Risk? = null,
   val activeRecommendation: ActiveRecommendation? = null,
+  @JsonProperty("assessments")
+  val assessmentInfo: AssessmentInfo? = null
 )

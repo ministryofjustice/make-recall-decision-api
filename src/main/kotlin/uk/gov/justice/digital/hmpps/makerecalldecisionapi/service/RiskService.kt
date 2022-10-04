@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
@@ -28,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.oaSysUtcDateTimeFormatCorrecter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
@@ -75,25 +77,37 @@ internal class RiskService(
     return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
-  suspend fun fetchIndexOffenceDetails(crn: String): String? {
+  suspend fun fetchAsessmentInfo(crn: String): AssessmentInfo? {
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment =
-      assessmentsResponse.assessments?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }?.reversed()
-        ?.firstOrNull()
+    val latestAssessment = assessmentsResponse.assessments
+      ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+      ?.reversed()
+      ?.firstOrNull()
     val oasysAssessmentCompleted =
       latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
-
-    return activeConvictionsFromDelius
+    val mainActiveCustodialOffenceFromLatestCompleteAssessment = activeConvictionsFromDelius
       ?.filter { oasysAssessmentCompleted }
       ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
       ?.filter { it.isCustodial && it.active == true }
       ?.flatMap(this::extractMainOffences)
       ?.filter { datesMatch(latestAssessment, it) }
+    val offenceCodesMatch =
+      mainActiveCustodialOffenceFromLatestCompleteAssessment?.any { currentOffenceCodesMatch(latestAssessment, it) }
+    val latestCompleteAssessment = oasysAssessmentCompleted
+    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { oaSysUtcDateTimeFormatCorrecter(it) }
+    val offenceDescription = mainActiveCustodialOffenceFromLatestCompleteAssessment
       ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
       ?.filter { isLatestAssessment(latestAssessment) }
       ?.map { latestAssessment?.offence }
       ?.firstOrNull()
+
+    return AssessmentInfo(
+      offenceDescription = offenceDescription,
+      offenceCodesMatch = offenceCodesMatch == true,
+      lastUpdatedDate = lastUpdatedDate,
+      offenceDataFromLatestCompleteAssessment = latestCompleteAssessment
+    )
   }
 
   private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
