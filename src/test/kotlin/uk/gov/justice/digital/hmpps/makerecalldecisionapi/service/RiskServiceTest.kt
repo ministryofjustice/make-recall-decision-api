@@ -110,6 +110,8 @@ internal class RiskServiceTest {
         .willReturn(Mono.fromCallable { contingencyPlanResponse })
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { assessmentResponse(crn) })
 
       val response = riskService.getRisk(crn)
 
@@ -182,13 +184,41 @@ internal class RiskServiceTest {
       assertThat(contingencyPlan?.description).isEqualTo(
         "key consideration for current situation\n" + "further consideration for current situation\n" + "supervision\n" + "monitoring and control\n" + "interventions and treatment\n" + "victim safety planning\n" + "contingency plans"
       )
+      assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
+      then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getCurrentScores(crn)
       then(arnApiClient).should().getHistoricalScores(crn)
       then(arnApiClient).should().getContingencyPlan(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves risk when assessmet status is incomplete`() {
+    runTest {
+      val crn = "my wonderful crn"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
+      given(arnApiClient.getRiskSummary(anyString()))
+        .willReturn(Mono.fromCallable { riskSummaryResponse })
+      given(arnApiClient.getHistoricalScores(anyString()))
+        .willReturn(Mono.fromCallable { listOf(historicalScoresResponse) })
+      given(arnApiClient.getCurrentScores(anyString()))
+        .willReturn(Mono.fromCallable { listOf(currentScoreResponse) })
+      given(arnApiClient.getContingencyPlan(anyString()))
+        .willReturn(Mono.fromCallable { contingencyPlanResponse })
+      given(communityApiClient.getAllMappaDetails(anyString()))
+        .willReturn(Mono.fromCallable { mappaResponse })
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
+
+      val response = riskService.getRisk(crn)
+
+      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
+      then(arnApiClient).should().getAssessments(crn)
     }
   }
 
@@ -226,6 +256,8 @@ internal class RiskServiceTest {
         .willReturn(
           Mono.fromCallable { listOf(currentScoreResponseWithOptionalFields) }
         )
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn = null, limitedAccessOffender = null, assessments = emptyList()) })
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -376,7 +408,9 @@ internal class RiskServiceTest {
       assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
       assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
       assertThat(contingencyPlan?.description).isEmpty()
+      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
+      then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getContingencyPlan(crn)
       then(arnApiClient).should().getCurrentScores(crn)
       then(arnApiClient).should().getHistoricalScores(crn)
@@ -456,6 +490,7 @@ internal class RiskServiceTest {
     assessments = listOf(
       Assessment(
         dateCompleted = "2021-10-09T08:26:31.349",
+        initiationDate = "2020-06-03T11:42:01",
         assessmentStatus = "COMPLETE",
         keyConsiderationsCurrentSituation = "key consideration for current situation\n",
         furtherConsiderationsCurrentSituation = "further consideration for current situation\n",
@@ -550,6 +585,7 @@ internal class RiskServiceTest {
 
   private fun assessment() = Assessment(
     dateCompleted = "2022-08-26T15:00:08",
+    initiationDate = "2020-06-03T11:42:01",
     assessmentStatus = "COMPLETE",
     keyConsiderationsCurrentSituation = null,
     furtherConsiderationsCurrentSituation = null,
