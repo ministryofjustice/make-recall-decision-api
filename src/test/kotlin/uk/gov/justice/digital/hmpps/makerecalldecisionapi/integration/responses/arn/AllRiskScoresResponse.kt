@@ -1,10 +1,10 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
 
-fun currentRiskScoresResponse() = """
+fun allRiskScoresResponse() = """
 [
 {
-    "completedDate": "2022-04-16T11:40:54.243",
-    "assessmentStatus": "string",
+    "completedDate": "2021-06-16T11:40:54.243",
+    "assessmentStatus": "COMPLETE",
     "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
@@ -41,8 +41,8 @@ fun currentRiskScoresResponse() = """
     }
   },
   {
-    "completedDate": "2022-06-16T11:40:54.243",
-    "assessmentStatus": "string",
+    "completedDate": "2022-04-16T11:40:54.243",
+    "assessmentStatus": "COMPLETE",
     "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,

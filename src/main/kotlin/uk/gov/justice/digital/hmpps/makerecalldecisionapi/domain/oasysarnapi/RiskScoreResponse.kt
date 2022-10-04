@@ -1,12 +1,13 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
-data class CurrentScoreResponse(
+data class RiskScoreResponse(
   val completedDate: String?,
   val generalPredictorScore: GeneralPredictorScore?,
   val riskOfSeriousRecidivismScore: RiskOfSeriousRecidivismScore?,
-  val sexualPredictorScore: SexualPredictorScore?
+  val sexualPredictorScore: SexualPredictorScore?,
+  val groupReconvictionScore: GroupReconvictionScore?,
+  val violencePredictorScore: ViolencePredictorScore?
 )
-
 data class SexualPredictorScore(
   val ospIndecentPercentageScore: String?,
   val ospContactPercentageScore: String?,
@@ -23,7 +24,9 @@ data class GeneralPredictorScore(
   val ogpStaticWeightedScore: String?,
   val ogpDynamicWeightedScore: String?,
   val ogpTotalWeightedScore: String?,
-  val ogpRisk: String?
+  val ogpRisk: String?,
+  val ogp1Year: String?,
+  val ogp2Year: String?
 )
 
 data class ViolencePredictorScore(
@@ -34,7 +37,6 @@ data class ViolencePredictorScore(
   val twoYears: String?,
   val ovpRisk: String?
 )
-
 data class GroupReconvictionScore(
   val oneYear: String?,
   val twoYears: String?,
