@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
@@ -90,7 +92,7 @@ internal class RiskService(
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
-    return if (latestAssessment?.superStatus == "COMPLETE") "COMPLETE" else "INCOMPLETE"
+    return if (latestAssessment?.superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
