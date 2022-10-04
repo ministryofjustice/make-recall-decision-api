@@ -19,6 +19,7 @@ data class RiskResponse(
   val factorsToReduceRisk: FactorsToReduceRisk? = null,
   val whenRiskHighest: WhenRiskHighest? = null,
   val activeRecommendation: ActiveRecommendation? = null,
+  val assessmentStatus: String? = null
 )
 
 data class RiskPersonalDetails(
