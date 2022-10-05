@@ -41,7 +41,7 @@ internal class ContactHistoryService(
 
   private suspend fun getContactSummary(crn: String): List<ContactSummaryResponse> {
     val contactSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getContactSummary(crn))?.content
-    val allContactDocuments = documentService.getDocumentsForContacts(crn)
+    val allContactDocuments = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
 
     return contactSummaryResponse
       ?.stream()

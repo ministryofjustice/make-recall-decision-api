@@ -72,6 +72,18 @@ fun groupedDocumentsDeliusResponse() = """
                     "parentPrimaryKeyId": 2500614567
                 },
                 {
+                    "id": "374136ce-f863-48d8-96dc-7581636e461e",
+                    "documentName": "ContactDoc.pdf",
+                    "author": "Terry Tibbs",
+                    "type": {
+                        "code": "CONTACT_DOCUMENT",
+                        "description": "Contact document"
+                    },
+                    "lastModifiedAt": "2022-06-07T17:00:29.493",
+                    "createdAt": "2022-06-07T17:00:29",
+                    "parentPrimaryKeyId": 2504435999
+                },
+                {
                     "id": "342234a8-b279-4d6e-b9ff-c7910afce95e",
                     "documentName": "Part A Recall Report 08 06 2022.doc",
                     "author": "Harry Wilson",
