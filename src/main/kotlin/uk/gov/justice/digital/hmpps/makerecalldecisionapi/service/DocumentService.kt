@@ -16,7 +16,13 @@ internal class DocumentService(
     val groupedDocuments = getValueAndHandleWrappedException(communityApiClient.getGroupedDocuments(crn))
     val docs: List<CaseDocument>? = groupedDocuments?.documents?.filter { it.type?.code == documentType }
     val convictionDocs: List<CaseDocument>? = groupedDocuments?.convictions?.flatMap { e ->
-      e.documents?.filter { it.type?.code == documentType } as List<CaseDocument>
+      if (e.documents != null) {
+        e.documents?.filter {
+          it.type?.code == documentType
+        } as List<CaseDocument>
+      } else {
+        emptyList()
+      }
     }
 
     return docs?.let { docList ->
