@@ -65,8 +65,10 @@ class ContactHistoryControllerTest(
         .jsonPath("$.contactTypeGroups[1].groupId").isEqualTo("17")
         .jsonPath("$.contactTypeGroups[1].label").isEqualTo("Police")
         .jsonPath("$.contactTypeGroups[1].contactTypeCodes[0]").isEqualTo("C204")
+        .jsonPath("$.contactSummary.length()").isEqualTo(3)
         .jsonPath("$.contactSummary[0].contactDocuments.length()").isEqualTo(1)
         .jsonPath("$.contactSummary[1].contactDocuments.length()").isEqualTo(1)
+        .jsonPath("$.contactSummary[2].contactDocuments.length()").isEqualTo(1)
         .jsonPath("$.contactSummary[0].contactDocuments[0].id").isEqualTo("f2943b31-2250-41ab-a04d-004e27a97add")
         .jsonPath("$.contactSummary[0].contactDocuments[0].documentName").isEqualTo("test doc.docx")
         .jsonPath("$.contactSummary[0].contactDocuments[0].author").isEqualTo("Trevor Small")
@@ -85,6 +87,14 @@ class ContactHistoryControllerTest(
         .jsonPath("$.contactSummary[1].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:29:17.324")
         .jsonPath("$.contactSummary[1].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:29:17")
         .jsonPath("$.contactSummary[1].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435532")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].id").isEqualTo("374136ce-f863-48d8-96dc-7581636e461e")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].documentName").isEqualTo("ContactDoc.pdf")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].author").isEqualTo("Terry Tibbs")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].type.description").isEqualTo("Contact document")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-07T17:00:29.493")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].createdAt").isEqualTo("2022-06-07T17:00:29")
+        .jsonPath("$.contactSummary[2].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435999")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
@@ -168,9 +178,10 @@ class ContactHistoryControllerTest(
         .jsonPath("$.releaseSummary.lastRelease").isEmpty()
         .jsonPath("$.releaseSummary.lastRecall").isEmpty()
         .jsonPath("$.contactSummary").isArray()
-        .jsonPath("$.contactSummary.length()").isEqualTo("2")
+        .jsonPath("$.contactSummary.length()").isEqualTo("3")
         .jsonPath("$.contactSummary[0].contactDocuments.length()").isEqualTo("1")
         .jsonPath("$.contactSummary[1].contactDocuments.length()").isEqualTo("1")
+        .jsonPath("$.contactSummary[2].contactDocuments.length()").isEqualTo("1")
     }
   }
 

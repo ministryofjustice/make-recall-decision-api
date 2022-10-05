@@ -12,16 +12,15 @@ internal class DocumentService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
 
-  fun getDocumentsForContacts(crn: String): List<CaseDocument>? {
+  fun getDocumentsByDocumentType(crn: String, documentType: String): List<CaseDocument>? {
     val groupedDocuments = getValueAndHandleWrappedException(communityApiClient.getGroupedDocuments(crn))
-    return groupedDocuments?.documents?.filter { it.type?.code == "CONTACT_DOCUMENT" }
-  }
+    val docs: List<CaseDocument>? = groupedDocuments?.documents?.filter { it.type?.code == documentType }
+    val convictionDocs: List<CaseDocument>? = groupedDocuments?.convictions?.flatMap { e ->
+      e.documents?.filter { it.type?.code == documentType } as List<CaseDocument>
+    }
 
-  fun getDocumentsForConvictions(crn: String): List<CaseDocument>? {
-    val groupedDocuments = getValueAndHandleWrappedException(communityApiClient.getGroupedDocuments(crn))
-
-    return groupedDocuments?.convictions?.flatMap { e ->
-      e.documents?.filter { it.type?.code == "CONVICTION_DOCUMENT" } as List<CaseDocument>
+    return docs?.let { docList ->
+      convictionDocs?.let { convictionDocsList -> docList + convictionDocsList }
     }
   }
 

@@ -31,13 +31,13 @@ internal class DocumentServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given a contact document request then only return all contact documents`() {
+  fun `given a contact document type then only return all contact documents`() {
     runTest {
 
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = documentService.getDocumentsForContacts(crn)
+      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
 
       then(communityApiClient).should().getGroupedDocuments(crn)
 
@@ -51,7 +51,7 @@ internal class DocumentServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.empty())
 
-      val response = documentService.getDocumentsForContacts(crn)
+      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
 
       then(communityApiClient).should().getGroupedDocuments(crn)
 
@@ -89,35 +89,6 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }
   }
 
-  @Test
-  fun `given a conviction document request then only return all conviction documents`() {
-    runTest {
-
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-
-      val response = documentService.getDocumentsForConvictions(crn)
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(expectedConvictionDocumentResponse()))
-    }
-  }
-
-  @Test
-  fun `given no conviction documents then handle request`() {
-    runTest {
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.empty())
-
-      val response = documentService.getDocumentsForConvictions(crn)
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(null))
-    }
-  }
-
   private fun expectedContactDocumentResponse(): List<CaseDocument>? {
     return listOf(
       CaseDocument(
@@ -144,6 +115,19 @@ internal class DocumentServiceTest : ServiceTestBase() {
         extendedDescription = "Contact on 21/06/2020 for Complementary Therapy Session (NS)",
         lastModifiedAt = "2022-06-21T20:29:17.324",
         createdAt = "2022-06-21T20:29:17",
+        parentPrimaryKeyId = 2504763206L
+      ),
+      CaseDocument(
+        id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
+        documentName = "conviction contact doc.pdf",
+        author = "Luke Smith",
+        type = CaseDocumentType(
+          code = "CONTACT_DOCUMENT",
+          description = "Contact related conviction document"
+        ),
+        extendedDescription = "Contact on 23/06/2020 for Complementary Therapy Session (NS)",
+        lastModifiedAt = "2022-06-23T20:29:17.324",
+        createdAt = "2022-06-23T20:29:17",
         parentPrimaryKeyId = 2504763206L
       )
     )
