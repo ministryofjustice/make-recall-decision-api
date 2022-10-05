@@ -297,6 +297,16 @@ class CommunityApiClientTest : IntegrationTestBase() {
           enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
           sensitive = true,
           description = "This is a contact description"
+        ),
+        Content(
+          contactId = 2504435999L,
+          contactStart = OffsetDateTime.parse("2022-06-10T10:39Z"),
+          type = ContactType(description = "Police Liaison", code = "C204", systemGenerated = false, nationalStandard = false, appointment = false),
+          outcome = ContactOutcome(description = "Test - Not Clean / Not Acceptable / Unsuitable"),
+          notes = "Conviction test",
+          enforcement = EnforcementAction(enforcementAction = EnforcementActionType(description = "Enforcement Letter Requested")),
+          sensitive = true,
+          description = "This is a conviction contact"
         )
       )
     )
@@ -489,6 +499,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
           listOf(
             CaseDocument(id = "374136ce-f863-48d8-96dc-7581636e461e", documentName = "GKlicencejune2022.pdf", author = "Tom Thumb", type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"), extendedDescription = null, lastModifiedAt = "2022-06-07T17:00:29.493", createdAt = "2022-06-07T17:00:29", parentPrimaryKeyId = 2500614567L),
             CaseDocument(id = "374136ce-f863-48d8-96dc-7581636e123e", documentName = "TDlicencejuly2022.pdf", author = "Wendy Rose", type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"), extendedDescription = null, lastModifiedAt = "2022-07-08T10:00:29.493", createdAt = "2022-06-08T10:00:29", parentPrimaryKeyId = 2500614567L),
+            CaseDocument(id = "374136ce-f863-48d8-96dc-7581636e461e", documentName = "ContactDoc.pdf", author = "Terry Tibbs", type = CaseDocumentType(code = "CONTACT_DOCUMENT", description = "Contact document"), extendedDescription = null, lastModifiedAt = "2022-06-07T17:00:29.493", createdAt = "2022-06-07T17:00:29", parentPrimaryKeyId = 2504435999L),
             CaseDocument(id = "342234a8-b279-4d6e-b9ff-c7910afce95e", documentName = "Part A Recall Report 08 06 2022.doc", author = "Harry Wilson", type = CaseDocumentType(code = "NSI_DOCUMENT", description = "Non Statutory Intervention related document"), extendedDescription = "Non Statutory Intervention for Request for Recall on 08/06/2022", lastModifiedAt = "2022-06-08T14:24:53.217", createdAt = "2022-06-08T14:24:53", parentPrimaryKeyId = 2500049480L)
           )
         )

@@ -103,6 +103,59 @@ fun contactSummaryResponse() = """
                 "surname": "Smith"
             },
             "description": "This is a contact description"
+        },
+        {
+            "contactId": 2504435999,
+            "contactStart": "2022-06-10T11:39:00+01:00",
+            "contactEnd": "2022-06-10T00:00:00",
+            "type": {
+                "code": "C204",
+                "description": "Police Liaison",
+                "appointment": false,
+                "nationalStandard": false,
+                "categories": [
+                    {
+                        "code": "TC",
+                        "description": "Throughcare"
+                    }
+                ],
+                "systemGenerated": false
+            },
+            "notes": "Conviction test",
+            "provider": {
+                "code": "N07",
+                "description": "NPS London"
+            },
+            "team": {
+                "code": "N07UAT",
+                "description": "Unallocated Team(N07)"
+            },
+            "staff": {
+                "code": "N07UATU",
+                "forenames": "Unallocated Staff(N07)",
+                "surname": "Staff",
+                "unallocated": true
+            },
+            "sensitive": true,
+            "enforcement": {
+                "enforcementAction": {
+                    "code": "WLS",
+                    "description": "Enforcement Letter Requested"
+                }
+            },
+            "outcome": {
+                "code": "TDRT",
+                "description": "Test - Not Clean / Not Acceptable / Unsuitable",
+                "attended": true,
+                "complied": false
+            },
+            "rarActivity": false,
+            "lastUpdatedDateTime": "2022-06-10T11:44:07+01:00",
+            "lastUpdatedByUser": {
+                "forenames": "John",
+                "surname": "Smith"
+            },
+            "description": "This is a conviction contact"
         }
     ],
     "pageable": {

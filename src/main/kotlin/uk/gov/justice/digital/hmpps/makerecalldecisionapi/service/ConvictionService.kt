@@ -19,7 +19,7 @@ internal class ConvictionService(
 
     val activeConvictions = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
 
-    val allConvictionDocuments = if (shouldGetDocuments) documentService.getDocumentsForConvictions(crn) else null
+    val allConvictionDocuments = if (shouldGetDocuments) documentService.getDocumentsByDocumentType(crn, "CONVICTION_DOCUMENT") else null
 
     return activeConvictions
       ?.map {
