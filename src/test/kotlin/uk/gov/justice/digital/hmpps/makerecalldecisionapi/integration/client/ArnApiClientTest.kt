@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Gen
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
@@ -244,6 +246,53 @@ class ArnApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = arnApiClient.getRiskSummary(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves risk management plan`() {
+    // given
+    val crn = "X123456"
+    riskManagementPlanResponse(crn)
+
+    // and
+    val expected = RiskManagementResponse(
+      crn = crn,
+      limitedAccessOffender = true,
+      riskManagementPlan = listOf(
+        RiskManagementPlanResponse(
+          assessmentId = 0,
+          dateCompleted = "2022-10-01T14:20:27",
+          partcompStatus = "Part comp status",
+          initiationDate = "2022-10-02T14:20:27",
+          assessmentStatus = "COMPLETE",
+          assessmentType = "LAYER1",
+          superStatus = "COMPLETE",
+          keyInformationCurrentSituation = "patternOfOffending",
+          furtherConsiderationsCurrentSituation = "string",
+          supervision = "string",
+          monitoringAndControl = "string",
+          interventionsAndTreatment = "string",
+          victimSafetyPlanning = "string",
+          contingencyPlans = "I am the contingency plan text",
+          laterWIPAssessmentExists = true,
+          latestWIPDate = "2022-10-03T14:20:27",
+          laterSignLockAssessmentExists = true,
+          latestSignLockDate = "2022-10-04T14:20:27",
+          laterPartCompUnsignedAssessmentExists = true,
+          latestPartCompUnsignedDate = "2022-10-05T14:20:27",
+          laterPartCompSignedAssessmentExists = true,
+          latestPartCompSignedDate = "2022-10-06T14:20:27",
+          laterCompleteAssessmentExists = true,
+          latestCompleteDate = "2022-10-07T14:20:27"
+        )
+      )
+    )
+
+    // when
+    val actual = arnApiClient.getRiskManagementPlan(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

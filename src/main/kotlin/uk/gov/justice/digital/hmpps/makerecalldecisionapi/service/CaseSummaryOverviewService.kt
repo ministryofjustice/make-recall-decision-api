@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Release
 @Service
 internal class CaseSummaryOverviewService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val riskService: RiskService,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
   private val convictionService: ConvictionService,
@@ -28,13 +29,15 @@ internal class CaseSummaryOverviewService(
 
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
+      val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
+
       val releaseSummary = getReleaseSummary(crn)
 
       CaseSummaryOverviewResponse(
         personalDetailsOverview = personalDetailsOverview,
         convictions = convictionService.buildConvictionResponseForOverview(crn),
         releaseSummary = releaseSummary,
-        risk = Risk(flags = riskFlags),
+        risk = Risk(flags = riskFlags, riskManagementPlan = riskManagementPlan),
         activeRecommendation = recommendationDetails
       )
     }

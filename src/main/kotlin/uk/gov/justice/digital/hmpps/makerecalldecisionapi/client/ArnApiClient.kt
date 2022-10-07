@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.Duration
@@ -95,6 +96,22 @@ class ArnApiClient(
         handleTimeoutException(
           exception = ex,
           endPoint = "current scores"
+        )
+      }
+  }
+
+  fun getRiskManagementPlan(crn: String): Mono<RiskManagementResponse> {
+    val responseType = object : ParameterizedTypeReference<RiskManagementResponse>() {}
+    return webClient
+      .get()
+      .uri("/risks/crn/$crn/risk-management-plan")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "risk management plan"
         )
       }
   }
