@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class CaseOverviewControllerTest(
+  @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
@@ -27,6 +28,7 @@ class CaseOverviewControllerTest(
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
+      riskManagementPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -52,6 +54,9 @@ class CaseOverviewControllerTest(
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
+        .jsonPath("$.risk.riskManagementPlan.assessmentStatusComplete").isEqualTo(true)
+        .jsonPath("$.risk.riskManagementPlan.lastUpdatedDate").isEqualTo("2022-10-01T14:20:27.000Z")
+        .jsonPath("$.risk.riskManagementPlan.contingencyPlans").isEqualTo("I am the contingency plan text")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
@@ -250,6 +255,26 @@ class CaseOverviewControllerTest(
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: Community API Client - release summary endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `given gateway timeout 503 given on ARN API risk management endpoint then set error to TIMEOUT`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      releaseSummaryResponse(crn)
+      riskManagementPlanResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.risk.riskManagementPlan.error").isEqualTo("TIMEOUT")
     }
   }
 

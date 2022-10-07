@@ -62,7 +62,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Mock
-  protected lateinit var riskService: RiskService
+  protected lateinit var riskServiceMocked: RiskService
 
   @Test
   fun `creates a new recommendation in the database`() {
@@ -92,7 +92,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskService)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked)
 
       // when
       val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
@@ -575,7 +575,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate DNTR letter preview from recommendation data`() {
     runTest {
-      given(riskService.getRisk(anyString())).willReturn(
+      given(riskServiceMocked.getRisk(anyString())).willReturn(
         RiskResponse(
           mappa = Mappa(
             category = 1,
@@ -591,7 +591,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskService
+        riskServiceMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
@@ -615,12 +615,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `generate Part A document from recommendation data when optional fields missing`() {
     runTest {
       // given
-      given(riskService.getRisk(anyString())).willReturn(
+      given(riskServiceMocked.getRisk(anyString())).willReturn(
         RiskResponse(
           mappa = null
         )
       )
-      given(riskService.fetchIndexOffenceDetails(anyString())).willReturn(null)
+      given(riskServiceMocked.fetchIndexOffenceDetails(anyString())).willReturn(null)
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(
@@ -655,7 +655,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskService
+        riskServiceMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
@@ -702,12 +702,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `generate Part A document from recommendation data`() {
     runTest {
       // given
-      given(riskService.getRisk(anyString())).willReturn(
+      given(riskServiceMocked.getRisk(anyString())).willReturn(
         RiskResponse(
           mappa = Mappa(category = 2, level = 2, isNominal = null, lastUpdated = null)
         )
       )
-      given(riskService.fetchIndexOffenceDetails(anyString())).willReturn("Juicy details")
+      given(riskServiceMocked.fetchIndexOffenceDetails(anyString())).willReturn("Juicy details")
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),
@@ -730,7 +730,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskService
+        riskServiceMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))

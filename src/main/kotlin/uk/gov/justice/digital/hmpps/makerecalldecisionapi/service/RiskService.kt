@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
@@ -37,6 +38,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.His
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -92,7 +95,11 @@ internal class RiskService(
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
-    return if (latestAssessment?.superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
+    return getStatusFromSuperStatus(latestAssessment?.superStatus)
+  }
+
+  suspend fun getStatusFromSuperStatus(superStatus: String?): String {
+    return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
@@ -392,6 +399,24 @@ internal class RiskService(
       isNominal = true,
       lastUpdated = reviewDate ?: "",
       category = mappaResponse?.category
+    )
+  }
+
+  suspend fun getLatestRiskManagementPlan(crn: String): RiskManagementPlan {
+    val riskManagementResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getRiskManagementPlan(crn))!!
+    } catch (ex: Exception) {
+      return RiskManagementPlan(error = extractErrorCode(ex, "risk management plan", crn))
+    }
+
+    val latestPlan = riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    val assessmentStatusComplete = getStatusFromSuperStatus(latestPlan?.superStatus) == COMPLETE.name
+    val lastUpdatedDate = latestPlan?.dateCompleted ?: latestPlan?.initiationDate
+
+    return RiskManagementPlan(
+      assessmentStatusComplete = assessmentStatusComplete,
+      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(lastUpdatedDate),
+      contingencyPlans = latestPlan?.contingencyPlans
     )
   }
 

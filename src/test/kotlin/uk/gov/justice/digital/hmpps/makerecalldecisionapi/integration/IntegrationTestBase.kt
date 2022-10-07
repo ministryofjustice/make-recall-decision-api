@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanSimpleResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.currentRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.historicalRiskScoresResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
@@ -245,6 +246,15 @@ abstract class IntegrationTestBase {
       request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
     oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(contingencyPlanSimpleResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun riskManagementPlanResponse(crn: String, delaySeconds: Long = 0) {
+    val riskManagementPlanRequest =
+      request().withPath("/risks/crn/$crn/risk-management-plan")
+    oasysARNApi.`when`(riskManagementPlanRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(riskManagementResponse(crn))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

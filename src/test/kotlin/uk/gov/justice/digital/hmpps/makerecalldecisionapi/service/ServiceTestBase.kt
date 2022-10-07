@@ -5,6 +5,7 @@ import org.mockito.BDDMockito.anyString
 import org.mockito.Mock
 import org.mockito.Mockito.lenient
 import org.mockito.kotlin.doReturn
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
@@ -44,6 +45,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -54,12 +57,17 @@ internal abstract class ServiceTestBase {
   protected lateinit var communityApiClient: CommunityApiClient
 
   @Mock
+  protected lateinit var arnApiClient: ArnApiClient
+
+  @Mock
   protected lateinit var recommendationRepository: RecommendationRepository
 
   @Mock
   protected lateinit var mockPersonDetailService: PersonDetailsService
 
   protected lateinit var personDetailsService: PersonDetailsService
+
+  protected lateinit var riskService: RiskService
 
   protected lateinit var userAccessValidator: UserAccessValidator
 
@@ -88,6 +96,7 @@ internal abstract class ServiceTestBase {
     convictionService = ConvictionService(communityApiClient, documentService)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
   fun personDetailsResponse() = PersonDetailsResponse(
@@ -239,6 +248,47 @@ internal abstract class ServiceTestBase {
           convictionId = "2500614567",
           null
         )
+      )
+    )
+  }
+
+  protected fun riskManagementResponse(crn: String, status: String, dateCompleted: String? = "2022-10-01T14:20:27"): RiskManagementResponse {
+    return RiskManagementResponse(
+      crn = crn,
+      limitedAccessOffender = true,
+      riskManagementPlan = listOf(
+        RiskManagementPlanResponse(
+          initiationDate = "2021-10-01T14:20:27"
+        ),
+        RiskManagementPlanResponse(
+          assessmentId = 0,
+          dateCompleted = dateCompleted,
+          partcompStatus = "Part comp status",
+          initiationDate = "2022-10-02T14:20:27",
+          assessmentStatus = status,
+          assessmentType = "LAYER1",
+          superStatus = status,
+          keyInformationCurrentSituation = "patternOfOffending",
+          furtherConsiderationsCurrentSituation = "string",
+          supervision = "string",
+          monitoringAndControl = "string",
+          interventionsAndTreatment = "string",
+          victimSafetyPlanning = "string",
+          contingencyPlans = "I am the contingency plan text",
+          laterWIPAssessmentExists = true,
+          latestWIPDate = "2022-10-03T14:20:27",
+          laterSignLockAssessmentExists = true,
+          latestSignLockDate = "2022-10-04T14:20:27",
+          laterPartCompUnsignedAssessmentExists = true,
+          latestPartCompUnsignedDate = "2022-10-05T14:20:27",
+          laterPartCompSignedAssessmentExists = true,
+          latestPartCompSignedDate = "2022-10-06T14:20:27",
+          laterCompleteAssessmentExists = true,
+          latestCompleteDate = "2022-10-07T14:20:27"
+        ),
+        RiskManagementPlanResponse(
+          initiationDate = "2020-10-02T14:20:27"
+        ),
       )
     )
   }
