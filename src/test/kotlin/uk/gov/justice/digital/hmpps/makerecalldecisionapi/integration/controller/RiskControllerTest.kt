@@ -291,12 +291,14 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.RSR.type").isEqualTo("RSR")
         .jsonPath("$.predictorScores.current.scores.RSR.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.current.scores.RSR.score").isEqualTo(23)
-        .jsonPath("$.predictorScores.current.scores.OGP.score").isEqualTo(12) // ogpTotalWeightedScore
-        .jsonPath("$.predictorScores.current.scores.OGP.level").isEqualTo("LOW") // og//pRisk
+        .jsonPath("$.predictorScores.current.scores.OGP.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.scores.OGP.type").isEqualTo("OGP")
-        .jsonPath("$.predictorScores.current.scores.OVP.score").isEqualTo(0) // ovpTotalWeightedScore
-        .jsonPath("$.predictorScores.current.scores.OVP.level").isEqualTo("LOW") // ovpRisk
+        .jsonPath("$.predictorScores.current.scores.OGP.ogp1Year").isEqualTo(0)
+        .jsonPath("$.predictorScores.current.scores.OGP.ogp2Year").isEqualTo(0)
+        .jsonPath("$.predictorScores.current.scores.OVP.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.scores.OVP.type").isEqualTo("OVP")
+        .jsonPath("$.predictorScores.current.scores.OVP.oneYear").isEqualTo(0)
+        .jsonPath("$.predictorScores.current.scores.OVP.twoYears").isEqualTo(0)
         .jsonPath("$.predictorScores.current.scores.OSPC.type").isEqualTo("OSP/C")
         .jsonPath("$.predictorScores.current.scores.OSPC.level").isEqualTo("LOW")
         .jsonPath("$.predictorScores.current.scores.OSPC.score").isEqualTo(3.45)
@@ -305,13 +307,17 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.OSPI.score").isEqualTo(5)
         .jsonPath("$.predictorScores.current.scores.OGRS.type").isEqualTo("OGRS")
         .jsonPath("$.predictorScores.current.scores.OGRS.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.scores.OGRS.oneYear").isEqualTo(0)
+        .jsonPath("$.predictorScores.current.scores.OGRS.twoYears").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].date").isEqualTo("2021-06-16")
-        .jsonPath("$.predictorScores.historical[0].scores.OGP.score").isEqualTo(0) // ogpTotalWeightedScore
-        .jsonPath("$.predictorScores.historical[0].scores.OGP.level").isEqualTo("HIGH") // ogpRisk
+        .jsonPath("$.predictorScores.historical[0].scores.OGP.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.historical[0].scores.OGP.type").isEqualTo("OGP")
-        .jsonPath("$.predictorScores.historical[0].scores.OVP.score").isEqualTo(0) // ovpTotalWeightedScore
-        .jsonPath("$.predictorScores.historical[0].scores.OVP.level").isEqualTo("HIGH") // ovpRisk
+        .jsonPath("$.predictorScores.historical[0].scores.OGP.ogp1Year").isEqualTo(0)
+        .jsonPath("$.predictorScores.historical[0].scores.OGP.ogp2Year").isEqualTo(0)
+        .jsonPath("$.predictorScores.historical[0].scores.OVP.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.historical[0].scores.OVP.type").isEqualTo("OVP")
+        .jsonPath("$.predictorScores.historical[0].scores.OVP.oneYear").isEqualTo(0)
+        .jsonPath("$.predictorScores.historical[0].scores.OVP.twoYears").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
@@ -321,9 +327,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level")
-        .isEqualTo("HIGH") // TODO BS what should I use for score?
+        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("HIGH")
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.historical[0].scores.OGRS.oneYear").isEqualTo(0)
+        .jsonPath("$.predictorScores.historical[0].scores.OGRS.twoYears").isEqualTo(0)
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")

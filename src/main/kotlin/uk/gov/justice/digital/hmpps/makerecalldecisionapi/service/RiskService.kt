@@ -36,7 +36,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import java.time.LocalDate
@@ -90,7 +89,8 @@ internal class RiskService(
 
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    val latestAssessment =
+      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
     return getStatusFromSuperStatus(latestAssessment?.superStatus)
   }
 
@@ -101,8 +101,10 @@ internal class RiskService(
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+    val latestAssessment =
+      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+    val oasysAssessmentCompleted =
+      latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
 
     return activeConvictionsFromDelius
       ?.filter { oasysAssessmentCompleted }
@@ -119,12 +121,15 @@ internal class RiskService(
   private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
     activeConvictionsFromDelius.count { it.isCustodial } == 1
 
-  private fun isLatestAssessment(it: Assessment?) = (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
+  private fun isLatestAssessment(it: Assessment?) =
+    (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
 
   private fun datesMatch(
     latestAssessment: Assessment?,
     mainOffence: Offence?
-  ) = latestAssessment?.offenceDetails?.any { LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate } == true
+  ) = latestAssessment?.offenceDetails?.any {
+    LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate
+  } == true
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
     it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.detail?.code) && (it.type == "CURRENT") } == true
@@ -180,18 +185,15 @@ internal class RiskService(
       ?.filter { it.mainOffence == true } ?: emptyList()
   }
 
-  private suspend fun fetchPredictorScores(crn: String): PredictorScores {
+  suspend fun fetchPredictorScores(crn: String): PredictorScores {
     val riskScoresResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getRiskScores(crn))!!
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No risk scores available for CRN: $crn - ${e.message}")
-      return PredictorScores(error = "NOT_FOUND", current = null, historical = null)
-    } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No risk scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      return PredictorScores(error = "SERVER_ERROR", current = null, historical = null)
-    } catch (e: ClientTimeoutException) {
-      log.info("Timeout on ARN predictors/all endpoint for CRN: $crn - ${e.message}")
-      return PredictorScores(error = "TIMEOUT", current = null, historical = null)
+    } catch (ex: Exception) {
+      return PredictorScores(
+        error = extractErrorCode(ex, "risk management plan", crn),
+        current = null,
+        historical = null
+      )
     }
     val latestScores = riskScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
     val historicalScores = riskScoresResponse.filter { it.completedDate != latestScores?.completedDate }
@@ -212,11 +214,34 @@ internal class RiskService(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
       scores = Scores(
         rsr = if (rsr == null) null else RSR(level = rsr.scoreLevel, score = rsr.percentageScore, type = "RSR"),
-        ospc = if (osp == null) null else OSPC(level = osp.ospContactScoreLevel, score = osp.ospContactPercentageScore, type = "OSP/C"),
-        ospi = if (osp == null) null else OSPI(level = osp.ospIndecentScoreLevel, score = osp.ospIndecentPercentageScore, type = "OSP/I"),
-        ogrs = if (ogrs == null) null else OGRS(level = ogrs.scoreLevel, score = "", type = "OGRS"),
-        ogp = if (ogp == null) null else OGP(level = ogp.ogpRisk, score = ogp.ogpTotalWeightedScore, type = "OGP"),
-        ovp = if (ovp == null) null else OVP(level = ovp.ovpRisk, score = ovp.ovpTotalWeightedScore, type = "OVP")
+        ospc = if (osp == null) null else OSPC(
+          level = osp.ospContactScoreLevel,
+          score = osp.ospContactPercentageScore,
+          type = "OSP/C"
+        ),
+        ospi = if (osp == null) null else OSPI(
+          level = osp.ospIndecentScoreLevel,
+          score = osp.ospIndecentPercentageScore,
+          type = "OSP/I"
+        ),
+        ogrs = if (ogrs == null) null else OGRS(
+          level = ogrs.scoreLevel,
+          oneYear = ogrs.oneYear,
+          twoYears = ogrs.twoYears,
+          type = "OGRS"
+        ),
+        ogp = if (ogp == null) null else OGP(
+          level = ogp.ogpRisk,
+          ogp1Year = ogp.ogp1Year,
+          ogp2Year = ogp.ogp2Year,
+          type = "OGP"
+        ),
+        ovp = if (ovp == null) null else OVP(
+          level = ovp.ovpRisk,
+          oneYear = ovp.oneYear,
+          twoYears = ovp.twoYears,
+          type = "OVP"
+        )
       )
     )
   }
@@ -377,7 +402,8 @@ internal class RiskService(
       return RiskManagementPlan(error = extractErrorCode(ex, "risk management plan", crn))
     }
 
-    val latestPlan = riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    val latestPlan =
+      riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
     val assessmentStatusComplete = getStatusFromSuperStatus(latestPlan?.superStatus) == COMPLETE.name
     val lastUpdatedDate = latestPlan?.dateCompleted ?: latestPlan?.initiationDate
 

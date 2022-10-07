@@ -143,15 +143,18 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(historicalScores?.get(0)?.scores?.ospi?.score).isEqualTo("3")
       assertThat(historicalScores?.get(0)?.scores?.ospi?.level).isEqualTo("MEDIUM")
       assertThat(historicalScores?.get(0)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(0)?.scores?.ogp?.score).isEqualTo("1")
+      assertThat(historicalScores?.get(0)?.scores?.ogp?.ogp1Year).isEqualTo("0")
+      assertThat(historicalScores?.get(0)?.scores?.ogp?.ogp2Year).isEqualTo("0")
       assertThat(historicalScores?.get(0)?.scores?.ogp?.level).isEqualTo("LOW")
       assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("1")
       assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("LOW")
       assertThat(historicalScores?.get(0)?.scores?.ovp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(0)?.scores?.ovp?.score).isEqualTo("0")
+      assertThat(historicalScores?.get(0)?.scores?.ovp?.oneYear).isEqualTo("0")
+      assertThat(historicalScores?.get(0)?.scores?.ovp?.twoYears).isEqualTo("0")
       assertThat(historicalScores?.get(0)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.level).isEqualTo("HIGH")
-//      assertThat(historicalScores?.get(0)?.scores?.ogrs?.score).isEqualTo("1") // TODO BS TBD
+      assertThat(historicalScores?.get(0)?.scores?.ogrs?.type).isEqualTo("OGRS")
+      assertThat(historicalScores?.get(0)?.scores?.ogrs?.oneYear).isEqualTo("0")
+      assertThat(historicalScores?.get(0)?.scores?.ogrs?.twoYears).isEqualTo("0")
       assertThat(currentScores?.scores?.rsr?.level).isEqualTo("MEDIUM")
       assertThat(currentScores?.scores?.rsr?.score).isEqualTo("2")
       assertThat(currentScores?.scores?.rsr?.type).isEqualTo("RSR")
@@ -161,8 +164,13 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ospi?.level).isEqualTo("MEDIUM")
       assertThat(currentScores?.scores?.ospi?.score).isEqualTo("3")
       assertThat(currentScores?.scores?.ospi?.type).isEqualTo("OSP/I")
+      assertThat(currentScores?.scores?.ovp?.oneYear).isEqualTo("0")
+      assertThat(currentScores?.scores?.ovp?.twoYears).isEqualTo("0")
+      assertThat(currentScores?.scores?.ogp?.ogp1Year).isEqualTo("0")
+      assertThat(currentScores?.scores?.ogp?.ogp2Year).isEqualTo("0")
       assertThat(currentScores?.scores?.ogrs?.level).isEqualTo("HIGH")
-//      assertThat(currentScores?.scores?.ogrs?.score).isEqualTo("1") // TODO BS TBD
+      assertThat(currentScores?.scores?.ogrs?.oneYear).isEqualTo("0")
+      assertThat(currentScores?.scores?.ogrs?.twoYears).isEqualTo("0")
       assertThat(currentScores?.scores?.ogrs?.type).isEqualTo("OGRS")
       assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
       assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
@@ -181,7 +189,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves risk when assessmet status is incomplete`() {
+  fun `retrieves risk when assessment status is incomplete`() {
     runTest {
       val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
@@ -444,6 +452,18 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
       assertThat(response.lastUpdatedDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.assessmentStatusComplete).isEqualTo(true)
+    }
+  }
+
+  @ParameterizedTest(name = "given call to fetch risk scores fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to fetch risk scores fails with given exception then set this in the error field response`(code: Int, expectedErrorCode: String) {
+    runTest {
+      given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.fetchPredictorScores(crn)
+
+      assertThat(response.error).isEqualTo(expectedErrorCode)
     }
   }
 

@@ -55,8 +55,6 @@ data class PredictorScores(
   val historical: List<TimelineDataPoint?>?
 )
 
-// val date: String?,
-
 data class TimelineDataPoint(
   val date: String?,
   val scores: Scores?
@@ -79,14 +77,16 @@ data class Scores(
 
 data class OGP(
   val level: String?,
-  val score: String?,
-  val type: String?
+  val type: String?,
+  val ogp1Year: String?,
+  val ogp2Year: String?
 )
 
 data class OVP(
   val level: String?,
-  val score: String?,
-  val type: String?
+  val type: String?,
+  val oneYear: String?,
+  val twoYears: String?
 )
 
 data class RSR(
@@ -109,8 +109,9 @@ data class OSPI(
 
 data class OGRS(
   val level: String?,
-  val score: String?,
-  val type: String?
+  val type: String?,
+  val oneYear: String?,
+  val twoYears: String?
 )
 
 data class NatureOfRisk(
