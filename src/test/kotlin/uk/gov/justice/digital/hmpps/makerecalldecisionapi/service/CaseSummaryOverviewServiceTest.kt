@@ -38,7 +38,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, personDetailsService, userAccessValidator, convictionService, recommendationService)
+    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, riskService, personDetailsService, userAccessValidator, convictionService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -47,7 +47,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves case summary when convictions and offences available`() {
     runTest {
-      val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -56,12 +55,15 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { registrations })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val convictions = response.convictions
       val riskFlags = response.risk!!.flags
+      val riskManagementPlan = response.risk!!.riskManagementPlan
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
@@ -80,6 +82,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].licenceExpiryDate).isEqualTo("2022-05-10")
       assertThat(convictions[0].isCustodial).isTrue
       assertThat(riskFlags!!.size).isEqualTo(1)
+      assertThat(riskManagementPlan!!.assessmentStatusComplete).isEqualTo(true)
+      assertThat(riskManagementPlan.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")
+      assertThat(riskManagementPlan.contingencyPlans).isEqualTo("I am the contingency plan text")
+
       assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
@@ -96,6 +102,8 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { registrations })
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -107,7 +115,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves case summary when no convictions available`() {
     runTest {
-      val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -116,6 +123,8 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         .willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString()))
         .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -234,6 +243,9 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
             )
           }
         )
+
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 

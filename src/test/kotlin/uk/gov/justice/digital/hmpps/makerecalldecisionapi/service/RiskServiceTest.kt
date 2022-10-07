@@ -7,6 +7,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -14,8 +16,6 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
@@ -43,7 +43,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentenc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -56,41 +55,22 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-internal class RiskServiceTest {
-  private lateinit var riskService: RiskService
+internal class RiskServiceTest : ServiceTestBase() {
 
   @Mock
-  private lateinit var communityApiClient: CommunityApiClient
+  lateinit var convictionService2: ConvictionService
 
   @Mock
-  private lateinit var recommendationRepository: RecommendationRepository
-
-  @Mock
-  private lateinit var personDetailsService: PersonDetailsService
-
-  @Mock
-  private lateinit var convictionService: ConvictionService
-
-  @Mock
-  private lateinit var arnApiClient: ArnApiClient
-
-  @Mock
-  private lateinit var templateReplacementService: TemplateReplacementService
-
-  protected lateinit var userAccessValidator: UserAccessValidator
-
-  protected lateinit var recommendationService: RecommendationService
+  lateinit var templateReplacementService2: TemplateReplacementService
 
   @BeforeEach
   fun setup() {
-    userAccessValidator = UserAccessValidator(communityApiClient)
-    recommendationService = RecommendationService(recommendationRepository, personDetailsService, templateReplacementService, userAccessValidator, convictionService, null)
+    recommendationService = RecommendationService(recommendationRepository, personDetailsService, templateReplacementService2, userAccessValidator, convictionService2, null)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
@@ -422,7 +402,6 @@ internal class RiskServiceTest {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-      val crn = "12345"
 
       given(communityApiClient.getUserAccess(crn)).willThrow(
         WebClientResponseException(
@@ -445,12 +424,57 @@ internal class RiskServiceTest {
     }
   }
 
-  private fun userAccessResponse(excluded: Boolean, restricted: Boolean) = UserAccessResponse(
-    userRestricted = restricted,
-    userExcluded = excluded,
-    exclusionMessage = "I am an exclusion message",
-    restrictionMessage = null
+  @ParameterizedTest()
+  @CsvSource(
+    "COMPLETE, true",
+    "INCOMPLETE, false"
   )
+  fun `given multiple risk management plans then return latest with assessment status set`(status: String, assessmentStatusComplete: Boolean) {
+    runTest {
+
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse(crn, status)
+          }
+        )
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
+      assertThat(response.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")
+      assertThat(response.assessmentStatusComplete).isEqualTo(assessmentStatusComplete)
+    }
+  }
+
+  @Test
+  fun `given risk management plan completed date not set then use initiation date`() {
+    runTest {
+
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse(crn, "COMPLETE", null)
+          }
+        )
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
+      assertThat(response.lastUpdatedDate).isEqualTo("2022-10-02T14:20:27.000Z")
+      assertThat(response.assessmentStatusComplete).isEqualTo(true)
+    }
+  }
+
+  @ParameterizedTest(name = "given call to risk management plan fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to risk management plan fails with given exception then set this in the error field response`(code: Int, expectedErrorCode: String) {
+    runTest {
+      given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response.error).isEqualTo(expectedErrorCode)
+    }
+  }
 
   fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
