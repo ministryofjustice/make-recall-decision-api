@@ -6,7 +6,6 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
@@ -47,22 +46,6 @@ class ArnApiClient(
         handleTimeoutException(
           exception = ex,
           endPoint = "assessments"
-        )
-      }
-  }
-
-  fun getContingencyPlan(crn: String): Mono<ContingencyPlanResponse> {
-    val responseType = object : ParameterizedTypeReference<ContingencyPlanResponse>() {}
-    return webClient
-      .get()
-      .uri("/assessments/risk-management-plans/$crn/ALLOW")
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(arnClientTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "risk contingency plan"
         )
       }
   }

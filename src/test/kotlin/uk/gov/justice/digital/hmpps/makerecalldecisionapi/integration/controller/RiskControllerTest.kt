@@ -2,15 +2,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.json.JSONArray
-import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 
@@ -23,14 +20,13 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk summary when no MAPPA, RoSH, or Contingency plan details available and Risk Scores not found`() {
+  fun `retrieves risk summary when no MAPPA, risk scores or RoSH summary available and Risk Scores not found`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       noRiskScoresResponse(crn)
       noRoSHSummaryResponse(crn)
-      noContingencyPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -43,49 +39,29 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
         .jsonPath("$.mappa.level").isEqualTo(null)
         .jsonPath("$.mappa.isNominal").isEqualTo(true)
         .jsonPath("$.mappa.lastUpdated").isEqualTo("")
         .jsonPath("$.mappa.category").isEqualTo(null)
-        .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
-        .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
-        .jsonPath("$.natureOfRisk.description").isEqualTo("")
-        .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
-        .jsonPath("$.whoIsAtRisk.description").isEqualTo("")
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description")
-        .isEqualTo("What circumstances are likely to increase the risk?")
-        .jsonPath("$.circumstancesIncreaseRisk.description").isEqualTo("")
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.description")
-        .isEqualTo("What factors are likely to reduce the risk?")
-        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("")
-        .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
-        .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
-        .jsonPath("$.whenRiskHighest.description").isEqualTo("")
-        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-        .jsonPath("$.contingencyPlan.description").isEqualTo("")
+        .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskMitigationFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskImminence").isEqualTo(null)
+        .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
         .jsonPath("$.predictorScores.error").isEqualTo("NOT_FOUND")
     }
   }
 
   @Test
-  fun `retrieves risk summary when no MAPPA, or Contingency plan details available, ARN RoSHSummary fetch fails, and Risk Scores fetch fails`() {
+  fun `retrieves risk summary when no MAPPA available, ARN RoSH Summary fetch fails, and Risk Scores fetch fails`() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       failedRiskScoresResponse(crn)
       failedRoSHSummaryResponse(crn)
-      failedContingencyPlanResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -98,36 +74,17 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("")
-        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
         .jsonPath("$.mappa.level").isEqualTo(null)
         .jsonPath("$.mappa.isNominal").isEqualTo(true)
         .jsonPath("$.mappa.lastUpdated").isEqualTo("")
         .jsonPath("$.mappa.category").isEqualTo(null)
-        .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
-        .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
-        .jsonPath("$.natureOfRisk.description").isEqualTo("")
-        .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
-        .jsonPath("$.whoIsAtRisk.description").isEqualTo("")
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description")
-        .isEqualTo("What circumstances are likely to increase the risk?")
-        .jsonPath("$.circumstancesIncreaseRisk.description").isEqualTo("")
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.description")
-        .isEqualTo("What factors are likely to reduce the risk?")
-        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("")
-        .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
-        .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
-        .jsonPath("$.whenRiskHighest.description").isEqualTo("")
-        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-        .jsonPath("$.contingencyPlan.description").isEqualTo("")
+        .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskMitigationFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskImminence").isEqualTo(null)
+        .jsonPath("$.roshSummary.error").isEqualTo("SERVER_ERROR")
         .jsonPath("$.predictorScores.error").isEqualTo("SERVER_ERROR")
     }
   }
@@ -135,7 +92,6 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data when ARN Scores are null`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
@@ -144,18 +100,6 @@ class RiskControllerTest(
       allRiskScoresEmptyResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
-      contingencyPlanResponse(crn)
-
-      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
-      val assessmentsFromArnContingencyPlanResponse =
-        JSONArray(arnContingencyPlanResponse.get("assessments").toString())
-      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
-
-      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation")
-        .toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation")
-        .toString() + latestCompleteAssessment.get("monitoringAndControl")
-        .toString() + latestCompleteAssessment.get("interventionsAndTreatment")
-        .toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -168,34 +112,23 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
-        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
         .jsonPath("$.mappa.level").isEqualTo(1)
         .jsonPath("$.mappa.isNominal").isEqualTo(true)
         .jsonPath("$.mappa.lastUpdated").isEqualTo("10 May 2021")
         .jsonPath("$.mappa.category").isEqualTo("0")
-        .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
-        .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
-        .jsonPath("$.natureOfRisk.description").isEqualTo("The nature of the risk is X")
-        .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
-        .jsonPath("$.whoIsAtRisk.description").isEqualTo("X, Y and Z are at risk")
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description")
-        .isEqualTo("What circumstances are likely to increase the risk?")
-        .jsonPath("$.circumstancesIncreaseRisk.description")
+        .jsonPath("$.roshSummary.natureOfRisk").isEqualTo("The nature of the risk is X")
+        .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo("X, Y and Z are at risk")
+        .jsonPath("$.roshSummary.riskIncreaseFactors")
         .isEqualTo("If offender in situation X the risk can be higher")
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.description")
-        .isEqualTo("What factors are likely to reduce the risk?")
-        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("Giving offender therapy in X will reduce the risk")
-        .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
-        .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
-        .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
+        .jsonPath("$.roshSummary.riskMitigationFactors")
+        .isEqualTo("Giving offender therapy in X will reduce the risk")
+        .jsonPath("$.roshSummary.riskImminence").isEqualTo("the risk is imminent and more probably in X situation")
         .jsonPath("$.predictorScores.error").isEqualTo(EMPTY_STRING)
         .jsonPath("$.predictorScores.current.date").isEqualTo("2021-06-16")
         .jsonPath("$.predictorScores.current.scores.RSR").isEqualTo(null)
@@ -215,9 +148,6 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
-        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-        .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
   }
@@ -225,7 +155,6 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
@@ -234,18 +163,6 @@ class RiskControllerTest(
       allRiskScoresResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
-      contingencyPlanResponse(crn)
-
-      val arnContingencyPlanResponse = JSONObject(contingencyPlanResponse())
-      val assessmentsFromArnContingencyPlanResponse =
-        JSONArray(arnContingencyPlanResponse.get("assessments").toString())
-      val latestCompleteAssessment = JSONObject(assessmentsFromArnContingencyPlanResponse.get(0).toString())
-
-      val expectedContingencyPlanDescription = latestCompleteAssessment.get("keyConsiderationsCurrentSituation")
-        .toString() + latestCompleteAssessment.get("furtherConsiderationsCurrentSituation")
-        .toString() + latestCompleteAssessment.get("monitoringAndControl")
-        .toString() + latestCompleteAssessment.get("interventionsAndTreatment")
-        .toString() + latestCompleteAssessment.get("victimSafetyPlanning").toString()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -258,34 +175,23 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
-        .jsonPath("$.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
-        .jsonPath("$.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
         .jsonPath("$.mappa.level").isEqualTo(1)
         .jsonPath("$.mappa.isNominal").isEqualTo(true)
         .jsonPath("$.mappa.lastUpdated").isEqualTo("10 May 2021")
         .jsonPath("$.mappa.category").isEqualTo("0")
-        .jsonPath("$.natureOfRisk.oasysHeading.number").isEqualTo(10.2)
-        .jsonPath("$.natureOfRisk.oasysHeading.description").isEqualTo("What is the nature of the risk?")
-        .jsonPath("$.natureOfRisk.description").isEqualTo("The nature of the risk is X")
-        .jsonPath("$.whoIsAtRisk.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.whoIsAtRisk.oasysHeading.description").isEqualTo("Who is at risk?")
-        .jsonPath("$.whoIsAtRisk.description").isEqualTo("X, Y and Z are at risk")
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.number").isEqualTo(10.4)
-        .jsonPath("$.circumstancesIncreaseRisk.oasysHeading.description")
-        .isEqualTo("What circumstances are likely to increase the risk?")
-        .jsonPath("$.circumstancesIncreaseRisk.description")
+        .jsonPath("$.roshSummary.natureOfRisk").isEqualTo("The nature of the risk is X")
+        .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo("X, Y and Z are at risk")
+        .jsonPath("$.roshSummary.riskIncreaseFactors")
         .isEqualTo("If offender in situation X the risk can be higher")
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.number").isEqualTo(10.5)
-        .jsonPath("$.factorsToReduceRisk.oasysHeading.description")
-        .isEqualTo("What factors are likely to reduce the risk?")
-        .jsonPath("$.factorsToReduceRisk.description").isEqualTo("Giving offender therapy in X will reduce the risk")
-        .jsonPath("$.whenRiskHighest.oasysHeading.number").isEqualTo(10.3)
-        .jsonPath("$.whenRiskHighest.oasysHeading.description").isEqualTo("When is the risk likely to be greatest?")
-        .jsonPath("$.whenRiskHighest.description").isEqualTo("the risk is imminent and more probably in X situation")
+        .jsonPath("$.roshSummary.riskMitigationFactors")
+        .isEqualTo("Giving offender therapy in X will reduce the risk")
+        .jsonPath("$.roshSummary.riskImminence").isEqualTo("the risk is imminent and more probably in X situation")
         .jsonPath("$.predictorScores.error").isEqualTo(EMPTY_STRING)
         .jsonPath("$.predictorScores.current.date").isEqualTo("2022-04-16")
         .jsonPath("$.predictorScores.current.scores.RSR.type").isEqualTo("RSR")
@@ -335,46 +241,17 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
-        .jsonPath("$.contingencyPlan.oasysHeading.number").isEqualTo(10.1)
-        .jsonPath("$.contingencyPlan.oasysHeading.description").isEqualTo("Contingency plan")
-        .jsonPath("$.contingencyPlan.description").isEqualTo(expectedContingencyPlanDescription)
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
   }
 
   @Test
-  fun `retrieves risk data when assessment status is incomplete`() {
-    runTest {
-      val crn = "A12345"
-      userAccessAllowed(crn)
-      oasysAssessmentsResponse(crn, superStatus = "INCOMPLETE")
-      roSHSummaryResponse(crn)
-      allOffenderDetailsResponse(crn)
-      mappaDetailsResponse(crn)
-      allRiskScoresResponse(crn)
-      deleteAndCreateRecommendation()
-      updateRecommendation(Status.DRAFT)
-      contingencyPlanResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/risk")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.assessmentStatus").isEqualTo("INCOMPLETE")
-    }
-  }
-
-  @Test
   fun `not found when person does not exist`() {
-    val crn = "A12345"
     userAccessAllowed(crn)
     roSHSummaryResponse(crn)
     mappaDetailsResponse(crn)
     allRiskScoresResponse(crn)
     noOffenderDetailsResponse(crn)
-    noContingencyPlanResponse(crn)
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -388,7 +265,6 @@ class RiskControllerTest(
   @Test
   fun `access denied when insufficient privileges used`() {
     runTest {
-      val crn = "X123456"
       userAccessAllowed(crn)
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -399,13 +275,32 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on OASYS ARN Api timeout`() {
+  fun `given case is excluded then only return user access details`() {
     runTest {
-      val crn = "A12345"
+      userAccessRestricted(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.restrictionMessage")
+        .isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+        .jsonPath("$.mappa").isEqualTo(null)
+    }
+  }
+
+  @Test
+  fun `Error message in rosh summary property given on OASYS ARN rosh summary timeout`() {
+    runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
-      contingencyPlanResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -413,23 +308,20 @@ class RiskControllerTest(
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
-        .is5xxServerError
+        .isOk
         .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: ARN API Client - risk summary endpoint: [No response within $oasysArnClientTimeout seconds]")
+        .jsonPath("$.roshSummary.error")
+        .isEqualTo("TIMEOUT")
     }
   }
 
   @Test
   fun `Error message in predictor scores property given on OASYS ARN all scores timeout`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
-      contingencyPlanResponse(crn)
       allRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -445,15 +337,13 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on OASYS ARN contingency plan endpoint`() {
+  fun `gateway timeout 503 given on Community Api timeout`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
-      mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
+      allOffenderDetailsResponse(crn)
       allRiskScoresResponse(crn)
-      contingencyPlanResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+      mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -464,53 +354,7 @@ class RiskControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: ARN API Client - risk contingency plan endpoint: [No response within $oasysArnClientTimeout seconds]")
-    }
-
-    @Test
-    fun `given case is excluded then only return user access details`() {
-      runTest {
-        val crn = "A12345"
-        userAccessRestricted(crn)
-
-        webTestClient.get()
-          .uri("/cases/$crn/risk")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus().isOk
-          .expectBody()
-          .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
-          .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
-          .jsonPath("$.userAccessResponse.restrictionMessage")
-          .isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
-          .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
-          .jsonPath("$.personalDetailsOverview").isEmpty
-          .jsonPath("$.mappa").isEqualTo(null)
-      }
-    }
-
-    @Test
-    fun `gateway timeout 503 given on Community Api timeout`() {
-      runTest {
-        val crn = "A12345"
-        userAccessAllowed(crn)
-        roSHSummaryResponse(crn)
-        allOffenderDetailsResponse(crn)
-        allRiskScoresResponse(crn)
-        mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
-        webTestClient.get()
-          .uri("/cases/$crn/risk")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus()
-          .is5xxServerError
-          .expectBody()
-          .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-          .jsonPath("$.userMessage")
-          .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
-          .jsonPath("$.mappa").isEqualTo(null)
-      }
+        .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 }

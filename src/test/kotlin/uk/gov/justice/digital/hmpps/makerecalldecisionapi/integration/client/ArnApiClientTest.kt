@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
@@ -28,45 +27,6 @@ import java.time.LocalDateTime
 class ArnApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var arnApiClient: ArnApiClient
-
-  @Test
-  fun `retrieves contingency plan`() {
-    // given
-    val crn = "X123456"
-    contingencyPlanSimpleResponse(crn)
-
-    // and
-    val expected = ContingencyPlanResponse(
-      assessments = listOf(
-        Assessment(
-          initiationDate = "2020-07-03T11:42:01",
-          dateCompleted = "2020-07-03T11:42:01",
-          assessmentStatus = "COMPLETE",
-          keyConsiderationsCurrentSituation = "key considerations for current situation",
-          furtherConsiderationsCurrentSituation = "further considerations for current situation",
-          supervision = null,
-          monitoringAndControl = "monitoring and control",
-          interventionsAndTreatment = "interventions and treatment",
-          victimSafetyPlanning = "victim safety planning",
-          contingencyPlans = null,
-          offenceDetails = emptyList(),
-          offence = null,
-          laterCompleteAssessmentExists = null,
-          laterPartCompSignedAssessmentExists = null,
-          laterPartCompUnsignedAssessmentExists = null,
-          laterSignLockAssessmentExists = null,
-          laterWIPAssessmentExists = null,
-          superStatus = null
-        )
-      )
-    )
-
-    // when
-    val actual = arnApiClient.getContingencyPlan(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
 
   @Test
   fun `retrieves assessments`() {

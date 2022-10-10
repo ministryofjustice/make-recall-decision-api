@@ -46,7 +46,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOf
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
@@ -78,15 +77,12 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk`() {
     runTest {
-      val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(currentRiskScoreResponse, historicalRiskScoreResponse) })
-      given(arnApiClient.getContingencyPlan(anyString()))
-        .willReturn(Mono.fromCallable { contingencyPlanResponse })
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
       given(arnApiClient.getAssessments(anyString()))
@@ -95,16 +91,10 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getRisk(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val riskOfSeriousHarm = response.riskOfSeriousHarm!!
+      val riskOfSeriousHarm = response.roshSummary?.riskOfSeriousHarm!!
       val mappa = response.mappa!!
-      val natureOfRisk = response.natureOfRisk
-      val whoIsAtRisk = response.whoIsAtRisk
-      val circumstancesIncreaseRisk = response.circumstancesIncreaseRisk
-      val factorsToReduceRisk = response.factorsToReduceRisk
-      val whenRiskHighest = response.whenRiskHighest
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
-      val contingencyPlan = response.contingencyPlan
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
@@ -121,22 +111,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
       assertThat(mappa.lastUpdated).isEqualTo("10 May 2021")
-      assertThat(natureOfRisk?.oasysHeading?.number).isEqualTo("10.2")
-      assertThat(natureOfRisk?.oasysHeading?.description).isEqualTo("What is the nature of the risk?")
-      assertThat(natureOfRisk?.description)
-        .isEqualTo("The nature of the risk is X")
-      assertThat(whoIsAtRisk?.oasysHeading?.number).isEqualTo("10.1")
-      assertThat(whoIsAtRisk?.oasysHeading?.description).isEqualTo("Who is at risk?")
-      assertThat(whoIsAtRisk?.description).isEqualTo("X, Y and Z are at risk")
-      assertThat(circumstancesIncreaseRisk?.oasysHeading?.number).isEqualTo("10.4")
-      assertThat(circumstancesIncreaseRisk?.oasysHeading?.description).isEqualTo("What circumstances are likely to increase the risk?")
-      assertThat(circumstancesIncreaseRisk?.description).isEqualTo("If offender in situation X the risk can be higher")
-      assertThat(factorsToReduceRisk?.oasysHeading?.number).isEqualTo("10.5")
-      assertThat(factorsToReduceRisk?.oasysHeading?.description).isEqualTo("What factors are likely to reduce the risk?")
-      assertThat(factorsToReduceRisk?.description).isEqualTo("Giving offender therapy in X will reduce the risk")
-      assertThat(whenRiskHighest?.oasysHeading?.number).isEqualTo("10.3")
-      assertThat(whenRiskHighest?.oasysHeading?.description).isEqualTo("When is the risk likely to be greatest?")
-      assertThat(whenRiskHighest?.description).isEqualTo("the risk is imminent and more probably in X situation")
+      assertThat(response.roshSummary?.natureOfRisk).isEqualTo("The nature of the risk is X")
+      assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
+      assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
+      assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
+      assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
       assertThat(historicalScores?.get(0)?.scores?.ospc?.score).isEqualTo("2")
       assertThat(historicalScores?.get(0)?.scores?.ospc?.level).isEqualTo("HIGH")
       assertThat(historicalScores?.get(0)?.scores?.ospc?.type).isEqualTo("OSP/C")
@@ -172,17 +151,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ogrs?.oneYear).isEqualTo("0")
       assertThat(currentScores?.scores?.ogrs?.twoYears).isEqualTo("0")
       assertThat(currentScores?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
-      assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
-      assertThat(contingencyPlan?.description).isEqualTo(
-        "key consideration for current situation\n" + "further consideration for current situation\n" + "supervision\n" + "monitoring and control\n" + "interventions and treatment\n" + "victim safety planning\n" + "contingency plans"
-      )
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getRiskScores(crn)
-      then(arnApiClient).should().getContingencyPlan(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
     }
@@ -191,15 +164,12 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk when assessment status is incomplete`() {
     runTest {
-      val crn = "my wonderful crn"
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(currentRiskScoreResponse) })
-      given(arnApiClient.getContingencyPlan(anyString()))
-        .willReturn(Mono.fromCallable { contingencyPlanResponse })
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
       given(arnApiClient.getAssessments(anyString()))
@@ -216,7 +186,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `retrieves assessments`() {
     runTest {
       // given
-      val crn = "my wonderful crn"
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { assessmentResponse(crn) })
       given(communityApiClient.getActiveConvictions(anyString()))
@@ -235,7 +204,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with optional fields missing`() {
     runTest {
-      val crn = "my wonderful crn"
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(
           Mono.fromCallable { listOf(currentRiskScoreResponseWithOptionalFields, historicalRiskScoreResponseWithOptionalFields) }
@@ -308,15 +276,6 @@ internal class RiskServiceTest : ServiceTestBase() {
           }
         )
 
-      given(arnApiClient.getContingencyPlan(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            ContingencyPlanResponse(
-              assessments = emptyList()
-            )
-          }
-        )
-
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -327,16 +286,10 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getRisk(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val riskOfSeriousHarm = response.riskOfSeriousHarm!!
+      val riskOfSeriousHarm = response.roshSummary?.riskOfSeriousHarm!!
       val mappa = response.mappa!!
-      val natureOfRisk = response.natureOfRisk
-      val whoIsAtRisk = response.whoIsAtRisk
-      val circumstancesIncreaseRisk = response.circumstancesIncreaseRisk
-      val factorsToReduceRisk = response.factorsToReduceRisk
-      val whenRiskHighest = response.whenRiskHighest
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
-      val contingencyPlan = response.contingencyPlan
 
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
@@ -355,19 +308,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(mappa.level).isEqualTo(null)
       assertThat(mappa.lastUpdated).isEqualTo("")
       assertThat(mappa.category).isNull()
-      assertThat(natureOfRisk?.description).isEqualTo("")
-      assertThat(whoIsAtRisk?.oasysHeading?.number).isEqualTo("10.1")
-      assertThat(whoIsAtRisk?.oasysHeading?.description).isEqualTo("Who is at risk?")
-      assertThat(whoIsAtRisk?.description).isEqualTo("")
-      assertThat(circumstancesIncreaseRisk?.oasysHeading?.number).isEqualTo("10.4")
-      assertThat(circumstancesIncreaseRisk?.oasysHeading?.description).isEqualTo("What circumstances are likely to increase the risk?")
-      assertThat(circumstancesIncreaseRisk?.description).isEqualTo("")
-      assertThat(factorsToReduceRisk?.oasysHeading?.number).isEqualTo("10.5")
-      assertThat(factorsToReduceRisk?.oasysHeading?.description).isEqualTo("What factors are likely to reduce the risk?")
-      assertThat(factorsToReduceRisk?.description).isEqualTo("")
-      assertThat(whenRiskHighest?.oasysHeading?.number).isEqualTo("10.3")
-      assertThat(whenRiskHighest?.oasysHeading?.description).isEqualTo("When is the risk likely to be greatest?")
-      assertThat(whenRiskHighest?.description).isEqualTo("")
+      assertThat(response.roshSummary?.natureOfRisk).isEqualTo("")
+      assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("")
+      assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("")
+      assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("")
+      assertThat(response.roshSummary?.riskImminence).isEqualTo("")
       assertThat(historicalScores?.get(0)?.date).isEqualTo("2017-09-12")
       assertThat(historicalScores?.get(0)?.scores?.rsr).isEqualTo(null)
       assertThat(historicalScores?.get(0)?.scores?.ospc).isEqualTo(null)
@@ -377,13 +322,9 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ospc).isEqualTo(null)
       assertThat(currentScores?.scores?.ospi).isEqualTo(null)
       assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
-      assertThat(contingencyPlan?.oasysHeading?.description).isEqualTo("Contingency plan")
-      assertThat(contingencyPlan?.oasysHeading?.number).isEqualTo("10.1")
-      assertThat(contingencyPlan?.description).isEmpty()
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
-      then(arnApiClient).should().getContingencyPlan(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
@@ -467,6 +408,18 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  @ParameterizedTest(name = "given call to fetch risk summary fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to fetch risk summary fails with given exception then set this in the error field response`(code: Int, expectedErrorCode: String) {
+    runTest {
+      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.getRoshSummary(crn)
+
+      assertThat(response.error).isEqualTo(expectedErrorCode)
+    }
+  }
+
   @ParameterizedTest(name = "given call to risk management plan fails with {1} exception then set this in the error field response")
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to risk management plan fails with given exception then set this in the error field response`(code: Int, expectedErrorCode: String) {
@@ -511,38 +464,6 @@ internal class RiskServiceTest : ServiceTestBase() {
     ),
     assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
     overallRiskLevel = "HIGH"
-  )
-
-  private val contingencyPlanResponse = ContingencyPlanResponse(
-    assessments = listOf(
-      Assessment(
-        dateCompleted = "2021-10-09T08:26:31.349",
-        initiationDate = "2020-06-03T11:42:01",
-        assessmentStatus = "COMPLETE",
-        keyConsiderationsCurrentSituation = "key consideration for current situation\n",
-        furtherConsiderationsCurrentSituation = "further consideration for current situation\n",
-        supervision = "supervision\n",
-        monitoringAndControl = "monitoring and control\n",
-        interventionsAndTreatment = "interventions and treatment\n",
-        victimSafetyPlanning = "victim safety planning\n",
-        contingencyPlans = "contingency plans",
-        offenceDetails = listOf(
-          AssessmentOffenceDetail(
-            type = "CURRENT",
-            offenceCode = "12",
-            offenceSubCode = "34",
-            offenceDate = "2022-08-26T12:00:00.000"
-          )
-        ),
-        offence = null,
-        laterCompleteAssessmentExists = null,
-        laterPartCompSignedAssessmentExists = null,
-        laterPartCompUnsignedAssessmentExists = null,
-        laterSignLockAssessmentExists = null,
-        laterWIPAssessmentExists = null,
-        superStatus = null
-      )
-    )
   )
 
   private val currentRiskScoreResponse = RiskScoreResponse(
