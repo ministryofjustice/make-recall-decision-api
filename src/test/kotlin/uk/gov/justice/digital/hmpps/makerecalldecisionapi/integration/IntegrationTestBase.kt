@@ -31,8 +31,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresEmptyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.contingencyPlanSimpleResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
@@ -231,40 +229,6 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withStatusCode(500)
-    )
-  }
-
-  protected fun noContingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
-    val contingencyPlanRequest =
-      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
-    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
-      response().withStatusCode(404)
-    )
-  }
-
-  protected fun failedContingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
-    val contingencyPlanRequest =
-      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
-    oasysARNApi.`when`(contingencyPlanRequest).respond(
-      response().withStatusCode(500)
-    )
-  }
-
-  protected fun contingencyPlanResponse(crn: String, delaySeconds: Long = 0) {
-    val contingencyPlanRequest =
-      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
-    oasysARNApi.`when`(contingencyPlanRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(contingencyPlanResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun contingencyPlanSimpleResponse(crn: String, delaySeconds: Long = 0) {
-    val contingencyPlanRequest =
-      request().withPath("/assessments/risk-management-plans/$crn/ALLOW")
-    oasysARNApi.`when`(contingencyPlanRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(contingencyPlanSimpleResponse())
-        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

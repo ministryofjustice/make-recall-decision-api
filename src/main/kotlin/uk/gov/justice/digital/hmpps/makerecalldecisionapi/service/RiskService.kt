@@ -8,32 +8,25 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CircumstancesIncreaseRisk
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContingencyPlan
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.FactorsToReduceRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.NatureOfRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OVP
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OasysHeading
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskPersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TimelineDataPoint
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.WhenRiskHighest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
@@ -58,29 +51,16 @@ internal class RiskService(
       RiskResponse(userAccessResponse = userAccessResponse, mappa = null)
     } else {
       val personalDetailsOverview = fetchPersonalDetails(crn)
-      val riskSummaryResponse = handleFetchRiskSummary(crn)
-      val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
-      val natureOfRisk = extractNatureOfRisk(riskSummaryResponse)
-      val whoIsAtRisk = extractWhoIsAtRisk(riskSummaryResponse)
-      val circumstancesIncreaseRisk = extractCircumstancesIncreaseRisk(riskSummaryResponse)
-      val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
-      val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
+      val roshSummary = getRoshSummary(crn)
       val mappa = handleFetchMappaApiCall(crn)
       val predictorScores = fetchPredictorScores(crn)
-      val contingencyPlan = fetchContingencyPlan(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
-        riskOfSeriousHarm = riskOfSeriousHarm,
         mappa = mappa,
         predictorScores = predictorScores,
-        natureOfRisk = natureOfRisk,
-        contingencyPlan = contingencyPlan,
-        whoIsAtRisk = whoIsAtRisk,
-        circumstancesIncreaseRisk = circumstancesIncreaseRisk,
-        factorsToReduceRisk = factorsToReduceRisk,
-        whenRiskHighest = whenRiskHighest,
+        roshSummary = roshSummary,
         activeRecommendation = recommendationDetails,
         assessmentStatus = getAssessmentStatus(crn)
       )
@@ -133,39 +113,6 @@ internal class RiskService(
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
     it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.detail?.code) && (it.type == "CURRENT") } == true
-
-  private suspend fun fetchContingencyPlan(crn: String): ContingencyPlan {
-    val contingencyPlanResponse = try {
-      getValueAndHandleWrappedException(arnApiClient.getContingencyPlan(crn))!!
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No contingency plan available for CRN: $crn - ${e.message}")
-      ContingencyPlanResponse(assessments = emptyList())
-    } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No contingency plan available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      ContingencyPlanResponse(assessments = emptyList())
-    }
-    val latestCompletedAssessment = contingencyPlanResponse.assessments
-      ?.filter { it?.assessmentStatus.equals("COMPLETE") }
-      ?.maxByOrNull { LocalDateTime.parse(it?.dateCompleted) }
-    return ContingencyPlan(
-      description = formatContingencyPlanDetails(latestCompletedAssessment),
-      oasysHeading = OasysHeading(
-        number = "10.1",
-        description = "Contingency plan"
-      )
-    )
-  }
-
-  private fun formatContingencyPlanDetails(latestCompletedAssessment: Assessment?): String {
-    val keyConsiderationsCurrentSituation = latestCompletedAssessment?.keyConsiderationsCurrentSituation ?: ""
-    val furtherConsiderationsCurrentSituation = latestCompletedAssessment?.furtherConsiderationsCurrentSituation ?: ""
-    val supervision = latestCompletedAssessment?.supervision ?: ""
-    val monitoringAndControl = latestCompletedAssessment?.monitoringAndControl ?: ""
-    val interventionsAndTreatment = latestCompletedAssessment?.interventionsAndTreatment ?: ""
-    val victimSafetyPlanning = latestCompletedAssessment?.victimSafetyPlanning ?: ""
-    val contingencyPlans = latestCompletedAssessment?.contingencyPlans ?: ""
-    return keyConsiderationsCurrentSituation + furtherConsiderationsCurrentSituation + supervision + monitoringAndControl + interventionsAndTreatment + victimSafetyPlanning + contingencyPlans
-  }
 
   private fun fetchAssessments(crn: String): AssessmentsResponse {
     val assessmentsResponse = try {
@@ -246,25 +193,6 @@ internal class RiskService(
     )
   }
 
-  private fun formatDateTimeStamp(localDateTimeString: String): String {
-    return LocalDateTime.parse(localDateTimeString).format(
-      DateTimeFormatter.ofPattern("dd MMMM YYYY HH:mm")
-        .withLocale(Locale.UK)
-    )
-  }
-
-  private suspend fun handleFetchRiskSummary(crn: String): RiskSummaryResponse? {
-    return try {
-      getValueAndHandleWrappedException(arnApiClient.getRiskSummary(crn))
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No Risk Summary available for CRN: $crn - ${e.message}")
-      null
-    } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No Risk Summary available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      null
-    }
-  }
-
   private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
     return try {
       fetchMappa(crn)
@@ -274,56 +202,6 @@ internal class RiskService(
     } catch (e: WebClientResponseException) {
       null
     }
-  }
-
-  private suspend fun extractNatureOfRisk(riskSummaryResponse: RiskSummaryResponse?): NatureOfRisk {
-    return NatureOfRisk(
-      description = riskSummaryResponse?.natureOfRisk ?: "",
-      oasysHeading = OasysHeading(
-        number = "10.2",
-        description = "What is the nature of the risk?"
-      )
-    )
-  }
-
-  private suspend fun extractFactorsToReduceRisk(riskSummaryResponse: RiskSummaryResponse?): FactorsToReduceRisk {
-    return FactorsToReduceRisk(
-      description = riskSummaryResponse?.riskMitigationFactors ?: "",
-      oasysHeading = OasysHeading(
-        number = "10.5",
-        description = "What factors are likely to reduce the risk?"
-      )
-    )
-  }
-
-  private suspend fun extractWhenRiskHighest(riskSummaryResponse: RiskSummaryResponse?): WhenRiskHighest {
-    return WhenRiskHighest(
-      description = riskSummaryResponse?.riskImminence ?: "",
-      oasysHeading = OasysHeading(
-        number = "10.3",
-        description = "When is the risk likely to be greatest?"
-      )
-    )
-  }
-
-  private suspend fun extractCircumstancesIncreaseRisk(riskSummaryResponse: RiskSummaryResponse?): CircumstancesIncreaseRisk {
-    return CircumstancesIncreaseRisk(
-      description = riskSummaryResponse?.riskIncreaseFactors ?: "",
-      oasysHeading = OasysHeading(
-        number = "10.4",
-        description = "What circumstances are likely to increase the risk?"
-      )
-    )
-  }
-
-  private suspend fun extractWhoIsAtRisk(riskSummaryResponse: RiskSummaryResponse?): WhoIsAtRisk {
-    return WhoIsAtRisk(
-      description = riskSummaryResponse?.whoIsAtRisk ?: "",
-      oasysHeading = OasysHeading(
-        number = "10.1",
-        description = "Who is at risk?"
-      )
-    )
   }
 
   private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
@@ -392,6 +270,25 @@ internal class RiskService(
       isNominal = true,
       lastUpdated = reviewDate ?: "",
       category = mappaResponse?.category
+    )
+  }
+
+  suspend fun getRoshSummary(crn: String): RoshSummary {
+    val riskSummaryResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getRiskSummary(crn))
+    } catch (ex: Exception) {
+      return RoshSummary(error = extractErrorCode(ex, "risk summary", crn))
+    }
+
+    val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
+
+    return RoshSummary(
+      riskOfSeriousHarm = riskOfSeriousHarm,
+      natureOfRisk = riskSummaryResponse?.natureOfRisk ?: "",
+      whoIsAtRisk = riskSummaryResponse?.whoIsAtRisk ?: "",
+      riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors ?: "",
+      riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors ?: "",
+      riskImminence = riskSummaryResponse?.riskImminence ?: ""
     )
   }
 
