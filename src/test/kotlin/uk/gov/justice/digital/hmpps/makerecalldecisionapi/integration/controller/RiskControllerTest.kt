@@ -466,51 +466,50 @@ class RiskControllerTest(
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: ARN API Client - risk contingency plan endpoint: [No response within $oasysArnClientTimeout seconds]")
     }
+  }
 
-    @Test
-    fun `given case is excluded then only return user access details`() {
-      runTest {
-        val crn = "A12345"
-        userAccessRestricted(crn)
+  @Test
+  fun `given case is excluded then only return user access details`() {
+    runTest {
+      val crn = "A12345"
+      userAccessRestricted(crn)
 
-        webTestClient.get()
-          .uri("/cases/$crn/risk")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus().isOk
-          .expectBody()
-          .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
-          .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
-          .jsonPath("$.userAccessResponse.restrictionMessage")
-          .isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
-          .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
-          .jsonPath("$.personalDetailsOverview").isEmpty
-          .jsonPath("$.mappa").isEqualTo(null)
-      }
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.restrictionMessage")
+        .isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+        .jsonPath("$.mappa").isEqualTo(null)
     }
+  }
 
-    @Test
-    fun `gateway timeout 503 given on Community Api timeout`() {
-      runTest {
-        val crn = "A12345"
-        userAccessAllowed(crn)
-        roSHSummaryResponse(crn)
-        allOffenderDetailsResponse(crn)
-        allRiskScoresResponse(crn)
-        mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+  @Test
+  fun `gateway timeout 503 given on Community Api timeout`() {
+    runTest {
+      val crn = "A12345"
+      userAccessAllowed(crn)
+      roSHSummaryResponse(crn)
+      allOffenderDetailsResponse(crn)
+      allRiskScoresResponse(crn)
+      mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
-        webTestClient.get()
-          .uri("/cases/$crn/risk")
-          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-          .exchange()
-          .expectStatus()
-          .is5xxServerError
-          .expectBody()
-          .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-          .jsonPath("$.userMessage")
-          .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
-          .jsonPath("$.mappa").isEqualTo(null)
-      }
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 }
