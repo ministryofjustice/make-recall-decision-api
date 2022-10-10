@@ -15,9 +15,6 @@ fun roSHSummaryResponse() = """
     ],
     "MEDIUM": [
       "Staff"
-    ],
-    "LOW": [
-      "Prisoners"
     ]
   },
   "riskInCustody": {
@@ -33,7 +30,7 @@ fun roSHSummaryResponse() = """
       "Public"
     ]
   },
-  "assessedOn": "2022-05-19T08:26:31.349Z",
+  "assessedOn": "2022-05-19T08:26:31",
   "overallRiskLevel": "HIGH"
 }
 """.trimIndent()
