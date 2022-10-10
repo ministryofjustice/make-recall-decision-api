@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import java.time.LocalDate
 
 data class DocumentData(

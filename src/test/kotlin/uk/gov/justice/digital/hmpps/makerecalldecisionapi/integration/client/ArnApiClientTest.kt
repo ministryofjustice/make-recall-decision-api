@@ -10,16 +10,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDateTime
 
@@ -27,32 +28,6 @@ import java.time.LocalDateTime
 class ArnApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var arnApiClient: ArnApiClient
-
-  @Test
-  fun `retrieves historical scores`() {
-    // given
-    val crn = "X123456"
-    historicalRiskScoresResponse(crn)
-
-    // and
-    val expected = listOf(
-      HistoricalScoreResponse(
-        rsrPercentageScore = "18",
-        rsrScoreLevel = "HIGH",
-        ospcPercentageScore = "6.2",
-        ospcScoreLevel = "LOW",
-        ospiPercentageScore = "8.1",
-        ospiScoreLevel = "MEDIUM",
-        calculatedDate = "2018-09-12T12:00:00.000"
-      )
-    )
-
-    // when
-    val actual = arnApiClient.getHistoricalScores(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
 
   @Test
   fun `retrieves contingency plan`() {
@@ -177,29 +152,33 @@ class ArnApiClientTest : IntegrationTestBase() {
   )
 
   @Test
-  fun `retrieves current scores`() {
+  fun `retrieves scores`() {
     // given
     val crn = "X123456"
-    currentRiskScoresResponse(crn)
+    allRiskScoresResponse(crn)
 
     // and
-    val expected = listOf<CurrentScoreResponse>(
-      CurrentScoreResponse(
-        completedDate = "2022-04-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "0", ogpRisk = "HIGH"),
+    val expected = listOf<RiskScoreResponse>(
+      RiskScoreResponse(
+        completedDate = "2021-06-16T11:40:54.243",
+        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "0", ogpRisk = "HIGH", ogp1Year = "0", ogp2Year = "0"),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "0", scoreLevel = "HIGH"),
-        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "0", ospContactPercentageScore = "0", ospIndecentScoreLevel = "HIGH", ospContactScoreLevel = "HIGH")
+        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "0", ospContactPercentageScore = "0", ospIndecentScoreLevel = "HIGH", ospContactScoreLevel = "HIGH"),
+        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
+        violencePredictorScore = ViolencePredictorScore(ovpStaticWeightedScore = "0", ovpDynamicWeightedScore = "0", ovpTotalWeightedScore = "0", ovpRisk = "HIGH", oneYear = "0", twoYears = "0")
       ),
-      CurrentScoreResponse(
-        completedDate = "2022-06-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "12", ogpRisk = "LOW"),
+      RiskScoreResponse(
+        completedDate = "2022-04-16T11:40:54.243",
+        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "12", ogpRisk = "LOW", ogp1Year = "0", ogp2Year = "0"),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "23", scoreLevel = "HIGH"),
-        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "5", ospContactPercentageScore = "3.45", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "LOW")
+        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "5", ospContactPercentageScore = "3.45", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "LOW"),
+        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "LOW"),
+        violencePredictorScore = ViolencePredictorScore(ovpStaticWeightedScore = "0", ovpDynamicWeightedScore = "0", ovpTotalWeightedScore = "0", ovpRisk = "LOW", oneYear = "0", twoYears = "0")
       )
     )
 
     // when
-    val actual = arnApiClient.getCurrentScores(crn).block()
+    val actual = arnApiClient.getRiskScores(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
