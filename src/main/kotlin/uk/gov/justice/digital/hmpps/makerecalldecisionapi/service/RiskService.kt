@@ -6,38 +6,36 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.CircumstancesIncreaseRisk
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ContingencyPlan
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.FactorsToReduceRisk
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.HistoricalScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.NatureOfRisk
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OGRS
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPC
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OSPI
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.OasysHeading
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.PredictorScores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RSR
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskOfSeriousHarm
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskPersonalDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.Scores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhenRiskHighest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CircumstancesIncreaseRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContingencyPlan
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.FactorsToReduceRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.NatureOfRisk
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPI
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OVP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OasysHeading
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskPersonalDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TimelineDataPoint
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.WhenRiskHighest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.WhoIsAtRisk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ContingencyPlanResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CurrentScoreResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.HistoricalScoreResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import java.time.LocalDate
@@ -68,10 +66,7 @@ internal class RiskService(
       val factorsToReduceRisk = extractFactorsToReduceRisk(riskSummaryResponse)
       val whenRiskHighest = extractWhenRiskHighest(riskSummaryResponse)
       val mappa = handleFetchMappaApiCall(crn)
-      val predictorScores = PredictorScores(
-        current = fetchCurrentScores(crn),
-        historical = fetchHistoricalScores(crn)
-      )
+      val predictorScores = fetchPredictorScores(crn)
       val contingencyPlan = fetchContingencyPlan(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
@@ -94,7 +89,8 @@ internal class RiskService(
 
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    val latestAssessment =
+      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
     return getStatusFromSuperStatus(latestAssessment?.superStatus)
   }
 
@@ -105,8 +101,10 @@ internal class RiskService(
   suspend fun fetchIndexOffenceDetails(crn: String): String? {
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment = assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+    val latestAssessment =
+      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+    val oasysAssessmentCompleted =
+      latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
 
     return activeConvictionsFromDelius
       ?.filter { oasysAssessmentCompleted }
@@ -123,12 +121,15 @@ internal class RiskService(
   private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
     activeConvictionsFromDelius.count { it.isCustodial } == 1
 
-  private fun isLatestAssessment(it: Assessment?) = (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
+  private fun isLatestAssessment(it: Assessment?) =
+    (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
 
   private fun datesMatch(
     latestAssessment: Assessment?,
     mainOffence: Offence?
-  ) = latestAssessment?.offenceDetails?.any { LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate } == true
+  ) = latestAssessment?.offenceDetails?.any {
+    LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate
+  } == true
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
     it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.detail?.code) && (it.type == "CURRENT") } == true
@@ -184,74 +185,66 @@ internal class RiskService(
       ?.filter { it.mainOffence == true } ?: emptyList()
   }
 
-  private suspend fun fetchCurrentScores(crn: String): Scores {
-    val currentScoresResponse = try {
-      getValueAndHandleWrappedException(arnApiClient.getCurrentScores(crn))!!
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No current scores available for CRN: $crn - ${e.message}")
-      listOf(
-        emptyCurrentScoreResponse()
-      )
-    } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No current scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      listOf(
-        emptyCurrentScoreResponse()
+  suspend fun fetchPredictorScores(crn: String): PredictorScores {
+    val riskScoresResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getRiskScores(crn))!!
+    } catch (ex: Exception) {
+      return PredictorScores(
+        error = extractErrorCode(ex, "risk management plan", crn),
+        current = null,
+        historical = null
       )
     }
-    val latestScores = currentScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
-    val rsr = latestScores?.riskOfSeriousRecidivismScore
-    val osp = latestScores?.sexualPredictorScore
-    val osg = latestScores?.generalPredictorScore
-    return Scores(
-      rsr = RSR(level = rsr?.scoreLevel ?: "", score = rsr?.percentageScore ?: "", type = "RSR"),
-      ospc = OSPC(level = osp?.ospContactScoreLevel ?: "", score = osp?.ospContactPercentageScore ?: "", type = "OSP/C"),
-      ospi = OSPI(level = osp?.ospIndecentScoreLevel ?: "", score = osp?.ospIndecentPercentageScore ?: "", type = "OSP/I"),
-      ogrs = OGRS(level = osg?.ogpRisk ?: "", score = osg?.ogpTotalWeightedScore, type = "OGRS")
+    val latestScores = riskScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
+    val historicalScores = riskScoresResponse.filter { it.completedDate != latestScores?.completedDate }
+
+    return PredictorScores(
+      current = createTimeLineDataPoint(latestScores),
+      historical = historicalScores.map { createTimeLineDataPoint(it) }
     )
   }
 
-  private fun emptyCurrentScoreResponse() = CurrentScoreResponse(
-    completedDate = "",
-    generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "", ogpDynamicWeightedScore = "", ogpTotalWeightedScore = "", ogpRisk = ""),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "", scoreLevel = ""),
-    sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "", ospContactPercentageScore = "", ospIndecentScoreLevel = "", ospContactScoreLevel = "")
-  )
-
-  private suspend fun fetchHistoricalScores(crn: String): List<HistoricalScore> {
-    val historicalScoresResponse = try {
-      getValueAndHandleWrappedException(arnApiClient.getHistoricalScores(crn))!!
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No historical scores available for CRN: $crn - ${e.message}")
-      emptyHistoricalScoresResponse()
-    } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No historical scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      emptyHistoricalScoresResponse()
-    }
-    return historicalScoresResponse
-      .map {
-        HistoricalScore(
-          date = it.calculatedDate?.let { it1 -> formatDateTimeStamp(it1) } ?: "",
-          scores = Scores(
-            rsr = RSR(level = it.rsrScoreLevel ?: "", score = it.rsrPercentageScore ?: "", type = "RSR"),
-            ospc = OSPC(level = it.ospcScoreLevel ?: "", score = it.ospcPercentageScore ?: "", type = "OSP/C"),
-            ospi = OSPI(level = it.ospiScoreLevel ?: "", score = it.ospiPercentageScore ?: "", type = "OSP/I"),
-            ogrs = OGRS(level = "", score = "", type = "OGRS") // TODO not available from rsr/history - TBD
-          )
+  private fun createTimeLineDataPoint(riskScoreResponse: RiskScoreResponse?): TimelineDataPoint {
+    val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
+    val osp = riskScoreResponse?.sexualPredictorScore
+    val ogp = riskScoreResponse?.generalPredictorScore
+    val ogrs = riskScoreResponse?.groupReconvictionScore
+    val ovp = riskScoreResponse?.violencePredictorScore
+    return TimelineDataPoint(
+      date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
+      scores = Scores(
+        rsr = if (rsr == null) null else RSR(level = rsr.scoreLevel, score = rsr.percentageScore, type = "RSR"),
+        ospc = if (osp == null) null else OSPC(
+          level = osp.ospContactScoreLevel,
+          score = osp.ospContactPercentageScore,
+          type = "OSP/C"
+        ),
+        ospi = if (osp == null) null else OSPI(
+          level = osp.ospIndecentScoreLevel,
+          score = osp.ospIndecentPercentageScore,
+          type = "OSP/I"
+        ),
+        ogrs = if (ogrs == null) null else OGRS(
+          level = ogrs.scoreLevel,
+          oneYear = ogrs.oneYear,
+          twoYears = ogrs.twoYears,
+          type = "OGRS"
+        ),
+        ogp = if (ogp == null) null else OGP(
+          level = ogp.ogpRisk,
+          ogp1Year = ogp.ogp1Year,
+          ogp2Year = ogp.ogp2Year,
+          type = "OGP"
+        ),
+        ovp = if (ovp == null) null else OVP(
+          level = ovp.ovpRisk,
+          oneYear = ovp.oneYear,
+          twoYears = ovp.twoYears,
+          type = "OVP"
         )
-      }
-  }
-
-  private fun emptyHistoricalScoresResponse() = listOf(
-    HistoricalScoreResponse(
-      rsrPercentageScore = "",
-      rsrScoreLevel = "",
-      ospcPercentageScore = "",
-      ospcScoreLevel = "",
-      ospiPercentageScore = "",
-      ospiScoreLevel = "",
-      calculatedDate = null
+      )
     )
-  )
+  }
 
   private fun formatDateTimeStamp(localDateTimeString: String): String {
     return LocalDateTime.parse(localDateTimeString).format(
@@ -409,7 +402,8 @@ internal class RiskService(
       return RiskManagementPlan(error = extractErrorCode(ex, "risk management plan", crn))
     }
 
-    val latestPlan = riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+    val latestPlan =
+      riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
     val assessmentStatusComplete = getStatusFromSuperStatus(latestPlan?.superStatus) == COMPLETE.name
     val lastUpdatedDate = latestPlan?.dateCompleted ?: latestPlan?.initiationDate
 
