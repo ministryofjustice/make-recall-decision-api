@@ -10,15 +10,9 @@ import java.time.LocalDate
 data class RiskResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val personalDetailsOverview: RiskPersonalDetails? = null,
-  val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
+  val roshSummary: RoshSummary? = null,
   val mappa: Mappa? = null,
   val predictorScores: PredictorScores? = null,
-  val natureOfRisk: NatureOfRisk? = null,
-  val contingencyPlan: ContingencyPlan? = null,
-  val whoIsAtRisk: WhoIsAtRisk? = null,
-  val circumstancesIncreaseRisk: CircumstancesIncreaseRisk? = null,
-  val factorsToReduceRisk: FactorsToReduceRisk? = null,
-  val whenRiskHighest: WhenRiskHighest? = null,
   val activeRecommendation: ActiveRecommendation? = null,
   val assessmentStatus: String? = null
 )
@@ -114,37 +108,12 @@ data class OGRS(
   val twoYears: String?
 )
 
-data class NatureOfRisk(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class ContingencyPlan(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class WhoIsAtRisk(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class CircumstancesIncreaseRisk(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class FactorsToReduceRisk(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class WhenRiskHighest(
-  val description: String?,
-  val oasysHeading: OasysHeading?
-)
-
-data class OasysHeading(
-  val number: String?,
-  val description: String?
+data class RoshSummary(
+  val natureOfRisk: String? = null,
+  val whoIsAtRisk: String? = null,
+  val riskIncreaseFactors: String? = null,
+  val riskMitigationFactors: String? = null,
+  val riskImminence: String? = null,
+  val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
+  val error: String? = null,
 )
