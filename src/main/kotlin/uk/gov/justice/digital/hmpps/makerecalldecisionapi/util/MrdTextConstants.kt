@@ -9,6 +9,7 @@ class MrdTextConstants {
     const val NO = "No"
     const val YES = "Yes"
     const val NOT_APPLICABLE = "N/A"
+    const val OSPC_SCORE_NOT_APPLICABLE = "NOT_APPLICABLE"
     const val TICK_CHARACTER = 0x2713.toChar().toString()
   }
 }

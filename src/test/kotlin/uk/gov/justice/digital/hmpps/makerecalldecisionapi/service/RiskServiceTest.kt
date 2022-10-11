@@ -54,6 +54,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.OSPC_SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -259,7 +260,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves risk with optional risk null risk score values`() {
+  fun `retrieves risk with null risk score values`() {
     runTest {
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(
@@ -267,6 +268,49 @@ internal class RiskServiceTest : ServiceTestBase() {
             listOf(
               currentRiskScoreResponseWithOptionalFields,
               historicalRiskScoreResponseWhereValuesNull
+            )
+          }
+        )
+      communityApiMocksWithAllFieldsEmpty()
+
+      val response = riskService.getRisk(crn)
+      val historicalScores = response.predictorScores?.historical
+      val currentScores = response.predictorScores?.current
+
+      assertThat(historicalScores?.get(0)?.date).isEqualTo("2018-09-12")
+      assertThat(historicalScores?.get(0)?.scores?.rsr).isEqualTo(null)
+      assertThat(historicalScores?.get(0)?.scores?.ospc).isEqualTo(null)
+      assertThat(historicalScores?.get(0)?.scores?.ospi).isEqualTo(null)
+      assertThat(currentScores?.date).isEqualTo("2018-09-12")
+      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
+      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
+      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
+      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
+      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
+
+      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getRiskScores(crn)
+      then(arnApiClient).should().getRiskSummary(crn)
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves risk with empty OSPC risk score values`() {
+    runTest {
+      given(arnApiClient.getRiskScores(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            listOf(
+              currentRiskScoreResponseWithOptionalFields,
+              historicalRiskScoreResponseWhereValuesNull.copy(
+                sexualPredictorScore = SexualPredictorScore(
+                  ospIndecentPercentageScore = OSPC_SCORE_NOT_APPLICABLE,
+                  ospContactPercentageScore = "0",
+                  ospIndecentScoreLevel = "0",
+                  ospContactScoreLevel = OSPC_SCORE_NOT_APPLICABLE
+                )
+              )
             )
           }
         )

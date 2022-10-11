@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.OSPC_SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -150,8 +151,10 @@ internal class RiskService(
     val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
     val rsr = if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) null else riskScoreResponse.riskOfSeriousRecidivismScore
     val ospScore = riskScoreResponse?.sexualPredictorScore
-    val ospc = if (ospScore?.ospContactScoreLevel == null && ospScore?.ospContactPercentageScore == null) null else ospScore
-    val ospi = if (ospScore?.ospIndecentScoreLevel == null && ospScore?.ospIndecentPercentageScore == null) null else ospScore
+    val noOspcScore = (ospScore?.ospContactScoreLevel == null && ospScore?.ospContactPercentageScore == null) || ospScore.ospContactScoreLevel.equals(OSPC_SCORE_NOT_APPLICABLE, ignoreCase = true)
+    val ospc = if (noOspcScore) null else ospScore
+    val noOspiScore = (ospScore?.ospIndecentScoreLevel == null && ospScore?.ospIndecentPercentageScore == null) || ospScore.ospIndecentScoreLevel.equals(OSPC_SCORE_NOT_APPLICABLE, ignoreCase = true)
+    val ospi = if (noOspiScore) null else ospScore
     val ogpScore = riskScoreResponse?.generalPredictorScore
     val ogp = if (ogpScore?.ogp1Year == null && ogpScore?.ogp2Year == null && ogpScore?.ogpRisk == null) null else ogpScore
     val ogrsScore = riskScoreResponse?.groupReconvictionScore
