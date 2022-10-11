@@ -28,19 +28,24 @@ data class RiskPersonalDetails(
 
 data class RiskOfSeriousHarm(
   val overallRisk: String?,
+  val riskInCustody: RiskTo?,
+  val riskInCommunity: RiskTo?
+)
+
+data class RiskTo(
   val riskToChildren: String?,
   val riskToPublic: String?,
   val riskToKnownAdult: String?,
   val riskToStaff: String?,
-  val lastUpdated: String?
+  val riskToPrisoners: String?,
 )
 
 data class Mappa(
-  val level: Int?,
-  val isNominal: Boolean?,
+  val level: Int? = null,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-  val lastUpdated: String?,
-  val category: Int?,
+  val lastUpdatedDate: String? = null,
+  val category: Int? = null,
+  val error: String? = null,
 )
 
 data class PredictorScores(
@@ -115,5 +120,6 @@ data class RoshSummary(
   val riskMitigationFactors: String? = null,
   val riskImminence: String? = null,
   val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
+  val lastUpdatedDate: String? = null,
   val error: String? = null,
 )

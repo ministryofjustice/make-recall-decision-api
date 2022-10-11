@@ -11,17 +11,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 class ArnApiClientTest : IntegrationTestBase() {
@@ -157,7 +155,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       riskImminence = "the risk is imminent and more probably in X situation",
       riskIncreaseFactors = "If offender in situation X the risk can be higher",
       riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
-      riskInCommunity = RiskInCommunity(
+      riskInCommunity = RiskScore(
         veryHigh = null,
         high = listOf(
           "Children",
@@ -165,9 +163,9 @@ class ArnApiClientTest : IntegrationTestBase() {
           "Known adult"
         ),
         medium = listOf("Staff"),
-        low = listOf("Prisoners")
+        low = null
       ),
-      riskInCustody = RiskInCustody(
+      riskInCustody = RiskScore(
         veryHigh = listOf(
           "Staff",
           "Prisoners"
@@ -179,7 +177,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           "Public"
         )
       ),
-      assessedOn = LocalDateTime.parse("2022-05-19T08:26:31.349"),
+      assessedOn = "2022-05-19T08:26:31",
       overallRiskLevel = "HIGH"
     )
 

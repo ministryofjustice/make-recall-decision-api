@@ -580,8 +580,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = Mappa(
             category = 1,
             level = 1,
-            isNominal = null,
-            lastUpdated = null
+            lastUpdatedDate = null
           )
         )
       )
@@ -704,7 +703,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // given
       given(riskServiceMocked.getRisk(anyString())).willReturn(
         RiskResponse(
-          mappa = Mappa(category = 2, level = 2, isNominal = null, lastUpdated = null)
+          mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
         )
       )
       given(riskServiceMocked.fetchIndexOffenceDetails(anyString())).willReturn("Juicy details")
@@ -745,7 +744,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             name = "John Smith",
             firstName = "John",
             surname = "Smith",
-            mappa = Mappa(level = 2, category = 2, isNominal = null, lastUpdated = null),
+            mappa = Mappa(level = 2, category = 2, lastUpdatedDate = null),
             addresses = listOf(
               Address(
                 line1 = "Line 1 addressXYZ",

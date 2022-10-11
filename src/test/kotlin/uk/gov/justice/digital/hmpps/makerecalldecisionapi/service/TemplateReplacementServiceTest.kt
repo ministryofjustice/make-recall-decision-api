@@ -113,7 +113,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
             pncNumber = "2004/0712343H",
             mostRecentPrisonerNumber = "G12345",
             nomsNumber = "A1234CR",
-            mappa = Mappa(level = null, category = null, isNominal = null, lastUpdated = null),
+            mappa = Mappa(level = null, category = null, lastUpdatedDate = null),
             addresses = listOf(
               Address(
                 line1 = "Address line 1",
@@ -510,7 +510,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       sentenceExpiryDate = "07/09/2022",
       custodialTerm = "6 days",
       extendedTerm = "20 days",
-      mappa = Mappa(level = 1, category = 1, isNominal = null, lastUpdated = null),
+      mappa = Mappa(level = 1, category = 1, lastUpdatedDate = null),
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
       letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
       noFixedAbode = "",

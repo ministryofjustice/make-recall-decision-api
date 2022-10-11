@@ -48,9 +48,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCommunity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskInCustody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
@@ -102,15 +101,20 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(riskOfSeriousHarm.overallRisk).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskToChildren).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskToPublic).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskToKnownAdult).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskToStaff).isEqualTo("MEDIUM")
-      assertThat(riskOfSeriousHarm.lastUpdated).isEqualTo("2021-10-09")
-      assertThat(mappa.isNominal).isTrue() // TODO how is this derived?
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPublic).isEqualTo("HIGH")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToKnownAdult).isEqualTo("HIGH")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToStaff).isEqualTo("MEDIUM")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPrisoners).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToChildren).isEqualTo("LOW")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPublic).isEqualTo("LOW")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToKnownAdult).isEqualTo("HIGH")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToStaff).isEqualTo("VERY_HIGH")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
-      assertThat(mappa.lastUpdated).isEqualTo("10 May 2021")
+      assertThat(mappa.lastUpdatedDate).isEqualTo("2021-05-10")
+      assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
       assertThat(response.roshSummary?.natureOfRisk).isEqualTo("The nature of the risk is X")
       assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
       assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
@@ -219,19 +223,19 @@ internal class RiskServiceTest : ServiceTestBase() {
               riskImminence = null,
               riskIncreaseFactors = null,
               riskMitigationFactors = null,
-              riskInCommunity = RiskInCommunity(
+              riskInCommunity = RiskScore(
                 veryHigh = null,
                 high = null,
                 medium = null,
                 low = null
               ),
-              riskInCustody = RiskInCustody(
+              riskInCustody = RiskScore(
                 veryHigh = null,
                 high = null,
                 medium = null,
                 low = null
               ),
-              assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
+              assessedOn = ("2022-10-09T08:26:31"),
               overallRiskLevel = null
             )
           }
@@ -299,15 +303,20 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("")
       assertThat(riskOfSeriousHarm.overallRisk).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskToChildren).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskToPublic).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskToKnownAdult).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskToStaff).isEqualTo("")
-      assertThat(riskOfSeriousHarm.lastUpdated).isEqualTo("2021-10-09")
-      assertThat(mappa.isNominal).isTrue() // TODO how is this derived?
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToChildren).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPublic).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToKnownAdult).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToStaff).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPrisoners).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToChildren).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPublic).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToKnownAdult).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToStaff).isEqualTo("")
+      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPrisoners).isEqualTo("")
       assertThat(mappa.level).isEqualTo(null)
-      assertThat(mappa.lastUpdated).isEqualTo("")
+      assertThat(mappa.lastUpdatedDate).isEqualTo("")
       assertThat(mappa.category).isNull()
+      assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
       assertThat(response.roshSummary?.natureOfRisk).isEqualTo("")
       assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("")
       assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("")
@@ -432,6 +441,18 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  @ParameterizedTest(name = "given call to mappa fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to maapa fails with given exception then set this in the error field response`(code: Int, expectedErrorCode: String) {
+    runTest {
+      given(communityApiClient.getAllMappaDetails(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.getMappa(crn)
+
+      assertThat(response.error).isEqualTo(expectedErrorCode)
+    }
+  }
+
   fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
   private val riskSummaryResponse = RiskSummaryResponse(
@@ -440,7 +461,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     riskImminence = "the risk is imminent and more probably in X situation",
     riskIncreaseFactors = "If offender in situation X the risk can be higher",
     riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
-    riskInCommunity = RiskInCommunity(
+    riskInCommunity = RiskScore(
       veryHigh = null,
       high = listOf(
         "Children",
@@ -448,9 +469,9 @@ internal class RiskServiceTest : ServiceTestBase() {
         "Known adult"
       ),
       medium = listOf("Staff"),
-      low = listOf("Prisoners")
+      low = null
     ),
-    riskInCustody = RiskInCustody(
+    riskInCustody = RiskScore(
       veryHigh = listOf(
         "Staff",
         "Prisoners"
@@ -462,7 +483,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         "Public"
       )
     ),
-    assessedOn = LocalDateTime.parse("2021-10-09T08:26:31.349"),
+    assessedOn = "2022-10-09T08:26:31",
     overallRiskLevel = "HIGH"
   )
 

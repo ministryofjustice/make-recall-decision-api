@@ -4,7 +4,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -41,8 +40,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
         .jsonPath("$.mappa.level").isEqualTo(null)
-        .jsonPath("$.mappa.isNominal").isEqualTo(true)
-        .jsonPath("$.mappa.lastUpdated").isEqualTo("")
+        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
         .jsonPath("$.mappa.category").isEqualTo(null)
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
@@ -76,8 +74,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
         .jsonPath("$.mappa.level").isEqualTo(null)
-        .jsonPath("$.mappa.isNominal").isEqualTo(true)
-        .jsonPath("$.mappa.lastUpdated").isEqualTo("")
+        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
         .jsonPath("$.mappa.category").isEqualTo(null)
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
@@ -113,15 +110,20 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff").isEqualTo("MEDIUM")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners").isEqualTo("")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren").isEqualTo("LOW")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic").isEqualTo("LOW")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff").isEqualTo("VERY_HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners").isEqualTo("VERY_HIGH")
         .jsonPath("$.mappa.level").isEqualTo(1)
-        .jsonPath("$.mappa.isNominal").isEqualTo(true)
-        .jsonPath("$.mappa.lastUpdated").isEqualTo("10 May 2021")
+        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo("2021-05-10")
         .jsonPath("$.mappa.category").isEqualTo("0")
+        .jsonPath("$.roshSummary.lastUpdatedDate").isEqualTo("2022-05-19T08:26:31.000Z")
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo("The nature of the risk is X")
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo("X, Y and Z are at risk")
         .jsonPath("$.roshSummary.riskIncreaseFactors")
@@ -175,16 +177,20 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToChildren").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToPublic").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToKnownAdult").isEqualTo("HIGH")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskToStaff").isEqualTo("MEDIUM")
-        .jsonPath("$.roshSummary.riskOfSeriousHarm.lastUpdated").isEqualTo("2022-05-19")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff").isEqualTo("MEDIUM")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners").isEqualTo("")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren").isEqualTo("LOW")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic").isEqualTo("LOW")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult").isEqualTo("HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff").isEqualTo("VERY_HIGH")
+        .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners").isEqualTo("VERY_HIGH")
         .jsonPath("$.mappa.level").isEqualTo(1)
-        .jsonPath("$.mappa.isNominal").isEqualTo(true)
-        .jsonPath("$.mappa.lastUpdated").isEqualTo("10 May 2021")
+        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo("2021-05-10")
         .jsonPath("$.mappa.category").isEqualTo("0")
+        .jsonPath("$.roshSummary.lastUpdatedDate").isEqualTo("2022-05-19T08:26:31.000Z")
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo("The nature of the risk is X")
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo("X, Y and Z are at risk")
         .jsonPath("$.roshSummary.riskIncreaseFactors")
@@ -337,7 +343,7 @@ class RiskControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout`() {
+  fun `Error message in mappa property given on Community API mappa timeout`() {
     runTest {
       userAccessAllowed(crn)
       roSHSummaryResponse(crn)
@@ -350,11 +356,10 @@ class RiskControllerTest(
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
-        .is5xxServerError
+        .isOk
         .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - mappa endpoint: [No response within $nDeliusTimeout seconds]")
+        .jsonPath("$.mappa.error")
+        .isEqualTo("TIMEOUT")
     }
   }
 }
