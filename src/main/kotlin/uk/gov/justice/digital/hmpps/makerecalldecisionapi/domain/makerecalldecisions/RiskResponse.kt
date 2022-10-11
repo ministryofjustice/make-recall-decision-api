@@ -50,63 +50,37 @@ data class Mappa(
 
 data class PredictorScores(
   val error: String? = EMPTY_STRING,
-  val current: TimelineDataPoint?,
-  val historical: List<TimelineDataPoint?>?
+  val current: PredictorScore?,
+  val historical: List<PredictorScore?>?
 )
 
-data class TimelineDataPoint(
+data class PredictorScore(
   val date: String?,
   val scores: Scores?
 )
 
 data class Scores(
   @JsonProperty("RSR")
-  val rsr: RSR?,
+  val rsr: LevelWithScore?,
   @JsonProperty("OSPC")
-  val ospc: OSPC?,
+  val ospc: LevelWithScore?,
   @JsonProperty("OSPI")
-  val ospi: OSPI?,
+  val ospi: LevelWithScore?,
   @JsonProperty("OGRS")
-  val ogrs: OGRS?,
+  val ogrs: LevelWithTwoYearScores?,
   @JsonProperty("OGP")
-  val ogp: OGP?,
+  val ogp: LevelWithTwoYearScores?,
   @JsonProperty("OVP")
-  val ovp: OVP?
+  val ovp: LevelWithTwoYearScores?
 )
 
-data class OGP(
+data class LevelWithScore(
   val level: String?,
   val type: String?,
-  val ogp1Year: String?,
-  val ogp2Year: String?
+  val score: String?
 )
 
-data class OVP(
-  val level: String?,
-  val type: String?,
-  val oneYear: String?,
-  val twoYears: String?
-)
-
-data class RSR(
-  val level: String?,
-  val score: String?,
-  val type: String?
-)
-
-data class OSPC(
-  val level: String?,
-  val score: String?,
-  val type: String?
-)
-
-data class OSPI(
-  val level: String?,
-  val score: String?,
-  val type: String?
-)
-
-data class OGRS(
+data class LevelWithTwoYearScores(
   val level: String?,
   val type: String?,
   val oneYear: String?,
