@@ -28,8 +28,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.9.4")
-  implementation("io.opentelemetry:opentelemetry-api:1.18.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.9.5")
+  implementation("io.opentelemetry:opentelemetry-api:1.19.0")
   implementation("joda-time:joda-time:2.11.2")
   implementation("com.deepoove:poi-tl:1.12.0")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -38,8 +38,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core:9.4.0")
   implementation("org.postgresql:postgresql:42.5.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.4.3")
-  implementation("io.sentry:sentry-logback:6.4.3")
+  implementation("io.sentry:sentry-spring-boot-starter:6.5.0")
+  implementation("io.sentry:sentry-logback:6.5.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
