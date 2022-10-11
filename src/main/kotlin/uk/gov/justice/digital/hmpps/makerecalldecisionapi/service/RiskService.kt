@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskPersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TimelineDataPoint
@@ -27,15 +28,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Convict
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 
 @Service
 internal class RiskService(
@@ -52,7 +51,7 @@ internal class RiskService(
     } else {
       val personalDetailsOverview = fetchPersonalDetails(crn)
       val roshSummary = getRoshSummary(crn)
-      val mappa = handleFetchMappaApiCall(crn)
+      val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
@@ -193,47 +192,40 @@ internal class RiskService(
     )
   }
 
-  private suspend fun handleFetchMappaApiCall(crn: String): Mappa? {
-    return try {
-      fetchMappa(crn)
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
-      Mappa(level = null, isNominal = true, lastUpdated = "", category = null)
-    } catch (e: WebClientResponseException) {
-      null
-    }
-  }
-
   private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
-    val overallRisk = riskSummaryResponse?.overallRiskLevel
     return RiskOfSeriousHarm(
-      overallRisk = overallRisk ?: "",
-      riskToChildren = getRiskLevel(riskSummaryResponse, "children") ?: "",
-      riskToPublic = getRiskLevel(riskSummaryResponse, "public") ?: "",
-      riskToKnownAdult = getRiskLevel(riskSummaryResponse, "known adult") ?: "",
-      riskToStaff = getRiskLevel(riskSummaryResponse, "staff") ?: "",
-      lastUpdated = riskSummaryResponse?.assessedOn?.toLocalDate()?.toString() ?: ""
+      overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
+      riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
+      riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity)
     )
   }
 
-  private fun getRiskLevel(riskSummaryResponse: RiskSummaryResponse?, key: String): String? {
+  private suspend fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo {
+    return RiskTo(
+      riskToChildren = getRiskLevel(riskScore, "children") ?: "",
+      riskToPublic = getRiskLevel(riskScore, "public") ?: "",
+      riskToKnownAdult = getRiskLevel(riskScore, "known adult") ?: "",
+      riskToStaff = getRiskLevel(riskScore, "staff") ?: "",
+      riskToPrisoners = getRiskLevel(riskScore, "prisoners") ?: "",
+    )
+  }
 
-    val veryHigh = riskSummaryResponse?.riskInCommunity?.veryHigh
+  private fun getRiskLevel(riskScore: RiskScore?, key: String): String? {
+
+    val veryHigh = riskScore?.veryHigh
       ?.firstOrNull { it?.lowercase() == key }
-    val high = riskSummaryResponse?.riskInCommunity?.high
+    val high = riskScore?.high
       ?.firstOrNull { it?.lowercase() == key }
-    val medium = riskSummaryResponse?.riskInCommunity?.medium
+    val medium = riskScore?.medium
       ?.firstOrNull { it?.lowercase() == key }
-    val low = riskSummaryResponse?.riskInCommunity?.low
+    val low = riskScore?.low
       ?.firstOrNull { it?.lowercase() == key }
 
     val risks = linkedMapOf<String?, String?>(
       "VERY_HIGH" to veryHigh, "HIGH" to high, "MEDIUM" to medium, "LOW" to low
     )
 
-    val highestRecordedRiskLevel = risks.asIterable().firstOrNull { it.value != null }?.key
-
-    return highestRecordedRiskLevel
+    return risks.asIterable().firstOrNull { it.value != null }?.key
   }
 
   private suspend fun fetchPersonalDetails(crn: String): RiskPersonalDetails {
@@ -254,22 +246,18 @@ internal class RiskService(
     )
   }
 
-  private suspend fun fetchMappa(crn: String): Mappa {
+  suspend fun getMappa(crn: String): Mappa {
     val mappaResponse = try {
       getValueAndHandleWrappedException(communityApiClient.getAllMappaDetails(crn))!!
-    } catch (e: WebClientResponseException.NotFound) {
-      log.info("No MAPPA details available for CRN: $crn - ${e.message}")
-      null
+    } catch (ex: Exception) {
+      return Mappa(error = extractErrorCode(ex, "mappa", crn))
     }
-    val reviewDate = mappaResponse?.reviewDate?.format(
-      DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-        .withLocale(Locale.UK)
-    )
+    val reviewDate = mappaResponse.reviewDate?.toString()
+
     return Mappa(
-      level = mappaResponse?.level,
-      isNominal = true,
-      lastUpdated = reviewDate ?: "",
-      category = mappaResponse?.category
+      level = mappaResponse.level,
+      lastUpdatedDate = reviewDate ?: "",
+      category = mappaResponse.category
     )
   }
 
@@ -288,7 +276,8 @@ internal class RiskService(
       whoIsAtRisk = riskSummaryResponse?.whoIsAtRisk ?: "",
       riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors ?: "",
       riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors ?: "",
-      riskImminence = riskSummaryResponse?.riskImminence ?: ""
+      riskImminence = riskSummaryResponse?.riskImminence ?: "",
+      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(riskSummaryResponse?.assessedOn)
     )
   }
 
