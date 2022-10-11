@@ -8,14 +8,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGP
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OGRS
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPC
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OSPI
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OVP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskPersonalDetails
@@ -23,7 +20,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TimelineDataPoint
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
@@ -150,39 +146,39 @@ internal class RiskService(
     )
   }
 
-  private fun createTimeLineDataPoint(riskScoreResponse: RiskScoreResponse?): TimelineDataPoint {
+  private fun createTimeLineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
     val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
     val osp = riskScoreResponse?.sexualPredictorScore
     val ogp = riskScoreResponse?.generalPredictorScore
     val ogrs = riskScoreResponse?.groupReconvictionScore
     val ovp = riskScoreResponse?.violencePredictorScore
-    return TimelineDataPoint(
+    return PredictorScore(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
       scores = Scores(
-        rsr = if (rsr == null) null else RSR(level = rsr.scoreLevel, score = rsr.percentageScore, type = "RSR"),
-        ospc = if (osp == null) null else OSPC(
+        rsr = if (rsr == null) null else LevelWithScore(level = rsr.scoreLevel, score = rsr.percentageScore, type = "RSR"),
+        ospc = if (osp == null) null else LevelWithScore(
           level = osp.ospContactScoreLevel,
           score = osp.ospContactPercentageScore,
           type = "OSP/C"
         ),
-        ospi = if (osp == null) null else OSPI(
+        ospi = if (osp == null) null else LevelWithScore(
           level = osp.ospIndecentScoreLevel,
           score = osp.ospIndecentPercentageScore,
           type = "OSP/I"
         ),
-        ogrs = if (ogrs == null) null else OGRS(
+        ogrs = if (ogrs == null) null else LevelWithTwoYearScores(
           level = ogrs.scoreLevel,
           oneYear = ogrs.oneYear,
           twoYears = ogrs.twoYears,
           type = "OGRS"
         ),
-        ogp = if (ogp == null) null else OGP(
+        ogp = if (ogp == null) null else LevelWithTwoYearScores(
           level = ogp.ogpRisk,
-          ogp1Year = ogp.ogp1Year,
-          ogp2Year = ogp.ogp2Year,
+          oneYear = ogp.ogp1Year,
+          twoYears = ogp.ogp2Year,
           type = "OGP"
         ),
-        ovp = if (ovp == null) null else OVP(
+        ovp = if (ovp == null) null else LevelWithTwoYearScores(
           level = ovp.ovpRisk,
           oneYear = ovp.oneYear,
           twoYears = ovp.twoYears,
