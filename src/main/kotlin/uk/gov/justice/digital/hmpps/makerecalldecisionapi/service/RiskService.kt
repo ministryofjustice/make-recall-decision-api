@@ -273,6 +273,10 @@ internal class RiskService(
       return RoshSummary(error = extractErrorCode(ex, "risk summary", crn))
     }
 
+    if (areAllRiskSummaryFieldsEmpty(riskSummaryResponse)) {
+      return RoshSummary(error = "NOT_FOUND")
+    }
+
     val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
 
     return RoshSummary(
@@ -284,6 +288,27 @@ internal class RiskService(
       riskImminence = riskSummaryResponse?.riskImminence ?: "",
       lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(riskSummaryResponse?.assessedOn)
     )
+  }
+
+  suspend fun areAllRiskSummaryFieldsEmpty(riskSummaryResponse: RiskSummaryResponse?): Boolean {
+    // There is an issue with the data getting returned by ARN for this. For some cases, it replies with a 200 and just returns an empty object for most fields.
+    // In this scenario, check all relevant fields are empty, and if so, return true. This should be followed up with ARN/OASys to understand why this is happening.
+    return (
+      riskSummaryResponse?.whoIsAtRisk == null &&
+        riskSummaryResponse?.natureOfRisk == null &&
+        riskSummaryResponse?.riskImminence == null &&
+        riskSummaryResponse?.riskIncreaseFactors == null &&
+        riskSummaryResponse?.riskMitigationFactors == null &&
+        riskSummaryResponse?.riskInCommunity?.veryHigh == null &&
+        riskSummaryResponse?.riskInCommunity?.high == null &&
+        riskSummaryResponse?.riskInCommunity?.medium == null &&
+        riskSummaryResponse?.riskInCommunity?.low == null &&
+        riskSummaryResponse?.riskInCustody?.veryHigh == null &&
+        riskSummaryResponse?.riskInCustody?.high == null &&
+        riskSummaryResponse?.riskInCustody?.medium == null &&
+        riskSummaryResponse?.riskInCustody?.low == null &&
+        riskSummaryResponse?.overallRiskLevel == null
+      )
   }
 
   suspend fun getLatestRiskManagementPlan(crn: String): RiskManagementPlan {

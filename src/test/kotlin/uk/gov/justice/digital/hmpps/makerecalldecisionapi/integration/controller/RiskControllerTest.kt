@@ -87,6 +87,30 @@ class RiskControllerTest(
   }
 
   @Test
+  fun `retrieves risk summary when RoSH summary has empty data`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      mappaDetailsResponse(crn)
+      allRiskScoresEmptyResponse(crn)
+      roSHSummaryNoDataResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
+    }
+  }
+
+  @Test
   fun `retrieves risk data when ARN Scores are null`() {
     runTest {
       userAccessAllowed(crn)

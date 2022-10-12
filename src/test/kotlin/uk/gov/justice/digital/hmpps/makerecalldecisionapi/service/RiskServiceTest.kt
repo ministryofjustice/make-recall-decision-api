@@ -355,7 +355,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getRisk(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val riskOfSeriousHarm = response.roshSummary?.riskOfSeriousHarm!!
       val mappa = response.mappa!!
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
@@ -367,26 +366,10 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("")
-      assertThat(riskOfSeriousHarm.overallRisk).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToChildren).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPublic).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToKnownAdult).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToStaff).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPrisoners).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToChildren).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPublic).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToKnownAdult).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToStaff).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPrisoners).isEqualTo("")
       assertThat(mappa.level).isEqualTo(null)
       assertThat(mappa.lastUpdatedDate).isEqualTo("")
       assertThat(mappa.category).isNull()
-      assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
-      assertThat(response.roshSummary?.natureOfRisk).isEqualTo("")
-      assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("")
-      assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("")
-      assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("")
-      assertThat(response.roshSummary?.riskImminence).isEqualTo("")
+      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
       assertThat(historicalScores?.get(0)?.date).isEqualTo("2018-09-12")
       assertThat(historicalScores?.get(0)?.scores?.rsr).isEqualTo(null)
       assertThat(historicalScores?.get(0)?.scores?.ospc).isEqualTo(null)
