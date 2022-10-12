@@ -55,6 +55,8 @@ class CaseOverviewControllerTest(
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
         .jsonPath("$.risk.riskManagementPlan.assessmentStatusComplete").isEqualTo(true)
+        .jsonPath("$.risk.riskManagementPlan.latestDateCompleted").isEqualTo("2022-10-07T14:20:27.000Z")
+        .jsonPath("$.risk.riskManagementPlan.initiationDate").isEqualTo("2022-10-02T14:20:27.000Z")
         .jsonPath("$.risk.riskManagementPlan.lastUpdatedDate").isEqualTo("2022-10-01T14:20:27.000Z")
         .jsonPath("$.risk.riskManagementPlan.contingencyPlans").isEqualTo("I am the contingency plan text")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
