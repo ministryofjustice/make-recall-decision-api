@@ -144,86 +144,45 @@ internal class RiskService(
     val historicalScores = riskScoresResponse.sortedBy { it.completedDate }.reversed()
 
     return PredictorScores(
-      current = createTimeLineDataPoint(latestScores),
-      historical = historicalScores.map { createTimeLineDataPoint(it) }
+      current = createTimelineDataPoint(latestScores),
+      historical = historicalScores.map { createTimelineDataPoint(it) }
     )
   }
 
-  private fun createTimeLineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
+  private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
     return PredictorScore(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
       scores = Scores(
         rsr = rsrLevelWithScore(riskScoreResponse),
-        ospc = ospcLevelWithScore(riskScoreResponse),
-        ospi = ospiLevelWithScore(riskScoreResponse),
-        ogrs = ogrsLevelWithTwoYearScores(riskScoreResponse),
-        ogp = ogpLevelWithTwoYearScores(riskScoreResponse),
-        ovp = ovpLevelWithTwoYearScores(riskScoreResponse)
+        ospc = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospContactScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospContactPercentageScore, "OSP/C"),
+        ospi = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospIndecentScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospIndecentPercentageScore, "OSP/I"),
+        ogrs = buildTwoYearScore(riskScoreResponse?.groupReconvictionScore?.scoreLevel, riskScoreResponse?.groupReconvictionScore?.oneYear, riskScoreResponse?.groupReconvictionScore?.twoYears, "OGRS"),
+        ogp = buildTwoYearScore(riskScoreResponse?.generalPredictorScore?.ogpRisk, riskScoreResponse?.generalPredictorScore?.ogp1Year, riskScoreResponse?.generalPredictorScore?.ogp2Year, "OGP"),
+        ovp = buildTwoYearScore(riskScoreResponse?.violencePredictorScore?.ovpRisk, riskScoreResponse?.violencePredictorScore?.oneYear, riskScoreResponse?.violencePredictorScore?.twoYears, "OVP"),
       )
     )
   }
 
-  private fun ovpLevelWithTwoYearScores(riskScoreResponse: RiskScoreResponse?): LevelWithTwoYearScores? {
-    val ovpScore = riskScoreResponse?.violencePredictorScore
-    val scoreEmpty =
-      ovpScore == null || ovpScore.ovpRisk == null && ovpScore.twoYears == null && ovpScore.oneYear == null
+  private fun buildTwoYearScore(level: String?, oneYear: String?, twoYears: String?, type: String?): LevelWithTwoYearScores? {
+    val scoreEmpty = level == null && twoYears == null && oneYear == null
     return if (scoreEmpty) null else LevelWithTwoYearScores(
-      level = ovpScore?.ovpRisk,
-      oneYear = ovpScore?.oneYear,
-      twoYears = ovpScore?.twoYears,
-      type = "OVP"
+      level = level,
+      oneYear = oneYear,
+      twoYears = twoYears,
+      type = type
     )
   }
 
-  private fun ogrsLevelWithTwoYearScores(riskScoreResponse: RiskScoreResponse?): LevelWithTwoYearScores? {
-    val ogrsScore = riskScoreResponse?.groupReconvictionScore
-    val scoreEmpty =
-      ogrsScore == null || ogrsScore.scoreLevel == null && ogrsScore.twoYears == null && ogrsScore.oneYear == null
-    return if (scoreEmpty) null else LevelWithTwoYearScores(
-      level = ogrsScore?.scoreLevel,
-      oneYear = ogrsScore?.oneYear,
-      twoYears = ogrsScore?.twoYears,
-      type = "OGRS"
-    )
-  }
-
-  private fun ogpLevelWithTwoYearScores(riskScoreResponse: RiskScoreResponse?): LevelWithTwoYearScores? {
-    val ogpScore = riskScoreResponse?.generalPredictorScore
-    val scoreEmpty =
-      ogpScore == null || ogpScore.ogp1Year == null && ogpScore.ogp2Year == null && ogpScore.ogpRisk == null
-    return if (scoreEmpty) null else LevelWithTwoYearScores(
-      level = ogpScore?.ogpRisk,
-      oneYear = ogpScore?.ogp1Year,
-      twoYears = ogpScore?.ogp2Year,
-      type = "OGP"
-    )
-  }
-
-  private fun ospiLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
-    val ospScore = riskScoreResponse?.sexualPredictorScore
-    val nullValuesInScore = ospScore?.ospIndecentScoreLevel == null && ospScore?.ospIndecentPercentageScore == null
+  private fun buildLevelWithScore(level: String?, percentageScore: String?, type: String?): LevelWithScore? {
+    val scoreIsNull = level == null && percentageScore == null
     val notApplicableWithZeroPercentScorePresent =
-      ospScore?.ospIndecentScoreLevel.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) &&
-        ospScore?.ospIndecentPercentageScore == "0"
-    val noOspiScore = ospScore == null || nullValuesInScore || notApplicableWithZeroPercentScorePresent
-    return if (noOspiScore) null else LevelWithScore(
-      level = ospScore?.ospIndecentScoreLevel,
-      score = ospScore?.ospIndecentPercentageScore,
-      type = "OSP/I"
-    )
-  }
+      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
+    val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
 
-  private fun ospcLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
-    val ospScore = riskScoreResponse?.sexualPredictorScore
-    val nullValuesInScore = ospScore?.ospContactScoreLevel == null && ospScore?.ospContactPercentageScore == null
-    val notApplicableWithZeroPercentScorePresent =
-      ospScore?.ospContactScoreLevel.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) &&
-        ospScore?.ospContactPercentageScore == "0"
-    val noOspcScore = ospScore == null || nullValuesInScore || notApplicableWithZeroPercentScorePresent
-    return if (noOspcScore) null else LevelWithScore(
-      level = ospScore?.ospContactScoreLevel,
-      score = ospScore?.ospContactPercentageScore,
-      type = "OSP/C"
+    return if (noScore) null else LevelWithScore(
+      level = level,
+      score = percentageScore,
+      type = type
     )
   }
 
@@ -231,7 +190,11 @@ internal class RiskService(
     val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
     val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
     return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) null
-    else LevelWithScore(level = rsr?.scoreLevel, score = rsr?.percentageScore, type = "RSR")
+    else LevelWithScore(
+      level = rsr?.scoreLevel,
+      score = rsr?.percentageScore,
+      type = "RSR"
+    )
   }
 
   private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
