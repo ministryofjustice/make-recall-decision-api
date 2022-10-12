@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
@@ -293,6 +294,16 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(roSHSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(roSHSummaryResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun roSHSummaryNoDataResponse(crn: String, delaySeconds: Long = 0) {
+    val roSHSummaryRequest =
+      request().withPath("/risks/crn/$crn/summary")
+
+    oasysARNApi.`when`(roSHSummaryRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(roSHSummaryNoDataResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
