@@ -54,7 +54,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.OSPC_SCORE_NOT_APPLICABLE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -305,10 +305,10 @@ internal class RiskServiceTest : ServiceTestBase() {
               currentRiskScoreResponseWithOptionalFields,
               historicalRiskScoreResponseWhereValuesNull.copy(
                 sexualPredictorScore = SexualPredictorScore(
-                  ospIndecentPercentageScore = OSPC_SCORE_NOT_APPLICABLE,
+                  ospIndecentPercentageScore = SCORE_NOT_APPLICABLE,
                   ospContactPercentageScore = "0",
                   ospIndecentScoreLevel = "0",
-                  ospContactScoreLevel = OSPC_SCORE_NOT_APPLICABLE
+                  ospContactScoreLevel = SCORE_NOT_APPLICABLE
                 )
               )
             )

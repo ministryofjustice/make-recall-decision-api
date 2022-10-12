@@ -29,7 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.OSPC_SCORE_NOT_APPLICABLE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -203,7 +203,7 @@ internal class RiskService(
     val ospScore = riskScoreResponse?.sexualPredictorScore
     val nullValuesInScore = ospScore?.ospIndecentScoreLevel == null && ospScore?.ospIndecentPercentageScore == null
     val notApplicableWithZeroPercentScorePresent =
-      ospScore?.ospIndecentScoreLevel.equals(OSPC_SCORE_NOT_APPLICABLE, ignoreCase = true) &&
+      ospScore?.ospIndecentScoreLevel.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) &&
         ospScore?.ospIndecentPercentageScore == "0"
     val noOspiScore = ospScore == null || nullValuesInScore || notApplicableWithZeroPercentScorePresent
     return if (noOspiScore) null else LevelWithScore(
@@ -217,7 +217,7 @@ internal class RiskService(
     val ospScore = riskScoreResponse?.sexualPredictorScore
     val nullValuesInScore = ospScore?.ospContactScoreLevel == null && ospScore?.ospContactPercentageScore == null
     val notApplicableWithZeroPercentScorePresent =
-      ospScore?.ospContactScoreLevel.equals(OSPC_SCORE_NOT_APPLICABLE, ignoreCase = true) &&
+      ospScore?.ospContactScoreLevel.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) &&
         ospScore?.ospContactPercentageScore == "0"
     val noOspcScore = ospScore == null || nullValuesInScore || notApplicableWithZeroPercentScorePresent
     return if (noOspcScore) null else LevelWithScore(
