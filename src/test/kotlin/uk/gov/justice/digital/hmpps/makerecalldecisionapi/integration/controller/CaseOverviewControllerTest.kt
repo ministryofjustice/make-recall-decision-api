@@ -68,6 +68,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
         .jsonPath("$.assessments.offenceCodesMatch").isEqualTo(true)
         .jsonPath("$.assessments.offenceDescription").isEqualTo("Juicy offence details.")
+        .jsonPath("$.assessments.error").isEqualTo(null)
     }
   }
 

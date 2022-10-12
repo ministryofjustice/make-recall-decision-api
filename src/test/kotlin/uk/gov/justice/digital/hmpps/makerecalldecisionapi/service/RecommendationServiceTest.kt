@@ -620,7 +620,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = null
         )
       )
-      given(riskServiceMocked.fetchAsessmentInfo(anyString())).willReturn(null)
+      given(riskServiceMocked.fetchAssessmentInfo(anyString())).willReturn(null)
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(
@@ -707,7 +707,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
         )
       )
-      given(riskServiceMocked.fetchAsessmentInfo(anyString())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
+      given(riskServiceMocked.fetchAssessmentInfo(anyString())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),

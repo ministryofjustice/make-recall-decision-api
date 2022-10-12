@@ -326,6 +326,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
       val riskFlags = response.risk!!.flags
+      val assessments = response.assessmentInfo
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
@@ -337,6 +338,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].offences!![0].description).isEqualTo("")
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(riskFlags[0]).isEqualTo("")
+      assertThat(assessments?.lastUpdatedDate).isEqualTo(null)
+      assertThat(assessments?.offenceCodesMatch).isEqualTo(false)
+      assertThat(assessments?.offenceDescription).isEqualTo(null)
+      assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(false)
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }

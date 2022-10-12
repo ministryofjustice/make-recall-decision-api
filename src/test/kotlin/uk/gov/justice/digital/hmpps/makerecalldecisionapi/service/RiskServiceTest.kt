@@ -248,7 +248,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchAsessmentInfo(crn)
+      val response = riskService.fetchAssessmentInfo(crn)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -560,6 +560,36 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.initiationDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.lastUpdatedDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.assessmentStatusComplete).isEqualTo(true)
+    }
+  }
+
+  @ParameterizedTest(name = "given call to fetch risk assessments fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to fetch risk assessments fails on call to community api with given exception then set this in the error field response`(
+    code: Int,
+    expectedErrorCode: String
+  ) {
+    runTest {
+      given(communityApiClient.getActiveConvictions(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.fetchAssessmentInfo(crn)
+
+      assertThat(response?.error).isEqualTo(expectedErrorCode)
+    }
+  }
+
+  @ParameterizedTest(name = "given call to fetch risk assessments fails with {1} exception then set this in the error field response")
+  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
+    code: Int,
+    expectedErrorCode: String
+  ) {
+    runTest {
+      given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+
+      val response = riskService.fetchAssessmentInfo(crn)
+
+      assertThat(response?.error).isEqualTo(expectedErrorCode)
     }
   }
 

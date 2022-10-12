@@ -1,8 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 data class AssessmentInfo(
-  val lastUpdatedDate: String?,
-  val offenceDataFromLatestCompleteAssessment: Boolean,
-  val offenceCodesMatch: Boolean,
-  val offenceDescription: String?
+  val error: String? = null,
+  val lastUpdatedDate: String? = null,
+  val offenceDataFromLatestCompleteAssessment: Boolean? = null,
+  val offenceCodesMatch: Boolean? = null,
+  val offenceDescription: String? = null
 )

@@ -29,7 +29,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.oaSysUtcDateTimeFormatCorrecter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
@@ -77,30 +76,44 @@ internal class RiskService(
     return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
-  suspend fun fetchAsessmentInfo(crn: String): AssessmentInfo? {
-    val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
-    val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment = assessmentsResponse.assessments
-      ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-      ?.reversed()
-      ?.firstOrNull()
-    val oasysAssessmentCompleted =
+  suspend fun fetchAssessmentInfo(crn: String): AssessmentInfo? {
+    val activeConvictionsFromDelius = try {
+      getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
+    } catch (ex: Exception) {
+      return AssessmentInfo(error = extractErrorCode(ex, "convictions", crn))
+    }
+    val assessmentsResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getAssessments(crn))!!
+    } catch (ex: Exception) {
+      log.info("No assessments available for CRN: $crn - ${ex.message}")
+      return AssessmentInfo(error = extractErrorCode(ex, "risk assessments", crn))
+    }
+    val latestAssessment = getLatestAssessment(assessmentsResponse)
+    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+    val mainActiveCustodialOffenceFromLatestCompleteAssessment = getMainActiveCustodialOffenceFromLatestCompleteAssessment(activeConvictionsFromDelius, oasysAssessmentCompleted, latestAssessment)
+
+    return buildAssessmentInfo(
+      mainActiveCustodialOffenceFromLatestCompleteAssessment,
+      assessmentsResponse,
+      latestAssessment
+    )
+  }
+
+  private fun buildAssessmentInfo(
+    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
+    assessmentsResponse: AssessmentsResponse,
+    latestAssessment: Assessment?
+  ): AssessmentInfo {
+    val offenceCodesMatch = mainActiveCustodialOffenceFromLatestCompleteAssessment?.any {
+      currentOffenceCodesMatch(
+        getLatestAssessment(assessmentsResponse), it
+      )
+    }
+    val latestCompleteAssessment =
       latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
-    val mainActiveCustodialOffenceFromLatestCompleteAssessment = activeConvictionsFromDelius
-      ?.filter { oasysAssessmentCompleted }
-      ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
-      ?.filter { it.isCustodial && it.active == true }
-      ?.flatMap(this::extractMainOffences)
-      ?.filter { datesMatch(latestAssessment, it) }
-    val offenceCodesMatch =
-      mainActiveCustodialOffenceFromLatestCompleteAssessment?.any { currentOffenceCodesMatch(latestAssessment, it) }
-    val latestCompleteAssessment = oasysAssessmentCompleted
-    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { oaSysUtcDateTimeFormatCorrecter(it) }
-    val offenceDescription = mainActiveCustodialOffenceFromLatestCompleteAssessment
-      ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
-      ?.filter { isLatestAssessment(latestAssessment) }
-      ?.map { latestAssessment?.offence }
-      ?.firstOrNull()
+    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
+    val offenceDescription =
+      getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestAssessment)
 
     return AssessmentInfo(
       offenceDescription = offenceDescription,
@@ -109,6 +122,32 @@ internal class RiskService(
       offenceDataFromLatestCompleteAssessment = latestCompleteAssessment
     )
   }
+
+  private fun getOffenceDescription(
+    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
+    latestAssessment: Assessment?
+  ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
+    ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
+    ?.filter { isLatestAssessment(latestAssessment) }
+    ?.map { latestAssessment?.offence }
+    ?.firstOrNull()
+
+  private fun getMainActiveCustodialOffenceFromLatestCompleteAssessment(
+    activeConvictionsFromDelius: List<Conviction>?,
+    oasysAssessmentCompleted: Boolean,
+    latestAssessment: Assessment?
+  ) = activeConvictionsFromDelius
+    ?.filter { oasysAssessmentCompleted }
+    ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
+    ?.filter { it.isCustodial && it.active == true }
+    ?.flatMap(this::extractMainOffences)
+    ?.filter { datesMatch(latestAssessment, it) }
+
+  private fun getLatestAssessment(assessmentsResponse: AssessmentsResponse) =
+    assessmentsResponse.assessments
+      ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+      ?.reversed()
+      ?.firstOrNull()
 
   private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
     activeConvictionsFromDelius.count { it.isCustodial } == 1
