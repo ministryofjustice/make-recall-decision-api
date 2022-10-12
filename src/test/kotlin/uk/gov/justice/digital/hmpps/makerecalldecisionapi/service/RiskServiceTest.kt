@@ -382,6 +382,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getLatestRiskManagementPlan(crn)
 
       assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
+      assertThat(response.latestDateCompleted).isEqualTo("2022-10-07T14:20:27.000Z")
+      assertThat(response.initiationDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")
       assertThat(response.assessmentStatusComplete).isEqualTo(assessmentStatusComplete)
     }
@@ -400,6 +402,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getLatestRiskManagementPlan(crn)
 
       assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
+      assertThat(response.latestDateCompleted).isEqualTo("2022-10-07T14:20:27.000Z")
+      assertThat(response.initiationDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.lastUpdatedDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.assessmentStatusComplete).isEqualTo(true)
     }

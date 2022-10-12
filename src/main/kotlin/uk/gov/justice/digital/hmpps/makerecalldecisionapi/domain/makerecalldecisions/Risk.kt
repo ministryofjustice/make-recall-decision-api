@@ -8,6 +8,8 @@ data class Risk(
 data class RiskManagementPlan(
   val assessmentStatusComplete: Boolean? = null,
   val lastUpdatedDate: String? = null,
+  val latestDateCompleted: String? = null,
+  val initiationDate: String? = null,
   val contingencyPlans: String? = null,
   val error: String? = null
 )
