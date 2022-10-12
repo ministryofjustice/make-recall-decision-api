@@ -291,6 +291,8 @@ internal class RiskService(
 
     return RiskManagementPlan(
       assessmentStatusComplete = assessmentStatusComplete,
+      latestDateCompleted = convertUtcDateTimeStringToIso8601Date(latestPlan?.latestCompleteDate),
+      initiationDate = convertUtcDateTimeStringToIso8601Date(latestPlan?.initiationDate),
       lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(lastUpdatedDate),
       contingencyPlans = latestPlan?.contingencyPlans
     )
