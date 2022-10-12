@@ -281,11 +281,11 @@ internal class RiskService(
 
     return RoshSummary(
       riskOfSeriousHarm = riskOfSeriousHarm,
-      natureOfRisk = riskSummaryResponse?.natureOfRisk ?: "",
-      whoIsAtRisk = riskSummaryResponse?.whoIsAtRisk ?: "",
-      riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors ?: "",
-      riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors ?: "",
-      riskImminence = riskSummaryResponse?.riskImminence ?: "",
+      natureOfRisk = riskSummaryResponse?.natureOfRisk,
+      whoIsAtRisk = riskSummaryResponse?.whoIsAtRisk,
+      riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors,
+      riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors,
+      riskImminence = riskSummaryResponse?.riskImminence,
       lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(riskSummaryResponse?.assessedOn)
     )
   }
