@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -65,7 +66,8 @@ internal class RiskService(
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment =
-      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+      assessmentsResponse.assessments?.sortedBy { LocalDateTime.parse(it.initiationDate).toLocalDate() }?.reversed()
+        ?.firstOrNull()
     return getStatusFromSuperStatus(latestAssessment?.superStatus)
   }
 
@@ -77,7 +79,8 @@ internal class RiskService(
     val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment =
-      assessmentsResponse.assessments?.maxByOrNull { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+      assessmentsResponse.assessments?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }?.reversed()
+        ?.firstOrNull()
     val oasysAssessmentCompleted =
       latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
 
@@ -137,54 +140,60 @@ internal class RiskService(
         historical = null
       )
     }
-    val latestScores = riskScoresResponse.maxByOrNull { LocalDateTime.parse(it.completedDate) }
-    val historicalScores = riskScoresResponse.filter { it.completedDate != latestScores?.completedDate }
+    val latestScores = riskScoresResponse.sortedBy { LocalDateTime.parse(it.completedDate) }.reversed().firstOrNull()
+    val historicalScores = riskScoresResponse.sortedBy { it.completedDate }.reversed()
 
     return PredictorScores(
-      current = createTimeLineDataPoint(latestScores),
-      historical = historicalScores.map { createTimeLineDataPoint(it) }
+      current = createTimelineDataPoint(latestScores),
+      historical = historicalScores.map { createTimelineDataPoint(it) }
     )
   }
 
-  private fun createTimeLineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
-    val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
-    val osp = riskScoreResponse?.sexualPredictorScore
-    val ogp = riskScoreResponse?.generalPredictorScore
-    val ogrs = riskScoreResponse?.groupReconvictionScore
-    val ovp = riskScoreResponse?.violencePredictorScore
+  private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
     return PredictorScore(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
       scores = Scores(
-        rsr = if (rsr == null) null else LevelWithScore(level = rsr.scoreLevel, score = rsr.percentageScore, type = "RSR"),
-        ospc = if (osp == null) null else LevelWithScore(
-          level = osp.ospContactScoreLevel,
-          score = osp.ospContactPercentageScore,
-          type = "OSP/C"
-        ),
-        ospi = if (osp == null) null else LevelWithScore(
-          level = osp.ospIndecentScoreLevel,
-          score = osp.ospIndecentPercentageScore,
-          type = "OSP/I"
-        ),
-        ogrs = if (ogrs == null) null else LevelWithTwoYearScores(
-          level = ogrs.scoreLevel,
-          oneYear = ogrs.oneYear,
-          twoYears = ogrs.twoYears,
-          type = "OGRS"
-        ),
-        ogp = if (ogp == null) null else LevelWithTwoYearScores(
-          level = ogp.ogpRisk,
-          oneYear = ogp.ogp1Year,
-          twoYears = ogp.ogp2Year,
-          type = "OGP"
-        ),
-        ovp = if (ovp == null) null else LevelWithTwoYearScores(
-          level = ovp.ovpRisk,
-          oneYear = ovp.oneYear,
-          twoYears = ovp.twoYears,
-          type = "OVP"
-        )
+        rsr = rsrLevelWithScore(riskScoreResponse),
+        ospc = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospContactScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospContactPercentageScore, "OSP/C"),
+        ospi = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospIndecentScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospIndecentPercentageScore, "OSP/I"),
+        ogrs = buildTwoYearScore(riskScoreResponse?.groupReconvictionScore?.scoreLevel, riskScoreResponse?.groupReconvictionScore?.oneYear, riskScoreResponse?.groupReconvictionScore?.twoYears, "OGRS"),
+        ogp = buildTwoYearScore(riskScoreResponse?.generalPredictorScore?.ogpRisk, riskScoreResponse?.generalPredictorScore?.ogp1Year, riskScoreResponse?.generalPredictorScore?.ogp2Year, "OGP"),
+        ovp = buildTwoYearScore(riskScoreResponse?.violencePredictorScore?.ovpRisk, riskScoreResponse?.violencePredictorScore?.oneYear, riskScoreResponse?.violencePredictorScore?.twoYears, "OVP"),
       )
+    )
+  }
+
+  private fun buildTwoYearScore(level: String?, oneYear: String?, twoYears: String?, type: String?): LevelWithTwoYearScores? {
+    val scoreEmpty = level == null && twoYears == null && oneYear == null
+    return if (scoreEmpty) null else LevelWithTwoYearScores(
+      level = level,
+      oneYear = oneYear,
+      twoYears = twoYears,
+      type = type
+    )
+  }
+
+  private fun buildLevelWithScore(level: String?, percentageScore: String?, type: String?): LevelWithScore? {
+    val scoreIsNull = level == null && percentageScore == null
+    val notApplicableWithZeroPercentScorePresent =
+      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
+    val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
+
+    return if (noScore) null else LevelWithScore(
+      level = level,
+      score = percentageScore,
+      type = type
+    )
+  }
+
+  private fun rsrLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
+    val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
+    val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
+    return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) null
+    else LevelWithScore(
+      level = rsr?.scoreLevel,
+      score = rsr?.percentageScore,
+      type = "RSR"
     )
   }
 
@@ -285,7 +294,9 @@ internal class RiskService(
     }
 
     val latestPlan =
-      riskManagementResponse.riskManagementPlan?.maxByOrNull { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+      riskManagementResponse.riskManagementPlan?.sortedBy { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+        ?.reversed()
+        ?.get(0)
     val assessmentStatusComplete = getStatusFromSuperStatus(latestPlan?.superStatus) == COMPLETE.name
     val lastUpdatedDate = latestPlan?.dateCompleted ?: latestPlan?.initiationDate
 
