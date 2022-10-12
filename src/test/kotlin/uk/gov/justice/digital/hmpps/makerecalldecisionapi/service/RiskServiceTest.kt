@@ -271,7 +271,7 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-      communityApiMocksWithAllFieldsEmpty()
+      apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
       val historicalScores = response.predictorScores?.historical
@@ -287,6 +287,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ospi).isEqualTo(null)
       assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
+      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
 
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
@@ -314,7 +315,7 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-      communityApiMocksWithAllFieldsEmpty()
+      apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
       val historicalScores = response.predictorScores?.historical
@@ -350,7 +351,7 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-      communityApiMocksWithAllFieldsEmpty()
+      apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
 
@@ -388,7 +389,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
-  private fun communityApiMocksWithAllFieldsEmpty() {
+  private fun apiMocksWithAllFieldsEmpty() {
     given(arnApiClient.getAssessments(anyString()))
       .willReturn(
         Mono.fromCallable {
