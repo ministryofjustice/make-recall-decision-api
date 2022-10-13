@@ -23,6 +23,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
+      oasysAssessmentsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -63,6 +64,11 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.assessments.lastUpdatedDate").isEqualTo("2022-04-24T15:00:08.000Z")
+        .jsonPath("$.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
+        .jsonPath("$.assessments.offenceCodesMatch").isEqualTo(true)
+        .jsonPath("$.assessments.offenceDescription").isEqualTo("Juicy offence details.")
+        .jsonPath("$.assessments.error").isEqualTo(null)
     }
   }
 
