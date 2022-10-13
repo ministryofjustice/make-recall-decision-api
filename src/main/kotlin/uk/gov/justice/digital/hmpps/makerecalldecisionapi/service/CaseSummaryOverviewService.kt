@@ -38,9 +38,8 @@ internal class CaseSummaryOverviewService(
         personalDetailsOverview = personalDetailsOverview,
         convictions = convictionService.buildConvictionResponseForOverview(crn),
         releaseSummary = releaseSummary,
-        risk = Risk(flags = riskFlags, riskManagementPlan = riskManagementPlan),
-        activeRecommendation = recommendationDetails,
-        assessmentInfo = assessmentInfo
+        risk = Risk(flags = riskFlags, riskManagementPlan = riskManagementPlan, assessmentInfo = assessmentInfo),
+        activeRecommendation = recommendationDetails
       )
     }
   }
