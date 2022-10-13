@@ -310,11 +310,11 @@ internal class RiskService(
     } catch (ex: Exception) {
       return Mappa(error = extractErrorCode(ex, "mappa", crn))
     }
-    val reviewDate = mappaResponse.reviewDate?.toString()
+    val startDate = mappaResponse.startDate?.toString()
 
     return Mappa(
       level = mappaResponse.level,
-      lastUpdatedDate = reviewDate ?: "",
+      lastUpdatedDate = startDate ?: "",
       category = mappaResponse.category
     )
   }
