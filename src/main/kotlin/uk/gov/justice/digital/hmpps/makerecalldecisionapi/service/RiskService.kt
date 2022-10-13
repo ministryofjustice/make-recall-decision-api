@@ -29,7 +29,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.oaSysUtcDateTimeFormatCorrecter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
@@ -112,7 +111,7 @@ internal class RiskService(
     }
     val latestCompleteAssessment =
       latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
-    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { oaSysUtcDateTimeFormatCorrecter(it) }
+    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
     val offenceDescription =
       getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestAssessment)
 
@@ -340,7 +339,7 @@ internal class RiskService(
       riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors,
       riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors,
       riskImminence = riskSummaryResponse?.riskImminence,
-      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(riskSummaryResponse?.assessedOn)
+      lastUpdatedDate = riskSummaryResponse?.assessedOn?.let { convertUtcDateTimeStringToIso8601Date(it) }
     )
   }
 
@@ -381,9 +380,9 @@ internal class RiskService(
 
     return RiskManagementPlan(
       assessmentStatusComplete = assessmentStatusComplete,
-      latestDateCompleted = convertUtcDateTimeStringToIso8601Date(latestPlan?.latestCompleteDate),
-      initiationDate = convertUtcDateTimeStringToIso8601Date(latestPlan?.initiationDate),
-      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(lastUpdatedDate),
+      latestDateCompleted = latestPlan?.latestCompleteDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
+      initiationDate = latestPlan?.initiationDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
+      lastUpdatedDate = lastUpdatedDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
       contingencyPlans = latestPlan?.contingencyPlans
     )
   }

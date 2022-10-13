@@ -14,12 +14,6 @@ class DateTimeHelper {
 
   companion object Helper {
 
-    fun oaSysUtcDateTimeFormatCorrecter(input: String): String {
-      val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
-      val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
-      return offsetDateTime.format(formatter)
-    }
-
     fun nowDate(): String {
       val formatter = DateTimeFormat.forPattern("ddMMyyyy")
       return formatter.print(DateTime.now()).toString()
@@ -52,14 +46,10 @@ class DateTimeHelper {
       return Pair(dateTime?.format(formatterDate), dateTime?.format(formatterTime))
     }
 
-    fun convertUtcDateTimeStringToIso8601Date(utcDateTime: String?): String? {
-      return if (utcDateTime != null) {
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val localDateTime = LocalDateTime.parse(utcDateTime, inputFormatter)
-        val outputFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX")
-
-        localDateTime.atOffset(ZoneOffset.UTC).format(outputFormatter)
-      } else null
+    fun convertUtcDateTimeStringToIso8601Date(input: String): String? {
+      val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
+      val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
+      return offsetDateTime.format(formatter)
     }
   }
 }
