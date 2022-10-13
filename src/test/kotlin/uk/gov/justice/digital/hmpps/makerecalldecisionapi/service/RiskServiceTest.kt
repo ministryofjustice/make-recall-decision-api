@@ -126,7 +126,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(riskOfSeriousHarm.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
-      assertThat(mappa.lastUpdatedDate).isEqualTo("2021-05-10")
+      assertThat(mappa.lastUpdatedDate).isEqualTo("2021-02-10")
       assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
       assertThat(response.roshSummary?.natureOfRisk).isEqualTo("The nature of the risk is X")
       assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
@@ -470,7 +470,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     given(communityApiClient.getAllMappaDetails(anyString()))
       .willReturn(
         Mono.fromCallable {
-          mappaResponse.copy(level = null, levelDescription = null, reviewDate = null, category = null)
+          mappaResponse.copy(level = null, levelDescription = null, reviewDate = null, startDate = null, category = null)
         }
       )
   }
