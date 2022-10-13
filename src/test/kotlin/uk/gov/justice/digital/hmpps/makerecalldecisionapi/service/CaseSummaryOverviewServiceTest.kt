@@ -28,6 +28,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -38,25 +41,46 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    caseSummaryOverviewService = CaseSummaryOverviewService(communityApiClient, riskService, personDetailsService, userAccessValidator, convictionService, recommendationService)
+    caseSummaryOverviewService = CaseSummaryOverviewService(
+      communityApiClient,
+      riskService,
+      personDetailsService,
+      userAccessValidator,
+      convictionService,
+      recommendationService
+    )
 
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+    given(communityApiClient.getUserAccess(anyString())).willReturn(
+      Mono.fromCallable {
+        userAccessResponse(
+          false,
+          false
+        )
+      }
+    )
   }
 
   @Test
   fun `retrieves case summary when convictions and offences available`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.fromCallable { registrations })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
+      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+        Mono.fromCallable {
+          listOf(
+            custodialConvictionResponse()
+          )
+        }
+      )
+      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.fromCallable { registrations })
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn, "COMPLETE"
+          )
+        }
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -64,6 +88,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val convictions = response.convictions
       val riskFlags = response.risk!!.flags
       val riskManagementPlan = response.risk!!.riskManagementPlan
+      val assessments = response.assessmentInfo
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
@@ -85,7 +110,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(riskManagementPlan!!.assessmentStatusComplete).isEqualTo(true)
       assertThat(riskManagementPlan.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")
       assertThat(riskManagementPlan.contingencyPlans).isEqualTo("I am the contingency plan text")
-
+      assertThat(assessments?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(assessments?.offenceCodesMatch).isEqualTo(true)
+      assertThat(assessments?.offenceDescription).isEqualTo("Juicy offence details.")
       assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
@@ -94,16 +122,24 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves case summary when conviction is non custodial`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.fromCallable { registrations })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
+      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+        Mono.fromCallable {
+          listOf(
+            nonCustodialConvictionResponse()
+          )
+        }
+      )
+      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.fromCallable { registrations })
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn, "COMPLETE"
+          )
+        }
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -115,16 +151,18 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves case summary when no convictions available`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { emptyList() })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.empty())
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
+      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getActiveConvictions(anyString())).willReturn(Mono.fromCallable { emptyList() })
+      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.empty())
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn, "COMPLETE"
+          )
+        }
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -173,79 +211,113 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary with optional fields missing`() {
     runTest {
       val crn = "my wonderful crn"
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            allOffenderDetailsResponse().copy(
-              firstName = null,
-              surname = null,
-              contactDetails = ContactDetails(
-                addresses = listOf(
-                  Address(
-                    postcode = null,
-                    district = null,
-                    addressNumber = null,
-                    buildingName = null,
-                    town = null,
-                    county = null, status = AddressStatus(code = "ABC123", description = "Main")
+      given(arnApiClient.getAssessments(anyString())).willReturn(
+        Mono.fromCallable {
+          AssessmentsResponse(
+            crn = crn, limitedAccessOffender = null,
+            assessments = listOf(
+              Assessment(
+                offenceDetails = listOf(
+                  AssessmentOffenceDetail(
+                    type = null, offenceCode = null, offenceSubCode = null, offenceDate = null
+                  ),
+                  AssessmentOffenceDetail(
+                    type = null, offenceCode = null, offenceSubCode = null, offenceDate = null
                   )
-                )
-              ),
-              offenderManagers = listOf(
-                OffenderManager(
-                  active = true,
-                  probationArea = null,
-                  trustOfficer = TrustOfficer(forenames = null, surname = null),
-                  staff = Staff(forenames = null, surname = null),
-                  providerEmployee = ProviderEmployee(forenames = null, surname = null),
-                  team = Team(
-                    telephone = null,
-                    emailAddress = null,
-                    code = null,
-                    description = null,
-                    localDeliveryUnit = null
-                  )
-                )
-              )
-            )
-          }
-        )
-      given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            listOf(
-              custodialConvictionResponse().copy(
-                offences = listOf(
-                  Offence(
-                    mainOffence = true,
-                    offenceDate = null,
-                    detail = OffenceDetail(
-                      mainCategoryDescription = null, subCategoryDescription = null,
-                      description = null,
-                      code = null,
-                    )
-                  )
-                )
-              )
-            )
-          }
-        )
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            registrations.copy(
-              registrations = listOf(
-                Registration(
-                  active = true,
-                  type = Type(code = null, description = null)
                 ),
+                assessmentStatus = null,
+                superStatus = null,
+                dateCompleted = null,
+                initiationDate = null,
+                laterWIPAssessmentExists = null,
+                laterSignLockAssessmentExists = null,
+                laterPartCompUnsignedAssessmentExists = null,
+                laterPartCompSignedAssessmentExists = null,
+                laterCompleteAssessmentExists = null,
+                offence = null,
+                keyConsiderationsCurrentSituation = null,
+                furtherConsiderationsCurrentSituation = null,
+                supervision = null,
+                monitoringAndControl = null,
+                interventionsAndTreatment = null,
+                victimSafetyPlanning = null,
+                contingencyPlans = null
               )
             )
-          }
-        )
+          )
+        }
+      )
 
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(
+        Mono.fromCallable {
+          allOffenderDetailsResponse().copy(
+            firstName = null, surname = null,
+            contactDetails = ContactDetails(
+              addresses = listOf(
+                Address(
+                  postcode = null,
+                  district = null,
+                  addressNumber = null,
+                  buildingName = null,
+                  town = null,
+                  county = null,
+                  status = AddressStatus(code = "ABC123", description = "Main")
+                )
+              )
+            ),
+            offenderManagers = listOf(
+              OffenderManager(
+                active = true,
+                probationArea = null,
+                trustOfficer = TrustOfficer(forenames = null, surname = null),
+                staff = Staff(forenames = null, surname = null),
+                providerEmployee = ProviderEmployee(forenames = null, surname = null),
+                team = Team(
+                  telephone = null, emailAddress = null, code = null, description = null, localDeliveryUnit = null
+                )
+              )
+            )
+          )
+        }
+      )
+      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+        Mono.fromCallable {
+          listOf(
+            custodialConvictionResponse().copy(
+              offences = listOf(
+                Offence(
+                  mainOffence = true,
+                  offenceDate = null,
+                  detail = OffenceDetail(
+                    mainCategoryDescription = null, subCategoryDescription = null,
+                    description = null,
+                    code = null,
+                  )
+                )
+              )
+            )
+          )
+        }
+      )
+      given(communityApiClient.getRegistrations(anyString())).willReturn(
+        Mono.fromCallable {
+          registrations.copy(
+            registrations = listOf(
+              Registration(
+                active = true, type = Type(code = null, description = null)
+              ),
+            )
+          )
+        }
+      )
+
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn, "COMPLETE"
+          )
+        }
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -254,6 +326,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
       val riskFlags = response.risk!!.flags
+      val assessments = response.assessmentInfo
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
@@ -265,6 +338,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].offences!![0].description).isEqualTo("")
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(riskFlags[0]).isEqualTo("")
+      assertThat(assessments?.lastUpdatedDate).isEqualTo(null)
+      assertThat(assessments?.offenceCodesMatch).isEqualTo(false)
+      assertThat(assessments?.offenceDescription).isEqualTo(null)
+      assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(false)
       then(communityApiClient).should().getAllOffenderDetails(crn)
     }
   }
@@ -274,12 +351,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   private val registrations = RegistrationsResponse(
     registrations = listOf(
       Registration(
-        active = true,
-        type = Type(code = "ABC123", description = "Victim contact")
+        active = true, type = Type(code = "ABC123", description = "Victim contact")
       ),
       Registration(
-        active = false,
-        type = Type(code = "ABC124", description = "Mental health issues")
+        active = false, type = Type(code = "ABC124", description = "Mental health issues")
       )
     )
   )

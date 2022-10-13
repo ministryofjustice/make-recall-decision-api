@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
@@ -75,26 +76,78 @@ internal class RiskService(
     return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
-  suspend fun fetchIndexOffenceDetails(crn: String): String? {
-    val activeConvictionsFromDelius = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
-    val assessmentsResponse = fetchAssessments(crn)
-    val latestAssessment =
-      assessmentsResponse.assessments?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }?.reversed()
-        ?.firstOrNull()
-    val oasysAssessmentCompleted =
-      latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+  suspend fun fetchAssessmentInfo(crn: String): AssessmentInfo? {
+    val activeConvictionsFromDelius = try {
+      getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
+    } catch (ex: Exception) {
+      return AssessmentInfo(error = extractErrorCode(ex, "convictions", crn))
+    }
+    val assessmentsResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getAssessments(crn))!!
+    } catch (ex: Exception) {
+      log.info("No assessments available for CRN: $crn - ${ex.message}")
+      return AssessmentInfo(error = extractErrorCode(ex, "risk assessments", crn))
+    }
+    val latestAssessment = getLatestAssessment(assessmentsResponse)
+    val oasysAssessmentCompleted = latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+    val mainActiveCustodialOffenceFromLatestCompleteAssessment = getMainActiveCustodialOffenceFromLatestCompleteAssessment(activeConvictionsFromDelius, oasysAssessmentCompleted, latestAssessment)
 
-    return activeConvictionsFromDelius
-      ?.filter { oasysAssessmentCompleted }
-      ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
-      ?.filter { it.isCustodial && it.active == true }
-      ?.flatMap(this::extractMainOffences)
-      ?.filter { datesMatch(latestAssessment, it) }
-      ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
-      ?.filter { isLatestAssessment(latestAssessment) }
-      ?.map { latestAssessment?.offence }
-      ?.firstOrNull()
+    return buildAssessmentInfo(
+      mainActiveCustodialOffenceFromLatestCompleteAssessment,
+      assessmentsResponse,
+      latestAssessment
+    )
   }
+
+  private fun buildAssessmentInfo(
+    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
+    assessmentsResponse: AssessmentsResponse,
+    latestAssessment: Assessment?
+  ): AssessmentInfo {
+    val offenceCodesMatch = mainActiveCustodialOffenceFromLatestCompleteAssessment?.any {
+      currentOffenceCodesMatch(
+        getLatestAssessment(assessmentsResponse), it
+      )
+    }
+    val latestCompleteAssessment =
+      latestAssessment?.assessmentStatus == "COMPLETE" && latestAssessment.superStatus == "COMPLETE"
+    val lastUpdatedDate = latestAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
+    val offenceDescription =
+      getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestAssessment)
+
+    return AssessmentInfo(
+      offenceDescription = offenceDescription,
+      offenceCodesMatch = offenceCodesMatch == true,
+      lastUpdatedDate = lastUpdatedDate,
+      offenceDataFromLatestCompleteAssessment = latestCompleteAssessment
+    )
+  }
+
+  private fun getOffenceDescription(
+    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
+    latestAssessment: Assessment?
+  ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
+    ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
+    ?.filter { isLatestAssessment(latestAssessment) }
+    ?.map { latestAssessment?.offence }
+    ?.firstOrNull()
+
+  private fun getMainActiveCustodialOffenceFromLatestCompleteAssessment(
+    activeConvictionsFromDelius: List<Conviction>?,
+    oasysAssessmentCompleted: Boolean,
+    latestAssessment: Assessment?
+  ) = activeConvictionsFromDelius
+    ?.filter { oasysAssessmentCompleted }
+    ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
+    ?.filter { it.isCustodial && it.active == true }
+    ?.flatMap(this::extractMainOffences)
+    ?.filter { datesMatch(latestAssessment, it) }
+
+  private fun getLatestAssessment(assessmentsResponse: AssessmentsResponse) =
+    assessmentsResponse.assessments
+      ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
+      ?.reversed()
+      ?.firstOrNull()
 
   private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
     activeConvictionsFromDelius.count { it.isCustodial } == 1
@@ -286,7 +339,7 @@ internal class RiskService(
       riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors,
       riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors,
       riskImminence = riskSummaryResponse?.riskImminence,
-      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(riskSummaryResponse?.assessedOn)
+      lastUpdatedDate = riskSummaryResponse?.assessedOn?.let { convertUtcDateTimeStringToIso8601Date(it) }
     )
   }
 
@@ -327,9 +380,9 @@ internal class RiskService(
 
     return RiskManagementPlan(
       assessmentStatusComplete = assessmentStatusComplete,
-      latestDateCompleted = convertUtcDateTimeStringToIso8601Date(latestPlan?.latestCompleteDate),
-      initiationDate = convertUtcDateTimeStringToIso8601Date(latestPlan?.initiationDate),
-      lastUpdatedDate = convertUtcDateTimeStringToIso8601Date(lastUpdatedDate),
+      latestDateCompleted = latestPlan?.latestCompleteDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
+      initiationDate = latestPlan?.initiationDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
+      lastUpdatedDate = lastUpdatedDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
       contingencyPlans = latestPlan?.contingencyPlans
     )
   }

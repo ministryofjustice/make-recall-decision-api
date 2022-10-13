@@ -11,10 +11,4 @@ class DateTimeHelperTest {
     val result = convertUtcDateTimeStringToIso8601Date("2022-10-02T14:20:27")
     assertThat(result).isEqualTo("2022-10-02T14:20:27.000Z")
   }
-
-  @Test
-  fun `given empty string then return null`() {
-    val result = convertUtcDateTimeStringToIso8601Date(null)
-    assertThat(result).isEqualTo(null)
-  }
 }

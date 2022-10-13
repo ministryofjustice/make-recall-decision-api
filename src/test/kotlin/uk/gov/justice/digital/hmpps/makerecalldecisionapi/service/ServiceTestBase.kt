@@ -45,6 +45,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -98,6 +101,38 @@ internal abstract class ServiceTestBase {
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
+
+  fun assessmentResponse(crn: String): AssessmentsResponse {
+    return AssessmentsResponse(crn, false, listOf(assessment()))
+  }
+
+  fun assessment() = Assessment(
+    dateCompleted = "2022-08-26T15:00:08",
+    initiationDate = "2020-06-03T11:42:01",
+    assessmentStatus = "COMPLETE",
+    keyConsiderationsCurrentSituation = null,
+    furtherConsiderationsCurrentSituation = null,
+    supervision = null,
+    monitoringAndControl = null,
+    interventionsAndTreatment = null,
+    victimSafetyPlanning = null,
+    contingencyPlans = null,
+    offenceDetails = listOf(
+      AssessmentOffenceDetail(
+        type = "CURRENT",
+        offenceCode = "ABC123",
+        offenceSubCode = "",
+        offenceDate = "2022-08-26T12:00:00.000"
+      )
+    ),
+    offence = "Juicy offence details.",
+    laterCompleteAssessmentExists = false,
+    laterPartCompSignedAssessmentExists = false,
+    laterPartCompUnsignedAssessmentExists = false,
+    laterSignLockAssessmentExists = false,
+    laterWIPAssessmentExists = false,
+    superStatus = "COMPLETE"
+  )
 
   fun personDetailsResponse() = PersonDetailsResponse(
     personalDetailsOverview = PersonDetails(

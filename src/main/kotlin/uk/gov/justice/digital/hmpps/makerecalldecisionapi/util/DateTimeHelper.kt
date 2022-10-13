@@ -5,12 +5,15 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class DateTimeHelper {
 
   companion object Helper {
+
     fun nowDate(): String {
       val formatter = DateTimeFormat.forPattern("ddMMyyyy")
       return formatter.print(DateTime.now()).toString()
@@ -43,14 +46,10 @@ class DateTimeHelper {
       return Pair(dateTime?.format(formatterDate), dateTime?.format(formatterTime))
     }
 
-    fun convertUtcDateTimeStringToIso8601Date(utcDateTime: String?): String? {
-      return if (utcDateTime != null) {
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val localDateTime = LocalDateTime.parse(utcDateTime, inputFormatter)
-        val outputFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX")
-
-        localDateTime.atOffset(ZoneOffset.UTC).format(outputFormatter)
-      } else null
+    fun convertUtcDateTimeStringToIso8601Date(input: String): String? {
+      val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
+      val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
+      return offsetDateTime.format(formatter)
     }
   }
 }
