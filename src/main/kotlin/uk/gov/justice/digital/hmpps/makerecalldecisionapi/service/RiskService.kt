@@ -207,8 +207,8 @@ internal class RiskService(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
       scores = Scores(
         rsr = rsrLevelWithScore(riskScoreResponse),
-        ospc = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospContactScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospContactPercentageScore, "OSP/C"),
-        ospi = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospIndecentScoreLevel, riskScoreResponse?.sexualPredictorScore?.ospIndecentPercentageScore, "OSP/I"),
+        ospc = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospContactScoreLevel, null, "OSP/C"),
+        ospi = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospIndecentScoreLevel, null, "OSP/I"),
         ogrs = buildTwoYearScore(riskScoreResponse?.groupReconvictionScore?.scoreLevel, riskScoreResponse?.groupReconvictionScore?.oneYear, riskScoreResponse?.groupReconvictionScore?.twoYears, "OGRS"),
         ogp = buildTwoYearScore(riskScoreResponse?.generalPredictorScore?.ogpRisk, riskScoreResponse?.generalPredictorScore?.ogp1Year, riskScoreResponse?.generalPredictorScore?.ogp2Year, "OGP"),
         ovp = buildTwoYearScore(riskScoreResponse?.violencePredictorScore?.ovpRisk, riskScoreResponse?.violencePredictorScore?.oneYear, riskScoreResponse?.violencePredictorScore?.twoYears, "OVP"),
