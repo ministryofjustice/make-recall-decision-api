@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -239,16 +240,38 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments`() {
+  fun `retrieves assessments when hideOffenceDetailsWhenLaterCompleteAssessmentAvailable is true`() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { assessmentResponse(crn) })
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn)
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = true)
+
+      // then
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offenceCodesMatch).isEqualTo(true)
+      assertThat(response?.offenceDescription).isEqualTo(null)
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn)
+    }
+  }
+
+  @Test
+  fun `retrieves assessments hideOffenceDetailsWhenLaterCompleteAssessmentAvailable is false`() {
+    runTest {
+      // given
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
+      given(communityApiClient.getActiveConvictions(anyString()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
+
+      // when
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = false)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -556,7 +579,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getActiveConvictions(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn)
+      val response = riskService.fetchAssessmentInfo(crn, anyBoolean())
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }
@@ -571,7 +594,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn)
+      val response = riskService.fetchAssessmentInfo(crn, anyBoolean())
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }

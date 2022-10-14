@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
@@ -620,7 +621,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = null
         )
       )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString())).willReturn(null)
+      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(null)
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(
@@ -707,7 +708,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
         )
       )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
+      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),
