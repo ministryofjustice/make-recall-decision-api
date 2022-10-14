@@ -25,7 +25,7 @@ class OverviewTest() : FunctionalTest() {
   }
 }
 
-fun overviewExpectation() = """//TODO correct
+fun overviewExpectation() = """
 {
     "userAccessResponse": null,
     "personalDetailsOverview": {
