@@ -99,7 +99,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { assessmentResponse(crn) })
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment(), assessment().copy(dateCompleted = null))) })
 
       val response = riskService.getRisk(crn)
 

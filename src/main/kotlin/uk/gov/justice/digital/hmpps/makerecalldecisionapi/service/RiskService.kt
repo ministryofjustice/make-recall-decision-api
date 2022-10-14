@@ -145,6 +145,7 @@ internal class RiskService(
 
   private fun getLatestAssessment(assessmentsResponse: AssessmentsResponse) =
     assessmentsResponse.assessments
+      ?.filter { it.dateCompleted != null && it.dateCompleted.isNotEmpty() }
       ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
       ?.reversed()
       ?.firstOrNull()
