@@ -266,7 +266,23 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
+        .willReturn(
+          Mono.fromCallable {
+            AssessmentsResponse(
+              crn,
+              false,
+              listOf(
+                assessment().copy(laterCompleteAssessmentExists = true),
+                assessment().copy(
+                  laterCompleteAssessmentExists = true,
+                  dateCompleted = "2022-08-26T15:00:08",
+                  superStatus = "OPEN"
+                )
+              )
+            )
+          }
+        )
+
       given(communityApiClient.getActiveConvictions(anyString()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
