@@ -295,7 +295,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         )
 
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse(), convictionResponse()) })
 
       // when
       val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
