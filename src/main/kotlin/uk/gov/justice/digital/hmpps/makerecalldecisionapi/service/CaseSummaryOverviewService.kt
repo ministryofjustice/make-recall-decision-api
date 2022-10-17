@@ -30,7 +30,7 @@ internal class CaseSummaryOverviewService(
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
-      val assessmentInfo = riskService.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = false)
+      val assessmentInfo = riskService.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenNoMatch = false)
 
       val releaseSummary = getReleaseSummary(crn)
 
