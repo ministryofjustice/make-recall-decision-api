@@ -52,7 +52,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      val indexOffenceDetails = recommendationRequest.crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = true) }
+      val indexOffenceDetails = recommendationRequest.crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation =
         buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -264,7 +264,7 @@ internal class RecommendationService(
     val crn = recommendationEntity.data.crn
     val riskResponse = crn?.let { riskService?.getRisk(it) }
     val personDetails = crn?.let { personDetailsService.getPersonDetails(it) }
-    val indexOffenceDetails = crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = true) }
+    val indexOffenceDetails = crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
     val data = recommendationEntity.data
     val personOnProbation = data.personOnProbation
     return recommendationEntity.copy(

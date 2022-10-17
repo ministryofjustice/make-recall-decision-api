@@ -44,6 +44,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentenc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
@@ -240,7 +241,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenLaterCompleteAssessmentAvailable is true`() {
+  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is true`() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
@@ -249,7 +250,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = true)
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = true)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -262,7 +263,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments hideOffenceDetailsWhenLaterCompleteAssessmentAvailable is false`() {
+  fun `retrieves assessments hideOffenceDetailsWhenNoMatch is false`() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
@@ -272,7 +273,17 @@ internal class RiskServiceTest : ServiceTestBase() {
               crn,
               false,
               listOf(
-                assessment().copy(laterCompleteAssessmentExists = true),
+                assessment().copy(
+                  laterCompleteAssessmentExists = true,
+                  offenceDetails = listOf(
+                    AssessmentOffenceDetail(
+                      type = "CURRENT",
+                      offenceCode = "NO_MATCH",
+                      offenceSubCode = "",
+                      offenceDate = "2022-08-26T12:00:00.000"
+                    )
+                  )
+                ),
                 assessment().copy(
                   laterCompleteAssessmentExists = true,
                   dateCompleted = "2022-08-26T15:00:08",
@@ -287,12 +298,12 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = false)
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
-      assertThat(response?.offenceCodesMatch).isEqualTo(true)
+      assertThat(response?.offenceCodesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
