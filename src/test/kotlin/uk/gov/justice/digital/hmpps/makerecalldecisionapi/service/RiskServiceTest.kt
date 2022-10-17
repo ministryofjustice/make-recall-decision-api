@@ -379,7 +379,6 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
-  // TODO BS extra test for 'just' no active - also change code to flag mismatch
   @Test
   fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match because a later complete assessment exists and the dates and codes do not match`() {
     runTest {
