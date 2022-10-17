@@ -76,7 +76,7 @@ internal class RiskService(
     return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
-  suspend fun fetchAssessmentInfo(crn: String, hideOffenceDetailsWhenLaterCompleteAssessmentAvailable: Boolean): AssessmentInfo? {
+  suspend fun fetchAssessmentInfo(crn: String, hideOffenceDetailsWhenNoMatch: Boolean): AssessmentInfo? {
     val activeConvictionsFromDelius = try {
       getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
     } catch (ex: Exception) {
@@ -94,14 +94,14 @@ internal class RiskService(
     return buildAssessmentInfo(
       mainActiveCustodialOffenceFromLatestCompleteAssessment = mainActiveCustodialOffenceFromLatestCompleteAssessment,
       latestCompleteAssessment = latestCompleteAssessment,
-      hideOffenceDetailsWhenLaterCompleteAssessmentAvailable = hideOffenceDetailsWhenLaterCompleteAssessmentAvailable
+      hideOffenceDetailsWhenNoMatch = hideOffenceDetailsWhenNoMatch
     )
   }
 
   private fun buildAssessmentInfo(
     mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
     latestCompleteAssessment: Assessment?,
-    hideOffenceDetailsWhenLaterCompleteAssessmentAvailable: Boolean?
+    hideOffenceDetailsWhenNoMatch: Boolean?
   ): AssessmentInfo {
     val offenceCodesMatch = mainActiveCustodialOffenceFromLatestCompleteAssessment?.any {
       currentOffenceCodesMatch(
@@ -109,8 +109,8 @@ internal class RiskService(
       )
     }
     val lastUpdatedDate = latestCompleteAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
-    val offenceDescription = if (hideOffenceDetailsWhenLaterCompleteAssessmentAvailable == true) {
-      getOffenceDescriptionWhenNoLaterCompleteAssessmentAvailable(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
+    val offenceDescription = if (hideOffenceDetailsWhenNoMatch == true) {
+      getOffenceDescriptionWhenOffencesDoNotMatch(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
     } else getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
 
     return AssessmentInfo(
@@ -121,7 +121,7 @@ internal class RiskService(
     )
   }
 
-  private fun getOffenceDescriptionWhenNoLaterCompleteAssessmentAvailable(
+  private fun getOffenceDescriptionWhenOffencesDoNotMatch(
     mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
     latestAssessment: Assessment?
   ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
@@ -134,7 +134,6 @@ internal class RiskService(
     mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
     latestAssessment: Assessment?
   ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
-    ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
     ?.map { latestAssessment?.offence }
     ?.firstOrNull()
 
