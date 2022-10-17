@@ -202,22 +202,23 @@ internal class RiskService(
     val historicalScores = riskScoresResponse.sortedBy { it.completedDate }.reversed()
 
     return PredictorScores(
-      current = createTimelineDataPoint(latestScores),
-      historical = historicalScores.map { createTimelineDataPoint(it) }
+      current = latestScores?.let { createTimelineDataPoint(it) },
+      historical = historicalScores.mapNotNull { createTimelineDataPoint(it) }
     )
   }
 
-  private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse?): PredictorScore {
-    return PredictorScore(
+  private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse): PredictorScore? {
+    val scores = Scores(
+      rsr = rsrLevelWithScore(riskScoreResponse),
+      ospc = buildLevelWithScore(riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel, riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore, "OSP/C"),
+      ospi = buildLevelWithScore(riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel, riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore, "OSP/I"),
+      ogrs = buildTwoYearScore(riskScoreResponse.groupReconvictionScore?.scoreLevel, riskScoreResponse.groupReconvictionScore?.oneYear, riskScoreResponse.groupReconvictionScore?.twoYears, "OGRS"),
+      ogp = buildTwoYearScore(riskScoreResponse.generalPredictorScore?.ogpRisk, riskScoreResponse.generalPredictorScore?.ogp1Year, riskScoreResponse.generalPredictorScore?.ogp2Year, "OGP"),
+      ovp = buildTwoYearScore(riskScoreResponse.violencePredictorScore?.ovpRisk, riskScoreResponse.violencePredictorScore?.oneYear, riskScoreResponse.violencePredictorScore?.twoYears, "OVP"),
+    )
+    return if (scores.ogp == null && scores.ogrs == null && scores.ovp == null && scores.rsr == null && scores.ospc == null && scores.ospi == null) null else PredictorScore(
       date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
-      scores = Scores(
-        rsr = rsrLevelWithScore(riskScoreResponse),
-        ospc = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospContactScoreLevel, null, "OSP/C"),
-        ospi = buildLevelWithScore(riskScoreResponse?.sexualPredictorScore?.ospIndecentScoreLevel, null, "OSP/I"),
-        ogrs = buildTwoYearScore(riskScoreResponse?.groupReconvictionScore?.scoreLevel, riskScoreResponse?.groupReconvictionScore?.oneYear, riskScoreResponse?.groupReconvictionScore?.twoYears, "OGRS"),
-        ogp = buildTwoYearScore(riskScoreResponse?.generalPredictorScore?.ogpRisk, riskScoreResponse?.generalPredictorScore?.ogp1Year, riskScoreResponse?.generalPredictorScore?.ogp2Year, "OGP"),
-        ovp = buildTwoYearScore(riskScoreResponse?.violencePredictorScore?.ovpRisk, riskScoreResponse?.violencePredictorScore?.oneYear, riskScoreResponse?.violencePredictorScore?.twoYears, "OVP"),
-      )
+      scores = scores
     )
   }
 
@@ -236,10 +237,9 @@ internal class RiskService(
     val notApplicableWithZeroPercentScorePresent =
       level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
     val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
-
     return if (noScore) null else LevelWithScore(
       level = level,
-      score = percentageScore,
+      score = if (type == "OSP/I" || type == "OSP/C") null else percentageScore,
       type = type
     )
   }
