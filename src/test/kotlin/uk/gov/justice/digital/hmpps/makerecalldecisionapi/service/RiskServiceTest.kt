@@ -280,7 +280,7 @@ internal class RiskServiceTest : ServiceTestBase() {
                       type = "CURRENT",
                       offenceCode = "NO_MATCH",
                       offenceSubCode = "",
-                      offenceDate = "2022-08-26T12:00:00.000"
+                      offenceDate = "2000-08-26T12:00:00.000"
                     )
                   )
                 ),
@@ -295,7 +295,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         )
 
       given(communityApiClient.getActiveConvictions(anyString()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse(), convictionResponse()) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
 
       // when
       val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)

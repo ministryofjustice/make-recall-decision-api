@@ -1,172 +1,230 @@
 [
   {
+    "convictionId": 2500566094,
+    "index": "2",
     "active": true,
-    "awaitingPsr": true,
-    "breachEnd": "2021-05-13",
-    "convictionDate": "2021-06-10",
-    "convictionId": 2500614567,
-    "courtAppearance": {
-      "appearanceDate": "2019-09-04T00:00:00",
-      "appearanceType": {
-        "code": "ABC123",
-        "description": "Some description"
-      },
-      "courtAppearanceId": 2500000001,
-      "courtCode": "SHEFMC",
-      "courtName": "Sheffield Magistrates Court",
-      "crn": "$crn"
-    },
-    "custody": {
-      "institution": {
-        "code": "COMMUN",
-        "description": "In the Community",
-        "establishmentType": {
-          "code": "E",
-          "description": "Prison"
-        },
-        "institutionId": 156,
-        "institutionName": "In the Community",
-        "isEstablishment": true,
-        "isPrivate": false,
-        "nomsPrisonInstitutionCode": "AB124"
-      },
-      "keyDates": {
-        "conditionalReleaseDate": "2020-06-20",
-        "expectedPrisonOffenderManagerHandoverDate": "2020-06-21",
-        "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-22",
-        "expectedReleaseDate": "2020-06-23",
-        "hdcEligibilityDate": "2020-06-24",
-        "licenceExpiryDate": "2020-06-25",
-        "paroleEligibilityDate": "2020-06-26",
-        "postSentenceSupervisionEndDate": "2020-06-27",
-        "sentenceExpiryDate": "2020-06-28"
-      },
-      "sentenceStartDate": "2022-04-26",
-      "status": {
-        "code": "ABC123",
-        "description": "I am the custody status description"
-      }
-    },
-    "failureToComplyCount": 3,
-    "inBreach": true,
-    "index": 1,
-    "latestCourtAppearanceOutcome": {
-      "code": "ABC123",
-      "description": "Some description"
-    },
+    "inBreach": false,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "convictionDate": "2022-01-17",
+    "referralDate": "2022-01-17",
     "offences": [
       {
-        "createdDatetime": "2022-04-26T20:39:47.778Z",
-        "detail": {
-          "abbreviation": "string",
-          "cjitCode": "string",
-          "code": "1234",
-          "description": "Robbery (other than armed robbery)",
-          "form20Code": "string",
-          "mainCategoryAbbreviation": "string",
-          "mainCategoryCode": "string",
-          "mainCategoryDescription": "string",
-          "ogrsOffenceCategory": "string",
-          "subCategoryAbbreviation": "string",
-          "subCategoryCode": "string",
-          "subCategoryDescription": "string"
-        },
-        "lastUpdatedDatetime": "2022-04-26T20:39:47.778Z",
+        "offenceId": "M2500566094",
         "mainOffence": true,
-        "offenceCount": 0,
-        "offenceDate": "2022-04-24T20:39:47.778",
-        "offenceId": "string",
-        "offenderId": 0,
-        "tics": 0,
-        "verdict": "string"
+        "detail": {
+          "code": "01600",
+          "description": "(Buggery and attempted buggery - 01600)",
+          "mainCategoryCode": "016",
+          "mainCategoryDescription": "Buggery and attempted buggery",
+          "mainCategoryAbbreviation": "Buggery and attempted buggery",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Buggery and attempted buggery",
+          "form20Code": "31"
+        },
+        "offenceDate": "2022-01-17T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2022-01-17T15:28:32",
+        "lastUpdatedDatetime": "2022-01-17T15:28:32"
+      },
+      {
+        "offenceId": "A2500117060",
+        "mainOffence": false,
+        "detail": {
+          "code": "01806",
+          "description": "(Gross indecency by a male aged 18 or over with another male aged 18 or over - 01806)",
+          "mainCategoryCode": "018",
+          "mainCategoryDescription": "Indecency between males",
+          "mainCategoryAbbreviation": "Indecency between males",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "06",
+          "subCategoryDescription": "Gross indecency by a male aged 18 or over with another male aged 18 or over",
+          "form20Code": "3"
+        },
+        "offenceDate": "2022-01-17T00:00:00",
+        "createdDatetime": "2022-01-17T15:30:23",
+        "lastUpdatedDatetime": "2022-01-17T15:30:23"
       }
     ],
+    "sentence": {
+      "sentenceId": 2500539955,
+      "description": "Absolute/Conditional Discharge",
+      "originalLength": 2,
+      "originalLengthUnits": "Months",
+      "defaultLength": 2,
+      "lengthInDays": 58,
+      "expectedSentenceEndDate": "2022-03-13",
+      "startDate": "2022-01-14",
+      "terminationDate": "2022-01-14",
+      "terminationReason": "Auto Terminated",
+      "sentenceType": {
+        "code": "NP",
+        "description": "Absolute/Conditional Discharge"
+      },
+      "failureToComplyLimit": 2,
+      "cja2003Order": true,
+      "legacyOrder": true
+    },
+    "latestCourtAppearanceOutcome": {
+      "code": "111",
+      "description": "Adjourned For Reports"
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500592955,
+      "appearanceDate": "2022-01-18T16:00:00",
+      "courtCode": "ABDRM1",
+      "courtName": "Aberdare Magistrates Court",
+      "appearanceType": {
+        "code": "V",
+        "description": "Application to Revoke / Vary"
+      },
+      "crn": "X098092"
+    },
+    "custody": {
+      "bookingNumber": "V74111",
+      "institution": {
+        "code": "string",
+        "description": "string",
+        "establishmentType": {
+          "code": "ABC123",
+          "description": "Some description"
+        },
+        "institutionId": 0,
+        "institutionName": "string",
+        "isEstablishment": true,
+        "isPrivate": true,
+        "nomsPrisonInstitutionCode": "string"
+      },
+      "keyDates": {
+        "conditionalReleaseDate": "2020-06-23",
+        "expectedPrisonOffenderManagerHandoverDate": "2020-06-23",
+        "expectedPrisonOffenderManagerHandoverStartDate": "2020-06-23",
+        "expectedReleaseDate": "2020-06-23",
+        "hdcEligibilityDate": "2020-06-23",
+        "licenceExpiryDate": "2020-06-23",
+        "paroleEligibilityDate": "2020-06-23",
+        "postSentenceSupervisionEndDate": "2020-06-23",
+        "sentenceExpiryDate": "2020-06-23"
+      },
+      "sentenceStartDate": "2022-08-24",
+      "status": {
+        "code": "ABC123",
+        "description": "Some description"
+      }
+    },
     "orderManagers": [
       {
-        "dateEndOfAllocation": "2022-04-26T20:39:47.778Z",
-        "dateStartOfAllocation": "2022-04-26T20:39:47.778Z",
-        "gradeCode": "string",
-        "name": "string",
-        "officerId": 0,
-        "probationAreaId": 0,
-        "staffCode": "$staffCode",
-        "teamId": 0
+        "probationAreaId": 2500010507,
+        "teamId": 2500038743,
+        "officerId": 2500626865,
+        "name": "Unallocated Staff",
+        "staffCode": "N57UATU",
+        "dateStartOfAllocation": "2022-01-17T00:00:00"
+      }
+    ]
+  },
+  {
+    "convictionId": 2500565594,
+    "index": "1",
+    "active": true,
+    "inBreach": false,
+    "failureToComplyCount": 0,
+    "awaitingPsr": false,
+    "referralDate": "2022-01-14",
+    "offences": [
+      {
+        "offenceId": "M2500565594",
+        "mainOffence": true,
+        "detail": {
+          "code": "02500",
+          "description": "(Abduction - 02500)",
+          "mainCategoryCode": "025",
+          "mainCategoryDescription": "Abduction",
+          "mainCategoryAbbreviation": "Abduction",
+          "ogrsOffenceCategory": "Sexual (not against child)",
+          "subCategoryCode": "00",
+          "subCategoryDescription": "Abduction",
+          "form20Code": "3"
+        },
+        "offenceDate": "2022-01-14T00:00:00",
+        "offenceCount": 1,
+        "offenderId": 2500109986,
+        "createdDatetime": "2022-01-14T15:05:21",
+        "lastUpdatedDatetime": "2022-01-14T15:05:21"
       }
     ],
-    "referralDate": "2021-06-10",
-    "responsibleCourt": {
-      "buildingName": "Sheffield Magistrates Court",
-      "code": "SHEFMC",
-      "country": "England",
-      "county": "South Yorkshire",
-      "courtId": 2500000001,
-      "courtName": "Sheffield Magistrates Court",
-      "courtType": {
-        "code": "ABC123",
-        "description": "Some description"
-      },
-      "courtTypeId": 310,
-      "createdDatetime": "2014-05-29T21:50:16",
-      "fax": "0114 2756 373",
-      "lastUpdatedDatetime": "2014-05-29T21:50:16",
-      "locality": "Sheffield City Centre",
-      "postcode": "S3 8LU",
-      "probationArea": {
-        "code": "ABC123",
-        "description": "Some description"
-      },
-      "probationAreaId": 1500001001,
-      "secureEmailAddress": "example@example.com",
-      "selectable": true,
-      "street": "Castle Street",
-      "telephoneNumber": "0300 047 0777",
-      "town": "Sheffield"
-    },
     "sentence": {
-      "additionalSentences": [
-        {
-          "additionalSentenceId": 2500000001,
-          "amount": 100,
-          "length": 14,
-          "notes": "Some additional sentence notes",
-          "type": {
-            "code": "ABC123",
-            "description": "Some description"
-          }
-        }
-      ],
-      "cja2003Order": true,
-      "defaultLength": 0,
-      "description": "Extended Determinate Sentence",
-      "effectiveLength": 0,
-      "expectedSentenceEndDate": "2022-04-26",
-      "failureToComplyLimit": 0,
-      "legacyOrder": true,
-      "lengthInDays": 0,
-      "originalLength": 12,
-      "originalLengthUnits": "days",
-      "secondLength": 19,
-      "secondLengthUnits": "days",
-      "sentenceId": 0,
+      "sentenceId": 2500539955,
+      "description": "Absolute/Conditional Discharge",
+      "originalLength": 2,
+      "originalLengthUnits": "Months",
+      "defaultLength": 2,
+      "lengthInDays": 58,
+      "expectedSentenceEndDate": "2022-03-13",
+      "startDate": "2022-01-14",
+      "terminationDate": "2022-01-14",
+      "terminationReason": "Auto Terminated",
       "sentenceType": {
-        "code": "ABC123",
-        "description": "Some description"
+        "code": "NP",
+        "description": "Absolute/Conditional Discharge"
       },
-      "startDate": "2022-04-26",
-      "terminationDate": "2022-04-26",
-      "terminationReason": "string",
-      "unpaidWork": {
-        "appointments": {
-          "acceptableAbsences": 0,
-          "attended": 0,
-          "noOutcomeRecorded": 0,
-          "total": 0,
-          "unacceptableAbsences": 0
-        },
-        "minutesCompleted": 0,
-        "minutesOrdered": 0,
-        "status": "string"
+      "failureToComplyLimit": 2,
+      "cja2003Order": true,
+      "legacyOrder": true
+    },
+    "latestCourtAppearanceOutcome": {
+      "code": "412",
+      "description": "Absolute/Conditional Discharge"
+    },
+    "responsibleCourt": {
+      "courtId": 1,
+      "code": "ABDRM1",
+      "selectable": true,
+      "courtName": "Aberdare Magistrates Court",
+      "telephoneNumber": "01685 721731",
+      "fax": "01685 723919",
+      "buildingName": "The Court House",
+      "street": "Cwmbach Road",
+      "locality": "Aberdare",
+      "town": "Aberdare",
+      "county": "Glamorgan",
+      "postcode": "CF44 0NW",
+      "country": "Wales",
+      "courtTypeId": 310,
+      "createdDatetime": "2013-02-05T10:08:41",
+      "lastUpdatedDatetime": "2021-09-20T16:33:49",
+      "probationAreaId": 1500001002,
+      "probationArea": {
+        "code": "N03",
+        "description": "NPS Wales"
+      },
+      "courtType": {
+        "code": "MAG",
+        "description": "Magistrates Court"
       }
-    }
+    },
+    "courtAppearance": {
+      "courtAppearanceId": 2500592454,
+      "appearanceDate": "2022-01-14T00:00:00",
+      "courtCode": "ABDRM1",
+      "courtName": "Aberdare Magistrates Court",
+      "appearanceType": {
+        "code": "A",
+        "description": "Appeal"
+      },
+      "crn": "X098092"
+    },
+    "orderManagers": [
+      {
+        "probationAreaId": 1500001002,
+        "teamId": 1500119954,
+        "officerId": 2500626365,
+        "name": "Unallocated Staff(N03) Staff",
+        "staffCode": "N03UATU",
+        "dateStartOfAllocation": "2022-01-14T00:00:00"
+      }
+    ]
   }
 ]
