@@ -91,7 +91,7 @@ internal class RiskService(
     val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
     val mainActiveCustodialOffenceFromLatestCompleteAssessment = if (hideOffenceDetailsWhenNoMatch) {
       getMainActiveCustodialOffenceFromLatestCompleteAssessment(activeConvictionsFromDelius, latestCompleteAssessment)
-    } else getMainActiveCustodialOffenceFromLatestCompleteAssessmentWhenNoMatch(activeConvictionsFromDelius, latestCompleteAssessment)
+    } else getMainActiveCustodialOffenceFromLatestCompleteAssessmentWhenNoMatch(activeConvictionsFromDelius)
 
     return buildAssessmentInfo(
       mainActiveCustodialOffenceFromLatestCompleteAssessment = mainActiveCustodialOffenceFromLatestCompleteAssessment,
@@ -140,12 +140,10 @@ internal class RiskService(
     ?.firstOrNull()
 
   private fun getMainActiveCustodialOffenceFromLatestCompleteAssessmentWhenNoMatch(
-    activeConvictionsFromDelius: List<Conviction>?,
-    latestAssessment: Assessment?
+    activeConvictionsFromDelius: List<Conviction>?
   ) = activeConvictionsFromDelius
-    ?.filter { it.isCustodial && it.active == true }
+    ?.filter { it.active == true }
     ?.flatMap(this::extractMainOffences)
-    ?.filter { datesMatch(latestAssessment, it) }
 
   private fun getMainActiveCustodialOffenceFromLatestCompleteAssessment(
     activeConvictionsFromDelius: List<Conviction>?,
