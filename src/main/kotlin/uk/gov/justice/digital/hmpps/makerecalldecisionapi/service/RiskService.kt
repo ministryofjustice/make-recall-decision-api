@@ -119,7 +119,7 @@ internal class RiskService(
       offenceDescription = offenceDescription,
       offenceCodesMatch = offenceCodesMatch == true,
       lastUpdatedDate = lastUpdatedDate,
-      offenceDataFromLatestCompleteAssessment = latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE"
+      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment) && (latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE")
     )
   }
 

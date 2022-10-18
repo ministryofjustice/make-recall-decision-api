@@ -254,7 +254,7 @@ internal class RiskServiceTest : ServiceTestBase() {
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
-      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(false)
       assertThat(response?.offenceCodesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
@@ -302,7 +302,7 @@ internal class RiskServiceTest : ServiceTestBase() {
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
-      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(false)
       assertThat(response?.offenceCodesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
