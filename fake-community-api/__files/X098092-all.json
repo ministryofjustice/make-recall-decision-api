@@ -9,7 +9,11 @@
   "dateOfBirth": "1990-09-15",
   "gender": "Male",
   "otherIds": {
-    "crn": "X098092"
+    "crn": "X098092",
+    "croNumber": "AB123XYZ",
+    "pncNumber": "GD123TEF",
+    "nomsNumber": "JG123POE",
+    "mostRecentPrisonerNumber": "MV123EDR"
   },
   "contactDetails": {
     "addresses": [
@@ -33,6 +37,7 @@
   },
   "offenderProfile": {
     "nationality": "Albanian",
+    "ethnicity": "White",
     "offenderLanguages": {},
     "remandStatus": "Bail - Conditional",
     "previousConviction": {}
