@@ -110,16 +110,25 @@ internal class RiskService(
         latestCompleteAssessment, it
       )
     }
+    val datesMatch = datesMatch(
+      latestCompleteAssessment,
+      mainActiveCustodialOffenceFromLatestCompleteAssessment?.find { it.mainOffence == true }
+    )
     val lastUpdatedDate = latestCompleteAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
     val offenceDescription = if (hideOffenceDetailsWhenNoMatch == true) {
-      getOffenceDescriptionWhenOffencesDoNotMatch(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
+      getOffenceDescriptionWhenOffencesDoNotMatch(
+        mainActiveCustodialOffenceFromLatestCompleteAssessment,
+        latestCompleteAssessment
+      )
     } else getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
 
     return AssessmentInfo(
       offenceDescription = offenceDescription,
       offenceCodesMatch = offenceCodesMatch == true,
       lastUpdatedDate = lastUpdatedDate,
-      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment) && (latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE")
+      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment) &&
+        (latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE") &&
+        datesMatch
     )
   }
 
