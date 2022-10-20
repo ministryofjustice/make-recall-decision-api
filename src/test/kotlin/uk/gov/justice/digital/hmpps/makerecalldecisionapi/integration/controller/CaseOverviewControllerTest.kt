@@ -66,7 +66,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
         .jsonPath("$.risk.assessments.lastUpdatedDate").isEqualTo("2022-04-24T15:00:08.000Z")
         .jsonPath("$.risk.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
-        .jsonPath("$.risk.assessments.offenceCodesMatch").isEqualTo(true)
+        .jsonPath("$.risk.assessments.offencesMatch").isEqualTo(true)
         .jsonPath("$.risk.assessments.offenceDescription").isEqualTo("Juicy offence details.")
         .jsonPath("$.risk.assessments.error").isEqualTo(null)
     }
