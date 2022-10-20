@@ -708,7 +708,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
         )
       )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offenceCodesMatch = true))
+      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offencesMatch = true))
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
           personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),

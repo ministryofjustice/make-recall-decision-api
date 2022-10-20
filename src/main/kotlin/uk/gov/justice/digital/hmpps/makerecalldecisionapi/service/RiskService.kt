@@ -124,7 +124,7 @@ internal class RiskService(
 
     return AssessmentInfo(
       offenceDescription = offenceDescription,
-      offenceCodesMatch = offenceCodesMatch == true && datesMatch,
+      offencesMatch = offenceCodesMatch == true && datesMatch,
       lastUpdatedDate = lastUpdatedDate,
       offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment) &&
         (latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE")
