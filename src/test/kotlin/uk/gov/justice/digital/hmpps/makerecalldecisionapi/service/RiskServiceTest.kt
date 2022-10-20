@@ -256,7 +256,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(shouldBeTrueBecauseNoLaterCompleteAssessmentExists).isEqualTo(true)
-      assertThat(response?.offenceCodesMatch).isEqualTo(true)
+      assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
@@ -279,7 +279,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(response?.offenceCodesMatch).isEqualTo(true)
+      assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
@@ -327,7 +327,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
-      assertThat(response?.offenceCodesMatch).isEqualTo(false)
+      assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
@@ -377,7 +377,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(response?.offenceCodesMatch).isEqualTo(false)
+      assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
       then(communityApiClient).should().getActiveConvictions(crn)
