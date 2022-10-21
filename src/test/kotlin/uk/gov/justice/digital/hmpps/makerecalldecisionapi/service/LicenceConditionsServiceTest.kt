@@ -15,7 +15,11 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
@@ -36,7 +40,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, recommendationService)
+    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, createAndVaryALicenceService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
@@ -194,6 +198,37 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     }
   }
 
+  @Test
+  fun `given licence conditions from CVL then return these details in the response`() {
+    runTest {
+      val licenceId = 444333
+      val nomsId = "A1234CR"
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId))))
+        .willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
+      given(cvlApiClient.getLicenceById(crn, licenceId))
+        .willReturn(Mono.fromCallable { licenceByIdResponse() })
+
+      val response = licenceConditionsService.getLicenceConditionsCvl(crn)
+
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(cvlApiClient).should().getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))
+      then(cvlApiClient).should().getLicenceById(crn, licenceId)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsCvlResponse(
+            null,
+            expectedPersonDetailsResponse(),
+            expectedCvlLicenceConditionsResponse()
+          )
+        )
+      )
+    }
+  }
+
   private fun expectedPersonDetailsResponse(): PersonDetails {
     val dateOfBirth = LocalDate.parse("1982-10-24")
 
@@ -291,4 +326,35 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       )
     )
   )
+
+  private fun expectedCvlLicenceConditionsResponse(): List<LicenceConditionResponse> {
+
+    return listOf(
+      LicenceConditionResponse(
+        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+        actualReleaseDate = LocalDate.parse("2022-06-11"),
+        sentenceStartDate = LocalDate.parse("2022-06-12"),
+        sentenceEndDate = LocalDate.parse("2022-06-13"),
+        licenceStartDate = LocalDate.parse("2022-06-14"),
+        licenceExpiryDate = LocalDate.parse("2022-06-15"),
+        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+        additionalLicenceConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional licence condition",
+            expandedText = "Expanded additional licence condition"
+          )
+        ),
+        additionalPssConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional PSS licence condition",
+            expandedText = "Expanded additional PSS licence condition"
+          )
+        ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      )
+    )
+  }
 }

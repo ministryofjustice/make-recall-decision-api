@@ -29,6 +29,11 @@ arn:
     endpoint:
       url: http://localhost:8095
 
+cvl:
+  api:
+    endpoint:
+      url: http://localhost:8096
+
 gotenberg:
   endpoint:
     url: http://localhost:8094

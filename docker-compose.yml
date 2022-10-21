@@ -90,6 +90,19 @@ services:
     volumes:
       - ./fake-arn-api:/home/wiremock
 
+  fake-cvl-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-cvl-api
+    ports:
+      - "9070:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-cvl-api:/home/wiremock
+
 networks:
   hmpps:
     name: hmpps
