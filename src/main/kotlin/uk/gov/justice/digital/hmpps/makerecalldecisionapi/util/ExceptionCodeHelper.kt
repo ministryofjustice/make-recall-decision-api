@@ -19,8 +19,13 @@ class ExceptionCodeHelper {
         }
         is WebClientResponseException -> {
           if (exception.rawStatusCode == 404) {
-            log.info("Not found when trying to get $task for CRN: $crn")
-            "NOT_FOUND"
+            if (task == "risk summary" && exception.statusText?.startsWith("Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn") == true) {
+              log.info("Latest complete assessment not found when trying to get $task for CRN: $crn")
+              "NOT_FOUND_LATEST_COMPLETE"
+            } else {
+              log.info("Not found when trying to get $task for CRN: $crn")
+              "NOT_FOUND"
+            }
           } else {
             log.error("WebClientResponseException: Server error trying to get $task for CRN: $crn - ${exception.message}")
             "SERVER_ERROR"

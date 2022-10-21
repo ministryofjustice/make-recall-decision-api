@@ -106,7 +106,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
+        .jsonPath("$.roshSummary.error").isEqualTo("MISSING_DATA")
     }
   }
 

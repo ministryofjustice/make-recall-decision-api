@@ -430,74 +430,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves risk with null risk score values`() {
-    runTest {
-      given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWhereValuesNull
-            )
-          }
-        )
-      apiMocksWithAllFieldsEmpty()
-
-      val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
-
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
-      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
-
-      then(arnApiClient).should().getAssessments(crn)
-      then(arnApiClient).should().getRiskScores(crn)
-      then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
-    }
-  }
-
-  @Test
-  fun `retrieves risk with null risk scores`() {
-    runTest {
-      given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields.copy(sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = null, ospContactPercentageScore = null, ospIndecentScoreLevel = null, ospContactScoreLevel = null)),
-              historicalRiskScoreResponseWhereValuesNull
-            )
-          }
-        )
-      apiMocksWithAllFieldsEmpty()
-
-      val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
-
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
-      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
-
-      then(arnApiClient).should().getAssessments(crn)
-      then(arnApiClient).should().getRiskScores(crn)
-      then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
-    }
-  }
-
-  @Test
   fun `retrieves risk with null predictor score field`() {
     runTest {
       given(arnApiClient.getRiskScores(anyString()))
@@ -522,41 +454,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ospi).isEqualTo(null)
       assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
-
-      then(arnApiClient).should().getAssessments(crn)
-      then(arnApiClient).should().getRiskScores(crn)
-      then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
-    }
-  }
-
-  @Test
-  fun `retrieves risk with null date when all scores are null`() {
-    runTest {
-      given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWhereValuesNull
-            )
-          }
-        )
-      apiMocksWithAllFieldsEmpty()
-
-      val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
-
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
-      assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
+      assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
@@ -595,7 +493,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(currentScores?.scores?.ospi).isEqualTo(null)
       assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
+      assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
@@ -675,7 +573,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(mappa.level).isEqualTo(null)
       assertThat(mappa.lastUpdatedDate).isEqualTo("")
       assertThat(mappa.category).isNull()
-      assertThat(response.roshSummary?.error).isEqualTo("NOT_FOUND")
+      assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
       assertThat(historicalScores).isEmpty()
       assertThat(currentScores?.date).isEqualTo(null)
       assertThat(currentScores?.scores?.rsr).isEqualTo(null)
@@ -894,13 +792,14 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest(name = "given call to fetch risk summary fails with {1} exception then set this in the error field response")
-  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
+  @CsvSource("404,Offender not found for CRN,NOT_FOUND", "404,'Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn X12345',NOT_FOUND_LATEST_COMPLETE", "503,This is a server error,SERVER_ERROR", "999,Random error,SERVER_ERROR")
   fun `given call to fetch risk summary fails with given exception then set this in the error field response`(
     code: Int,
+    exceptionMessage: String,
     expectedErrorCode: String
   ) {
     runTest {
-      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, exceptionMessage, null, null, null))
 
       val response = riskService.getRoshSummary(crn)
 
