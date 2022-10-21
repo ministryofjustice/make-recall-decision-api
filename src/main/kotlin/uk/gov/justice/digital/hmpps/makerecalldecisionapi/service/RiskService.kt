@@ -89,10 +89,7 @@ internal class RiskService(
       return AssessmentInfo(error = extractErrorCode(ex, "risk assessments", crn))
     }
     val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
-    val mainActiveCustodialOffenceFromLatestCompleteAssessment = if (hideOffenceDetailsWhenNoMatch) {
-      getMainActiveCustodialOffenceFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment)
-    } else getMainOffenceFromLatestCompleteAssessmentWhenNoMatch(convictionsFromDelius)
-
+    val mainActiveCustodialOffenceFromLatestCompleteAssessment = getMainActiveCustodialOffenceFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment)
     return buildAssessmentInfo(
       activeConvictionPresent = convictionsFromDelius?.any { it.active == true } == true,
       mainActiveCustodialOffenceFromLatestCompleteAssessment = mainActiveCustodialOffenceFromLatestCompleteAssessment,
@@ -122,7 +119,7 @@ internal class RiskService(
         mainActiveCustodialOffenceFromLatestCompleteAssessment,
         latestCompleteAssessment
       )
-    } else getOffenceDescription(mainActiveCustodialOffenceFromLatestCompleteAssessment, latestCompleteAssessment)
+    } else latestCompleteAssessment?.offence
 
     return AssessmentInfo(
       offenceDescription = offenceDescription,
@@ -139,13 +136,6 @@ internal class RiskService(
   ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
     ?.filter { currentOffenceCodesMatch(latestAssessment, it) }
     ?.filter { isLatestAssessment(latestAssessment) }
-    ?.map { latestAssessment?.offence }
-    ?.firstOrNull()
-
-  private fun getOffenceDescription(
-    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
-    latestAssessment: Assessment?
-  ) = mainActiveCustodialOffenceFromLatestCompleteAssessment
     ?.map { latestAssessment?.offence }
     ?.firstOrNull()
 
