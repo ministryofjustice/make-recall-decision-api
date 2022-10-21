@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/licence/match"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "X098092-licence-match.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

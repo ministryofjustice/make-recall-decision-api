@@ -7,8 +7,12 @@ import org.mockito.Mockito.lenient
 import org.mockito.kotlin.doReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
@@ -63,12 +67,17 @@ internal abstract class ServiceTestBase {
   protected lateinit var arnApiClient: ArnApiClient
 
   @Mock
+  protected lateinit var cvlApiClient: CvlApiClient
+
+  @Mock
   protected lateinit var recommendationRepository: RecommendationRepository
 
   @Mock
   protected lateinit var mockPersonDetailService: PersonDetailsService
 
   protected lateinit var personDetailsService: PersonDetailsService
+
+  protected lateinit var createAndVaryALicenceService: CreateAndVaryALicenceService
 
   protected lateinit var riskService: RiskService
 
@@ -100,6 +109,7 @@ internal abstract class ServiceTestBase {
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
+    createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }
 
   fun assessmentResponse(crn: String): AssessmentsResponse {
@@ -448,4 +458,33 @@ internal abstract class ServiceTestBase {
       )
     )
   )
+
+  protected fun licenceMatchedResponse(licenceId: Int, crn: String): List<LicenceMatchResponse> {
+    return listOf(
+      LicenceMatchResponse(
+        licenceId = licenceId,
+        licenceType = "AP",
+        licenceStatus = "IN_PROGRESS",
+        crn = crn,
+      )
+    )
+  }
+
+  protected fun licenceByIdResponse(): LicenceConditionResponse {
+    return LicenceConditionResponse(
+      conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+      actualReleaseDate = LocalDate.parse("2022-06-11"),
+      sentenceStartDate = LocalDate.parse("2022-06-12"),
+      sentenceEndDate = LocalDate.parse("2022-06-13"),
+      licenceStartDate = LocalDate.parse("2022-06-14"),
+      licenceExpiryDate = LocalDate.parse("2022-06-15"),
+      topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+      topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+      standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+      standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+      additionalLicenceConditions = listOf(LicenceConditionDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
+      additionalPssConditions = listOf(LicenceConditionDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
+      bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+    )
+  }
 }

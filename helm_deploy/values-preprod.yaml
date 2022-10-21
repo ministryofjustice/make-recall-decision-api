@@ -12,6 +12,7 @@ generic-service:
     OFFENDER_SEARCH_ENDPOINT_URL: https://probation-offender-search-preprod.hmpps.service.justice.gov.uk
     COMMUNITY_API_ENDPOINT_URL: https://community-api-secure.pre-prod.delius.probation.hmpps.dsd.io
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-preprod.hmpps.service.justice.gov.uk
+    CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api-preprod.hmpps.service.justice.gov.uk
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod

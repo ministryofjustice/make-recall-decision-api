@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.net.URI
 
@@ -25,8 +26,11 @@ class WebClientConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+  @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
+  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry
 ) {
 
@@ -91,11 +95,27 @@ class WebClientConfiguration(
 
   @Bean
   fun arnApiClient(@Qualifier("arnWebClientAppScope") webClient: WebClient): ArnApiClient {
-    return ArnApiClient(webClient, nDeliusTimeout, arnApiClientTimeoutCounter())
+    return ArnApiClient(webClient, arnTimeout, arnApiClientTimeoutCounter())
   }
 
   @Bean
   fun arnApiClientTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
+
+  @Bean
+  fun cvlWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManager, builder, cvlApiRootUri, "cvl-api")
+  }
+
+  @Bean
+  fun cvlApiClient(@Qualifier("cvlWebClientAppScope") webClient: WebClient): CvlApiClient {
+    return CvlApiClient(webClient, cvlTimeout, cvlApiClientTimeoutCounter())
+  }
+
+  @Bean
+  fun cvlApiClientTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
 
   @Bean
   fun gotenbergClient(): WebClient {
