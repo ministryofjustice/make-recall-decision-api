@@ -333,7 +333,7 @@ internal class RiskService(
     }
 
     if (areAllRiskSummaryFieldsEmpty(riskSummaryResponse)) {
-      return RoshSummary(error = "NOT_FOUND")
+      return RoshSummary(error = "MISSING_DATA")
     }
 
     val riskOfSeriousHarm = extractRiskOfSeriousHarm(riskSummaryResponse)
