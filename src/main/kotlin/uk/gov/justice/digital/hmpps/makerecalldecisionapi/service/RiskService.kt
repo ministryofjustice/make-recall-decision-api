@@ -139,11 +139,6 @@ internal class RiskService(
     ?.map { latestAssessment?.offence }
     ?.firstOrNull()
 
-  private fun getMainOffenceFromLatestCompleteAssessmentWhenNoMatch(
-    activeConvictionsFromDelius: List<Conviction>?
-  ) = activeConvictionsFromDelius
-    ?.flatMap(this::extractMainOffences)
-
   private fun getMainActiveCustodialOffenceFromLatestCompleteAssessment(
     activeConvictionsFromDelius: List<Conviction>?,
     latestAssessment: Assessment?
