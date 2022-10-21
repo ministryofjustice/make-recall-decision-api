@@ -27,6 +27,7 @@ import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.io.IOException
 import java.net.URI
@@ -74,7 +75,10 @@ class WebClientUserEnhancementConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+  @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
+  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry
 ) {
 
@@ -93,11 +97,28 @@ class WebClientUserEnhancementConfiguration(
 
   @Bean
   fun assessRisksNeedsApiClientUserEnhanced(@Qualifier("assessRisksNeedsWebClientUserEnhancedAppScope") webClient: WebClient): ArnApiClient {
-    return ArnApiClient(webClient, nDeliusTimeout, arnApiClientEnhancedTimeoutCounter())
+    return ArnApiClient(webClient, arnTimeout, arnApiClientEnhancedTimeoutCounter())
   }
 
   @Bean
   fun arnApiClientEnhancedTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
+
+  @Bean
+  @RequestScope
+  fun cvlWebClientUserEnhancedAppScope(
+    clientRegistrationRepository: ClientRegistrationRepository,
+    builder: WebClient.Builder
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, cvlApiRootUri, "cvl-api")
+  }
+
+  @Bean
+  fun cvlApiClientUserEnhanced(@Qualifier("cvlWebClientUserEnhancedAppScope") webClient: WebClient): CvlApiClient {
+    return CvlApiClient(webClient, cvlTimeout, cvlApiClientUserEnhancedTimeoutCounter())
+  }
+
+  @Bean
+  fun cvlApiClientUserEnhancedTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
 
   @Bean
   @RequestScope

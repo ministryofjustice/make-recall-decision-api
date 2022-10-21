@@ -34,6 +34,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
@@ -68,6 +70,8 @@ abstract class IntegrationTestBase {
 
   var oasysARNApi: ClientAndServer = startClientAndServer(8095)
 
+  var cvlApi: ClientAndServer = startClientAndServer(8096)
+
   @Autowired
   protected lateinit var repository: RecommendationRepository
 
@@ -79,6 +83,7 @@ abstract class IntegrationTestBase {
   private val gson: Gson = Gson()
 
   val crn = "A12345"
+  val nomsId = "A1234CR"
   val convictionId = 2500614567
 
   var createdRecommendationId: Int = 0
@@ -118,6 +123,7 @@ abstract class IntegrationTestBase {
     offenderSearchApi.reset()
     gotenbergMock.reset()
     oasysARNApi.reset()
+    cvlApi.reset()
     setupOauth()
     setupHealthChecks()
   }
@@ -125,6 +131,7 @@ abstract class IntegrationTestBase {
   @AfterAll
   fun tearDownServer() {
     oasysARNApi.stop()
+    cvlApi.stop()
     communityApi.stop()
     offenderSearchApi.stop()
     gotenbergMock.stop()
@@ -540,6 +547,26 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(documentRequest, exactly(1)).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun cvlLicenceMatchResponse(nomisId: String, crn: String, delaySeconds: Long = 0) {
+    val licenceMatchRequest =
+      request().withPath("/licence/match")
+
+    cvlApi.`when`(licenceMatchRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceMatchResponse(nomisId, crn))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun cvlLicenceByIdResponse(licenceId: Int, nomisId: String, crn: String, delaySeconds: Long = 0) {
+    val licenceIdRequesst =
+      request().withPath("/licence/id/$licenceId")
+
+    cvlApi.`when`(licenceIdRequesst).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceIdResponse(licenceId, nomisId, crn))
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

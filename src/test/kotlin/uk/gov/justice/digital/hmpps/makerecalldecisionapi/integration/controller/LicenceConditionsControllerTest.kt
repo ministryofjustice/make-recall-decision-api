@@ -13,7 +13,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class LicenceConditionsControllerTest(
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long
 ) : IntegrationTestBase() {
   val staffCode = "STFFCDEU"
 
@@ -308,6 +309,55 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `retrieves licence condition details from CVL for a case that exists in CVL`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      cvlLicenceMatchResponse(nomsId, crn)
+      cvlLicenceByIdResponse(123344, nomsId, crn)
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions-cvl")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.licenceConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].conditionalReleaseDate").isEqualTo("2022-06-10")
+        .jsonPath("$.licenceConditions[0].actualReleaseDate").isEqualTo("2022-06-11")
+        .jsonPath("$.licenceConditions[0].sentenceStartDate").isEqualTo("2022-06-12")
+        .jsonPath("$.licenceConditions[0].sentenceEndDate").isEqualTo("2022-06-13")
+        .jsonPath("$.licenceConditions[0].licenceStartDate").isEqualTo("2022-06-14")
+        .jsonPath("$.licenceConditions[0].licenceExpiryDate").isEqualTo("2022-06-15")
+        .jsonPath("$.licenceConditions[0].topupSupervisionStartDate").isEqualTo("2022-06-16")
+        .jsonPath("$.licenceConditions[0].topupSupervisionExpiryDate").isEqualTo("2022-06-17")
+        .jsonPath("$.licenceConditions[0].standardLicenceConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].standardLicenceConditions[0].text").isEqualTo("This is a standard licence condition")
+        .jsonPath("$.licenceConditions[0].standardPssConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].standardPssConditions[0].text").isEqualTo("This is a standard PSS licence condition")
+        .jsonPath("$.licenceConditions[0].additionalLicenceConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].text").isEqualTo("This is an additional licence condition")
+        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].expandedText").isEqualTo("Expanded additional licence condition")
+        .jsonPath("$.licenceConditions[0].additionalPssConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].text").isEqualTo("This is an additional PSS licence condition")
+        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].expandedText").isEqualTo("Expanded additional PSS licence condition")
+        .jsonPath("$.licenceConditions[0].bespokeConditions.length()").isEqualTo(1)
+        .jsonPath("$.licenceConditions[0].bespokeConditions[0].text").isEqualTo("This is a bespoke condition")
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+    }
+  }
+
+  @Test
   fun `given no custody release response 400 error then handle licence condition response`() {
     runTest {
       userAccessAllowed(crn)
@@ -368,7 +418,6 @@ class LicenceConditionsControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       convictionResponse(crn, staffCode)
@@ -389,7 +438,6 @@ class LicenceConditionsControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
@@ -411,7 +459,6 @@ class LicenceConditionsControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout on licence conditions endpoint`() {
     runTest {
-      val crn = "A12345"
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
@@ -455,9 +502,49 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `gateway timeout 503 given on CVL Api timeout on licence match endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      cvlLicenceMatchResponse(nomsId, crn, delaySeconds = cvlTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions-cvl")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: CVL API Client - licence match endpoint: [No response within $cvlTimeout seconds]")
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on CVL Api timeout on get licence id endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      cvlLicenceMatchResponse(nomsId, crn)
+      cvlLicenceByIdResponse(123344, nomsId, crn, delaySeconds = cvlTimeout + 2)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions-cvl")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: CVL API Client - licence by id endpoint: [No response within $cvlTimeout seconds]")
+    }
+  }
+
+  @Test
   fun `access denied when insufficient privileges used`() {
     runTest {
-      val crn = "X123456"
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
         .exchange()
