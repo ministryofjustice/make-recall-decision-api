@@ -287,13 +287,13 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as no active conviction exists`() {
+  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as no active conviction with main offence exists`() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment())) })
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(active = false)) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse(mainOffencePresent = false).copy(active = false)) })
 
       // when
       val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
@@ -1176,7 +1176,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     offenderProfile = OffenderProfile(ethnicity = "Ainu")
   )
 
-  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = Conviction(
+  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence", mainOffencePresent: Boolean? = true) = Conviction(
     convictionDate = LocalDate.parse("2021-06-10"),
     sentence = Sentence(
       startDate = LocalDate.parse("2022-04-26"),
@@ -1192,7 +1192,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     active = true,
     offences = listOf(
       Offence(
-        mainOffence = true,
+        mainOffence = mainOffencePresent,
         offenceDate = LocalDate.parse("2022-08-26"),
         detail = OffenceDetail(
           mainCategoryDescription = "string", subCategoryDescription = "string",
