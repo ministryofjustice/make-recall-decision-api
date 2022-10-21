@@ -141,7 +141,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
                 SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
                 SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
                 SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
-                SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
+                SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
+                SelectedStandardLicenceConditions.NAME_CHANGE.name,
+                SelectedStandardLicenceConditions.CONTACT_DETAILS.name
               )
             ),
             additionalLicenceConditions = AdditionalLicenceConditions(
@@ -301,7 +303,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(98)
+      assertThat(result.size).isEqualTo(100)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -326,6 +328,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
       assertThat(result["has_contraband_risk"]).isEqualTo("Yes")
       assertThat(result["has_contraband_risk_details"]).isEqualTo("Contraband risk details")
+      assertThat(result["other_name_known_by"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["contact_details_changed"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
@@ -482,7 +486,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
         SelectedStandardLicenceConditions.ADDRESS_APPROVED.name,
         SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
-        SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name
+        SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
+        SelectedStandardLicenceConditions.NAME_CHANGE.name,
+        SelectedStandardLicenceConditions.CONTACT_DETAILS.name
       ),
       additionalConditionsBreached = "These are the additional conditions breached",
       isUnderIntegratedOffenderManagement = "YES",

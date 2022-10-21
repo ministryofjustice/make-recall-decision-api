@@ -174,6 +174,8 @@ internal class TemplateReplacementService(
 
   private fun convertToSelectedStandardConditionsBreachedMap(selectedConditions: List<String>?): Map<String, String> {
     return mapOf(
+      "other_name_known_by" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NAME_CHANGE.name) == true) TICK_CHARACTER else EMPTY_STRING),
+      "contact_details_changed" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.CONTACT_DETAILS.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "good_behaviour_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) TICK_CHARACTER else EMPTY_STRING),

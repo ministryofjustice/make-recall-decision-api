@@ -132,7 +132,15 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
         {
           "value": "NO_OFFENCE",
           "text": "Not to commit any offence"
-        }
+        },
+        {
+          "value": "NAME_CHANGE",
+          "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence."        
+        },
+        {
+          "value": "CONTACT_DETAILS",
+          "text": "Tell your supervising officer if you change or add any contact details, including phone number or email."        
+        }        
       ]
     },
     "additionalLicenceConditions": {
