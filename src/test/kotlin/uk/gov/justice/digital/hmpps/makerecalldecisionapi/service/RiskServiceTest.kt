@@ -246,7 +246,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
@@ -259,7 +259,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
     }
   }
 
@@ -269,7 +269,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
@@ -282,7 +282,52 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
+    }
+  }
+
+  @Test
+  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as no active conviction exists`() {
+    runTest {
+      // given
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment())) })
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(active = false)) })
+
+      // when
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+
+      // then
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offencesMatch).isEqualTo(false)
+      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
+    }
+  }
+
+  @Test
+  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as a later complete assessment exists`() {
+    runTest {
+      // given
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
+
+      // when
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = true)
+
+      // then
+      val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
+      assertThat(response?.offencesMatch).isEqualTo(true)
+      assertThat(response?.offenceDescription).isEqualTo(null)
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
     }
   }
 
@@ -318,7 +363,7 @@ internal class RiskServiceTest : ServiceTestBase() {
           }
         )
 
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
 
       // when
@@ -330,10 +375,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
     }
   }
 
+  // TODO BS extra test for 'just' no active - also change code to flag mismatch
   @Test
   fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match because a later complete assessment exists and the dates and codes do not match`() {
     runTest {
@@ -367,7 +413,7 @@ internal class RiskServiceTest : ServiceTestBase() {
           }
         )
 
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
 
       // when
@@ -380,7 +426,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
     }
   }
 
@@ -810,9 +856,9 @@ internal class RiskServiceTest : ServiceTestBase() {
     expectedErrorCode: String
   ) {
     runTest {
-      given(communityApiClient.getActiveConvictions(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn, anyBoolean())
+      val response = riskService.fetchAssessmentInfo(crn, true)
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }
@@ -827,7 +873,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn, anyBoolean())
+      val response = riskService.fetchAssessmentInfo(crn, true)
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }

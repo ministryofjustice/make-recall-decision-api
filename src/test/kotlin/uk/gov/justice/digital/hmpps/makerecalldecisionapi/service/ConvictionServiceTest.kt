@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
@@ -28,7 +29,7 @@ internal class ConvictionServiceTest : ServiceTestBase() {
   @Test
   fun `given an active conviction and licence conditions with documents then return these details in the response`() {
     runTest {
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })
@@ -54,7 +55,7 @@ internal class ConvictionServiceTest : ServiceTestBase() {
   @Test
   fun `given an active conviction and licence conditions with no documents required then return these details in the response`() {
     runTest {
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })

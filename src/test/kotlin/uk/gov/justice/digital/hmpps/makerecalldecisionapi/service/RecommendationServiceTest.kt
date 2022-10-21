@@ -93,7 +93,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked)
 
       // when
@@ -813,7 +813,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
       )
 
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
 
       given(recommendationRepository.save(any()))
@@ -841,7 +841,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
       )
 
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString()))
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(), custodialConvictionResponse()) })
 
       given(recommendationRepository.save(any()))

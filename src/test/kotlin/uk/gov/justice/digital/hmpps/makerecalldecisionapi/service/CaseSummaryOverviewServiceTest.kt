@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -65,7 +66,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
       given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
         Mono.fromCallable {
           listOf(
             custodialConvictionResponse()
@@ -124,7 +125,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
       given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
         Mono.fromCallable {
           listOf(
             nonCustodialConvictionResponse()
@@ -153,7 +154,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
       given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString())).willReturn(Mono.fromCallable { emptyList() })
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(Mono.fromCallable { emptyList() })
       given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.empty())
       given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
       given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
@@ -280,7 +281,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
           )
         }
       )
-      given(communityApiClient.getActiveConvictions(anyString())).willReturn(
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
         Mono.fromCallable {
           listOf(
             custodialConvictionResponse().copy(
