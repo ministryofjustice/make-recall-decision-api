@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
@@ -46,7 +47,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })
@@ -82,7 +83,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.fromCallable { licenceConditions })
@@ -128,7 +129,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
         .willReturn(Mono.empty())
@@ -164,7 +165,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getActiveConvictions(anyString()))
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { emptyList() })
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })

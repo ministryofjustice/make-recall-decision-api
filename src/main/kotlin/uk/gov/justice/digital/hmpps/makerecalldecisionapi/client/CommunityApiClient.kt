@@ -56,7 +56,7 @@ class CommunityApiClient(
     return result
   }
 
-  fun getActiveConvictions(crn: String): Mono<List<Conviction>> {
+  fun getActiveConvictions(crn: String, activeOnly: Boolean? = true): Mono<List<Conviction>> {
     log.info(normalizeSpace("About to get active convictions for $crn"))
     val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
 
@@ -64,7 +64,7 @@ class CommunityApiClient(
       .get()
       .uri {
         it.path("/secure/offenders/crn/$crn/convictions")
-          .queryParam("activeOnly", true)
+          .queryParam("activeOnly", activeOnly)
           .build()
       }
       .retrieve()
