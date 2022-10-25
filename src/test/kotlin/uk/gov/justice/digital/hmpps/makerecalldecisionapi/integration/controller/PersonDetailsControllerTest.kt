@@ -32,7 +32,7 @@ class PersonDetailsControllerTest(
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("39")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.addresses[0].line1").isEqualTo("HMPPS Digital Studio 33 Scotland Street")

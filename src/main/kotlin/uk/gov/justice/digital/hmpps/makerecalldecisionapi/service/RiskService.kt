@@ -165,7 +165,7 @@ internal class RiskService(
     latestAssessment: Assessment?,
     mainOffence: Offence?
   ) = latestAssessment?.offenceDetails?.any {
-    LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate
+    it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffence?.offenceDate)
   } == true
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
