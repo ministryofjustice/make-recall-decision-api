@@ -51,5 +51,10 @@ class DateTimeHelper {
       val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
       return offsetDateTime.format(formatter)
     }
+
+    fun convertDateStringToIso8601Date(input: String?): LocalDate? {
+      val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+      return input?.let { LocalDate.parse(it, formatter) }
+    }
   }
 }

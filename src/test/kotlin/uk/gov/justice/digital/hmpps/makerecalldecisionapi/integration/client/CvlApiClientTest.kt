@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import java.time.LocalDate
 
 @ActiveProfiles("test")
 class CvlApiClientTest : IntegrationTestBase() {
@@ -52,20 +51,20 @@ class CvlApiClientTest : IntegrationTestBase() {
 
     // and
     val expected =
-      LicenceConditionResponse(
-        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-        actualReleaseDate = LocalDate.parse("2022-06-11"),
-        sentenceStartDate = LocalDate.parse("2022-06-12"),
-        sentenceEndDate = LocalDate.parse("2022-06-13"),
-        licenceStartDate = LocalDate.parse("2022-06-14"),
-        licenceExpiryDate = LocalDate.parse("2022-06-15"),
-        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(LicenceConditionDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
-        additionalPssConditions = listOf(LicenceConditionDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      LicenceConditionCvlResponse(
+        conditionalReleaseDate = "10/06/2022",
+        actualReleaseDate = "11/06/2022",
+        sentenceStartDate = "12/06/2022",
+        sentenceEndDate = "13/06/2022",
+        licenceStartDate = "14/06/2022",
+        licenceExpiryDate = "15/06/2022",
+        topupSupervisionStartDate = "16/06/2022",
+        topupSupervisionExpiryDate = "17/06/2022",
+        standardLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard licence condition")),
+        standardPssConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard PSS licence condition")),
+        additionalLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
+        additionalPssConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
+        bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition"))
       )
 
     // when

@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiCli
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
@@ -470,21 +470,21 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun licenceByIdResponse(): LicenceConditionResponse {
-    return LicenceConditionResponse(
-      conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-      actualReleaseDate = LocalDate.parse("2022-06-11"),
-      sentenceStartDate = LocalDate.parse("2022-06-12"),
-      sentenceEndDate = LocalDate.parse("2022-06-13"),
-      licenceStartDate = LocalDate.parse("2022-06-14"),
-      licenceExpiryDate = LocalDate.parse("2022-06-15"),
-      topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-      topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-      standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-      standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
-      additionalLicenceConditions = listOf(LicenceConditionDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
-      additionalPssConditions = listOf(LicenceConditionDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
-      bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+  protected fun licenceByIdResponse(): LicenceConditionCvlResponse {
+    return LicenceConditionCvlResponse(
+      conditionalReleaseDate = "10/06/2022",
+      actualReleaseDate = "11/06/2022",
+      sentenceStartDate = "12/06/2022",
+      sentenceEndDate = "13/06/2022",
+      licenceStartDate = "14/06/2022",
+      licenceExpiryDate = "15/06/2022",
+      topupSupervisionStartDate = "16/06/2022",
+      topupSupervisionExpiryDate = "17/06/2022",
+      standardLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard licence condition")),
+      standardPssConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard PSS licence condition")),
+      additionalLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
+      additionalPssConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
+      bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition"))
     )
   }
 }
