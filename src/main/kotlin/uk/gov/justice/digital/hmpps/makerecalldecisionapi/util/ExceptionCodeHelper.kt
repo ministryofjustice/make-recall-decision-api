@@ -19,7 +19,7 @@ class ExceptionCodeHelper {
         }
         is WebClientResponseException -> {
           if (exception.rawStatusCode == 404) {
-            if (task == "risk summary" && exception.statusText?.startsWith("Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn") == true) {
+            if (task == "risk summary" && exception.responseBodyAsString.contains("Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn")) {
               log.info("Latest complete assessment not found when trying to get $task for CRN: $crn")
               "NOT_FOUND_LATEST_COMPLETE"
             } else {

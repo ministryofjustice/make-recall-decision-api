@@ -871,7 +871,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     expectedErrorCode: String
   ) {
     runTest {
-      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, exceptionMessage, null, null, null))
+      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, exceptionMessage.toByteArray(Charsets.UTF_8), null))
 
       val response = riskService.getRoshSummary(crn)
 
