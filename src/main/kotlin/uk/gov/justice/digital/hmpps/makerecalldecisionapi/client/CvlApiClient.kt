@@ -10,12 +10,11 @@ import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceByIdException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceMatchException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -38,10 +37,6 @@ class CvlApiClient(
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(fromValue(licenceConditionSearch))
       .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw NoCvlLicenceMatchException("No licence matches found in CVL for crn: $crn with nomisId: " + licenceConditionSearch.nomsId) }
-      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(cvlTimeout))
       .doOnError { ex ->
@@ -54,10 +49,10 @@ class CvlApiClient(
     return result
   }
 
-  fun getLicenceById(crn: String, licenceId: Int): Mono<LicenceConditionResponse> {
+  fun getLicenceById(crn: String, licenceId: Int): Mono<LicenceConditionCvlResponse> {
     log.info(normalizeSpace("About to get licence from CVL for CRN $crn and licence id $licenceId"))
 
-    val responseType = object : ParameterizedTypeReference<LicenceConditionResponse>() {}
+    val responseType = object : ParameterizedTypeReference<LicenceConditionCvlResponse>() {}
     val result = webClient
       .get()
       .uri("/licence/id/$licenceId")

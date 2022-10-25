@@ -4,11 +4,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceByIdException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceMatchException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertDateStringToIso8601Date
 
 @Service
 internal class CreateAndVaryALicenceService(
@@ -17,12 +17,8 @@ internal class CreateAndVaryALicenceService(
 
   suspend fun buildLicenceConditions(crn: String, nomsId: String): List<LicenceConditionResponse?> {
 
-    val matchedLicences = try {
+    val matchedLicences =
       getValueAndHandleWrappedException(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(listOf(nomsId))))
-    } catch (ex: NoCvlLicenceMatchException) {
-      log.info(ex.message)
-      return emptyList()
-    }
 
     return matchedLicences
       ?.filter { it.crn.equals(crn) }
@@ -31,14 +27,14 @@ internal class CreateAndVaryALicenceService(
           val licence = getValueAndHandleWrappedException(cvlApiClient.getLicenceById(crn, matched.licenceId))
 
           LicenceConditionResponse(
-            conditionalReleaseDate = licence?.conditionalReleaseDate,
-            actualReleaseDate = licence?.actualReleaseDate,
-            sentenceStartDate = licence?.sentenceStartDate,
-            sentenceEndDate = licence?.sentenceEndDate,
-            licenceStartDate = licence?.licenceStartDate,
-            licenceExpiryDate = licence?.licenceExpiryDate,
-            topupSupervisionStartDate = licence?.topupSupervisionStartDate,
-            topupSupervisionExpiryDate = licence?.topupSupervisionExpiryDate,
+            conditionalReleaseDate = convertDateStringToIso8601Date(licence?.conditionalReleaseDate),
+            actualReleaseDate = convertDateStringToIso8601Date(licence?.actualReleaseDate),
+            sentenceStartDate = convertDateStringToIso8601Date(licence?.sentenceStartDate),
+            sentenceEndDate = convertDateStringToIso8601Date(licence?.sentenceEndDate),
+            licenceStartDate = convertDateStringToIso8601Date(licence?.licenceStartDate),
+            licenceExpiryDate = convertDateStringToIso8601Date(licence?.licenceExpiryDate),
+            topupSupervisionStartDate = convertDateStringToIso8601Date(licence?.topupSupervisionStartDate),
+            topupSupervisionExpiryDate = convertDateStringToIso8601Date(licence?.topupSupervisionExpiryDate),
             standardLicenceConditions = licence?.standardLicenceConditions?.map { LicenceConditionDetail(it.text) },
             standardPssConditions = licence?.standardPssConditions?.map { LicenceConditionDetail(it.text) },
             additionalLicenceConditions = licence?.additionalLicenceConditions?.map { LicenceConditionDetail(it.text, it.expandedText) },
