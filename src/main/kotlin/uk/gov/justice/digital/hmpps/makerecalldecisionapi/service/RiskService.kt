@@ -89,10 +89,10 @@ internal class RiskService(
       return AssessmentInfo(error = extractErrorCode(ex, "risk assessments", crn))
     }
     val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
-    val mainActiveCustodialOffenceFromLatestCompleteAssessment = getMainActiveCustodialOffenceFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment)
+    val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment, hideOffenceDetailsWhenNoMatch)
     return buildAssessmentInfo(
       activeConvictionPresent = convictionsFromDelius?.any { it.active == true } == true,
-      mainActiveCustodialOffenceFromLatestCompleteAssessment = mainActiveCustodialOffenceFromLatestCompleteAssessment,
+      offences = offences,
       latestCompleteAssessment = latestCompleteAssessment,
       hideOffenceDetailsWhenNoMatch = hideOffenceDetailsWhenNoMatch
     )
@@ -100,23 +100,23 @@ internal class RiskService(
 
   private fun buildAssessmentInfo(
     activeConvictionPresent: Boolean,
-    mainActiveCustodialOffenceFromLatestCompleteAssessment: List<Offence>?,
+    offences: List<Offence>?,
     latestCompleteAssessment: Assessment?,
     hideOffenceDetailsWhenNoMatch: Boolean?
   ): AssessmentInfo {
-    val offenceCodesMatch = mainActiveCustodialOffenceFromLatestCompleteAssessment?.any {
+    val offenceCodesMatch = offences?.any {
       currentOffenceCodesMatch(
         latestCompleteAssessment, it
       )
     }
     val datesMatch = datesMatch(
       latestCompleteAssessment,
-      mainActiveCustodialOffenceFromLatestCompleteAssessment?.find { it.mainOffence == true }
+      offences?.find { it.mainOffence == true }
     )
     val lastUpdatedDate = latestCompleteAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
     val offenceDescription = if (hideOffenceDetailsWhenNoMatch == true) {
       getOffenceDescriptionWhenOffencesDoNotMatch(
-        mainActiveCustodialOffenceFromLatestCompleteAssessment,
+        offences,
         latestCompleteAssessment
       )
     } else latestCompleteAssessment?.offence
@@ -139,14 +139,23 @@ internal class RiskService(
     ?.map { latestAssessment?.offence }
     ?.firstOrNull()
 
-  private fun getMainActiveCustodialOffenceFromLatestCompleteAssessment(
-    activeConvictionsFromDelius: List<Conviction>?,
-    latestAssessment: Assessment?
-  ) = activeConvictionsFromDelius
-    ?.filter { isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius) }
-    ?.filter { it.isCustodial && it.active == true }
-    ?.flatMap(this::extractMainOffences)
-    ?.filter { datesMatch(latestAssessment, it) }
+  private fun getOffencesFromLatestCompleteAssessment(
+    convictionsFromDelius: List<Conviction>?,
+    latestAssessment: Assessment?,
+    hideOffenceDetailsWhenNoMatch: Boolean?
+  ): List<Offence>? {
+    return filterOffencesToShow(convictionsFromDelius, hideOffenceDetailsWhenNoMatch)
+      ?.filter { it.isCustodial && it.active == true }
+      ?.flatMap(this::extractMainOffences)
+      ?.filter { datesMatch(latestAssessment, it) }
+  }
+
+  private fun filterOffencesToShow(convictionsFromDelius: List<Conviction>?, hideOffenceDetailsWhenNoMatch: Boolean?): List<Conviction>? {
+    val showOffencesForOverview = hideOffenceDetailsWhenNoMatch == false && convictionsFromDelius?.let { isAtLeastOneActiveCustodialConvictionPresent(it) } == true
+    val showOffencesForRecFlow = hideOffenceDetailsWhenNoMatch == true && convictionsFromDelius?.let { isOnlyOneActiveCustodialConvictionPresent(it) } == true
+    return convictionsFromDelius
+      ?.filter { showOffencesForOverview || showOffencesForRecFlow }
+  }
 
   private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
     assessmentsResponse.assessments
@@ -155,8 +164,11 @@ internal class RiskService(
       ?.reversed()
       ?.firstOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
 
-  private fun isOnlyOneActiveCustodialConvictionPresent(activeConvictionsFromDelius: List<Conviction>) =
-    activeConvictionsFromDelius.count { it.isCustodial } == 1
+  private fun isOnlyOneActiveCustodialConvictionPresent(convictionsFromDelius: List<Conviction>) =
+    convictionsFromDelius.filter { it.active == true }.count { it.isCustodial } == 1
+
+  private fun isAtLeastOneActiveCustodialConvictionPresent(convictionsFromDelius: List<Conviction>) =
+    convictionsFromDelius.filter { it.active == true }.count { it.isCustodial } >= 1
 
   private fun isLatestAssessment(it: Assessment?) =
     (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
