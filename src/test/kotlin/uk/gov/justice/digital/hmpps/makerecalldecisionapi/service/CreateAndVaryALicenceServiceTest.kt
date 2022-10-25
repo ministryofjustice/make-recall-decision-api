@@ -9,10 +9,9 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceByIdException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceMatchException
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -74,7 +73,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val nomsId = "67876"
 
       given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
-      given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { LicenceConditionResponse() })
+      given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { LicenceConditionCvlResponse() })
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
@@ -92,21 +91,6 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val nomsId = "67876"
 
       given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, "RandomCRN") })
-
-      val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
-
-      assertThat(response.size).isEqualTo(0)
-    }
-  }
-
-  @Test
-  fun `given call to match licence fails on call to CVL with a 404 then return empty list`() {
-    runTest {
-      val nomsId = "67876"
-
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willThrow(
-        NoCvlLicenceMatchException("No licence match for nomis id: $nomsId")
-      )
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 

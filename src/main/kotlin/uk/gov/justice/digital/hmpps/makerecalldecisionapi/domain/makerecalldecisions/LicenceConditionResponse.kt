@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import java.time.LocalDate
 
