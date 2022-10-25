@@ -145,16 +145,20 @@ internal class RiskService(
     hideOffenceDetailsWhenNoMatch: Boolean?
   ): List<Offence>? {
     return filterOffencesToShow(convictionsFromDelius, hideOffenceDetailsWhenNoMatch)
-      ?.filter { it.isCustodial && it.active == true }
+      ?.filter { it.active == true }
       ?.flatMap(this::extractMainOffences)
       ?.filter { datesMatch(latestAssessment, it) }
   }
 
   private fun filterOffencesToShow(convictionsFromDelius: List<Conviction>?, hideOffenceDetailsWhenNoMatch: Boolean?): List<Conviction>? {
-    val showOffencesForOverview = hideOffenceDetailsWhenNoMatch == false && convictionsFromDelius?.let { isAtLeastOneActiveCustodialConvictionPresent(it) } == true
+    val showOffencesForOverview = hideOffenceDetailsWhenNoMatch == false && convictionsFromDelius?.let { isAtLeastOneActiveConvictionPresent(it) } == true
     val showOffencesForRecFlow = hideOffenceDetailsWhenNoMatch == true && convictionsFromDelius?.let { isOnlyOneActiveCustodialConvictionPresent(it) } == true
-    return convictionsFromDelius
-      ?.filter { showOffencesForOverview || showOffencesForRecFlow }
+    return if (showOffencesForOverview) {
+      convictionsFromDelius
+    } else convictionsFromDelius
+      ?.filter {
+        showOffencesForRecFlow && it.isCustodial
+      }
   }
 
   private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
@@ -167,8 +171,8 @@ internal class RiskService(
   private fun isOnlyOneActiveCustodialConvictionPresent(convictionsFromDelius: List<Conviction>) =
     convictionsFromDelius.filter { it.active == true }.count { it.isCustodial } == 1
 
-  private fun isAtLeastOneActiveCustodialConvictionPresent(convictionsFromDelius: List<Conviction>) =
-    convictionsFromDelius.filter { it.active == true }.count { it.isCustodial } >= 1
+  private fun isAtLeastOneActiveConvictionPresent(convictionsFromDelius: List<Conviction>) =
+    convictionsFromDelius.any { it.active == true }
 
   private fun isLatestAssessment(it: Assessment?) =
     (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
