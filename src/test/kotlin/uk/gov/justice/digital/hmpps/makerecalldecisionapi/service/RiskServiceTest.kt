@@ -430,6 +430,55 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match because offence date from OaSys is null`() {
+    runTest {
+      // given
+      val nullDateShouldBeHandledAsMismatch = null
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            AssessmentsResponse(
+              crn,
+              false,
+              listOf(
+                assessment().copy(
+                  offenceDetails = listOf(
+                    AssessmentOffenceDetail(
+                      type = "CURRENT",
+                      offenceCode = "ABC123",
+                      offenceSubCode = "",
+                      offenceDate = nullDateShouldBeHandledAsMismatch
+                    )
+                  )
+                ),
+                assessment().copy(
+                  laterCompleteAssessmentExists = true,
+                  dateCompleted = "2022-08-26T15:00:08",
+                  superStatus = "OPEN"
+                )
+              )
+            )
+          }
+        )
+
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
+
+      // when
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+
+      // then
+      val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
+      assertThat(response?.offencesMatch).isEqualTo(false)
+      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
+    }
+  }
+
+  @Test
   fun `retrieves risk with null predictor score field`() {
     runTest {
       given(arnApiClient.getRiskScores(anyString()))
