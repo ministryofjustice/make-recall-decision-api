@@ -32,6 +32,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404LatestCompleteNotFoundResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404NoOffenderFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
@@ -315,11 +317,19 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun noRoSHSummaryResponse(crn: String) {
+  protected fun noOffenderFoundRoshSummaryResponse(crn: String) {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
-      response().withStatusCode(404)
+      response().withBody(roSH404NoOffenderFoundResponse(crn)).withStatusCode(404)
+    )
+  }
+
+  protected fun noLatestCompleteRoshSummaryResponse(crn: String) {
+    val roSHSummaryRequest =
+      request().withPath("/risks/crn/$crn/summary")
+    oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
+      response().withBody(roSH404LatestCompleteNotFoundResponse(crn)).withStatusCode(404)
     )
   }
 

@@ -19,13 +19,13 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk summary when no MAPPA, risk scores or RoSH summary available and Risk Scores not found`() {
+  fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available `() {
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       noRiskScoresResponse(crn)
-      noRoSHSummaryResponse(crn)
+      noOffenderFoundRoshSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -48,6 +48,40 @@ class RiskControllerTest(
         .jsonPath("$.roshSummary.riskMitigationFactors").isEqualTo(null)
         .jsonPath("$.roshSummary.riskImminence").isEqualTo(null)
         .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
+        .jsonPath("$.predictorScores.error").isEqualTo("NOT_FOUND")
+    }
+  }
+
+  @Test
+  fun `retrieves risk summary when no MAPPA or risk scores are available and RoSH summary is no latest complete 404`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      noMappaDetailsResponse(crn)
+      noRiskScoresResponse(crn)
+      noLatestCompleteRoshSummaryResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/risk")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
+        .jsonPath("$.mappa.level").isEqualTo(null)
+        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
+        .jsonPath("$.mappa.category").isEqualTo(null)
+        .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskMitigationFactors").isEqualTo(null)
+        .jsonPath("$.roshSummary.riskImminence").isEqualTo(null)
+        .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND_LATEST_COMPLETE")
         .jsonPath("$.predictorScores.error").isEqualTo("NOT_FOUND")
     }
   }
