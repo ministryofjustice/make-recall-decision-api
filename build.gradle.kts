@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.5"
   kotlin("jvm") version "1.7.20"
   id("jacoco")
   kotlin("plugin.jpa") version "1.7.20"
@@ -17,7 +17,7 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
-val springDocVersion = "1.6.11"
+val springDocVersion = "1.6.12"
 
 dependencies {
 
@@ -27,19 +27,19 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.4")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.5")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.5")
   implementation("io.opentelemetry:opentelemetry-api:1.19.0")
-  implementation("joda-time:joda-time:2.11.2")
+  implementation("joda-time:joda-time:2.12.0")
   implementation("com.deepoove:poi-tl:1.12.0")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.4.0")
+  implementation("org.flywaydb:flyway-core:9.5.1")
   implementation("org.postgresql:postgresql:42.5.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.5.0")
-  implementation("io.sentry:sentry-logback:6.5.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.6.0")
+  implementation("io.sentry:sentry-logback:6.6.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -50,7 +50,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.6.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.19.2")
+  implementation("com.vladmihalcea:hibernate-types-52:2.20.0")
 
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
