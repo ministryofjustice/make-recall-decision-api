@@ -20,5 +20,18 @@ class OffenderSearchTest() : FunctionalTest() {
 
     // then
     assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
+    assertJsonArrayResponse(lastResponse, offenderSearchExpectation())
   }
 }
+
+fun offenderSearchExpectation() = """
+[
+    {
+        "userExcluded": null,
+        "userRestricted": null,
+        "name": "Ikenberry Camploongo",
+        "crn": "D006296",
+        "dateOfBirth": "1986-05-11"
+    }
+]
+""".trimIndent()

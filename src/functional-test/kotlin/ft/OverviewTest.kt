@@ -10,7 +10,6 @@ class OverviewTest() : FunctionalTest() {
   fun `overview, expected 200`() {
     // given
     val expected = HttpStatus.OK.value()
-    val testCrn = "X263655"
 
     // when
     lastResponse = RestAssured
@@ -29,11 +28,19 @@ fun overviewExpectation() = """
 {
     "userAccessResponse": null,
     "personalDetailsOverview": {
-        "name": "Lee JarIce",
-        "dateOfBirth": "1969-06-23",
-        "age": 53,
-        "gender": "Female",
-        "crn": "X263655"
+        "name": "Ikenberry Camploongo",
+        "firstName": "Ikenberry",
+        "middleNames": "ZZ",
+        "surname": "Camploongo",
+        "dateOfBirth": "1986-05-11",
+        "age": 36,
+        "gender": "Male",
+        "crn": "D006296",
+        "ethnicity": "",
+        "croNumber": "",
+        "mostRecentPrisonerNumber": "",
+        "pncNumber": "",
+        "nomsNumber": ""
     },
     "convictions": [
         {
@@ -41,24 +48,9 @@ fun overviewExpectation() = """
             "offences": [
                 {
                     "mainOffence": true,
-                    "description": "Accident offences - 80500",
-                    "code": "80500"
-                }
-            ],
-            "sentenceDescription": "ORA Community Order",
-            "sentenceOriginalLength": 18,
-            "sentenceOriginalLengthUnits": "Months",
-            "sentenceExpiryDate": null,
-            "licenceExpiryDate": null,
-            "isCustodial": false
-        },
-        {
-            "active": true,
-            "offences": [
-                {
-                    "mainOffence": true,
-                    "description": "Accident offences - 80500",
-                    "code": "80500"
+                    "description": "Endangering life at sea - 00700",
+                    "code": "00700",
+                    "offenceDate": "2014-02-07"
                 }
             ],
             "sentenceDescription": "CJA - Std Determinate Custody",
@@ -74,12 +66,22 @@ fun overviewExpectation() = """
         "lastRecall": null
     },
     "risk": {
-        "flags": [
-            "Suicide/Self Harm",
-            "Hate Crime",
-            "Street Gangs",
-            "MAPPA"
-        ]
+        "flags": [],
+        "riskManagementPlan": {
+            "assessmentStatusComplete": null,
+            "lastUpdatedDate": null,
+            "latestDateCompleted": null,
+            "initiationDate": null,
+            "contingencyPlans": null,
+            "error": "SERVER_ERROR"
+        },
+        "assessments": {
+            "error": "SERVER_ERROR",
+            "lastUpdatedDate": null,
+            "offenceDataFromLatestCompleteAssessment": null,
+            "offencesMatch": null,
+            "offenceDescription": null
+        }
     },
     "activeRecommendation": null
 }
