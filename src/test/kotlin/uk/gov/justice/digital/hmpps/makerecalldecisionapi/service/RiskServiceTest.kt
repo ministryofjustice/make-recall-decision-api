@@ -264,13 +264,14 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and multiple main offences are available`() {
+  fun `retrieves assessments information when hideOffenceDetailsWhenNoMatch is false and at least one active conviction from Delius with a main offence matches the offence from OaSys`() {
     runTest {
       // given
+      val custodialConvictionNotRequired = null
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse(), convictionResponse()) })
+        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = custodialConvictionNotRequired), convictionResponse().copy(custody = custodialConvictionNotRequired)) })
 
       // when
       val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
