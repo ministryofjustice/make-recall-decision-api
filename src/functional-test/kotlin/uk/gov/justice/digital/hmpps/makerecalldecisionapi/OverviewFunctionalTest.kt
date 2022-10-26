@@ -1,29 +1,28 @@
-package ft
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 
-class LicenceConditionsTest() : FunctionalTest() {
+class OverviewTest() : FunctionalTest() {
+
   @Test
-  fun `retrieve licence conditions`() {
-    // given
-    val expected = HttpStatus.OK.value()
+  fun `fetch overview details`() {
 
     // when
     lastResponse = RestAssured
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/licence-conditions")
+      .get("$path/cases/{crn}/overview")
 
     // then
-    assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
-    assertResponse(lastResponse, licenceConditionsExpectation())
+    assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
+    assertResponse(lastResponse, overviewExpectation())
   }
+}
 
-  fun licenceConditionsExpectation() = """
+fun overviewExpectation() = """
 {
     "userAccessResponse": null,
     "personalDetailsOverview": {
@@ -43,7 +42,6 @@ class LicenceConditionsTest() : FunctionalTest() {
     },
     "convictions": [
         {
-            "convictionId": 2500007681,
             "active": true,
             "offences": [
                 {
@@ -56,16 +54,8 @@ class LicenceConditionsTest() : FunctionalTest() {
             "sentenceDescription": "CJA - Std Determinate Custody",
             "sentenceOriginalLength": 12,
             "sentenceOriginalLengthUnits": "Months",
-            "sentenceSecondLength": null,
-            "sentenceSecondLengthUnits": null,
-            "sentenceStartDate": "2014-11-17",
             "sentenceExpiryDate": null,
             "licenceExpiryDate": null,
-            "postSentenceSupervisionEndDate": null,
-            "statusCode": "A",
-            "statusDescription": "Sentenced - In Custody",
-            "licenceConditions": [],
-            "licenceDocuments": [],
             "isCustodial": true
         }
     ],
@@ -73,7 +63,24 @@ class LicenceConditionsTest() : FunctionalTest() {
         "lastRelease": null,
         "lastRecall": null
     },
+    "risk": {
+        "flags": [],
+        "riskManagementPlan": {
+            "assessmentStatusComplete": null,
+            "lastUpdatedDate": null,
+            "latestDateCompleted": null,
+            "initiationDate": null,
+            "contingencyPlans": null,
+            "error": "SERVER_ERROR"
+        },
+        "assessments": {
+            "error": "SERVER_ERROR",
+            "lastUpdatedDate": null,
+            "offenceDataFromLatestCompleteAssessment": null,
+            "offencesMatch": null,
+            "offenceDescription": null
+        }
+    },
     "activeRecommendation": null
 }
-  """.trimIndent()
-}
+""".trimIndent()

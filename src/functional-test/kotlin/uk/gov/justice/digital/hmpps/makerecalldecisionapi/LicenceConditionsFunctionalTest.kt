@@ -1,30 +1,27 @@
-package ft
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 
-class OverviewTest() : FunctionalTest() {
+class LicenceConditionsFunctionalTest() : FunctionalTest() {
+
   @Test
-  fun `overview, expected 200`() {
-    // given
-    val expected = HttpStatus.OK.value()
+  fun `retrieve licence conditions`() {
 
     // when
     lastResponse = RestAssured
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/overview")
+      .get("$path/cases/{crn}/licence-conditions")
 
     // then
-    assertThat(lastResponse.statusCode).isEqualTo(expected)
-    assertResponse(lastResponse, overviewExpectation())
+    assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
+    assertResponse(lastResponse, licenceConditionsExpectation())
   }
-}
 
-fun overviewExpectation() = """
+  fun licenceConditionsExpectation() = """
 {
     "userAccessResponse": null,
     "personalDetailsOverview": {
@@ -44,6 +41,7 @@ fun overviewExpectation() = """
     },
     "convictions": [
         {
+            "convictionId": 2500007681,
             "active": true,
             "offences": [
                 {
@@ -56,8 +54,16 @@ fun overviewExpectation() = """
             "sentenceDescription": "CJA - Std Determinate Custody",
             "sentenceOriginalLength": 12,
             "sentenceOriginalLengthUnits": "Months",
+            "sentenceSecondLength": null,
+            "sentenceSecondLengthUnits": null,
+            "sentenceStartDate": "2014-11-17",
             "sentenceExpiryDate": null,
             "licenceExpiryDate": null,
+            "postSentenceSupervisionEndDate": null,
+            "statusCode": "A",
+            "statusDescription": "Sentenced - In Custody",
+            "licenceConditions": [],
+            "licenceDocuments": [],
             "isCustodial": true
         }
     ],
@@ -65,24 +71,7 @@ fun overviewExpectation() = """
         "lastRelease": null,
         "lastRecall": null
     },
-    "risk": {
-        "flags": [],
-        "riskManagementPlan": {
-            "assessmentStatusComplete": null,
-            "lastUpdatedDate": null,
-            "latestDateCompleted": null,
-            "initiationDate": null,
-            "contingencyPlans": null,
-            "error": "SERVER_ERROR"
-        },
-        "assessments": {
-            "error": "SERVER_ERROR",
-            "lastUpdatedDate": null,
-            "offenceDataFromLatestCompleteAssessment": null,
-            "offencesMatch": null,
-            "offenceDescription": null
-        }
-    },
     "activeRecommendation": null
 }
-""".trimIndent()
+  """.trimIndent()
+}
