@@ -1,25 +1,23 @@
-package ft
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 
 class PersonalDetailsTest() : FunctionalTest() {
+
   @Test
   fun `fetch personal details`() {
-    // given
-    val expected = HttpStatus.OK.value()
 
     // when
     lastResponse = RestAssured
       .given()
       .pathParam("crn", testCrn)
       .header("Authorization", token)
-      .get("http://127.0.0.1:8080/cases/{crn}/personal-details")
+      .get("$path/cases/{crn}/personal-details")
 
     // then
-    assertThat(lastResponse.getStatusCode()).isEqualTo(expected)
+    assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
     assertResponse(lastResponse, personalDetailsExpectation())
   }
 }
