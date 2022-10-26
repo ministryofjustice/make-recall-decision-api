@@ -3,6 +3,7 @@ package ft
 import io.restassured.RestAssured
 import io.restassured.response.Response
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.BeforeAll
 import org.skyscreamer.jsonassert.JSONAssert
@@ -34,7 +35,11 @@ open class FunctionalTest {
     }
 
     fun assertResponse(restassuredResponse: Response, expectation: String) {
-      JSONAssert.assertEquals(JSONObject(restassuredResponse.asString()), JSONObject(expectation), JSONCompareMode.LENIENT)
+      JSONAssert.assertEquals(JSONObject(restassuredResponse.asString()), JSONObject(expectation), JSONCompareMode.NON_EXTENSIBLE)
+    }
+
+    fun assertJsonArrayResponse(restassuredResponse: Response, expectation: String) {
+      JSONAssert.assertEquals(JSONArray(restassuredResponse.asString()), JSONArray(expectation), JSONCompareMode.NON_EXTENSIBLE)
     }
   }
 }

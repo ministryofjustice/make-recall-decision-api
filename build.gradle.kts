@@ -61,8 +61,9 @@ dependencies {
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
 
-  testImplementation("io.rest-assured:json-path")
-  testImplementation("io.rest-assured:xml-path")
+  implementation("io.rest-assured:rest-assured")
+  implementation("io.rest-assured:json-path")
+  implementation("io.rest-assured:xml-path")
 }
 
 java {
