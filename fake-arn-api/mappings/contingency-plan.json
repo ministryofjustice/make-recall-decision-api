@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/risks/crn/X098092/summary"
+    "urlPathPattern": "/assessments/risk-management-plans/.*/ALLOW"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-rosh.json",
+    "bodyFileName": "contingency-scores.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/assessments/risk-management-plans/X098092/ALLOW"
+    "urlPathPattern": "/secure/offenders/crn/.*/contact-summary"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-contingency-scores.json",
+    "bodyFileName": "contact-summary.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/X098092/registrations"
+    "urlPathPattern": "/secure/offenders/crn/.*/registrations"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-registrations.json",
+    "bodyFileName": "registrations.json",
     "headers": {
       "Content-Type": "application/json"
     }
