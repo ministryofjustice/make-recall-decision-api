@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/X098092/contact-summary"
+    "urlPath": "/licence/id/123344"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-contact-summary.json",
+    "bodyFileName": "licence-by-id.json",
     "headers": {
       "Content-Type": "application/json"
     }

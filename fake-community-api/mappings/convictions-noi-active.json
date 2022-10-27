@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/X098092/risk/mappa"
+    "urlPathPattern": "/secure/offenders/crn/.*/convictions"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-mappa.json",
+    "bodyFileName": "convictions.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/X098092/userAccess"
+    "urlPathPattern": "/secure/offenders/crn/.*/all"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-user-access.json",
+    "bodyFileName": "all.json",
     "headers": {
       "Content-Type": "application/json"
     }

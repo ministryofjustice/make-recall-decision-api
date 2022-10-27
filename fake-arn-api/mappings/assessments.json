@@ -1,11 +1,11 @@
 {
   "request": {
-    "method": "POST",
-    "urlPath": "/licence/match"
+    "method": "GET",
+    "urlPathPattern": "/assessments/crn/.*/offence"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-licence-match.json",
+    "bodyFileName": "assessments.json",
     "headers": {
       "Content-Type": "application/json"
     }
