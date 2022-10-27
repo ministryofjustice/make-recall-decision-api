@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/risks/crn/X098092/predictors/all"
+    "urlPathPattern": "/secure/offenders/crn/.*/userAccess"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "X098092-current-scores.json",
+    "bodyFileName": "user-access.json",
     "headers": {
       "Content-Type": "application/json"
     }
