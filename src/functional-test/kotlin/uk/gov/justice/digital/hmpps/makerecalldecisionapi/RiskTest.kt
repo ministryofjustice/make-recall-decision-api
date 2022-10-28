@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class RiskTest() : FunctionalTest() {
