@@ -167,7 +167,6 @@ internal class TemplateReplacementService(
       "referral_to_approved_premises_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name] ?: EMPTY_STRING),
       "referral_to_other_teams_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name] ?: EMPTY_STRING),
       "referral_to_partnership_agencies_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name] ?: EMPTY_STRING),
-      "risk_escalation_details" to (selectedAlternativesMap[SelectedAlternativeOptions.RISK_ESCALATION.name] ?: EMPTY_STRING),
       "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name] ?: EMPTY_STRING)
     )
   }
