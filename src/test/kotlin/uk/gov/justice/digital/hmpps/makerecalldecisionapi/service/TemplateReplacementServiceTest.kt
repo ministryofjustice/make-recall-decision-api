@@ -303,7 +303,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(100)
+      assertThat(result.size).isEqualTo(99)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -322,7 +322,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["referral_to_other_teams_details"]).isEqualTo("referral to other team")
       assertThat(result["referral_to_approved_premises_details"]).isEqualTo("referred to approved premises")
       assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo("referred to partner agency")
-      assertThat(result["risk_escalation_details"]).isEqualTo("risk escalation")
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
       assertThat(result["has_arrest_issues"]).isEqualTo("Yes")
       assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
@@ -433,7 +432,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["referral_to_other_teams_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["referral_to_approved_premises_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["risk_escalation_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_STRING)
@@ -455,7 +453,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name, details = "referred to approved premises"),
       ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name, details = "referral to other team"),
       ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name, details = "referred to partner agency"),
-      ValueWithDetails(value = SelectedAlternativeOptions.RISK_ESCALATION.name, details = "risk escalation"),
       ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
     )
     return DocumentData(
