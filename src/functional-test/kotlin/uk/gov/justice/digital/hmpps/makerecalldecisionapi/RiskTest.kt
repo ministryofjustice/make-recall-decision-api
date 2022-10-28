@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class RiskTest() : FunctionalTest() {
@@ -31,29 +32,29 @@ fun riskExpectation() = """
     "error": "NOT_FOUND"
   },
   "roshSummary": {
-    "whoIsAtRisk": "X, Y and Z are at risk",
-    "lastUpdatedDate": "2022-05-19T08:26:31.000Z",
-    "riskImminence": "the risk is imminent and more probably in X situation",
-    "natureOfRisk": "The nature of the risk is X",
-    "riskIncreaseFactors": "If offender in situation X the risk can be higher",
+    "whoIsAtRisk": "TBA",
+    "lastUpdatedDate": "2022-07-27T12:09:41.000Z",
+    "riskImminence": "TBA",
+    "natureOfRisk": "TBA",
+    "riskIncreaseFactors": "TBA",
     "riskOfSeriousHarm": {
       "riskInCommunity": {
-        "riskToChildren": "HIGH",
-        "riskToPublic": "HIGH",
+        "riskToChildren": "LOW",
+        "riskToPublic": "MEDIUM",
         "riskToKnownAdult": "HIGH",
-        "riskToStaff": "MEDIUM",
+        "riskToStaff": "VERY_HIGH",
         "riskToPrisoners": ""
       },
       "riskInCustody": {
         "riskToChildren": "LOW",
-        "riskToPublic": "LOW",
+        "riskToPublic": "MEDIUM",
         "riskToKnownAdult": "HIGH",
         "riskToStaff": "VERY_HIGH",
         "riskToPrisoners": "VERY_HIGH"
       },
-      "overallRisk": "HIGH"
+      "overallRisk": "VERY_HIGH"
     },
-    "riskMitigationFactors": "Giving offender therapy in X will reduce the risk",
+    "riskMitigationFactors": "TBA",
     "error": null
   },
   "userAccessResponse": null,
@@ -62,7 +63,7 @@ fun riskExpectation() = """
     "name": "Ikenberry Camploongo",
     "dateOfBirth": "1986-05-11",
     "age": 36,
-    "crn": "A12345"
+    "crn": "D006296"
   },
   "assessmentStatus": "INCOMPLETE",
   "predictorScores": {
@@ -275,30 +276,6 @@ fun riskExpectation() = """
     ],
     "error": ""
   },
-  "activeRecommendation": {
-    "recallType": {
-      "allOptions": [
-        {
-          "text": "Fixed term",
-          "value": "FIXED_TERM"
-        },
-        {
-          "text": "Standard",
-          "value": "STANDARD"
-        },
-        {
-          "text": "No recall",
-          "value": "NO_RECALL"
-        }
-      ],
-      "selected": {
-        "details": "My details",
-        "value": "FIXED_TERM"
-      }
-    },
-    "lastModifiedDate": "2022-10-28T10:39:36.390Z",
-    "lastModifiedBy": "SOME_USER",
-    "recommendationId": 888238631
-  }
+  "activeRecommendation": null
 }
 """
