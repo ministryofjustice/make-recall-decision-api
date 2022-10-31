@@ -288,6 +288,31 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `retrieves assessments information and returns not found error`() {
+    runTest {
+      // given
+      val custodialConvictionNotRequired = null
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false, offence = null))) })
+      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
+        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = custodialConvictionNotRequired), convictionResponse().copy(custody = custodialConvictionNotRequired)) })
+
+      // when
+      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+
+      // then
+      val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
+      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
+      assertThat(shouldBeTrueBecauseNoLaterCompleteAssessmentExists).isEqualTo(true)
+      assertThat(response?.offencesMatch).isEqualTo(true)
+      assertThat(response?.offenceDescription).isEqualTo(null)
+      assertThat(response?.error).isEqualTo("NOT_FOUND")
+      then(arnApiClient).should().getAssessments(crn)
+      then(communityApiClient).should().getActiveConvictions(crn, false)
+    }
+  }
+
+  @Test
   fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is true and offences do not match as a later complete assessment exists`() {
     runTest {
       // given
