@@ -91,6 +91,7 @@ internal class RiskService(
     val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
     val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment, hideOffenceDetailsWhenNoMatch)
     return buildAssessmentInfo(
+      crn = crn,
       activeConvictionPresent = convictionsFromDelius?.any { it.active == true } == true,
       offences = offences,
       latestCompleteAssessment = latestCompleteAssessment,
@@ -99,6 +100,7 @@ internal class RiskService(
   }
 
   private fun buildAssessmentInfo(
+    crn: String?,
     activeConvictionPresent: Boolean,
     offences: List<Offence>?,
     latestCompleteAssessment: Assessment?,
@@ -119,9 +121,17 @@ internal class RiskService(
         offences,
         latestCompleteAssessment
       )
-    } else latestCompleteAssessment?.offence
+    } else {
+      latestCompleteAssessment?.offence
+    }
+
+    val errorOnBlankOffenceDescription = if (hideOffenceDetailsWhenNoMatch == false && offenceDescription == null) {
+      log.info("No offence description available for CRN: $crn ")
+      "NOT_FOUND"
+    } else null
 
     return AssessmentInfo(
+      error = errorOnBlankOffenceDescription,
       offenceDescription = offenceDescription,
       offencesMatch = offenceCodesMatch == true && datesMatch && activeConvictionPresent,
       lastUpdatedDate = lastUpdatedDate,
