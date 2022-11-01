@@ -18,6 +18,7 @@ class RecommendationTest() : FunctionalTest() {
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedCreated)
+    val actualResponse = JSONObject(lastResponse.asString()).toString()
     assertResponse(lastResponse, "")
   }
 
@@ -35,6 +36,7 @@ class RecommendationTest() : FunctionalTest() {
     // then
     lastResponse = getRecommendation(recommendationId, token)
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
+
     assertResponse(lastResponse, "")
   }
 
