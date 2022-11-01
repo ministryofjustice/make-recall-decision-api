@@ -70,8 +70,7 @@ class LicenceConditionsFunctionalTest() : FunctionalTest() {
     "releaseSummary": {
         "lastRelease": null,
         "lastRecall": null
-    },
-    "activeRecommendation": null
+    }
 }
   """.trimIndent()
 }

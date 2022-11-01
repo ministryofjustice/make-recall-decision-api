@@ -24,63 +24,62 @@ class OverviewTest() : FunctionalTest() {
 
 fun overviewExpectation() = """
 {
-    "userAccessResponse": null,
-    "personalDetailsOverview": {
-        "name": "Ikenberry Camploongo",
-        "firstName": "Ikenberry",
-        "middleNames": "ZZ",
-        "surname": "Camploongo",
-        "dateOfBirth": "1986-05-11",
-        "age": 36,
-        "gender": "Male",
-        "crn": "D006296",
-        "ethnicity": "",
-        "croNumber": "",
-        "mostRecentPrisonerNumber": "",
-        "pncNumber": "",
-        "nomsNumber": ""
+  "userAccessResponse": null,
+  "personalDetailsOverview": {
+    "gender": "Male",
+    "ethnicity": "",
+    "croNumber": "",
+    "dateOfBirth": "1986-05-11",
+    "middleNames": "ZZ",
+    "firstName": "Ikenberry",
+    "nomsNumber": "",
+    "surname": "Camploongo",
+    "pncNumber": "",
+    "name": "Ikenberry Camploongo",
+    "age": 36,
+    "crn": "D006296",
+    "mostRecentPrisonerNumber": ""
+  },
+  "releaseSummary": {
+    "lastRecall": null,
+    "lastRelease": null
+  },
+  "risk": {
+    "assessments": {
+      "lastUpdatedDate": "2022-07-27T12:09:41.000Z",
+      "offencesMatch": false,
+      "error": null,
+      "offenceDataFromLatestCompleteAssessment": false,
+      "offenceDescription": "Holding a Gun"
     },
-    "convictions": [
+    "flags": [],
+    "riskManagementPlan": {
+      "lastUpdatedDate": "2022-07-27T12:10:58.000Z",
+      "assessmentStatusComplete": false,
+      "initiationDate": "2022-07-27T12:10:58.000Z",
+      "contingencyPlans": "developing contingency plans consider what role increased supervision, additional monitoring\/control or greater intervention might play when a trigger is detected. Additionally consider whether following the trigger greater protection is needed for those named individuals or groups at risk.",
+      "error": null,
+      "latestDateCompleted": "2022-07-27T12:09:41.000Z"
+    }
+  },
+  "convictions": [
+    {
+      "sentenceExpiryDate": null,
+      "sentenceDescription": "CJA - Std Determinate Custody",
+      "isCustodial": true,
+      "offences": [
         {
-            "active": true,
-            "offences": [
-                {
-                    "mainOffence": true,
-                    "description": "Endangering life at sea - 00700",
-                    "code": "00700",
-                    "offenceDate": "2014-02-07"
-                }
-            ],
-            "sentenceDescription": "CJA - Std Determinate Custody",
-            "sentenceOriginalLength": 12,
-            "sentenceOriginalLengthUnits": "Months",
-            "sentenceExpiryDate": null,
-            "licenceExpiryDate": null,
-            "isCustodial": true
+          "code": "00700",
+          "description": "Endangering life at sea - 00700",
+          "offenceDate": "2014-02-07",
+          "mainOffence": true
         }
-    ],
-    "releaseSummary": {
-        "lastRelease": null,
-        "lastRecall": null
-    },
-    "risk": {
-        "flags": [],
-        "riskManagementPlan": {
-            "assessmentStatusComplete": null,
-            "lastUpdatedDate": null,
-            "latestDateCompleted": null,
-            "initiationDate": null,
-            "contingencyPlans": null,
-            "error": "SERVER_ERROR"
-        },
-        "assessments": {
-            "error": "SERVER_ERROR",
-            "lastUpdatedDate": null,
-            "offenceDataFromLatestCompleteAssessment": null,
-            "offencesMatch": null,
-            "offenceDescription": null
-        }
-    },
-    "activeRecommendation": null
+      ],
+      "licenceExpiryDate": null,
+      "active": true,
+      "sentenceOriginalLength": 12,
+      "sentenceOriginalLengthUnits": "Months"
+    }
+  ]
 }
 """.trimIndent()

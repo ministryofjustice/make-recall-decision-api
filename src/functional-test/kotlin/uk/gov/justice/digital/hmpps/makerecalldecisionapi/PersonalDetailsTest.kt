@@ -59,7 +59,6 @@ fun personalDetailsExpectation() = """
             "localDeliveryUnitDescription": "All NPS London"
         },
         "probationAreaDescription": "NPS London"
-    },
-    "activeRecommendation": null
+    }
 }
 """.trimIndent()
