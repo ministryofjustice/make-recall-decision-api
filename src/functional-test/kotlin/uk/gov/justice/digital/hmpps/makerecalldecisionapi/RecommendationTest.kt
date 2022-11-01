@@ -18,8 +18,8 @@ class RecommendationTest() : FunctionalTest() {
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedCreated)
-    val actualResponse = JSONObject(lastResponse.asString()).toString()
-    assertResponse(lastResponse, "")
+    val recommendationId = JSONObject(lastResponse.asString()).getString("id")
+    assertResponse(lastResponse, expectedCreateRecommendationResponse(recommendationId))
   }
 
   @Test
@@ -37,7 +37,7 @@ class RecommendationTest() : FunctionalTest() {
     lastResponse = getRecommendation(recommendationId, token)
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
 
-    assertResponse(lastResponse, "")
+    assertResponse(lastResponse, expectedUpdateRecommendationResponse(recommendationId))
   }
 
   @Test
@@ -60,8 +60,12 @@ class RecommendationTest() : FunctionalTest() {
       .post("recommendations/$recommendationId/part-a")
 
     // then
+    val responseJson = JSONObject(lastResponse.asString())
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
-    assertResponse(lastResponse, "")
+    assertThat(responseJson.getString("fileContents")).isNotNull
+    assertThat(responseJson.getString("fileName")).startsWith("NAT_Recall_Part_A")
+    assertThat(responseJson.getString("fileName")).endsWith("Camploongo_I_D006296.docx")
+
   }
 
   @Test
@@ -85,7 +89,9 @@ class RecommendationTest() : FunctionalTest() {
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
-    assertResponse(lastResponse, "")
+    val responseJson = JSONObject(lastResponse.asString())
+    val letterDate = JSONObject(responseJson.getString("letterContent")).getString("letterDate")
+    assertResponse(lastResponse, expectedDntrDocumentResponse(letterDate))
   }
 
   @Test
@@ -109,9 +115,426 @@ class RecommendationTest() : FunctionalTest() {
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
-    assertResponse(lastResponse, "")
+    val responseJson = JSONObject(lastResponse.asString())
+    assertThat(responseJson.getString("fileContents")).isNotNull
+    assertThat(responseJson.getString("fileName")).startsWith("No_Recall")
+    assertThat(responseJson.getString("fileName")).endsWith("Camploongo_I_D006296.docx")
   }
 }
+private fun expectedDntrDocumentResponse(letterDate: String) = """
+  {
+    "fileName": null,
+    "userAccessResponse": null,
+    "letterContent": {
+      "signedByParagraph": "Yours sincerely,\n\n\nProbation Practitioner\/Senior Probation Officer\/Head of PDU",
+      "letterDate": "$letterDate",
+      "letterAddress": "Ikenberry Camploongo\n99 Oxford Road\nEpsom\nSW16 1AF",
+      "salutation": "Dear Ikenberry Camploongo,",
+      "letterTitle": "DECISION NOT TO RECALL",
+      "section1": "I am writing to you because you have breached your licence conditions in such a way that your risk is assessed as increased.\n\nThis breach has been discussed with a Probation manager and a decision has been made that you will not be recalled to prison. This letter explains this decision. If you have any questions, please contact me.\n\nReason for breaching licence\n\nRationale for no recall\n\nProgress made so far detail\n\nFuture expectations detail\n\nI hope our conversation and\/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\nYour next appointment is by telephone on:",
+      "section2": "Sunday 24th April 2022 at 9:39pm\n",
+      "section3": "You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n"
+    },
+    "fileContents": null
+  }
+""".trimIndent()
+private fun expectedUpdateRecommendationResponse(recommendationId: String) = """
+  {
+    "recallType": {
+      "allOptions": [
+        {
+          "text": "Fixed term",
+          "value": "FIXED_TERM"
+        },
+        {
+          "text": "Standard",
+          "value": "STANDARD"
+        },
+        {
+          "text": "No recall",
+          "value": "NO_RECALL"
+        }
+      ],
+      "selected": {
+        "details": "My details",
+        "value": "FIXED_TERM"
+      }
+    },
+    "userAccessResponse": null,
+    "whatLedToRecall": "Increasingly violent behaviour",
+    "isIndeterminateSentence": true,
+    "isMainAddressWherePersonCanBeFound": {
+      "details": "123 Acacia Avenue, Birmingham, B23 1AV",
+      "selected": false
+    },
+    "convictionDetail": {
+      "sentenceExpiryDate": null,
+      "indexOffenceDescription": "Endangering life at sea - 00700",
+      "lengthOfSentence": 12,
+      "lengthOfSentenceUnits": "Months",
+      "sentenceDescription": "CJA - Std Determinate Custody",
+      "dateOfSentence": "2014-11-17",
+      "licenceExpiryDate": null,
+      "sentenceSecondLength": null,
+      "dateOfOriginalOffence": "2014-02-07",
+      "sentenceSecondLengthUnits": null
+    },
+    "responseToProbation": "They have not responded well",
+    "activeCustodialConvictionCount": 1,
+    "localPoliceContact": {
+      "emailAddress": "thomas.magnum@gmail.com",
+      "phoneNumber": "555-0100",
+      "contactName": "Thomas Magnum",
+      "faxNumber": "555-0199"
+    },
+    "userEmailPartACompletedBy": null,
+    "fixedTermAdditionalLicenceConditions": {
+      "details": "This is an additional licence condition",
+      "selected": true
+    },
+    "id": $recommendationId,
+    "hasArrestIssues": {
+      "details": "Violent behaviour",
+      "selected": true
+    },
+    "nextAppointment": {
+      "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
+      "probationPhoneNumber": "01238282838",
+      "howWillAppointmentHappen": {
+        "allOptions": [
+          {
+            "text": "Telephone",
+            "value": "TELEPHONE"
+          },
+          {
+            "text": "Video call",
+            "value": "VIDEO_CALL"
+          },
+          {
+            "text": "Office visit",
+            "value": "OFFICE_VISIT"
+          },
+          {
+            "text": "Home visit",
+            "value": "HOME_VISIT"
+          }
+        ],
+        "selected": "TELEPHONE"
+      }
+    },
+    "crn": "D006296",
+    "alternativesToRecallTried": {
+      "allOptions": [
+        {
+          "text": "Warnings\/licence breach letters",
+          "value": "WARNINGS_LETTER"
+        },
+        {
+          "text": "Drug testing",
+          "value": "DRUG_TESTING"
+        }
+      ],
+      "selected": [
+        {
+          "details": "We sent a warning letter on 27th July 2022",
+          "value": "WARNINGS_LETTER"
+        },
+        {
+          "details": "Drug test passed",
+          "value": "DRUG_TESTING"
+        }
+      ]
+    },
+    "dateVloInformed": "2022-08-01",
+    "whyConsideredRecall": {
+      "allOptions": [
+        {
+          "text": "Your risk is assessed as increased",
+          "value": "RISK_INCREASED"
+        },
+        {
+          "text": "Contact with your probation practitioner has broken down",
+          "value": "CONTACT_STOPPED"
+        },
+        {
+          "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down",
+          "value": "RISK_INCREASED_AND_CONTACT_STOPPED"
+        }
+      ],
+      "selected": "RISK_INCREASED"
+    },
+    "lastPartADownloadDateTime": null,
+    "custodyStatus": {
+      "details": "Bromsgrove Police Station\r\nLondon",
+      "allOptions": [
+        {
+          "text": "Yes, prison custody",
+          "value": "YES_PRISON"
+        },
+        {
+          "text": "Yes, police custody",
+          "value": "YES_POLICE"
+        },
+        {
+          "text": "No",
+          "value": "NO"
+        }
+      ],
+      "selected": "YES_PRISON"
+    },
+    "reasonsForNoRecall": {
+      "noRecallRationale": "Rationale for no recall",
+      "futureExpectations": "Future expectations detail",
+      "licenceBreach": "Reason for breaching licence",
+      "popProgressMade": "Progress made so far detail"
+    },
+    "isThisAnEmergencyRecall": true,
+    "indeterminateSentenceType": {
+      "allOptions": [
+        {
+          "text": "Life sentence",
+          "value": "LIFE"
+        },
+        {
+          "text": "Imprisonment for Public Protection (IPP) sentence",
+          "value": "IPP"
+        },
+        {
+          "text": "Detention for Public Protection (DPP) sentence",
+          "value": "DPP"
+        },
+        {
+          "text": "No",
+          "value": "NO"
+        }
+      ],
+      "selected": "LIFE"
+    },
+    "hasContrabandRisk": {
+      "details": "Contraband risk details",
+      "selected": true
+    },
+    "localDeliveryUnit": "All NPS London",
+    "licenceConditionsBreached": {
+      "additionalLicenceConditions": {
+        "allOptions": [
+          {
+            "subCatCode": "NST14",
+            "note": "Persons wife is Joan Smyth",
+            "details": "Notify your supervising officer of any intimate relationships",
+            "mainCatCode": "NLC5",
+            "title": "Disclosure of information"
+          }
+        ],
+        "selected": [
+          "NST14"
+        ]
+      },
+      "standardLicenceConditions": {
+        "allOptions": [
+          {
+            "text": "Be of good behaviour",
+            "value": "GOOD_BEHAVIOUR"
+          },
+          {
+            "text": "Not to commit any offence",
+            "value": "NO_OFFENCE"
+          },
+          {
+            "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence.",
+            "value": "NAME_CHANGE"
+          },
+          {
+            "text": "Tell your supervising officer if you change or add any contact details, including phone number or email.",
+            "value": "CONTACT_DETAILS"
+          }
+        ],
+        "selected": [
+          "GOOD_BEHAVIOUR",
+          "NO_OFFENCE"
+        ]
+      }
+    },
+    "isUnderIntegratedOffenderManagement": {
+      "allOptions": [
+        {
+          "text": "Yes",
+          "value": "YES"
+        },
+        {
+          "text": "No",
+          "value": "NO"
+        },
+        {
+          "text": "N\/A",
+          "value": "NOT_APPLICABLE"
+        }
+      ],
+      "selected": "YES"
+    },
+    "userNamePartACompletedBy": null,
+    "indexOffenceDetails": null,
+    "personOnProbation": {
+      "mappa": null,
+      "addresses": [
+        {
+          "noFixedAbode": false,
+          "town": "Epsom",
+          "postcode": "SW16 1AF",
+          "line2": "",
+          "line1": "99 Oxford Road"
+        }
+      ],
+      "gender": "Male",
+      "ethnicity": "",
+      "croNumber": "",
+      "dateOfBirth": "1986-05-11",
+      "middleNames": "ZZ",
+      "firstName": "Ikenberry",
+      "nomsNumber": "",
+      "surname": "Camploongo",
+      "pncNumber": "",
+      "name": "Ikenberry Camploongo",
+      "mostRecentPrisonerNumber": ""
+    },
+    "indeterminateOrExtendedSentenceDetails": {
+      "allOptions": [
+        {
+          "text": "Some behaviour similar to index offence",
+          "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+        },
+        {
+          "text": "Behaviour leading to sexual or violent behaviour",
+          "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+        },
+        {
+          "text": "Out of touch",
+          "value": "OUT_OF_TOUCH"
+        }
+      ],
+      "selected": [
+        {
+          "details": "Some behaviour similar to index offence",
+          "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+        },
+        {
+          "details": "Behaviour leading to sexual or violent behaviour",
+          "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+        },
+        {
+          "details": "Out of touch",
+          "value": "OUT_OF_TOUCH"
+        }
+      ]
+    },
+    "hasVictimsInContactScheme": {
+      "allOptions": [
+        {
+          "text": "Yes",
+          "value": "YES"
+        },
+        {
+          "text": "No",
+          "value": "NO"
+        },
+        {
+          "text": "N\/A",
+          "value": "NOT_APPLICABLE"
+        }
+      ],
+      "selected": "YES"
+    },
+    "isExtendedSentence": true,
+    "vulnerabilities": {
+      "allOptions": [
+        {
+          "text": "Risk of suicide or self harm",
+          "value": "RISK_OF_SUICIDE_OR_SELF_HARM"
+        },
+        {
+          "text": "Relationship breakdown",
+          "value": "RELATIONSHIP_BREAKDOWN"
+        }
+      ],
+      "selected": [
+        {
+          "details": "Risk of suicide",
+          "value": "RISK_OF_SUICIDE_OR_SELF_HARM"
+        },
+        {
+          "details": "Divorced",
+          "value": "RELATIONSHIP_BREAKDOWN"
+        }
+      ]
+    },
+    "region": "NPS London",
+    "status": "DRAFT"
+  }
+""".trimIndent()
+
+private fun expectedCreateRecommendationResponse(recommendationId: String) = """
+  {
+    "recallType": null,
+    "userAccessResponse": null,
+    "whatLedToRecall": null,
+    "isIndeterminateSentence": null,
+    "isMainAddressWherePersonCanBeFound": null,
+    "convictionDetail": null,
+    "responseToProbation": null,
+    "activeCustodialConvictionCount": null,
+    "localPoliceContact": null,
+    "userEmailPartACompletedBy": null,
+    "fixedTermAdditionalLicenceConditions": null,
+    "id": $recommendationId,
+    "hasArrestIssues": null,
+    "nextAppointment": null,
+    "crn": null,
+    "alternativesToRecallTried": null,
+    "dateVloInformed": null,
+    "whyConsideredRecall": null,
+    "lastPartADownloadDateTime": null,
+    "custodyStatus": null,
+    "reasonsForNoRecall": null,
+    "isThisAnEmergencyRecall": null,
+    "indeterminateSentenceType": null,
+    "hasContrabandRisk": null,
+    "localDeliveryUnit": null,
+    "licenceConditionsBreached": null,
+    "isUnderIntegratedOffenderManagement": null,
+    "userNamePartACompletedBy": null,
+    "indexOffenceDetails": null,
+    "personOnProbation": {
+      "mappa": null,
+      "addresses": [
+        {
+          "noFixedAbode": false,
+          "town": "Epsom",
+          "postcode": "SW16 1AF",
+          "line2": "",
+          "line1": "99 Oxford Road"
+        }
+      ],
+      "gender": "Male",
+      "ethnicity": "",
+      "croNumber": "",
+      "dateOfBirth": "1986-05-11",
+      "middleNames": "ZZ",
+      "firstName": "Ikenberry",
+      "nomsNumber": "",
+      "surname": "Camploongo",
+      "pncNumber": "",
+      "name": "Ikenberry Camploongo",
+      "mostRecentPrisonerNumber": ""
+    },
+    "indeterminateOrExtendedSentenceDetails": null,
+    "hasVictimsInContactScheme": null,
+    "isExtendedSentence": null,
+    "vulnerabilities": null,
+    "region": null,
+    "status": "DRAFT"
+  }
+""".trimIndent()
+
 private fun updateRecommendation(recommendationId: String?, token: String) {
   RestAssured
     .given()
