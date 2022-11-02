@@ -19,7 +19,7 @@ class RecommendationTest() : FunctionalTest() {
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedCreated)
     val recommendationId = JSONObject(lastResponse.asString()).getString("id")
-    assertResponse(lastResponse, expectedCreateRecommendationResponse(recommendationId))
+    assertFullResponse(lastResponse, expectedCreateRecommendationResponse(recommendationId))
   }
 
   @Test
@@ -36,8 +36,7 @@ class RecommendationTest() : FunctionalTest() {
     // then
     lastResponse = getRecommendation(recommendationId, token)
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
-
-    assertResponse(lastResponse, expectedUpdateRecommendationResponse(recommendationId))
+    assertFullResponse(lastResponse, expectedUpdateRecommendationResponse(recommendationId))
   }
 
   @Test
@@ -91,7 +90,7 @@ class RecommendationTest() : FunctionalTest() {
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
     val responseJson = JSONObject(lastResponse.asString())
     val letterDate = JSONObject(responseJson.getString("letterContent")).getString("letterDate")
-    assertResponse(lastResponse, expectedDntrDocumentResponse(letterDate))
+    assertFullResponse(lastResponse, expectedDntrDocumentResponse(letterDate))
   }
 
   @Test

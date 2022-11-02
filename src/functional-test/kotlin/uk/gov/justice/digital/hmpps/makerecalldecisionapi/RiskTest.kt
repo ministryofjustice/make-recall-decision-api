@@ -274,7 +274,6 @@ fun riskExpectation() = """
       }
     ],
     "error": ""
-  },
-  "activeRecommendation": null
+  }
 }
 """
