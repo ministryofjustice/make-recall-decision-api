@@ -1,9 +1,9 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.5"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.7"
   kotlin("jvm") version "1.7.20"
   id("jacoco")
   kotlin("plugin.jpa") version "1.7.20"
-  id("org.sonarqube") version "3.4.0.2513"
+  id("org.sonarqube") version "3.5.0.2730"
   kotlin("plugin.spring") version "1.7.20"
 }
 
@@ -30,12 +30,12 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.5")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.5")
   implementation("io.opentelemetry:opentelemetry-api:1.19.0")
-  implementation("joda-time:joda-time:2.12.0")
+  implementation("joda-time:joda-time:2.12.1")
   implementation("com.deepoove:poi-tl:1.12.0")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.5.1")
+  implementation("org.flywaydb:flyway-core:9.7.0")
   implementation("org.postgresql:postgresql:42.5.0")
 
   implementation("io.sentry:sentry-spring-boot-starter:6.6.0")
