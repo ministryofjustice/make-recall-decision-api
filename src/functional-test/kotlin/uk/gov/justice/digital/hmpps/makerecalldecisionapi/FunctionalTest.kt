@@ -39,6 +39,13 @@ open class FunctionalTest {
     }
 
     fun assertResponse(restassuredResponse: Response, expectation: String) {
+      val response = JSONObject(restassuredResponse.asString())
+      assertThat(response.has("activeRecommendation")).isTrue
+      response.remove("activeRecommendation")
+      JSONAssert.assertEquals(response, JSONObject(expectation), JSONCompareMode.NON_EXTENSIBLE)
+    }
+
+    fun assertFullResponse(restassuredResponse: Response, expectation: String) {
       JSONAssert.assertEquals(JSONObject(restassuredResponse.asString()), JSONObject(expectation), JSONCompareMode.NON_EXTENSIBLE)
     }
 
