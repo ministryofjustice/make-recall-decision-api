@@ -4113,7 +4113,6 @@ fun contactHistoryExpectation() = """
     "releaseSummary": {
         "lastRelease": null,
         "lastRecall": null
-    },
-    "activeRecommendation": null
+    }
 }
 """.trimIndent()
