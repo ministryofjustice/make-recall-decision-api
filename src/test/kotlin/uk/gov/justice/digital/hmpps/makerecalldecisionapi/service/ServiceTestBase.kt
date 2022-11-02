@@ -54,6 +54,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecFlowEventRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -73,6 +74,9 @@ internal abstract class ServiceTestBase {
   protected lateinit var recommendationRepository: RecommendationRepository
 
   @Mock
+  protected lateinit var recFlowEventRepository: RecFlowEventRepository
+
+  @Mock
   protected lateinit var mockPersonDetailService: PersonDetailsService
 
   protected lateinit var personDetailsService: PersonDetailsService
@@ -88,6 +92,8 @@ internal abstract class ServiceTestBase {
   protected lateinit var convictionService: ConvictionService
 
   protected lateinit var recommendationService: RecommendationService
+
+  protected lateinit var recFlowEventService: RecFlowEventService
 
   protected lateinit var templateReplacementService: TemplateReplacementService
 
@@ -106,6 +112,7 @@ internal abstract class ServiceTestBase {
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
+    recFlowEventService = RecFlowEventService(recFlowEventRepository)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService)
