@@ -4,8 +4,8 @@
     "urlPathPattern": "/secure/offenders/crn/.*/userAccess"
   },
   "response": {
-    "status": 200,
-    "bodyFileName": "user-access.json",
+    "status": 404,
+    "bodyFileName": null,
     "headers": {
       "Content-Type": "application/json"
     }

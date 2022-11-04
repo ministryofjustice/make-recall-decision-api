@@ -41,7 +41,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
   }
 
   @Test
@@ -86,7 +86,32 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         response,
         equalTo(
           ContactHistoryResponse(
-            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null, userNotFoundMessage = null), null, null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user not found for user then return user access response details`() {
+    runTest {
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Forbidden", null, null, null
+        )
+      )
+
+      val response = contactHistoryService.getContactHistory(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      assertThat(
+        response,
+        equalTo(
+          ContactHistoryResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null, null
           )
         )
       )

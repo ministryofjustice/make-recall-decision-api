@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -131,6 +132,27 @@ class CaseOverviewControllerTest(
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+    }
+  }
+
+  @Test
+  fun `given user not found then only return user access details`() {
+    runTest {
+      userNotFound(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userNotFound").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.userNotFoundMessage").isEqualTo(MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
     }

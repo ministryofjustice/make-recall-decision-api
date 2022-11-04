@@ -51,6 +51,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
 import java.util.Optional
 
@@ -418,7 +419,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           userRestricted = false,
           userExcluded = true,
           exclusionMessage = "I am an exclusion message",
-          restrictionMessage = null
+          restrictionMessage = null,
+          userNotFoundMessage = null,
+          userNotFound = false
         )
       )
     }
@@ -434,7 +437,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
         fail()
       } catch (actual: UserAccessException) {
-        val expected = UserAccessException(Gson().toJson(UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
+        val expected = UserAccessException(Gson().toJson(UserAccessResponse(userNotFound = false, userNotFoundMessage = null, userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
         assertThat(actual.message, equalTo((expected.message)))
       }
       then(communityApiClient).should().getUserAccess(crn)
@@ -472,6 +475,28 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `given user is not found when updating a recommendation for user then return user access response details`() {
+    runTest {
+      given(communityApiClient.getUserAccess(crn)).willThrow(WebClientResponseException(404, "Not found", null, null, null))
+
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+
+      val response = recommendationService.getRecommendation(1L)
+      assertThat(
+        response,
+        equalTo(RecommendationResponse(userAccessResponse = UserAccessResponse(userNotFound = true, userNotFoundMessage = MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE, userRestricted = false, userExcluded = false, exclusionMessage = null, restrictionMessage = null)))
+      )
+    }
+  }
+
+  @Test
   fun `given case is excluded when updating a recommendation for user then return user access response details`() {
     runTest {
       given(communityApiClient.getUserAccess(crn)).willThrow(WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null))
@@ -488,7 +513,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val response = recommendationService.getRecommendation(1L)
       assertThat(
         response,
-        equalTo(RecommendationResponse(userAccessResponse = UserAccessResponse(userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
+        equalTo(RecommendationResponse(userAccessResponse = UserAccessResponse(userNotFound = false, userNotFoundMessage = null, userRestricted = false, userExcluded = true, exclusionMessage = "I am an exclusion message", restrictionMessage = null)))
       )
     }
   }

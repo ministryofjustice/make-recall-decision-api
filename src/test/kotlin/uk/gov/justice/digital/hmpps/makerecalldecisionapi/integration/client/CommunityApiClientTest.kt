@@ -472,6 +472,8 @@ class CommunityApiClientTest : IntegrationTestBase() {
       userExcluded = false,
       exclusionMessage = null,
       restrictionMessage = null,
+      userNotFound = false,
+      userNotFoundMessage = null
     )
 
     // when

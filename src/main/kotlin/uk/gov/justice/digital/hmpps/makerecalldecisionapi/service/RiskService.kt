@@ -44,7 +44,7 @@ internal class RiskService(
 
   suspend fun getRisk(crn: String): RiskResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RiskResponse(userAccessResponse = userAccessResponse, mappa = null)
     } else {
       val personalDetailsOverview = fetchPersonalDetails(crn)

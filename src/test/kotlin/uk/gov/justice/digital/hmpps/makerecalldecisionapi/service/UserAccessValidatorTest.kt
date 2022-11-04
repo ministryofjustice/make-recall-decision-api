@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -33,7 +34,7 @@ internal class UserAccessValidatorTest {
   fun `checks user access happy path`() {
     runTest {
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       val crn = "my wonderful crn"
 
       val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -63,6 +64,26 @@ internal class UserAccessValidatorTest {
   }
 
   @Test
+  fun `checks user access unhappy path when user not found`() {
+    runTest {
+      val crn = "my wonderful crn"
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Not found", null, null, null
+        )
+      )
+
+      val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+
+      assertThat(userAccessResponse?.userExcluded).isEqualTo(false)
+      assertThat(userAccessResponse?.userNotFound).isEqualTo(true)
+      assertThat(userAccessResponse?.userNotFoundMessage).isEqualTo(MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE)
+      assertThat(userAccessResponse?.exclusionMessage).isEqualTo(null)
+      assertThat(userAccessResponse?.restrictionMessage).isEqualTo(null)
+      assertThat(userAccessResponse?.userRestricted).isEqualTo(false)
+    }
+  }
+  @Test
   fun `checks user access unhappy path when restricted`() {
     runTest {
       val crn = "my wonderful crn"
@@ -83,46 +104,65 @@ internal class UserAccessValidatorTest {
   @Test
   fun `checks isUserExcludedOrRestricted when user is restricted`() {
     runTest {
-      val userRestrictedOrExcluded = userAccessValidator.isUserExcludedOrRestricted(
+      val userRestrictedExcludedOrNotFound = userAccessValidator.isUserExcludedRestrictedOrNotFound(
         userAccessResponse(
           excluded = false,
-          restricted = true
+          restricted = true,
+          userNotFound = false
         )
       )
-      assertThat(userRestrictedOrExcluded).isTrue()
+      assertThat(userRestrictedExcludedOrNotFound).isTrue()
+    }
+  }
+
+  @Test
+  fun `checks isUserExcludedOrRestricted when user is not found`() {
+    runTest {
+      val userRestrictedExcludedOrNotFound = userAccessValidator.isUserExcludedRestrictedOrNotFound(
+        userAccessResponse(
+          excluded = false,
+          restricted = false,
+          userNotFound = true
+        )
+      )
+      assertThat(userRestrictedExcludedOrNotFound).isTrue()
     }
   }
 
   @Test
   fun `checks isUserExcludedOrRestricted when user is excluded`() {
     runTest {
-      val userRestrictedOrExcluded = userAccessValidator.isUserExcludedOrRestricted(
+      val userRestrictedExcludedOrNotFound = userAccessValidator.isUserExcludedRestrictedOrNotFound(
         userAccessResponse(
           excluded = true,
-          restricted = false
+          restricted = false,
+          userNotFound = false
         )
       )
-      assertThat(userRestrictedOrExcluded).isTrue()
+      assertThat(userRestrictedExcludedOrNotFound).isTrue()
     }
   }
 
   @Test
   fun `checks isUserExcludedOrRestricted when user is neither restricted or excluded`() {
     runTest {
-      val userRestrictedOrExcluded = userAccessValidator.isUserExcludedOrRestricted(
+      val userRestrictedExcludedOrNotFound = userAccessValidator.isUserExcludedRestrictedOrNotFound(
         userAccessResponse(
           excluded = false,
-          restricted = false
+          restricted = false,
+          userNotFound = false
         )
       )
-      assertThat(userRestrictedOrExcluded).isFalse()
+      assertThat(userRestrictedExcludedOrNotFound).isFalse()
     }
   }
 
-  private fun userAccessResponse(excluded: Boolean, restricted: Boolean) = UserAccessResponse(
+  private fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccessResponse(
     userRestricted = restricted,
     userExcluded = excluded,
+    userNotFound = userNotFound,
     exclusionMessage = "I am an exclusion message",
-    restrictionMessage = "I am a restriction message"
+    restrictionMessage = "I am a restriction message",
+    userNotFoundMessage = MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE
   )
 }
