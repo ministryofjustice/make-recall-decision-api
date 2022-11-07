@@ -55,7 +55,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -255,10 +254,9 @@ internal abstract class ServiceTestBase {
   protected fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccessResponse(
     userRestricted = restricted,
     userExcluded = excluded,
-    exclusionMessage = "I am an exclusion message",
-    restrictionMessage = "I am a restriction message",
     userNotFound = userNotFound,
-    userNotFoundMessage = MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE
+    exclusionMessage = "I am an exclusion message",
+    restrictionMessage = "I am a restriction message"
   )
 
   protected fun groupedDocumentsResponse(): GroupedDocuments {

@@ -73,7 +73,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         response,
         equalTo(
           PersonDetailsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null, userNotFoundMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
           )
         )
       )

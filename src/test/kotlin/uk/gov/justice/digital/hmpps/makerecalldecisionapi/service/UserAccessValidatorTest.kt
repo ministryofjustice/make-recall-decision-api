@@ -14,7 +14,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -77,7 +76,6 @@ internal class UserAccessValidatorTest {
 
       assertThat(userAccessResponse?.userExcluded).isEqualTo(false)
       assertThat(userAccessResponse?.userNotFound).isEqualTo(true)
-      assertThat(userAccessResponse?.userNotFoundMessage).isEqualTo(MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE)
       assertThat(userAccessResponse?.exclusionMessage).isEqualTo(null)
       assertThat(userAccessResponse?.restrictionMessage).isEqualTo(null)
       assertThat(userAccessResponse?.userRestricted).isEqualTo(false)
@@ -162,7 +160,6 @@ internal class UserAccessValidatorTest {
     userExcluded = excluded,
     userNotFound = userNotFound,
     exclusionMessage = "I am an exclusion message",
-    restrictionMessage = "I am a restriction message",
-    userNotFoundMessage = MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE
+    restrictionMessage = "I am a restriction message"
   )
 }

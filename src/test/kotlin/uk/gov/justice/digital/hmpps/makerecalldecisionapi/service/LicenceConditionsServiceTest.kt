@@ -121,7 +121,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null, userNotFoundMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
           )
         )
       )

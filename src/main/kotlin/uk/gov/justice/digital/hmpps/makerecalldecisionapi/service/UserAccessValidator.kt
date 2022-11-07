@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 @Component
 internal class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient) {
@@ -17,7 +16,13 @@ internal class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") 
       return if (webClientResponseException.rawStatusCode == 403) {
         Gson().fromJson(webClientResponseException.responseBodyAsString, UserAccessResponse::class.java)
       } else if (webClientResponseException.rawStatusCode == 404) {
-        UserAccessResponse(userNotFound = true, userNotFoundMessage = MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE, userExcluded = false, userRestricted = false, exclusionMessage = null, restrictionMessage = null)
+        UserAccessResponse(
+          userRestricted = false,
+          userExcluded = false,
+          userNotFound = true,
+          exclusionMessage = null,
+          restrictionMessage = null
+        )
       } else {
         throw webClientResponseException
       }

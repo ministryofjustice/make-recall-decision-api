@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -151,7 +150,6 @@ class CaseOverviewControllerTest(
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userNotFound").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.userNotFoundMessage").isEqualTo(MrdTextConstants.USER_NOT_FOUND_ERROR_MESSAGE)
         .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty

@@ -4,7 +4,6 @@ data class UserAccessResponse(
   val userRestricted: Boolean?,
   val userExcluded: Boolean?,
   val userNotFound: Boolean?,
-  val userNotFoundMessage: String?,
   val exclusionMessage: String?,
   val restrictionMessage: String?
 )
