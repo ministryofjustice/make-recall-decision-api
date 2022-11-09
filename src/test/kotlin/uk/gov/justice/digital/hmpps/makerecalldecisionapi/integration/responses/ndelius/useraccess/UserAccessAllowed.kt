@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses
 fun userAccessAllowedResponse() = """
 {
     "userRestricted": false,
-    "userExcluded": false
+    "userExcluded": false,
+    "userNotFound": false
 }
 """.trimIndent()

@@ -4,6 +4,7 @@ fun excludedResponse() = """
 {
   "userRestricted": false,
   "userExcluded": true,
+  "userNotFound": false,
   "exclusionMessage": "I am an exclusion message"
 }
 """.trimIndent()

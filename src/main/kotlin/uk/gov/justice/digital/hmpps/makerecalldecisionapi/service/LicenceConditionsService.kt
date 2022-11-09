@@ -18,7 +18,7 @@ internal class LicenceConditionsService(
 ) {
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       LicenceConditionsResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
@@ -37,7 +37,7 @@ internal class LicenceConditionsService(
 
   suspend fun getLicenceConditionsCvl(crn: String): LicenceConditionsCvlResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       LicenceConditionsCvlResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)

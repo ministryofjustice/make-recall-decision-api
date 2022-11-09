@@ -15,6 +15,14 @@ internal class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") 
     } catch (webClientResponseException: WebClientResponseException) {
       return if (webClientResponseException.rawStatusCode == 403) {
         Gson().fromJson(webClientResponseException.responseBodyAsString, UserAccessResponse::class.java)
+      } else if (webClientResponseException.rawStatusCode == 404) {
+        UserAccessResponse(
+          userRestricted = false,
+          userExcluded = false,
+          userNotFound = true,
+          exclusionMessage = null,
+          restrictionMessage = null
+        )
       } else {
         throw webClientResponseException
       }
@@ -22,7 +30,7 @@ internal class UserAccessValidator(@Qualifier("communityApiClientUserEnhanced") 
     return userAccessResponse
   }
 
-  fun isUserExcludedOrRestricted(userAccessResponse: UserAccessResponse?): Boolean {
-    return userAccessResponse?.userExcluded == true || userAccessResponse?.userRestricted == true
+  fun isUserExcludedRestrictedOrNotFound(userAccessResponse: UserAccessResponse?): Boolean {
+    return userAccessResponse?.userExcluded == true || userAccessResponse?.userRestricted == true || userAccessResponse?.userNotFound == true
   }
 }

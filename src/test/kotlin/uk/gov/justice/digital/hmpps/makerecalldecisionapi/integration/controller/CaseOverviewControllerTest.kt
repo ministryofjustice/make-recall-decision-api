@@ -137,6 +137,26 @@ class CaseOverviewControllerTest(
   }
 
   @Test
+  fun `given user not found then only return user access details`() {
+    runTest {
+      userNotFound(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
+        .jsonPath("$.userAccessResponse.userNotFound").isEqualTo(true)
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
+        .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
+        .jsonPath("$.personalDetailsOverview").isEmpty
+    }
+  }
+
+  @Test
   fun `given case has no recommendation in database then do not return any active recommendation`() {
     runTest {
       // Delete recommendation from database if one was created in previous tests

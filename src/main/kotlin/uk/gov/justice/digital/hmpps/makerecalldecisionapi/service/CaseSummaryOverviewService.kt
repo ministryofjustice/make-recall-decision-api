@@ -18,7 +18,7 @@ internal class CaseSummaryOverviewService(
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       CaseSummaryOverviewResponse(userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
