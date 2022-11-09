@@ -512,6 +512,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun userNotFound(crn: String, delaySeconds: Long = 0) {
+    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessRequest = request()
+      .withPath(userAccessUrl)
+
+    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+      response()
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404)
+    )
+  }
+
   protected fun userAccessRestricted(crn: String, delaySeconds: Long = 0) {
     val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
     val userAccessRequest = request()

@@ -21,7 +21,7 @@ internal class PersonDetailsService(
 ) {
   fun getPersonDetails(crn: String): PersonDetailsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       PersonDetailsResponse(userAccessResponse = userAccessResponse)
     } else {
       val offenderDetails = getPersonalDetailsOverview(crn)

@@ -41,7 +41,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `throws exception when no person details available`() {
     val nonExistentCrn = "this person doesn't exist"
     given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
     given(communityApiClient.getAllOffenderDetails(anyString()))
       .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
 
@@ -73,7 +73,32 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         response,
         equalTo(
           PersonDetailsResponse(
-            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user not found for user then return user access response details`() {
+    runTest {
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Not found", null, null, null
+        )
+      )
+
+      val response = personDetailsService.getPersonDetails(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          PersonDetailsResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
           )
         )
       )
@@ -85,7 +110,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(middleNames = listOf("Homer Bart")) })
 
@@ -122,7 +147,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -165,7 +190,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {
@@ -213,7 +238,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       // given
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(contactDetails = ContactDetails(addresses = listOf(Address(postcode = "Nf1 1nf", status = AddressStatus(code = "ABC123", description = "Main"))))) })
 
@@ -233,7 +258,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(Mono.fromCallable { allOffenderDetailsResponse().copy(middleNames = listOf("Homer Bart")) })
 
@@ -275,7 +300,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       val crn = "12345"
       given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(communityApiClient.getAllOffenderDetails(anyString()))
         .willReturn(
           Mono.fromCallable {

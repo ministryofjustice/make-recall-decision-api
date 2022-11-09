@@ -48,7 +48,7 @@ internal class RecommendationService(
     username: String?
   ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
@@ -95,7 +95,7 @@ internal class RecommendationService(
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RecommendationResponse(userAccessResponse)
     } else {
       RecommendationResponse(
@@ -150,7 +150,7 @@ internal class RecommendationService(
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
@@ -215,7 +215,7 @@ internal class RecommendationService(
   private suspend fun generateDntrDownload(recommendationId: Long, username: String?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, null, false, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
@@ -233,7 +233,7 @@ internal class RecommendationService(
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val enrichedRecommendationEntity = patchRecommendationWithExtraData(recommendationEntity)
     val userAccessResponse = enrichedRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val letterContent =
@@ -248,7 +248,7 @@ internal class RecommendationService(
   suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, userEmail, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =

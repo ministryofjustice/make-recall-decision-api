@@ -790,7 +790,32 @@ internal class RiskServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RiskResponse(
-            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user not found then return user access response details`() {
+    runTest {
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Not found", null, null, null
+        )
+      )
+
+      val response = riskService.getRisk(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          RiskResponse(
+            userAccessResponse(false, false, true).copy(exclusionMessage = null, restrictionMessage = null), null, null, null, null
           )
         )
       )

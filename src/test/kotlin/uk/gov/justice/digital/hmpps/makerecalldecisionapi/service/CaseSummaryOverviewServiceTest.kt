@@ -55,6 +55,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       Mono.fromCallable {
         userAccessResponse(
           false,
+          false,
           false
         )
       }
@@ -184,6 +185,31 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `given case user not found for user then return user access response details`() {
+    runTest {
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Not found", null, null, null
+        )
+      )
+
+      val response = caseSummaryOverviewService.getOverview(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          CaseSummaryOverviewResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
@@ -201,7 +227,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         response,
         equalTo(
           CaseSummaryOverviewResponse(
-            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
           )
         )
       )

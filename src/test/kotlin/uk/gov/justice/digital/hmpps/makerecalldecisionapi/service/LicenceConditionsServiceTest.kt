@@ -43,7 +43,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, createAndVaryALicenceService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
   }
 
   @Test
@@ -121,7 +121,32 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(true, false).copy(restrictionMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user is not found for user then return user access response details`() {
+    runTest {
+
+      given(communityApiClient.getUserAccess(crn)).willThrow(
+        WebClientResponseException(
+          404, "Forbidden", null, null, null
+        )
+      )
+
+      val response = licenceConditionsService.getLicenceConditions(crn)
+
+      then(communityApiClient).should().getUserAccess(crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
           )
         )
       )

@@ -251,9 +251,10 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun userAccessResponse(excluded: Boolean, restricted: Boolean) = UserAccessResponse(
+  protected fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccessResponse(
     userRestricted = restricted,
     userExcluded = excluded,
+    userNotFound = userNotFound,
     exclusionMessage = "I am an exclusion message",
     restrictionMessage = "I am a restriction message"
   )

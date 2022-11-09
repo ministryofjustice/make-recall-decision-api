@@ -20,7 +20,7 @@ internal class ContactHistoryService(
 ) {
   suspend fun getContactHistory(crn: String): ContactHistoryResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
-    return if (userAccessValidator.isUserExcludedOrRestricted(userAccessResponse)) {
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       ContactHistoryResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)

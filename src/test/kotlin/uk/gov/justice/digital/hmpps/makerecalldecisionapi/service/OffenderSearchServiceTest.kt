@@ -110,7 +110,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { omittedDetailsResponse })
 
       given(communityApiClient.getUserAccess(crn))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false) })
+        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
 
       val results = offenderSearch.search(crn)
 

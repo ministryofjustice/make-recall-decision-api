@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.description
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -470,8 +469,9 @@ class CommunityApiClientTest : IntegrationTestBase() {
     val expected = UserAccessResponse(
       userRestricted = false,
       userExcluded = false,
+      userNotFound = false,
       exclusionMessage = null,
-      restrictionMessage = null,
+      restrictionMessage = null
     )
 
     // when
