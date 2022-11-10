@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
@@ -14,17 +16,25 @@ internal class ConvictionService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   private val documentService: DocumentService
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   suspend fun buildConvictionResponse(crn: String, shouldGetDocuments: Boolean): List<ConvictionResponse> {
+    log.info(StringUtils.normalizeSpace("About to build conviction response for $crn in conviction service"))
 
     val activeConvictions = getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn))
+
+    log.info(StringUtils.normalizeSpace("Got conviction response for $crn in conviction service."))
 
     val allConvictionDocuments = if (shouldGetDocuments) documentService.getDocumentsByDocumentType(crn, "CONVICTION_DOCUMENT") else null
 
     return activeConvictions
       ?.map {
+        log.info(StringUtils.normalizeSpace("About to get licence conditions by conviction id " + it.convictionId + " for $crn in conviction service"))
         val licenceConditions = getValueAndHandleWrappedException(communityApiClient.getLicenceConditionsByConvictionId(crn, it.convictionId))
           ?.licenceConditions
+        log.info(StringUtils.normalizeSpace("Got licence conditions by conviction id " + it.convictionId + " for $crn in conviction service"))
 
         ConvictionResponse(
           convictionId = it.convictionId,
