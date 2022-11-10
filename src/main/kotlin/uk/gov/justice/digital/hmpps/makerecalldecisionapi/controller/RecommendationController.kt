@@ -66,7 +66,7 @@ internal class RecommendationController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PatchMapping("/recommendations/{recommendationId}")
-  @Operation(summary = "WIP: Updates a recommendation")
+  @Operation(summary = "Updates a recommendation")
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationJson: JsonNode,
@@ -80,7 +80,7 @@ internal class RecommendationController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/recommendations/{recommendationId}/part-a")
-  @Operation(summary = "WIP: Generates a Part A document")
+  @Operation(summary = "Generates a Part A document")
   suspend fun generatePartADocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody createPartARequest: CreatePartARequest,

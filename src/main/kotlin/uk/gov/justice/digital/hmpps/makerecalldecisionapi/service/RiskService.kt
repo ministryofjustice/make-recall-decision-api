@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskPersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
@@ -31,7 +30,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -39,7 +37,8 @@ internal class RiskService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
-  private val recommendationService: RecommendationService
+  private val recommendationService: RecommendationService,
+  private val personDetailsService: PersonDetailsService
 ) {
 
   suspend fun getRisk(crn: String): RiskResponse {
@@ -47,7 +46,7 @@ internal class RiskService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RiskResponse(userAccessResponse = userAccessResponse, mappa = null)
     } else {
-      val personalDetailsOverview = fetchPersonalDetails(crn)
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val roshSummary = getRoshSummary(crn)
       val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
@@ -316,24 +315,6 @@ internal class RiskService(
     )
 
     return risks.asIterable().firstOrNull { it.value != null }?.key
-  }
-
-  private suspend fun fetchPersonalDetails(crn: String): RiskPersonalDetails {
-    val offenderDetails = getValueAndHandleWrappedException(communityApiClient.getAllOffenderDetails(crn))
-    val age = offenderDetails?.dateOfBirth?.until(LocalDate.now())?.years
-    val firstName = offenderDetails?.firstName ?: ""
-    val surname = offenderDetails?.surname ?: ""
-    val name = if (firstName.isEmpty()) {
-      surname
-    } else "$firstName $surname"
-
-    return RiskPersonalDetails(
-      name = name,
-      dateOfBirth = offenderDetails?.dateOfBirth,
-      age = age,
-      gender = offenderDetails?.gender ?: "",
-      crn = crn
-    )
   }
 
   suspend fun getMappa(crn: String): Mappa {

@@ -5,25 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
-import java.time.LocalDate
 
 data class RiskResponse(
   val userAccessResponse: UserAccessResponse? = null,
-  val personalDetailsOverview: RiskPersonalDetails? = null,
+  val personalDetailsOverview: PersonDetails? = null,
   val roshSummary: RoshSummary? = null,
   val mappa: Mappa? = null,
   val predictorScores: PredictorScores? = null,
   val activeRecommendation: ActiveRecommendation? = null,
   val assessmentStatus: String? = null
-)
-
-data class RiskPersonalDetails(
-  val name: String?,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-  val dateOfBirth: LocalDate?,
-  val age: Int?,
-  val gender: String?,
-  val crn: String?
 )
 
 data class RiskOfSeriousHarm(
