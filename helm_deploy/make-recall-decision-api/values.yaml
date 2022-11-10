@@ -6,14 +6,16 @@ generic-service:
 
   image:
     repository: quay.io/hmpps/make-recall-decision-api
-    tag: app_version    # override at deployment time
+    tag: app_version # override at deployment time
     port: 8080
 
   ingress:
     enabled: true
-    host: app-hostname.local    # override per environment
+    host: app-hostname.local # override per environment
     tlsSecretName: make-recall-decision-cert
     contextColour: green
+    v1_2_enabled: true
+    v0_47_enabled: false
     annotations:
       nginx.ingress.kubernetes.io/limit-rpm: "200"
 
