@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -147,6 +148,7 @@ internal class RecommendationService(
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false
   ): RecommendationEntity {
+    validateRecallType(jsonRequest)
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -168,7 +170,6 @@ internal class RecommendationService(
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
-
         existingRecommendationEntity.data = updateRecommendationRequest
       }
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
@@ -334,5 +335,17 @@ internal class RecommendationService(
       )
     }
     return null
+  }
+
+  @Throws(InvalidRequestException::class)
+  private fun validateRecallType(jsonRequest: JsonNode?) {
+    val selectedRecallType = jsonRequest?.get("recallType")?.get("selected")?.get("value")?.textValue()
+    if (selectedRecallType != null) {
+      val allOptions = jsonRequest.get("recallType")?.get("allOptions")
+      val allOptionsList = allOptions?.map { it.get("value").asText() }?.toList()
+      val valid = allOptionsList?.any { it == selectedRecallType }
+      val errorMessage = "$selectedRecallType is not a valid recall type, available types are ${allOptionsList?.joinToString(",")}"
+      if (valid == false) throw InvalidRequestException(errorMessage)
+    }
   }
 }
