@@ -23,7 +23,7 @@ internal class OverviewController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/overview")
-  @Operation(summary = "WIP: Returns an overview of the case details")
+  @Operation(summary = "Returns an overview of the case details")
   suspend fun overview(@PathVariable("crn") crn: String): CaseSummaryOverviewResponse {
     log.info(normalizeSpace("Overview endpoint hit for CRN: $crn"))
     return caseSummaryOverviewService.getOverview(crn)

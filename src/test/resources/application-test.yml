@@ -30,6 +30,8 @@ arn:
       url: http://localhost:8095
 
 cvl:
+  client:
+    timeout: 2
   api:
     endpoint:
       url: http://localhost:8096
