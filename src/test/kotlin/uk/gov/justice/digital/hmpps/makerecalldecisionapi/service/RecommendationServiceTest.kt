@@ -39,17 +39,21 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import java.time.LocalDate
 import java.util.Optional
@@ -478,6 +482,38 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         // nothing to do here!!
       }
       then(communityApiClient).should().getUserAccess(crn)
+      then(recommendationRepository).shouldHaveNoMoreInteractions()
+    }
+  }
+
+  @Test
+  fun `given invalid recall type should throw invalid request exception`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallType = RecallType(
+            selected = RecallTypeSelectedValue(RecallTypeValue.NO_RECALL),
+            allOptions = listOf(TextValueOption("NO_RECALL"))
+          )
+        )
+      )
+      val updateRecommendationRequest = RecommendationModel(
+        crn = crn,
+        recallType = existingRecommendation.data.recallType?.copy(
+          selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM),
+          allOptions = listOf(TextValueOption("NO_RECALL"))
+        )
+      )
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      try {
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+      } catch (e: InvalidRequestException) {
+        // nothing to do here!!
+      }
       then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
   }
