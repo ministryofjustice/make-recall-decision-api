@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -70,6 +71,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var riskServiceMocked: RiskService
 
+  @Mock
+  protected lateinit var mrdEmitterMocked: MrdEventsEmitter
+
   @Test
   fun `creates a new recommendation in the database`() {
     runTest {
@@ -99,7 +103,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked, mrdEmitterMocked)
 
       // when
       val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
@@ -671,7 +675,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked, mrdEmitterMocked)
+
       val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X)
+
+      val eventCaptor = argumentCaptor<MrdEvent>()
+      then(mrdEmitterMocked).should(times(1)).sendEvent(eventCaptor.capture())
+      val mrdEvent = eventCaptor.firstValue
+      assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.type).isEqualTo("CRN")
+      assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
+      assertThat(mrdEvent.message?.eventType).isEqualTo("DNTR_LETTER_DOWNLOADED")
+      assertThat(mrdEvent.message?.version).isEqualTo(1)
+      assertThat(mrdEvent.message?.occurredAt).isNotNull
+      // assertThat(mrdEvent.message?.detailUrl).isEqualTo("TBD") // TODO TBD
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -702,7 +718,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        mrdEmitterMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
@@ -767,7 +784,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        mrdEmitterMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
@@ -797,7 +815,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // when
       val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
 
-      // then
+      // and
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should(times(1)).save(captor.capture())
       val recommendationEntity = captor.firstValue
@@ -842,7 +860,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        mrdEmitterMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
