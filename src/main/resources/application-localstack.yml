@@ -1,0 +1,11 @@
+aws:
+  provider: localstack
+  region: eu-west-2
+
+hmpps.sqs:
+  provider: localstack
+  localstackUrl: http://localhost:4566
+
+  topics:
+    hmpps-domain-events:
+      arn: arn:aws:sns:eu-west-2:000000000000:prison-event-topic
