@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
@@ -28,7 +27,6 @@ class ContactHistoryControllerTest(
         contactSummaryResponse()
       )
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
 
@@ -42,8 +40,6 @@ class ContactHistoryControllerTest(
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
         .jsonPath("$.contactSummary[0].contactStartDate").isEqualTo("2022-06-03T07:00:00Z")
         .jsonPath("$.contactSummary[0].descriptionType").isEqualTo("Registration Review")
         .jsonPath("$.contactSummary[0].outcome").isEmpty()
@@ -109,7 +105,6 @@ class ContactHistoryControllerTest(
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(crn, emptyContactSummaryResponse())
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
@@ -121,8 +116,6 @@ class ContactHistoryControllerTest(
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
         .jsonPath("$.contactSummary").isArray()
         .jsonPath("$.contactSummary.length()").isEqualTo("0")
         .jsonPath("$.contactTypeGroups.length()").isEqualTo(0)
@@ -150,42 +143,6 @@ class ContactHistoryControllerTest(
   }
 
   @Test
-  fun `given no custody release response 400 error then handle contact history response`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
-      contactSummaryResponse(
-        crn,
-        contactSummaryResponse()
-      )
-      groupedDocumentsResponse(crn)
-      releaseSummaryResponseWithStatusCode(
-        crn,
-        releaseSummaryDeliusResponse(),
-        400
-      )
-
-      webTestClient.get()
-        .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
-        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.releaseSummary.lastRelease").isEmpty()
-        .jsonPath("$.releaseSummary.lastRecall").isEmpty()
-        .jsonPath("$.contactSummary").isArray()
-        .jsonPath("$.contactSummary.length()").isEqualTo("3")
-        .jsonPath("$.contactSummary[0].contactDocuments.length()").isEqualTo("1")
-        .jsonPath("$.contactSummary[1].contactDocuments.length()").isEqualTo("1")
-        .jsonPath("$.contactSummary[2].contactDocuments.length()").isEqualTo("1")
-    }
-  }
-
-  @Test
   fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
     runTest {
       userAccessAllowed(crn)
@@ -204,28 +161,6 @@ class ContactHistoryControllerTest(
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
         .isEqualTo("Client timeout: Community API Client - contact summary endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on release summary endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
-      contactSummaryResponse(crn, contactSummaryResponse())
-      groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
-      webTestClient.get()
-        .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - release summary endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 
