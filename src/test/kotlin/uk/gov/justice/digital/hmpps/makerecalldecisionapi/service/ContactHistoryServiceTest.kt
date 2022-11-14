@@ -54,17 +54,14 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), allReleaseSummariesResponse())))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse())))
     }
   }
 
@@ -119,28 +116,6 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given no release summary details then still retrieve contact summary details`() {
-    runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getContactSummary(anyString()))
-        .willReturn(Mono.fromCallable { allContactSummariesResponse() })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.empty())
-
-      val response = contactHistoryService.getContactHistory(crn)
-
-      then(communityApiClient).should().getContactSummary(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
-
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse(), null)))
-    }
-  }
-
-  @Test
   fun `given no contact summary details then still retrieve release summary details`() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString()))
@@ -149,38 +124,13 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         .willReturn(Mono.empty())
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), allReleaseSummariesResponse())))
-    }
-  }
-
-  @Test
-  fun `given no contact summary details and no release summary details then still return an empty response`() {
-    runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getContactSummary(anyString()))
-        .willReturn(Mono.empty())
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.empty())
-
-      val response = contactHistoryService.getContactHistory(crn)
-
-      then(communityApiClient).should().getContactSummary(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
-
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList(), null)))
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList())))
     }
   }
 

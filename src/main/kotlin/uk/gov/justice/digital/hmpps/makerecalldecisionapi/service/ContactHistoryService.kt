@@ -6,9 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGrou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
-import kotlin.streams.toList
 
 @Service
 internal class ContactHistoryService(
@@ -26,14 +24,12 @@ internal class ContactHistoryService(
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val contactSummary = getContactSummary(crn)
       val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
-      val releaseSummary = getReleaseSummary(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       ContactHistoryResponse(
         personalDetailsOverview = personalDetailsOverview,
         contactSummary = contactSummary,
         contactTypeGroups = contactTypeGroups,
-        releaseSummary = releaseSummary,
         activeRecommendation = recommendationDetails,
       )
     }
@@ -89,9 +85,5 @@ internal class ContactHistoryService(
       existingContacts + ContactGroupResponse("unknown", "Unknown", codes)
     else
       existingContacts
-  }
-
-  private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
   }
 }
