@@ -57,8 +57,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { licenceConditions })
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -66,7 +64,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -74,8 +71,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse(licenceConditions),
-            allReleaseSummariesResponse()
+            expectedOffenceWithLicenceConditionsResponse(licenceConditions)
           )
         )
       )
@@ -93,8 +89,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { licenceConditions })
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -164,8 +158,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.empty())
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -173,7 +165,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
       then(communityApiClient).should().getAllOffenderDetails(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -181,8 +172,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse(null),
-            allReleaseSummariesResponse()
+            expectedOffenceWithLicenceConditionsResponse(null)
           )
         )
       )
@@ -198,14 +188,11 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { emptyList() })
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-      given(communityApiClient.getReleaseSummary(anyString()))
-        .willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
       then(communityApiClient).should().getActiveConvictions(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
-      then(communityApiClient).should().getReleaseSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).shouldHaveNoMoreInteractions()
 
@@ -215,8 +202,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            emptyList(),
-            allReleaseSummariesResponse()
+            emptyList()
           )
         )
       )

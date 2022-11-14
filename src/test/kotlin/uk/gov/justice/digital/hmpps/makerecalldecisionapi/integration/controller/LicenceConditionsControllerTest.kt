@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 @ActiveProfiles("test")
@@ -26,7 +25,6 @@ class LicenceConditionsControllerTest(
       convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
 
@@ -76,14 +74,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceDocuments[1].lastModifiedAt").isEqualTo("2022-07-08T10:00:29.493")
         .jsonPath("$.convictions[0].licenceDocuments[1].createdAt").isEqualTo("2022-06-08T10:00:29")
         .jsonPath("$.convictions[0].licenceDocuments[1].parentPrimaryKeyId").isEqualTo("2500614567")
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
-        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
-        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
-        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
@@ -99,7 +89,6 @@ class LicenceConditionsControllerTest(
       nonCustodialConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
 
       webTestClient.get()
@@ -120,7 +109,6 @@ class LicenceConditionsControllerTest(
       convictionResponse(crn, staffCode)
       multipleLicenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -156,14 +144,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.code").isEqualTo("NSTT9")
         .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.description").isEqualTo("Do not attend Hull city center after 8pm")
         .jsonPath("$.convictions[0].licenceDocuments.length()").isEqualTo(2)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
-        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
-        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
-        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
@@ -177,7 +157,6 @@ class LicenceConditionsControllerTest(
       licenceConditionsResponse(crn, convictionId)
       licenceConditionsResponse(crn, convictionId2)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -229,14 +208,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId2")
         .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
         .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
-        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
-        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
-        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
@@ -247,7 +218,6 @@ class LicenceConditionsControllerTest(
       allOffenderDetailsResponse(crn)
       noActiveConvictionResponse(crn)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -262,14 +232,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.convictions.length()").isEqualTo(0)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
-        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
-        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
-        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
@@ -281,7 +243,6 @@ class LicenceConditionsControllerTest(
       convictionResponse(crn, staffCode)
       noActiveLicenceConditions(crn, convictionId)
       groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -297,14 +258,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.convictions.length()").isEqualTo(1)
         .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(0)
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
-        .jsonPath("$.releaseSummary.lastRelease.notes").isEqualTo("I am a note")
-        .jsonPath("$.releaseSummary.lastRelease.reason.code").isEqualTo("ADL")
-        .jsonPath("$.releaseSummary.lastRelease.reason.description").isEqualTo("Adult Licence")
-        .jsonPath("$.releaseSummary.lastRecall.date").isEqualTo("2020-10-15")
-        .jsonPath("$.releaseSummary.lastRecall.notes").isEqualTo("I am a second note")
-        .jsonPath("$.releaseSummary.lastRecall.reason.code").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRecall.reason.description").isEqualTo("another reason description")
     }
   }
 
@@ -354,45 +307,6 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
-    }
-  }
-
-  @Test
-  fun `given no custody release response 400 error then handle licence condition response`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      licenceConditionsResponse(crn, convictionId)
-      groupedDocumentsResponse(crn)
-      releaseSummaryResponseWithStatusCode(
-        crn,
-        releaseSummaryDeliusResponse(),
-        400
-      )
-
-      webTestClient.get()
-        .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
-        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(2)
-        .jsonPath("$.convictions[0].convictionId").isEqualTo(convictionId)
-        .jsonPath("$.convictions[0].licenceConditions[0].active").isEqualTo("true")
-        .jsonPath("$.convictions[0].licenceConditions[0].startDate").isEqualTo("2022-05-18")
-        .jsonPath("$.convictions[0].licenceConditions[0].createdDateTime").isEqualTo("2022-05-18T19:33:56")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement for conviction $convictionId")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
-        .jsonPath("$.releaseSummary.lastRelease").isEmpty()
-        .jsonPath("$.releaseSummary.lastRecall").isEmpty()
     }
   }
 
@@ -486,7 +400,6 @@ class LicenceConditionsControllerTest(
       convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, 2500614567)
       groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      releaseSummaryResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")

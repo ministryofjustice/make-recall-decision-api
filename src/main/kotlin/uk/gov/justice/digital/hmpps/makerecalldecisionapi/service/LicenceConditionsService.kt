@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 
 @Service
 internal class LicenceConditionsService(
@@ -23,13 +22,11 @@ internal class LicenceConditionsService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val convictions = convictionService.buildConvictionResponse(crn, true)
-      val releaseSummary = getReleaseSummary(crn)
       val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
 
       LicenceConditionsResponse(
         personalDetailsOverview = personalDetailsOverview,
         convictions = convictions,
-        releaseSummary = releaseSummary,
         activeRecommendation = recommendationDetails,
       )
     }
@@ -50,9 +47,5 @@ internal class LicenceConditionsService(
         activeRecommendation = recommendationDetails
       )
     }
-  }
-
-  private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
   }
 }
