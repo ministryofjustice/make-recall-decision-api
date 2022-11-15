@@ -73,8 +73,9 @@ internal class RecommendationService(
             surname = personDetails?.personalDetailsOverview?.surname,
             gender = personDetails?.personalDetailsOverview?.gender,
             ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
+            primaryLanguage = personDetails?.personalDetailsOverview?.primaryLanguage,
             dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
-            addresses = personDetails?.addresses
+            addresses = personDetails?.addresses,
           ),
           convictionForRecommendation,
           personDetails?.offenderManager?.probationAreaDescription,

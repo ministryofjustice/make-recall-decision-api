@@ -106,6 +106,7 @@ internal class TemplateReplacementService(
       "date_of_birth" to documentData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       "name" to documentData.name,
       "ethnicity" to if (documentData.ethnicity.isNullOrBlank()) NOT_SPECIFIED else documentData.ethnicity,
+      "primary_language" to documentData.primaryLanguage,
       "last_recorded_address" to documentData.lastRecordedAddress,
       "no_fixed_abode" to documentData.noFixedAbode,
       "cro_number" to documentData.croNumber,

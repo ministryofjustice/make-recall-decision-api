@@ -35,6 +35,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
@@ -158,7 +159,8 @@ internal abstract class ServiceTestBase {
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
-      nomsNumber = "A1234CR"
+      nomsNumber = "A1234CR",
+      primaryLanguage = "English"
     ),
     addresses = listOf(
       uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
@@ -191,7 +193,7 @@ internal abstract class ServiceTestBase {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       firstName = "John",
       surname = "Smith",
-      middleNames = emptyList(),
+      middleNames = listOf("Homer", "Bart"),
       gender = "Male",
       otherIds = OtherIds(crn = null, croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"),
       contactDetails = ContactDetails(
@@ -247,7 +249,12 @@ internal abstract class ServiceTestBase {
           )
         )
       ),
-      offenderProfile = OffenderProfile(ethnicity = "Ainu")
+      offenderProfile = OffenderProfile(
+        ethnicity = "Ainu",
+        offenderLanguages = OffenderLanguages(
+          primaryLanguage = "English"
+        )
+      )
     )
   }
 
@@ -486,6 +493,27 @@ internal abstract class ServiceTestBase {
       additionalLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
       additionalPssConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
       bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition"))
+    )
+  }
+
+  protected fun expectedPersonDetailsResponse(): PersonDetails {
+    val dateOfBirth = LocalDate.parse("1982-10-24")
+
+    return PersonDetails(
+      name = "John Smith",
+      firstName = "John",
+      surname = "Smith",
+      dateOfBirth = dateOfBirth,
+      age = dateOfBirth?.until(LocalDate.now())?.years,
+      gender = "Male",
+      crn = "12345",
+      ethnicity = "Ainu",
+      middleNames = "Homer Bart",
+      croNumber = "123456/04A",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = "A1234CR",
+      pncNumber = "2004/0712343H",
+      primaryLanguage = "English"
     )
   }
 }

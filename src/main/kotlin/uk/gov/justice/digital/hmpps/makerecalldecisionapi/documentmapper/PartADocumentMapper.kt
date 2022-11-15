@@ -103,12 +103,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
       outOfTouch = outOfTouch,
       outOfTouchPresent = outOfTouchPresent,
-      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details)
-
-      // licenceBreach = recommendation.data.reasonsForNoRecall?.licenceBreach,
-      // noRecallRationale = recommendation.data.reasonsForNoRecall?.noRecallRationale,
-      // popProgressMade = recommendation.data.reasonsForNoRecall?.popProgressMade,
-      // futureExpectations = recommendation.data.reasonsForNoRecall?.futureExpectations
+      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details),
+      primaryLanguage = recommendation.data.personOnProbation?.primaryLanguage
     )
   }
 

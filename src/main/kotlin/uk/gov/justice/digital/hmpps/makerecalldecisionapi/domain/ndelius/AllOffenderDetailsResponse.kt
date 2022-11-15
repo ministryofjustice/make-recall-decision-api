@@ -17,5 +17,10 @@ data class AllOffenderDetailsResponse(
 )
 
 data class OffenderProfile(
-  val ethnicity: String? = null
+  val ethnicity: String? = null,
+  val offenderLanguages: OffenderLanguages? = null,
+)
+
+data class OffenderLanguages(
+  val primaryLanguage: String? = null
 )

@@ -85,6 +85,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             name = "John Smith",
             gender = "Male",
             ethnicity = "Ainu",
+            primaryLanguage = "English",
             dateOfBirth = LocalDate.parse("1982-10-24"),
             croNumber = "123456/04A",
             pncNumber = "2004/0712343H",
@@ -124,6 +125,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           surname = "Smith",
           gender = "Male",
           ethnicity = "Ainu",
+          primaryLanguage = "English",
           dateOfBirth = LocalDate.parse("1982-10-24"),
           croNumber = "123456/04A",
           mostRecentPrisonerNumber = "G12345",
@@ -742,7 +744,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             middleNames = "",
             nomsNumber = "",
             pncNumber = "",
-            mostRecentPrisonerNumber = null
+            mostRecentPrisonerNumber = null,
+            primaryLanguage = ""
           ),
           addresses = null,
           offenderManager = personDetailsResponse().offenderManager?.copy(
@@ -816,7 +819,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offencesMatch = true))
       given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
         personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345"),
+          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345", primaryLanguage = ""),
           addresses = listOf(
             Address(
               line1 = "Line 1 addressXYZ",

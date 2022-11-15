@@ -15,12 +15,13 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
@@ -129,6 +130,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.primaryLanguage).isEqualTo("English")
       assertThat(currentAddresses[0].line1).isEqualTo("HMPPS Digital Studio 32 Jump Street")
       assertThat(currentAddresses[0].line2).isEqualTo("Sheffield City Centre")
       assertThat(currentAddresses[0].town).isEqualTo("Sheffield")
@@ -175,6 +177,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.primaryLanguage).isEqualTo("English")
       assertThat(currentAddresses).isEmpty()
       assertThat(offenderManager.name).isEqualTo("Sheila Linda Hancock")
       assertThat(offenderManager.email).isEqualTo("first.last@digital.justice.gov.uk")
@@ -277,6 +280,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
+      assertThat(personalDetails.primaryLanguage).isEqualTo("English")
       assertThat(personalDetails.croNumber).isEqualTo("123456/04A")
       assertThat(personalDetails.mostRecentPrisonerNumber).isEqualTo("G12345")
       assertThat(personalDetails.nomsNumber).isEqualTo("A1234CR")
@@ -322,6 +326,12 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
                     )
                   )
                 ),
+                offenderProfile = OffenderProfile(
+                  ethnicity = null,
+                  offenderLanguages = OffenderLanguages(
+                    primaryLanguage = null
+                  )
+                ),
                 offenderManagers = listOf(
                   OffenderManager(
                     active = true,
@@ -356,6 +366,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("")
       assertThat(personalDetails.gender).isEqualTo("")
+      assertThat(personalDetails.ethnicity).isEqualTo("")
+      assertThat(personalDetails.primaryLanguage).isEqualTo("")
       assertThat(currentAddresses[0].line1).isEqualTo("")
       assertThat(currentAddresses[0].line2).isEqualTo("")
       assertThat(currentAddresses[0].town).isEqualTo("")
@@ -384,25 +396,5 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
 
       assertThat(response, equalTo(expectedPersonDetailsResponse()))
     }
-  }
-
-  private fun expectedPersonDetailsResponse(): PersonDetails {
-    val dateOfBirth = LocalDate.parse("1982-10-24")
-
-    return PersonDetails(
-      name = "John Smith",
-      firstName = "John",
-      surname = "Smith",
-      dateOfBirth = dateOfBirth,
-      age = dateOfBirth?.until(LocalDate.now())?.years,
-      gender = "Male",
-      crn = "12345",
-      ethnicity = "Ainu",
-      middleNames = "Homer Bart",
-      croNumber = "123456/04A",
-      mostRecentPrisonerNumber = "G12345",
-      nomsNumber = "A1234CR",
-      pncNumber = "2004/0712343H"
-    )
   }
 }
