@@ -72,7 +72,8 @@ internal class ConvictionService(
           sentenceOriginalLengthUnits = it.sentence?.originalLengthUnits,
           sentenceExpiryDate = it.custody?.keyDates?.sentenceExpiryDate,
           licenceExpiryDate = it.custody?.keyDates?.licenceExpiryDate,
-          isCustodial = it.isCustodial
+          isCustodial = it.isCustodial,
+          statusCode = it.custody?.status?.code
         )
       } ?: emptyList()
   }
