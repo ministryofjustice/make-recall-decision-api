@@ -52,6 +52,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
         .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
         .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
+        .jsonPath("$.convictions[0].statusCode").isEqualTo("ABC123")
         .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")

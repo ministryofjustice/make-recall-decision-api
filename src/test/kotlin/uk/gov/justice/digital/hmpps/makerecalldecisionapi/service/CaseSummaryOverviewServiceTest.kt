@@ -108,6 +108,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictions[0].sentenceExpiryDate).isEqualTo("2022-06-10")
       assertThat(convictions[0].licenceExpiryDate).isEqualTo("2022-05-10")
       assertThat(convictions[0].isCustodial).isTrue
+      assertThat(convictions[0].statusCode).isEqualTo("ABC123")
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(riskManagementPlan!!.assessmentStatusComplete).isEqualTo(true)
       assertThat(riskManagementPlan.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")

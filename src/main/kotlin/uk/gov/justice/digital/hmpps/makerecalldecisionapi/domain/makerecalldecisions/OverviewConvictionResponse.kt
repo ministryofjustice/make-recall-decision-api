@@ -10,5 +10,6 @@ data class OverviewConvictionResponse(
   val sentenceOriginalLengthUnits: String? = null,
   val sentenceExpiryDate: LocalDate? = null,
   val licenceExpiryDate: LocalDate? = null,
-  val isCustodial: Boolean? = null
+  val isCustodial: Boolean? = null,
+  val statusCode: String? = null
 )
