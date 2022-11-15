@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
@@ -238,26 +237,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         )
       )
     }
-  }
-
-  private fun expectedPersonDetailsResponse(): PersonDetails {
-    val dateOfBirth = LocalDate.parse("1982-10-24")
-
-    return PersonDetails(
-      name = "John Smith",
-      firstName = "John",
-      surname = "Smith",
-      dateOfBirth = dateOfBirth,
-      age = dateOfBirth?.until(LocalDate.now())?.years,
-      gender = "Male",
-      crn = "12345",
-      ethnicity = "Ainu",
-      middleNames = "",
-      croNumber = "123456/04A",
-      mostRecentPrisonerNumber = "G12345",
-      nomsNumber = "A1234CR",
-      pncNumber = "2004/0712343H"
-    )
   }
 
   private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<ConvictionResponse> {

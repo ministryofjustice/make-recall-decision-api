@@ -338,7 +338,7 @@ fun allOffenderDetailsResponse(district: String? = "Sheffield City Centre") = ""
       "otherLanguages": [
         "string"
       ],
-      "primaryLanguage": "string",
+      "primaryLanguage": "English",
       "requiresInterpreter": true
     },
     "previousConviction": {

@@ -85,6 +85,7 @@ internal class PersonDetailsService(
       gender = offenderDetails.gender ?: "",
       crn = crn,
       ethnicity = offenderDetails.offenderProfile?.ethnicity ?: "",
+      primaryLanguage = offenderDetails.offenderProfile?.offenderLanguages?.primaryLanguage ?: "",
       croNumber = offenderDetails.otherIds?.croNumber ?: "",
       pncNumber = offenderDetails.otherIds?.pncNumber ?: "",
       nomsNumber = offenderDetails.otherIds?.nomsNumber ?: "",

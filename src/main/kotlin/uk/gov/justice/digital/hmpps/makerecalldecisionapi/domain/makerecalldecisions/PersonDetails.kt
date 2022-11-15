@@ -17,5 +17,6 @@ data class PersonDetails(
   val croNumber: String?,
   val mostRecentPrisonerNumber: String?,
   val pncNumber: String?,
-  val nomsNumber: String?
+  val nomsNumber: String?,
+  val primaryLanguage: String?,
 )

@@ -122,7 +122,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
                 postcode = "TS1 1ST",
                 noFixedAbode = false,
               )
-            )
+            ),
+            primaryLanguage = "English"
           ),
           hasVictimsInContactScheme = VictimsInContactScheme(selected = YES, allOptions = null),
           indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
@@ -303,7 +304,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(99)
+      assertThat(result.size).isEqualTo(100)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -346,6 +347,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["name"]).isEqualTo("Homer Bart Simpson")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
       assertThat(result["ethnicity"]).isEqualTo("Ainu")
+      assertThat(result["primary_language"]).isEqualTo("English")
       assertThat(result["cro_number"]).isEqualTo("123456/04A")
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
       assertThat(result["most_recent_prisoner_number"]).isEqualTo("G12345")
@@ -500,6 +502,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       gender = "Male",
       name = "Homer Bart Simpson",
       ethnicity = "Ainu",
+      primaryLanguage = "English",
       dateOfBirth = parse("1982-10-24"),
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
