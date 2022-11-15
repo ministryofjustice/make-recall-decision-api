@@ -62,6 +62,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
     assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
     assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
     assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
     assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
@@ -260,6 +261,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.dateVloInformed").isEqualTo("2022-08-01")
       .jsonPath("$.personOnProbation.name").isEqualTo("John Smith")
       .jsonPath("$.personOnProbation.gender").isEqualTo("Male")
+      .jsonPath("$.personOnProbation.primaryLanguage").isEqualTo("English")
+      .jsonPath("$.personOnProbation.hasBeenReviewed").isEqualTo(true)
       .jsonPath("$.alternativesToRecallTried.selected[0].value").isEqualTo("WARNINGS_LETTER")
       .jsonPath("$.alternativesToRecallTried.selected[0].details").isEqualTo("We sent a warning letter on 27th July 2022")
       .jsonPath("$.alternativesToRecallTried.selected[1].value").isEqualTo("DRUG_TESTING")
@@ -357,6 +360,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.nextAppointment.howWillAppointmentHappen.allOptions[3].text").isEqualTo("Home visit")
       .jsonPath("$.nextAppointment.dateTimeOfAppointment").isEqualTo("2022-04-24T20:39:00.000Z")
       .jsonPath("$.nextAppointment.probationPhoneNumber").isEqualTo("01238282838")
+      .jsonPath("$.hasBeenReviewed").doesNotExist()
   }
 
   @Test
