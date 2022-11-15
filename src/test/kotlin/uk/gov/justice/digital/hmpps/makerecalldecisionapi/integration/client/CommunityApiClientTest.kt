@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
@@ -392,7 +393,12 @@ class CommunityApiClientTest : IntegrationTestBase() {
         )
 
       ),
-      offenderProfile = OffenderProfile(ethnicity = "Ainu")
+      offenderProfile = OffenderProfile(
+        ethnicity = "Ainu",
+        offenderLanguages = OffenderLanguages(
+          primaryLanguage = "English"
+        )
+      )
     )
 
     // when
