@@ -67,7 +67,8 @@ data class PersonOnProbation(
   val pncNumber: String? = null,
   val mappa: Mappa? = null,
   val addresses: List<Address>? = null,
-  val primaryLanguage: String? = null
+  val primaryLanguage: String? = null,
+  val hasBeenReviewed: Boolean? = false
 )
 
 data class ConvictionDetail(

@@ -38,7 +38,14 @@
   "offenderProfile": {
     "nationality": "Albanian",
     "ethnicity": "White",
-    "offenderLanguages": {},
+    "offenderLanguages": {
+      "languageConcerns": "No",
+      "otherLanguages": [
+        "French"
+      ],
+      "primaryLanguage": "English",
+      "requiresInterpreter": false
+    },
     "remandStatus": "Bail - Conditional",
     "previousConviction": {}
   },
