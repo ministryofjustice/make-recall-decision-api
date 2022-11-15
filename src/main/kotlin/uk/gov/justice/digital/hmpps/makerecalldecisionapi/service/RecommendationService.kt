@@ -171,7 +171,7 @@ internal class RecommendationService(
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
-        existingRecommendationEntity.data = updateRecommendationRequest
+        existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
       existingRecommendationEntity.data.lastModifiedBy = username
@@ -180,6 +180,25 @@ internal class RecommendationService(
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
       return savedRecommendation
     }
+  }
+
+  private fun updatePageReviewedValues(
+    updateRecommendationRequest: RecommendationModel,
+    recommendationEntity: RecommendationEntity
+  ): RecommendationEntity {
+    if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
+      val data = recommendationEntity.data
+      val personOnProbation = data.personOnProbation
+      return recommendationEntity.copy(
+        data = data.copy(
+          personOnProbation = personOnProbation?.copy(
+            hasBeenReviewed = true
+          ),
+          hasBeenReviewed = null
+        )
+      )
+    }
+    return recommendationEntity
   }
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {

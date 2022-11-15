@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -86,7 +87,8 @@ data class RecommendationModel(
   @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
   var whyConsideredRecall: WhyConsideredRecall? = null,
   var reasonsForNoRecall: ReasonsForNoRecall? = null,
-  var nextAppointment: NextAppointment? = null
+  var nextAppointment: NextAppointment? = null,
+  var hasBeenReviewed: HasBeenReviewed? = null
 ) : Serializable
 
 enum class Status {

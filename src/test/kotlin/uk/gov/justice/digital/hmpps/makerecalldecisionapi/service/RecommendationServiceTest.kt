@@ -126,6 +126,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           gender = "Male",
           ethnicity = "Ainu",
           primaryLanguage = "English",
+          hasBeenReviewed = false,
           dateOfBirth = LocalDate.parse("1982-10-24"),
           croNumber = "123456/04A",
           mostRecentPrisonerNumber = "G12345",
@@ -193,7 +194,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           id = existingRecommendation.id,
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
-            personOnProbation = PersonOnProbation(name = "John Smith"),
+            personOnProbation = PersonOnProbation(name = "John Smith", hasBeenReviewed = true),
             recallType = updateRecommendationRequest.recallType,
             custodyStatus = updateRecommendationRequest.custodyStatus,
             responseToProbation = updateRecommendationRequest.responseToProbation,
@@ -223,7 +224,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
             whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
             reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
-            nextAppointment = updateRecommendationRequest.nextAppointment
+            nextAppointment = updateRecommendationRequest.nextAppointment,
+            hasBeenReviewed = null
           )
         )
 
@@ -854,6 +856,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             name = "John Smith",
             firstName = "John",
             surname = "Smith",
+            primaryLanguage = "English",
             mappa = Mappa(level = 2, category = 2, lastUpdatedDate = null),
             addresses = listOf(
               Address(

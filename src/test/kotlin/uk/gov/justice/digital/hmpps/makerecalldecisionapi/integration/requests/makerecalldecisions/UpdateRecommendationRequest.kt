@@ -288,6 +288,9 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     },
     "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
     "probationPhoneNumber": "01238282838"
+  },
+  "hasBeenReviewed": {
+    "personOnProbation": true
   }
 }
 """.trimIndent()
