@@ -31,7 +31,11 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.0")
   implementation("io.opentelemetry:opentelemetry-api:1.20.1")
   implementation("joda-time:joda-time:2.12.1")
-  implementation("com.deepoove:poi-tl:1.12.0")
+  implementation("com.deepoove:poi-tl:1.12.0") {
+    // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
+    exclude("org.apache.xmlgraphics", "batik-codec")
+    exclude("org.apache.xmlgraphics", "batik-transcoder")
+  }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
