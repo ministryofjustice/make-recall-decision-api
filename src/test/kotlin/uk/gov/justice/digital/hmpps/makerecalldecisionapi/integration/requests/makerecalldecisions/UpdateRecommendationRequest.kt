@@ -290,7 +290,8 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "probationPhoneNumber": "01238282838"
   },
   "hasBeenReviewed": {
-    "personOnProbation": true
+    "personOnProbation": true,
+    "convictionDetail": true
   }
 }
 """.trimIndent()
