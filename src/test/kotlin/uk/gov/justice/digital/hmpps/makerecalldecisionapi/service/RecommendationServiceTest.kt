@@ -154,7 +154,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           licenceExpiryDate = LocalDate.parse("2022-05-10"),
           sentenceExpiryDate = LocalDate.parse("2022-06-10"),
           sentenceSecondLength = 10,
-          sentenceSecondLengthUnits = "Months"
+          sentenceSecondLengthUnits = "Months",
+          hasBeenReviewed = false,
         )
       )
       assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
@@ -218,7 +219,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
             localPoliceContact = updateRecommendationRequest.localPoliceContact,
             vulnerabilities = updateRecommendationRequest.vulnerabilities,
-            convictionDetail = updateRecommendationRequest.convictionDetail,
+            convictionDetail = updateRecommendationRequest.convictionDetail?.copy(hasBeenReviewed = true),
             fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
             indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
             mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,

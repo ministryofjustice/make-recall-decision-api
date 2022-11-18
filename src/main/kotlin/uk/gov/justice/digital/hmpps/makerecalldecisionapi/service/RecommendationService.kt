@@ -186,19 +186,27 @@ internal class RecommendationService(
     updateRecommendationRequest: RecommendationModel,
     recommendationEntity: RecommendationEntity
   ): RecommendationEntity {
+    val data = recommendationEntity.data
+    var personOnProbation = data.personOnProbation
+    var convictionDetail = data.convictionDetail
     if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
-      val data = recommendationEntity.data
-      val personOnProbation = data.personOnProbation
-      return recommendationEntity.copy(
-        data = data.copy(
-          personOnProbation = personOnProbation?.copy(
-            hasBeenReviewed = true
-          ),
-          hasBeenReviewed = null
-        )
+      personOnProbation = personOnProbation?.copy(
+        hasBeenReviewed = true
       )
     }
-    return recommendationEntity
+    if (updateRecommendationRequest.hasBeenReviewed?.convictionDetail == true) {
+      convictionDetail = convictionDetail?.copy(
+        hasBeenReviewed = true
+      )
+    }
+
+    return recommendationEntity.copy(
+      data = data.copy(
+        personOnProbation = personOnProbation,
+        convictionDetail = convictionDetail,
+        hasBeenReviewed = null
+      )
+    )
   }
 
   fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {

@@ -320,6 +320,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.convictionDetail.sentenceExpiryDate").isEqualTo("2020-06-28")
       .jsonPath("$.convictionDetail.sentenceSecondLength").isEqualTo("19")
       .jsonPath("$.convictionDetail.sentenceSecondLengthUnits").isEqualTo("days")
+      .jsonPath("$.convictionDetail.hasBeenReviewed").isEqualTo(true)
       .jsonPath("$.region").isEqualTo("NPS North West")
       .jsonPath("$.localDeliveryUnit").isEqualTo("Local delivery unit description 2")
       .jsonPath("$.fixedTermAdditionalLicenceConditions.selected").isEqualTo(true)
