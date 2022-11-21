@@ -82,5 +82,7 @@ data class ConvictionDetail(
   val sentenceExpiryDate: LocalDate? = null,
   val sentenceSecondLength: Int? = null,
   val sentenceSecondLengthUnits: String? = null,
+  val custodialTerm: String? = null,
+  val extendedTerm: String? = null,
   val hasBeenReviewed: Boolean? = false
 )
