@@ -19,7 +19,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
 
@@ -30,7 +29,6 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val firstName = recommendation.data.personOnProbation?.firstName
     val middleNames = recommendation.data.personOnProbation?.middleNames
     val lastName = recommendation.data.personOnProbation?.surname
-    val (custodialTerm, extendedTerm) = extendedSentenceDetails(recommendation.data.convictionDetail)
     val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.data.personOnProbation?.addresses)
     val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.data.lastPartADownloadDateTime)
     val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
@@ -84,8 +82,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       lengthOfSentence = buildLengthOfSentence(recommendation.data.convictionDetail),
       licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
       sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
-      custodialTerm = custodialTerm,
-      extendedTerm = extendedTerm,
+      custodialTerm = recommendation.data.convictionDetail?.custodialTerm,
+      extendedTerm = recommendation.data.convictionDetail?.extendedTerm,
       mappa = recommendation.data.personOnProbation?.mappa,
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
@@ -182,18 +180,6 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     return if (null != dateToConvert)
       convertLocalDateToDateWithSlashes(dateToConvert)
     else EMPTY_STRING
-  }
-
-  private fun extendedSentenceDetails(convictionDetail: ConvictionDetail?): Pair<String?, String?> {
-    return if (convictionDetail?.sentenceDescription.equals("Extended Determinate Sentence") ||
-      convictionDetail?.sentenceDescription.equals("CJA - Extended Sentence")
-    ) {
-      val lengthOfSentence = buildLengthOfSentence(convictionDetail)
-      val sentenceSecondLength = convictionDetail?.sentenceSecondLength?.toString() ?: EMPTY_STRING
-      val sentenceSecondLengthUnits = convictionDetail?.sentenceSecondLengthUnits ?: EMPTY_STRING
-
-      Pair(lengthOfSentence, sentenceSecondLength + WHITE_SPACE + sentenceSecondLengthUnits)
-    } else Pair(null, null)
   }
 
   private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {

@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -348,6 +349,7 @@ internal class RecommendationService(
     if (convictionResponse?.size == 1) {
 
       val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
+      val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0])
 
       return ConvictionDetail(
         mainOffence?.description,
@@ -360,9 +362,23 @@ internal class RecommendationService(
         convictionResponse[0].sentenceExpiryDate,
         convictionResponse[0].sentenceSecondLength,
         convictionResponse[0].sentenceSecondLengthUnits,
+        custodialTerm,
+        extendedTerm
       )
     }
     return null
+  }
+
+  private fun extendedSentenceDetails(conviction: ConvictionResponse?): Pair<String?, String?> {
+    return if ("Extended Determinate Sentence" == conviction?.sentenceDescription ||
+      "CJA - Extended Sentence" == conviction?.sentenceDescription
+    ) {
+      val custodialTerm = conviction.sentenceOriginalLength?.toString() + MrdTextConstants.WHITE_SPACE + conviction.sentenceOriginalLengthUnits
+      val sentenceSecondLength = conviction.sentenceSecondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
+      val sentenceSecondLengthUnits = conviction.sentenceSecondLengthUnits ?: MrdTextConstants.EMPTY_STRING
+
+      Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
+    } else Pair(null, null)
   }
 
   @Throws(InvalidRequestException::class)
