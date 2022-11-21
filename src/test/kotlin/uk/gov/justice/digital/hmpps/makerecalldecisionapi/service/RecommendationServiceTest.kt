@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyBoolean
@@ -70,8 +72,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var riskServiceMocked: RiskService
 
-  @Test
-  fun `creates a new recommendation in the database`() {
+  @ParameterizedTest()
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  fun `creates a new recommendation in the database`(sentenceDescription: String) {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -98,7 +101,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("CJA - Extended Sentence")) })
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked)
 
       // when
@@ -143,6 +146,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           )
         )
       )
+
+      val expectedCustodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else null
+      val expectedExtendedTerm = if (sentenceDescription != "Random sentence description") "10 Months" else null
+
       assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
         ConvictionDetail(
           indexOffenceDescription = "Robbery (other than armed robbery)",
@@ -150,11 +157,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           dateOfSentence = LocalDate.parse("2022-04-26"),
           lengthOfSentence = 6,
           lengthOfSentenceUnits = "Days",
-          sentenceDescription = "CJA - Extended Sentence",
+          sentenceDescription = sentenceDescription,
           licenceExpiryDate = LocalDate.parse("2022-05-10"),
           sentenceExpiryDate = LocalDate.parse("2022-06-10"),
           sentenceSecondLength = 10,
           sentenceSecondLengthUnits = "Months",
+          custodialTerm = expectedCustodialTerm,
+          extendedTerm = expectedExtendedTerm,
           hasBeenReviewed = false,
         )
       )

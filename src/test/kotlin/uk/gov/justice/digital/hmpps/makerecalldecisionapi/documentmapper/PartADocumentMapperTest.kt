@@ -438,9 +438,8 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest()
-  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
-  fun `given conviction details then convert dates and sentence lengths in the part A`(sentenceDescription: String) {
+  @Test
+  fun `given conviction details then convert dates and sentence lengths in the part A`() {
     runTest {
       val recommendation = RecommendationEntity(
         id = 1,
@@ -452,11 +451,12 @@ class PartADocumentMapperTest {
             dateOfSentence = LocalDate.parse("2022-09-04"),
             lengthOfSentence = 6,
             lengthOfSentenceUnits = "days",
-            sentenceDescription = sentenceDescription,
             licenceExpiryDate = LocalDate.parse("2022-09-05"),
             sentenceExpiryDate = LocalDate.parse("2022-09-06"),
             sentenceSecondLength = 20,
-            sentenceSecondLengthUnits = "days"
+            sentenceSecondLengthUnits = "days",
+            custodialTerm = "6 days",
+            extendedTerm = "20 days"
           )
         )
       )
@@ -470,13 +470,8 @@ class PartADocumentMapperTest {
       assertThat(result.licenceExpiryDate).isEqualTo("05/09/2022")
       assertThat(result.sentenceExpiryDate).isEqualTo("06/09/2022")
 
-      if (sentenceDescription != "Random sentence description") {
-        assertThat(result.custodialTerm).isEqualTo("6 days")
-        assertThat(result.extendedTerm).isEqualTo("20 days")
-      } else {
-        assertThat(result.custodialTerm).isNull()
-        assertThat(result.extendedTerm).isNull()
-      }
+      assertThat(result.custodialTerm).isEqualTo("6 days")
+      assertThat(result.extendedTerm).isEqualTo("20 days")
     }
   }
 
@@ -493,11 +488,12 @@ class PartADocumentMapperTest {
             dateOfSentence = null,
             lengthOfSentence = null,
             lengthOfSentenceUnits = null,
-            sentenceDescription = "Extended Determinate Sentence",
             licenceExpiryDate = null,
             sentenceExpiryDate = null,
             sentenceSecondLength = null,
-            sentenceSecondLengthUnits = null
+            sentenceSecondLengthUnits = null,
+            custodialTerm = WHITE_SPACE,
+            extendedTerm = WHITE_SPACE
           )
         )
       )
