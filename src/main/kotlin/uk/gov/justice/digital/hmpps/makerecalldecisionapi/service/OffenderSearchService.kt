@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
 
 @Service
 internal class OffenderSearchService(
@@ -30,14 +31,14 @@ internal class OffenderSearchService(
       if (it.firstName == null && it.surname == null) {
         try {
           getValueAndHandleWrappedException(communityApiClient.getUserAccess(crn))
-          name = "No name available"
+          name = NO_NAME_AVAILABLE
         } catch (webClientResponseException: WebClientResponseException) {
           if (webClientResponseException.rawStatusCode == 403) {
             val userAccessResponse = Gson().fromJson(webClientResponseException.responseBodyAsString, UserAccessResponse::class.java)
             excluded = userAccessResponse.userExcluded
             restricted = userAccessResponse?.userRestricted
           } else {
-            throw webClientResponseException
+            name = NO_NAME_AVAILABLE
           }
         }
       }
