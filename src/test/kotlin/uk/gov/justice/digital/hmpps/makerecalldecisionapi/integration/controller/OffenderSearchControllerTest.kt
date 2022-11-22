@@ -96,6 +96,27 @@ class OffenderSearchControllerTest(
   }
 
   @Test
+  fun `given case with no name and user access replies with 404 then set search to no name available`() {
+    runTest {
+      val crn = "X123456"
+      limitedAccessPractitionerOffenderSearchResponse(crn)
+      userNotFound(crn)
+      webTestClient.get()
+        .uri("/search?crn=$crn")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("No name available")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(null)
+        .jsonPath("$[0].userRestricted").isEqualTo(null)
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Offender Search Api timeout on offenders search by phrase endpoint`() {
     runTest {
       val crn = "X123456"
