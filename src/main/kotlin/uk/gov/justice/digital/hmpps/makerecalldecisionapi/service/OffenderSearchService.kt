@@ -16,9 +16,9 @@ internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
-  suspend fun search(crn: String): List<SearchByCrnResponse> {
+  suspend fun search(phrase: String): List<SearchByCrnResponse> {
     val request = OffenderSearchByPhraseRequest(
-      phrase = crn
+      phrase = phrase
     )
     val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
 
@@ -26,6 +26,7 @@ internal class OffenderSearchService(
       var name = "${it.firstName} ${it.surname}"
       var excluded: Boolean? = null
       var restricted: Boolean? = null
+      var crn: String = it.otherIds?.crn ?: phrase
 
       // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
