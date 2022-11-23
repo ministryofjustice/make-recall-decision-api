@@ -9,15 +9,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
 
 @Service
 internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
-  suspend fun search(crn: String): List<SearchByCrnResponse> {
+  suspend fun search(phrase: String): List<SearchByCrnResponse> {
     val request = OffenderSearchByPhraseRequest(
-      phrase = crn
+      phrase = phrase
     )
     val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
 
@@ -25,19 +26,20 @@ internal class OffenderSearchService(
       var name = "${it.firstName} ${it.surname}"
       var excluded: Boolean? = null
       var restricted: Boolean? = null
+      var crn: String = it.otherIds?.crn ?: phrase
 
       // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
         try {
           getValueAndHandleWrappedException(communityApiClient.getUserAccess(crn))
-          name = "No name available"
+          name = NO_NAME_AVAILABLE
         } catch (webClientResponseException: WebClientResponseException) {
           if (webClientResponseException.rawStatusCode == 403) {
             val userAccessResponse = Gson().fromJson(webClientResponseException.responseBodyAsString, UserAccessResponse::class.java)
             excluded = userAccessResponse.userExcluded
             restricted = userAccessResponse?.userRestricted
           } else {
-            throw webClientResponseException
+            name = NO_NAME_AVAILABLE
           }
         }
       }

@@ -74,23 +74,23 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
     runTest {
-      val crn = "X12345"
+      val phrase = "test"
       val request = OffenderSearchByPhraseRequest(
-        phrase = crn
+        phrase = phrase
       )
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
         .willReturn(Mono.fromCallable { omittedDetailsResponse })
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
+      given(communityApiClient.getUserAccess("X12345")).willThrow(
         WebClientResponseException(
           403, "Forbidden", null, restrictedResponse().toByteArray(), null
         )
       )
-      val results = offenderSearch.search(crn)
+      val results = offenderSearch.search(phrase)
 
       assertThat(results.size).isEqualTo(1)
       assertThat(results[0].name).isEqualTo("null null")
-      assertThat(results[0].crn).isEqualTo(crn)
+      assertThat(results[0].crn).isEqualTo("X12345")
       assertThat(results[0].dateOfBirth).isNull()
       assertThat(results[0].userExcluded).isEqualTo(false)
       assertThat(results[0].userRestricted).isEqualTo(true)

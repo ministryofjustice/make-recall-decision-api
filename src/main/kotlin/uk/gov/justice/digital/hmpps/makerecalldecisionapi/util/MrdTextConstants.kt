@@ -11,5 +11,6 @@ class MrdTextConstants {
     const val NOT_APPLICABLE = "N/A"
     const val SCORE_NOT_APPLICABLE = "NOT_APPLICABLE"
     const val TICK_CHARACTER = 0x2713.toChar().toString()
+    const val NO_NAME_AVAILABLE = "No name available"
   }
 }
