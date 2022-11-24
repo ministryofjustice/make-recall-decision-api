@@ -30,7 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
@@ -133,8 +133,8 @@ class MrdTestDataBuilder {
       )
     }
 
-    private fun vulnerabilities(): Vulnerabilities {
-      return Vulnerabilities(
+    private fun vulnerabilities(): VulnerabilitiesRecommendation {
+      return VulnerabilitiesRecommendation(
         selected = listOf(ValueWithDetails(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
         allOptions = listOf(
           TextValueOption(value = VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
