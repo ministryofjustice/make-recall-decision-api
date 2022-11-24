@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 data class RiskSummaryResponse(
   val whoIsAtRisk: String?,
   val natureOfRisk: String?,
@@ -12,15 +10,4 @@ data class RiskSummaryResponse(
   val riskInCustody: RiskScore?,
   val assessedOn: String?,
   val overallRiskLevel: String?
-)
-
-data class RiskScore(
-  @JsonProperty("VERY_HIGH")
-  val veryHigh: List<String?>?,
-  @JsonProperty("HIGH")
-  val high: List<String?>?,
-  @JsonProperty("MEDIUM")
-  val medium: List<String?>?,
-  @JsonProperty("LOW")
-  val low: List<String?>?
 )

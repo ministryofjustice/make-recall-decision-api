@@ -11,12 +11,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryRiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -230,6 +235,96 @@ class ArnApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = arnApiClient.getRiskManagementPlan(crn).block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `retrieves risks`() {
+    // given
+    risksResponse(crn)
+
+    // and
+    val expected = RiskResponse(
+      riskToSelf = RiskToSelfResponse(
+        suicide = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of suicide concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of suicide concerns due to ..."
+        ),
+        selfHarm = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of self harm concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of self harm concerns due to ..."
+        ),
+        custody = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of custody concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of custody concerns due to ..."
+        ),
+        hostelSetting = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of hostel setting concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of hostel setting concerns due to ..."
+        ),
+        vulnerability = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of vulnerability concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of vulnerability concerns due to ..."
+        ),
+      ),
+      otherRisks = OtherRisksResponse(
+        escapeOrAbscond = "YES",
+        controlIssuesDisruptiveBehaviour = "YES",
+        breachOfTrust = "YES",
+        riskToOtherPrisoners = "YES"
+      ),
+      summary = RiskSummaryRiskResponse(
+        whoIsAtRisk = "X, Y and Z are at risk",
+        natureOfRisk = "The nature of the risk is X",
+        riskImminence = "the risk is imminent and more probably in X situation",
+        riskIncreaseFactors = "If offender in situation X the risk can be higher",
+        riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
+        riskInCommunity = RiskScore(
+          veryHigh = null,
+          high = listOf(
+            "Children",
+            "Public",
+            "Known adult"
+          ),
+          medium = listOf("Staff"),
+          low = listOf("Prisoners")
+        ),
+        riskInCustody = RiskScore(
+          veryHigh = listOf(
+            "Staff",
+            "Prisoners"
+          ),
+          high = listOf("Known adult"),
+          medium = null,
+          low = listOf(
+            "Children",
+            "Public"
+          )
+        ),
+        overallRiskLevel = "HIGH"
+      ),
+      assessedOn = "2022-11-23T00:01:50"
+    )
+
+    // when
+    val actual = arnApiClient.getRisks(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))
