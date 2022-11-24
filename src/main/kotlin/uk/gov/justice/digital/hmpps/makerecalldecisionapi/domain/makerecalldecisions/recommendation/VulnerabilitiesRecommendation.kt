@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 
-data class Vulnerabilities(
+data class VulnerabilitiesRecommendation(
   val selected: List<ValueWithDetails>?,
   val allOptions: List<TextValueOption>? = null
 )

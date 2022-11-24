@@ -27,7 +27,7 @@ data class DocumentData(
   val additionalConditionsBreached: String? = null,
   val isUnderIntegratedOffenderManagement: String? = null,
   val localPoliceContact: LocalPoliceContact? = null,
-  val vulnerabilities: Vulnerabilities? = null,
+  val vulnerabilities: VulnerabilitiesRecommendation? = null,
   val gender: String? = null,
   val dateOfBirth: LocalDate? = null,
   val name: String? = null,

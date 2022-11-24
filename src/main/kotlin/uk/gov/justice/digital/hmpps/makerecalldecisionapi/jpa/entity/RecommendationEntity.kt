@@ -20,7 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import java.io.Serializable
 import java.security.SecureRandom
@@ -79,7 +79,7 @@ data class RecommendationModel(
   val convictionDetail: ConvictionDetail? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
-  var vulnerabilities: Vulnerabilities? = null,
+  var vulnerabilities: VulnerabilitiesRecommendation? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
