@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.risksDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404LatestCompleteNotFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404NoOffenderFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
@@ -191,6 +192,15 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/risk-management-plan")
     oasysARNApi.`when`(riskManagementPlanRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(riskManagementResponse(crn))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun risksResponse(crn: String, delaySeconds: Long = 0) {
+    val risksRequest =
+      request().withPath("/risks/crn/$crn")
+    oasysARNApi.`when`(risksRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(risksDataResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

@@ -53,8 +53,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryRiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -87,6 +93,8 @@ internal abstract class ServiceTestBase {
   protected lateinit var documentService: DocumentService
 
   protected lateinit var convictionService: ConvictionService
+
+  protected lateinit var vulnerabilitiesService: VulnerabilitiesService
 
   protected lateinit var recommendationService: RecommendationService
 
@@ -144,6 +152,85 @@ internal abstract class ServiceTestBase {
     laterWIPAssessmentExists = false,
     superStatus = "COMPLETE"
   )
+
+  fun riskResponse(): RiskResponse {
+    return RiskResponse(
+      riskToSelf = RiskToSelfResponse(
+        suicide = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of suicide concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of suicide concerns due to ..."
+        ),
+        selfHarm = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of self harm concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of self harm concerns due to ..."
+        ),
+        custody = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of custody concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of custody concerns due to ..."
+        ),
+        hostelSetting = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of hostel setting concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of hostel setting concerns due to ..."
+        ),
+        vulnerability = RiskVulnerabilityTypeResponse(
+          risk = "Yes",
+          previous = "Yes",
+          previousConcernsText = "Previous risk of vulnerability concerns due to ...",
+          current = "Yes",
+          currentConcernsText = "Risk of vulnerability concerns due to ..."
+        ),
+      ),
+      otherRisks = OtherRisksResponse(
+        escapeOrAbscond = "YES",
+        controlIssuesDisruptiveBehaviour = "YES",
+        breachOfTrust = "YES",
+        riskToOtherPrisoners = "YES"
+      ),
+      summary = RiskSummaryRiskResponse(
+        whoIsAtRisk = "X, Y and Z are at risk",
+        natureOfRisk = "The nature of the risk is X",
+        riskImminence = "the risk is imminent and more probably in X situation",
+        riskIncreaseFactors = "If offender in situation X the risk can be higher",
+        riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
+        riskInCommunity = RiskScore(
+          veryHigh = null,
+          high = listOf(
+            "Children",
+            "Public",
+            "Known adult"
+          ),
+          medium = listOf("Staff"),
+          low = listOf("Prisoners")
+        ),
+        riskInCustody = RiskScore(
+          veryHigh = listOf(
+            "Staff",
+            "Prisoners"
+          ),
+          high = listOf("Known adult"),
+          medium = null,
+          low = listOf(
+            "Children",
+            "Public"
+          )
+        ),
+        overallRiskLevel = "HIGH"
+      ),
+      assessedOn = "2022-11-23T00:01:50"
+    )
+  }
 
   fun personDetailsResponse() = PersonDetailsResponse(
     personalDetailsOverview = PersonDetails(
@@ -516,4 +603,6 @@ internal abstract class ServiceTestBase {
       primaryLanguage = "English"
     )
   }
+
+  fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 }
