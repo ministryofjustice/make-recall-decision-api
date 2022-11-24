@@ -32,7 +32,7 @@ data class RecommendationResponse(
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
-  val vulnerabilities: Vulnerabilities? = null,
+  val vulnerabilities: VulnerabilitiesRecommendation? = null,
   val convictionDetail: ConvictionDetail? = null,
   val region: String? = null,
   val localDeliveryUnit: String? = null,
