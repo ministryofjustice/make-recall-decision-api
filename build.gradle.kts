@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.7"
-  kotlin("jvm") version "1.7.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.6.0"
+  kotlin("jvm") version "1.7.22"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.7.21"
+  kotlin("plugin.jpa") version "1.7.22"
   id("org.sonarqube") version "3.5.0.2730"
-  kotlin("plugin.spring") version "1.7.21"
+  kotlin("plugin.spring") version "1.7.22"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -22,7 +22,7 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
-val springDocVersion = "1.6.12"
+val springDocVersion = "1.6.13"
 
 dependencies {
 
@@ -32,8 +32,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.5")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.6")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
   implementation("io.opentelemetry:opentelemetry-api:1.20.1")
   implementation("joda-time:joda-time:2.12.1")
   implementation("com.deepoove:poi-tl:1.12.0") {
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.8.1")
-  implementation("org.postgresql:postgresql:42.5.0")
+  implementation("org.flywaydb:flyway-core:9.8.3")
+  implementation("org.postgresql:postgresql:42.5.1")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.7.0")
-  implementation("io.sentry:sentry-logback:6.7.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.8.0")
+  implementation("io.sentry:sentry-logback:6.8.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")

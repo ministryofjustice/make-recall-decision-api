@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Vulnerabilities
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.ADULT_OR_CHILD_SAFEGUARDING_CONCERNS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.BEING_BULLIED_BY_OTHERS
@@ -155,7 +155,7 @@ internal class TemplateReplacementService(
     return mappings
   }
 
-  private fun hasVulnerabilities(vulnerabilities: Vulnerabilities?) =
+  private fun hasVulnerabilities(vulnerabilities: VulnerabilitiesRecommendation?) =
     vulnerabilities?.selected?.isNotEmpty() == true && !vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
@@ -186,7 +186,7 @@ internal class TemplateReplacementService(
     )
   }
 
-  private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: Vulnerabilities?): Map<String, String> {
+  private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> {
     return mapOf(
       "risk_of_suicide_or_self_harm" to (getVulnerabilityDisplayText(RISK_OF_SUICIDE_OR_SELF_HARM.name, vulnerabilities)),
       "relationship_breakdown" to (getVulnerabilityDisplayText(RELATIONSHIP_BREAKDOWN.name, vulnerabilities)),
@@ -208,7 +208,7 @@ internal class TemplateReplacementService(
     )
   }
 
-  private fun getVulnerabilityDisplayText(vulnerability: String?, vulnerabilities: Vulnerabilities?): String {
+  private fun getVulnerabilityDisplayText(vulnerability: String?, vulnerabilities: VulnerabilitiesRecommendation?): String {
     val selectedVulnerabilities = vulnerabilities?.selected?.map { it.value }
     val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
     val detailsMap = vulnerabilities?.selected?.associate {

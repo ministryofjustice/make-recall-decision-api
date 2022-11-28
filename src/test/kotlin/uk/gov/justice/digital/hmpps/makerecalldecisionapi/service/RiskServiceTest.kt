@@ -948,7 +948,7 @@ internal class RiskServiceTest : ServiceTestBase() {
 
   @ParameterizedTest(name = "given call to mappa fails with {1} exception then set this in the error field response")
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
-  fun `given call to maapa fails with given exception then set this in the error field response`(
+  fun `given call to mappa fails with given exception then set this in the error field response`(
     code: Int,
     expectedErrorCode: String
   ) {
@@ -968,8 +968,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.error).isEqualTo(expectedErrorCode)
     }
   }
-
-  fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
 
   private val riskSummaryResponse = RiskSummaryResponse(
     whoIsAtRisk = "X, Y and Z are at risk",
