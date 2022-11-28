@@ -30,6 +30,7 @@ import org.mockito.kotlin.willReturn
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -238,6 +239,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
             reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
             nextAppointment = updateRecommendationRequest.nextAppointment,
+            offenceAnalysis = "This is the offence analysis",
             hasBeenReviewed = null
           )
         )
@@ -371,6 +373,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.localPoliceContact?.phoneNumber).isEqualTo("555-0100")
     assertThat(recommendationResponse.localPoliceContact?.faxNumber).isEqualTo("555-0199")
     assertThat(recommendationResponse.localPoliceContact?.emailAddress).isEqualTo("thomas.magnum@gmail.com")
+    assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
     assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
     assertThat(recommendationResponse.convictionDetail?.dateOfOriginalOffence).isEqualTo("2022-09-01")
     assertThat(recommendationResponse.convictionDetail?.dateOfSentence).isEqualTo("2022-09-02")
@@ -809,7 +812,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
+      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com", null)
 
       // and
       val captor = argumentCaptor<RecommendationEntity>()
@@ -824,8 +827,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @Test
-  fun `generate Part A document from recommendation data`() {
+  @ParameterizedTest()
+  @CsvSource("true", "false")
+  fun `generate Part A document from recommendation data with feature flags`(flagRecommendationOffenceDetails: Boolean) {
     runTest {
       // given
       given(riskServiceMocked.getRisk(anyString())).willReturn(
@@ -891,7 +895,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
+      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com", FeatureFlags(flagRecommendationOffenceDetails = true))
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
@@ -923,7 +927,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
-      val result = recommendationService.generatePartA(1L, "John smith", "John.Smith@test.com")
+      val result = recommendationService.generatePartA(1L, "John smith", "John.Smith@test.com", null)
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
       assertThat(result.fileContents).isNotNull

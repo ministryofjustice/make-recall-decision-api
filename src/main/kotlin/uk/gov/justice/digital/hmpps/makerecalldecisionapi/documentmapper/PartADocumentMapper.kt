@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -25,7 +26,7 @@ import java.time.LocalDate
 @Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(recommendation: RecommendationEntity): DocumentData {
+  fun mapRecommendationDataToDocumentData(recommendation: RecommendationEntity, featureFlags: FeatureFlags?): DocumentData {
     val firstName = recommendation.data.personOnProbation?.firstName
     val middleNames = recommendation.data.personOnProbation?.middleNames
     val lastName = recommendation.data.personOnProbation?.surname
@@ -34,6 +35,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
+
+    val offenceAnalysis = if (featureFlags?.flagRecommendationOffenceDetails == true) recommendation.data.offenceAnalysis else recommendation.data.indexOffenceDetails
 
     return DocumentData(
       custodyStatus = ValueWithDetails(
@@ -93,7 +96,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       localDeliveryUnit = recommendation.data.localDeliveryUnit,
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
-      indexOffenceDetails = recommendation.data.indexOffenceDetails,
+      offenceAnalysis = offenceAnalysis,
       fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation),
       behaviourSimilarToIndexOffence = behaviourSimilarToIndexOffence,
       behaviourSimilarToIndexOffencePresent = behaviourSimilarToIndexOffencePresent,

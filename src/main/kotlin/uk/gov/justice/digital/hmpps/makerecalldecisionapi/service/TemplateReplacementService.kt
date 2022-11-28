@@ -5,6 +5,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
@@ -46,10 +47,10 @@ internal class TemplateReplacementService(
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 ) {
 
-  fun generateDocFromRecommendation(recommendation: RecommendationEntity, documentType: DocumentType): String {
+  fun generateDocFromRecommendation(recommendation: RecommendationEntity, documentType: DocumentType, featureFlags: FeatureFlags?): String {
 
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
-      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, featureFlags)
     } else {
       decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     }
@@ -130,7 +131,7 @@ internal class TemplateReplacementService(
       "local_delivery_unit" to documentData.localDeliveryUnit,
       "date_of_decision" to documentData.dateOfDecision,
       "time_of_decision" to documentData.timeOfDecision,
-      "index_offence_details" to (documentData.indexOffenceDetails ?: EMPTY_STRING),
+      "index_offence_details" to (documentData.offenceAnalysis ?: EMPTY_STRING),
       "fixed_term_additional_licence_conditions" to documentData.fixedTermAdditionalLicenceConditions,
       "behaviour_similar_to_index_offence" to documentData.behaviourSimilarToIndexOffence,
       "behaviour_similar_to_index_offence_present" to documentData.behaviourSimilarToIndexOffencePresent,

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
@@ -138,6 +139,7 @@ internal class RecommendationService(
         userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
         lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
         indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
+        offenceAnalysis = recommendationEntity.data.offenceAnalysis,
         fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
         indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
         mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
@@ -275,7 +277,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.DNTR_DOCUMENT)
+        templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.DNTR_DOCUMENT, null)
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationEntity.data, "No_Recall"),
         fileContents = fileContents
@@ -301,14 +303,14 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
+  suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?, featureFlags: FeatureFlags?): DocumentResponse {
     val recommendationEntity = updateRecommendation(null, recommendationId, username, userEmail, true)
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.PART_A_DOCUMENT)
+        templateReplacementService.generateDocFromRecommendation(recommendationEntity, DocumentType.PART_A_DOCUMENT, featureFlags)
       return DocumentResponse(
         fileName = generateDocumentFileName(recommendationEntity.data, "NAT_Recall_Part_A"),
         fileContents = fileContents
