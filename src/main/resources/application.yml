@@ -162,7 +162,9 @@ aws:
 hmpps.sqs:
   topics:
     hmpps-domain-events:
-      asyncClient: true
+      arn: ${hmpps.domain.event.topic.arn}
+    asyncClient: true
+
 spring:
   config:
     activate:

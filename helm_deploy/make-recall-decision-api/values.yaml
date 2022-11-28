@@ -53,10 +53,10 @@ generic-service:
       POSTGRES_DBNAME: "name"
       POSTGRES_USERNAME: "username"
       POSTGRES_PASSWORD: "password"
-    domain-events-topic:
-      HMPPS_SQS_TOPICS_DOMAINEVENTTOPIC_ACCESS_KEY_ID: "access_key_id"
-      HMPPS_SQS_TOPICS_DOMAINEVENTTOPIC_SECRET_ACCESS_KEY: "secret_access_key"
-      HMPPS_SQS_TOPICS_DOMAINEVENTTOPIC_ARN: "topic_arn"
+    hmpps-domain-event-topic:
+      HMPPS_DOMAIN_EVENT_TOPIC_ARN: "topic_arn"
+      HMPPS_DOMAIN_EVENT_TOPIC_ACCESS_KEY_ID: "access_key_id"
+      HMPPS_DOMAIN_EVENT_TOPIC_SECRET_ACCESS_KEY: "secret_access_key"
 
   allowlist:
     north_shields_user: "194.33.192.1/24"
