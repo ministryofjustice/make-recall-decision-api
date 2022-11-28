@@ -40,6 +40,7 @@ data class RecommendationResponse(
   val userEmailPartACompletedBy: String? = null,
   val lastPartADownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
+  val offenceAnalysis: String? = null,
   val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
   @JsonProperty("isMainAddressWherePersonCanBeFound") val mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
