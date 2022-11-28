@@ -100,73 +100,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `create recommendation when no active conviction available`() {
-    userAccessAllowed(crn)
-    licenceConditionsResponse(crn, 2500614567)
-    oasysAssessmentsResponse(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
-  }
-
-  @Test
-  fun `create recommendation when offence type is not current`() {
-    licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011")
-    oasysAssessmentsResponse(crn, offenceType = "NOT_CURRENT")
-    userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
-  }
-
-  @Test
-  fun `create recommendation when multiple active custodial convictions present`() {
-    val staffCode = "STFFCDEU"
-    licenceConditionsResponse(crn, 2500614567)
-    licenceConditionsResponse(crn, 123456789)
-    multipleConvictionResponse(crn, staffCode)
-    oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isCreated
-    )
-    assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
-  }
-
-  @Test
   fun `create recommendation when Delius and OASys offence codes do not match`() {
     licenceConditionsResponse(crn, 2500614567)
     convictionResponse(crn, "011", offenceCode = "not a match")
@@ -363,6 +296,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.nextAppointment.howWillAppointmentHappen.allOptions[3].text").isEqualTo("Home visit")
       .jsonPath("$.nextAppointment.dateTimeOfAppointment").isEqualTo("2022-04-24T20:39:00.000Z")
       .jsonPath("$.nextAppointment.probationPhoneNumber").isEqualTo("01238282838")
+      .jsonPath("$.offenceAnalysis").isEqualTo("This is the offence analysis")
       .jsonPath("$.hasBeenReviewed").doesNotExist()
   }
 
@@ -533,49 +467,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `generate a Part A from recommendation data when details change between save and return`() {
-    oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    convictionResponse(crn, "011")
-    licenceConditionsResponse(crn, 2500614567)
-    allOffenderDetailsResponseOneTimeOnly(crn)
-    deleteAndCreateRecommendation()
-    allOffenderDetailsResponseOneTimeOnly(crn, district = "MegaCity1")
-    updateRecommendation(updateRecommendationRequest())
-
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations/$createdRecommendationId/part-a")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(createPartARequest())
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
-    assertNotNull(response.get("fileContents"))
-
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
-    assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
-    assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
-    assertNotNull(result[0].data.lastPartADownloadDateTime)
-    assertThat(result[0].data.personOnProbation?.mappa?.category).isEqualTo(1)
-    assertThat(result[0].data.personOnProbation?.mappa?.level).isEqualTo(1)
-    assertThat(result[0].data.indexOffenceDetails).isEqualTo("Juicy offence details.")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2).isEqualTo("MegaCity1")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town).isEqualTo("Sheffield")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode).isEqualTo("S3 7BS")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode).isEqualTo(false)
-    assertThat(result[0].data.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
-  }
-
-  @Test
   fun `generate a Part A from recommendation data`() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
@@ -588,6 +479,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     allOffenderDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
 
+    val featureFlagString = "{\"flagRecommendationOffenceDetails\": true }"
+
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")
@@ -595,7 +488,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .body(
           BodyInserters.fromValue(createPartARequest())
         )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString),
+            )
+            )
+        }
         .exchange()
         .expectStatus().isOk
     )
@@ -609,7 +509,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertNotNull(result[0].data.lastPartADownloadDateTime)
     assertThat(result[0].data.personOnProbation?.mappa?.category).isEqualTo(1)
     assertThat(result[0].data.personOnProbation?.mappa?.level).isEqualTo(1)
-    assertThat(result[0].data.indexOffenceDetails).isEqualTo("Juicy offence details.")
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2).isEqualTo("Sheffield City Centre")
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town).isEqualTo("Sheffield")

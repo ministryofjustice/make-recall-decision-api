@@ -82,6 +82,7 @@ data class RecommendationModel(
   var vulnerabilities: VulnerabilitiesRecommendation? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
+  var offenceAnalysis: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
   @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
