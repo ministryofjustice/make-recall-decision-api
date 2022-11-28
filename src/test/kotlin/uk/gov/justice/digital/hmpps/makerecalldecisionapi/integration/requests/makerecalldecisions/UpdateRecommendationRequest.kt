@@ -292,6 +292,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "hasBeenReviewed": {
     "personOnProbation": true,
     "convictionDetail": true
-  }
+  },
+  "offenceAnalysis": "This is the offence analysis"
 }
 """.trimIndent()

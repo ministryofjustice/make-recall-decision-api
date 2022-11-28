@@ -129,7 +129,8 @@ class MrdTestDataBuilder {
         whyConsideredRecall = whyConsideredRecall(),
         reasonsForNoRecall = reasonForNoRecall(),
         nextAppointment = nextAppointment(),
-        hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true)
+        hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true),
+        offenceAnalysis = "This is the offence analysis"
       )
     }
 

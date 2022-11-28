@@ -54,7 +54,7 @@ data class DocumentData(
   val localDeliveryUnit: String? = null,
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
-  val indexOffenceDetails: String? = null,
+  val offenceAnalysis: String? = null,
   val fixedTermAdditionalLicenceConditions: String? = null,
   val behaviourSimilarToIndexOffence: String? = null,
   val behaviourSimilarToIndexOffencePresent: String? = null,

@@ -258,7 +258,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           )
         )
       )
-      templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
+      templateReplacementService.generateDocFromRecommendation(recommendation, documentType, null)
     }
   }
 
@@ -465,7 +465,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       section2 = "This is the second paragraph",
       section3 = "This is the third paragraph",
       signedByParagraph = "Yours faithfully, Jim Smith",
-      indexOffenceDetails = "Juicy details!",
+      offenceAnalysis = "Juicy details!",
       custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
       responseToProbation = "They have not responded well",
