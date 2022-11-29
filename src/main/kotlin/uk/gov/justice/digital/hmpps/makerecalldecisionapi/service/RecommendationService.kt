@@ -11,6 +11,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.Fe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonReference
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -29,6 +33,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import java.lang.System.getenv
+import java.time.LocalDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -40,7 +46,8 @@ internal class RecommendationService(
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   private val convictionService: ConvictionService,
-  @Lazy private val riskService: RiskService?
+  @Lazy private val riskService: RiskService?,
+  private val mrdEventsEmitter: MrdEventsEmitter?
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -235,13 +242,34 @@ internal class RecommendationService(
   suspend fun generateDntr(
     recommendationId: Long,
     username: String?,
-    documentRequestType: DocumentRequestType?
+    documentRequestType: DocumentRequestType?,
+    featureFlags: FeatureFlags?
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
-      generateDntrDownload(recommendationId, username)
+      val documentResponse = generateDntrDownload(recommendationId, username)
+
+      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
+        sendDntrDownloadEvent(recommendationId)
+      }
+      documentResponse
     } else {
       generateDntrPreview(recommendationId)
     }
+  }
+
+  private fun sendDntrDownloadEvent(recommendationId: Long) {
+    val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
+    val payload = MrdEvent(
+      message = MrdEventMessageBody(
+        eventType = "DNTR_LETTER_DOWNLOADED",
+        version = 1,
+        description = "DNTR letter downloaded",
+        occurredAt = LocalDateTime.now(),
+        detailUrl = "", // TODO TBD
+        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn)))
+      )
+    )
+    mrdEventsEmitter?.sendEvent(payload)
   }
 
   private suspend fun generateDntrDownload(recommendationId: Long, username: String?): DocumentResponse {
