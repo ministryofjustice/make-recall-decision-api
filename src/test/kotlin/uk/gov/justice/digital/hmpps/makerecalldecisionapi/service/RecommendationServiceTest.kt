@@ -686,7 +686,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
-      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X)
+      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X, null)
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -696,6 +696,49 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
       assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+      then(mrdEmitterMocked).shouldHaveNoInteractions()
+    }
+  }
+
+  @Test
+  fun `generate DNTR letter from recommendation data and send domain event`() {
+    runTest {
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        mockPersonDetailService,
+        templateReplacementService,
+        userAccessValidator,
+        convictionService,
+        riskServiceMocked,
+        mrdEmitterMocked
+      )
+
+      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
+        )
+      )
+
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X, FeatureFlags(flagSendDomainEvent = true, flagRecommendationOffenceDetails = false))
+
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
+
+      assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
+      assertThat(result.fileContents).isNotNull
+      assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+      assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+      then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
     }
   }
 
@@ -725,7 +768,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
-      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.PREVIEW)
+      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.PREVIEW, null)
 
       assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
       assertThat(result.letterContent?.letterAddress).isEqualTo(

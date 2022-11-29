@@ -113,11 +113,14 @@ internal class RecommendationController(
   suspend fun generateDntrDocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody documentRequestQuery: DocumentRequestQuery,
+    @RequestHeader("X-Feature-Flags") featureFlags: String?
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
 
+    val mapper = jacksonObjectMapper()
+    val flags: FeatureFlags? = if (featureFlags != null) { mapper.readValue(featureFlags) } else null
     val responseEntity = try {
-      ResponseEntity(recommendationService.generateDntr(recommendationId, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format)), OK)
+      ResponseEntity(recommendationService.generateDntr(recommendationId, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), flags), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }

@@ -242,11 +242,13 @@ internal class RecommendationService(
   suspend fun generateDntr(
     recommendationId: Long,
     username: String?,
-    documentRequestType: DocumentRequestType?
+    documentRequestType: DocumentRequestType?,
+    featureFlags: FeatureFlags?
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val documentResponse = generateDntrDownload(recommendationId, username)
-      if (getenv("spring_profiles_active") != "dev") {
+
+      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
         sendDntrDownloadEvent(recommendationId)
       }
       documentResponse
