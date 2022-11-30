@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -17,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -41,7 +44,8 @@ internal class RecommendationService(
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   private val convictionService: ConvictionService,
-  @Lazy private val riskService: RiskService?
+  @Lazy private val riskService: RiskService?,
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -96,13 +100,16 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  fun getRecommendation(recommendationId: Long): RecommendationResponse {
+  fun getRecommendation(recommendationId: Long, pageId: String): RecommendationResponse {
     val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     val userAccessResponse = recommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RecommendationResponse(userAccessResponse)
     } else {
+
+      val previousReleaseDetails = getPreviousReleaseDetails(pageId, recommendationEntity.data.crn, recommendationEntity.data.previousReleases)
+
       RecommendationResponse(
         id = recommendationEntity.id,
         crn = recommendationEntity.data.crn,
@@ -139,9 +146,24 @@ internal class RecommendationService(
         mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
         whyConsideredRecall = recommendationEntity.data.whyConsideredRecall,
         reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall,
-        nextAppointment = recommendationEntity.data.nextAppointment
+        nextAppointment = recommendationEntity.data.nextAppointment,
+        previousReleases = previousReleaseDetails
       )
     }
+  }
+
+  private fun getPreviousReleaseDetails(pageId: String, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
+    if (pageId == "previousRelease" && crn != null) {
+
+      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
+
+      return PreviousReleases(
+        lastReleaseDate = releaseSummaryResponse?.lastRelease?.date,
+        lastReleasingPrisonOrCustodialEstablishment = releaseSummaryResponse?.lastRelease?.institution?.institutionName,
+        previousReleaseDates = previousReleases?.previousReleaseDates,
+      )
+    }
+    return previousReleases
   }
 
   @OptIn(ExperimentalStdlibApi::class)
