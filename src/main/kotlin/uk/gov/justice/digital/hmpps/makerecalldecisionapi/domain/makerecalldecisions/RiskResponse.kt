@@ -36,6 +36,7 @@ data class Mappa(
   val lastUpdatedDate: String? = null,
   val category: Int? = null,
   val error: String? = null,
+  val hasBeenReviewed: Boolean? = false
 )
 
 data class PredictorScores(
