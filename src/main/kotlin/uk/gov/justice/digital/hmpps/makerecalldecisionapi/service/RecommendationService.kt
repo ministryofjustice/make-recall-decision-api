@@ -199,6 +199,12 @@ internal class RecommendationService(
     val data = recommendationEntity.data
     var personOnProbation = data.personOnProbation
     var convictionDetail = data.convictionDetail
+    var mappa = data.personOnProbation?.mappa
+    if (updateRecommendationRequest.hasBeenReviewed?.mappa == true) {
+      mappa = mappa?.copy(
+        hasBeenReviewed = true
+      )
+    }
     if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
       personOnProbation = personOnProbation?.copy(
         hasBeenReviewed = true
@@ -212,7 +218,7 @@ internal class RecommendationService(
 
     return recommendationEntity.copy(
       data = data.copy(
-        personOnProbation = personOnProbation,
+        personOnProbation = personOnProbation?.copy(mappa = mappa),
         convictionDetail = convictionDetail,
         hasBeenReviewed = null
       )

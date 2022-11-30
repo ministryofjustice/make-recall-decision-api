@@ -191,7 +191,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
+          personOnProbation = PersonOnProbation(name = "John Smith", mappa = Mappa(category = 1, level = 1, lastUpdatedDate = null)),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -208,7 +208,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           id = existingRecommendation.id,
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
-            personOnProbation = PersonOnProbation(name = "John Smith", hasBeenReviewed = true),
+            personOnProbation = PersonOnProbation(name = "John Smith", hasBeenReviewed = true, mappa = Mappa(category = 1, level = 1, lastUpdatedDate = null, hasBeenReviewed = true)),
             recallType = updateRecommendationRequest.recallType,
             custodyStatus = updateRecommendationRequest.custodyStatus,
             responseToProbation = updateRecommendationRequest.responseToProbation,

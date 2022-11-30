@@ -129,7 +129,7 @@ class MrdTestDataBuilder {
         whyConsideredRecall = whyConsideredRecall(),
         reasonsForNoRecall = reasonForNoRecall(),
         nextAppointment = nextAppointment(),
-        hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true),
+        hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true, mappa = true),
         offenceAnalysis = "This is the offence analysis"
       )
     }
@@ -293,10 +293,11 @@ class MrdTestDataBuilder {
       )
     }
 
-    private fun reviewedPages(personOnProbationReviewed: Boolean, convictionDetailReviewed: Boolean): HasBeenReviewed {
+    private fun reviewedPages(personOnProbationReviewed: Boolean, convictionDetailReviewed: Boolean, mappa: Boolean): HasBeenReviewed {
       return HasBeenReviewed(
         personOnProbation = personOnProbationReviewed,
         convictionDetail = convictionDetailReviewed,
+        mappa = mappa
       )
     }
 
