@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.Fe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonReference
@@ -201,9 +202,7 @@ internal class RecommendationService(
     var convictionDetail = data.convictionDetail
     var mappa = data.personOnProbation?.mappa
     if (updateRecommendationRequest.hasBeenReviewed?.mappa == true) {
-      mappa = mappa?.copy(
-        hasBeenReviewed = true
-      )
+      mappa = mappa?.copy(hasBeenReviewed = true) ?: Mappa(hasBeenReviewed = true)
     }
     if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
       personOnProbation = personOnProbation?.copy(
