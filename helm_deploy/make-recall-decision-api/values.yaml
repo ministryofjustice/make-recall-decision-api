@@ -53,7 +53,7 @@ generic-service:
       POSTGRES_DBNAME: "name"
       POSTGRES_USERNAME: "username"
       POSTGRES_PASSWORD: "password"
-    hmpps-domain-events-topic:
+    hmpps-domain-event-topic:
       HMPPS_DOMAIN_EVENT_TOPIC_ARN: "topic_arn"
       HMPPS_DOMAIN_EVENT_TOPIC_ACCESS_KEY_ID: "access_key_id"
       HMPPS_DOMAIN_EVENT_TOPIC_SECRET_ACCESS_KEY: "secret_access_key"
