@@ -22,13 +22,10 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.LocalStackContainer.setLocalStackProperties
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresEmptyResponse
@@ -65,7 +62,7 @@ import java.util.concurrent.TimeUnit
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test", "localstack")
+@ActiveProfiles("test")
 @FlywayTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
@@ -108,14 +105,6 @@ abstract class IntegrationTestBase {
   }
 
   companion object {
-    private val localStackContainer = LocalStackContainer.instance
-
-    @JvmStatic
-    @DynamicPropertySource
-    fun testcontainers(registry: DynamicPropertyRegistry) {
-      localStackContainer?.also { setLocalStackProperties(it, registry) }
-    }
-
     @JvmStatic
     var postgresStarted = false
 

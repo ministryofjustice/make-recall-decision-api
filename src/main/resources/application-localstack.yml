@@ -8,4 +8,4 @@ hmpps.sqs:
 
   topics:
     hmpps-domain-events:
-      arn: arn:aws:sns:eu-west-2:000000000000:hmpps-domain-events
+      arn: arn:aws:sns:eu-west-2:000000000000:hmpps-domain-events #TODO must be created on SQS
