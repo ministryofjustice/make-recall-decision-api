@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.lang3.StringUtils.normalizeSpace
@@ -29,7 +31,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.setFeatureFlags
 import java.security.Principal
 
 @RestController
@@ -90,7 +91,10 @@ internal class RecommendationController(
     @RequestBody createPartARequest: CreatePartARequest,
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+
+    val mapper = jacksonObjectMapper()
+    val flags: FeatureFlags? = if (featureFlags != null) { mapper.readValue(featureFlags) } else null
+
     val responseEntity = try {
       ResponseEntity(recommendationService.generatePartA(recommendationId, authenticationFacade.currentNameOfUser, createPartARequest.userEmail, flags), OK)
     } catch (e: UserAccessException) {
@@ -109,12 +113,11 @@ internal class RecommendationController(
   suspend fun generateDntrDocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody documentRequestQuery: DocumentRequestQuery,
-    @RequestHeader("X-Feature-Flags") featureFlags: String?
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+
     val responseEntity = try {
-      ResponseEntity(recommendationService.generateDntr(recommendationId, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), flags), OK)
+      ResponseEntity(recommendationService.generateDntr(recommendationId, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format)), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }
