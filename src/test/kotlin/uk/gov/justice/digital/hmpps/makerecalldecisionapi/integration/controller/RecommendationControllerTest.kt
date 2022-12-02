@@ -152,7 +152,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     licenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationRequest(), listOf("previousRecalls"))
+    updateRecommendation(updateRecommendationRequest(), "previousReleases")
     updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
@@ -299,7 +299,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.nextAppointment.probationPhoneNumber").isEqualTo("01238282838")
       .jsonPath("$.offenceAnalysis").isEqualTo("This is the offence analysis")
       .jsonPath("$.hasBeenReviewed").doesNotExist()
-      .jsonPath("$.previousReleases.lastReleaseDate").isEqualTo("2020-06-28")
+      .jsonPath("$.previousReleases.lastReleaseDate").isEqualTo("2017-09-15")
+      .jsonPath("$.previousReleases.lastReleasingPrisonOrCustodialEstablishment").isEqualTo("Addiewell")
+      .jsonPath("$.previousReleases.previousReleaseDates").isEqualTo("2015-04-24")
+      .jsonPath("$.previousReleases.hasBeenReleasedPreviously").isEqualTo(true)
   }
 
   @Test
@@ -339,9 +342,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
 
-  private fun updateRecommendation(recommendationRequest: String, refreshPage: List<String>? = null) {
+  private fun updateRecommendation(recommendationRequest: String, refreshPage: String? = null) {
+    val refreshPageQueryString = if (refreshPage != null) "?refreshProperty=$refreshPage" else ""
     webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId?refreshProperty=$refreshPage")
+      .uri("/recommendations/$createdRecommendationId$refreshPageQueryString")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(recommendationRequest)

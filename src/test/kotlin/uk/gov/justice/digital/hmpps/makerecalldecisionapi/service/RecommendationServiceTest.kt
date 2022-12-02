@@ -35,12 +35,9 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -243,7 +240,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
             nextAppointment = updateRecommendationRequest.nextAppointment,
             offenceAnalysis = "This is the offence analysis",
-            hasBeenReviewed = null
+            hasBeenReviewed = null,
+            previousReleases = updateRecommendationRequest.previousReleases
           )
         )
 
@@ -263,7 +261,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
-      then(recommendationRepository).should(times(2)).findById(1)
+      then(recommendationRepository).should().findById(1)
     }
   }
 
@@ -346,7 +344,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
-      then(recommendationRepository).should(times(2)).findById(1)
+      then(recommendationRepository).should().findById(1)
     }
   }
 
@@ -379,6 +377,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         false,
         listOf("previousReleases")
       )
+
+      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
 
@@ -832,15 +832,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate DNTR letter preview from recommendation data`() {
     runTest {
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = Mappa(
-            category = 1,
-            level = 1,
-            lastUpdatedDate = null
-          )
-        )
-      )
       recommendationService = RecommendationService(
         recommendationRepository,
         mockPersonDetailService,
@@ -871,42 +862,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate Part A document from recommendation data when optional fields missing`() {
     runTest {
-      // given
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = null
-        )
-      )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(null)
-      given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
-        personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(
-            name = "John Smith",
-            firstName = "John",
-            surname = "Smith",
-            crn = crn,
-            age = 21,
-            croNumber = "",
-            dateOfBirth = null,
-            ethnicity = "",
-            gender = "",
-            middleNames = "",
-            nomsNumber = "",
-            pncNumber = "",
-            mostRecentPrisonerNumber = null,
-            primaryLanguage = ""
-          ),
-          addresses = null,
-          offenderManager = personDetailsResponse().offenderManager?.copy(
-            probationAreaDescription = null,
-            probationTeam = personDetailsResponse().offenderManager?.probationTeam?.copy(
-              localDeliveryUnitDescription = null
-            )
-          )
-        )
-      }
 
-      // and
       recommendationService = RecommendationService(
         recommendationRepository,
         mockPersonDetailService,
@@ -961,28 +917,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @CsvSource("true", "false")
   fun `generate Part A document from recommendation data with feature flags`(flagRecommendationOffenceDetails: Boolean) {
     runTest {
-      // given
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
-        )
-      )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offencesMatch = true))
-      given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
-        personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345", primaryLanguage = ""),
-          addresses = listOf(
-            Address(
-              line1 = "Line 1 addressXYZ",
-              line2 = "Line 2 addressXYZ",
-              town = "Town address",
-              postcode = "ABC CBA",
-              noFixedAbode = false
-            )
-          )
-        )
-      }
-
       // and
       recommendationService = RecommendationService(
         recommendationRepository,

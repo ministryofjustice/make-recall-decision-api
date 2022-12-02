@@ -156,7 +156,7 @@ internal class RecommendationService(
   }
 
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
-    if (pageRefreshIds?.filter { it == "previousReleases" } != null && crn != null) {
+    if (pageRefreshIds?.filter { it == "previousReleases" }?.isNotEmpty() == true && crn != null) {
 
       val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
 

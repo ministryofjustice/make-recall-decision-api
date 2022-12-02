@@ -293,6 +293,12 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "personOnProbation": true,
     "convictionDetail": true
   },
-  "offenceAnalysis": "This is the offence analysis"
+  "offenceAnalysis": "This is the offence analysis",
+  "previousReleases": {
+    "hasBeenReleasedPreviously": true,
+    "previousReleaseDates": [
+      "2015-04-24"
+    ]
+  }
 }
 """.trimIndent()

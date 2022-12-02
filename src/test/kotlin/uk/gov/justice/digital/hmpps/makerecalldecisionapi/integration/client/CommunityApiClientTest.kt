@@ -463,17 +463,14 @@ class CommunityApiClientTest : IntegrationTestBase() {
           description = "Adult Licence"
         ),
         institution = Institution(
-          code = "COMMUN",
-          description = "In the Community",
-          establishmentType = EstablishmentType(
-            code = "E",
-            description = "Prison"
-          ),
-          institutionId = 156,
-          institutionName = "In the Community",
+          code = "XXX005",
+          description = "Addiewell",
+          establishmentType = null,
+          institutionId = 361,
+          institutionName = "Addiewell",
           isEstablishment = true,
-          isPrivate = false,
-          nomsPrisonInstitutionCode = "AB124",
+          isPrivate = null,
+          nomsPrisonInstitutionCode = null,
         ),
       ),
       lastRecall = LastRecall(
