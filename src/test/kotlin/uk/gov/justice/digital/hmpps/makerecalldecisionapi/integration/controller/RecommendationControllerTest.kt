@@ -144,14 +144,15 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `update and get recommendation`() {
+  fun `update with refresh and get recommendation`() {
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     allOffenderDetailsResponse(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
+    releaseSummaryResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationRequest())
+    updateRecommendation(updateRecommendationRequest(), listOf("previousRecalls"))
     updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
@@ -298,6 +299,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.nextAppointment.probationPhoneNumber").isEqualTo("01238282838")
       .jsonPath("$.offenceAnalysis").isEqualTo("This is the offence analysis")
       .jsonPath("$.hasBeenReviewed").doesNotExist()
+      .jsonPath("$.previousReleases.lastReleaseDate").isEqualTo("2020-06-28")
   }
 
   @Test
@@ -337,9 +339,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
 
-  private fun updateRecommendation(recommendationRequest: String) {
+  private fun updateRecommendation(recommendationRequest: String, refreshPage: List<String>? = null) {
     webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId")
+      .uri("/recommendations/$createdRecommendationId?refreshProperty=$refreshPage")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(recommendationRequest)
@@ -379,43 +381,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
-
-    assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
-  }
-
-  @Test
-  fun `generate a DNTR document from recommendation data when details change between save and return`() {
-    userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
-    convictionResponse(crn, "011")
-    licenceConditionsResponse(crn, 2500614567)
-    deleteAndCreateRecommendation()
-    allOffenderDetailsResponseOneTimeOnly(crn)
-    updateRecommendation(updateRecommendationRequest())
-    allOffenderDetailsResponseOneTimeOnly(crn, district = "MegaCity1")
-
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations/$createdRecommendationId/no-recall-letter")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(documentRequestQuery("download-docx"))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
-    assertNotNull(response.get("fileContents"))
-
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
-    assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("MegaCity1"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
@@ -507,14 +472,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
     assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)
-    assertThat(result[0].data.personOnProbation?.mappa?.category).isEqualTo(1)
-    assertThat(result[0].data.personOnProbation?.mappa?.level).isEqualTo(1)
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2).isEqualTo("Sheffield City Centre")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town).isEqualTo("Sheffield")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode).isEqualTo("S3 7BS")
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode).isEqualTo(false)
-    assertThat(result[0].data.personOnProbation?.mostRecentPrisonerNumber).isEqualTo("G12345")
   }
 
   @Test

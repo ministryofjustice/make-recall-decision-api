@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.text.SimpleDateFormat
@@ -11,11 +11,11 @@ import java.time.ZonedDateTime
 
 abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToLetterDocumentData(recommendation: RecommendationEntity, paragraph1: String?, paragraph2: String?, paragraph3: String?): DocumentData {
+  fun mapRecommendationDataToLetterDocumentData(recommendation: RecommendationResponse, paragraph1: String?, paragraph2: String?, paragraph3: String?): DocumentData {
     val name = formatFullName(
-      recommendation.data.personOnProbation?.firstName,
+      recommendation.personOnProbation?.firstName,
       null,
-      recommendation.data.personOnProbation?.surname
+      recommendation.personOnProbation?.surname
     )
 
     return DocumentData(
@@ -23,7 +23,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       letterTitle = buildLetterTitle(),
       letterDate = convertLocalDateToDateWithSlashes(LocalDate.now()),
       signedByParagraph = buildSignedByParagraph(),
-      letterAddress = getLetterAddressDetails(recommendation.data.personOnProbation?.addresses, name),
+      letterAddress = getLetterAddressDetails(recommendation.personOnProbation?.addresses, name),
       section1 = paragraph1,
       section2 = paragraph2,
       section3 = paragraph3
@@ -64,9 +64,9 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
     return output.format(dateTime.toInstant().toEpochMilli())
   }
 
-  fun nextAppointmentBy(recommendation: RecommendationEntity): String? {
-    val selected = recommendation.data.nextAppointment?.howWillAppointmentHappen?.selected
-    return recommendation.data.nextAppointment?.howWillAppointmentHappen?.allOptions
+  fun nextAppointmentBy(recommendation: RecommendationResponse): String? {
+    val selected = recommendation.nextAppointment?.howWillAppointmentHappen?.selected
+    return recommendation.nextAppointment?.howWillAppointmentHappen?.allOptions
       ?.filter { it.value == selected?.name }
       ?.map { it.text?.lowercase() }
       ?.first()

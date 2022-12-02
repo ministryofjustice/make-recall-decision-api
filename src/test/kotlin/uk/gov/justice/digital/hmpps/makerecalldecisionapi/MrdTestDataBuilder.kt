@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -92,7 +93,8 @@ class MrdTestDataBuilder {
           whyConsideredRecall = whyConsideredRecall(),
           reasonsForNoRecall = reasonForNoRecall(),
           nextAppointment = nextAppointment(),
-          indexOffenceDetails = "Juicy details"
+          indexOffenceDetails = "Juicy details",
+          previousReleases = previousReleases()
         )
       )
     }
@@ -130,7 +132,8 @@ class MrdTestDataBuilder {
         reasonsForNoRecall = reasonForNoRecall(),
         nextAppointment = nextAppointment(),
         hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true, mappa = true),
-        offenceAnalysis = "This is the offence analysis"
+        offenceAnalysis = "This is the offence analysis",
+        previousReleases = previousReleases()
       )
     }
 
@@ -290,6 +293,15 @@ class MrdTestDataBuilder {
         ),
         dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
         probationPhoneNumber = "01238282838"
+      )
+    }
+
+    private fun previousReleases(): PreviousReleases {
+      return PreviousReleases(
+        lastReleaseDate = LocalDate.parse("2022-09-02"),
+        lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
+        hasBeenReleasedPreviously = true,
+        previousReleaseDates = listOf(LocalDate.parse("2020-02-01"))
       )
     }
 

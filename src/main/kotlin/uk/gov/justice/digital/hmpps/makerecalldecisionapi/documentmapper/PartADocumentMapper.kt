@@ -10,10 +10,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
@@ -26,74 +27,76 @@ import java.time.LocalDate
 @Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(recommendation: RecommendationEntity, featureFlags: FeatureFlags?): DocumentData {
-    val firstName = recommendation.data.personOnProbation?.firstName
-    val middleNames = recommendation.data.personOnProbation?.middleNames
-    val lastName = recommendation.data.personOnProbation?.surname
-    val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.data.personOnProbation?.addresses)
-    val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.data.lastPartADownloadDateTime)
-    val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
-    val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
-    val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.data.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
+  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse, featureFlags: FeatureFlags?): DocumentData {
+    val firstName = recommendation.personOnProbation?.firstName
+    val middleNames = recommendation.personOnProbation?.middleNames
+    val lastName = recommendation.personOnProbation?.surname
+    val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.personOnProbation?.addresses)
+    val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.lastPartADownloadDateTime)
+    val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
+    val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
+    val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
 
-    val offenceAnalysis = if (featureFlags?.flagRecommendationOffenceDetails == true) recommendation.data.offenceAnalysis else recommendation.data.indexOffenceDetails
+    val offenceAnalysis = if (featureFlags?.flagRecommendationOffenceDetails == true) recommendation.offenceAnalysis else recommendation.indexOffenceDetails
+
+    val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
 
     return DocumentData(
       custodyStatus = ValueWithDetails(
-        recommendation.data.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
-        recommendation.data.custodyStatus?.details
+        recommendation.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
+        recommendation.custodyStatus?.details
       ),
       recallType = findRecallTypeToDisplay(
-        recommendation.data.recallType,
-        recommendation.data.isIndeterminateSentence,
-        recommendation.data.isExtendedSentence
+        recommendation.recallType,
+        recommendation.isIndeterminateSentence,
+        recommendation.isExtendedSentence
       ),
-      responseToProbation = recommendation.data.responseToProbation,
-      whatLedToRecall = recommendation.data.whatLedToRecall,
-      isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.data.isThisAnEmergencyRecall),
-      isExtendedSentence = convertBooleanToYesNo(recommendation.data.isExtendedSentence),
-      hasVictimsInContactScheme = recommendation.data.hasVictimsInContactScheme?.selected?.partADisplayValue
+      responseToProbation = recommendation.responseToProbation,
+      whatLedToRecall = recommendation.whatLedToRecall,
+      isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
+      isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
+      hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
-      indeterminateSentenceType = recommendation.data.indeterminateSentenceType?.selected?.partADisplayValue
+      indeterminateSentenceType = recommendation.indeterminateSentenceType?.selected?.partADisplayValue
         ?: EMPTY_STRING,
-      dateVloInformed = convertLocalDateToReadableDate(recommendation.data.dateVloInformed),
-      selectedAlternatives = recommendation.data.alternativesToRecallTried?.selected,
+      dateVloInformed = convertLocalDateToReadableDate(recommendation.dateVloInformed),
+      selectedAlternatives = recommendation.alternativesToRecallTried?.selected,
       hasArrestIssues = ValueWithDetails(
-        convertBooleanToYesNo(recommendation.data.hasArrestIssues?.selected),
-        recommendation.data.hasArrestIssues?.details
+        convertBooleanToYesNo(recommendation.hasArrestIssues?.selected),
+        recommendation.hasArrestIssues?.details
       ),
       hasContrabandRisk = ValueWithDetails(
-        convertBooleanToYesNo(recommendation.data.hasContrabandRisk?.selected),
-        recommendation.data.hasContrabandRisk?.details
+        convertBooleanToYesNo(recommendation.hasContrabandRisk?.selected),
+        recommendation.hasContrabandRisk?.details
       ),
-      selectedStandardConditionsBreached = recommendation.data.licenceConditionsBreached?.standardLicenceConditions?.selected,
-      additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.data.licenceConditionsBreached?.additionalLicenceConditions),
-      isUnderIntegratedOffenderManagement = recommendation.data.underIntegratedOffenderManagement?.selected,
-      localPoliceContact = recommendation.data.localPoliceContact,
-      vulnerabilities = recommendation.data.vulnerabilities,
-      gender = recommendation.data.personOnProbation?.gender,
-      dateOfBirth = recommendation.data.personOnProbation?.dateOfBirth,
+      selectedStandardConditionsBreached = recommendation.licenceConditionsBreached?.standardLicenceConditions?.selected,
+      additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.licenceConditionsBreached?.additionalLicenceConditions),
+      isUnderIntegratedOffenderManagement = recommendation.underIntegratedOffenderManagement?.selected,
+      localPoliceContact = recommendation.localPoliceContact,
+      vulnerabilities = recommendation.vulnerabilities,
+      gender = recommendation.personOnProbation?.gender,
+      dateOfBirth = recommendation.personOnProbation?.dateOfBirth,
       name = formatFullName(firstName, middleNames, lastName),
-      ethnicity = recommendation.data.personOnProbation?.ethnicity,
-      croNumber = recommendation.data.personOnProbation?.croNumber,
-      pncNumber = recommendation.data.personOnProbation?.pncNumber,
-      mostRecentPrisonerNumber = recommendation.data.personOnProbation?.mostRecentPrisonerNumber,
-      nomsNumber = recommendation.data.personOnProbation?.nomsNumber,
-      indexOffenceDescription = recommendation.data.convictionDetail?.indexOffenceDescription,
-      dateOfOriginalOffence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfOriginalOffence),
-      dateOfSentence = buildFormattedLocalDate(recommendation.data.convictionDetail?.dateOfSentence),
-      lengthOfSentence = buildLengthOfSentence(recommendation.data.convictionDetail),
-      licenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.licenceExpiryDate),
-      sentenceExpiryDate = buildFormattedLocalDate(recommendation.data.convictionDetail?.sentenceExpiryDate),
-      custodialTerm = recommendation.data.convictionDetail?.custodialTerm,
-      extendedTerm = recommendation.data.convictionDetail?.extendedTerm,
-      mappa = recommendation.data.personOnProbation?.mappa,
+      ethnicity = recommendation.personOnProbation?.ethnicity,
+      croNumber = recommendation.personOnProbation?.croNumber,
+      pncNumber = recommendation.personOnProbation?.pncNumber,
+      mostRecentPrisonerNumber = recommendation.personOnProbation?.mostRecentPrisonerNumber,
+      nomsNumber = recommendation.personOnProbation?.nomsNumber,
+      indexOffenceDescription = recommendation.convictionDetail?.indexOffenceDescription,
+      dateOfOriginalOffence = buildFormattedLocalDate(recommendation.convictionDetail?.dateOfOriginalOffence),
+      dateOfSentence = buildFormattedLocalDate(recommendation.convictionDetail?.dateOfSentence),
+      lengthOfSentence = buildLengthOfSentence(recommendation.convictionDetail),
+      licenceExpiryDate = buildFormattedLocalDate(recommendation.convictionDetail?.licenceExpiryDate),
+      sentenceExpiryDate = buildFormattedLocalDate(recommendation.convictionDetail?.sentenceExpiryDate),
+      custodialTerm = recommendation.convictionDetail?.custodialTerm,
+      extendedTerm = recommendation.convictionDetail?.extendedTerm,
+      mappa = recommendation.personOnProbation?.mappa,
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
-      lastPersonCompletingFormName = recommendation.data.userNamePartACompletedBy,
-      lastPersonCompletingFormEmail = recommendation.data.userEmailPartACompletedBy,
-      region = recommendation.data.region,
-      localDeliveryUnit = recommendation.data.localDeliveryUnit,
+      lastPersonCompletingFormName = recommendation.userNamePartACompletedBy,
+      lastPersonCompletingFormEmail = recommendation.userEmailPartACompletedBy,
+      region = recommendation.region,
+      localDeliveryUnit = recommendation.localDeliveryUnit,
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
       offenceAnalysis = offenceAnalysis,
@@ -104,9 +107,19 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
       outOfTouch = outOfTouch,
       outOfTouchPresent = outOfTouchPresent,
-      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.data.mainAddressWherePersonCanBeFound?.details),
-      primaryLanguage = recommendation.data.personOnProbation?.primaryLanguage
+      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
+      primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
+      lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
+      dateOfLastRelease = formatMultipleDates(previousReleasesList)
     )
+  }
+
+  private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate>? {
+    var dates: List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
+    if (previousReleases?.lastReleaseDate != null) {
+      dates = listOf(previousReleases.lastReleaseDate) + dates
+    }
+    return dates
   }
 
   private fun findRecallTypeToDisplay(
@@ -127,14 +140,14 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     }
   }
 
-  private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationEntity): String? {
-    val isStandardRecall: Boolean = recommendation.data.recallType?.selected?.value == RecallTypeValue.STANDARD
+  private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationResponse): String? {
+    val isStandardRecall: Boolean = recommendation.recallType?.selected?.value == RecallTypeValue.STANDARD
     return buildNotApplicableMessage(
-      recommendation.data.isIndeterminateSentence,
-      recommendation.data.isExtendedSentence,
+      recommendation.isIndeterminateSentence,
+      recommendation.isExtendedSentence,
       isStandardRecall
     )
-      ?: if (recommendation.data.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.data.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
+      ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
   }
 
   private fun buildNotApplicableMessage(
@@ -222,5 +235,12 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
   private fun formatAddressWherePersonCanBeFound(details: String?): String? {
     return if (details?.isNullOrBlank() == false) "Police can find this person at: $details" else null
+  }
+
+  private fun formatMultipleDates(dates: List<LocalDate>?): String {
+    if (dates != null) {
+      return dates.joinToString(", ") { buildFormattedLocalDate(it) }
+    }
+    return EMPTY_STRING
   }
 }

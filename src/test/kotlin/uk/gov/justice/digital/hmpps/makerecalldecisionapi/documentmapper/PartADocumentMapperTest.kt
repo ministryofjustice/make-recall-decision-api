@@ -18,17 +18,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
@@ -51,12 +51,10 @@ class PartADocumentMapperTest {
     partADisplayText: String
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)
-        )
+        crn = "ABC123",
+        custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -87,18 +85,16 @@ class PartADocumentMapperTest {
     partAFixedTermLicenceConditionsDisplayValue: String?,
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          recallType = RecallType(
-            selected = RecallTypeSelectedValue(value = recallValue, details = recallTypeDetails),
-            allOptions = null
-          ),
-          isIndeterminateSentence = isIndeterminateSentence,
-          isExtendedSentence = isExtendedSentence,
-          fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
-        )
+        crn = "ABC123",
+        recallType = RecallType(
+          selected = RecallTypeSelectedValue(value = recallValue, details = recallTypeDetails),
+          allOptions = null
+        ),
+        isIndeterminateSentence = isIndeterminateSentence,
+        isExtendedSentence = isExtendedSentence,
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -116,9 +112,10 @@ class PartADocumentMapperTest {
     partADisplayText: String?
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", isThisAnEmergencyRecall = isThisAnEmergencyRecall)
+        crn = "ABC123",
+        isThisAnEmergencyRecall = isThisAnEmergencyRecall
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -134,9 +131,10 @@ class PartADocumentMapperTest {
     partADisplayText: String?
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", isExtendedSentence = isExtendedSentence)
+        crn = "ABC123",
+        isExtendedSentence = isExtendedSentence
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -152,12 +150,10 @@ class PartADocumentMapperTest {
     partADisplayText: String?
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme)
-        )
+        crn = "ABC123",
+        hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -169,9 +165,10 @@ class PartADocumentMapperTest {
   @Test
   fun `given date vlo informed then should map to readable date in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", dateVloInformed = LocalDate.parse("2022-09-01"))
+        crn = "ABC123",
+        dateVloInformed = LocalDate.parse("2022-09-01")
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -183,9 +180,9 @@ class PartADocumentMapperTest {
   @Test
   fun `given null date vlo informed then should map to empty string in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", dateVloInformed = null)
+        crn = "ABC123", dateVloInformed = null
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -201,12 +198,10 @@ class PartADocumentMapperTest {
     partADisplayText: String?
   ) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType)
-        )
+        crn = "ABC123",
+        indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -218,12 +213,10 @@ class PartADocumentMapperTest {
   @Test
   fun `given has arrest issues data then should map in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details")
-        )
+        crn = "ABC123",
+        hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details")
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -236,9 +229,9 @@ class PartADocumentMapperTest {
   @Test
   fun `given has no arrest issues data then should map in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = null))
+        crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = null)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -250,12 +243,10 @@ class PartADocumentMapperTest {
   @Test
   fun `given has contraband risk data then should map in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details")
-        )
+        crn = "ABC123",
+        hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details")
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -268,23 +259,21 @@ class PartADocumentMapperTest {
   @Test
   fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = AdditionalLicenceConditions(
-              selected = listOf("NST14"),
-              allOptions = listOf(
-                AdditionalLicenceConditionOption(
-                  subCatCode = "NST14",
-                  mainCatCode = "NLC5",
-                  title = "I am a title", details = "details1", note = "note1"
-                )
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = AdditionalLicenceConditions(
+            selected = listOf("NST14"),
+            allOptions = listOf(
+              AdditionalLicenceConditionOption(
+                subCatCode = "NST14",
+                mainCatCode = "NLC5",
+                title = "I am a title", details = "details1", note = "note1"
               )
-            ),
-            standardLicenceConditions = null
-          )
+            )
+          ),
+          standardLicenceConditions = null
         )
       )
 
@@ -299,28 +288,26 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple alternative licence conditions then build up the text with line breaks for alternative licences in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = AdditionalLicenceConditions(
-              selected = listOf("NST14", "XYZ"),
-              allOptions = listOf(
-                AdditionalLicenceConditionOption(
-                  subCatCode = "NST14",
-                  mainCatCode = "NLC5",
-                  title = "I am a title", details = "details1", note = "note1"
-                ),
-                AdditionalLicenceConditionOption(
-                  subCatCode = "XYZ",
-                  mainCatCode = "ABC",
-                  title = "I am another title", details = "details2", note = "note2"
-                )
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = AdditionalLicenceConditions(
+            selected = listOf("NST14", "XYZ"),
+            allOptions = listOf(
+              AdditionalLicenceConditionOption(
+                subCatCode = "NST14",
+                mainCatCode = "NLC5",
+                title = "I am a title", details = "details1", note = "note1"
+              ),
+              AdditionalLicenceConditionOption(
+                subCatCode = "XYZ",
+                mainCatCode = "ABC",
+                title = "I am another title", details = "details2", note = "note2"
               )
-            ),
-            standardLicenceConditions = null
-          )
+            )
+          ),
+          standardLicenceConditions = null
         )
       )
 
@@ -339,28 +326,26 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple alternative licence conditions with no note then build up the text with line breaks and no notes for alternative licences in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = AdditionalLicenceConditions(
-              selected = listOf("NST14", "XYZ"),
-              allOptions = listOf(
-                AdditionalLicenceConditionOption(
-                  subCatCode = "NST14",
-                  mainCatCode = "NLC5",
-                  title = "I am a title", details = "details1"
-                ),
-                AdditionalLicenceConditionOption(
-                  subCatCode = "XYZ",
-                  mainCatCode = "ABC",
-                  title = "I am another title", details = "details2"
-                )
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = AdditionalLicenceConditions(
+            selected = listOf("NST14", "XYZ"),
+            allOptions = listOf(
+              AdditionalLicenceConditionOption(
+                subCatCode = "NST14",
+                mainCatCode = "NLC5",
+                title = "I am a title", details = "details1"
+              ),
+              AdditionalLicenceConditionOption(
+                subCatCode = "XYZ",
+                mainCatCode = "ABC",
+                title = "I am another title", details = "details2"
               )
-            ),
-            standardLicenceConditions = null
-          )
+            )
+          ),
+          standardLicenceConditions = null
         )
       )
 
@@ -377,17 +362,15 @@ class PartADocumentMapperTest {
   @Test
   fun `given has is under integrated offender management then should map in part A text`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
-            selected = "YES",
-            allOptions = listOf(
-              TextValueOption(value = "YES", text = "Yes"),
-              TextValueOption(value = "NO", text = "No"),
-              TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
-            )
+        crn = "ABC123",
+        underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
+          selected = "YES",
+          allOptions = listOf(
+            TextValueOption(value = "YES", text = "Yes"),
+            TextValueOption(value = "NO", text = "No"),
+            TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
           )
         )
       )
@@ -401,13 +384,11 @@ class PartADocumentMapperTest {
   @Test
   fun `given no alternative licence conditions then return empty text for alternative licences in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = null, standardLicenceConditions = null
-          )
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = null, standardLicenceConditions = null
         )
       )
 
@@ -420,15 +401,13 @@ class PartADocumentMapperTest {
   @Test
   fun `given selected standard licence conditions then return this for standard licences in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          licenceConditionsBreached = LicenceConditionsBreached(
-            additionalLicenceConditions = null,
-            standardLicenceConditions = StandardLicenceConditions(
-              selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
-            )
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = null,
+          standardLicenceConditions = StandardLicenceConditions(
+            selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
           )
         )
       )
@@ -442,23 +421,21 @@ class PartADocumentMapperTest {
   @Test
   fun `given conviction details then convert dates and sentence lengths in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          convictionDetail = ConvictionDetail(
-            indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
-            dateOfSentence = LocalDate.parse("2022-09-04"),
-            lengthOfSentence = 6,
-            lengthOfSentenceUnits = "days",
-            licenceExpiryDate = LocalDate.parse("2022-09-05"),
-            sentenceExpiryDate = LocalDate.parse("2022-09-06"),
-            sentenceSecondLength = 20,
-            sentenceSecondLengthUnits = "days",
-            custodialTerm = "6 days",
-            extendedTerm = "20 days"
-          )
+        crn = "ABC123",
+        convictionDetail = ConvictionDetail(
+          indexOffenceDescription = "Armed robbery",
+          dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+          dateOfSentence = LocalDate.parse("2022-09-04"),
+          lengthOfSentence = 6,
+          lengthOfSentenceUnits = "days",
+          licenceExpiryDate = LocalDate.parse("2022-09-05"),
+          sentenceExpiryDate = LocalDate.parse("2022-09-06"),
+          sentenceSecondLength = 20,
+          sentenceSecondLengthUnits = "days",
+          custodialTerm = "6 days",
+          extendedTerm = "20 days"
         )
       )
 
@@ -479,23 +456,21 @@ class PartADocumentMapperTest {
   @Test
   fun `given conviction details with empty dates then set empty dates in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          convictionDetail = ConvictionDetail(
-            indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = null,
-            dateOfSentence = null,
-            lengthOfSentence = null,
-            lengthOfSentenceUnits = null,
-            licenceExpiryDate = null,
-            sentenceExpiryDate = null,
-            sentenceSecondLength = null,
-            sentenceSecondLengthUnits = null,
-            custodialTerm = WHITE_SPACE,
-            extendedTerm = WHITE_SPACE
-          )
+        crn = "ABC123",
+        convictionDetail = ConvictionDetail(
+          indexOffenceDescription = "Armed robbery",
+          dateOfOriginalOffence = null,
+          dateOfSentence = null,
+          lengthOfSentence = null,
+          lengthOfSentenceUnits = null,
+          licenceExpiryDate = null,
+          sentenceExpiryDate = null,
+          sentenceSecondLength = null,
+          sentenceSecondLengthUnits = null,
+          custodialTerm = WHITE_SPACE,
+          extendedTerm = WHITE_SPACE
         )
       )
 
@@ -515,12 +490,10 @@ class PartADocumentMapperTest {
   @Test
   fun `given empty conviction details then set empty conviction in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          convictionDetail = null
-        )
+        crn = "ABC123",
+        convictionDetail = null
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -539,19 +512,17 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address details then set address details in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 address",
-                line2 = "Line 2 address",
-                town = "Address town",
-                postcode = "TS1 1ST",
-                noFixedAbode = false
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Address town",
+              postcode = "TS1 1ST",
+              noFixedAbode = false
             )
           )
         )
@@ -566,19 +537,17 @@ class PartADocumentMapperTest {
   @Test
   fun `given address is no fixed abode then clear address in the part A and set no fixed abode field`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 address",
-                line2 = "Line 2 address",
-                town = "Address town",
-                postcode = "TS1 1ST",
-                noFixedAbode = true
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Address town",
+              postcode = "TS1 1ST",
+              noFixedAbode = true
             )
           )
         )
@@ -593,26 +562,24 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple main address details then set address details in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 address",
-                line2 = "Line 2 address",
-                town = "Address town",
-                postcode = "TS1 1ST",
-                noFixedAbode = false
-              ),
-              Address(
-                line1 = "Line 1 second address",
-                line2 = "Line 2 second address",
-                town = "Address second town",
-                postcode = "TS1 2ST",
-                noFixedAbode = false
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Address town",
+              postcode = "TS1 1ST",
+              noFixedAbode = false
+            ),
+            Address(
+              line1 = "Line 1 second address",
+              line2 = "Line 2 second address",
+              town = "Address second town",
+              postcode = "TS1 2ST",
+              noFixedAbode = false
             )
           )
         )
@@ -627,26 +594,24 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple main address details with contradicting no fixed abode values then clear the address details in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 address",
-                line2 = "Line 2 address",
-                town = "Address town",
-                postcode = "TS1 1ST",
-                noFixedAbode = true
-              ),
-              Address(
-                line1 = "Line 1 second address",
-                line2 = "Line 2 second address",
-                town = "Address second town",
-                postcode = "TS1 2ST",
-                noFixedAbode = false
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Address town",
+              postcode = "TS1 1ST",
+              noFixedAbode = true
+            ),
+            Address(
+              line1 = "Line 1 second address",
+              line2 = "Line 2 second address",
+              town = "Address second town",
+              postcode = "TS1 2ST",
+              noFixedAbode = false
             )
           )
         )
@@ -661,12 +626,10 @@ class PartADocumentMapperTest {
   @Test
   fun `given empty address details then clear the address details in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation()
-        )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -678,19 +641,17 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address with all empty lines then clear the address details in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "",
-                line2 = "",
-                town = "",
-                postcode = "",
-                noFixedAbode = false
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "",
+              line2 = "",
+              town = "",
+              postcode = "",
+              noFixedAbode = false
             )
           )
         )
@@ -705,19 +666,17 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address with some empty lines then correctly format the address in the part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 address",
-                line2 = "",
-                town = "Address town",
-                postcode = "TS1 1ST",
-                noFixedAbode = false
-              )
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "",
+              town = "Address town",
+              postcode = "TS1 1ST",
+              noFixedAbode = false
             )
           )
         )
@@ -732,14 +691,12 @@ class PartADocumentMapperTest {
   @Test
   fun `given other possible address field is populated then format it for the Part A`() {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          mainAddressWherePersonCanBeFound = SelectedWithDetails(
-            selected = false,
-            details = "123 Acacia Avenue, Birmingham, B23 1AV"
-          ),
+        crn = "ABC123",
+        mainAddressWherePersonCanBeFound = SelectedWithDetails(
+          selected = false,
+          details = "123 Acacia Avenue, Birmingham, B23 1AV"
         )
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
@@ -752,12 +709,10 @@ class PartADocumentMapperTest {
   @CsvSource("''", "null", nullValues = ["null"])
   fun `given empty other possible address field then leave this field empty in the Part A`(addressValue: String?) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = true, details = addressValue),
-        )
+        crn = "ABC123",
+        mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = true, details = addressValue),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -769,13 +724,11 @@ class PartADocumentMapperTest {
   @CsvSource("true", "false")
   fun `given feature flag then use the correct offence analysis details in the Part A`(featureFlagSet: Boolean) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          indexOffenceDetails = "I am the index offence details",
-          offenceAnalysis = "I am the offence analysis details",
-        )
+        crn = "ABC123",
+        indexOffenceDetails = "I am the index offence details",
+        offenceAnalysis = "I am the offence analysis details",
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, FeatureFlags(flagRecommendationOffenceDetails = featureFlagSet))
 
@@ -784,6 +737,44 @@ class PartADocumentMapperTest {
       } else {
         assertThat(result.offenceAnalysis).isEqualTo("I am the index offence details")
       }
+    }
+  }
+
+  @Test
+  fun `given previous release details with multiple release dates then format it for the Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        previousReleases = PreviousReleases(
+          lastReleaseDate = LocalDate.parse("2022-09-05"),
+          lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
+          previousReleaseDates = listOf(LocalDate.parse("2020-02-01"))
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+
+      assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
+      assertThat(result.dateOfLastRelease).isEqualTo("05/09/2022, 01/02/2020")
+    }
+  }
+
+  @Test
+  fun `given previous release details with one last release date then format it for the Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        previousReleases = PreviousReleases(
+          lastReleaseDate = LocalDate.parse("2022-09-05"),
+          lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
+          previousReleaseDates = null
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+
+      assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
+      assertThat(result.dateOfLastRelease).isEqualTo("05/09/2022")
     }
   }
 }
