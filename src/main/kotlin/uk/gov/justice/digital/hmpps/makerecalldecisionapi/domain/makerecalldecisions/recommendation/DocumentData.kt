@@ -65,7 +65,8 @@ data class DocumentData(
   val otherPossibleAddresses: String? = null,
   val primaryLanguage: String? = null,
   val lastReleasingPrison: String? = null,
-  val dateOfLastRelease: String? = null
+  val datesOfLastReleases: String? = null,
+  val datesOfLastRecalls: String? = null
 )
 
 data class ValueWithDetails(

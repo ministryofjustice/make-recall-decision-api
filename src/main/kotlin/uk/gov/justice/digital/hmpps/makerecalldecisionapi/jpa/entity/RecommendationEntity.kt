@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -91,7 +92,8 @@ data class RecommendationModel(
   var reasonsForNoRecall: ReasonsForNoRecall? = null,
   var nextAppointment: NextAppointment? = null,
   var hasBeenReviewed: HasBeenReviewed? = null,
-  var previousReleases: PreviousReleases? = null
+  var previousReleases: PreviousReleases? = null,
+  var previousRecalls: PreviousRecalls? = null
 ) : Serializable
 
 enum class Status {

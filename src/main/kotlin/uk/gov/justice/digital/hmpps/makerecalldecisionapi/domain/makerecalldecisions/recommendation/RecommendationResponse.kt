@@ -48,6 +48,7 @@ data class RecommendationResponse(
   val reasonsForNoRecall: ReasonsForNoRecall? = null,
   val nextAppointment: NextAppointment? = null,
   val previousReleases: PreviousReleases? = null,
+  val previousRecalls: PreviousRecalls? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -40,6 +41,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val offenceAnalysis = if (featureFlags?.flagRecommendationOffenceDetails == true) recommendation.offenceAnalysis else recommendation.indexOffenceDetails
 
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
+    val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
 
     return DocumentData(
       custodyStatus = ValueWithDetails(
@@ -110,7 +112,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
       primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
       lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
-      dateOfLastRelease = formatMultipleDates(previousReleasesList)
+      datesOfLastReleases = formatMultipleDates(previousReleasesList),
+      datesOfLastRecalls = formatMultipleDates(previousRecallsList)
     )
   }
 
@@ -118,6 +121,14 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     var dates: List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
     if (previousReleases?.lastReleaseDate != null) {
       dates = listOf(previousReleases.lastReleaseDate) + dates
+    }
+    return dates
+  }
+
+  private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate>? {
+    var dates: List<LocalDate> = previousRecalls?.previousRecallDates ?: emptyList()
+    if (previousRecalls?.lastRecallDate != null) {
+      dates = listOf(previousRecalls.lastRecallDate) + dates
     }
     return dates
   }

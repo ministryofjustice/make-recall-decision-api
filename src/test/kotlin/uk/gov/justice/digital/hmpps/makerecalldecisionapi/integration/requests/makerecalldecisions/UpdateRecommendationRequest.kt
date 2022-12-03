@@ -299,6 +299,13 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "previousReleaseDates": [
       "2015-04-24"
     ]
+  },
+  "previousRecalls": {
+    "hasBeenRecalledPreviously": true,
+    "previousRecallDates": [
+      "2018-10-10",
+      "2016-04-30"
+    ]
   }
 }
 """.trimIndent()

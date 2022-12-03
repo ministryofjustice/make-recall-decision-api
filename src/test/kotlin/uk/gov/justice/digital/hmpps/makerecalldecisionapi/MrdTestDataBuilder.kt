@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -133,7 +134,8 @@ class MrdTestDataBuilder {
         nextAppointment = nextAppointment(),
         hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true, mappa = true),
         offenceAnalysis = "This is the offence analysis",
-        previousReleases = previousReleases()
+        previousReleases = previousReleases(),
+        previousRecalls = previousRecalls()
       )
     }
 
@@ -302,6 +304,14 @@ class MrdTestDataBuilder {
         lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
         hasBeenReleasedPreviously = true,
         previousReleaseDates = listOf(LocalDate.parse("2020-02-01"))
+      )
+    }
+
+    private fun previousRecalls(): PreviousRecalls {
+      return PreviousRecalls(
+        lastRecallDate = LocalDate.parse("2022-08-02"),
+        hasBeenRecalledPreviously = true,
+        previousRecallDates = listOf(LocalDate.parse("2021-06-01"))
       )
     }
 
