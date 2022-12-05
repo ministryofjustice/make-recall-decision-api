@@ -77,7 +77,7 @@ data class RecommendationModel(
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
   val createdDate: String? = null,
-  val personOnProbation: PersonOnProbation? = null,
+  var personOnProbation: PersonOnProbation? = null,
   val convictionDetail: ConvictionDetail? = null,
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,

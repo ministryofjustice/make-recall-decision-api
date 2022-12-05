@@ -105,7 +105,7 @@ class MrdTestDataBuilder {
         crn = existingRecommendation.data.crn,
         createdBy = existingRecommendation.data.createdBy,
         createdDate = existingRecommendation.data.createdDate,
-        personOnProbation = existingRecommendation.data.personOnProbation,
+        personOnProbation = personOnProbation(existingRecommendation.data.personOnProbation),
         status = Status.DRAFT,
         recallType = recallTypeData(),
         custodyStatus = custodyStatusData(),
@@ -136,6 +136,18 @@ class MrdTestDataBuilder {
         offenceAnalysis = "This is the offence analysis",
         previousReleases = previousReleases(),
         previousRecalls = previousRecalls()
+      )
+    }
+
+    private fun personOnProbation(personOnProbation: PersonOnProbation?): PersonOnProbation? {
+      return personOnProbation?.copy(
+        mappa = Mappa(
+          level = 2,
+          lastUpdatedDate = null,
+          category = 2,
+          hasBeenReviewed = true
+        ),
+        hasBeenReviewed = true
       )
     }
 

@@ -33,11 +33,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
@@ -115,8 +117,8 @@ internal abstract class ServiceTestBase {
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null, communityApiClient)
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, null)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }
@@ -369,6 +371,36 @@ internal abstract class ServiceTestBase {
           primaryLanguage = "English"
         )
       )
+    )
+  }
+
+  protected fun mappaResponse(): MappaResponse {
+
+    return MappaResponse(
+      level = 1,
+      levelDescription = "MAPPA Level 1",
+      category = 0,
+      categoryDescription = "All - Category to be determined",
+      startDate = LocalDate.parse("2021-02-10"),
+      reviewDate = LocalDate.parse("2021-05-10"),
+      team = Team(
+        code = "N07CHT",
+        description = "Automation SPG",
+        emailAddress = null,
+        telephone = null,
+        localDeliveryUnit = null
+      ),
+      officer = Officer(
+        code = "N07A060",
+        forenames = "NDelius26",
+        surname = "Anderson",
+        unallocated = false
+      ),
+      probationArea = ProbationArea(
+        code = "N07",
+        description = "NPS London"
+      ),
+      notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
     )
   }
 

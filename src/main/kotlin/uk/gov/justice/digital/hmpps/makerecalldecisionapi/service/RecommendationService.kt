@@ -188,8 +188,8 @@ internal class RecommendationService(
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
         existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
-      existingRecommendationEntity.data.previousReleases = getPreviousReleaseDetails(pageRefreshIds, existingRecommendationEntity.data.crn, existingRecommendationEntity.data.previousReleases)
-      existingRecommendationEntity.data.previousRecalls = getPreviousRecallDetails(pageRefreshIds, existingRecommendationEntity.data.crn, existingRecommendationEntity.data.previousRecalls)
+
+      refreshData(pageRefreshIds, existingRecommendationEntity.data)
 
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
       existingRecommendationEntity.data.lastModifiedBy = username
@@ -200,8 +200,14 @@ internal class RecommendationService(
     }
   }
 
+  private suspend fun refreshData(pageRefreshIds: List<String>?, model: RecommendationModel) {
+    model.previousReleases = getPreviousReleaseDetails(pageRefreshIds, model.crn, model.previousReleases)
+    model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
+    model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
+  }
+
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
-    if (pageRefreshIds?.filter { it == "previousReleases" }?.isNotEmpty() == true && crn != null) {
+    if (pageRefreshIds?.any { it == "previousReleases" } == true && crn != null) {
 
       val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
 
@@ -216,7 +222,7 @@ internal class RecommendationService(
   }
 
   private fun getPreviousRecallDetails(pageRefreshIds: List<String>?, crn: String?, previousRecalls: PreviousRecalls?): PreviousRecalls? {
-    if (pageRefreshIds?.filter { it == "previousRecalls" }?.isNotEmpty() == true && crn != null) {
+    if (pageRefreshIds?.any { it == "previousRecalls" } == true && crn != null) {
 
       val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
 
@@ -227,6 +233,15 @@ internal class RecommendationService(
       )
     }
     return previousRecalls
+  }
+
+  private suspend fun getMappaDetails(pageRefreshIds: List<String>?, crn: String?, mappa: Mappa?): Mappa? {
+    if (pageRefreshIds?.any { it == "mappa" } == true && crn != null) {
+      var latestMappa = riskService?.getMappa(crn)
+      latestMappa = latestMappa?.copy(hasBeenReviewed = mappa?.hasBeenReviewed)
+      return latestMappa
+    }
+    return mappa
   }
 
   private fun updatePageReviewedValues(
@@ -243,12 +258,12 @@ internal class RecommendationService(
     if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
       personOnProbation = personOnProbation?.copy(
         hasBeenReviewed = true
-      )
+      ) ?: PersonOnProbation(hasBeenReviewed = true)
     }
     if (updateRecommendationRequest.hasBeenReviewed?.convictionDetail == true) {
       convictionDetail = convictionDetail?.copy(
         hasBeenReviewed = true
-      )
+      ) ?: ConvictionDetail(hasBeenReviewed = true)
     }
 
     return recommendationEntity.copy(
