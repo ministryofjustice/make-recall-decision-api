@@ -8,4 +8,5 @@ data class LastRelease(
   val date: LocalDate?,
   val notes: String?,
   val reason: Reason?,
+  val institution: Institution?,
 )

@@ -455,8 +455,32 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // and
     val expected = ReleaseSummaryResponse(
-      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15"), notes = "I am a note", reason = Reason(code = "ADL", description = "Adult Licence")),
-      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"), notes = "I am a second note", reason = Reason(code = "ABC123", description = "another reason description"))
+      lastRelease = LastRelease(
+        date = LocalDate.parse("2017-09-15"),
+        notes = "I am a note",
+        reason = Reason(
+          code = "ADL",
+          description = "Adult Licence"
+        ),
+        institution = Institution(
+          code = "XXX005",
+          description = "Addiewell",
+          establishmentType = null,
+          institutionId = 361,
+          institutionName = "Addiewell",
+          isEstablishment = true,
+          isPrivate = null,
+          nomsPrisonInstitutionCode = null,
+        ),
+      ),
+      lastRecall = LastRecall(
+        date = LocalDate.parse("2020-10-15"),
+        notes = "I am a second note",
+        reason = Reason(
+          code = "ABC123",
+          description = "another reason description"
+        )
+      )
     )
 
     // when

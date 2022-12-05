@@ -11,10 +11,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -32,47 +31,44 @@ class DecisionNotToRecallLetterDocumentMapperTest {
   @Test
   fun `given no recall journey then build contents of the decision not to recall letter`() {
     runTest {
-      val recommendation = RecommendationEntity(
-        id = 1,
-        data = RecommendationModel(
-          crn = "ABC123",
-          personOnProbation = PersonOnProbation(
-            firstName = "Cliff",
-            middleNames = "Dave",
-            surname = "Rowland",
-            addresses = listOf(
-              Address(
-                line1 = "Address line 1",
-                line2 = "Address line 2",
-                town = "Address line town",
-                postcode = "TS1 1ST",
-                noFixedAbode = false,
-              )
+      val recommendation = RecommendationResponse(
+        crn = "ABC123",
+        personOnProbation = PersonOnProbation(
+          firstName = "Cliff",
+          middleNames = "Dave",
+          surname = "Rowland",
+          addresses = listOf(
+            Address(
+              line1 = "Address line 1",
+              line2 = "Address line 2",
+              town = "Address line town",
+              postcode = "TS1 1ST",
+              noFixedAbode = false,
             )
-          ),
-          whyConsideredRecall = WhyConsideredRecall(
-            selected = WhyConsideredRecallValue.RISK_INCREASED,
+          )
+        ),
+        whyConsideredRecall = WhyConsideredRecall(
+          selected = WhyConsideredRecallValue.RISK_INCREASED,
+          allOptions = listOf(
+            TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
+            TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
+            TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
+          )
+        ),
+        nextAppointment = NextAppointment(
+          HowWillAppointmentHappen(
+            selected = NextAppointmentValue.TELEPHONE,
             allOptions = listOf(
-              TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
-              TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
-              TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
+              TextValueOption(text = "Telephone", value = "TELEPHONE"),
+              TextValueOption(text = "Video call", value = "VIDEO_CALL"),
+              TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
+              TextValueOption(text = "Home visit", value = "HOME_VISIT")
             )
           ),
-          nextAppointment = NextAppointment(
-            HowWillAppointmentHappen(
-              selected = NextAppointmentValue.TELEPHONE,
-              allOptions = listOf(
-                TextValueOption(text = "Telephone", value = "TELEPHONE"),
-                TextValueOption(text = "Video call", value = "VIDEO_CALL"),
-                TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
-                TextValueOption(text = "Home visit", value = "HOME_VISIT")
-              )
-            ),
-            dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
-            probationPhoneNumber = "01238282838"
-          ),
-          reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
-        )
+          dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
+          probationPhoneNumber = "01238282838"
+        ),
+        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
       )
 
       val result = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)

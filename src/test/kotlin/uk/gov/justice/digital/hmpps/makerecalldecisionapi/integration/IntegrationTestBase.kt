@@ -474,7 +474,7 @@ abstract class IntegrationTestBase {
     val releaseSummaryRequest =
       request().withPath("/secure/offenders/crn/$crn/release")
 
-    communityApi.`when`(releaseSummaryRequest, exactly(1)).respond(
+    communityApi.`when`(releaseSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(releaseSummaryDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )

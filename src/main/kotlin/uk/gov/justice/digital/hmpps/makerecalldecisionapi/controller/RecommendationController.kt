@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreatePartARequest
@@ -74,12 +75,12 @@ internal class RecommendationController(
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationJson: JsonNode,
-    userLogin: Principal
-  ): ResponseEntity<Unit> {
+    userLogin: Principal,
+    @RequestParam("refreshProperty") refreshProperty: List<String>?
+  ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
-    recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, null, false)
-    return ResponseEntity<Unit>(OK)
+    return recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, null, false, false, refreshProperty)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")

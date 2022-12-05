@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -32,7 +33,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
@@ -47,7 +47,7 @@ internal class TemplateReplacementService(
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 ) {
 
-  fun generateDocFromRecommendation(recommendation: RecommendationEntity, documentType: DocumentType, featureFlags: FeatureFlags?): String {
+  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType, featureFlags: FeatureFlags?): String {
 
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
       partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, featureFlags)
@@ -63,7 +63,7 @@ internal class TemplateReplacementService(
     return writeDataToFile(file)
   }
 
-  fun generateLetterContentForPreviewFromRecommendation(recommendation: RecommendationEntity): LetterContent {
+  fun generateLetterContentForPreviewFromRecommendation(recommendation: RecommendationResponse): LetterContent {
 
     val documentData = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
@@ -148,6 +148,9 @@ internal class TemplateReplacementService(
       "section_2" to documentData.section2,
       "section_3" to documentData.section3,
       "letter_signed_by_paragraph" to documentData.signedByParagraph,
+      "last_releasing_prison" to documentData.lastReleasingPrison,
+      "date_of_last_release" to documentData.datesOfLastReleases,
+      "date_of_previous_recalls" to documentData.datesOfLastRecalls,
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))

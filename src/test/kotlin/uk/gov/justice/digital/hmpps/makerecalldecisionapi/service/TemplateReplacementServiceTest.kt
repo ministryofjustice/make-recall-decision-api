@@ -32,10 +32,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
@@ -64,8 +67,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions.YES
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
@@ -90,172 +91,181 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   )
   fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
-      val recommendation = RecommendationEntity(
+      val recommendation = RecommendationResponse(
         id = 1,
-        data = RecommendationModel(
-          crn = crn,
-          indexOffenceDetails = "Juicy details!",
-          custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, details = "Bromsgrove Police Station\r\nLondon", allOptions = null),
-          recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
-          responseToProbation = "They did not respond well",
-          whatLedToRecall = "Increasingly violent behaviour",
-          isThisAnEmergencyRecall = true,
-          isIndeterminateSentence = false,
-          isExtendedSentence = false,
-          personOnProbation = PersonOnProbation(
-            gender = "Male",
-            dateOfBirth = parse("1982-10-24"),
-            firstName = "Homer",
-            middleNames = "Bart",
-            surname = "Simpson",
-            ethnicity = "Ainu",
-            croNumber = "123456/04A",
-            pncNumber = "2004/0712343H",
-            mostRecentPrisonerNumber = "G12345",
-            nomsNumber = "A1234CR",
-            mappa = Mappa(level = null, category = null, lastUpdatedDate = null),
-            addresses = listOf(
-              Address(
-                line1 = "Address line 1",
-                line2 = "Address line 2",
-                town = "Address line town",
-                postcode = "TS1 1ST",
-                noFixedAbode = false,
-              )
-            ),
-            primaryLanguage = "English"
-          ),
-          hasVictimsInContactScheme = VictimsInContactScheme(selected = YES, allOptions = null),
-          indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
-          dateVloInformed = now(),
-          alternativesToRecallTried = AlternativesToRecallTried(
-            selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
-            allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
-          ),
-          hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues"),
-          hasContrabandRisk = SelectedWithDetails(selected = true, details = "Has contraband risk"),
-          licenceConditionsBreached = LicenceConditionsBreached(
-            standardLicenceConditions = StandardLicenceConditions(
-              selected = listOf(
-                SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
-                SelectedStandardLicenceConditions.NO_OFFENCE.name,
-                SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
-                SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
-                SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
-                SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
-                SelectedStandardLicenceConditions.NAME_CHANGE.name,
-                SelectedStandardLicenceConditions.CONTACT_DETAILS.name
-              )
-            ),
-            additionalLicenceConditions = AdditionalLicenceConditions(
-              selected = listOf("NST14"),
-              allOptions = listOf(
-                AdditionalLicenceConditionOption(
-                  subCatCode = "NST14",
-                  mainCatCode = "NLC5",
-                  title = "Additional title", details = "Additional details", note = "Additional note"
-                )
-              )
+        crn = crn,
+        indexOffenceDetails = "Juicy details!",
+        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, details = "Bromsgrove Police Station\r\nLondon", allOptions = null),
+        recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
+        responseToProbation = "They did not respond well",
+        whatLedToRecall = "Increasingly violent behaviour",
+        isThisAnEmergencyRecall = true,
+        isIndeterminateSentence = false,
+        isExtendedSentence = false,
+        personOnProbation = PersonOnProbation(
+          gender = "Male",
+          dateOfBirth = parse("1982-10-24"),
+          firstName = "Homer",
+          middleNames = "Bart",
+          surname = "Simpson",
+          ethnicity = "Ainu",
+          croNumber = "123456/04A",
+          pncNumber = "2004/0712343H",
+          mostRecentPrisonerNumber = "G12345",
+          nomsNumber = "A1234CR",
+          mappa = Mappa(level = null, category = null, lastUpdatedDate = null),
+          addresses = listOf(
+            Address(
+              line1 = "Address line 1",
+              line2 = "Address line 2",
+              town = "Address line town",
+              postcode = "TS1 1ST",
+              noFixedAbode = false,
             )
           ),
-          underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
-            selected = "NOT_APPLICABLE",
-            allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
-          ),
-          localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
-          vulnerabilities = VulnerabilitiesRecommendation(
+          primaryLanguage = "English"
+        ),
+        hasVictimsInContactScheme = VictimsInContactScheme(selected = YES, allOptions = null),
+        indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
+        dateVloInformed = now(),
+        alternativesToRecallTried = AlternativesToRecallTried(
+          selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
+          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
+        ),
+        hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues"),
+        hasContrabandRisk = SelectedWithDetails(selected = true, details = "Has contraband risk"),
+        licenceConditionsBreached = LicenceConditionsBreached(
+          standardLicenceConditions = StandardLicenceConditions(
             selected = listOf(
-              ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide"),
-              ValueWithDetails(value = RELATIONSHIP_BREAKDOWN.name, details = "Divorced"),
-              ValueWithDetails(value = NOT_KNOWN.name, details = null),
-              ValueWithDetails(value = NONE.name, details = null),
-              ValueWithDetails(value = DOMESTIC_ABUSE.name, details = "Victim of domestic violence"),
-              ValueWithDetails(value = DRUG_OR_ALCOHOL_USE.name, details = "Has an alcohol dependency"),
-              ValueWithDetails(value = BULLYING_OTHERS.name, details = "Bullying"),
-              ValueWithDetails(value = BEING_BULLIED_BY_OTHERS.name, details = "Bullied"),
-              ValueWithDetails(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, details = "At risk of serious harm"),
-              ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
-              ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
-              ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
-              ValueWithDetails(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, details = "Insulin"),
-              ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
-              ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
-              ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
-              ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist")
-            ),
-            allOptions = listOf(
-              TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
-              TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
-              TextValueOption(value = NOT_KNOWN.name, text = "Not known"),
-              TextValueOption(value = NONE.name, text = "None"),
-              TextValueOption(value = DOMESTIC_ABUSE.name, text = "Domestic abuse"),
-              TextValueOption(value = DRUG_OR_ALCOHOL_USE.name, text = "Drug or alcohol use"),
-              TextValueOption(value = BULLYING_OTHERS.name, text = "Bullying others"),
-              TextValueOption(value = BEING_BULLIED_BY_OTHERS.name, text = "Being bullied by others"),
-              TextValueOption(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, text = "Being at risk of serious harm from others"),
-              TextValueOption(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, text = "Adult or child safeguarding concerns"),
-              TextValueOption(value = MENTAL_HEALTH_CONCERNS.name, text = "Mental health concerns"),
-              TextValueOption(value = PHYSICAL_HEALTH_CONCERNS.name, text = "Physical health concerns"),
-              TextValueOption(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, text = "Medication taken including compliance with medication"),
-              TextValueOption(value = BEREAVEMENT_ISSUES.name, text = "Bereavement issues"),
-              TextValueOption(value = LEARNING_DIFFICULTIES.name, text = "Learning difficulties"),
-              TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
-              TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences")
+              SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
+              SelectedStandardLicenceConditions.NO_OFFENCE.name,
+              SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name,
+              SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
+              SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
+              SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
+              SelectedStandardLicenceConditions.NAME_CHANGE.name,
+              SelectedStandardLicenceConditions.CONTACT_DETAILS.name
             )
           ),
-          convictionDetail = ConvictionDetail(
-            indexOffenceDescription = "Armed robbery",
-            dateOfOriginalOffence = parse("2022-09-01"),
-            dateOfSentence = parse("2022-09-05"),
-            lengthOfSentence = 6,
-            lengthOfSentenceUnits = "days",
-            sentenceDescription = "Extended Determinate Sentence",
-            licenceExpiryDate = parse("2022-09-06"),
-            sentenceExpiryDate = parse("2022-09-07"),
-            sentenceSecondLength = 20,
-            sentenceSecondLengthUnits = "days"
-          ),
-          userNamePartACompletedBy = "Henry Richarlison",
-          userEmailPartACompletedBy = "Henry.Richarlison@test.com",
-          region = "NPS London",
-          localDeliveryUnit = "All NPS London",
-          lastPartADownloadDateTime = LocalDateTime.now(),
-          fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
-          indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
-            selected = listOf(
-              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence"),
-              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, details = "behaviour leading to sexual or violent behaviour"),
-              ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, details = "out of touch")
-            ),
+          additionalLicenceConditions = AdditionalLicenceConditions(
+            selected = listOf("NST14"),
             allOptions = listOf(
-              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
-              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
-              TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
-            )
-          ),
-          mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = false, "123 Acacia Avenue, Birmingham, B23 1AV"),
-          whyConsideredRecall = WhyConsideredRecall(
-            selected = WhyConsideredRecallValue.RISK_INCREASED,
-            allOptions = listOf(
-              TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
-              TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
-              TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
-            )
-          ),
-          reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
-          nextAppointment = NextAppointment(
-            HowWillAppointmentHappen(
-              selected = NextAppointmentValue.TELEPHONE,
-              allOptions = listOf(
-                TextValueOption(text = "Telephone", value = "TELEPHONE"),
-                TextValueOption(text = "Video call", value = "VIDEO_CALL"),
-                TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
-                TextValueOption(text = "Home visit", value = "HOME_VISIT")
+              AdditionalLicenceConditionOption(
+                subCatCode = "NST14",
+                mainCatCode = "NLC5",
+                title = "Additional title", details = "Additional details", note = "Additional note"
               )
-            ),
-            dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
-            probationPhoneNumber = "01238282838"
+            )
           )
+        ),
+        underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
+          selected = "NOT_APPLICABLE",
+          allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
+        ),
+        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+        vulnerabilities = VulnerabilitiesRecommendation(
+          selected = listOf(
+            ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide"),
+            ValueWithDetails(value = RELATIONSHIP_BREAKDOWN.name, details = "Divorced"),
+            ValueWithDetails(value = NOT_KNOWN.name, details = null),
+            ValueWithDetails(value = NONE.name, details = null),
+            ValueWithDetails(value = DOMESTIC_ABUSE.name, details = "Victim of domestic violence"),
+            ValueWithDetails(value = DRUG_OR_ALCOHOL_USE.name, details = "Has an alcohol dependency"),
+            ValueWithDetails(value = BULLYING_OTHERS.name, details = "Bullying"),
+            ValueWithDetails(value = BEING_BULLIED_BY_OTHERS.name, details = "Bullied"),
+            ValueWithDetails(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, details = "At risk of serious harm"),
+            ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
+            ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
+            ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
+            ValueWithDetails(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, details = "Insulin"),
+            ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
+            ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
+            ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
+            ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist")
+          ),
+          allOptions = listOf(
+            TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+            TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
+            TextValueOption(value = NOT_KNOWN.name, text = "Not known"),
+            TextValueOption(value = NONE.name, text = "None"),
+            TextValueOption(value = DOMESTIC_ABUSE.name, text = "Domestic abuse"),
+            TextValueOption(value = DRUG_OR_ALCOHOL_USE.name, text = "Drug or alcohol use"),
+            TextValueOption(value = BULLYING_OTHERS.name, text = "Bullying others"),
+            TextValueOption(value = BEING_BULLIED_BY_OTHERS.name, text = "Being bullied by others"),
+            TextValueOption(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, text = "Being at risk of serious harm from others"),
+            TextValueOption(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, text = "Adult or child safeguarding concerns"),
+            TextValueOption(value = MENTAL_HEALTH_CONCERNS.name, text = "Mental health concerns"),
+            TextValueOption(value = PHYSICAL_HEALTH_CONCERNS.name, text = "Physical health concerns"),
+            TextValueOption(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, text = "Medication taken including compliance with medication"),
+            TextValueOption(value = BEREAVEMENT_ISSUES.name, text = "Bereavement issues"),
+            TextValueOption(value = LEARNING_DIFFICULTIES.name, text = "Learning difficulties"),
+            TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
+            TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences")
+          )
+        ),
+        convictionDetail = ConvictionDetail(
+          indexOffenceDescription = "Armed robbery",
+          dateOfOriginalOffence = parse("2022-09-01"),
+          dateOfSentence = parse("2022-09-05"),
+          lengthOfSentence = 6,
+          lengthOfSentenceUnits = "days",
+          sentenceDescription = "Extended Determinate Sentence",
+          licenceExpiryDate = parse("2022-09-06"),
+          sentenceExpiryDate = parse("2022-09-07"),
+          sentenceSecondLength = 20,
+          sentenceSecondLengthUnits = "days"
+        ),
+        userNamePartACompletedBy = "Henry Richarlison",
+        userEmailPartACompletedBy = "Henry.Richarlison@test.com",
+        region = "NPS London",
+        localDeliveryUnit = "All NPS London",
+        lastPartADownloadDateTime = LocalDateTime.now(),
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
+        indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
+          selected = listOf(
+            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence"),
+            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, details = "behaviour leading to sexual or violent behaviour"),
+            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, details = "out of touch")
+          ),
+          allOptions = listOf(
+            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
+            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
+            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
+          )
+        ),
+        mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = false, "123 Acacia Avenue, Birmingham, B23 1AV"),
+        whyConsideredRecall = WhyConsideredRecall(
+          selected = WhyConsideredRecallValue.RISK_INCREASED,
+          allOptions = listOf(
+            TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
+            TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
+            TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
+          )
+        ),
+        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
+        nextAppointment = NextAppointment(
+          HowWillAppointmentHappen(
+            selected = NextAppointmentValue.TELEPHONE,
+            allOptions = listOf(
+              TextValueOption(text = "Telephone", value = "TELEPHONE"),
+              TextValueOption(text = "Video call", value = "VIDEO_CALL"),
+              TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
+              TextValueOption(text = "Home visit", value = "HOME_VISIT")
+            )
+          ),
+          dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
+          probationPhoneNumber = "01238282838"
+        ),
+        previousReleases = PreviousReleases(
+          lastReleaseDate = parse("2022-09-06"),
+          lastReleasingPrisonOrCustodialEstablishment = "Holloway",
+          hasBeenReleasedPreviously = true,
+          previousReleaseDates = listOf(parse("2022-06-01"))
+        ),
+        previousRecalls = PreviousRecalls(
+          lastRecallDate = parse("2022-02-26"),
+          hasBeenRecalledPreviously = true,
+          previousRecallDates = listOf(parse("2021-01-01"))
         )
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, null)
@@ -265,7 +275,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @Test
   fun `given recommendation data then build a preview of the DNTR document`() {
     runTest {
-      val recommendation = RecommendationEntity(data = RecommendationModel(crn = "123456"))
+      val recommendation = RecommendationResponse(crn = "123456")
 
       val documentData = DocumentData(
         salutation = "Dear John Smith",
@@ -304,7 +314,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(100)
+      assertThat(result.size).isEqualTo(103)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -387,6 +397,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["section_2"]).isEqualTo("This is the second paragraph")
       assertThat(result["section_3"]).isEqualTo("This is the third paragraph")
       assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Jim Smith")
+      assertThat(result["last_releasing_prison"]).isEqualTo("HMP Holloway")
+      assertThat(result["date_of_last_release"]).isEqualTo("07/10/2022")
+      assertThat(result["date_of_previous_recalls"]).isEqualTo("10/09/2022")
     }
   }
 
@@ -533,7 +546,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
-      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV"
+      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
+      lastReleasingPrison = "HMP Holloway",
+      datesOfLastReleases = "07/10/2022",
+      datesOfLastRecalls = "10/09/2022"
     )
   }
 }
