@@ -52,6 +52,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.roshHistoryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
@@ -357,6 +358,16 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(registrationsDeliusResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun roshHistoryResponse(delaySeconds: Long = 0) {
+    val convictionsRequest =
+      request().withPath("/secure/offenders/crn/$crn/registrations")
+
+    communityApi.`when`(convictionsRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(roshHistoryDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
