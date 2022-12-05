@@ -76,7 +76,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       templateReplacementService2,
       userAccessValidator,
       convictionService2,
-      null
+      null,
+      communityApiClient
     )
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
   }

@@ -115,7 +115,7 @@ internal abstract class ServiceTestBase {
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null, communityApiClient)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
@@ -270,8 +270,35 @@ internal abstract class ServiceTestBase {
   protected fun allReleaseSummariesResponse(): ReleaseSummaryResponse {
 
     return ReleaseSummaryResponse(
-      lastRelease = LastRelease(date = LocalDate.parse("2017-09-15"), notes = "I am a note", reason = Reason(code = "reasonCode", description = "reasonDescription")),
-      lastRecall = LastRecall(date = LocalDate.parse("2020-10-15"), notes = "I am a second note", reason = Reason(code = "another reason code", description = "another reason description"))
+      lastRelease = LastRelease(
+        date = LocalDate.parse("2017-09-15"),
+        notes = "I am a note",
+        reason = Reason(
+          code = "reasonCode",
+          description = "reasonDescription"
+        ),
+        institution = Institution(
+          code = "COMMUN",
+          description = "In the Community",
+          establishmentType = EstablishmentType(
+            code = "E",
+            description = "Prison"
+          ),
+          institutionId = 156,
+          institutionName = "In the Community",
+          isEstablishment = true,
+          isPrivate = false,
+          nomsPrisonInstitutionCode = "AB124",
+        ),
+      ),
+      lastRecall = LastRecall(
+        date = LocalDate.parse("2020-10-15"),
+        notes = "I am a second note",
+        reason = Reason(
+          code = "another reason code",
+          description = "another reason description"
+        )
+      )
     )
   }
 

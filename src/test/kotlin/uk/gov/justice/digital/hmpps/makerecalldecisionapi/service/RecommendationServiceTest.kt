@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyBoolean
@@ -23,21 +24,20 @@ import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.willReturn
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -73,6 +73,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var riskServiceMocked: RiskService
 
+  @Captor
+  private lateinit var recommendationCaptor: ArgumentCaptor<RecommendationEntity>
+
   @ParameterizedTest()
   @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
   fun `creates a new recommendation in the database`(sentenceDescription: String) {
@@ -103,7 +106,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked, communityApiClient)
 
       // when
       val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
@@ -237,7 +240,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
             nextAppointment = updateRecommendationRequest.nextAppointment,
             offenceAnalysis = "This is the offence analysis",
-            hasBeenReviewed = null
+            hasBeenReviewed = null,
+            previousReleases = updateRecommendationRequest.previousReleases,
+            previousRecalls = updateRecommendationRequest.previousRecalls
           )
         )
 
@@ -253,11 +258,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false, false, null)
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
-      then(recommendationRepository).should(times(2)).findById(1)
+      then(recommendationRepository).should().findById(1)
     }
   }
 
@@ -319,7 +324,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
             nextAppointment = updateRecommendationRequest.nextAppointment,
             offenceAnalysis = "This is the offence analysis",
-            hasBeenReviewed = null
+            hasBeenReviewed = null,
+            previousReleases = updateRecommendationRequest.previousReleases,
+            previousRecalls = updateRecommendationRequest.previousRecalls
           )
         )
 
@@ -335,11 +342,92 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false, false, null)
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
-      then(recommendationRepository).should(times(2)).findById(1)
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
+  fun `update recommendation with previous release details from Delius when previousReleases page refresh received`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("previousReleases")
+      )
+
+      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.previousReleases?.lastReleaseDate).isEqualTo(LocalDate.parse("2017-09-15"))
+      assertThat(recommendationEntity.data.previousReleases?.lastReleasingPrisonOrCustodialEstablishment).isEqualTo("In the Community")
+      assertThat(recommendationEntity.data.previousReleases?.hasBeenReleasedPreviously).isEqualTo(true)
+      assertThat(recommendationEntity.data.previousReleases?.previousReleaseDates).isEqualTo(listOf(LocalDate.parse("2020-02-01")))
+    }
+  }
+
+  @Test
+  fun `update recommendation with latest previous recall details from Delius when previousRecall page refresh received`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("previousRecalls")
+      )
+
+      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.previousRecalls?.lastRecallDate).isEqualTo(LocalDate.parse("2020-10-15"))
+      assertThat(recommendationEntity.data.previousRecalls?.hasBeenRecalledPreviously).isEqualTo(true)
+      assertThat(recommendationEntity.data.previousRecalls?.previousRecallDates).isEqualTo(listOf(LocalDate.parse("2021-06-01")))
     }
   }
 
@@ -381,7 +469,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           recommendationId = 456L,
           "Bill",
           null,
-          false
+          false,
+          false,
+          null
         )
       }
     }.isInstanceOf(NoRecommendationFoundException::class.java)
@@ -488,6 +578,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(3)?.value).isEqualTo("HOME_VISIT")
     assertThat(recommendationResponse.nextAppointment?.dateTimeOfAppointment).isEqualTo("2022-04-24T20:39:00.000Z")
     assertThat(recommendationResponse.nextAppointment?.probationPhoneNumber).isEqualTo("01238282838")
+    assertThat(recommendationResponse.previousReleases?.lastReleaseDate).isEqualTo("2022-09-02")
+    assertThat(recommendationResponse.previousReleases?.lastReleasingPrisonOrCustodialEstablishment).isEqualTo("HMP Holloway")
+    assertThat(recommendationResponse.previousReleases?.previousReleaseDates?.get(0)).isEqualTo("2020-02-01")
   }
 
   @Test
@@ -576,7 +669,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false, false, null)
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
@@ -609,7 +702,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "Bill", null, false, false, null)
       } catch (e: InvalidRequestException) {
         // nothing to do here!!
       }
@@ -781,22 +874,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate DNTR letter preview from recommendation data`() {
     runTest {
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = Mappa(
-            category = 1,
-            level = 1,
-            lastUpdatedDate = null
-          )
-        )
-      )
       recommendationService = RecommendationService(
         recommendationRepository,
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        communityApiClient
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
@@ -819,49 +904,15 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate Part A document from recommendation data when optional fields missing`() {
     runTest {
-      // given
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = null
-        )
-      )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(null)
-      given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
-        personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(
-            name = "John Smith",
-            firstName = "John",
-            surname = "Smith",
-            crn = crn,
-            age = 21,
-            croNumber = "",
-            dateOfBirth = null,
-            ethnicity = "",
-            gender = "",
-            middleNames = "",
-            nomsNumber = "",
-            pncNumber = "",
-            mostRecentPrisonerNumber = null,
-            primaryLanguage = ""
-          ),
-          addresses = null,
-          offenderManager = personDetailsResponse().offenderManager?.copy(
-            probationAreaDescription = null,
-            probationTeam = personDetailsResponse().offenderManager?.probationTeam?.copy(
-              localDeliveryUnitDescription = null
-            )
-          )
-        )
-      }
 
-      // and
       recommendationService = RecommendationService(
         recommendationRepository,
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        communityApiClient
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
@@ -908,28 +959,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @CsvSource("true", "false")
   fun `generate Part A document from recommendation data with feature flags`(flagRecommendationOffenceDetails: Boolean) {
     runTest {
-      // given
-      given(riskServiceMocked.getRisk(anyString())).willReturn(
-        RiskResponse(
-          mappa = Mappa(category = 2, level = 2, lastUpdatedDate = null)
-        )
-      )
-      given(riskServiceMocked.fetchAssessmentInfo(anyString(), anyBoolean())).willReturn(AssessmentInfo(offenceDescription = "Juicy details", offenceDataFromLatestCompleteAssessment = true, lastUpdatedDate = null, offencesMatch = true))
-      given(mockPersonDetailService.getPersonDetails(anyString())).willReturn {
-        personDetailsResponse().copy(
-          personalDetailsOverview = PersonDetails(name = "John Smith", firstName = "John", surname = "Smith", crn = crn, age = 21, croNumber = "", dateOfBirth = LocalDate.now(), ethnicity = "", gender = "", middleNames = "", nomsNumber = "", pncNumber = "", mostRecentPrisonerNumber = "G12345", primaryLanguage = ""),
-          addresses = listOf(
-            Address(
-              line1 = "Line 1 addressXYZ",
-              line2 = "Line 2 addressXYZ",
-              town = "Town address",
-              postcode = "ABC CBA",
-              noFixedAbode = false
-            )
-          )
-        )
-      }
-
       // and
       recommendationService = RecommendationService(
         recommendationRepository,
@@ -937,7 +966,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         templateReplacementService,
         userAccessValidator,
         convictionService,
-        riskServiceMocked
+        riskServiceMocked,
+        communityApiClient
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
         .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
