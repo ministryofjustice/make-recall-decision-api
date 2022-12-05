@@ -32,6 +32,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -253,6 +255,17 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           ),
           dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
           probationPhoneNumber = "01238282838"
+        ),
+        previousReleases = PreviousReleases(
+          lastReleaseDate = parse("2022-09-06"),
+          lastReleasingPrisonOrCustodialEstablishment = "Holloway",
+          hasBeenReleasedPreviously = true,
+          previousReleaseDates = listOf(parse("2022-06-01"))
+        ),
+        previousRecalls = PreviousRecalls(
+          lastRecallDate = parse("2022-02-26"),
+          hasBeenRecalledPreviously = true,
+          previousRecallDates = listOf(parse("2021-01-01"))
         )
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, null)
@@ -301,7 +314,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(100)
+      assertThat(result.size).isEqualTo(103)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -384,6 +397,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["section_2"]).isEqualTo("This is the second paragraph")
       assertThat(result["section_3"]).isEqualTo("This is the third paragraph")
       assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Jim Smith")
+      assertThat(result["last_releasing_prison"]).isEqualTo("HMP Holloway")
+      assertThat(result["date_of_last_release"]).isEqualTo("07/10/2022")
+      assertThat(result["date_of_previous_recalls"]).isEqualTo("10/09/2022")
     }
   }
 
@@ -530,7 +546,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
-      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV"
+      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
+      lastReleasingPrison = "HMP Holloway",
+      datesOfLastReleases = "07/10/2022",
+      datesOfLastRecalls = "10/09/2022"
     )
   }
 }

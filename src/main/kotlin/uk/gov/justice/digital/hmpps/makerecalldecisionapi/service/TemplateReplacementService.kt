@@ -148,6 +148,9 @@ internal class TemplateReplacementService(
       "section_2" to documentData.section2,
       "section_3" to documentData.section3,
       "letter_signed_by_paragraph" to documentData.signedByParagraph,
+      "last_releasing_prison" to documentData.lastReleasingPrison,
+      "date_of_last_release" to documentData.datesOfLastReleases,
+      "date_of_previous_recalls" to documentData.datesOfLastRecalls,
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))

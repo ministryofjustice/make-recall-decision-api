@@ -241,7 +241,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             nextAppointment = updateRecommendationRequest.nextAppointment,
             offenceAnalysis = "This is the offence analysis",
             hasBeenReviewed = null,
-            previousReleases = updateRecommendationRequest.previousReleases
+            previousReleases = updateRecommendationRequest.previousReleases,
+            previousRecalls = updateRecommendationRequest.previousRecalls
           )
         )
 
@@ -324,7 +325,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             nextAppointment = updateRecommendationRequest.nextAppointment,
             offenceAnalysis = "This is the offence analysis",
             hasBeenReviewed = null,
-            previousReleases = updateRecommendationRequest.previousReleases
+            previousReleases = updateRecommendationRequest.previousReleases,
+            previousRecalls = updateRecommendationRequest.previousRecalls
           )
         )
 
@@ -349,7 +351,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `update recommendation with latest previous release details from Delius when previousReleases page refresh received`() {
+  fun `update recommendation with previous release details from Delius when previousReleases page refresh received`() {
     runTest {
       val existingRecommendation = RecommendationEntity(
         id = 1,
@@ -386,6 +388,46 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.previousReleases?.lastReleasingPrisonOrCustodialEstablishment).isEqualTo("In the Community")
       assertThat(recommendationEntity.data.previousReleases?.hasBeenReleasedPreviously).isEqualTo(true)
       assertThat(recommendationEntity.data.previousReleases?.previousReleaseDates).isEqualTo(listOf(LocalDate.parse("2020-02-01")))
+    }
+  }
+
+  @Test
+  fun `update recommendation with latest previous recall details from Delius when previousRecall page refresh received`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("previousRecalls")
+      )
+
+      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.previousRecalls?.lastRecallDate).isEqualTo(LocalDate.parse("2020-10-15"))
+      assertThat(recommendationEntity.data.previousRecalls?.hasBeenRecalledPreviously).isEqualTo(true)
+      assertThat(recommendationEntity.data.previousRecalls?.previousRecallDates).isEqualTo(listOf(LocalDate.parse("2021-06-01")))
     }
   }
 

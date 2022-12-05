@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -151,23 +152,9 @@ internal class RecommendationService(
       whyConsideredRecall = recommendationEntity.data.whyConsideredRecall,
       reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall,
       nextAppointment = recommendationEntity.data.nextAppointment,
-      previousReleases = recommendationEntity.data.previousReleases
+      previousReleases = recommendationEntity.data.previousReleases,
+      previousRecalls = recommendationEntity.data.previousRecalls
     )
-  }
-
-  private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
-    if (pageRefreshIds?.filter { it == "previousReleases" }?.isNotEmpty() == true && crn != null) {
-
-      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
-
-      return PreviousReleases(
-        lastReleaseDate = releaseSummaryResponse?.lastRelease?.date,
-        lastReleasingPrisonOrCustodialEstablishment = releaseSummaryResponse?.lastRelease?.institution?.institutionName,
-        hasBeenReleasedPreviously = previousReleases?.hasBeenReleasedPreviously,
-        previousReleaseDates = previousReleases?.previousReleaseDates,
-      )
-    }
-    return previousReleases
   }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -191,15 +178,18 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else if (isDntrDownloaded) {
         existingRecommendationEntity.data.userNameDntrLetterCompletedBy = username
         existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
         existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
       existingRecommendationEntity.data.previousReleases = getPreviousReleaseDetails(pageRefreshIds, existingRecommendationEntity.data.crn, existingRecommendationEntity.data.previousReleases)
+      existingRecommendationEntity.data.previousRecalls = getPreviousRecallDetails(pageRefreshIds, existingRecommendationEntity.data.crn, existingRecommendationEntity.data.previousRecalls)
 
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
       existingRecommendationEntity.data.lastModifiedBy = username
@@ -208,6 +198,35 @@ internal class RecommendationService(
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
       return buildRecommendationResponse(savedRecommendation)
     }
+  }
+
+  private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
+    if (pageRefreshIds?.filter { it == "previousReleases" }?.isNotEmpty() == true && crn != null) {
+
+      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
+
+      return PreviousReleases(
+        lastReleaseDate = releaseSummaryResponse?.lastRelease?.date,
+        lastReleasingPrisonOrCustodialEstablishment = releaseSummaryResponse?.lastRelease?.institution?.institutionName,
+        hasBeenReleasedPreviously = previousReleases?.hasBeenReleasedPreviously,
+        previousReleaseDates = previousReleases?.previousReleaseDates,
+      )
+    }
+    return previousReleases
+  }
+
+  private fun getPreviousRecallDetails(pageRefreshIds: List<String>?, crn: String?, previousRecalls: PreviousRecalls?): PreviousRecalls? {
+    if (pageRefreshIds?.filter { it == "previousRecalls" }?.isNotEmpty() == true && crn != null) {
+
+      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
+
+      return PreviousRecalls(
+        lastRecallDate = releaseSummaryResponse?.lastRecall?.date,
+        hasBeenRecalledPreviously = previousRecalls?.hasBeenRecalledPreviously,
+        previousRecallDates = previousRecalls?.previousRecallDates,
+      )
+    }
+    return previousRecalls
   }
 
   private fun updatePageReviewedValues(
@@ -316,6 +335,25 @@ internal class RecommendationService(
         fileContents = fileContents
       )
     }
+  }
+
+  suspend fun patchRecommendationWithExtraData(recommendationEntity: RecommendationEntity): RecommendationEntity {
+    val crn = recommendationEntity.data.crn
+    val riskResponse = crn?.let { riskService?.getRisk(it) }
+    val personDetails = crn?.let { personDetailsService.getPersonDetails(it) }
+    val indexOffenceDetails = crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
+    val data = recommendationEntity.data
+    val personOnProbation = data.personOnProbation
+    return recommendationEntity.copy(
+      data = data.copy(
+        indexOffenceDetails = indexOffenceDetails?.offenceDescription,
+        personOnProbation = personOnProbation?.copy(
+          mappa = riskResponse?.mappa,
+          addresses = personDetails?.addresses,
+          mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber
+        )
+      )
+    )
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {

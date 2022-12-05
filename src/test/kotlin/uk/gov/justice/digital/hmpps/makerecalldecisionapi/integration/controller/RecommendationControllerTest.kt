@@ -152,7 +152,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     licenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationRequest(), "previousReleases")
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls")
     updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
@@ -303,6 +303,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.previousReleases.lastReleasingPrisonOrCustodialEstablishment").isEqualTo("Addiewell")
       .jsonPath("$.previousReleases.previousReleaseDates").isEqualTo("2015-04-24")
       .jsonPath("$.previousReleases.hasBeenReleasedPreviously").isEqualTo(true)
+      .jsonPath("$.previousRecalls.lastRecallDate").isEqualTo("2020-10-15")
+      .jsonPath("$.previousRecalls.previousRecallDates[0]").isEqualTo("2018-10-10")
+      .jsonPath("$.previousRecalls.previousRecallDates[1]").isEqualTo("2016-04-30")
+      .jsonPath("$.previousRecalls.hasBeenRecalledPreviously").isEqualTo(true)
   }
 
   @Test

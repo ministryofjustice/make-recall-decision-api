@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -755,7 +756,7 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
-      assertThat(result.dateOfLastRelease).isEqualTo("05/09/2022, 01/02/2020")
+      assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022, 01/02/2020")
     }
   }
 
@@ -774,7 +775,43 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
-      assertThat(result.dateOfLastRelease).isEqualTo("05/09/2022")
+      assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022")
+    }
+  }
+
+  @Test
+  fun `given previous recall details with multiple recall dates then format it for the Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        previousRecalls = PreviousRecalls(
+          lastRecallDate = LocalDate.parse("2022-09-05"),
+          hasBeenRecalledPreviously = true,
+          previousRecallDates = listOf(LocalDate.parse("2020-02-01"), LocalDate.parse("2018-06-21"))
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+
+      assertThat(result.datesOfLastRecalls).isEqualTo("05/09/2022, 01/02/2020, 21/06/2018")
+    }
+  }
+
+  @Test
+  fun `given previous recall details with one last recall date then format it for the Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        previousRecalls = PreviousRecalls(
+          lastRecallDate = LocalDate.parse("2022-09-05"),
+          hasBeenRecalledPreviously = true,
+          previousRecallDates = null
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+
+      assertThat(result.datesOfLastRecalls).isEqualTo("05/09/2022")
     }
   }
 }
