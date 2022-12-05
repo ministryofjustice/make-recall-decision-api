@@ -68,7 +68,7 @@ data class PersonOnProbation(
   val mostRecentPrisonerNumber: String? = null,
   val nomsNumber: String? = null,
   val pncNumber: String? = null,
-  val mappa: Mappa? = null,
+  var mappa: Mappa? = null,
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false

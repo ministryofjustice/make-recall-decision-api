@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
@@ -37,7 +38,7 @@ internal class RiskService(
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
-  private val recommendationService: RecommendationService,
+  @Lazy private val recommendationService: RecommendationService?,
   private val personDetailsService: PersonDetailsService
 ) {
 
@@ -50,7 +51,7 @@ internal class RiskService(
       val roshSummary = getRoshSummary(crn)
       val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService?.getDraftRecommendationForCrn(crn)
 
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,

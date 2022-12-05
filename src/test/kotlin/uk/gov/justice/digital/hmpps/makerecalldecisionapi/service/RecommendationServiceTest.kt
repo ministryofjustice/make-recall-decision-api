@@ -191,7 +191,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
-          personOnProbation = PersonOnProbation(name = "John Smith", mappa = null),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -200,7 +199,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest = updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null))
 
       // and
       val recommendationToSave =
@@ -275,7 +275,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
-          personOnProbation = PersonOnProbation(name = "John Smith", mappa = Mappa(category = 1, level = 1, lastUpdatedDate = null)),
+          personOnProbation = PersonOnProbation(name = "John Smith"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -292,7 +292,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           id = existingRecommendation.id,
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
-            personOnProbation = PersonOnProbation(name = "John Smith", hasBeenReviewed = true, mappa = Mappa(category = 1, level = 1, lastUpdatedDate = null, hasBeenReviewed = true)),
+            personOnProbation = updateRecommendationRequest.personOnProbation,
             recallType = updateRecommendationRequest.recallType,
             custodyStatus = updateRecommendationRequest.custodyStatus,
             responseToProbation = updateRecommendationRequest.responseToProbation,
@@ -428,6 +428,50 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.previousRecalls?.lastRecallDate).isEqualTo(LocalDate.parse("2020-10-15"))
       assertThat(recommendationEntity.data.previousRecalls?.hasBeenRecalledPreviously).isEqualTo(true)
       assertThat(recommendationEntity.data.previousRecalls?.previousRecallDates).isEqualTo(listOf(LocalDate.parse("2021-06-01")))
+    }
+  }
+
+  @Test
+  fun `update recommendation with mappa details from Delius when mappa page refresh received`() {
+    runTest {
+
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith")
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(communityApiClient.getAllMappaDetails(anyString())).willReturn(Mono.fromCallable { mappaResponse() })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("mappa")
+      )
+
+      then(communityApiClient).should(times(1)).getAllMappaDetails(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.personOnProbation?.mappa?.level).isEqualTo(1)
+      assertThat(recommendationEntity.data.personOnProbation?.mappa?.category).isEqualTo(0)
+      assertThat(recommendationEntity.data.personOnProbation?.mappa?.lastUpdatedDate).isEqualTo("2021-02-10")
+      assertThat(recommendationEntity.data.personOnProbation?.mappa?.hasBeenReviewed).isEqualTo(true)
+      assertThat(recommendationEntity.data.personOnProbation?.firstName).isEqualTo("Alan")
     }
   }
 
@@ -843,6 +887,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate DNTR letter from recommendation data`() {
     runTest {
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null, communityApiClient)
+      personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+      riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
+
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
       val recommendationToSave = RecommendationEntity(

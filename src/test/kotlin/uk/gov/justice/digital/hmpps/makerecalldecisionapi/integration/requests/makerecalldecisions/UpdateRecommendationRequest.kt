@@ -291,7 +291,8 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "hasBeenReviewed": {
     "personOnProbation": true,
-    "convictionDetail": true
+    "convictionDetail": true,
+    "mappa": true
   },
   "offenceAnalysis": "This is the offence analysis",
   "previousReleases": {
