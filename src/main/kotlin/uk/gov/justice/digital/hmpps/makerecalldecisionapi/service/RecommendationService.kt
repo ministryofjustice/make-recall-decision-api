@@ -178,9 +178,11 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else if (isDntrDownloaded) {
         existingRecommendationEntity.data.userNameDntrLetterCompletedBy = username
         existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
@@ -333,6 +335,25 @@ internal class RecommendationService(
         fileContents = fileContents
       )
     }
+  }
+
+  suspend fun patchRecommendationWithExtraData(recommendationEntity: RecommendationEntity): RecommendationEntity {
+    val crn = recommendationEntity.data.crn
+    val riskResponse = crn?.let { riskService?.getRisk(it) }
+    val personDetails = crn?.let { personDetailsService.getPersonDetails(it) }
+    val indexOffenceDetails = crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
+    val data = recommendationEntity.data
+    val personOnProbation = data.personOnProbation
+    return recommendationEntity.copy(
+      data = data.copy(
+        indexOffenceDetails = indexOffenceDetails?.offenceDescription,
+        personOnProbation = personOnProbation?.copy(
+          mappa = riskResponse?.mappa,
+          addresses = personDetails?.addresses,
+          mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber
+        )
+      )
+    )
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {
