@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.toRoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
@@ -52,12 +54,14 @@ internal class RiskService(
       val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
       val recommendationDetails = recommendationService?.getDraftRecommendationForCrn(crn)
+      val roshHistory = getRoshHistory(crn)
 
       return RiskResponse(
         personalDetailsOverview = personalDetailsOverview,
         mappa = mappa,
         predictorScores = predictorScores,
         roshSummary = roshSummary,
+        roshHistory = roshHistory,
         activeRecommendation = recommendationDetails,
         assessmentStatus = getAssessmentStatus(crn)
       )
@@ -316,6 +320,15 @@ internal class RiskService(
     )
 
     return risks.asIterable().firstOrNull { it.value != null }?.key
+  }
+
+  private suspend fun getRoshHistory(crn: String): RoshHistory {
+    val registrationsResponse = try {
+      getValueAndHandleWrappedException(communityApiClient.getRegistrations(crn))!!
+    } catch (ex: Exception) {
+      return RoshHistory(error = extractErrorCode(ex, "rosh history", crn))
+    }
+    return registrationsResponse.toRoshHistory()
   }
 
   suspend fun getMappa(crn: String): Mappa {

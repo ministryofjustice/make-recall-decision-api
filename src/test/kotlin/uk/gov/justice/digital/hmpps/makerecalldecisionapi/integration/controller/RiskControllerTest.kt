@@ -24,6 +24,7 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       noMappaDetailsResponse(crn)
+      roshHistoryResponse()
       noRiskScoresResponse(crn)
       noOffenderFoundRoshSummaryResponse(crn)
 
@@ -49,6 +50,14 @@ class RiskControllerTest(
         .jsonPath("$.roshSummary.riskImminence").isEqualTo(null)
         .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
         .jsonPath("$.predictorScores.error").isEqualTo("NOT_FOUND")
+        .jsonPath("$.roshHistory.error").isEqualTo(null)
+        .jsonPath("$.roshHistory.registrations[0].registrationId").isEqualTo("2500064995")
+        .jsonPath("$.roshHistory.registrations[0].register.code").isEqualTo("1")
+        .jsonPath("$.roshHistory.registrations[0].register.description").isEqualTo("RoSH")
+        .jsonPath("$.roshHistory.registrations[0].type.code").isEqualTo("RVHR")
+        .jsonPath("$.roshHistory.registrations[0].type.description").isEqualTo("Very High RoSH")
+        .jsonPath("$.roshHistory.registrations[0].startDate").isEqualTo("2021-01-30")
+        .jsonPath("$.roshHistory.registrations[0].notes").isEqualTo("Notes on Very High RoSH case")
     }
   }
 
