@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonMerge
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
@@ -92,7 +93,9 @@ data class RecommendationModel(
   var reasonsForNoRecall: ReasonsForNoRecall? = null,
   var nextAppointment: NextAppointment? = null,
   var hasBeenReviewed: HasBeenReviewed? = null,
+  @JsonMerge
   var previousReleases: PreviousReleases? = null,
+  @JsonMerge
   var previousRecalls: PreviousRecalls? = null
 ) : Serializable
 

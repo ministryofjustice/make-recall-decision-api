@@ -296,17 +296,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "offenceAnalysis": "This is the offence analysis",
   "previousReleases": {
-    "hasBeenReleasedPreviously": true,
-    "previousReleaseDates": [
-      "2015-04-24"
-    ]
+    "hasBeenReleasedPreviously": true
   },
   "previousRecalls": {
-    "hasBeenRecalledPreviously": true,
-    "previousRecallDates": [
-      "2018-10-10",
-      "2016-04-30"
-    ]
+    "hasBeenRecalledPreviously": true
   }
 }
 """.trimIndent()
