@@ -123,6 +123,7 @@ class MrdTestDataBuilder {
         hasContrabandRisk = contrabandRisk(),
         licenceConditionsBreached = licenceConditionsBreached(),
         underIntegratedOffenderManagement = integratedOffenderManagement(),
+        indexOffenceDetails = "Juicy details",
         localPoliceContact = localPoliceContact(),
         vulnerabilities = vulnerabilities(),
         convictionDetail = convictionDetail(),

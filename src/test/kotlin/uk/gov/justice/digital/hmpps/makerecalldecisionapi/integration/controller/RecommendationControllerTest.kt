@@ -151,8 +151,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
+    oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa")
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails")
     updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
@@ -184,6 +185,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.isThisAnEmergencyRecall").isEqualTo(true)
       .jsonPath("$.isExtendedSentence").isEqualTo(true)
       .jsonPath("$.isIndeterminateSentence").isEqualTo(true)
+      .jsonPath("$.indexOffenceDetails").isEqualTo("Juicy offence details.")
       .jsonPath("$.activeCustodialConvictionCount").isEqualTo(1)
       .jsonPath("$.hasVictimsInContactScheme.selected").isEqualTo("YES")
       .jsonPath("$.hasVictimsInContactScheme.allOptions[0].value").isEqualTo("YES")
