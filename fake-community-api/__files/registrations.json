@@ -1,102 +1,232 @@
 {
   "registrations": [
     {
-      "registrationId": 2500167265,
-      "offenderId": 2500109986,
-      "register": {
-        "code": "5",
-        "description": "Public Protection"
-      },
-      "type": {
-        "code": "MAPP",
-        "description": "MAPPA"
-      },
-      "riskColour": "Red",
-      "startDate": "2021-02-10",
-      "nextReviewDate": "2021-05-10",
-      "reviewPeriodMonths": 3,
-      "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note",
-      "registeringTeam": {
-        "code": "N07CHT",
-        "description": "Automation SPG"
-      },
-      "registeringOfficer": {
-        "code": "N07A060",
-        "forenames": "NDelius26",
-        "surname": "NDelius26",
-        "unallocated": false
-      },
-      "registeringProbationArea": {
-        "code": "N07",
-        "description": "NPS London"
-      },
-      "registerLevel": {
-        "code": "M1",
-        "description": "MAPPA Level 1"
-      },
-      "registerCategory": {
-        "code": "X9",
-        "description": "All - Category to be determined"
-      },
-      "warnUser": false,
       "active": true,
-      "numberOfPreviousDeregistrations": 0
-    },
-    {
-      "registrationId": 2500167262,
-      "offenderId": 2500109986,
-      "register": {
-        "code": "5",
-        "description": "Public Protection"
-      },
-      "type": {
-        "code": "MAPP",
-        "description": "MAPPA"
-      },
-      "riskColour": "Red",
-      "startDate": "2021-02-10",
-      "reviewPeriodMonths": 3,
-      "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
-      "registeringTeam": {
-        "code": "N07SP1",
-        "description": "Bexley\\Bromley SP TEST1"
-      },
-      "registeringOfficer": {
-        "code": "N07A001",
-        "forenames": "AZEROONE",
-        "surname": "AZEROONE",
-        "unallocated": false
-      },
-      "registeringProbationArea": {
-        "code": "N07",
-        "description": "NPS London"
-      },
-      "registerLevel": {
-        "code": "M0",
-        "description": "MAPPA Nominal (level to be determined)"
-      },
-      "registerCategory": {
-        "code": "X9",
-        "description": "All - Category to be determined"
-      },
-      "warnUser": false,
-      "active": false,
-      "endDate": "2021-02-10",
-      "deregisteringTeam": {
-        "code": "N07CHT",
-        "description": "Automation SPG"
-      },
+      "deregisteringNotes": "string",
       "deregisteringOfficer": {
-        "code": "N07A060",
-        "forenames": "NDelius26",
-        "surname": "NDelius26",
-        "unallocated": false
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
       },
       "deregisteringProbationArea": {
-        "code": "N07",
-        "description": "NPS London"
+        "code": "ABC123",
+        "description": "Some description"
       },
-      "numberOfPreviousDeregistrations": 1
+      "deregisteringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "endDate": "2021-01-30",
+      "nextReviewDate": "2021-01-30",
+      "notes": "Notes on Very High RoSH case",
+      "numberOfPreviousDeregistrations": 0,
+      "offenderId": 2500343964,
+      "register": {
+        "code": "1",
+        "description": "RoSH"
+      },
+      "registerCategory": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registerLevel": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringOfficer": {
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
+      },
+      "registeringProbationArea": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registrationId": 2500064995,
+      "registrationReviews": [
+        {
+          "completed": true,
+          "notes": "string",
+          "reviewDate": "2022-05-09",
+          "reviewDateDue": "2022-05-09",
+          "reviewingOfficer": {
+            "code": "AN001A",
+            "forenames": "Sheila Linda",
+            "surname": "Hancock",
+            "unallocated": true
+          },
+          "reviewingTeam": {
+            "code": "ABC123",
+            "description": "Some description"
+          }
+        }
+      ],
+      "reviewPeriodMonths": 6,
+      "riskColour": "Amber",
+      "startDate": "2021-01-30",
+      "type": {
+        "code": "RVHR",
+        "description": "Very High RoSH"
+      },
+      "warnUser": true
+    },
+    {
+      "active": true,
+      "deregisteringNotes": "string",
+      "deregisteringOfficer": {
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
+      },
+      "deregisteringProbationArea": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "deregisteringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "endDate": "2021-01-30",
+      "nextReviewDate": "2021-01-30",
+      "notes": "Notes on case",
+      "numberOfPreviousDeregistrations": 0,
+      "offenderId": 2500343964,
+      "register": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registerCategory": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registerLevel": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringOfficer": {
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
+      },
+      "registeringProbationArea": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registrationId": 2500064995,
+      "registrationReviews": [
+        {
+          "completed": true,
+          "notes": "string",
+          "reviewDate": "2022-05-09",
+          "reviewDateDue": "2022-05-09",
+          "reviewingOfficer": {
+            "code": "AN001A",
+            "forenames": "Sheila Linda",
+            "surname": "Hancock",
+            "unallocated": true
+          },
+          "reviewingTeam": {
+            "code": "ABC123",
+            "description": "Some description"
+          }
+        }
+      ],
+      "reviewPeriodMonths": 6,
+      "riskColour": "Amber",
+      "startDate": "2021-01-30",
+      "type": {
+        "code": "ABC123",
+        "description": "Victim contact"
+      },
+      "warnUser": true
+    },
+    {
+      "active": false,
+      "deregisteringNotes": "string",
+      "deregisteringOfficer": {
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
+      },
+      "deregisteringProbationArea": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "deregisteringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "endDate": "2021-01-30",
+      "nextReviewDate": "2021-01-30",
+      "notes": "string",
+      "numberOfPreviousDeregistrations": 0,
+      "offenderId": 2500343964,
+      "register": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registerCategory": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registerLevel": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringOfficer": {
+        "code": "AN001A",
+        "forenames": "Sheila Linda",
+        "surname": "Hancock",
+        "unallocated": true
+      },
+      "registeringProbationArea": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registeringTeam": {
+        "code": "ABC123",
+        "description": "Some description"
+      },
+      "registrationId": 2500064995,
+      "registrationReviews": [
+        {
+          "completed": true,
+          "notes": "string",
+          "reviewDate": "2022-05-09",
+          "reviewDateDue": "2022-05-09",
+          "reviewingOfficer": {
+            "code": "AN001A",
+            "forenames": "Sheila Linda",
+            "surname": "Hancock",
+            "unallocated": true
+          },
+          "reviewingTeam": {
+            "code": "ABC123",
+            "description": "Some description"
+          }
+        }
+      ],
+      "reviewPeriodMonths": 6,
+      "riskColour": "Amber",
+      "startDate": "2021-01-30",
+      "type": {
+        "code": "ABC124",
+        "description": "Mental health issues"
+      },
+      "warnUser": true
     }
   ]
 }

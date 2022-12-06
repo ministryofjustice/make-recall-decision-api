@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
@@ -56,7 +57,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentenc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -250,12 +250,20 @@ class CommunityApiClientTest : IntegrationTestBase() {
     val expected = RegistrationsResponse(
       registrations = listOf(
         Registration(
+          registrationId = "2500064995",
           active = true,
-          type = Type(code = "ABC123", description = "Victim contact")
+          register = CodeDescriptionItem(code = "ABC123", description = "Some description"),
+          type = CodeDescriptionItem(code = "ABC123", description = "Victim contact"),
+          startDate = LocalDate.parse("2021-01-30"),
+          notes = "Notes on case"
         ),
         Registration(
+          registrationId = "2500064995",
           active = false,
-          type = Type(code = "ABC124", description = "Mental health issues")
+          register = CodeDescriptionItem(code = "ABC123", description = "Some description"),
+          type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues"),
+          startDate = LocalDate.parse("2021-01-30"),
+          notes = "string"
         )
       )
     )

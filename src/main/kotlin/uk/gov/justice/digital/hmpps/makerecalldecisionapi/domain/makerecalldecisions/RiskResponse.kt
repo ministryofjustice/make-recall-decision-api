@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 
@@ -10,6 +11,7 @@ data class RiskResponse(
   val userAccessResponse: UserAccessResponse? = null,
   val personalDetailsOverview: PersonDetails? = null,
   val roshSummary: RoshSummary? = null,
+  val roshHistory: RoshHistory? = null,
   val mappa: Mappa? = null,
   val predictorScores: PredictorScores? = null,
   val activeRecommendation: ActiveRecommendation? = null,

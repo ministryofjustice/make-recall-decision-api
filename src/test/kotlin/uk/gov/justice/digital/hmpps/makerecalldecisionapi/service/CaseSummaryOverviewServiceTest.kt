@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
@@ -27,7 +28,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registr
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Type
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -331,7 +331,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
           registrations.copy(
             registrations = listOf(
               Registration(
-                active = true, type = Type(code = null, description = null)
+                active = true, type = CodeDescriptionItem(code = null, description = null)
               ),
             )
           )
@@ -376,10 +376,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   private val registrations = RegistrationsResponse(
     registrations = listOf(
       Registration(
-        active = true, type = Type(code = "ABC123", description = "Victim contact")
+        active = true, type = CodeDescriptionItem(code = "ABC123", description = "Victim contact")
       ),
       Registration(
-        active = false, type = Type(code = "ABC124", description = "Mental health issues")
+        active = false, type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues")
       )
     )
   )

@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
@@ -39,6 +40,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderMa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
@@ -101,6 +104,8 @@ internal class RiskServiceTest : ServiceTestBase() {
         )
       given(communityApiClient.getAllMappaDetails(anyString()))
         .willReturn(Mono.fromCallable { mappaResponse })
+      given(communityApiClient.getRegistrations(anyString()))
+        .willReturn(Mono.fromCallable { registrationsResponse })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment(), assessment().copy(dateCompleted = null))) })
 
@@ -111,6 +116,16 @@ internal class RiskServiceTest : ServiceTestBase() {
       val mappa = response.mappa!!
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
+      val roshHistory = response.roshHistory
+      assertThat(roshHistory?.registrations?.get(0)?.active).isEqualTo(true)
+      assertThat(roshHistory?.registrations?.get(0)?.registrationId).isEqualTo("2500064995")
+      assertThat(roshHistory?.registrations?.get(0)?.register?.code).isEqualTo("1")
+      assertThat(roshHistory?.registrations?.get(0)?.register?.description).isEqualTo("RoSH")
+      assertThat(roshHistory?.registrations?.get(0)?.type?.code).isEqualTo("ABC123")
+      assertThat(roshHistory?.registrations?.get(0)?.type?.description).isEqualTo("Victim contact")
+      assertThat(roshHistory?.registrations?.get(0)?.startDate).isEqualTo("2021-01-30")
+      assertThat(roshHistory?.registrations?.get(0)?.notes).isEqualTo("Notes on case")
+      assertThat(roshHistory?.registrations?.size).isEqualTo(1)
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
       assertThat(personalDetails.gender).isEqualTo("Male")
@@ -1101,6 +1116,27 @@ internal class RiskServiceTest : ServiceTestBase() {
     sexualPredictorScore = null,
     groupReconvictionScore = null,
     violencePredictorScore = null
+  )
+
+  private val registrationsResponse = RegistrationsResponse(
+    registrations = listOf(
+      Registration(
+        registrationId = "2500064995",
+        active = true,
+        register = CodeDescriptionItem(code = "1", description = "RoSH"),
+        type = CodeDescriptionItem(code = "ABC123", description = "Victim contact"),
+        startDate = LocalDate.parse("2021-01-30"),
+        notes = "Notes on case"
+      ),
+      Registration(
+        registrationId = "2500064995",
+        active = false,
+        register = CodeDescriptionItem(code = "ABC123", description = "Some description"),
+        type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues"),
+        startDate = LocalDate.parse("2021-01-30"),
+        notes = "string"
+      )
+    )
   )
 
   private val mappaResponse = MappaResponse(
