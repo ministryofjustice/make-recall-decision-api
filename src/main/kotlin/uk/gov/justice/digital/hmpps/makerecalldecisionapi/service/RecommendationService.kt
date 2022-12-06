@@ -61,6 +61,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      // FIXME: Can remove this once feature to refresh conviction data on page load is switched on
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation =
         buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -203,6 +204,7 @@ internal class RecommendationService(
     model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
     model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
+    model.convictionDetail = getConvictionDetails(pageRefreshIds, model.crn, model.convictionDetail)
   }
 
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
@@ -249,6 +251,18 @@ internal class RecommendationService(
       return latestIndexOffenceDetails?.offenceDescription
     }
     return indexOffenceDetails
+  }
+
+  private suspend fun getConvictionDetails(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?): ConvictionDetail? {
+    if (pageRefreshIds?.any { it == "convictionDetails" } == true && crn != null) {
+      val latestConvictionResponse = convictionService.buildConvictionResponse(crn, false)
+
+      return buildRecommendationConvictionResponse(
+        latestConvictionResponse.filter { it.isCustodial == true },
+        convictionDetail?.hasBeenReviewed
+      )
+    }
+    return convictionDetail
   }
 
   private fun updatePageReviewedValues(
@@ -395,6 +409,7 @@ internal class RecommendationService(
     recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
+    // FIXME: Remove conviction detail when feature to refresh conviction detail on page load is switched on
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
         crn = recommendationRequest.crn,
@@ -406,15 +421,14 @@ internal class RecommendationService(
         personOnProbation = recommendationWrapper?.personOnProbation,
         convictionDetail = recommendationWrapper?.convictionDetail,
         region = recommendationWrapper?.region,
-        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
-        indexOffenceDetails = recommendationWrapper?.indexOffenceDetails
+        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
       )
     )
 
     return recommendationRepository.save(recommendationEntity)
   }
 
-  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?): ConvictionDetail? {
+  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?, hasBeenReviewed: Boolean? = false): ConvictionDetail? {
     if (convictionResponse?.size == 1) {
 
       val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
@@ -432,7 +446,8 @@ internal class RecommendationService(
         convictionResponse[0].sentenceSecondLength,
         convictionResponse[0].sentenceSecondLengthUnits,
         custodialTerm,
-        extendedTerm
+        extendedTerm,
+        hasBeenReviewed
       )
     }
     return null
