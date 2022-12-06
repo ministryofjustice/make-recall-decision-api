@@ -61,7 +61,6 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      val indexOffenceDetails = recommendationRequest.crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation =
         buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
@@ -94,8 +93,7 @@ internal class RecommendationService(
       return RecommendationResponse(
         id = savedRecommendation?.id,
         status = savedRecommendation?.data?.status,
-        personOnProbation = savedRecommendation?.data?.personOnProbation,
-        indexOffenceDetails = indexOffenceDetails?.offenceDescription
+        personOnProbation = savedRecommendation?.data?.personOnProbation
       )
     }
   }
@@ -204,6 +202,7 @@ internal class RecommendationService(
     model.previousReleases = getPreviousReleaseDetails(pageRefreshIds, model.crn, model.previousReleases)
     model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
+    model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
   }
 
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
@@ -242,6 +241,14 @@ internal class RecommendationService(
       return latestMappa
     }
     return mappa
+  }
+
+  private suspend fun getIndexOffenceDetails(pageRefreshIds: List<String>?, crn: String?, indexOffenceDetails: String?): String? {
+    if (pageRefreshIds?.any { it == "indexOffenceDetails" } == true && crn != null) {
+      val latestIndexOffenceDetails = riskService?.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenNoMatch = true)
+      return latestIndexOffenceDetails?.offenceDescription
+    }
+    return indexOffenceDetails
   }
 
   private fun updatePageReviewedValues(

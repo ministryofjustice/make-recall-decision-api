@@ -50,6 +50,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -115,7 +116,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(response.id).isNotNull
       assertThat(response.status).isEqualTo(Status.DRAFT)
       assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation)
-      assertThat(response.indexOffenceDetails).isEqualTo(recommendationToSave.data.indexOffenceDetails)
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -227,6 +227,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             lastModifiedBy = "Bill",
             createdBy = existingRecommendation.data.createdBy,
             createdDate = existingRecommendation.data.createdDate,
+            indexOffenceDetails = updateRecommendationRequest.indexOffenceDetails,
             alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
             licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
             underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
@@ -311,6 +312,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             lastModifiedBy = "Bill",
             createdBy = existingRecommendation.data.createdBy,
             createdDate = existingRecommendation.data.createdDate,
+            indexOffenceDetails = updateRecommendationRequest.indexOffenceDetails,
             alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
             licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
             underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
@@ -472,6 +474,49 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.personOnProbation?.mappa?.lastUpdatedDate).isEqualTo("2021-02-10")
       assertThat(recommendationEntity.data.personOnProbation?.mappa?.hasBeenReviewed).isEqualTo(true)
       assertThat(recommendationEntity.data.personOnProbation?.firstName).isEqualTo("Alan")
+    }
+  }
+
+  @Test
+  fun `update recommendation with index offence details from Delius when index offence refresh received`() {
+    runTest {
+
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith")
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(arnApiClient.getAssessments(anyString()))
+        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("Extended Determinate Sentence")) })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("indexOffenceDetails")
+      )
+
+      then(arnApiClient).should().getAssessments(anyString())
+      then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.indexOffenceDetails).isEqualTo("Juicy offence details.")
     }
   }
 
