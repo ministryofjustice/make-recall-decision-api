@@ -520,6 +520,64 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
+  @ParameterizedTest()
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  fun `update recommendation with conviction details from Delius when convictionDetail page refresh received`(sentenceDescription: String) {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("convictionDetails")
+      )
+
+      then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      val expectedCustodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else null
+      val expectedExtendedTerm = if (sentenceDescription != "Random sentence description") "10 Months" else null
+
+      assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
+        ConvictionDetail(
+          indexOffenceDescription = "Robbery (other than armed robbery)",
+          dateOfOriginalOffence = LocalDate.parse("2022-08-26"),
+          dateOfSentence = LocalDate.parse("2022-04-26"),
+          lengthOfSentence = 6,
+          lengthOfSentenceUnits = "Days",
+          sentenceDescription = sentenceDescription,
+          licenceExpiryDate = LocalDate.parse("2022-05-10"),
+          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+          sentenceSecondLength = 10,
+          sentenceSecondLengthUnits = "Months",
+          custodialTerm = expectedCustodialTerm,
+          extendedTerm = expectedExtendedTerm,
+          hasBeenReviewed = true,
+        )
+      )
+    }
+  }
+
   @Test
   fun `throws exception when no recommendation available for given id on an update`() {
     val recommendation = Optional.empty<RecommendationEntity>()
