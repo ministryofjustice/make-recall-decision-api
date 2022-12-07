@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.6.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.7.1"
   kotlin("jvm") version "1.7.22"
   id("jacoco")
   kotlin("plugin.jpa") version "1.7.22"
@@ -30,7 +30,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.6")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
   implementation("io.opentelemetry:opentelemetry-api:1.20.1")
-  implementation("joda-time:joda-time:2.12.1")
+  implementation("joda-time:joda-time:2.12.2")
   implementation("com.deepoove:poi-tl:1.12.0") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
@@ -42,8 +42,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core:9.8.3")
   implementation("org.postgresql:postgresql:42.5.1")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.8.0")
-  implementation("io.sentry:sentry-logback:6.8.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.9.2")
+  implementation("io.sentry:sentry-logback:6.9.2")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -53,7 +53,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.6.0")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
   implementation("com.vladmihalcea:hibernate-types-52:2.20.0")
 
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
