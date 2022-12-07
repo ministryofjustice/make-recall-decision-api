@@ -548,7 +548,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("convictionDetails")
+        listOf("convictionDetail")
       )
 
       then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
