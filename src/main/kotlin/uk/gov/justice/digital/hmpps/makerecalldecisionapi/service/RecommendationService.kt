@@ -204,7 +204,7 @@ internal class RecommendationService(
     model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
     model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
-    model.convictionDetail = getConvictionDetails(pageRefreshIds, model.crn, model.convictionDetail)
+    model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail)
   }
 
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
@@ -253,8 +253,8 @@ internal class RecommendationService(
     return indexOffenceDetails
   }
 
-  private suspend fun getConvictionDetails(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?): ConvictionDetail? {
-    if (pageRefreshIds?.any { it == "convictionDetails" } == true && crn != null) {
+  private suspend fun getConvictionDetail(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?): ConvictionDetail? {
+    if (pageRefreshIds?.any { it == "convictionDetail" } == true && crn != null) {
       val latestConvictionResponse = convictionService.buildConvictionResponse(crn, false)
 
       return buildRecommendationConvictionResponse(

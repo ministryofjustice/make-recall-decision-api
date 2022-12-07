@@ -153,7 +153,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
-    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetails")
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail")
     updateRecommendation(secondUpdateRecommendationRequest())
 
     webTestClient.get()
