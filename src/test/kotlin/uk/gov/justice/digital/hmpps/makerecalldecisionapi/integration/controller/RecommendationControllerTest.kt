@@ -154,7 +154,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
     allOffenderDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
-    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetails, personalDetails")
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetails, personOnProbation")
     updateRecommendation(secondUpdateRecommendationRequest())
     webTestClient.get()
       .uri("/recommendations/$createdRecommendationId")

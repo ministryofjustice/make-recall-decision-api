@@ -30,6 +30,7 @@ class PersonDetailsControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
+        .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")

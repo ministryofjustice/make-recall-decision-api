@@ -547,7 +547,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("personalDetails")
+        listOf("personOnProbation")
       )
 
       then(mockPersonDetailService).should().getPersonDetails(anyString())

@@ -225,7 +225,7 @@ internal class RecommendationService(
   }
 
   private suspend fun getPersonalDetails(pageRefreshIds: List<String>?, crn: String?, personDetails: PersonOnProbation?): PersonOnProbation? {
-    if (pageRefreshIds?.any { it == "personalDetails" } == true && crn != null) {
+    if (pageRefreshIds?.any { it == "personOnProbation" } == true && crn != null) {
       var latestPersonDetails = personDetailsService.getPersonDetails(crn).toPersonOnProbation()
       val existingMappa = personDetails?.mappa
       latestPersonDetails = latestPersonDetails.copy(hasBeenReviewed = personDetails?.hasBeenReviewed, mappa = existingMappa)
