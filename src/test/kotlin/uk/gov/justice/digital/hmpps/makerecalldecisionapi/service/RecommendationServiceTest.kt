@@ -49,6 +49,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -116,7 +117,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // then
       assertThat(response.id).isNotNull
       assertThat(response.status).isEqualTo(Status.DRAFT)
-      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -689,7 +690,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation)
+    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation?.toPersOnProbationDto())
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
     assertThat(recommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.FIXED_TERM)
     assertThat(recommendationResponse.recallType?.selected?.details).isEqualTo("My details")

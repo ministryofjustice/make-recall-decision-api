@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
@@ -28,7 +29,7 @@ data class RecommendationResponse(
   val dateVloInformed: LocalDate? = null,
   val hasArrestIssues: SelectedWithDetails? = null,
   val hasContrabandRisk: SelectedWithDetails? = null,
-  val personOnProbation: PersonOnProbation? = null,
+  val personOnProbation: PersonOnProbationDto? = null,
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
@@ -57,6 +58,48 @@ data class UnderIntegratedOffenderManagement(
 )
 
 data class PersonOnProbation(
+  val name: String? = null,
+  val firstName: String? = null,
+  val surname: String? = null,
+  val middleNames: String? = null,
+  val gender: String? = null,
+  val ethnicity: String? = null,
+  val dateOfBirth: LocalDate? = null,
+  val croNumber: String? = null,
+  val mostRecentPrisonerNumber: String? = null,
+  val nomsNumber: String? = null,
+  val pncNumber: String? = null,
+  var mappa: Mappa? = null,
+  val addresses: List<Address>? = null,
+  val primaryLanguage: String? = null,
+  val hasBeenReviewed: Boolean? = false
+)
+fun PersonOnProbation.toPersOnProbationDto(): PersonOnProbationDto {
+  val firstName = this.firstName
+  val middleNames = this.middleNames
+  val surname = this.surname
+  return PersonOnProbationDto(
+    fullName = formatFullName(firstName, middleNames, surname),
+    name = this.name,
+    firstName = firstName,
+    surname = surname,
+    middleNames = middleNames,
+    gender = this.gender,
+    ethnicity = this.ethnicity,
+    dateOfBirth = this.dateOfBirth,
+    croNumber = this.croNumber,
+    mostRecentPrisonerNumber = this.mostRecentPrisonerNumber,
+    nomsNumber = this.nomsNumber,
+    pncNumber = this.pncNumber,
+    mappa = this.mappa,
+    addresses = this.addresses,
+    primaryLanguage = this.primaryLanguage,
+    hasBeenReviewed = this.hasBeenReviewed
+  )
+}
+
+data class PersonOnProbationDto(
+  val fullName: String?,
   val name: String? = null,
   val firstName: String? = null,
   val surname: String? = null,

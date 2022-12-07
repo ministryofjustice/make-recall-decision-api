@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
@@ -81,7 +82,7 @@ internal class RecommendationService(
       return RecommendationResponse(
         id = savedRecommendation?.id,
         status = savedRecommendation?.data?.status,
-        personOnProbation = savedRecommendation?.data?.personOnProbation
+        personOnProbation = savedRecommendation?.data?.personOnProbation?.toPersOnProbationDto()
       )
     }
   }
@@ -118,7 +119,7 @@ internal class RecommendationService(
       dateVloInformed = recommendationEntity.data.dateVloInformed,
       hasArrestIssues = recommendationEntity.data.hasArrestIssues,
       hasContrabandRisk = recommendationEntity.data.hasContrabandRisk,
-      personOnProbation = recommendationEntity.data.personOnProbation,
+      personOnProbation = recommendationEntity.data.personOnProbation?.toPersOnProbationDto(),
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
       underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
