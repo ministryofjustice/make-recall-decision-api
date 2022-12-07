@@ -74,7 +74,7 @@ data class PersonOnProbation(
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false
 )
-fun PersonOnProbation.toPersOnProbationDto(): PersonOnProbationDto {
+fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
   val firstName = this.firstName
   val middleNames = this.middleNames
   val surname = this.surname
