@@ -49,6 +49,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -517,6 +518,56 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationEntity = recommendationCaptor.firstValue
 
       assertThat(recommendationEntity.data.indexOffenceDetails).isEqualTo("Juicy offence details.")
+    }
+  }
+
+  @Test
+  fun `update recommendation with person details from Delius when person details page refresh received`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("personalDetails")
+      )
+
+      then(mockPersonDetailService).should().getPersonDetails(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+      val expected = personDetailsResponse().toPersonOnProbation()
+      val actual = recommendationEntity.data.personOnProbation
+
+      assertThat(expected.croNumber).isEqualTo(actual?.croNumber)
+      assertThat(expected.mostRecentPrisonerNumber).isEqualTo(actual?.mostRecentPrisonerNumber)
+      assertThat(expected.nomsNumber).isEqualTo(actual?.nomsNumber)
+      assertThat(expected.pncNumber).isEqualTo(actual?.pncNumber)
+      assertThat(expected.firstName).isEqualTo(actual?.firstName)
+      assertThat(expected.middleNames).isEqualTo(actual?.middleNames)
+      assertThat(expected.surname).isEqualTo(actual?.surname)
+      assertThat(expected.ethnicity).isEqualTo(actual?.ethnicity)
+      assertThat(expected.primaryLanguage).isEqualTo(actual?.primaryLanguage)
+      assertThat(expected.dateOfBirth).isEqualTo(actual?.dateOfBirth)
+      assertThat(expected.addresses).isEqualTo(actual?.addresses)
+      assertThat(expected.firstName).isEqualTo(actual?.firstName)
     }
   }
 
