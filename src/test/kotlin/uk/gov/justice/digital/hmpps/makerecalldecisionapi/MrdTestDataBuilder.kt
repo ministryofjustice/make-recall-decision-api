@@ -113,7 +113,7 @@ class MrdTestDataBuilder {
         whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = true,
         isIndeterminateSentence = true,
-        isExtendedSentence = true,
+        isExtendedSentence = false,
         activeCustodialConvictionCount = 1,
         hasVictimsInContactScheme = victimsInContactSchemeData(),
         indeterminateSentenceType = indeterminateSentenceType(),
