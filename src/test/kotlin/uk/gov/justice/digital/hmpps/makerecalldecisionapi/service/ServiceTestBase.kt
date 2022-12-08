@@ -236,6 +236,7 @@ internal abstract class ServiceTestBase {
 
   fun personDetailsResponse() = PersonDetailsResponse(
     personalDetailsOverview = PersonDetails(
+      fullName = "John Homer Bart Smith",
       name = "John Smith",
       firstName = "John",
       middleNames = "Homer Bart",
@@ -659,7 +660,8 @@ internal abstract class ServiceTestBase {
       mostRecentPrisonerNumber = "G12345",
       nomsNumber = "A1234CR",
       pncNumber = "2004/0712343H",
-      primaryLanguage = "English"
+      primaryLanguage = "English",
+      fullName = "John Homer Bart Smith"
     )
   }
 

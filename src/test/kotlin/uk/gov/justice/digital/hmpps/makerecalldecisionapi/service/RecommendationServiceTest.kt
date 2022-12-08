@@ -49,6 +49,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -115,7 +117,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // then
       assertThat(response.id).isNotNull
       assertThat(response.status).isEqualTo(Status.DRAFT)
-      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -520,6 +522,56 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
+  @Test
+  fun `update recommendation with person details from Delius when person details page refresh received`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("personOnProbation")
+      )
+
+      then(mockPersonDetailService).should().getPersonDetails(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+      val expected = personDetailsResponse().toPersonOnProbation()
+      val actual = recommendationEntity.data.personOnProbation
+
+      assertThat(expected.croNumber).isEqualTo(actual?.croNumber)
+      assertThat(expected.mostRecentPrisonerNumber).isEqualTo(actual?.mostRecentPrisonerNumber)
+      assertThat(expected.nomsNumber).isEqualTo(actual?.nomsNumber)
+      assertThat(expected.pncNumber).isEqualTo(actual?.pncNumber)
+      assertThat(expected.firstName).isEqualTo(actual?.firstName)
+      assertThat(expected.middleNames).isEqualTo(actual?.middleNames)
+      assertThat(expected.surname).isEqualTo(actual?.surname)
+      assertThat(expected.ethnicity).isEqualTo(actual?.ethnicity)
+      assertThat(expected.primaryLanguage).isEqualTo(actual?.primaryLanguage)
+      assertThat(expected.dateOfBirth).isEqualTo(actual?.dateOfBirth)
+      assertThat(expected.addresses).isEqualTo(actual?.addresses)
+      assertThat(expected.firstName).isEqualTo(actual?.firstName)
+    }
+  }
+
   @ParameterizedTest()
   @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
   fun `update recommendation with conviction details from Delius when convictionDetail page refresh received`(sentenceDescription: String) {
@@ -638,7 +690,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation)
+    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation?.toPersonOnProbationDto())
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
     assertThat(recommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.FIXED_TERM)
     assertThat(recommendationResponse.recallType?.selected?.details).isEqualTo("My details")

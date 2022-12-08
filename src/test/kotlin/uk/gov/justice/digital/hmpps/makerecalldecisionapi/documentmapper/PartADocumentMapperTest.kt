@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
@@ -526,7 +527,7 @@ class PartADocumentMapperTest {
               noFixedAbode = false
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -551,7 +552,7 @@ class PartADocumentMapperTest {
               noFixedAbode = true
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -583,7 +584,7 @@ class PartADocumentMapperTest {
               noFixedAbode = false
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -615,7 +616,7 @@ class PartADocumentMapperTest {
               noFixedAbode = false
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -630,7 +631,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        personOnProbation = PersonOnProbation()
+        personOnProbation = PersonOnProbation().toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -655,7 +656,7 @@ class PartADocumentMapperTest {
               noFixedAbode = false
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 
@@ -680,7 +681,7 @@ class PartADocumentMapperTest {
               noFixedAbode = false
             )
           )
-        )
+        ).toPersonOnProbationDto()
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
 

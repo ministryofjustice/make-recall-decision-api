@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
@@ -76,6 +77,7 @@ internal class PersonDetailsService(
     val middleNames = offenderDetails.middleNames?.joinToString(WHITE_SPACE) ?: ""
 
     return PersonDetails(
+      fullName = formatFullName(firstName, middleNames, surname),
       name = formatTwoWordField(firstName, surname),
       firstName = firstName,
       surname = surname,
