@@ -573,7 +573,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest()
-  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
+  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description", "Random sentence description with extended selected in recommendation journey")
   fun `update recommendation with conviction details from Delius when convictionDetail page refresh received`(sentenceDescription: String) {
     runTest {
       val existingRecommendation = RecommendationEntity(
@@ -584,9 +584,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
+      given(
+        communityApiClient.getActiveConvictions(
+          ArgumentMatchers.anyString(),
+          anyBoolean()
+        )
+      ).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      if (sentenceDescription == "Random sentence description with extended selected in recommendation journey") {
+        updateRecommendationRequest.isExtendedSentence = true
+      }
 
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)

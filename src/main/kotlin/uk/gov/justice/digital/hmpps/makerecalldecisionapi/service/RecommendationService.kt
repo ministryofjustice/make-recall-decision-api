@@ -66,7 +66,7 @@ internal class RecommendationService(
       // FIXME: Can remove this once feature to refresh conviction data on page load is switched on
       val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
       val convictionForRecommendation =
-        buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true })
+        buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true }, hasBeenReviewed = false, isExtendedSentenceInRecommendation = false)
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
@@ -193,7 +193,7 @@ internal class RecommendationService(
     model.personOnProbation = getPersonalDetails(pageRefreshIds, model.crn, model.personOnProbation)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
     model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
-    model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail)
+    model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail, model.isExtendedSentence)
   }
 
   private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
@@ -252,13 +252,14 @@ internal class RecommendationService(
     return indexOffenceDetails
   }
 
-  private suspend fun getConvictionDetail(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?): ConvictionDetail? {
+  private suspend fun getConvictionDetail(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?, isExtendedSentenceInRecommendation: Boolean?): ConvictionDetail? {
     if (pageRefreshIds?.any { it == "convictionDetail" } == true && crn != null) {
       val latestConvictionResponse = convictionService.buildConvictionResponse(crn, false)
 
       return buildRecommendationConvictionResponse(
         latestConvictionResponse.filter { it.isCustodial == true },
-        convictionDetail?.hasBeenReviewed
+        convictionDetail?.hasBeenReviewed,
+        isExtendedSentenceInRecommendation
       )
     }
     return convictionDetail
@@ -430,11 +431,11 @@ internal class RecommendationService(
     return recommendationRepository.save(recommendationEntity)
   }
 
-  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?, hasBeenReviewed: Boolean? = false): ConvictionDetail? {
+  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?, hasBeenReviewed: Boolean? = false, isExtendedSentenceInRecommendation: Boolean?): ConvictionDetail? {
     if (convictionResponse?.size == 1) {
 
       val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
-      val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0])
+      val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0], isExtendedSentenceInRecommendation)
 
       return ConvictionDetail(
         mainOffence?.description,
@@ -455,13 +456,14 @@ internal class RecommendationService(
     return null
   }
 
-  private fun extendedSentenceDetails(conviction: ConvictionResponse?): Pair<String?, String?> {
+  private fun extendedSentenceDetails(conviction: ConvictionResponse?, isExtendedSentenceInRecommendation: Boolean?): Pair<String?, String?> {
     return if ("Extended Determinate Sentence" == conviction?.sentenceDescription ||
-      "CJA - Extended Sentence" == conviction?.sentenceDescription
+      "CJA - Extended Sentence" == conviction?.sentenceDescription ||
+      isExtendedSentenceInRecommendation == true
     ) {
-      val custodialTerm = conviction.sentenceOriginalLength?.toString() + MrdTextConstants.WHITE_SPACE + conviction.sentenceOriginalLengthUnits
-      val sentenceSecondLength = conviction.sentenceSecondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
-      val sentenceSecondLengthUnits = conviction.sentenceSecondLengthUnits ?: MrdTextConstants.EMPTY_STRING
+      val custodialTerm = conviction?.sentenceOriginalLength?.toString() + MrdTextConstants.WHITE_SPACE + conviction?.sentenceOriginalLengthUnits
+      val sentenceSecondLength = conviction?.sentenceSecondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
+      val sentenceSecondLengthUnits = conviction?.sentenceSecondLengthUnits ?: MrdTextConstants.EMPTY_STRING
 
       Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
     } else Pair(null, null)
