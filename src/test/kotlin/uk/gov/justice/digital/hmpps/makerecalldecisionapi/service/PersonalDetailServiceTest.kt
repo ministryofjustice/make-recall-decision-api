@@ -128,6 +128,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age)
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
+      assertThat(personalDetails.fullName).isEqualTo("John Homer Bart Smith")
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.primaryLanguage).isEqualTo("English")

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun allOffenderDetailsResponse(district: String? = "Sheffield City Centre") = """
+fun allOffenderDetailsResponse(district: String? = "Sheffield City Centre", firstName: String? = "John") = """
 {
   "activeProbationManagedSentence": true,
   "contactDetails": {
@@ -75,7 +75,7 @@ fun allOffenderDetailsResponse(district: String? = "Sheffield City Centre") = ""
   "currentTier": "D2",
   "dateOfBirth": "1982-10-24",
   "exclusionMessage": "string",
-  "firstName": "John",
+  "firstName": "$firstName",
   "gender": "Male",
   "middleNames": [
     "Homer",

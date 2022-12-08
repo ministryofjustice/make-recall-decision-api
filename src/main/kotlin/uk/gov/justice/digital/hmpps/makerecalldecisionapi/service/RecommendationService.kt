@@ -22,6 +22,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -70,21 +72,7 @@ internal class RecommendationService(
         recommendationRequest,
         username,
         StaticRecommendationDataWrapper(
-          PersonOnProbation(
-            croNumber = personDetails?.personalDetailsOverview?.croNumber,
-            mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber,
-            nomsNumber = personDetails?.personalDetailsOverview?.nomsNumber,
-            pncNumber = personDetails?.personalDetailsOverview?.pncNumber,
-            name = personDetails?.personalDetailsOverview?.name,
-            firstName = personDetails?.personalDetailsOverview?.firstName,
-            middleNames = personDetails?.personalDetailsOverview?.middleNames,
-            surname = personDetails?.personalDetailsOverview?.surname,
-            gender = personDetails?.personalDetailsOverview?.gender,
-            ethnicity = personDetails?.personalDetailsOverview?.ethnicity,
-            primaryLanguage = personDetails?.personalDetailsOverview?.primaryLanguage,
-            dateOfBirth = personDetails?.personalDetailsOverview?.dateOfBirth,
-            addresses = personDetails?.addresses,
-          ),
+          personDetails?.toPersonOnProbation(),
           convictionForRecommendation,
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
@@ -94,7 +82,7 @@ internal class RecommendationService(
       return RecommendationResponse(
         id = savedRecommendation?.id,
         status = savedRecommendation?.data?.status,
-        personOnProbation = savedRecommendation?.data?.personOnProbation
+        personOnProbation = savedRecommendation?.data?.personOnProbation?.toPersonOnProbationDto()
       )
     }
   }
@@ -131,7 +119,7 @@ internal class RecommendationService(
       dateVloInformed = recommendationEntity.data.dateVloInformed,
       hasArrestIssues = recommendationEntity.data.hasArrestIssues,
       hasContrabandRisk = recommendationEntity.data.hasContrabandRisk,
-      personOnProbation = recommendationEntity.data.personOnProbation,
+      personOnProbation = recommendationEntity.data.personOnProbation?.toPersonOnProbationDto(),
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
       underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
@@ -202,6 +190,7 @@ internal class RecommendationService(
   private suspend fun refreshData(pageRefreshIds: List<String>?, model: RecommendationModel) {
     model.previousReleases = getPreviousReleaseDetails(pageRefreshIds, model.crn, model.previousReleases)
     model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
+    model.personOnProbation = getPersonalDetails(pageRefreshIds, model.crn, model.personOnProbation)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
     model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
     model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail)
@@ -234,6 +223,16 @@ internal class RecommendationService(
       )
     }
     return previousRecalls
+  }
+
+  private suspend fun getPersonalDetails(pageRefreshIds: List<String>?, crn: String?, personDetails: PersonOnProbation?): PersonOnProbation? {
+    if (pageRefreshIds?.any { it == "personOnProbation" } == true && crn != null) {
+      var latestPersonDetails = personDetailsService.getPersonDetails(crn).toPersonOnProbation()
+      val existingMappa = personDetails?.mappa
+      latestPersonDetails = latestPersonDetails.copy(hasBeenReviewed = personDetails?.hasBeenReviewed, mappa = existingMappa)
+      return latestPersonDetails
+    }
+    return personDetails
   }
 
   private suspend fun getMappaDetails(pageRefreshIds: List<String>?, crn: String?, mappa: Mappa?): Mappa? {
@@ -273,6 +272,9 @@ internal class RecommendationService(
     var personOnProbation = data.personOnProbation
     var convictionDetail = data.convictionDetail
     var mappa = data.personOnProbation?.mappa
+    if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
+      personOnProbation = personOnProbation?.copy(hasBeenReviewed = true) ?: PersonOnProbation(hasBeenReviewed = true)
+    }
     if (updateRecommendationRequest.hasBeenReviewed?.mappa == true) {
       mappa = mappa?.copy(hasBeenReviewed = true) ?: Mappa(hasBeenReviewed = true)
     }

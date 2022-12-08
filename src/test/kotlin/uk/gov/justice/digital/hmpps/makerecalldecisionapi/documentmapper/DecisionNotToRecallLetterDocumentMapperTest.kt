@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -46,7 +47,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
               noFixedAbode = false,
             )
           )
-        ),
+        ).toPersonOnProbationDto(),
         whyConsideredRecall = WhyConsideredRecall(
           selected = WhyConsideredRecallValue.RISK_INCREASED,
           allOptions = listOf(

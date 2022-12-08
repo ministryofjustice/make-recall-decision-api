@@ -289,12 +289,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun allOffenderDetailsResponseOneTimeOnly(crn: String, delaySeconds: Long = 0, district: String? = "Sheffield City Centre") {
+  protected fun allOffenderDetailsResponseOneTimeOnly(crn: String, delaySeconds: Long = 0, district: String? = "Sheffield City Centre", firstName: String? = "John") {
     val allOffenderDetailsRequest =
       request().withPath("/secure/offenders/crn/$crn/all")
 
     communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse(district = district))
+      response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse(district = district, firstName = firstName))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
