@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration
 class ApplicationInsightsConfiguration {
   @Bean
   @ConditionalOnExpression("T(org.apache.commons.lang3.StringUtils).isBlank('\${applicationinsights.connection.string:}')")
-  fun telemetryClient(): TelemetryClient {
+  fun customTelemetryClient(): TelemetryClient {
     log.warn("Application insights configuration missing, returning dummy bean instead")
 
     return TelemetryClient()

@@ -20,7 +20,7 @@ import java.util.stream.Collectors
 class MrdEventsEmitter(
   hmppsQueueService: HmppsQueueService,
   objectMapper: ObjectMapper,
-  telemetryClient: TelemetryClient
+  customTelemetryClient: TelemetryClient
 ) {
   private val domainEventTopicSnsClient: AmazonSNSAsync
   private val topicArn: String
@@ -33,7 +33,7 @@ class MrdEventsEmitter(
     domainEventTopicSnsClient = domainEventTopic.snsClient as AmazonSNSAsync
     this.objectMapper = objectMapper
     this.objectMapper.registerModule(JavaTimeModule())
-    this.telemetryClient = telemetryClient
+    this.telemetryClient = customTelemetryClient
   }
 
   fun sendEvent(payload: MrdEvent) {

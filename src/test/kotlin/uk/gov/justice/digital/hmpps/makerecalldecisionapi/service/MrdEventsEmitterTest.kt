@@ -32,7 +32,7 @@ class MrdEventsEmitterTest {
   private lateinit var service: MrdEventsEmitter
 
   @Mock
-  private lateinit var telemetryClient: TelemetryClient
+  private lateinit var customTelemetryClient: TelemetryClient
 
   @Captor
   private lateinit var telemetryAttributesCaptor: ArgumentCaptor<Map<String, String>>
@@ -48,7 +48,7 @@ class MrdEventsEmitterTest {
     whenever(hmppsQueueService.findByTopicId("hmpps-domain-events"))
       .thenReturn(HmppsTopic("hmpps-domain-events", "topicARN", domainEventSnsClient))
 
-    service = MrdEventsEmitter(hmppsQueueService, objectMapper, telemetryClient)
+    service = MrdEventsEmitter(hmppsQueueService, objectMapper, customTelemetryClient)
   }
 
   @Test
@@ -65,7 +65,7 @@ class MrdEventsEmitterTest {
   fun `will add telemetry event`() {
     service.sendEvent(testPayload())
 
-    verify(telemetryClient).trackEvent(
+    verify(customTelemetryClient).trackEvent(
       ArgumentMatchers.eq("DNTR_LETTER_DOWNLOADED"),
       telemetryAttributesCaptor.capture(),
       ArgumentMatchers.isNull()
