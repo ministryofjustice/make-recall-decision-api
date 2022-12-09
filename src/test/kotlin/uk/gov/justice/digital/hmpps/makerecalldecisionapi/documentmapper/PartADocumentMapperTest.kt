@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
@@ -59,7 +58,7 @@ class PartADocumentMapperTest {
         custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.custodyStatus?.value).isEqualTo(partADisplayText)
       assertThat(result.custodyStatus?.details).isEqualTo("Details")
@@ -99,7 +98,7 @@ class PartADocumentMapperTest {
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.recallType?.value).isEqualTo(partARecallTypeDisplayValue)
       assertThat(result.recallType?.details).isEqualTo(partARecallTypeDisplayDetails)
@@ -120,7 +119,7 @@ class PartADocumentMapperTest {
         isThisAnEmergencyRecall = isThisAnEmergencyRecall
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.isThisAnEmergencyRecall).isEqualTo(partADisplayText)
     }
@@ -139,7 +138,7 @@ class PartADocumentMapperTest {
         isExtendedSentence = isExtendedSentence
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.isExtendedSentence).isEqualTo(partADisplayText)
     }
@@ -158,7 +157,7 @@ class PartADocumentMapperTest {
         hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme)
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.hasVictimsInContactScheme).isEqualTo(partADisplayText)
     }
@@ -173,7 +172,7 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01")
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.dateVloInformed).isEqualTo("1 September 2022")
     }
@@ -187,7 +186,7 @@ class PartADocumentMapperTest {
         crn = "ABC123", dateVloInformed = null
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.dateVloInformed).isEqualTo("")
     }
@@ -206,7 +205,7 @@ class PartADocumentMapperTest {
         indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType)
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.indeterminateSentenceType).isEqualTo(partADisplayText)
     }
@@ -221,7 +220,7 @@ class PartADocumentMapperTest {
         hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details")
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.hasArrestIssues?.value).isEqualTo("Yes")
       assertThat(result.hasArrestIssues?.details).isEqualTo("Arrest details")
@@ -236,7 +235,7 @@ class PartADocumentMapperTest {
         crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = null)
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.hasArrestIssues?.value).isEqualTo("")
     }
@@ -251,7 +250,7 @@ class PartADocumentMapperTest {
         hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details")
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.hasContrabandRisk?.value).isEqualTo("Yes")
       assertThat(result.hasContrabandRisk?.details).isEqualTo("Contraband risk details")
@@ -279,7 +278,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
         .append(System.lineSeparator()).append("Note: note1")
@@ -313,7 +312,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
         .append(System.lineSeparator()).append("Note: note1").append(System.lineSeparator())
@@ -351,7 +350,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
         .append(System.lineSeparator()).append(System.lineSeparator())
@@ -377,7 +376,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.isUnderIntegratedOffenderManagement).isEqualTo("YES")
     }
@@ -394,7 +393,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.additionalConditionsBreached).isEqualTo(EMPTY_STRING)
     }
@@ -414,7 +413,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.selectedStandardConditionsBreached?.get(0)).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
     }
@@ -441,7 +440,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.indexOffenceDescription).isEqualTo("Armed robbery")
       assertThat(result.dateOfOriginalOffence).isEqualTo("01/09/2022")
@@ -476,7 +475,7 @@ class PartADocumentMapperTest {
         )
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.indexOffenceDescription).isEqualTo("Armed robbery")
       assertThat(result.dateOfOriginalOffence).isEqualTo(EMPTY_STRING)
@@ -498,7 +497,7 @@ class PartADocumentMapperTest {
         convictionDetail = null
       )
 
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.indexOffenceDescription).isNull()
       assertThat(result.dateOfOriginalOffence).isEqualTo(EMPTY_STRING)
@@ -529,7 +528,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Line 2 address, Address town, TS1 1ST")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -554,7 +553,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("")
       assertThat(result.noFixedAbode).isEqualTo("No fixed abode")
@@ -586,7 +585,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Line 2 address, Address town, TS1 1ST\nLine 1 second address, Line 2 second address, Address second town, TS1 2ST")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -618,7 +617,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -633,7 +632,7 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         personOnProbation = PersonOnProbation().toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -658,7 +657,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -683,7 +682,7 @@ class PartADocumentMapperTest {
           )
         ).toPersonOnProbationDto()
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastRecordedAddress).isEqualTo("Line 1 address, Address town, TS1 1ST")
       assertThat(result.noFixedAbode).isEqualTo("")
@@ -701,7 +700,7 @@ class PartADocumentMapperTest {
           details = "123 Acacia Avenue, Birmingham, B23 1AV"
         )
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.otherPossibleAddresses).isEqualTo("Police can find this person at: 123 Acacia Avenue, Birmingham, B23 1AV")
     }
@@ -716,15 +715,13 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = true, details = addressValue),
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.otherPossibleAddresses).isEqualTo(null)
     }
   }
 
-  @ParameterizedTest(name = "given flagRecommendationOffenceDetails feature flag is {0} then use the correct offence analysis details")
-  @CsvSource("true", "false")
-  fun `given feature flag then use the correct offence analysis details in the Part A`(featureFlagSet: Boolean) {
+  fun `given offence analysis details then show in the Part A`() {
     runTest {
       val recommendation = RecommendationResponse(
         id = 1,
@@ -732,13 +729,9 @@ class PartADocumentMapperTest {
         indexOffenceDetails = "I am the index offence details",
         offenceAnalysis = "I am the offence analysis details",
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, FeatureFlags(flagRecommendationOffenceDetails = featureFlagSet))
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
-      if (featureFlagSet) {
-        assertThat(result.offenceAnalysis).isEqualTo("I am the offence analysis details")
-      } else {
-        assertThat(result.offenceAnalysis).isEqualTo("I am the index offence details")
-      }
+      assertThat(result.offenceAnalysis).isEqualTo("I am the offence analysis details")
     }
   }
 
@@ -754,7 +747,7 @@ class PartADocumentMapperTest {
           previousReleaseDates = listOf(LocalDate.parse("2020-02-01"))
         )
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
       assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022, 01/02/2020")
@@ -773,7 +766,7 @@ class PartADocumentMapperTest {
           previousReleaseDates = null
         )
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
       assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022")
@@ -792,7 +785,7 @@ class PartADocumentMapperTest {
           previousRecallDates = listOf(LocalDate.parse("2020-02-01"), LocalDate.parse("2018-06-21"))
         )
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.datesOfLastRecalls).isEqualTo("05/09/2022, 01/02/2020, 21/06/2018")
     }
@@ -810,7 +803,7 @@ class PartADocumentMapperTest {
           previousRecallDates = null
         )
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, null)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.datesOfLastRecalls).isEqualTo("05/09/2022")
     }

@@ -5,7 +5,6 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
@@ -47,10 +46,10 @@ internal class TemplateReplacementService(
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 ) {
 
-  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType, featureFlags: FeatureFlags?): String {
+  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType): String {
 
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
-      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, featureFlags)
+      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     } else {
       decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     }

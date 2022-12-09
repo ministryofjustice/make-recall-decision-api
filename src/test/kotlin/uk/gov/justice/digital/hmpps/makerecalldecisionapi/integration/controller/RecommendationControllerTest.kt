@@ -154,7 +154,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
     allOffenderDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
-    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetails, personOnProbation")
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation")
     updateRecommendation(secondUpdateRecommendationRequest())
     webTestClient.get()
       .uri("/recommendations/$createdRecommendationId")
@@ -468,8 +468,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     allOffenderDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
 
-    val featureFlagString = "{\"flagRecommendationOffenceDetails\": true, \"unknownFeatureFlag\": true }"
-
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")
@@ -481,7 +479,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
           (
             listOf(
               it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString),
             )
             )
         }
