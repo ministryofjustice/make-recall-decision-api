@@ -377,6 +377,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     updateRecommendation(updateRecommendationRequest())
     allOffenderDetailsResponseOneTimeOnly(crn)
 
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"unknownFeatureFlag\": true }"
+
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/no-recall-letter")
@@ -384,7 +386,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .body(
           BodyInserters.fromValue(documentRequestQuery("download-docx"))
         )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
         .exchange()
         .expectStatus().isOk
     )
