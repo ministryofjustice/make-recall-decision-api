@@ -377,7 +377,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     updateRecommendation(updateRecommendationRequest())
     allOffenderDetailsResponseOneTimeOnly(crn)
 
-    val featureFlagString = "{\"flagSendDomainEvent\": true, \"unknownFeatureFlag\": true }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"unknownFeatureFlag\": true }"
 
     val response = convertResponseToJSONObject(
       webTestClient.post()

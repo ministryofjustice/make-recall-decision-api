@@ -7,40 +7,6 @@ spring:
   flyway:
     enabled: false
 
-source.queue:
-  provider: localstack
-  transacted: false
-  name: xtagdps
-
-hmppsdomain.events:
-  client:
-    id: hmpps-events-client
-    secret: clientsecret
-
-aws:
-  provider: localstack
-  region: eu-west-2
-
-hmpps:
-  auth.url: http://localhost:9090/auth
-  sqs:
-    provider: localstack
-    localstackUrl: http://localhost:4566
-    queues:
-      xtagdps:
-        queueName: xtagdps
-      mrdeventtestqueue:
-        queueName: ${random.uuid}
-        subscribeTopicId: hmpps-domain-events
-        subscribeFilter: '{"eventType":[ "DNTR_LETTER_DOWNLOADED" ] }'
-    topics:
-      hmpps-domain-events:
-        arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}
-
-jms.events:
-  start: "2022-09-14T06:00:00"
-  end: "2999-09-14T06:00:00"
-
 server:
   shutdown: immediate
 

@@ -63,8 +63,6 @@ dependencies {
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.12")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
-  testImplementation("org.testcontainers:localstack:1.17.5")
-
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
@@ -105,7 +103,9 @@ tasks.jacocoTestReport {
 }
 
 val SourceSet.kotlin: SourceDirectorySet
-  get() = project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>().sourceSets.getByName(name).kotlin
+  get() = project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>().sourceSets.getByName(
+    name
+  ).kotlin
 
 sourceSets {
   create("functional-test") {
