@@ -147,3 +147,26 @@ oasys:
   arn:
     client:
       timeout: 30
+
+---
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: eu-west-2
+aws:
+  provider: aws
+  region: eu-west-2
+
+hmpps.sqs:
+  topics:
+    hmpps-domain-events:
+      arn: ${hmpps.domain.event.topic.arn}
+    asyncClient: true
+
+spring:
+  config:
+    activate:
+      on-profile: default
+---

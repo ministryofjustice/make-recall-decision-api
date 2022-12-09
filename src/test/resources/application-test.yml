@@ -47,8 +47,8 @@ oauth:
       id: client-id
       secret: client-secret
 
-hmpps:
-  auth.url: http://localhost:9090/auth
+#hmpps:
+#  auth.url: http://localhost:9090/auth
 
 ndelius:
   client:

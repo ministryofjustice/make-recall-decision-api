@@ -118,7 +118,7 @@ internal abstract class ServiceTestBase {
     documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, null)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, null)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }
