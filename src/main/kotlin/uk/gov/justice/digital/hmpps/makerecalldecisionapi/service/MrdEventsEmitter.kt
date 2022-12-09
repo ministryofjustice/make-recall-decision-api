@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.convertValue
-import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -19,13 +18,13 @@ import java.util.stream.Collectors
 @Service
 class MrdEventsEmitter(
   hmppsQueueService: HmppsQueueService,
-  objectMapper: ObjectMapper,
-  telemetryClient: TelemetryClient
+  objectMapper: ObjectMapper
+//  telemetryClient: TelemetryClient
 ) {
   private val domainEventTopicSnsClient: AmazonSNSAsync
   private val topicArn: String
   private val objectMapper: ObjectMapper
-  private val telemetryClient: TelemetryClient
+//  private val telemetryClient: TelemetryClient
 
   init {
     val domainEventTopic: HmppsTopic? = hmppsQueueService.findByTopicId("hmpps-domain-events")
@@ -33,7 +32,7 @@ class MrdEventsEmitter(
     domainEventTopicSnsClient = domainEventTopic.snsClient as AmazonSNSAsync
     this.objectMapper = objectMapper
     this.objectMapper.registerModule(JavaTimeModule())
-    this.telemetryClient = telemetryClient
+//    this.telemetryClient = telemetryClient
   }
 
   fun sendEvent(payload: MrdEvent) {
@@ -41,7 +40,7 @@ class MrdEventsEmitter(
       domainEventTopicSnsClient.publishAsync(
         PublishRequest(topicArn, objectMapper.writeValueAsString(payload))
       )
-      telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
+//      telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {
       log.error("Failed to convert payload {} to json", payload)
     }

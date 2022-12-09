@@ -1,7 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.7.1"
   kotlin("jvm") version "1.7.22"
-  id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.7.22"
   id("org.sonarqube") version "3.5.0.2730"
@@ -12,10 +11,6 @@ jacoco.toolVersion = "0.8.8"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
-}
-
-testSets {
-  "testSmoke"()
 }
 
 allOpen {
