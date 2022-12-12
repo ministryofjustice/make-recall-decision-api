@@ -31,7 +31,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   fun `retrieves risks and formats into vulnerabilities`() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(arnApiClient.getRisks(anyString())).willReturn(Mono.fromCallable { riskResponse() })
+      given(arnApiClient.getRisksWithFullText(anyString())).willReturn(Mono.fromCallable { riskResponse() })
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
 
@@ -128,7 +128,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
     runTest {
       given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
 
-      given(arnApiClient.getRisks(crn)).willThrow(
+      given(arnApiClient.getRisksWithFullText(crn)).willThrow(
         WebClientResponseException(
           code,
           null,

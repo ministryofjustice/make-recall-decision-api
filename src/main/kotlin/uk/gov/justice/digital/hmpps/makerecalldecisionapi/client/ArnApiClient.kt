@@ -105,13 +105,13 @@ class ArnApiClient(
     return result
   }
 
-  fun getRisks(crn: String): Mono<RiskResponse> {
+  fun getRisksWithFullText(crn: String): Mono<RiskResponse> {
     val responseType = object : ParameterizedTypeReference<RiskResponse>() {}
-    log.info(StringUtils.normalizeSpace("About to get risks for $crn"))
+    log.info(StringUtils.normalizeSpace("About to get risks with full text for $crn"))
 
     val result = webClient
       .get()
-      .uri("/risks/crn/$crn")
+      .uri("/risks/crn/$crn/fulltext")
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(arnClientTimeout))
@@ -121,7 +121,7 @@ class ArnApiClient(
           endPoint = "risks"
         )
       }
-    log.info(StringUtils.normalizeSpace("Returning all risks for $crn"))
+    log.info(StringUtils.normalizeSpace("Returning all risks with full text for $crn"))
     return result
   }
 

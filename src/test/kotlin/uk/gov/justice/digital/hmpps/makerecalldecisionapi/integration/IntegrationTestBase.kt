@@ -197,9 +197,9 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun risksResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun risksWithFullTextResponse(crn: String, delaySeconds: Long = 0) {
     val risksRequest =
-      request().withPath("/risks/crn/$crn")
+      request().withPath("/risks/crn/$crn/fulltext")
     oasysARNApi.`when`(risksRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(risksDataResponse())
         .withDelay(Delay.seconds(delaySeconds))

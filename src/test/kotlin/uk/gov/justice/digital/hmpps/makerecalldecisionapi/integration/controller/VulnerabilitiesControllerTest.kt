@@ -19,7 +19,7 @@ class VulnerabilitiesControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      risksResponse(crn)
+      risksWithFullTextResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
 
@@ -105,7 +105,7 @@ class VulnerabilitiesControllerTest(
     runTest {
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      risksResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
+      risksWithFullTextResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/vulnerabilities")
