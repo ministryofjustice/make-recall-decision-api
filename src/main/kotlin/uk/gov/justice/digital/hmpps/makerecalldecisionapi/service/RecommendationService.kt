@@ -70,17 +70,12 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      // FIXME: Can remove this once feature to refresh conviction data on page load is switched on
-      val convictionResponse = (recommendationRequest.crn?.let { convictionService.buildConvictionResponse(it, false) })
-      val convictionForRecommendation =
-        buildRecommendationConvictionResponse(convictionResponse?.filter { it.isCustodial == true }, hasBeenReviewed = false, isExtendedSentenceInRecommendation = false)
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
         username,
         StaticRecommendationDataWrapper(
           personDetails?.toPersonOnProbation(),
-          convictionForRecommendation,
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
         )
@@ -172,11 +167,9 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = username
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
-        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else if (isDntrDownloaded) {
         existingRecommendationEntity.data.userNameDntrLetterCompletedBy = username
         existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
-        existingRecommendationEntity.data = patchRecommendationWithExtraData(existingRecommendationEntity).data
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
@@ -365,7 +358,7 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.DNTR_DOCUMENT, null)
+        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.DNTR_DOCUMENT)
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "No_Recall"),
         fileContents = fileContents
@@ -389,38 +382,19 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?, featureFlags: FeatureFlags?): DocumentResponse {
+  suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
     val recommendationModel = updateRecommendation(null, recommendationId, username, userEmail, true, false, null)
     val userAccessResponse = recommendationModel.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationModel, DocumentType.PART_A_DOCUMENT, featureFlags)
+        templateReplacementService.generateDocFromRecommendation(recommendationModel, DocumentType.PART_A_DOCUMENT)
       return DocumentResponse(
         fileName = generateDocumentFileName(recommendationModel, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
-  }
-
-  suspend fun patchRecommendationWithExtraData(recommendationEntity: RecommendationEntity): RecommendationEntity {
-    val crn = recommendationEntity.data.crn
-    val riskResponse = crn?.let { riskService?.getRisk(it) }
-    val personDetails = crn?.let { personDetailsService.getPersonDetails(it) }
-    val indexOffenceDetails = crn?.let { riskService?.fetchAssessmentInfo(crn = it, hideOffenceDetailsWhenNoMatch = true) }
-    val data = recommendationEntity.data
-    val personOnProbation = data.personOnProbation
-    return recommendationEntity.copy(
-      data = data.copy(
-        indexOffenceDetails = indexOffenceDetails?.offenceDescription,
-        personOnProbation = personOnProbation?.copy(
-          mappa = riskResponse?.mappa,
-          addresses = personDetails?.addresses,
-          mostRecentPrisonerNumber = personDetails?.personalDetailsOverview?.mostRecentPrisonerNumber
-        )
-      )
-    )
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {
@@ -440,7 +414,6 @@ internal class RecommendationService(
     recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
-    // FIXME: Remove conviction detail when feature to refresh conviction detail on page load is switched on
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
         crn = recommendationRequest.crn,
@@ -450,7 +423,6 @@ internal class RecommendationService(
         createdBy = createdByUserName,
         createdDate = now,
         personOnProbation = recommendationWrapper?.personOnProbation,
-        convictionDetail = recommendationWrapper?.convictionDetail,
         region = recommendationWrapper?.region,
         localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
       )

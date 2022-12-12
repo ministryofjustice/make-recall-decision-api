@@ -269,7 +269,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           previousRecallDates = listOf(parse("2021-01-01"))
         )
       )
-      templateReplacementService.generateDocFromRecommendation(recommendation, documentType, null)
+      templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
     }
   }
 

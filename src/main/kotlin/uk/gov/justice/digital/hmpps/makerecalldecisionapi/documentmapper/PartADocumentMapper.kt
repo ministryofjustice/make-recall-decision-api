@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -28,7 +27,7 @@ import java.time.LocalDate
 @Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse, featureFlags: FeatureFlags?): DocumentData {
+  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse): DocumentData {
     val firstName = recommendation.personOnProbation?.firstName
     val middleNames = recommendation.personOnProbation?.middleNames
     val lastName = recommendation.personOnProbation?.surname
@@ -37,8 +36,6 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
-
-    val offenceAnalysis = if (featureFlags?.flagRecommendationOffenceDetails == true) recommendation.offenceAnalysis else recommendation.indexOffenceDetails
 
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
     val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
@@ -101,7 +98,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       localDeliveryUnit = recommendation.localDeliveryUnit,
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
-      offenceAnalysis = offenceAnalysis,
+      offenceAnalysis = recommendation.offenceAnalysis,
       fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation),
       behaviourSimilarToIndexOffence = behaviourSimilarToIndexOffence,
       behaviourSimilarToIndexOffencePresent = behaviourSimilarToIndexOffencePresent,
@@ -158,7 +155,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       recommendation.isExtendedSentence,
       isStandardRecall
     )
-      ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions?.details else EMPTY_STRING
+      ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions.details else EMPTY_STRING
   }
 
   private fun buildNotApplicableMessage(
