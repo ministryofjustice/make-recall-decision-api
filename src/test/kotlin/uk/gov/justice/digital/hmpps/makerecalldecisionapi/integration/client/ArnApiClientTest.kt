@@ -241,9 +241,9 @@ class ArnApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `retrieves risks`() {
+  fun `retrieves risks with full text`() {
     // given
-    risksResponse(crn)
+    risksWithFullTextResponse(crn)
 
     // and
     val expected = RiskResponse(
@@ -324,7 +324,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     )
 
     // when
-    val actual = arnApiClient.getRisks(crn).block()
+    val actual = arnApiClient.getRisksWithFullText(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

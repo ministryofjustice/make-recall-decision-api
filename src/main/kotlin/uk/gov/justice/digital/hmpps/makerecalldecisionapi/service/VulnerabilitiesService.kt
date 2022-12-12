@@ -37,7 +37,7 @@ internal class VulnerabilitiesService(
 
   private suspend fun getVulnerabilityDetail(crn: String): Vulnerabilities {
     val riskResponse = try {
-      getValueAndHandleWrappedException(arnApiClient.getRisks(crn))
+      getValueAndHandleWrappedException(arnApiClient.getRisksWithFullText(crn))
     } catch (ex: Exception) {
       return Vulnerabilities(error = extractErrorCode(ex, "risks", crn))
     }
