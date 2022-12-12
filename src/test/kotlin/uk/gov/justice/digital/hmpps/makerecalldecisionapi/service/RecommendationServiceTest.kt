@@ -82,9 +82,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var mrdEmitterMocked: MrdEventsEmitter
 
-  @ParameterizedTest()
-  @CsvSource("Extended Determinate Sentence", "CJA - Extended Sentence", "Random sentence description")
-  fun `creates a new recommendation in the database`(sentenceDescription: String) {
+  @Test()
+  fun `creates a new recommendation in the database`() {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -111,7 +110,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked, communityApiClient, mrdEmitterMocked)
 
       // when
@@ -153,27 +151,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
               noFixedAbode = false
             )
           )
-        )
-      )
-
-      val expectedCustodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else null
-      val expectedExtendedTerm = if (sentenceDescription != "Random sentence description") "10 Months" else null
-
-      assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
-        ConvictionDetail(
-          indexOffenceDescription = "Robbery (other than armed robbery)",
-          dateOfOriginalOffence = LocalDate.parse("2022-08-26"),
-          dateOfSentence = LocalDate.parse("2022-04-26"),
-          lengthOfSentence = 6,
-          lengthOfSentenceUnits = "Days",
-          sentenceDescription = sentenceDescription,
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
-          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          sentenceSecondLength = 10,
-          sentenceSecondLengthUnits = "Months",
-          custodialTerm = expectedCustodialTerm,
-          extendedTerm = expectedExtendedTerm,
-          hasBeenReviewed = false,
         )
       )
       assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
@@ -1116,7 +1093,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
-      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X, FeatureFlags(flagSendDomainEvent = true, flagRecommendationOffenceDetails = false))
+      val result = recommendationService.generateDntr(1L, "John Smith", DocumentRequestType.DOWNLOAD_DOC_X, FeatureFlags(flagSendDomainEvent = true))
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -1201,7 +1178,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com", null)
+      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
 
       // and
       val captor = argumentCaptor<RecommendationEntity>()
@@ -1216,9 +1193,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @ParameterizedTest()
-  @CsvSource("true", "false")
-  fun `generate Part A document from recommendation data with feature flags`(flagRecommendationOffenceDetails: Boolean) {
+  @Test()
+  fun `generate Part A document from recommendation data`() {
     runTest {
       // and
       recommendationService = RecommendationService(
@@ -1263,7 +1239,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com", FeatureFlags(flagRecommendationOffenceDetails = true))
+      val result = recommendationService.generatePartA(1L, "John Smith", "John.Smith@test.com")
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
@@ -1295,7 +1271,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
-      val result = recommendationService.generatePartA(1L, "John smith", "John.Smith@test.com", null)
+      val result = recommendationService.generatePartA(1L, "John smith", "John.Smith@test.com")
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
       assertThat(result.fileContents).isNotNull
@@ -1311,9 +1287,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn
         )
       )
-
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
 
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
@@ -1339,9 +1312,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn
         )
       )
-
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(), custodialConvictionResponse()) })
 
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
