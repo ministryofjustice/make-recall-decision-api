@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
@@ -63,17 +64,28 @@ internal class RecommendationService(
 
   suspend fun createRecommendation(
     recommendationRequest: CreateRecommendationRequest,
-    username: String?
+    username: String?,
+    featureFlags: FeatureFlags?
   ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
+      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
+        RecallConsidered(
+          createdDate = utcNowDateTimeString(),
+          userName = username,
+          recallConsideredDetail = recommendationRequest.recallConsideredDetail
+        )
+      ) else null
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
         username,
+        status,
+        recallConsideredList,
         StaticRecommendationDataWrapper(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
@@ -411,13 +423,16 @@ internal class RecommendationService(
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
     createdByUserName: String?,
+    status: Status?,
+    recallConsideredList: List<RecallConsidered>?,
     recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
         crn = recommendationRequest.crn,
-        status = Status.DRAFT,
+        recallConsideredList = recallConsideredList,
+        status = status,
         lastModifiedBy = createdByUserName,
         lastModifiedDate = now,
         createdBy = createdByUserName,

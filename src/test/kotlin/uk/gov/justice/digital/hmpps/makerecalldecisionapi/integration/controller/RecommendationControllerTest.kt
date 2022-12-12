@@ -42,6 +42,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
+
+    val featureFlagString = "{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }"
+
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -49,7 +52,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .body(
           BodyInserters.fromValue(recommendationRequest(crn))
         )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
         .exchange()
         .expectStatus().isCreated
     )
@@ -57,7 +67,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val idOfRecommendationJustCreated = response.get("id")
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
-    assertThat(response.get("status")).isEqualTo("DRAFT")
+    assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
     assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
