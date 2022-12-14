@@ -171,11 +171,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       if (recallConsidered == Status.RECALL_CONSIDERED.toString()) {
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
       } else {
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo(null)
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo(null)
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isEqualTo(null)
+        assertThat(recommendationEntity.data.recallConsideredList).isNull()
       }
     }
   }

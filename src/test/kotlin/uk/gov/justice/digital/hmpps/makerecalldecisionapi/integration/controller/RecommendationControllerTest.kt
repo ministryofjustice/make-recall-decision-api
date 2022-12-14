@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter
 @ExperimentalCoroutinesApi
 class RecommendationControllerTest() : IntegrationTestBase() {
 
+  // TODO add version without flagConsiderRecall
   @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)

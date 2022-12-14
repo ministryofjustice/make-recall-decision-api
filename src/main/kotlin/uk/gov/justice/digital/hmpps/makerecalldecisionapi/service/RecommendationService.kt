@@ -76,6 +76,7 @@ internal class RecommendationService(
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
+          userId = username,
           createdDate = utcNowDateTimeString(),
           userName = readableUsername,
           recallConsideredDetail = recommendationRequest.recallConsideredDetail
