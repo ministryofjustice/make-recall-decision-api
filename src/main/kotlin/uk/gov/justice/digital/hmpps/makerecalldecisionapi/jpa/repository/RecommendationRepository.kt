@@ -11,8 +11,8 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
 
   @Query(
     value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE CAST(t.data ->> 'crn' AS VARCHAR) = :crn " +
-      "AND CAST(t.data ->> 'status' AS VARCHAR) = :status",
+      "AND CAST(t.data ->> 'status' AS VARCHAR) IN (:statuses)",
     nativeQuery = true
   )
-  fun findByCrnAndStatus(@Param("crn")crn: String, @Param("status")status: String): List<RecommendationEntity>
+  fun findByCrnAndStatus(@Param("crn")crn: String, @Param("statuses")statuses: List<String>): List<RecommendationEntity>
 }

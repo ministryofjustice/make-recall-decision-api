@@ -29,7 +29,7 @@ internal class PersonDetailsService(
       val activeOffenderManager = offenderDetails.offenderManagers?.first { it.active ?: false }
       val trustOfficerForenames = activeOffenderManager?.trustOfficer?.forenames ?: ""
       val trustOfficerSurname = activeOffenderManager?.trustOfficer?.surname ?: ""
-      val recommendationDetails = recommendationService?.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService?.getRecommendationsInProgressForCrn(crn)
 
       return PersonDetailsResponse(
         personalDetailsOverview = buildPersonalDetails(crn, offenderDetails),

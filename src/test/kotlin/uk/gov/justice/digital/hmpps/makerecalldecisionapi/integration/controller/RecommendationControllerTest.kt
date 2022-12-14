@@ -360,7 +360,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.hasContrabandRisk.selected").isEqualTo(false)
       .jsonPath("$.hasContrabandRisk.details").isEqualTo(null)
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
 
@@ -412,7 +412,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
@@ -500,7 +500,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
     assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)

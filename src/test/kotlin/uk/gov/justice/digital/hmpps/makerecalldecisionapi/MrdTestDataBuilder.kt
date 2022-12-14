@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
@@ -56,6 +57,7 @@ class MrdTestDataBuilder {
         data = RecommendationModel(
           crn = crn,
           status = Status.DRAFT,
+          recallConsideredList = recallConsideredData(),
           recallType = recallTypeData(),
           custodyStatus = custodyStatusData(),
           responseToProbation = "They have not responded well",
@@ -149,6 +151,16 @@ class MrdTestDataBuilder {
           hasBeenReviewed = true
         ),
         hasBeenReviewed = true
+      )
+    }
+
+    private fun recallConsideredData(): List<RecallConsidered> {
+      return listOf(
+        RecallConsidered(
+          createdDate = "2022-12-01T15:22:24.567Z",
+          userName = "Bob Smith",
+          recallConsideredDetail = "I have concerns about their behaviour"
+        )
       )
     }
 

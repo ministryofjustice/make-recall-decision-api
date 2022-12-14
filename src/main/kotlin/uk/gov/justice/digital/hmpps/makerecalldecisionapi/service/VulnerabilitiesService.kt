@@ -25,7 +25,7 @@ internal class VulnerabilitiesService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val vulnerabilities = getVulnerabilityDetail(crn)
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       return VulnerabilitiesResponse(
         personalDetailsOverview = personalDetailsOverview,

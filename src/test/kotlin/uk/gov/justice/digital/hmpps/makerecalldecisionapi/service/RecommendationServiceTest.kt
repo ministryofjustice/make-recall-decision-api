@@ -788,18 +788,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `get a draft recommendation for CRN from the database`() {
+  fun `get a recommendation in draft or recall considered state for CRN from the database`() {
     val recommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
-    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+    given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
       .willReturn(listOf(recommendation))
 
-    val result = recommendationService.getDraftRecommendationForCrn(crn)
+    val result = recommendationService.getRecommendationsInProgressForCrn(crn)
 
     assertThat(result?.recommendationId).isEqualTo(recommendation.id)
     assertThat(result?.lastModifiedBy).isEqualTo(recommendation.data.lastModifiedBy)
     assertThat(result?.lastModifiedDate).isEqualTo(recommendation.data.lastModifiedDate)
     assertThat(result?.recallType).isEqualTo(recommendation.data.recallType)
+    assertThat(result?.recallConsideredList).isEqualTo(recommendation.data.recallConsideredList)
   }
 
   @Test
@@ -1017,10 +1018,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z")
     )
 
-    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+    given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
       .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5))
 
-    val result = recommendationService.getDraftRecommendationForCrn(crn)
+    val result = recommendationService.getRecommendationsInProgressForCrn(crn)
 
     assertThat(result?.recommendationId).isEqualTo(recommendation3.id)
     assertThat(result?.lastModifiedBy).isEqualTo(recommendation3.data.lastModifiedBy)

@@ -53,7 +53,7 @@ internal class RiskService(
       val roshSummary = getRoshSummary(crn)
       val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
-      val recommendationDetails = recommendationService?.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService?.getRecommendationsInProgressForCrn(crn)
       val roshHistory = getRoshHistory(crn)
 
       return RiskResponse(
