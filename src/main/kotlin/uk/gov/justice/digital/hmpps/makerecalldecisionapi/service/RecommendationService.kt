@@ -326,7 +326,8 @@ internal class RecommendationService(
         lastModifiedDate = recommendationEntity[0].data.lastModifiedDate,
         lastModifiedBy = recommendationEntity[0].data.lastModifiedBy,
         recallType = recommendationEntity[0].data.recallType,
-        recallConsideredList = recommendationEntity[0].data.recallConsideredList
+        recallConsideredList = recommendationEntity[0].data.recallConsideredList,
+        status = recommendationEntity[0].data.status,
       )
     } else {
       null

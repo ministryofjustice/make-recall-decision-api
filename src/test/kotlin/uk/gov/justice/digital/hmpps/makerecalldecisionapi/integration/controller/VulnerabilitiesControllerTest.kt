@@ -64,6 +64,7 @@ class VulnerabilitiesControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
+        .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
     }
   }
 

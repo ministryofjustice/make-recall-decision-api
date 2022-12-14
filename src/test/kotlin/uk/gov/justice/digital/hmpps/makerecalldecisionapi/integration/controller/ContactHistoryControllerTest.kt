@@ -103,6 +103,7 @@ class ContactHistoryControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
     }
   }
 
