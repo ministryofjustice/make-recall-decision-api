@@ -20,12 +20,14 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves licence condition details for case with custodial conviction`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -78,6 +80,10 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
     }
   }
 
@@ -264,11 +270,13 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves licence condition details from CVL for a case that exists in CVL`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       cvlLicenceMatchResponse(nomsId, crn)
       cvlLicenceByIdResponse(123344, nomsId, crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -307,6 +315,10 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
     }
   }
 

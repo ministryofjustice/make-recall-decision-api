@@ -21,14 +21,16 @@ class CaseOverviewControllerTest(
   @Test
   fun `retrieves case summary details`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       oasysAssessmentsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
-      deleteAndCreateRecommendation()
-      updateRecommendation(Status.DRAFT)
+      deleteAndCreateRecommendation(featureFlagString)
+      updateRecommendation(Status.RECALL_CONSIDERED)
       riskManagementPlanResponse(crn)
 
       webTestClient.get()
@@ -65,6 +67,10 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
         .jsonPath("$.risk.assessments.lastUpdatedDate").isEqualTo("2022-04-24T15:00:08.000Z")
         .jsonPath("$.risk.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
         .jsonPath("$.risk.assessments.offencesMatch").isEqualTo(true)

@@ -187,7 +187,6 @@ internal class RecommendationService(
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
         existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
-
       refreshData(pageRefreshIds, existingRecommendationEntity.data)
 
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
@@ -311,10 +310,11 @@ internal class RecommendationService(
     )
   }
 
-  fun getDraftRecommendationForCrn(crn: String): ActiveRecommendation? {
-    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name)
+  fun getRecommendationsInProgressForCrn(crn: String): ActiveRecommendation? {
+    val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
     Collections.sort(recommendationEntity)
 
+    // FIXME: This will need to be fixed when we open up functionally to allow multiple recommendations per CRN
     if (recommendationEntity.size > 1) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
@@ -324,6 +324,7 @@ internal class RecommendationService(
         lastModifiedDate = recommendationEntity[0].data.lastModifiedDate,
         lastModifiedBy = recommendationEntity[0].data.lastModifiedBy,
         recallType = recommendationEntity[0].data.recallType,
+        recallConsideredList = recommendationEntity[0].data.recallConsideredList
       )
     } else {
       null

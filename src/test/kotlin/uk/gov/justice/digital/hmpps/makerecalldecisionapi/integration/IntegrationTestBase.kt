@@ -24,6 +24,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
@@ -142,16 +143,16 @@ abstract class IntegrationTestBase {
     oauthMock.stop()
   }
 
-  fun deleteAndCreateRecommendation() {
+  fun deleteAndCreateRecommendation(featureFlagString: String? = null) {
     deleteRecommendation()
-    createRecommendation()
+    createRecommendation(featureFlagString)
   }
 
   fun deleteRecommendation() {
     repository.deleteAllInBatch()
   }
 
-  private fun createRecommendation() {
+  private fun createRecommendation(featureFlagString: String? = null) {
     licenceConditionsResponse(crn, convictionId)
 
     val response = convertResponseToJSONObject(
@@ -161,7 +162,14 @@ abstract class IntegrationTestBase {
         .body(
           BodyInserters.fromValue(recommendationRequest(crn))
         )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+          )
+        }
         .exchange()
         .expectStatus().isCreated
     )
@@ -169,7 +177,7 @@ abstract class IntegrationTestBase {
     createdRecommendationId = response.get("id") as Int
   }
 
-  fun updateRecommendation(status: Status) {
+  fun updateRecommendation(status: Status = Status.DRAFT) {
     webTestClient.patch()
       .uri("/recommendations/$createdRecommendationId")
       .contentType(MediaType.APPLICATION_JSON)

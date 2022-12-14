@@ -20,6 +20,8 @@ class ContactHistoryControllerTest(
   @Test
   fun `retrieves all contact history details`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
       contactSummaryResponse(
@@ -27,7 +29,7 @@ class ContactHistoryControllerTest(
         contactSummaryResponse()
       )
       groupedDocumentsResponse(crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -95,6 +97,10 @@ class ContactHistoryControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
     }
   }
 

@@ -156,13 +156,15 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data when ARN Scores are null`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       allRiskScoresEmptyResponse(crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -207,6 +209,10 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
   }
@@ -214,13 +220,15 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
       allOffenderDetailsResponse(crn)
       mappaDetailsResponse(crn)
       allRiskScoresResponse(crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -326,6 +334,10 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
   }
