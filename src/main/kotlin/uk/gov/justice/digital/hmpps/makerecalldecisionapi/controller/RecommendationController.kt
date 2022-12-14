@@ -54,8 +54,9 @@ internal class RecommendationController(
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
+    val readableUserName = authenticationFacade.currentNameOfUser
     val responseEntity = try {
-      ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username, flags), CREATED)
+      ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username, readableUserName, flags), CREATED)
     } catch (e: UserAccessException) {
       ResponseEntity(RecommendationResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }

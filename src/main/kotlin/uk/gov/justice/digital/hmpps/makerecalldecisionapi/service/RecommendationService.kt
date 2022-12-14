@@ -65,6 +65,7 @@ internal class RecommendationService(
   suspend fun createRecommendation(
     recommendationRequest: CreateRecommendationRequest,
     username: String?,
+    readableUsername: String?,
     featureFlags: FeatureFlags?
   ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -76,7 +77,7 @@ internal class RecommendationService(
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
           createdDate = utcNowDateTimeString(),
-          userName = username,
+          userName = readableUsername,
           recallConsideredDetail = recommendationRequest.recallConsideredDetail
         )
       ) else null

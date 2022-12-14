@@ -118,7 +118,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recallConsidereDetail = if (recallConsidered == Status.RECALL_CONSIDERED.toString()) "Juicy details" else null
 
       // when
-      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn, recallConsidereDetail), "Bill", featureFlags)
+      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn, recallConsidereDetail), "UserBill", "Bill", featureFlags)
 
       // then
       assertThat(response.id).isNotNull
@@ -159,9 +159,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           )
         )
       )
-      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
       assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
       assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
@@ -832,7 +832,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null)
       )
       try {
-        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null)
+        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
         fail()
       } catch (actual: UserAccessException) {
         val expected = UserAccessException(
@@ -1308,7 +1308,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null)
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
@@ -1333,7 +1333,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null)
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
