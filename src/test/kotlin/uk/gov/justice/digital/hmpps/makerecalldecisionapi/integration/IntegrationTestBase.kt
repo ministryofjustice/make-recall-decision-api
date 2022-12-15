@@ -24,7 +24,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
@@ -168,7 +167,7 @@ abstract class IntegrationTestBase {
               it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
               it.set("X-Feature-Flags", featureFlagString)
             )
-          )
+            )
         }
         .exchange()
         .expectStatus().isCreated

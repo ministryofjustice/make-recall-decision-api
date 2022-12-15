@@ -159,7 +159,8 @@ class MrdTestDataBuilder {
         RecallConsidered(
           createdDate = "2022-12-01T15:22:24.567Z",
           userName = "Bob Smith",
-          recallConsideredDetail = "I have concerns about their behaviour"
+          recallConsideredDetail = "I have concerns about their behaviour",
+          userId = "Bob Smith Id"
         )
       )
     }

@@ -34,7 +34,59 @@ import java.time.format.DateTimeFormatter
 @ExperimentalCoroutinesApi
 class RecommendationControllerTest() : IntegrationTestBase() {
 
-  // TODO add version without flagConsiderRecall
+  @Test
+  fun `create recommendation without flagConsiderRecall`() {
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+
+    val featureFlagString = "{\"flagConsiderRecall\": false, \"unknownFeatureFlag\": true }"
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
+        .exchange()
+        .expectStatus().isCreated
+    )
+
+    val idOfRecommendationJustCreated = response.get("id")
+
+    assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
+    assertThat(response.get("status")).isEqualTo("DRAFT")
+    val personOnProbation = JSONObject(response.get("personOnProbation").toString())
+    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
+    assertThat(personOnProbation.get("gender")).isEqualTo("Male")
+    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
+    assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
+    assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
+    assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
+    assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
+    assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
+    val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
+    val address = JSONObject(personOnProbationAddress.get(0).toString())
+    assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
+    assertThat(address.get("town")).isEqualTo("Sheffield")
+    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("noFixedAbode")).isEqualTo(false)
+  }
+
   @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
