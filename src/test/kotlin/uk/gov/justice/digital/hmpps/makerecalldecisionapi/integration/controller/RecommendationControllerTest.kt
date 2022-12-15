@@ -35,15 +35,13 @@ import java.time.format.DateTimeFormatter
 class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `create recommendation without flagConsiderRecall`() {
+  fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
     convictionResponse(crn, "011")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
-
-    val featureFlagString = "{\"flagConsiderRecall\": false, \"unknownFeatureFlag\": true }"
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -55,8 +53,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString)
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
             )
             )
         }
@@ -88,38 +85,19 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `create recommendation`() {
-    licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011")
-    oasysAssessmentsResponse(crn)
+  fun `create recommendation with recallConsideredList feature flag active`() {
     userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
-
-    val featureFlagString = "{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }"
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation("{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }")
 
     val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
-        )
-        .headers {
-          (
-            listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString)
-            )
-            )
-        }
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isOk
     )
-
-    val idOfRecommendationJustCreated = response.get("id")
-
-    assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
+    assertThat(response.get("id")).isEqualTo(createdRecommendationId)
     assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
     assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
@@ -138,6 +116,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(address.get("town")).isEqualTo("Sheffield")
     assertThat(address.get("postcode")).isEqualTo("S3 7BS")
     assertThat(address.get("noFixedAbode")).isEqualTo(false)
+    val recallConsideredList = JSONArray(response.get("recallConsideredList").toString())
+    val recallConsidered = JSONObject(recallConsideredList.get(0).toString())
+    assertThat(recallConsideredList.length()).isEqualTo(1)
+    assertThat(recallConsidered.get("id")).isNotNull
+    assertThat(recallConsidered.get("userName")).isEqualTo("some_user")
+    assertThat(recallConsidered.get("createdDate")).isNotNull
+    assertThat(recallConsidered.get("userId")).isEqualTo("SOME_USER")
+    assertThat(recallConsidered.get("recallConsideredDetail")).isEqualTo("I have concerns around their behaviour")
   }
 
   @Test
