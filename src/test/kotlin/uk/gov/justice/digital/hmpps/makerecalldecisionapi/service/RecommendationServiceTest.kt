@@ -82,8 +82,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var mrdEmitterMocked: MrdEventsEmitter
 
-  @Test()
-  fun `creates a new recommendation in the database`() {
+  @ParameterizedTest()
+  @CsvSource("RECALL_CONSIDERED", "NO_FLAGS")
+  fun `create recommendation with and without recall considered flag`(recallConsidered: String) {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -112,8 +113,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, riskServiceMocked, communityApiClient, mrdEmitterMocked)
 
+      // and
+      val featureFlags = if (recallConsidered == Status.RECALL_CONSIDERED.toString()) FeatureFlags(flagConsiderRecall = true) else null
+      val recallConsidereDetail = if (recallConsidered == Status.RECALL_CONSIDERED.toString()) "Juicy details" else null
+
       // when
-      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn, recallConsidereDetail), "UserBill", "Bill", featureFlags)
 
       // then
       assertThat(response.id).isNotNull
@@ -123,10 +128,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
       val recommendationEntity = captor.firstValue
+      val expectedStatus = if (recallConsidered == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
 
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
-      assertThat(recommendationEntity.data.status).isEqualTo(Status.DRAFT)
+      assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
       assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
         PersonOnProbation(
           name = "John Smith",
@@ -153,14 +159,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           )
         )
       )
-      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationEntity.data.createdBy).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
       assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
       assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
+
+      if (recallConsidered == Status.RECALL_CONSIDERED.toString()) {
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
+        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+      } else {
+        assertThat(recommendationEntity.data.recallConsideredList).isNull()
+      }
     }
   }
 
@@ -772,18 +788,20 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `get a draft recommendation for CRN from the database`() {
+  fun `get a recommendation in draft or recall considered state for CRN from the database`() {
     val recommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
-    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+    given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
       .willReturn(listOf(recommendation))
 
-    val result = recommendationService.getDraftRecommendationForCrn(crn)
+    val result = recommendationService.getRecommendationsInProgressForCrn(crn)
 
     assertThat(result?.recommendationId).isEqualTo(recommendation.id)
     assertThat(result?.lastModifiedBy).isEqualTo(recommendation.data.lastModifiedBy)
     assertThat(result?.lastModifiedDate).isEqualTo(recommendation.data.lastModifiedDate)
     assertThat(result?.recallType).isEqualTo(recommendation.data.recallType)
+    assertThat(result?.recallConsideredList).isEqualTo(recommendation.data.recallConsideredList)
+    assertThat(result?.status).isEqualTo(recommendation.data.status)
   }
 
   @Test
@@ -816,7 +834,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null)
       )
       try {
-        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
         fail()
       } catch (actual: UserAccessException) {
         val expected = UserAccessException(
@@ -1001,14 +1019,15 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       data = RecommendationModel(crn = crn, lastModifiedBy = "Harry Winks", lastModifiedDate = "2022-07-26T12:00:00.000", createdBy = "Jack", createdDate = "2022-07-01T15:22:24.567Z")
     )
 
-    given(recommendationRepository.findByCrnAndStatus(crn, Status.DRAFT.name))
+    given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
       .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5))
 
-    val result = recommendationService.getDraftRecommendationForCrn(crn)
+    val result = recommendationService.getRecommendationsInProgressForCrn(crn)
 
     assertThat(result?.recommendationId).isEqualTo(recommendation3.id)
     assertThat(result?.lastModifiedBy).isEqualTo(recommendation3.data.lastModifiedBy)
     assertThat(result?.lastModifiedDate).isEqualTo(recommendation3.data.lastModifiedDate)
+    assertThat(result?.status).isEqualTo(recommendation3.data.status)
   }
 
   @Test
@@ -1292,7 +1311,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()
@@ -1317,7 +1336,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // when
-      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill")
+      recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
 
       // then
       val captor = argumentCaptor<RecommendationEntity>()

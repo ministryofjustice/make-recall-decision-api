@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
@@ -52,6 +53,7 @@ data class RecommendationEntity(
 
 data class RecommendationModel(
   val crn: String?,
+  val recallConsideredList: List<RecallConsidered>? = null,
   var recallType: RecallType? = null,
   var custodyStatus: CustodyStatus? = null,
   var localPoliceContact: LocalPoliceContact? = null,
@@ -100,7 +102,7 @@ data class RecommendationModel(
 ) : Serializable
 
 enum class Status {
-  DRAFT, DOCUMENT_CREATED, DELETED
+  DRAFT, DOCUMENT_CREATED, DELETED, RECALL_CONSIDERED
 }
 
 data class TextValueOption(

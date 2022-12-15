@@ -48,12 +48,15 @@ internal class RecommendationController(
   @Operation(summary = "Creates a recommendation")
   suspend fun recommendation(
     @RequestBody recommendationRequest: CreateRecommendationRequest,
+    @RequestHeader("X-Feature-Flags") featureFlags: String?,
     userLogin: Principal
   ): ResponseEntity<RecommendationResponse>? {
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
+    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
+    val readableUserName = authenticationFacade.currentNameOfUser
     val responseEntity = try {
-      ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username), CREATED)
+      ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username, readableUserName, flags), CREATED)
     } catch (e: UserAccessException) {
       ResponseEntity(RecommendationResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
     }

@@ -27,7 +27,7 @@ internal class CaseSummaryOverviewService(
       val activeRegistrations = registrations?.filter { it.active ?: false }
       val riskFlags = activeRegistrations?.map { it.type?.description ?: "" } ?: emptyList()
 
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
       val assessmentInfo = riskService.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenNoMatch = false)

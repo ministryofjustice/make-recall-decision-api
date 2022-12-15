@@ -24,7 +24,7 @@ internal class ContactHistoryService(
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val contactSummary = getContactSummary(crn)
       val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       ContactHistoryResponse(
         personalDetailsOverview = personalDetailsOverview,
