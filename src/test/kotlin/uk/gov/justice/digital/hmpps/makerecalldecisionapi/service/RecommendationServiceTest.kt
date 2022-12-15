@@ -1079,6 +1079,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
       assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       then(mrdEmitterMocked).shouldHaveNoInteractions()
     }
   }
@@ -1122,6 +1123,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
       assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
     }
   }
@@ -1209,6 +1211,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
+      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
     }
   }
 
@@ -1270,6 +1273,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
       assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
+      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
     }
   }
 
