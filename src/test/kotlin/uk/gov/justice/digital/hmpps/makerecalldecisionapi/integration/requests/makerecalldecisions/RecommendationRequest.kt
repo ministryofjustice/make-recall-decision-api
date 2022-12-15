@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 
 fun recommendationRequest(crn: String) = """
   {
-    "crn": "$crn"
+    "crn": "$crn",
+    "recallConsideredDetail" : "I have concerns around their behaviour"
   }
 """.trimIndent()

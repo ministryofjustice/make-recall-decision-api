@@ -19,9 +19,11 @@ class PersonDetailsControllerTest(
   @Test
   fun `retrieves person details`() {
     runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
-      deleteAndCreateRecommendation()
+      deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -49,6 +51,13 @@ class PersonDetailsControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("some_user")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
     }
   }
 

@@ -35,13 +35,16 @@ import java.time.format.DateTimeFormatter
 class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `create recommendation`() {
+  fun `create recommendation without flagConsiderRecall`() {
     licenceConditionsResponse(crn, 2500614567)
     convictionResponse(crn, "011")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     allOffenderDetailsResponse(crn)
+
+    val featureFlagString = "{\"flagConsiderRecall\": false, \"unknownFeatureFlag\": true }"
+
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -49,7 +52,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .body(
           BodyInserters.fromValue(recommendationRequest(crn))
         )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
         .exchange()
         .expectStatus().isCreated
     )
@@ -58,6 +68,59 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
+    val personOnProbation = JSONObject(response.get("personOnProbation").toString())
+    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
+    assertThat(personOnProbation.get("gender")).isEqualTo("Male")
+    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
+    assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
+    assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
+    assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
+    assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
+    assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
+    val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
+    val address = JSONObject(personOnProbationAddress.get(0).toString())
+    assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
+    assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
+    assertThat(address.get("town")).isEqualTo("Sheffield")
+    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("noFixedAbode")).isEqualTo(false)
+  }
+
+  @Test
+  fun `create recommendation`() {
+    licenceConditionsResponse(crn, 2500614567)
+    convictionResponse(crn, "011")
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    mappaDetailsResponse(crn, category = 1, level = 1)
+    allOffenderDetailsResponse(crn)
+
+    val featureFlagString = "{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }"
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
+        .exchange()
+        .expectStatus().isCreated
+    )
+
+    val idOfRecommendationJustCreated = response.get("id")
+
+    assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
+    assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
     assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
@@ -349,7 +412,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.hasContrabandRisk.selected").isEqualTo(false)
       .jsonPath("$.hasContrabandRisk.details").isEqualTo(null)
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
   }
 
@@ -401,7 +464,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
@@ -489,7 +552,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, Status.DRAFT.name)
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
     assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)

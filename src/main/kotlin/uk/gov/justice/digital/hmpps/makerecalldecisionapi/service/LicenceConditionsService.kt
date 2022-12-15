@@ -22,7 +22,7 @@ internal class LicenceConditionsService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val convictions = convictionService.buildConvictionResponse(crn, true)
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       LicenceConditionsResponse(
         personalDetailsOverview = personalDetailsOverview,
@@ -39,7 +39,7 @@ internal class LicenceConditionsService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val licenceConditions = personalDetailsOverview.nomsNumber.let { createAndVaryALicenceService.buildLicenceConditions(crn, it!!) }
-      val recommendationDetails = recommendationService.getDraftRecommendationForCrn(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       LicenceConditionsCvlResponse(
         personalDetailsOverview = personalDetailsOverview,

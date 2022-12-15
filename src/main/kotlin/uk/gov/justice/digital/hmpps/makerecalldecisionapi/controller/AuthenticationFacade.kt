@@ -31,6 +31,16 @@ class AuthenticationFacade {
       }
     }
 
+  val currentUserId: String?
+    get() {
+      val credentials = authentication.credentials as Jwt
+      return if (credentials.claims is Map<*, *>) {
+        credentials.claims["user_id"] as String?
+      } else {
+        null
+      }
+    }
+
   private val userPrincipal: Any?
     get() {
       val auth = authentication
