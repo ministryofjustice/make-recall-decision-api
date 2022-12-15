@@ -694,6 +694,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val recommendationResponse = recommendationService.getRecommendation(456L)
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
+    assertThat(recommendationResponse.recallConsideredList?.get(0)?.id).isNotNull
+    assertThat(recommendationResponse.recallConsideredList?.get(0)?.createdDate).isEqualTo("2022-12-01T15:22:24.567Z")
+    assertThat(recommendationResponse.recallConsideredList?.get(0)?.userName).isEqualTo("Bob Smith")
+    assertThat(recommendationResponse.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("I have concerns about their behaviour")
+    assertThat(recommendationResponse.recallConsideredList?.get(0)?.userId).isEqualTo("Bob Smith Id")
+    assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
     assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
     assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation?.toPersonOnProbationDto())
     assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
