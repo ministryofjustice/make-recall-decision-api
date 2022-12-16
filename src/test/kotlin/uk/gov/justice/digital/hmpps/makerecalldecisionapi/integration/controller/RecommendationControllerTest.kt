@@ -363,6 +363,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.previousRecalls.previousRecallDates[0]").isEqualTo("2018-10-10")
       .jsonPath("$.previousRecalls.previousRecallDates[1]").isEqualTo("2016-04-30")
       .jsonPath("$.previousRecalls.hasBeenRecalledPreviously").isEqualTo(true)
+      .jsonPath("$.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
   }
 
   @Test
@@ -400,6 +401,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
     assertThat(result[0].data.lastModifiedBy, equalTo("SOME_USER"))
+    assertThat(result[0].data.lastModifiedByUserName, equalTo("some_user"))
   }
 
   private fun updateRecommendation(recommendationRequest: String, refreshPage: String? = null) {

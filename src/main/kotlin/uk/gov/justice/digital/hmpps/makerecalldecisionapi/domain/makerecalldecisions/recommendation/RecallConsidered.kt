@@ -4,7 +4,7 @@ import java.security.SecureRandom
 import kotlin.math.abs
 
 data class RecallConsidered(
-  val id: Long = abs(SecureRandom().nextInt().toLong()),
+  var id: Long = abs(SecureRandom().nextInt().toLong()),
   val userId: String?,
   val createdDate: String?,
   val userName: String?,

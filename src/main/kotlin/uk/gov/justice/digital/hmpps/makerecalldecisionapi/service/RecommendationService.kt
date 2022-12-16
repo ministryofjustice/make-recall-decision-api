@@ -74,14 +74,7 @@ internal class RecommendationService(
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
-        RecallConsidered(
-          userId = username,
-          createdDate = utcNowDateTimeString(),
-          userName = readableUsername,
-          recallConsideredDetail = recommendationRequest.recallConsideredDetail
-        )
-      ) else null
+      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) buildRecallDecisionList(username, readableUsername, recommendationRequest.recallConsideredDetail) else null
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
@@ -101,6 +94,17 @@ internal class RecommendationService(
         personOnProbation = savedRecommendation?.data?.personOnProbation?.toPersonOnProbationDto()
       )
     }
+  }
+
+  fun buildRecallDecisionList(username: String?, readableUsername: String?, recallConsideredDetail: String?): List<RecallConsidered> {
+    return listOf(
+      RecallConsidered(
+        userId = username,
+        createdDate = utcNowDateTimeString(),
+        userName = readableUsername,
+        recallConsideredDetail = recallConsideredDetail
+      )
+    )
   }
 
   fun getRecommendation(recommendationId: Long): RecommendationResponse {
@@ -165,7 +169,8 @@ internal class RecommendationService(
   suspend fun updateRecommendation(
     jsonRequest: JsonNode?,
     recommendationId: Long,
-    username: String?,
+    userId: String?,
+    readableUserName: String?,
     userEmail: String?,
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false,
@@ -179,28 +184,37 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       if (isPartADownloaded) {
-        existingRecommendationEntity.data.userNamePartACompletedBy = username
+        existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
         existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
       } else if (isDntrDownloaded) {
-        existingRecommendationEntity.data.userNameDntrLetterCompletedBy = username
+        existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
         existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
         existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
+        existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(updateRecommendationRequest, existingRecommendationEntity.data, userId, readableUserName)
         existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
       refreshData(pageRefreshIds, existingRecommendationEntity.data)
 
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
-      existingRecommendationEntity.data.lastModifiedBy = username
+      existingRecommendationEntity.data.lastModifiedBy = userId
+      existingRecommendationEntity.data.lastModifiedByUserName = readableUserName
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
       log.info("recommendation for ${savedRecommendation.data.crn} updated")
       return buildRecommendationResponse(savedRecommendation)
     }
+  }
+
+  private fun updateRecallConsideredList(updateRecommendationRequest: RecommendationModel, existingRecommendation: RecommendationModel, username: String?, readableUserName: String?): List<RecallConsidered>? {
+    if (updateRecommendationRequest.recallConsideredList != null && updateRecommendationRequest.recallConsideredList?.isNotEmpty() == true) {
+      return buildRecallDecisionList(username, readableUserName, updateRecommendationRequest.recallConsideredList!![0].recallConsideredDetail)
+    }
+    return existingRecommendation.recallConsideredList
   }
 
   private suspend fun refreshData(pageRefreshIds: List<String>?, model: RecommendationModel) {
@@ -339,12 +353,13 @@ internal class RecommendationService(
 
   suspend fun generateDntr(
     recommendationId: Long,
-    username: String?,
+    userId: String?,
+    readableUsername: String?,
     documentRequestType: DocumentRequestType?,
     featureFlags: FeatureFlags?
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
-      val documentResponse = generateDntrDownload(recommendationId, username)
+      val documentResponse = generateDntrDownload(recommendationId, userId, readableUsername)
 
       if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
         sendDntrDownloadEvent(recommendationId)
@@ -370,8 +385,8 @@ internal class RecommendationService(
     mrdEventsEmitter?.sendEvent(payload)
   }
 
-  private suspend fun generateDntrDownload(recommendationId: Long, username: String?): DocumentResponse {
-    val recommendationResponse = updateRecommendation(null, recommendationId, username, null, false, true, null)
+  private suspend fun generateDntrDownload(recommendationId: Long, userId: String?, readableUsername: String?,): DocumentResponse {
+    val recommendationResponse = updateRecommendation(null, recommendationId, userId, readableUsername, null, false, true, null)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -401,8 +416,8 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  suspend fun generatePartA(recommendationId: Long, username: String?, userEmail: String?): DocumentResponse {
-    val recommendationModel = updateRecommendation(null, recommendationId, username, userEmail, true, false, null)
+  suspend fun generatePartA(recommendationId: Long, username: String?, readableUsername: String?, userEmail: String?): DocumentResponse {
+    val recommendationModel = updateRecommendation(null, recommendationId, username, readableUsername, userEmail, true, false, null)
     val userAccessResponse = recommendationModel.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))

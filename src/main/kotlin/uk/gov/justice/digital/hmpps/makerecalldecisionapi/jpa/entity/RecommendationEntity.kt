@@ -53,7 +53,7 @@ data class RecommendationEntity(
 
 data class RecommendationModel(
   val crn: String?,
-  val recallConsideredList: List<RecallConsidered>? = null,
+  var recallConsideredList: List<RecallConsidered>? = null,
   var recallType: RecallType? = null,
   var custodyStatus: CustodyStatus? = null,
   var localPoliceContact: LocalPoliceContact? = null,
@@ -77,6 +77,7 @@ data class RecommendationModel(
   var userNameDntrLetterCompletedBy: String? = null,
   var lastDntrLetterADownloadDateTime: LocalDateTime? = null,
   var lastModifiedBy: String? = null,
+  var lastModifiedByUserName: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
   val createdDate: String? = null,
