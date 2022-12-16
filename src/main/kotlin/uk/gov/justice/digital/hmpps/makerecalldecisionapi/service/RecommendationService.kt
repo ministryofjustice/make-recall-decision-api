@@ -187,9 +187,11 @@ internal class RecommendationService(
         existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
         existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
         existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
       } else if (isDntrDownloaded) {
         existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
         existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
+        existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)

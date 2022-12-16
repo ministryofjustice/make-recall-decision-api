@@ -103,7 +103,8 @@ data class RecommendationModel(
 ) : Serializable
 
 enum class Status {
-  DRAFT, DOCUMENT_CREATED, DELETED, RECALL_CONSIDERED
+  // Looks like DOCUMENT_CREATED is only used in tests
+  DRAFT, DOCUMENT_CREATED, DELETED, RECALL_CONSIDERED, DOCUMENT_DOWNLOADED
 }
 
 data class TextValueOption(
