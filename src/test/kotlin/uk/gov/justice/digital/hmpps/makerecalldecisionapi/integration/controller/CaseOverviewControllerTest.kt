@@ -72,7 +72,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("I have concerns around their behaviour")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("RECALL_CONSIDERED")
         .jsonPath("$.risk.assessments.lastUpdatedDate").isEqualTo("2022-04-24T15:00:08.000Z")
         .jsonPath("$.risk.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)

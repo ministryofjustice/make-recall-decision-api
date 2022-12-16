@@ -138,7 +138,8 @@ class MrdTestDataBuilder {
         hasBeenReviewed = reviewedPages(personOnProbationReviewed = true, convictionDetailReviewed = true, mappa = true),
         offenceAnalysis = "This is the offence analysis",
         previousReleases = previousReleases(),
-        previousRecalls = previousRecalls()
+        previousRecalls = previousRecalls(),
+        recallConsideredList = recallConsideredData()
       )
     }
 
@@ -157,10 +158,11 @@ class MrdTestDataBuilder {
     private fun recallConsideredData(): List<RecallConsidered> {
       return listOf(
         RecallConsidered(
-          createdDate = "2022-12-01T15:22:24.567Z",
-          userName = "Bob Smith",
+          id = 1,
+          createdDate = "2022-07-26T09:48:27.443Z",
+          userName = "Bill",
           recallConsideredDetail = "I have concerns about their behaviour",
-          userId = "Bob Smith Id"
+          userId = "bill"
         )
       )
     }
