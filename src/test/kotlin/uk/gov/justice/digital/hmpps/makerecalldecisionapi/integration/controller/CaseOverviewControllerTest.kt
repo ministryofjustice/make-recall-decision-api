@@ -21,7 +21,7 @@ class CaseOverviewControllerTest(
   @Test
   fun `retrieves case summary details`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)

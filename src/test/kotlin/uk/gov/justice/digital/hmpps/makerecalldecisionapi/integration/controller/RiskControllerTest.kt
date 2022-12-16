@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 @ExperimentalCoroutinesApi
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class RiskControllerTest(
+  @Value("\${mrd.url}") private val mrdUrl: String?,
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
@@ -156,7 +157,7 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data when ARN Scores are null`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
@@ -223,7 +224,7 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)

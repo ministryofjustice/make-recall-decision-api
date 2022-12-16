@@ -134,7 +134,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       val featureFlags = when (featureFlag) {
-        "RECALL_CONSIDERED" -> FeatureFlags(flagDomainEventConsiderRecall = true)
+        "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
         "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
         else -> null
       }

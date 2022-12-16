@@ -17,7 +17,7 @@ class VulnerabilitiesControllerTest(
   @Test
   fun `retrieves risk vulnerability details`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)

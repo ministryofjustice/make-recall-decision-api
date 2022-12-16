@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -43,7 +44,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
-import java.lang.System.getenv
 import java.time.LocalDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
@@ -58,7 +58,8 @@ internal class RecommendationService(
   private val convictionService: ConvictionService,
   @Lazy private val riskService: RiskService?,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
-  private val mrdEventsEmitter: MrdEventsEmitter?
+  private val mrdEventsEmitter: MrdEventsEmitter?,
+  @Value("\${mrd.url}") private val mrdUrl: String? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -75,8 +76,8 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      val status = if (featureFlags?.flagDomainEventConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagDomainEventConsiderRecall == true) listOf(
+      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
+      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
           userId = username,
           createdDate = utcNowDateTimeString(),
@@ -98,8 +99,10 @@ internal class RecommendationService(
       )
 
       val recommendationId = savedRecommendation?.id
-      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagDomainEventRecommendationStarted == true) {
+      if (System.getenv("spring_profiles_active") != "dev" && featureFlags?.flagDomainEventRecommendationStarted == true) {
+        log.info("About to send domain event for Recommendation started")
         recommendationId?.let { sendRecommendationStartedEvent(it) }
+        log.info("Sent domain event for Recommendation started asynchronously")
       }
 
       return RecommendationResponse(
@@ -375,8 +378,10 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val documentResponse = generateDntrDownload(recommendationId, userId, readableUsername)
 
-      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
+      if (System.getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
+        log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
+        log.info("Sent domain event for DNTR download asynchronously")
       }
       documentResponse
     } else {
@@ -394,7 +399,7 @@ internal class RecommendationService(
         occurredAt = LocalDateTime.now(),
         detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
-        additionalInformation = AdditionalInformation(recommendationUrl = "https://make-recall-decision-api.hmpps.service.justice.gov.uk/cases/$crn/overview")
+        additionalInformation = AdditionalInformation(recommendationUrl = "$mrdUrl/cases/$crn/overview")
       ),
       messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
     )

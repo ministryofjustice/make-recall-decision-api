@@ -19,7 +19,7 @@ class PersonDetailsControllerTest(
   @Test
   fun `retrieves person details`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)

@@ -20,7 +20,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves licence condition details for case with custodial conviction`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -273,7 +273,7 @@ class LicenceConditionsControllerTest(
   @Test
   fun `retrieves licence condition details from CVL for a case that exists in CVL`() {
     runTest {
-      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
