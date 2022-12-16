@@ -156,7 +156,7 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data when ARN Scores are null`() {
     runTest {
-      val featureFlagString = "{\"flagConsiderRecall\": true }"
+      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
@@ -223,7 +223,7 @@ class RiskControllerTest(
   @Test
   fun `retrieves risk data`() {
     runTest {
-      val featureFlagString = "{\"flagConsiderRecall\": true }"
+      val featureFlagString = "{\"flagDomainEventConsiderRecall\": true }"
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)

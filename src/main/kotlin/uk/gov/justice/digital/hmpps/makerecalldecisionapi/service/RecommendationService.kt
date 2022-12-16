@@ -75,8 +75,15 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) buildRecallDecisionList(username, readableUsername, recommendationRequest.recallConsideredDetail) else null
+      val status = if (featureFlags?.flagDomainEventConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
+      val recallConsideredList = if (featureFlags?.flagDomainEventConsiderRecall == true) listOf(
+        RecallConsidered(
+          userId = username,
+          createdDate = utcNowDateTimeString(),
+          userName = readableUsername,
+          recallConsideredDetail = recommendationRequest.recallConsideredDetail
+        )
+      ) else null
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
@@ -91,7 +98,7 @@ internal class RecommendationService(
       )
 
       val recommendationId = savedRecommendation?.id
-      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagRecommendationStarted == true) {
+      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagDomainEventRecommendationStarted == true) {
         recommendationId?.let { sendRecommendationStartedEvent(it) }
       }
 
@@ -387,10 +394,8 @@ internal class RecommendationService(
         occurredAt = LocalDateTime.now(),
         detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
-        additionalInformation = AdditionalInformation(recommendationUrl = "http://mrd.case.crn/overview")
+        additionalInformation = AdditionalInformation(recommendationUrl = "https://make-recall-decision-api.hmpps.service.justice.gov.uk/cases/$crn/overview")
       ),
-      signingCertURL = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem",
-      subscribeUrl = "http://localhost:9999",
       messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
     )
     mrdEventsEmitter?.sendEvent(payload)

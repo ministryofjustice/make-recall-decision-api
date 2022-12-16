@@ -88,7 +88,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `create recommendation with recallConsideredList feature flag active`() {
     userAccessAllowed(crn)
     allOffenderDetailsResponseOneTimeOnly(crn)
-    deleteAndCreateRecommendation("{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }")
+    deleteAndCreateRecommendation("{\"flagDomainEventConsiderRecall\": true, \"unknownFeatureFlag\": true }")
 
     val response = convertResponseToJSONObject(
       webTestClient.get()
