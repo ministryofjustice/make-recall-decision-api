@@ -300,6 +300,11 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "previousRecalls": {
     "hasBeenRecalledPreviously": true
-  }
+  },
+  "recallConsideredList" : [
+    { 
+      "recallConsideredDetail": "This is an updated recall considered detail" 
+    } 
+  ]
 }
 """.trimIndent()
