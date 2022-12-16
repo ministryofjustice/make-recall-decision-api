@@ -88,6 +88,11 @@ internal class RecommendationService(
         )
       )
 
+      val recommendationId = savedRecommendation?.id
+      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagRecommendationStarted == true) {
+        recommendationId?.let { sendRecommendationStartedEvent(it) }
+      }
+
       return RecommendationResponse(
         id = savedRecommendation?.id,
         status = savedRecommendation?.data?.status,
@@ -368,6 +373,21 @@ internal class RecommendationService(
     } else {
       generateDntrPreview(recommendationId)
     }
+  }
+
+  private fun sendRecommendationStartedEvent(recommendationId: Long) {
+    val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
+    val payload = MrdEvent(
+      message = MrdEventMessageBody(
+        eventType = "RECOMMENDATION_STARTED",
+        version = 1,
+        description = "Recommendation started",
+        occurredAt = LocalDateTime.now(),
+        detailUrl = "", // TODO TBD
+        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn)))
+      )
+    )
+    mrdEventsEmitter?.sendEvent(payload)
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
