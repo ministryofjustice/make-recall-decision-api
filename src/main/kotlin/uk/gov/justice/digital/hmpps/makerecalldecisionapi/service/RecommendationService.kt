@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AdditionalInformation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonReference
@@ -379,13 +381,17 @@ internal class RecommendationService(
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
     val payload = MrdEvent(
       message = MrdEventMessageBody(
-        eventType = "RECOMMENDATION_STARTED",
+        eventType = "prison-recall.recommendation.started",
         version = 1,
-        description = "Recommendation started",
+        description = "Recommendation started (recall or no recall)",
         occurredAt = LocalDateTime.now(),
         detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn)))
-      )
+        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
+        additionalInformation = AdditionalInformation(recommendationUrl = "http://mrd.case.crn/overview")
+      ),
+      signingCertURL = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem",
+      subscribeUrl = "http://localhost:9999",
+      messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
     )
     mrdEventsEmitter?.sendEvent(payload)
   }
