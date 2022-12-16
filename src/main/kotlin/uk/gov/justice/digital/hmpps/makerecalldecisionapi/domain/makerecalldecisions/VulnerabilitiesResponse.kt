@@ -21,6 +21,7 @@ data class Vulnerabilities(
 )
 
 data class VulnerabilityDetail(
+  val risk: String? = null,
   val previous: String? = null,
   val previousConcernsText: String? = null,
   val current: String? = null,
