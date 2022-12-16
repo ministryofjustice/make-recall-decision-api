@@ -156,7 +156,8 @@ internal class RecommendationService(
       reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall,
       nextAppointment = recommendationEntity.data.nextAppointment,
       previousReleases = recommendationEntity.data.previousReleases,
-      previousRecalls = recommendationEntity.data.previousRecalls
+      previousRecalls = recommendationEntity.data.previousRecalls,
+      recallConsideredList = recommendationEntity.data.recallConsideredList
     )
   }
 
