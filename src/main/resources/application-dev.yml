@@ -21,3 +21,6 @@ cvl:
 hmpps:
   auth:
     url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
+mrd:
+  url: https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk

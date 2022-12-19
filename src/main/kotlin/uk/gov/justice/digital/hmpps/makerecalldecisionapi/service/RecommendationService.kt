@@ -5,15 +5,18 @@ import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AdditionalInformation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonReference
@@ -41,7 +44,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
-import java.lang.System.getenv
 import java.time.LocalDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
@@ -56,7 +58,8 @@ internal class RecommendationService(
   private val convictionService: ConvictionService,
   @Lazy private val riskService: RiskService?,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
-  private val mrdEventsEmitter: MrdEventsEmitter?
+  private val mrdEventsEmitter: MrdEventsEmitter?,
+  @Value("\${mrd.url}") private val mrdUrl: String? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -74,7 +77,14 @@ internal class RecommendationService(
     } else {
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) buildRecallDecisionList(username, readableUsername, recommendationRequest.recallConsideredDetail) else null
+      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
+        RecallConsidered(
+          userId = username,
+          createdDate = utcNowDateTimeString(),
+          userName = readableUsername,
+          recallConsideredDetail = recommendationRequest.recallConsideredDetail
+        )
+      ) else null
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
@@ -87,6 +97,13 @@ internal class RecommendationService(
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
         )
       )
+
+      val recommendationId = savedRecommendation?.id
+      if (featureFlags?.flagDomainEventRecommendationStarted == true) {
+        log.info("About to send domain event for Recommendation started")
+        recommendationId?.let { sendRecommendationStartedEvent(it) }
+        log.info("Sent domain event for Recommendation started asynchronously")
+      }
 
       return RecommendationResponse(
         id = savedRecommendation?.id,
@@ -361,13 +378,32 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val documentResponse = generateDntrDownload(recommendationId, userId, readableUsername)
 
-      if (getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
+      if (featureFlags?.flagSendDomainEvent == true) {
+        log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
+        log.info("Sent domain event for DNTR download asynchronously")
       }
       documentResponse
     } else {
       generateDntrPreview(recommendationId)
     }
+  }
+
+  private fun sendRecommendationStartedEvent(recommendationId: Long) {
+    val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
+    val payload = MrdEvent(
+      message = MrdEventMessageBody(
+        eventType = "prison-recall.recommendation.started",
+        version = 1,
+        description = "Recommendation started (recall or no recall)",
+        occurredAt = LocalDateTime.now(),
+        detailUrl = "", // TODO TBD
+        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
+        additionalInformation = AdditionalInformation(recommendationUrl = "$mrdUrl/cases/$crn/overview")
+      ),
+      messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
+    )
+    mrdEventsEmitter?.sendEvent(payload)
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {

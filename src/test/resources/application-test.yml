@@ -58,3 +58,6 @@ oasys:
   arn:
     client:
       timeout: 2
+
+mrd:
+  url: "environment-host"

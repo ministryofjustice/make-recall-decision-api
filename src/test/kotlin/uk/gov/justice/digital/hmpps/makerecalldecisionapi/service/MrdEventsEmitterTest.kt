@@ -58,7 +58,7 @@ class MrdEventsEmitterTest {
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")
-      .isEqualTo("{\"type\":\"Notification\",\"messageId\":\"6584074d-6c22-426b-a1cf-cbc472080d99\",\"topicArn\":\"arn:aws:sns:eu-west-2:000000000000:hmpps-domain\",\"message\":{\"eventType\":\"DNTR_LETTER_DOWNLOADED\",\"version\":1,\"description\":\"DNTR letter downloaded\",\"detailUrl\":\"http://someurl\",\"occurredAt\":[2022,4,26,20,39,47,778000000],\"additionalInformation\":{\"referralId\":null},\"personReference\":{\"identifiers\":[{\"type\":\"some type\",\"value\":\"some value\"}]}},\"timeStamp\":[2022,4,26,20,39,47,778000000],\"subscribeUrl\":\"http://localhost:9999\",\"signingCertURL\":\"https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem\",\"messageAttributes\":{\"eventType\":{\"type\":\"\",\"value\":\"\"}}}")
+      .isEqualTo("{\"type\":\"Notification\",\"messageId\":\"6584074d-6c22-426b-a1cf-cbc472080d99\",\"topicArn\":\"arn:aws:sns:eu-west-2:000000000000:hmpps-domain\",\"message\":{\"eventType\":\"DNTR_LETTER_DOWNLOADED\",\"version\":1,\"description\":\"DNTR letter downloaded\",\"detailUrl\":\"http://someurl\",\"occurredAt\":[2022,4,26,20,39,47,778000000],\"additionalInformation\":{\"referralId\":null,\"recommendationUrl\":null},\"personReference\":{\"identifiers\":[{\"type\":\"some type\",\"value\":\"some value\"}]}},\"timeStamp\":[2022,4,26,20,39,47,778000000],\"subscribeUrl\":\"http://localhost:9999\",\"signingCertURL\":\"https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem\",\"messageAttributes\":{\"eventType\":{\"type\":\"\",\"value\":\"\"}}}")
   }
 
   @Test
@@ -73,7 +73,7 @@ class MrdEventsEmitterTest {
     assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(
       java.util.Map.of(
         "message",
-        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=[2022, 4, 26, 20, 39, 47, 778000000], additionalInformation={referralId=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
+        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=[2022, 4, 26, 20, 39, 47, 778000000], additionalInformation={referralId=null, recommendationUrl=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
         "messageAttributes",
         "{eventType={type=, value=}}",
         "messageId",
