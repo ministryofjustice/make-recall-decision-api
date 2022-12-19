@@ -255,7 +255,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       ),
       ContactGroupResponse(
         groupId = "unknown",
-        label = "Unknown",
+        label = "Not categorised",
         contactTypeCodes = listOf("ABCD", "EFGH")
       )
     )
