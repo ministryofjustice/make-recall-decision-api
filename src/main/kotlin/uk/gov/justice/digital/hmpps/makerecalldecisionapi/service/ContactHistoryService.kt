@@ -82,7 +82,7 @@ internal class ContactHistoryService(
     val codes = unknownContacts.mapNotNull { it.code }
 
     return if (codes.isNotEmpty())
-      existingContacts + ContactGroupResponse("unknown", "Unknown", codes)
+      existingContacts + ContactGroupResponse("unknown", "Not categorised", codes)
     else
       existingContacts
   }
