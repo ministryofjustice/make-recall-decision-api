@@ -99,7 +99,7 @@ internal class RecommendationService(
       )
 
       val recommendationId = savedRecommendation?.id
-      if (System.getenv("spring_profiles_active") != "dev" && featureFlags?.flagDomainEventRecommendationStarted == true) {
+      if (featureFlags?.flagDomainEventRecommendationStarted == true) {
         log.info("About to send domain event for Recommendation started")
         recommendationId?.let { sendRecommendationStartedEvent(it) }
         log.info("Sent domain event for Recommendation started asynchronously")
@@ -378,7 +378,7 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val documentResponse = generateDntrDownload(recommendationId, userId, readableUsername)
 
-      if (System.getenv("spring_profiles_active") != "dev" && featureFlags?.flagSendDomainEvent == true) {
+      if (featureFlags?.flagSendDomainEvent == true) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
         log.info("Sent domain event for DNTR download asynchronously")
