@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.7.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.7.4"
   kotlin("jvm") version "1.7.22"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
@@ -22,7 +22,7 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
-val springDocVersion = "1.6.13"
+val springDocVersion = "1.6.14"
 
 dependencies {
 
@@ -34,7 +34,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.0")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
-  implementation("io.opentelemetry:opentelemetry-api:1.20.1")
+  implementation("io.opentelemetry:opentelemetry-api:1.21.0")
   implementation("joda-time:joda-time:2.12.2")
   implementation("com.deepoove:poi-tl:1.12.0") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.8.3")
+  implementation("org.flywaydb:flyway-core:9.10.1")
   implementation("org.postgresql:postgresql:42.5.1")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.9.2")
-  implementation("io.sentry:sentry-logback:6.9.2")
+  implementation("io.sentry:sentry-spring-boot-starter:6.10.0")
+  implementation("io.sentry:sentry-logback:6.10.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -59,9 +59,9 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.20.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.21.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.12")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.14.0")
   testImplementation("io.projectreactor:reactor-test")
