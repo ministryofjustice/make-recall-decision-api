@@ -84,8 +84,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   protected lateinit var mrdEmitterMocked: MrdEventsEmitter
 
   @ParameterizedTest()
-  @CsvSource("RECALL_CONSIDERED", "NO_FLAGS")
-  fun `create recommendation with and without recall considered flag`(recallConsidered: String) {
+  @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
+  fun `create recommendation with and without recall considered flag`(featureFlag: String) {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -119,6 +119,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
+      if (featureFlag == "RECOMMENDATION_STARTED") given(recommendationRepository.findById(any())).willReturn(Optional.of(recommendationToSave))
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
@@ -132,9 +133,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      val featureFlags =
-        if (recallConsidered == Status.RECALL_CONSIDERED.toString()) FeatureFlags(flagConsiderRecall = true) else null
-      val recallConsidereDetail = if (recallConsidered == Status.RECALL_CONSIDERED.toString()) "Juicy details" else null
+      val featureFlags = when (featureFlag) {
+        "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
+        else -> null
+      }
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
 
       // when
       val response = recommendationService.createRecommendation(
@@ -152,7 +156,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
       val recommendationEntity = captor.firstValue
-      val expectedStatus = if (recallConsidered == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
+      val expectedStatus = if (featureFlag == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
 
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
@@ -192,14 +196,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
 
-      if (recallConsidered == Status.RECALL_CONSIDERED.toString()) {
+      if (featureFlag == "RECALL_CONSIDERED") {
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+        then(mrdEmitterMocked).shouldHaveNoInteractions()
+      } else if (featureFlag == "RECOMMENDATION_STARTED") {
+        then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
       } else {
         assertThat(recommendationEntity.data.recallConsideredList).isNull()
+        then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
     }
   }
@@ -1126,7 +1134,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate DNTR letter from recommendation data`() {
     runTest {
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null, communityApiClient, null)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, null, communityApiClient, mrdEmitterMocked)
       personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
       riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
 

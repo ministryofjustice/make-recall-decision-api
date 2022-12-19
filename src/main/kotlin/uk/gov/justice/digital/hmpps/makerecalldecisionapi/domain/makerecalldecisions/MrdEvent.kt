@@ -50,7 +50,8 @@ data class PersonReference(
 )
 
 data class AdditionalInformation(
-  val referralId: String? = null
+  val referralId: String? = null,
+  val recommendationUrl: String? = null
 )
 
 data class TypeValue(

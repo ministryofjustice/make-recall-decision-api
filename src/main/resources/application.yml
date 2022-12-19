@@ -149,6 +149,9 @@ oasys:
       timeout: 30
 
 ---
+mrd:
+  url: ${mrd.url}
+
 cloud:
   aws:
     stack:
