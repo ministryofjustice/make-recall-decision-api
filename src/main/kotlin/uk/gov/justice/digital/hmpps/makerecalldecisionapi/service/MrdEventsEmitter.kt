@@ -39,8 +39,11 @@ class MrdEventsEmitter(
 
   fun sendEvent(payload: MrdEvent) {
     try {
+      val payloadAsJson = JSONObject(payload)
+      val messageFromPayload = payloadAsJson.get("Message")
+      val payloadWithMessageAsString = payloadAsJson.put("Message", messageFromPayload.toString())
       domainEventTopicSnsClient.publishAsync(
-        PublishRequest(topicArn, JSONObject(payload).toString())
+        PublishRequest(topicArn, payloadWithMessageAsString.toString())
       )
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {

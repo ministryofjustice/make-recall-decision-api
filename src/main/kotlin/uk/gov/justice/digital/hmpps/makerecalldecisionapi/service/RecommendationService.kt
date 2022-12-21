@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.IdentifierTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
@@ -405,7 +406,7 @@ internal class RecommendationService(
         description = "Recommendation started (recall or no recall)",
         occurredAt = utcNowDateTimeString(),
         detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
+        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
         additionalInformation = AdditionalInformation(recommendationUrl = "$mrdUrl/cases/$crn/overview")
       ),
       messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
@@ -423,7 +424,7 @@ internal class RecommendationService(
         description = "DNTR letter downloaded",
         occurredAt = utcNowDateTimeString(),
         detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn)))
+        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn)))
       )
     )
     mrdEventsEmitter?.sendEvent(payload)

@@ -46,7 +46,7 @@ data class MrdEventMessageBody(
 )
 
 data class PersonReference(
-  val identifiers: List<TypeValue>? = null
+  val identifiers: List<IdentifierTypeValue>? = null
 )
 
 data class AdditionalInformation(
@@ -58,5 +58,12 @@ data class TypeValue(
   @get:JSONPropertyName("Type")
   val type: String? = null,
   @get:JSONPropertyName("Value")
+  val value: String? = null
+)
+
+data class IdentifierTypeValue(
+  @get:JSONPropertyName("type")
+  val type: String? = null,
+  @get:JSONPropertyName("value")
   val value: String? = null
 )
