@@ -32,9 +32,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTab
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTabStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsTabResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationStatusForRecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -562,16 +562,16 @@ internal class RecommendationService(
     }
   }
 
-  fun getRecommendations(crn: String): RecommendationsTabResponse {
+  fun getRecommendations(crn: String): RecommendationsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      RecommendationsTabResponse(userAccessResponse = userAccessResponse)
+      RecommendationsResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val recommendationDetails = getRecommendationsInProgressForCrn(crn)
       val recommendations = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
 
-      return RecommendationsTabResponse(
+      return RecommendationsResponse(
         personalDetailsOverview = personalDetailsOverview,
         activeRecommendation = recommendationDetails,
         recommendations = buildRecommendationsResponse(recommendations)
@@ -579,11 +579,11 @@ internal class RecommendationService(
     }
   }
 
-  private fun buildRecommendationsResponse(recommendationEntityList: List<RecommendationEntity>?): List<RecommendationTab>? {
+  private fun buildRecommendationsResponse(recommendationEntityList: List<RecommendationEntity>?): List<RecommendationsListItem>? {
     return recommendationEntityList
       ?.map {
-        RecommendationTab(
-          statusForRecallType = mapRecommendationStatusToRecommendationTabStatus(it.data.status, it.data.recallType),
+        RecommendationsListItem(
+          statusForRecallType = mapRecommendationStatusToRecommendationStatusForRecallType(it.data.status, it.data.recallType),
           lastModifiedBy = it.data.lastModifiedBy,
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
@@ -591,21 +591,21 @@ internal class RecommendationService(
       }
   }
 
-  private fun mapRecommendationStatusToRecommendationTabStatus(recommendationStatus: Status?, recallType: RecallType?): RecommendationTabStatus {
+  private fun mapRecommendationStatusToRecommendationStatusForRecallType(recommendationStatus: Status?, recallType: RecallType?): RecommendationStatusForRecallType {
 
     if (recommendationStatus == Status.RECALL_CONSIDERED) {
-      return RecommendationTabStatus.CONSIDERING_RECALL
+      return RecommendationStatusForRecallType.CONSIDERING_RECALL
     } else if (recommendationStatus == Status.DRAFT && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
-      return RecommendationTabStatus.MAKING_DECISION_NOT_TO_RECALL
+      return RecommendationStatusForRecallType.MAKING_DECISION_NOT_TO_RECALL
     } else if (recommendationStatus == Status.DRAFT && recallType != null) {
-      return RecommendationTabStatus.MAKING_DECISION_TO_RECALL
+      return RecommendationStatusForRecallType.MAKING_DECISION_TO_RECALL
     } else if (recommendationStatus == Status.DRAFT) {
-      return RecommendationTabStatus.RECOMMENDATION_STARTED
+      return RecommendationStatusForRecallType.RECOMMENDATION_STARTED
     } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
-      return RecommendationTabStatus.DECIDED_NOT_TO_RECALL
+      return RecommendationStatusForRecallType.DECIDED_NOT_TO_RECALL
     } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null) {
-      return RecommendationTabStatus.DECIDED_TO_RECALL
+      return RecommendationStatusForRecallType.DECIDED_TO_RECALL
     }
-    return RecommendationTabStatus.UNKNOWN
+    return RecommendationStatusForRecallType.UNKNOWN
   }
 }

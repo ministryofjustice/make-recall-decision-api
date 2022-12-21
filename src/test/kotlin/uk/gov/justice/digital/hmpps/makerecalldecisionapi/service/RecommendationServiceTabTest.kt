@@ -16,9 +16,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTab
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTabStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsTabResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationStatusForRecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.util.stream.Stream
@@ -48,10 +48,10 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       assertThat(
         response,
         equalTo(
-          RecommendationsTabResponse(
+          RecommendationsResponse(
             null,
             null,
-            listOf(expectedRecommendationTabResponse(testData.recommendationTabStatus)),
+            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus)),
             expectedActiveRecommendationResponse(testData.recommendationStatus, testData.recallType)
           )
         )
@@ -59,8 +59,8 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
     }
   }
 
-  private fun expectedRecommendationTabResponse(recommendationTabStatus: RecommendationTabStatus): RecommendationTab {
-    return RecommendationTab(
+  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType): RecommendationsListItem {
+    return RecommendationsListItem(
       statusForRecallType = recommendationTabStatus,
       lastModifiedBy = "Jack",
       createdDate = "2022-07-01T15:22:24.567Z",
@@ -108,19 +108,19 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
     @JvmStatic
     private fun recommendationTabTestData(): Stream<RecommendationTabTestData> =
       Stream.of(
-        RecommendationTabTestData(Status.RECALL_CONSIDERED, RecommendationTabStatus.CONSIDERING_RECALL, null),
-        RecommendationTabTestData(Status.DRAFT, RecommendationTabStatus.MAKING_DECISION_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DRAFT, RecommendationTabStatus.MAKING_DECISION_TO_RECALL, RecallTypeValue.STANDARD),
-        RecommendationTabTestData(Status.DRAFT, RecommendationTabStatus.RECOMMENDATION_STARTED, null),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationTabStatus.DECIDED_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationTabStatus.DECIDED_TO_RECALL, RecallTypeValue.FIXED_TERM),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationTabStatus.UNKNOWN, null)
+        RecommendationTabTestData(Status.RECALL_CONSIDERED, RecommendationStatusForRecallType.CONSIDERING_RECALL, null),
+        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.MAKING_DECISION_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
+        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.MAKING_DECISION_TO_RECALL, RecallTypeValue.STANDARD),
+        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.RECOMMENDATION_STARTED, null),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.DECIDED_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.DECIDED_TO_RECALL, RecallTypeValue.FIXED_TERM),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.UNKNOWN, null)
       )
   }
 
   data class RecommendationTabTestData(
     val recommendationStatus: Status,
-    val recommendationTabStatus: RecommendationTabStatus,
+    val recommendationTabStatus: RecommendationStatusForRecallType,
     val recallType: RecallTypeValue?
   )
 }

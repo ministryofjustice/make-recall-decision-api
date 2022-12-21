@@ -27,7 +27,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType.Companion.fromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsTabResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
@@ -67,7 +67,7 @@ internal class RecommendationController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/recommendations")
   @Operation(summary = "Gets all recommendations for case")
-  suspend fun getRecommendations(@PathVariable("crn") crn: String): RecommendationsTabResponse {
+  suspend fun getRecommendations(@PathVariable("crn") crn: String): RecommendationsResponse {
     log.info(normalizeSpace("Get all recommendations for CRN endpoint hit for crn: $crn"))
     return recommendationService.getRecommendations(crn)
   }
