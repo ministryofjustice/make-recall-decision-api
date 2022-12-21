@@ -17,6 +17,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AdditionalInformation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.IdentifierTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
@@ -57,7 +58,7 @@ class MrdEventsEmitterTest {
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")
-      .isEqualTo("{\"MessageAttributes\":{\"eventType\":{\"Type\":\"String\",\"Value\":\"prison-recall.recommendation.started\"}},\"Type\":\"Notification\",\"Message\":{\"additionalInformation\":{\"recommendationUrl\":\"someurl/cases/crn/overview\"},\"occurredAt\":\"2022-12-1T14:25:40.117Z\",\"description\":\"Recommendation started (recall or no recall)\",\"eventType\":\"prison-recall.recommendation.started\",\"detailUrl\":\"\",\"personReference\":{\"identifiers\":[{\"Type\":\"CRN\",\"Value\":\"crn\"}]},\"version\":1},\"TopicArn\":\"arn: aws:sns:eu-west-2:000000000000:hmpps-domain\",\"TimeStamp\":\"2022-12-1T14:25:40.117Z\",\"MessageId\":\"b4745442-3be4-4e06-8fc6-d8dd8cea87e2\"}")
+      .isEqualTo("{\"MessageAttributes\":{\"eventType\":{\"Type\":\"String\",\"Value\":\"prison-recall.recommendation.started\"}},\"Type\":\"Notification\",\"Message\":\"{\\\"additionalInformation\\\":{\\\"recommendationUrl\\\":\\\"someurl/cases/crn/overview\\\"},\\\"occurredAt\\\":\\\"2022-12-1T14:25:40.117Z\\\",\\\"description\\\":\\\"Recommendation started (recall or no recall)\\\",\\\"eventType\\\":\\\"prison-recall.recommendation.started\\\",\\\"detailUrl\\\":\\\"\\\",\\\"personReference\\\":{\\\"identifiers\\\":[{\\\"type\\\":\\\"CRN\\\",\\\"value\\\":\\\"crn\\\"}]},\\\"version\\\":1}\",\"TopicArn\":\"arn: aws:sns:eu-west-2:000000000000:hmpps-domain\",\"TimeStamp\":\"2022-12-1T14:25:40.117Z\",\"MessageId\":\"b4745442-3be4-4e06-8fc6-d8dd8cea87e2\"}")
   }
 
   @Test
@@ -101,7 +102,7 @@ class MrdEventsEmitterTest {
         description = "Recommendation started (recall or no recall)",
         occurredAt = "2022-12-1T14:25:40.117Z",
         detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = "crn"))),
+        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
         additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview")
       ),
       messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
@@ -125,7 +126,7 @@ class MrdEventsEmitterTest {
         version = 1,
         description = "DNTR letter downloaded",
         occurredAt = "2022-04-26T20:39:47.778",
-        personReference = PersonReference(listOf(TypeValue(type = "some type", value = "some value"))),
+        personReference = PersonReference(listOf(IdentifierTypeValue(type = "some type", value = "some value"))),
         additionalInformation = AdditionalInformation(referralId = null),
         detailUrl = "http://someurl"
       )
