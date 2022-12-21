@@ -582,6 +582,55 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `retrieves recommendations for recommendation tab`() {
+    runTest {
+      userAccessAllowed(crn)
+      allOffenderDetailsResponse(crn)
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.RECALL_CONSIDERED)
+
+      webTestClient.get()
+        .uri("/cases/$crn/recommendations")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
+        .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+        .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.recommendations[0].statusForRecallType").isEqualTo("CONSIDERING_RECALL")
+        .jsonPath("$.recommendations[0].lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.recommendations[0].createdDate").isNotEmpty
+        .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+        .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+        .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("some_user")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.status").isEqualTo("RECALL_CONSIDERED")
+    }
+  }
+
+  @Test
+  fun `access denied when insufficient privileges used on recommendations tab request`() {
+    runTest {
+      webTestClient.get()
+        .uri("/cases/$crn/recommendations")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
+
+  @Test
   fun `access denied when insufficient privileges used for creation request`() {
     val crn = "X123456"
     webTestClient.post()
