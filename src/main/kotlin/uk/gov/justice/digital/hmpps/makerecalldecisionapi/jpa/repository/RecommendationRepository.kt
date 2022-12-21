@@ -14,5 +14,5 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
       "AND CAST(t.data ->> 'status' AS VARCHAR) IN (:statuses)",
     nativeQuery = true
   )
-  fun findByCrnAndStatus(@Param("crn")crn: String, @Param("statuses")statuses: List<String>): List<RecommendationEntity>
+  fun findByCrnAndStatus(@Param("crn") crn: String, @Param("statuses") statuses: List<String>): List<RecommendationEntity>
 }

@@ -29,7 +29,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTab
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationTabStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsTabResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -201,14 +206,18 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       if (isPartADownloaded) {
-        existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
-        existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
-        existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
-        existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+        if (existingRecommendationEntity.data.userNamePartACompletedBy == null) {
+          existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
+          existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
+          existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+          existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+        }
       } else if (isDntrDownloaded) {
-        existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
-        existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
-        existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+        if (existingRecommendationEntity.data.userNameDntrLetterCompletedBy == null) {
+          existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
+          existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
+          existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+        }
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
@@ -350,7 +359,6 @@ internal class RecommendationService(
     val recommendationEntity = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
     Collections.sort(recommendationEntity)
 
-    // FIXME: This will need to be fixed when we open up functionally to allow multiple recommendations per CRN
     if (recommendationEntity.size > 1) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
@@ -552,5 +560,52 @@ internal class RecommendationService(
       val errorMessage = "$selectedRecallType is not a valid recall type, available types are ${allOptionsList?.joinToString(",")}"
       if (valid == false) throw InvalidRequestException(errorMessage)
     }
+  }
+
+  fun getRecommendations(crn: String): RecommendationsTabResponse {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      RecommendationsTabResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val recommendationDetails = getRecommendationsInProgressForCrn(crn)
+      val recommendations = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
+
+      return RecommendationsTabResponse(
+        personalDetailsOverview = personalDetailsOverview,
+        activeRecommendation = recommendationDetails,
+        recommendations = buildRecommendationsResponse(recommendations)
+      )
+    }
+  }
+
+  private fun buildRecommendationsResponse(recommendationEntityList: List<RecommendationEntity>?): List<RecommendationTab>? {
+    return recommendationEntityList
+      ?.map {
+        RecommendationTab(
+          statusForRecallType = mapRecommendationStatusToRecommendationTabStatus(it.data.status, it.data.recallType),
+          lastModifiedBy = it.data.lastModifiedBy,
+          createdDate = it.data.createdDate,
+          lastModifiedDate = it.data.lastModifiedDate,
+        )
+      }
+  }
+
+  private fun mapRecommendationStatusToRecommendationTabStatus(recommendationStatus: Status?, recallType: RecallType?): RecommendationTabStatus {
+
+    if (recommendationStatus == Status.RECALL_CONSIDERED) {
+      return RecommendationTabStatus.CONSIDERING_RECALL
+    } else if (recommendationStatus == Status.DRAFT && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
+      return RecommendationTabStatus.MAKING_DECISION_NOT_TO_RECALL
+    } else if (recommendationStatus == Status.DRAFT && recallType != null) {
+      return RecommendationTabStatus.MAKING_DECISION_TO_RECALL
+    } else if (recommendationStatus == Status.DRAFT) {
+      return RecommendationTabStatus.RECOMMENDATION_STARTED
+    } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
+      return RecommendationTabStatus.DECIDED_NOT_TO_RECALL
+    } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null) {
+      return RecommendationTabStatus.DECIDED_TO_RECALL
+    }
+    return RecommendationTabStatus.UNKNOWN
   }
 }
