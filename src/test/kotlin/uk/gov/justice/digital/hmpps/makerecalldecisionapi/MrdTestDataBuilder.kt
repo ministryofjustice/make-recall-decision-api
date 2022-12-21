@@ -50,15 +50,17 @@ class MrdTestDataBuilder {
     fun recommendationDataEntityData(
       crn: String?,
       firstName: String = "Jim",
-      surname: String = "Long"
+      surname: String = "Long",
+      status: Status = Status.DRAFT,
+      recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          status = Status.DRAFT,
+          status = status,
           recallConsideredList = recallConsideredData(),
-          recallType = recallTypeData(),
+          recallType = recallTypeData(recallTypeValue),
           custodyStatus = custodyStatusData(),
           responseToProbation = "They have not responded well",
           whatLedToRecall = "Increasingly violent behaviour",
@@ -109,7 +111,7 @@ class MrdTestDataBuilder {
         createdDate = existingRecommendation.data.createdDate,
         personOnProbation = personOnProbation(existingRecommendation.data.personOnProbation),
         status = Status.DRAFT,
-        recallType = recallTypeData(),
+        recallType = recallTypeData(RecallTypeValue.FIXED_TERM),
         custodyStatus = custodyStatusData(),
         responseToProbation = "They have not responded well",
         whatLedToRecall = "Increasingly violent behaviour",
@@ -204,15 +206,16 @@ class MrdTestDataBuilder {
       )
     }
 
-    private fun recallTypeData(): RecallType {
-      return RecallType(
-        selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"),
-        allOptions = listOf(
-          TextValueOption(value = "NO_RECALL", text = "No recall"),
-          TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-          TextValueOption(value = "STANDARD", text = "Standard")
-        )
-      )
+    private fun recallTypeData(recallTypeValue: RecallTypeValue?): RecallType? {
+      return if (recallTypeValue != null)
+        RecallType(
+          selected = RecallTypeSelectedValue(value = recallTypeValue, details = "My details"),
+          allOptions = listOf(
+            TextValueOption(value = "NO_RECALL", text = "No recall"),
+            TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
+            TextValueOption(value = "STANDARD", text = "Standard")
+          )
+        ) else null
     }
 
     private fun custodyStatusData(): CustodyStatus {
