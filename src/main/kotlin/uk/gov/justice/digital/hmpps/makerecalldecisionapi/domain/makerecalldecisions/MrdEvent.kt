@@ -1,33 +1,33 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDateTime
+import org.json.JSONPropertyName
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class MrdEvent(
-  @JsonProperty("Type")
+  @get:JSONPropertyName("Type")
   val type: String? = "Notification",
-  @JsonProperty("MessageId")
+  @get:JSONPropertyName("MessageId")
   val messageId: String? = UUID.randomUUID().toString(),
-  @JsonProperty("Token")
+  @get:JSONPropertyName("Token")
   val token: String? = null,
-  @JsonProperty("TopicArn")
-  val topicArn: String? = "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
-  @JsonProperty("Message")
+  @get:JSONPropertyName("TopicArn")
+  val topicArn: String? = "arn: aws:sns:eu-west-2:000000000000:hmpps-domain",
+  @get:JSONPropertyName("Message")
   val message: MrdEventMessageBody? = null,
-  @JsonProperty("TimeStamp")
-  val timeStamp: LocalDateTime? = LocalDateTime.now(),
-  @JsonProperty("SignatureVersion")
+  @get:JSONPropertyName("TimeStamp")
+  val timeStamp: String? = utcNowDateTimeString(),
+  @get:JSONPropertyName("SignatureVersion")
   val signatureVersion: String? = null,
-  @JsonProperty("SubscribeURL")
+  @get:JSONPropertyName("SubscribeUrl")
   val subscribeUrl: String? = null,
-  @JsonProperty("Signature")
+  @get:JSONPropertyName("Signature")
   val signature: String? = null,
-  @JsonProperty("SigningCertURL")
+  @get:JSONPropertyName("SigningCertURL")
   val signingCertURL: String? = null,
-  @JsonProperty("MessageAttributes")
+  @get:JSONPropertyName("MessageAttributes")
   val messageAttributes: MessageAttributes? = null
 )
 
@@ -40,7 +40,7 @@ data class MrdEventMessageBody(
   val version: Int? = null,
   val description: String? = null,
   val detailUrl: String? = null, // TODO TBD
-  val occurredAt: LocalDateTime? = null,
+  val occurredAt: String? = utcNowDateTimeString(),
   val additionalInformation: AdditionalInformation? = null,
   val personReference: PersonReference? = null
 )
@@ -55,6 +55,8 @@ data class AdditionalInformation(
 )
 
 data class TypeValue(
+  @get:JSONPropertyName("Type")
   val type: String? = null,
+  @get:JSONPropertyName("Value")
   val value: String? = null
 )
