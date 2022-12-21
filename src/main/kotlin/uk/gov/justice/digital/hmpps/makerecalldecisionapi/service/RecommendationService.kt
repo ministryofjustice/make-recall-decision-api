@@ -104,9 +104,9 @@ internal class RecommendationService(
 
       val recommendationId = savedRecommendation?.id
       if (featureFlags?.flagDomainEventRecommendationStarted == true) {
-        log.info("About to send domain event for Recommendation started")
-        recommendationId?.let { sendRecommendationStartedEvent(it) }
-        log.info("Sent domain event for Recommendation started asynchronously")
+        log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
+        recommendationId?.let { sendRecommendationStartedEvent(it, recommendationRequest.crn) }
+        log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
 
       return RecommendationResponse(
@@ -396,8 +396,7 @@ internal class RecommendationService(
     }
   }
 
-  private fun sendRecommendationStartedEvent(recommendationId: Long) {
-    val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
+  private fun sendRecommendationStartedEvent(recommendationId: Long, crn: String?) {
     val payload = MrdEvent(
       timeStamp = utcNowDateTimeString(),
       message = MrdEventMessageBody(
