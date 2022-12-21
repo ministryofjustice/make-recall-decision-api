@@ -1,5 +1,4 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
-
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
@@ -49,7 +48,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
-import java.time.LocalDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -400,11 +398,12 @@ internal class RecommendationService(
   private fun sendRecommendationStartedEvent(recommendationId: Long) {
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
     val payload = MrdEvent(
+      timeStamp = utcNowDateTimeString(),
       message = MrdEventMessageBody(
         eventType = "prison-recall.recommendation.started",
         version = 1,
         description = "Recommendation started (recall or no recall)",
-        occurredAt = LocalDateTime.now(),
+        occurredAt = utcNowDateTimeString(),
         detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn))),
         additionalInformation = AdditionalInformation(recommendationUrl = "$mrdUrl/cases/$crn/overview")
@@ -417,11 +416,12 @@ internal class RecommendationService(
   private fun sendDntrDownloadEvent(recommendationId: Long) {
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
     val payload = MrdEvent(
+      timeStamp = utcNowDateTimeString(),
       message = MrdEventMessageBody(
         eventType = "DNTR_LETTER_DOWNLOADED",
         version = 1,
         description = "DNTR letter downloaded",
-        occurredAt = LocalDateTime.now(),
+        occurredAt = utcNowDateTimeString(),
         detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(TypeValue(type = "CRN", value = crn)))
       )
