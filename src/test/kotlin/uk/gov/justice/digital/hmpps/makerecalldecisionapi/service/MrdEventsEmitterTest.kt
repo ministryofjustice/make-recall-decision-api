@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TypeValue
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.HmppsTopic
-import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 class MrdEventsEmitterTest {
@@ -58,12 +57,12 @@ class MrdEventsEmitterTest {
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")
-      .isEqualTo("{\"type\":\"Notification\",\"messageId\":\"6584074d-6c22-426b-a1cf-cbc472080d99\",\"topicArn\":\"arn:aws:sns:eu-west-2:000000000000:hmpps-domain\",\"message\":{\"eventType\":\"DNTR_LETTER_DOWNLOADED\",\"version\":1,\"description\":\"DNTR letter downloaded\",\"detailUrl\":\"http://someurl\",\"occurredAt\":[2022,4,26,20,39,47,778000000],\"additionalInformation\":{\"referralId\":null,\"recommendationUrl\":null},\"personReference\":{\"identifiers\":[{\"type\":\"some type\",\"value\":\"some value\"}]}},\"timeStamp\":[2022,4,26,20,39,47,778000000],\"subscribeUrl\":\"http://localhost:9999\",\"signingCertURL\":\"https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem\",\"messageAttributes\":{\"eventType\":{\"type\":\"\",\"value\":\"\"}}}")
+      .isEqualTo("{\"MessageAttributes\":{\"eventType\":{\"Type\":\"String\",\"Value\":\"prison-recall.recommendation.started\"}},\"Type\":\"Notification\",\"Message\":{\"additionalInformation\":{\"recommendationUrl\":\"someurl/cases/crn/overview\"},\"occurredAt\":\"2022-12-1T14:25:40.117Z\",\"description\":\"Recommendation started (recall or no recall)\",\"eventType\":\"prison-recall.recommendation.started\",\"detailUrl\":\"\",\"personReference\":{\"identifiers\":[{\"Type\":\"CRN\",\"Value\":\"crn\"}]},\"version\":1},\"TopicArn\":\"arn: aws:sns:eu-west-2:000000000000:hmpps-domain\",\"TimeStamp\":\"2022-12-1T14:25:40.117Z\",\"MessageId\":\"b4745442-3be4-4e06-8fc6-d8dd8cea87e2\"}")
   }
 
   @Test
   fun `will add telemetry event`() {
-    service.sendEvent(testPayload())
+    service.sendEvent(testPayloadDntrDownload())
 
     verify(customTelemetryClient).trackEvent(
       ArgumentMatchers.eq("DNTR_LETTER_DOWNLOADED"),
@@ -73,7 +72,7 @@ class MrdEventsEmitterTest {
     assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(
       java.util.Map.of(
         "message",
-        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=[2022, 4, 26, 20, 39, 47, 778000000], additionalInformation={referralId=null, recommendationUrl=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
+        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=2022-04-26T20:39:47.778, additionalInformation={referralId=null, recommendationUrl=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
         "messageAttributes",
         "{eventType={type=, value=}}",
         "messageId",
@@ -83,7 +82,7 @@ class MrdEventsEmitterTest {
         "subscribeUrl",
         "http://localhost:9999",
         "timeStamp",
-        "[2022, 4, 26, 20, 39, 47, 778000000]",
+        "2022-04-26T20:39:47.778",
         "topicArn",
         "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
         "type",
@@ -94,11 +93,28 @@ class MrdEventsEmitterTest {
 
   private fun testPayload(): MrdEvent {
     return MrdEvent(
+      messageId = "b4745442-3be4-4e06-8fc6-d8dd8cea87e2",
+      timeStamp = "2022-12-1T14:25:40.117Z",
+      message = MrdEventMessageBody(
+        eventType = "prison-recall.recommendation.started",
+        version = 1,
+        description = "Recommendation started (recall or no recall)",
+        occurredAt = "2022-12-1T14:25:40.117Z",
+        detailUrl = "", // TODO TBD
+        personReference = PersonReference(listOf(TypeValue(type = "CRN", value = "crn"))),
+        additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview")
+      ),
+      messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
+    )
+  }
+
+  private fun testPayloadDntrDownload(): MrdEvent {
+    return MrdEvent(
       type = "Notification",
       messageId = "6584074d-6c22-426b-a1cf-cbc472080d99",
       token = null,
       topicArn = "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
-      timeStamp = LocalDateTime.parse("2022-04-26T20:39:47.778"),
+      timeStamp = "2022-04-26T20:39:47.778",
       signatureVersion = null,
       subscribeUrl = "http://localhost:9999",
       signature = null,
@@ -108,7 +124,7 @@ class MrdEventsEmitterTest {
         eventType = "DNTR_LETTER_DOWNLOADED",
         version = 1,
         description = "DNTR letter downloaded",
-        occurredAt = LocalDateTime.parse("2022-04-26T20:39:47.778"),
+        occurredAt = "2022-04-26T20:39:47.778",
         personReference = PersonReference(listOf(TypeValue(type = "some type", value = "some value"))),
         additionalInformation = AdditionalInformation(referralId = null),
         detailUrl = "http://someurl"

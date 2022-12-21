@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.microsoft.applicationinsights.TelemetryClient
+import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -39,7 +40,7 @@ class MrdEventsEmitter(
   fun sendEvent(payload: MrdEvent) {
     try {
       domainEventTopicSnsClient.publishAsync(
-        PublishRequest(topicArn, objectMapper.writeValueAsString(payload))
+        PublishRequest(topicArn, JSONObject(payload).toString())
       )
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {
