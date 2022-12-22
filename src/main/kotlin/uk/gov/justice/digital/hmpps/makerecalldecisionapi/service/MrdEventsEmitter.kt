@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.amazonaws.services.sns.AmazonSNSAsync
+import com.amazonaws.services.sns.model.MessageAttributeValue
 import com.amazonaws.services.sns.model.PublishRequest
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,6 +12,7 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.HmppsTopic
@@ -37,15 +39,21 @@ class MrdEventsEmitter(
     this.telemetryClient = customTelemetryClient
   }
 
+  private fun MessageAttributes.forSns(): Map<String, MessageAttributeValue> {
+    val ma = MessageAttributeValue()
+    ma.dataType = "String"
+    ma.stringValue = eventType?.value
+    return mapOf("eventType" to ma)
+  }
+
   fun sendEvent(payload: MrdEvent) {
     try {
       log.info("arn of hmpps-domain-events:: $topicArn")
       val payloadAsJson = JSONObject(payload)
-      val messageFromPayload = payloadAsJson.get("Message")
-      val payloadWithMessageAsString = payloadAsJson.put("Message", messageFromPayload.toString())
-      domainEventTopicSnsClient.publishAsync(
-        PublishRequest(topicArn, payloadWithMessageAsString.toString())
-      )
+      val messageFromPayload = payloadAsJson.get("Message").toString()
+      val request = PublishRequest(topicArn, messageFromPayload)
+      request.messageAttributes = payload.messageAttributes?.forSns()
+      domainEventTopicSnsClient.publishAsync(request)
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {
       log.error("Failed to convert payload {} to json", payload)
