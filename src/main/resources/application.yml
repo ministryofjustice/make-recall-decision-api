@@ -166,6 +166,8 @@ hmpps.sqs:
   topics:
     hmpps-domain-events:
       arn: ${hmpps.domain.event.topic.arn}
+      accessKeyId: ${hmpps.domain.event.topic.access.key.id}
+      secretAccessKey: ${hmpps.domain.event.topic.secret.access.key}
       asyncClient: true
 
 spring:
