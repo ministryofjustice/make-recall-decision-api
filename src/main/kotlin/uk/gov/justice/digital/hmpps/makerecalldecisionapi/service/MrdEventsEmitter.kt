@@ -39,6 +39,7 @@ class MrdEventsEmitter(
 
   fun sendEvent(payload: MrdEvent) {
     try {
+      log.info("arn of hmpps-domain-events:: $topicArn")
       val payloadAsJson = JSONObject(payload)
       val messageFromPayload = payloadAsJson.get("Message")
       val payloadWithMessageAsString = payloadAsJson.put("Message", messageFromPayload.toString())

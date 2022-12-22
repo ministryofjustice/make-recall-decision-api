@@ -120,11 +120,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      if (featureFlag == "RECOMMENDATION_STARTED") given(recommendationRepository.findById(any())).willReturn(
-        Optional.of(
-          recommendationToSave
-        )
-      )
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
