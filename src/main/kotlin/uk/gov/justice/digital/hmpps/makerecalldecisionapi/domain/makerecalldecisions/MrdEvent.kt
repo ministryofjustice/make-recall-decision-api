@@ -30,6 +30,34 @@ data class MrdEvent(
   @get:JSONPropertyName("MessageAttributes")
   val messageAttributes: MessageAttributes? = null
 )
+fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
+  return MrdEvent(
+    timeStamp = utcNowDateTimeString(),
+    message = MrdEventMessageBody(
+      eventType = "DNTR_LETTER_DOWNLOADED",
+      version = 1,
+      description = "DNTR letter downloaded",
+      occurredAt = utcNowDateTimeString(),
+      detailUrl = "", // TODO TBD
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn)))
+    )
+  )
+}
+fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?): MrdEvent {
+  return MrdEvent(
+    timeStamp = utcNowDateTimeString(),
+    message = MrdEventMessageBody(
+      eventType = "prison-recall.recommendation.started",
+      version = 1,
+      description = "Recommendation started (recall or no recall)",
+      occurredAt = utcNowDateTimeString(),
+      detailUrl = "", // TODO TBD
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+      additionalInformation = AdditionalInformation(recommendationUrl = recommendationUrl)
+    ),
+    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
+  )
+}
 
 data class MessageAttributes(
   val eventType: TypeValue? = null,

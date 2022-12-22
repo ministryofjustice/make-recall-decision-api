@@ -10,17 +10,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AdditionalInformation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.IdentifierTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEventMessageBody
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonReference
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.TypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -36,7 +29,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -105,7 +100,7 @@ internal class RecommendationService(
       val recommendationId = savedRecommendation?.id
       if (featureFlags?.flagDomainEventRecommendationStarted == true) {
         log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
-        recommendationId?.let { sendRecommendationStartedEvent(it, recommendationRequest.crn) }
+        sendRecommendationStartedEvent(recommendationRequest.crn)
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
 
@@ -396,37 +391,15 @@ internal class RecommendationService(
     }
   }
 
-  private fun sendRecommendationStartedEvent(recommendationId: Long, crn: String?) {
-    val payload = MrdEvent(
-      timeStamp = utcNowDateTimeString(),
-      message = MrdEventMessageBody(
-        eventType = "prison-recall.recommendation.started",
-        version = 1,
-        description = "Recommendation started (recall or no recall)",
-        occurredAt = utcNowDateTimeString(),
-        detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-        additionalInformation = AdditionalInformation(recommendationUrl = "$mrdUrl/cases/$crn/overview")
-      ),
-      messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
-    )
+  private fun sendRecommendationStartedEvent(crn: String?) {
+    val payload = toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn)
     mrdEventsEmitter?.sendEvent(payload)
     log.info("MrdEvent payload for crn $crn :: ${org.json.JSONObject(payload).toString(2)}")
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
-    val payload = MrdEvent(
-      timeStamp = utcNowDateTimeString(),
-      message = MrdEventMessageBody(
-        eventType = "DNTR_LETTER_DOWNLOADED",
-        version = 1,
-        description = "DNTR letter downloaded",
-        occurredAt = utcNowDateTimeString(),
-        detailUrl = "", // TODO TBD
-        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn)))
-      )
-    )
+    val payload = toDntrDownloadedEventPayload(crn)
     mrdEventsEmitter?.sendEvent(payload)
   }
 
