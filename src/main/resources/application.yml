@@ -166,7 +166,7 @@ hmpps.sqs:
   topics:
     hmpps-domain-events:
       arn: ${hmpps.domain.event.topic.arn}
-    asyncClient: true
+      asyncClient: true
 
 spring:
   config:
