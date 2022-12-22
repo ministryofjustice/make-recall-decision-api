@@ -1,33 +1,33 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.json.JSONPropertyName
+import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class MrdEvent(
-  @get:JSONPropertyName("Type")
+  @get:JsonProperty("Type")
   val type: String? = "Notification",
-  @get:JSONPropertyName("MessageId")
+  @get:JsonProperty("MessageId")
   val messageId: String? = UUID.randomUUID().toString(),
-  @get:JSONPropertyName("Token")
+  @get:JsonProperty("Token")
   val token: String? = null,
-  @get:JSONPropertyName("TopicArn")
+  @get:JsonProperty("TopicArn")
   val topicArn: String? = "arn: aws:sns:eu-west-2:000000000000:hmpps-domain",
-  @get:JSONPropertyName("Message")
+  @get:JsonProperty("Message")
   val message: MrdEventMessageBody? = null,
-  @get:JSONPropertyName("TimeStamp")
+  @get:JsonProperty("TimeStamp")
   val timeStamp: String? = utcNowDateTimeString(),
-  @get:JSONPropertyName("SignatureVersion")
+  @get:JsonProperty("SignatureVersion")
   val signatureVersion: String? = null,
-  @get:JSONPropertyName("SubscribeUrl")
+  @get:JsonProperty("SubscribeUrl")
   val subscribeUrl: String? = null,
-  @get:JSONPropertyName("Signature")
+  @get:JsonProperty("Signature")
   val signature: String? = null,
-  @get:JSONPropertyName("SigningCertURL")
+  @get:JsonProperty("SigningCertURL")
   val signingCertURL: String? = null,
-  @get:JSONPropertyName("MessageAttributes")
+  @get:JsonProperty("MessageAttributes")
   val messageAttributes: MessageAttributes? = null
 )
 fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
@@ -83,15 +83,13 @@ data class AdditionalInformation(
 )
 
 data class TypeValue(
-  @get:JSONPropertyName("Type")
+  @get:JsonProperty("Type")
   val type: String? = null,
-  @get:JSONPropertyName("Value")
+  @get:JsonProperty("Value")
   val value: String? = null
 )
 
 data class IdentifierTypeValue(
-  @get:JSONPropertyName("type")
   val type: String? = null,
-  @get:JSONPropertyName("value")
   val value: String? = null
 )
