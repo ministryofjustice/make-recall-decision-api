@@ -5,10 +5,8 @@ import com.amazonaws.services.sns.model.MessageAttributeValue
 import com.amazonaws.services.sns.model.PublishRequest
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.microsoft.applicationinsights.TelemetryClient
-import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -35,24 +33,19 @@ class MrdEventsEmitter(
     topicArn = domainEventTopic!!.arn
     domainEventTopicSnsClient = domainEventTopic.snsClient as AmazonSNSAsync
     this.objectMapper = objectMapper
-    this.objectMapper.registerModule(JavaTimeModule())
     this.telemetryClient = customTelemetryClient
   }
 
   private fun MessageAttributes.forSns(): Map<String, MessageAttributeValue> {
-    val ma = MessageAttributeValue()
-    ma.dataType = "String"
-    ma.stringValue = eventType?.value
-    return mapOf("eventType" to ma)
+    val eventType = MessageAttributeValue().withDataType("String").withStringValue(eventType?.value)
+    return mapOf("eventType" to eventType)
   }
 
   fun sendEvent(payload: MrdEvent) {
     try {
       log.info("arn of hmpps-domain-events:: $topicArn")
-      val payloadAsJson = JSONObject(payload)
-      val messageFromPayload = payloadAsJson.get("Message").toString().replace("\"", "\\\"")
-      val request = PublishRequest(topicArn, messageFromPayload)
-      request.messageAttributes = payload.messageAttributes?.forSns()
+      val message = objectMapper.writeValueAsString(payload.message)
+      val request = PublishRequest(topicArn, message).withMessageAttributes(payload.messageAttributes?.forSns())
       domainEventTopicSnsClient.publishAsync(request)
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {
