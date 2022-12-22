@@ -50,7 +50,7 @@ class MrdEventsEmitter(
     try {
       log.info("arn of hmpps-domain-events:: $topicArn")
       val payloadAsJson = JSONObject(payload)
-      val messageFromPayload = payloadAsJson.get("Message").toString()
+      val messageFromPayload = payloadAsJson.get("Message").toString().replace("\"", "\\\"")
       val request = PublishRequest(topicArn, messageFromPayload)
       request.messageAttributes = payload.messageAttributes?.forSns()
       domainEventTopicSnsClient.publishAsync(request)
