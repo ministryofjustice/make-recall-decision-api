@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -27,7 +26,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.HmppsTopic
 
-@Disabled
 @ExtendWith(MockitoExtension::class)
 class MrdEventsEmitterTest {
   private val objectMapper = ObjectMapper()
@@ -60,7 +58,7 @@ class MrdEventsEmitterTest {
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")
-      .isEqualTo("{\"MessageAttributes\":{\"eventType\":{\"Type\":\"String\",\"Value\":\"prison-recall.recommendation.started\"}},\"Type\":\"Notification\",\"Message\":\"{\\\"additionalInformation\\\":{\\\"recommendationUrl\\\":\\\"someurl/cases/crn/overview\\\"},\\\"occurredAt\\\":\\\"2022-12-1T14:25:40.117Z\\\",\\\"description\\\":\\\"Recommendation started (recall or no recall)\\\",\\\"eventType\\\":\\\"prison-recall.recommendation.started\\\",\\\"detailUrl\\\":\\\"\\\",\\\"personReference\\\":{\\\"identifiers\\\":[{\\\"type\\\":\\\"CRN\\\",\\\"value\\\":\\\"crn\\\"}]},\\\"version\\\":1}\",\"TopicArn\":\"arn: aws:sns:eu-west-2:000000000000:hmpps-domain\",\"TimeStamp\":\"2022-12-1T14:25:40.117Z\",\"MessageId\":\"b4745442-3be4-4e06-8fc6-d8dd8cea87e2\"}")
+      .isEqualTo("{\\\"additionalInformation\\\":{\\\"recommendationUrl\\\":\\\"someurl/cases/crn/overview\\\"},\\\"occurredAt\\\":\\\"2022-12-1T14:25:40.117Z\\\",\\\"description\\\":\\\"Recommendation started (recall or no recall)\\\",\\\"eventType\\\":\\\"prison-recall.recommendation.started\\\",\\\"personReference\\\":{\\\"identifiers\\\":[{\\\"type\\\":\\\"CRN\\\",\\\"value\\\":\\\"crn\\\"}]},\\\"version\\\":1}")
   }
 
   @Test
@@ -103,7 +101,7 @@ class MrdEventsEmitterTest {
         version = 1,
         description = "Recommendation started (recall or no recall)",
         occurredAt = "2022-12-1T14:25:40.117Z",
-        detailUrl = "", // TODO TBD
+//        detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
         additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview")
       ),
