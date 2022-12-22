@@ -411,6 +411,7 @@ internal class RecommendationService(
       messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
     )
     mrdEventsEmitter?.sendEvent(payload)
+    log.info("MrdEvent payload for crn $crn :: ${org.json.JSONObject(payload).toString(2)}")
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
