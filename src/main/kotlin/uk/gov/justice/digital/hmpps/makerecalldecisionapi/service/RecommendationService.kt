@@ -558,7 +558,7 @@ internal class RecommendationService(
       ?.map {
         RecommendationsListItem(
           statusForRecallType = mapRecommendationStatusToRecommendationStatusForRecallType(it.data.status, it.data.recallType),
-          lastModifiedBy = it.data.lastModifiedBy,
+          lastModifiedBy = it.data.lastModifiedByUserName,
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
         )
