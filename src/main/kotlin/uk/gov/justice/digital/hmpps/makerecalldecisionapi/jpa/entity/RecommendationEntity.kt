@@ -99,7 +99,8 @@ data class RecommendationModel(
   @JsonMerge
   var previousReleases: PreviousReleases? = null,
   @JsonMerge
-  var previousRecalls: PreviousRecalls? = null
+  var previousRecalls: PreviousRecalls? = null,
+  var recommendationStartedDomainEventSent: Boolean? = null
 ) : Serializable
 
 enum class Status {
