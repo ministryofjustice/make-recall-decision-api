@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
@@ -53,13 +54,34 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn)
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagSystemGeneratedContacts = false))
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).should().getAllOffenderDetails(crn)
 
       assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse())))
+    }
+  }
+
+  @Test
+  fun `given a contact summary with feature flag system generated contacts on then return these details in the response`() {
+    runTest {
+
+      given(communityApiClient.getAllOffenderDetails(anyString()))
+        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(communityApiClient.getContactSummary(anyString()))
+        .willReturn(Mono.fromCallable { allContactSummariesResponse() })
+      given(communityApiClient.getGroupedDocuments(anyString()))
+        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
+
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagSystemGeneratedContacts = true))
+
+      then(communityApiClient).should().getContactSummary(crn)
+      then(communityApiClient).should().getGroupedDocuments(crn)
+      then(communityApiClient).should().getAllOffenderDetails(crn)
+
+      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn())))
     }
   }
 
@@ -73,7 +95,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         )
       )
 
-      val response = contactHistoryService.getContactHistory(crn)
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
 
       then(communityApiClient).should().getUserAccess(crn)
 
@@ -98,7 +120,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         )
       )
 
-      val response = contactHistoryService.getContactHistory(crn)
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
 
       then(communityApiClient).should().getUserAccess(crn)
 
@@ -123,7 +145,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn)
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
@@ -216,12 +238,12 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
-        descriptionType = "I am unknown",
+        descriptionType = "Unpaid work",
         outcome = "Unknown contact",
-        notes = "This is an unknown test",
+        notes = "This is another test",
         enforcementAction = null,
         systemGenerated = true,
-        code = "ABCD",
+        code = "EASU",
         sensitive = null,
         contactDocuments = emptyList(),
         description = null
@@ -256,7 +278,32 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       ContactGroupResponse(
         groupId = "unknown",
         label = "Not categorised",
-        contactTypeCodes = listOf("ABCD", "EFGH")
+        contactTypeCodes = listOf("EASU", "EFGH")
+      )
+    )
+  }
+
+  private fun expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn(): List<ContactGroupResponse> {
+    return listOf(
+      ContactGroupResponse(
+        groupId = "3",
+        label = "Appointments",
+        contactTypeCodes = listOf("CHVS", "COAI", "COAP")
+      ),
+      ContactGroupResponse(
+        groupId = "11",
+        label = "Home visit",
+        contactTypeCodes = listOf("CHVS")
+      ),
+      ContactGroupResponse(
+        groupId = "21",
+        label = "Unpaid work",
+        contactTypeCodes = listOf("EASU")
+      ),
+      ContactGroupResponse(
+        groupId = "unknown",
+        label = "Not categorised",
+        contactTypeCodes = listOf("EFGH")
       )
     )
   }
@@ -307,9 +354,9 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         Content(
           contactId = 654L,
           contactStart = OffsetDateTime.parse("2022-05-13T10:39Z"),
-          type = ContactType(description = "I am unknown", systemGenerated = true, code = "ABCD", nationalStandard = false, appointment = false),
+          type = ContactType(description = "Unpaid work", systemGenerated = true, code = "EASU", nationalStandard = false, appointment = false),
           outcome = ContactOutcome(description = "Unknown contact"),
-          notes = "This is an unknown test",
+          notes = "This is another test",
           enforcement = null,
           sensitive = null,
           description = null
