@@ -135,7 +135,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       val featureFlags = when (featureFlag) {
         "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
-        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = false)
         else -> null
       }
       val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
@@ -202,21 +202,25 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
         assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
         then(mrdEmitterMocked).shouldHaveNoInteractions()
       } else if (featureFlag == "RECOMMENDATION_STARTED") {
         then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
       } else {
         assertThat(recommendationEntity.data.recallConsideredList).isNull()
+        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
         then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
     }
   }
 
-  @Test
-  fun `updates a recommendation to the database when mappa is null`() {
+  @ParameterizedTest()
+  @CsvSource("RECOMMENDATION_STARTED_EVENT_ALREADY_SENT", "RECOMMENDATION_STARTED", "NO_FLAGS")
+  fun `updates a recommendation to the database when mappa is null`(scenario: String) {
     runTest {
       // given
-      val existingRecommendation = RecommendationEntity(
+      var existingRecommendation = RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = crn,
@@ -233,16 +237,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
+          recommendationStartedDomainEventSent = if (scenario == "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT") true else null
         )
       )
 
       // and
       var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
       updateRecommendationRequest =
-        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null))
+        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null), recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent)
 
       // and
-      val recommendationToSave =
+      var recommendationToSave =
         existingRecommendation.copy(
           id = existingRecommendation.id,
           data = RecommendationModel(
@@ -288,7 +293,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             hasBeenReviewed = null,
             previousReleases = updateRecommendationRequest.previousReleases,
             previousRecalls = updateRecommendationRequest.previousRecalls,
-            recallConsideredList = updateRecommendationRequest.recallConsideredList
+            recallConsideredList = updateRecommendationRequest.recallConsideredList,
+            recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent
           )
         )
 
@@ -302,13 +308,39 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
+      // and
+      val featureFlags = when (scenario) {
+        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
+        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
+        else -> null
+      }
+
+      // and
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, featureFlags)
 
       // then
       recallConsideredIdWorkaround(recommendationToSave)
 
-      then(recommendationRepository).should().save(recommendationToSave)
+      when (scenario) {
+        "RECOMMENDATION_STARTED" -> {
+          recommendationToSave.data.recommendationStartedDomainEventSent = true
+          then(recommendationRepository).should().save(recommendationToSave)
+          then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+        }
+        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> {
+          recommendationToSave.data.recommendationStartedDomainEventSent = true
+          then(recommendationRepository).should().save(recommendationToSave)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+        else -> {
+          then(recommendationRepository).should().save(recommendationToSave)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+      }
+
       then(recommendationRepository).should().findById(1)
     }
   }
@@ -400,7 +432,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
 
       // then
       recallConsideredIdWorkaround(recommendationToSave)
@@ -448,7 +480,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("previousReleases")
+        listOf("previousReleases"),
+        null
       )
 
       then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
@@ -490,7 +523,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("previousRecalls")
+        listOf("previousRecalls"),
+        null
       )
 
       then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
@@ -533,7 +567,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("mappa")
+        listOf("mappa"),
+        null
       )
 
       then(communityApiClient).should(times(1)).getAllMappaDetails(anyString())
@@ -580,7 +615,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("indexOffenceDetails")
+        listOf("indexOffenceDetails"),
+        null
       )
 
       then(arnApiClient).should().getAssessments(anyString())
@@ -619,7 +655,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("personOnProbation")
+        listOf("personOnProbation"),
+        null
       )
 
       then(mockPersonDetailService).should().getPersonDetails(anyString())
@@ -688,7 +725,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
         false,
         false,
-        listOf("convictionDetail")
+        listOf("convictionDetail"),
+        null
       )
 
       then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
@@ -759,6 +797,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           null,
           false,
           false,
+          null,
           null
         )
       }
@@ -1000,7 +1039,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
@@ -1033,7 +1072,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
       } catch (e: InvalidRequestException) {
         // nothing to do here!!
       }

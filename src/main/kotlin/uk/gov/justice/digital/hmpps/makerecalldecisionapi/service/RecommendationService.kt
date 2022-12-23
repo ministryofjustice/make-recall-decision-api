@@ -1,4 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
@@ -85,6 +86,13 @@ internal class RecommendationService(
         )
       ) else null
 
+      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
+      if (sendRecommendationStartedDomainEvent) {
+        log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
+        sendRecommendationStartedEvent(recommendationRequest.crn)
+        log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
+      }
+
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
         username,
@@ -94,15 +102,9 @@ internal class RecommendationService(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
-        )
+        ),
+        sendRecommendationStartedDomainEvent
       )
-
-      val recommendationId = savedRecommendation?.id
-      if (featureFlags?.flagDomainEventRecommendationStarted == true) {
-        log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
-        sendRecommendationStartedEvent(recommendationRequest.crn)
-        log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
-      }
 
       return RecommendationResponse(
         id = savedRecommendation?.id,
@@ -190,7 +192,8 @@ internal class RecommendationService(
     userEmail: String?,
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false,
-    pageRefreshIds: List<String>?
+    pageRefreshIds: List<String>?,
+    featureFlags: FeatureFlags?
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
@@ -219,6 +222,14 @@ internal class RecommendationService(
         existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
       }
       refreshData(pageRefreshIds, existingRecommendationEntity.data)
+
+      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
+      if (sendRecommendationStartedDomainEvent) {
+        log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started")
+        sendRecommendationStartedEvent(existingRecommendationEntity.data.crn)
+        log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on Recommendation started asynchronously")
+        existingRecommendationEntity.data.recommendationStartedDomainEventSent = true
+      }
 
       existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
       existingRecommendationEntity.data.lastModifiedBy = userId
@@ -394,7 +405,6 @@ internal class RecommendationService(
   private fun sendRecommendationStartedEvent(crn: String?) {
     val payload = toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn)
     mrdEventsEmitter?.sendEvent(payload)
-    log.info("MrdEvent payload for crn $crn :: ${org.json.JSONObject(payload).toString(2)}")
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
@@ -404,7 +414,7 @@ internal class RecommendationService(
   }
 
   private suspend fun generateDntrDownload(recommendationId: Long, userId: String?, readableUsername: String?,): DocumentResponse {
-    val recommendationResponse = updateRecommendation(null, recommendationId, userId, readableUsername, null, false, true, null)
+    val recommendationResponse = updateRecommendation(null, recommendationId, userId, readableUsername, null, false, true, null, null)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -435,7 +445,7 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   suspend fun generatePartA(recommendationId: Long, username: String?, readableUsername: String?, userEmail: String?): DocumentResponse {
-    val recommendationModel = updateRecommendation(null, recommendationId, username, readableUsername, userEmail, true, false, null)
+    val recommendationModel = updateRecommendation(null, recommendationId, username, readableUsername, userEmail, true, false, null, null)
     val userAccessResponse = recommendationModel.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -465,7 +475,8 @@ internal class RecommendationService(
     createdByUserName: String?,
     status: Status?,
     recallConsideredList: List<RecallConsidered>?,
-    recommendationWrapper: StaticRecommendationDataWrapper?
+    recommendationWrapper: StaticRecommendationDataWrapper?,
+    recommendationStartedDomainEventSent: Boolean?
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
@@ -479,7 +490,8 @@ internal class RecommendationService(
         createdDate = now,
         personOnProbation = recommendationWrapper?.personOnProbation,
         region = recommendationWrapper?.region,
-        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
+        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
+        recommendationStartedDomainEventSent = recommendationStartedDomainEventSent
       )
     )
 
