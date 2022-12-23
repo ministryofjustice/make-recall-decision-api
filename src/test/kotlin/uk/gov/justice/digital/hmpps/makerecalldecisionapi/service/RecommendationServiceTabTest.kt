@@ -61,8 +61,9 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
 
   private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType): RecommendationsListItem {
     return RecommendationsListItem(
+      recommendationId = 1,
       statusForRecallType = recommendationTabStatus,
-      lastModifiedBy = "jack",
+      lastModifiedByName = "jack",
       createdDate = "2022-07-01T15:22:24.567Z",
       lastModifiedDate = "2022-07-01T15:22:24.567Z",
     )
@@ -90,6 +91,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       recommendationId = 1,
       lastModifiedDate = "2022-07-01T15:22:24.567Z",
       lastModifiedBy = "Jack",
+      lastModifiedByName = "jack",
       recallType = recallType,
       recallConsideredList = listOf(
         RecallConsidered(

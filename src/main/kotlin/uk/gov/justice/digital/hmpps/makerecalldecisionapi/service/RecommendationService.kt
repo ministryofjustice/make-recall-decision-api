@@ -66,8 +66,8 @@ internal class RecommendationService(
 
   suspend fun createRecommendation(
     recommendationRequest: CreateRecommendationRequest,
-    username: String?,
-    readableUsername: String?,
+    userId: String?,
+    readableNameOfUser: String?,
     featureFlags: FeatureFlags?
   ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
@@ -78,16 +78,17 @@ internal class RecommendationService(
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
-          userId = username,
+          userId = userId,
           createdDate = utcNowDateTimeString(),
-          userName = readableUsername,
+          userName = readableNameOfUser,
           recallConsideredDetail = recommendationRequest.recallConsideredDetail
         )
       ) else null
 
       val savedRecommendation = saveNewRecommendationEntity(
         recommendationRequest,
-        username,
+        userId,
+        readableNameOfUser,
         status,
         recallConsideredList,
         StaticRecommendationDataWrapper(
@@ -361,6 +362,7 @@ internal class RecommendationService(
         recommendationId = recommendationEntity[0].id,
         lastModifiedDate = recommendationEntity[0].data.lastModifiedDate,
         lastModifiedBy = recommendationEntity[0].data.lastModifiedBy,
+        lastModifiedByName = recommendationEntity[0].data.lastModifiedByUserName,
         recallType = recommendationEntity[0].data.recallType,
         recallConsideredList = recommendationEntity[0].data.recallConsideredList,
         status = recommendationEntity[0].data.status,
@@ -462,7 +464,8 @@ internal class RecommendationService(
 
   private fun saveNewRecommendationEntity(
     recommendationRequest: CreateRecommendationRequest,
-    createdByUserName: String?,
+    userId: String?,
+    readableNameOfUser: String?,
     status: Status?,
     recallConsideredList: List<RecallConsidered>?,
     recommendationWrapper: StaticRecommendationDataWrapper?
@@ -473,9 +476,10 @@ internal class RecommendationService(
         crn = recommendationRequest.crn,
         recallConsideredList = recallConsideredList,
         status = status,
-        lastModifiedBy = createdByUserName,
+        lastModifiedBy = userId,
+        lastModifiedByUserName = readableNameOfUser,
         lastModifiedDate = now,
-        createdBy = createdByUserName,
+        createdBy = userId,
         createdDate = now,
         personOnProbation = recommendationWrapper?.personOnProbation,
         region = recommendationWrapper?.region,
@@ -557,8 +561,9 @@ internal class RecommendationService(
     return recommendationEntityList
       ?.map {
         RecommendationsListItem(
+          recommendationId = it.id,
           statusForRecallType = mapRecommendationStatusToRecommendationStatusForRecallType(it.data.status, it.data.recallType),
-          lastModifiedBy = it.data.lastModifiedByUserName,
+          lastModifiedByName = it.data.lastModifiedByUserName,
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
         )
