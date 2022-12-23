@@ -33,13 +33,19 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
   internal fun `given a recommendation in recall considered state then return these details in the recommendation tab response`(testData: RecommendationTabTestData) {
     runTest {
 
-      val recommendation = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType)
+      val lastModifiedDate1 = "2022-07-02T15:22:24.567Z"
+      val lastModifiedDate2 = "2022-07-01T15:22:24.567Z"
+      val lastModifiedDate3 = "2022-07-03T15:22:24.567Z"
+
+      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate1)
+      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate2)
+      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate3)
 
       given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name)))
-        .willReturn(listOf(recommendation))
+        .willReturn(listOf(recommendation1, recommendation2, recommendation3))
 
       given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
-        .willReturn(listOf(recommendation))
+        .willReturn(listOf(recommendation3))
 
       val response = recommendationService.getRecommendations(crn)
 
@@ -51,24 +57,25 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           RecommendationsResponse(
             null,
             null,
-            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus)),
-            expectedActiveRecommendationResponse(testData.recommendationStatus, testData.recallType)
+            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate3), expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate1), expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate2)),
+            expectedActiveRecommendationResponse(testData.recommendationStatus, testData.recallType, lastModifiedDate3)
           )
         )
       )
     }
   }
 
-  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType): RecommendationsListItem {
+  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType, expectedDate: String): RecommendationsListItem {
     return RecommendationsListItem(
+      recommendationId = 1,
       statusForRecallType = recommendationTabStatus,
-      lastModifiedBy = "jack",
+      lastModifiedByName = "jack",
       createdDate = "2022-07-01T15:22:24.567Z",
-      lastModifiedDate = "2022-07-01T15:22:24.567Z",
+      lastModifiedDate = expectedDate,
     )
   }
 
-  private fun expectedActiveRecommendationResponse(status: Status, recallTypeValue: RecallTypeValue?): ActiveRecommendation {
+  private fun expectedActiveRecommendationResponse(status: Status, recallTypeValue: RecallTypeValue?, expectedDate: String): ActiveRecommendation {
 
     val recallType = if (recallTypeValue != null) {
       RecallType(
@@ -88,8 +95,9 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
 
     return ActiveRecommendation(
       recommendationId = 1,
-      lastModifiedDate = "2022-07-01T15:22:24.567Z",
+      lastModifiedDate = expectedDate,
       lastModifiedBy = "Jack",
+      lastModifiedByName = "jack",
       recallType = recallType,
       recallConsideredList = listOf(
         RecallConsidered(

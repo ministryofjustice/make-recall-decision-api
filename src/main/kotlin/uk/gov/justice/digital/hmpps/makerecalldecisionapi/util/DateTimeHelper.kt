@@ -46,7 +46,7 @@ class DateTimeHelper {
       return Pair(dateTime?.format(formatterDate), dateTime?.format(formatterTime))
     }
 
-    fun convertUtcDateTimeStringToIso8601Date(input: String): String? {
+    fun convertUtcDateTimeStringToIso8601Date(input: String?): String? {
       val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
       val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
       return offsetDateTime.format(formatter)
