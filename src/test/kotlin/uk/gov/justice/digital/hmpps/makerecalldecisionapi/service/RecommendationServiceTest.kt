@@ -995,7 +995,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-        .copy(status = Status.DOCUMENT_CREATED)
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 

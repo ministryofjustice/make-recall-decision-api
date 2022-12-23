@@ -196,7 +196,7 @@ class CaseOverviewControllerTest(
       registrationsResponse()
       releaseSummaryResponse(crn)
       deleteAndCreateRecommendation()
-      updateRecommendation(Status.DOCUMENT_CREATED)
+      updateRecommendation(Status.DOCUMENT_DOWNLOADED)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
