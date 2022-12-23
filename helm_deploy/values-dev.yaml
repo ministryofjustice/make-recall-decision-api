@@ -15,7 +15,7 @@ generic-service:
     COMMUNITY_API_ENDPOINT_URL: https://community-api-secure.test.delius.probation.hmpps.dsd.io
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
     CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
-    MRD_URL: https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk
+    MRD_URL: https://make-recall-decision-dev.hmpps.service.justice.gov.uk
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-nonprod
