@@ -87,12 +87,14 @@ internal class RecommendationController(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationJson: JsonNode,
     userLogin: Principal,
-    @RequestParam("refreshProperty") refreshProperty: List<String>?
+    @RequestParam("refreshProperty") refreshProperty: List<String>?,
+    @RequestHeader("X-Feature-Flags") featureFlags: String?
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
+    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
-    return recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, readableUserName, null, false, false, refreshProperty)
+    return recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, readableUserName, null, false, false, refreshProperty, flags)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
