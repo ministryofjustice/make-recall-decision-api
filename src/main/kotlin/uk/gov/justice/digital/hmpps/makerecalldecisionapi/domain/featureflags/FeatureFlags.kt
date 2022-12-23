@@ -5,5 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 data class FeatureFlags(
   val flagSendDomainEvent: Boolean? = false,
   val flagConsiderRecall: Boolean? = false,
-  val flagDomainEventRecommendationStarted: Boolean? = false
+  val flagDomainEventRecommendationStarted: Boolean? = false,
+  val flagSystemGeneratedContacts: Boolean? = false,
 )
