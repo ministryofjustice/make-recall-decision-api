@@ -44,6 +44,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import java.time.OffsetDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 
@@ -558,7 +559,11 @@ internal class RecommendationService(
   }
 
   private fun buildRecommendationsResponse(recommendationEntityList: List<RecommendationEntity>?): List<RecommendationsListItem>? {
-    return recommendationEntityList
+    val sorted = recommendationEntityList?.sortedBy {
+      OffsetDateTime.parse(it.data.lastModifiedDate).toLocalDateTime()
+    }?.reversed()
+
+    return sorted
       ?.map {
         RecommendationsListItem(
           recommendationId = it.id,
