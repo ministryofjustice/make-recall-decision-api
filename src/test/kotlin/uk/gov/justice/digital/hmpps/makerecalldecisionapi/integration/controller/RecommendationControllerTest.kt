@@ -601,8 +601,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+        .jsonPath("$.recommendations[0].recommendationId").isNotEmpty
         .jsonPath("$.recommendations[0].statusForRecallType").isEqualTo("CONSIDERING_RECALL")
-        .jsonPath("$.recommendations[0].lastModifiedBy").isEqualTo("SOME_USER")
+        .jsonPath("$.recommendations[0].lastModifiedByName").isEqualTo("some_user")
         .jsonPath("$.recommendations[0].createdDate").isNotEmpty
         .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)

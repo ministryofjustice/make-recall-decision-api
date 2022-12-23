@@ -188,6 +188,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
       )
       assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("UserBill")
+      assertThat(recommendationEntity.data.lastModifiedByUserName).isEqualTo("Bill")
       assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
       assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
@@ -1034,7 +1035,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-        .copy(status = Status.DOCUMENT_CREATED)
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 

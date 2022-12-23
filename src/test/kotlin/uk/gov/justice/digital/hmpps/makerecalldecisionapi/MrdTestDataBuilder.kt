@@ -52,7 +52,8 @@ class MrdTestDataBuilder {
       firstName: String = "Jim",
       surname: String = "Long",
       status: Status = Status.DRAFT,
-      recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM
+      recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM,
+      lastModifiedDate: String = "2022-07-01T15:22:24.567Z"
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
@@ -74,7 +75,8 @@ class MrdTestDataBuilder {
           hasArrestIssues = arrestIssues(),
           hasContrabandRisk = contrabandRisk(),
           lastModifiedBy = "Jack",
-          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          lastModifiedByUserName = "jack",
+          lastModifiedDate = lastModifiedDate,
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
           personOnProbation = PersonOnProbation(firstName = firstName, surname = surname, mappa = Mappa(level = 1, category = 1, lastUpdatedDate = null), primaryLanguage = "English", dateOfBirth = LocalDate.parse("1982-10-24"), addresses = listOf(Address(line1 = "Line 1 address", line2 = "Line 2 address", town = "Town address", postcode = "TS1 1ST", noFixedAbode = false))),
