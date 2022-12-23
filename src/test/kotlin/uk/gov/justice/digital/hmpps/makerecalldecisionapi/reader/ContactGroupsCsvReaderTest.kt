@@ -26,4 +26,18 @@ class ContactGroupsCsvReaderTest {
     assertEquals("PREVENT", result.get(56).code)
     assertEquals("Prevent Activity", result.get(56).contactName)
   }
+
+  @Test
+  fun `given a csv file with system generated contacts then read the contents and map to list of contact groups`() {
+    val result = ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts()
+    assertEquals(772, result.size)
+    assertEquals("1", result.get(0).groupId)
+    assertEquals("Administrative", result.get(0).groupName)
+    assertEquals("C070", result.get(0).code)
+    assertEquals("Case Allocated", result.get(0).contactName)
+    assertEquals("2", result.get(56).groupId)
+    assertEquals("Anti-terrorism", result.get(56).groupName)
+    assertEquals("PREVENT", result.get(56).code)
+    assertEquals("Prevent Activity", result.get(56).contactName)
+  }
 }

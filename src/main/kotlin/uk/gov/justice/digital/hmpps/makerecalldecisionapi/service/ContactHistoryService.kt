@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGroup
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
@@ -16,14 +17,14 @@ internal class ContactHistoryService(
   private val documentService: DocumentService,
   private val recommendationService: RecommendationService
 ) {
-  suspend fun getContactHistory(crn: String): ContactHistoryResponse {
+  suspend fun getContactHistory(crn: String, featureFlags: FeatureFlags?): ContactHistoryResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       ContactHistoryResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val contactSummary = getContactSummary(crn)
-      val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary)
+      val contactTypeGroups = buildRelevantContactTypeGroups(contactSummary, featureFlags)
       val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       ContactHistoryResponse(
@@ -57,10 +58,12 @@ internal class ContactHistoryService(
       }?.toList() ?: emptyList()
   }
 
-  private fun buildRelevantContactTypeGroups(contactSummary: List<ContactSummaryResponse>): List<ContactGroupResponse?> {
+  private fun buildRelevantContactTypeGroups(contactSummary: List<ContactSummaryResponse>, featureFlags: FeatureFlags?): List<ContactGroupResponse?> {
     val allRelevantContacts = contactSummary.distinctBy { it.code }
 
-    val contactGroups = ContactGroupsCsvReader.getContactGroups().groupBy(ContactGroup::groupId)
+    val contactGroupToUse = if (featureFlags?.flagSystemGeneratedContacts == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
+
+    val contactGroups = contactGroupToUse.groupBy(ContactGroup::groupId)
       .entries.mapNotNull { (id, contactGroups) ->
         val contacts = contactGroups.map { it.code }.filter { i -> allRelevantContacts.any { it.code == i } }
         if (contacts.isNotEmpty())
@@ -69,15 +72,18 @@ internal class ContactHistoryService(
           null
       }
 
-    return addUnknownContactGroupToList(allRelevantContacts, contactGroups)
+    return addUnknownContactGroupToList(allRelevantContacts, contactGroups, featureFlags)
   }
 
   private fun addUnknownContactGroupToList(
     allRelevantContacts: List<ContactSummaryResponse>,
-    existingContacts: List<ContactGroupResponse>
+    existingContacts: List<ContactGroupResponse>,
+    featureFlags: FeatureFlags?
   ): List<ContactGroupResponse> {
+    val contactGroupToUse = if (featureFlags?.flagSystemGeneratedContacts == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
+
     val unknownContacts = allRelevantContacts.filter { relevantContact ->
-      ContactGroupsCsvReader.getContactGroups().none { it.code == relevantContact.code }
+      contactGroupToUse.none { it.code == relevantContact.code }
     }
     val codes = unknownContacts.mapNotNull { it.code }
 

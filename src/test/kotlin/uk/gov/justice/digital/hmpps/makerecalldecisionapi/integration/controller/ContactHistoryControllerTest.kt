@@ -20,7 +20,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `retrieves all contact history details`() {
     runTest {
-      val featureFlagString = "{\"flagConsiderRecall\": true }"
+      val featureFlagString = "{\"flagConsiderRecall\": true, \"flagSystemGeneratedContacts\": false }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -34,7 +34,14 @@ class ContactHistoryControllerTest(
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+              it.set("X-Feature-Flags", featureFlagString)
+            )
+            )
+        }
         .exchange()
         .expectStatus().isOk
         .expectBody()
