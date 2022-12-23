@@ -74,6 +74,7 @@ class MrdTestDataBuilder {
           hasArrestIssues = arrestIssues(),
           hasContrabandRisk = contrabandRisk(),
           lastModifiedBy = "Jack",
+          lastModifiedByUserName = "jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
