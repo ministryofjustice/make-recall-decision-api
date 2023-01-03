@@ -69,6 +69,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate.now
@@ -281,7 +282,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val documentData = DocumentData(
         salutation = "Dear John Smith",
         letterTitle = "Decision not to recall",
-        letterDate = "12/09/2022",
         letterAddress = "My address",
         section1 = "Section 1",
         section2 = "Section 2",
@@ -295,7 +295,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val letterContent = TemplateReplacementService(partADocumentMapperMocked, decisionNotToRecallLetterDocumentMapperMocked).generateLetterContentForPreviewFromRecommendation(recommendation)
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")
-      assertThat(letterContent.letterDate).isEqualTo("12/09/2022")
+      assertThat(letterContent.letterDate).isEqualTo(DateTimeHelper.convertLocalDateToDateWithSlashes(now()))
       assertThat(letterContent.salutation).isEqualTo("Dear John Smith")
       assertThat(letterContent.letterTitle).isEqualTo("Decision not to recall")
       assertThat(letterContent.section1).isEqualTo("Section 1")
