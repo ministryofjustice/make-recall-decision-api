@@ -171,6 +171,7 @@ internal class RecommendationService(
       userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
       userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
       lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
+      lastDntrLetterDownloadDateTime = recommendationEntity.data.lastDntrLetterADownloadDateTime,
       indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
       offenceAnalysis = recommendationEntity.data.offenceAnalysis,
       fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,

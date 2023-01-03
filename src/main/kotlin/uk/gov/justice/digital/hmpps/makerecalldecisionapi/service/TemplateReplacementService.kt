@@ -32,12 +32,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -68,7 +70,7 @@ internal class TemplateReplacementService(
 
     return LetterContent(
       letterAddress = documentData.letterAddress,
-      letterDate = documentData.letterDate,
+      letterDate = DateTimeHelper.convertLocalDateToDateWithSlashes(LocalDate.now()),
       salutation = documentData.salutation,
       letterTitle = documentData.letterTitle,
       section1 = documentData.section1,

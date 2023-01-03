@@ -3,10 +3,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateTimeToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
@@ -21,7 +20,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
     return DocumentData(
       salutation = buildSalutationName(name),
       letterTitle = buildLetterTitle(),
-      letterDate = convertLocalDateToDateWithSlashes(LocalDate.now()),
+      letterDate = convertLocalDateTimeToDateWithSlashes(recommendation.lastDntrLetterDownloadDateTime),
       signedByParagraph = buildSignedByParagraph(),
       letterAddress = getLetterAddressDetails(recommendation.personOnProbation?.addresses, name),
       section1 = paragraph1,

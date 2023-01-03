@@ -447,6 +447,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         }
         .exchange()
         .expectStatus().isOk
+
     )
 
     assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")

@@ -16,8 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 
 @ExperimentalCoroutinesApi
 class DecisionNotToRecallLetterDocumentMapperTest {
@@ -69,7 +68,8 @@ class DecisionNotToRecallLetterDocumentMapperTest {
           dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
           probationPhoneNumber = "01238282838"
         ),
-        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
+        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
+        lastDntrLetterDownloadDateTime = LocalDateTime.parse("2022-12-26T20:39:47.778")
       )
 
       val result = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
@@ -77,7 +77,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       assertThat(result.salutation).isEqualTo("Dear Cliff Rowland,")
       assertThat(result.letterAddress).isEqualTo("Cliff Rowland\nAddress line 1\nAddress line 2\nAddress line town\nTS1 1ST")
       assertThat(result.letterTitle).isEqualTo("DECISION NOT TO RECALL")
-      assertThat(result.letterDate).isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+      assertThat(result.letterDate).isEqualTo("26/12/2022")
 
       assertThat(result.section1).isEqualTo(
         "I am writing to you because you have breached your licence conditions in such a way that your risk is assessed as increased.\n\n" +

@@ -40,6 +40,12 @@ class DateTimeHelper {
       return date?.format(formatter) ?: ""
     }
 
+    fun convertLocalDateTimeToDateWithSlashes(date: LocalDateTime?): String {
+      val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+      return date?.format(formatter) ?: ""
+    }
+
     fun splitDateTime(dateTime: LocalDateTime?): Pair<String?, String?> {
       val formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy")
       val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
