@@ -42,6 +42,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -346,7 +349,142 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           then(mrdEmitterMocked).shouldHaveNoInteractions()
         }
       }
+      then(recommendationRepository).should().findById(1)
+    }
+  }
 
+  @Test
+  fun `given invalid recall type should throw invalid request exception on an update with manager recall decision`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallType = RecallType(
+            selected = RecallTypeSelectedValue(RecallTypeValue.NO_RECALL),
+            allOptions = listOf(TextValueOption("NO_RECALL"))
+          )
+        )
+      )
+
+      val updateRecommendationRequest = RecommendationModel(
+        crn = crn,
+        recallType = existingRecommendation.data.recallType?.copy(
+          selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM),
+          allOptions = listOf(TextValueOption("NO_RECALL"))
+        ),
+        status = Status.DRAFT,
+        managerRecallDecision = ManagerRecallDecision(
+          selected = ManagerRecallDecisionTypeSelectedValue(
+            value = ManagerRecallDecisionTypeValue.RECALL,
+            details = "Recall"
+          ),
+          allOptions = listOf(
+            TextValueOption(value = "NO_RECALL", text = "Do not recall")
+          ),
+          isSentToDelius = false
+        )
+      )
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      try {
+        recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "")
+      } catch (e: InvalidRequestException) {
+        // nothing to do here!!
+      }
+      then(recommendationRepository).shouldHaveNoMoreInteractions()
+    }
+  }
+
+  @Test
+  fun `updates a recommendation with manager recall decision to the database`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallConsideredList = listOf(
+            RecallConsidered(
+              createdDate = "2022-11-01T15:22:24.567Z",
+              userName = "Harry",
+              userId = "harry",
+              recallConsideredDetail = "Recall considered"
+            )
+          ),
+          status = Status.RECALL_CONSIDERED,
+          personOnProbation = PersonOnProbation(name = "John Smith"),
+          lastModifiedBy = "Jack",
+          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z"
+        )
+      )
+
+      // and
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation)
+
+      // and
+      var recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            managerRecallDecision = updateRecommendationRequest.managerRecallDecision,
+            personOnProbation = updateRecommendationRequest.personOnProbation,
+            recallType = updateRecommendationRequest.recallType,
+            custodyStatus = updateRecommendationRequest.custodyStatus,
+            responseToProbation = updateRecommendationRequest.responseToProbation,
+            whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
+            isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
+            isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
+            isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
+            activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
+            hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
+            indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
+            dateVloInformed = updateRecommendationRequest.dateVloInformed,
+            hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
+            hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
+            status = Status.DRAFT,
+            createdBy = existingRecommendation.data.createdBy,
+            createdDate = existingRecommendation.data.createdDate,
+            indexOffenceDetails = updateRecommendationRequest.indexOffenceDetails,
+            alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
+            licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
+            underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
+            localPoliceContact = updateRecommendationRequest.localPoliceContact,
+            vulnerabilities = updateRecommendationRequest.vulnerabilities,
+            convictionDetail = updateRecommendationRequest.convictionDetail?.copy(hasBeenReviewed = true),
+            fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
+            indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
+            mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
+            whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
+            reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
+            nextAppointment = updateRecommendationRequest.nextAppointment,
+            hasBeenReviewed = null,
+            previousReleases = updateRecommendationRequest.previousReleases,
+            previousRecalls = updateRecommendationRequest.previousRecalls,
+            recallConsideredList = updateRecommendationRequest.recallConsideredList
+          )
+        )
+
+      // and
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // when
+      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "Bill")
+
+      // then
+      then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
     }
   }
