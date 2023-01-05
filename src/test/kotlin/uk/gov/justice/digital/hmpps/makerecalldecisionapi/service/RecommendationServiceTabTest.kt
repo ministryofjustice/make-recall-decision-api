@@ -13,14 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationStatusForRecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.util.stream.Stream
 
 @ExtendWith(MockitoExtension::class)
@@ -37,9 +35,9 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       val lastModifiedDate2 = "2022-07-01T15:22:24.567Z"
       val lastModifiedDate3 = "2022-07-03T15:22:24.567Z"
 
-      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate1)
-      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate2)
-      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallType, lastModifiedDate = lastModifiedDate3)
+      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate1)
+      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate2)
+      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate3)
 
       given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name)))
         .willReturn(listOf(recommendation1, recommendation2, recommendation3))
@@ -57,48 +55,34 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           RecommendationsResponse(
             null,
             null,
-            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate3), expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate1), expectedRecommendationListItemResponse(testData.recommendationTabStatus, lastModifiedDate2)),
-            expectedActiveRecommendationResponse(testData.recommendationStatus, testData.recallType, lastModifiedDate3)
+            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation3), expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation1), expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation2)),
+            expectedActiveRecommendationResponse(testData.recommendationStatus, recommendation3)
           )
         )
       )
     }
   }
 
-  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType, expectedDate: String): RecommendationsListItem {
+  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType, recommendation: RecommendationEntity): RecommendationsListItem {
     return RecommendationsListItem(
       recommendationId = 1,
       statusForRecallType = recommendationTabStatus,
       lastModifiedByName = "jack",
       createdDate = "2022-07-01T15:22:24.567Z",
-      lastModifiedDate = expectedDate,
+      lastModifiedDate = recommendation.data.lastModifiedDate,
+      status = recommendation.data.status,
+      recallType = recommendation.data.recallType
     )
   }
 
-  private fun expectedActiveRecommendationResponse(status: Status, recallTypeValue: RecallTypeValue?, expectedDate: String): ActiveRecommendation {
-
-    val recallType = if (recallTypeValue != null) {
-      RecallType(
-        selected = RecallTypeSelectedValue(
-          value = recallTypeValue,
-          details = "My details"
-        ),
-        allOptions = listOf(
-          TextValueOption(value = "NO_RECALL", text = "No recall"),
-          TextValueOption(value = "FIXED_TERM", text = "Fixed term"),
-          TextValueOption(value = "STANDARD", text = "Standard")
-        )
-      )
-    } else {
-      null
-    }
+  private fun expectedActiveRecommendationResponse(status: Status, recommendation: RecommendationEntity): ActiveRecommendation {
 
     return ActiveRecommendation(
       recommendationId = 1,
-      lastModifiedDate = expectedDate,
+      lastModifiedDate = recommendation.data.lastModifiedDate,
       lastModifiedBy = "Jack",
       lastModifiedByName = "jack",
-      recallType = recallType,
+      recallType = recommendation.data.recallType,
       recallConsideredList = listOf(
         RecallConsidered(
           id = 1,
@@ -129,6 +113,6 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
   data class RecommendationTabTestData(
     val recommendationStatus: Status,
     val recommendationTabStatus: RecommendationStatusForRecallType,
-    val recallType: RecallTypeValue?
+    val recallTypeValue: RecallTypeValue?
   )
 }
