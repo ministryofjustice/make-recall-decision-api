@@ -40,6 +40,7 @@ data class RecommendationResponse(
   val userNamePartACompletedBy: String? = null,
   val userEmailPartACompletedBy: String? = null,
   val lastPartADownloadDateTime: LocalDateTime? = null,
+  val userNameDntrLetterCompletedBy: String? = null,
   val lastDntrLetterDownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
   val offenceAnalysis: String? = null,
