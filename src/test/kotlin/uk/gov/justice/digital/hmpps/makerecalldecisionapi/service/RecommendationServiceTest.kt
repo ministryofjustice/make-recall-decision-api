@@ -26,6 +26,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
 import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.firstValue
@@ -62,6 +63,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -83,6 +85,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Mock
   protected lateinit var mrdEmitterMocked: MrdEventsEmitter
+
+  @Mock
+  protected lateinit var templateReplacementServiceMocked: TemplateReplacementService
 
   @ParameterizedTest()
   @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
@@ -1246,58 +1251,62 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   // FIXME: Can probably remove this test once domain events feature is on as duplicated below
   fun `generate DNTR letter from recommendation data`(firstDownload: Boolean) {
     runTest {
-      recommendationService = RecommendationService(
-        recommendationRepository,
-        mockPersonDetailService,
-        templateReplacementService,
-        userAccessValidator,
-        convictionService,
-        null,
-        communityApiClient,
-        mrdEmitterMocked
-      )
-      personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
-      riskService =
-        RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
+      initialiseWithMockedTemplateReplacementService()
 
       val existingRecommendation =
         if (!firstDownload) {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
-            .copy(data = RecommendationModel(crn = crn, status = Status.DOCUMENT_DOWNLOADED, userNameDntrLetterCompletedBy = "Jack", lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")))
+            .copy(data = RecommendationModel(crn = crn, personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"), status = Status.DOCUMENT_DOWNLOADED, userNameDntrLetterCompletedBy = "Jack", lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")))
         } else {
+          val recommendationToSave = RecommendationEntity(
+            data = RecommendationModel(
+              crn = crn,
+              personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
+            )
+          )
+
+          given(recommendationRepository.save(any()))
+            .willReturn(recommendationToSave)
+
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      val recommendationToSave = RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn,
-          personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
-        )
-      )
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+        .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
-
-      val result =
-        recommendationService.generateDntr(1L, "john.smith", "John Smith", DocumentRequestType.DOWNLOAD_DOC_X, null)
-
-      val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should().save(captor.capture())
-      val recommendationEntity = captor.firstValue
+      val result = recommendationService.generateDntr(
+        1L,
+        "john.smith",
+        "John Smith",
+        DocumentRequestType.DOWNLOAD_DOC_X,
+        null
+      )
 
       assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
       if (firstDownload) {
-        assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
-        assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+        val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
+        then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
+        val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
+
+        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+        assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       } else {
-        assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("Jack")
-        assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        then(recommendationRepository).should(times(0)).save(any())
+
+        val captor = argumentCaptor<RecommendationResponse>()
+        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
+        val recommendationResponseResult = captor.firstValue
+
+        assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
+        assertThat(recommendationResponseResult.lastDntrLetterDownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
+        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
-      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       then(mrdEmitterMocked).shouldHaveNoInteractions()
     }
   }
@@ -1306,37 +1315,31 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @CsvSource("true", "false")
   fun `generate DNTR letter from recommendation data and send domain event`(firstDownload: Boolean) {
     runTest {
-      recommendationService = RecommendationService(
-        recommendationRepository,
-        mockPersonDetailService,
-        templateReplacementService,
-        userAccessValidator,
-        convictionService,
-        riskServiceMocked,
-        communityApiClient,
-        mrdEmitterMocked
-      )
+      initialiseWithMockedTemplateReplacementService()
 
       val existingRecommendation =
         if (!firstDownload) {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
-            .copy(data = RecommendationModel(crn = crn, status = Status.DOCUMENT_DOWNLOADED, userNameDntrLetterCompletedBy = "Jack", lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")))
+            .copy(data = RecommendationModel(crn = crn, personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"), status = Status.DOCUMENT_DOWNLOADED, userNameDntrLetterCompletedBy = "Jack", lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")))
         } else {
+          val recommendationToSave = RecommendationEntity(
+            data = RecommendationModel(
+              crn = crn,
+              personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
+            )
+          )
+
+          given(recommendationRepository.save(any()))
+            .willReturn(recommendationToSave)
+
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      val recommendationToSave = RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn,
-          personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long")
-        )
-      )
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+        .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
-
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
 
       val result = recommendationService.generateDntr(
         1L,
@@ -1346,20 +1349,27 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         FeatureFlags(flagSendDomainEvent = true)
       )
 
-      val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should().save(captor.capture())
-      val recommendationEntity = captor.firstValue
-
       assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
       if (firstDownload) {
-        assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
-        assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+        val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
+        then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
+        val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
+
+        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+        assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
+        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       } else {
-        assertThat(recommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("Jack")
-        assertThat(recommendationEntity.data.lastDntrLetterADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        then(recommendationRepository).should(times(0)).save(any())
+
+        val captor = argumentCaptor<RecommendationResponse>()
+        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
+        val recommendationResponseResult = captor.firstValue
+
+        assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
+        assertThat(recommendationResponseResult.lastDntrLetterDownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
-      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
     }
   }
@@ -1395,164 +1405,90 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @Test
-  fun `generate Part A document from recommendation data when optional fields missing`() {
-    runTest {
-
-      recommendationService = RecommendationService(
-        recommendationRepository,
-        mockPersonDetailService,
-        templateReplacementService,
-        userAccessValidator,
-        convictionService,
-        riskServiceMocked,
-        communityApiClient,
-        mrdEmitterMocked
-      )
-      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
-        .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
-      val data = existingRecommendation.data
-      val pop = data.personOnProbation
-      given(recommendationRepository.findById(any()))
-        .willReturn(
-          Optional.of(
-            existingRecommendation.copy(
-              data = data.copy(
-                indexOffenceDetails = null,
-                personOnProbation = pop?.copy(mappa = null, mostRecentPrisonerNumber = null)
-              )
-            )
-          )
-        )
-
-      // and
-      val recommendationToSave = RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn,
-          personOnProbation = PersonOnProbation(
-            name = "John Smith",
-            firstName = "John",
-            surname = "Smith",
-            mappa = null,
-            addresses = null,
-            dateOfBirth = null
-          ),
-          indexOffenceDetails = null
-        )
-      )
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
-
-      // when
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", "John.Smith@test.com")
-
-      // and
-      val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should(times(1)).save(captor.capture())
-      val recommendationEntity = captor.firstValue
-
-      assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
-      assertThat(result.fileContents).isNotNull
-      assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
-      assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
-      assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
-      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
-    }
-  }
-
   @ParameterizedTest()
   @CsvSource("true", "false")
   fun `generate Part A document from recommendation data`(firstDownload: Boolean) {
     runTest {
-      // and
-      recommendationService = RecommendationService(
-        recommendationRepository,
-        mockPersonDetailService,
-        templateReplacementService,
-        userAccessValidator,
-        convictionService,
-        riskServiceMocked,
-        communityApiClient,
-        mrdEmitterMocked
-      )
-
+      initialiseWithMockedTemplateReplacementService()
       val existingRecommendation =
         if (!firstDownload) {
+          then(recommendationRepository).should(times(0)).save(any())
+
           MrdTestDataBuilder.recommendationDataEntityData(crn)
-            .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null, status = Status.DOCUMENT_DOWNLOADED, userNamePartACompletedBy = "Jack", userEmailPartACompletedBy = "Jack@test.com", lastPartADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")))
+            .copy(
+              data = RecommendationModel(
+                crn = crn,
+                personOnProbation = PersonOnProbation(
+                  name = "John Smith",
+                  firstName = "John",
+                  surname = "Smith"
+                ),
+                indexOffenceDetails = null,
+                status = Status.DOCUMENT_DOWNLOADED,
+                userNamePartACompletedBy = "Jack",
+                userEmailPartACompletedBy = "Jack@test.com",
+                lastPartADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")
+              )
+            )
         } else {
+          val recommendationToSave = RecommendationEntity(
+            data = RecommendationModel(
+              crn = crn,
+              personOnProbation = PersonOnProbation(
+                name = "John Smith",
+                firstName = "John",
+                surname = "Smith"
+              )
+            )
+          )
+          given(recommendationRepository.save(any()))
+            .willReturn(recommendationToSave)
+
           MrdTestDataBuilder.recommendationDataEntityData(crn)
             .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
         }
 
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+        .willReturn("Contents")
+
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
-
-      // and
-      val recommendationToSave = RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn,
-          personOnProbation = PersonOnProbation(
-            name = "John Smith",
-            firstName = "John",
-            surname = "Smith",
-            primaryLanguage = "English",
-            mappa = Mappa(level = 2, category = 2, lastUpdatedDate = null),
-            addresses = listOf(
-              Address(
-                line1 = "Line 1 addressXYZ",
-                line2 = "Line 2 addressXYZ",
-                town = "Town address",
-                postcode = "ABC CBA",
-                noFixedAbode = false
-              )
-            )
-          ),
-          indexOffenceDetails = "Juicy details"
-        )
-      )
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
 
       // when
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", "John.Smith@test.com")
 
-      // then
-      val captor = argumentCaptor<RecommendationEntity>()
-      then(recommendationRepository).should(times(1)).save(captor.capture())
-      val recommendationEntity = captor.firstValue
-
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
+
       if (firstDownload) {
-        assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
-        assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
-        assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNotNull
+        val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
+        then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
+        val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
+
+        assertThat(savedRecommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
+        assertThat(savedRecommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
+        assertThat(savedRecommendationEntity.data.lastPartADownloadDateTime).isNotNull
+        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       } else {
-        assertThat(recommendationEntity.data.userNamePartACompletedBy).isEqualTo("Jack")
-        assertThat(recommendationEntity.data.userEmailPartACompletedBy).isEqualTo("Jack@test.com")
-        assertThat(recommendationEntity.data.lastPartADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        val captor = argumentCaptor<RecommendationResponse>()
+        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
+        val recommendationResponseResult = captor.firstValue
+
+        assertThat(recommendationResponseResult.userNamePartACompletedBy).isEqualTo("Jack")
+        assertThat(recommendationResponseResult.userEmailPartACompletedBy).isEqualTo("Jack@test.com")
+        assertThat(recommendationResponseResult.lastPartADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
+        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
-      assertThat(recommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
     }
   }
 
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
-      var existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(null, "", "")
+      var existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn, "", "")
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
-
-      val recommendationToSave = RecommendationEntity(
-        data = RecommendationModel(
-          crn = crn
-        )
-      )
-
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
 
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", "John.Smith@test.com")
 
@@ -1609,5 +1545,27 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       assertThat(recommendationEntity.data.convictionDetail).isNull()
     }
+  }
+
+  private fun initialiseWithMockedTemplateReplacementService() {
+    recommendationService = RecommendationService(
+      recommendationRepository,
+      mockPersonDetailService,
+      templateReplacementServiceMocked,
+      userAccessValidator,
+      convictionService,
+      RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService),
+      communityApiClient,
+      mrdEmitterMocked
+    )
+  }
+
+  object MockitoHelper {
+    fun <T> anyObject(): T {
+      Mockito.any<T>()
+      return uninitialized()
+    }
+    @Suppress("UNCHECKED_CAST")
+    fun <T> uninitialized(): T = null as T
   }
 }
