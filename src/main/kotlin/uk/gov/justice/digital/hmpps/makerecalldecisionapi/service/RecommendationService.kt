@@ -643,6 +643,8 @@ internal class RecommendationService(
           lastModifiedByName = it.data.lastModifiedByUserName,
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
+          status = it.data.status,
+          recallType = it.data.recallType
         )
       }
   }

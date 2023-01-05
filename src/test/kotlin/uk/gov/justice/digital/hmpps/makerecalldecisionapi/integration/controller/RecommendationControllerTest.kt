@@ -607,6 +607,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.recommendations[0].lastModifiedByName").isEqualTo("some_user")
         .jsonPath("$.recommendations[0].createdDate").isNotEmpty
         .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
+        .jsonPath("$.recommendations[0].status").isEqualTo("RECALL_CONSIDERED")
+        .jsonPath("$.recommendations[0].recallType.selected.value").isEqualTo("FIXED_TERM")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
