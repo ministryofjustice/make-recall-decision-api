@@ -87,7 +87,8 @@ internal class RecommendationService(
         )
       ) else null
 
-      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
+      val sendRecommendationStartedDomainEvent =
+        featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
       if (sendRecommendationStartedDomainEvent) {
         log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
         sendRecommendationStartedEvent(recommendationRequest.crn)
@@ -116,7 +117,11 @@ internal class RecommendationService(
     }
   }
 
-  fun buildRecallDecisionList(username: String?, readableUsername: String?, recallConsideredDetail: String?): List<RecallConsidered> {
+  fun buildRecallDecisionList(
+    username: String?,
+    readableUsername: String?,
+    recallConsideredDetail: String?
+  ): List<RecallConsidered> {
     return listOf(
       RecallConsidered(
         userId = username,
@@ -135,10 +140,15 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   private fun getRecommendationResponseById(recommendationId: Long): RecommendationResponse {
-    val recommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
-      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+    val recommendationEntity = getRecommendationEntityById(recommendationId)
 
     return buildRecommendationResponse(recommendationEntity)
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  private fun getRecommendationEntityById(recommendationId: Long): RecommendationEntity {
+    return recommendationRepository.findById(recommendationId).getOrNull()
+      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
   }
 
   private fun buildRecommendationResponse(recommendationEntity: RecommendationEntity): RecommendationResponse {
@@ -171,6 +181,7 @@ internal class RecommendationService(
       userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
       userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
       lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
+      userNameDntrLetterCompletedBy = recommendationEntity.data.userNameDntrLetterCompletedBy,
       lastDntrLetterDownloadDateTime = recommendationEntity.data.lastDntrLetterADownloadDateTime,
       indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
       offenceAnalysis = recommendationEntity.data.offenceAnalysis,
@@ -186,7 +197,6 @@ internal class RecommendationService(
     )
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   suspend fun updateRecommendation(
     jsonRequest: JsonNode?,
     recommendationId: Long,
@@ -199,34 +209,46 @@ internal class RecommendationService(
     featureFlags: FeatureFlags?
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
-    val existingRecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
-      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+    val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
+
+    return updateAndSaveRecommendation(jsonRequest, existingRecommendationEntity, userId, readableUserName, null, false, false, pageRefreshIds, featureFlags)
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  private suspend fun updateAndSaveRecommendation(
+    jsonRequest: JsonNode?,
+    existingRecommendationEntity: RecommendationEntity,
+    userId: String?,
+    readableUserName: String?,
+    userEmail: String?,
+    isPartADownloaded: Boolean,
+    isDntrDownloaded: Boolean = false,
+    pageRefreshIds: List<String>?,
+    featureFlags: FeatureFlags?
+  ): RecommendationResponse {
     val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      if (isPartADownloaded) {
-        if (existingRecommendationEntity.data.userNamePartACompletedBy == null) {
-          existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
-          existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
-          existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
-          existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
-        }
-      } else if (isDntrDownloaded) {
-        if (existingRecommendationEntity.data.userNameDntrLetterCompletedBy == null) {
-          existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
-          existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
-          existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
-        }
+      if (isPartADownloaded || isDntrDownloaded) {
+        updateDownloadDataForRecommendation(existingRecommendationEntity, readableUserName, userEmail, isPartADownloaded)
       } else {
         val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
         val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
-        existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(updateRecommendationRequest, existingRecommendationEntity.data, userId, readableUserName)
-        existingRecommendationEntity.data = updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
+        existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
+          updateRecommendationRequest,
+          existingRecommendationEntity.data,
+          userId,
+          readableUserName
+        )
+        existingRecommendationEntity.data =
+          updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
+        refreshData(pageRefreshIds, existingRecommendationEntity.data)
       }
-      refreshData(pageRefreshIds, existingRecommendationEntity.data)
 
-      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
+      // FIXME: This should probably be moved out of this method as feels like the wrong place. Needs some thought around how we handle this for SPOs as the current pattern will not work.
+      val sendRecommendationStartedDomainEvent =
+        featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
       if (sendRecommendationStartedDomainEvent) {
         log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started")
         sendRecommendationStartedEvent(existingRecommendationEntity.data.crn)
@@ -234,14 +256,37 @@ internal class RecommendationService(
         existingRecommendationEntity.data.recommendationStartedDomainEventSent = true
       }
 
-      existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
-      existingRecommendationEntity.data.lastModifiedBy = userId
-      existingRecommendationEntity.data.lastModifiedByUserName = readableUserName
+      val savedRecommendation = saveRecommendation(existingRecommendationEntity, userId, readableUserName)
 
-      val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
-      log.info("recommendation for ${savedRecommendation.data.crn} updated")
       return buildRecommendationResponse(savedRecommendation)
     }
+  }
+
+  private fun saveRecommendation(
+    existingRecommendationEntity: RecommendationEntity,
+    userId: String?,
+    readableUserName: String?
+  ): RecommendationEntity {
+    existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
+    existingRecommendationEntity.data.lastModifiedBy = userId
+    existingRecommendationEntity.data.lastModifiedByUserName = readableUserName
+
+    val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
+    log.info("recommendation for ${existingRecommendationEntity.data.crn} updated")
+    return savedRecommendation
+  }
+
+  private fun updateDownloadDataForRecommendation(existingRecommendationEntity: RecommendationEntity, readableUserName: String?, userEmail: String?, isPartADownloaded: Boolean) {
+    if (isPartADownloaded) {
+
+      existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
+      existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
+      existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
+    } else {
+      existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
+      existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
+    }
+    existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
   }
 
   private fun updateRecallConsideredList(updateRecommendationRequest: RecommendationModel, existingRecommendation: RecommendationModel, username: String?, readableUserName: String?): List<RecallConsidered>? {
@@ -418,7 +463,14 @@ internal class RecommendationService(
   }
 
   private suspend fun generateDntrDownload(recommendationId: Long, userId: String?, readableUsername: String?,): DocumentResponse {
-    val recommendationResponse = updateRecommendation(null, recommendationId, userId, readableUsername, null, false, true, null, null)
+
+    val recommendationEntity = getRecommendationEntityById(recommendationId)
+    val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
+      updateAndSaveRecommendation(null, recommendationEntity, userId, readableUsername, null, false, true, null, null)
+    } else {
+      buildRecommendationResponse(recommendationEntity)
+    }
+
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
@@ -449,15 +501,22 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   suspend fun generatePartA(recommendationId: Long, username: String?, readableUsername: String?, userEmail: String?): DocumentResponse {
-    val recommendationModel = updateRecommendation(null, recommendationId, username, readableUsername, userEmail, true, false, null, null)
-    val userAccessResponse = recommendationModel.crn?.let { userAccessValidator.checkUserAccess(it) }
+    val recommendationEntity = getRecommendationEntityById(recommendationId)
+
+    val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
+      updateAndSaveRecommendation(null, recommendationEntity, username, readableUsername, userEmail, true, false, null, null)
+    } else {
+      buildRecommendationResponse(recommendationEntity)
+    }
+
+    val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationModel, DocumentType.PART_A_DOCUMENT)
+        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT)
       return DocumentResponse(
-        fileName = generateDocumentFileName(recommendationModel, "NAT_Recall_Part_A"),
+        fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
