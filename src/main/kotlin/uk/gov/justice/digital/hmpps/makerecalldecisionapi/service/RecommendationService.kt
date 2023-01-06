@@ -152,6 +152,7 @@ internal class RecommendationService(
     return RecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
+      managerRecallDecision = recommendationEntity.data.managerRecallDecision,
       recallType = recommendationEntity.data.recallType,
       status = recommendationEntity.data.status,
       custodyStatus = recommendationEntity.data.custodyStatus,
@@ -192,6 +193,33 @@ internal class RecommendationService(
       previousRecalls = recommendationEntity.data.previousRecalls,
       recallConsideredList = recommendationEntity.data.recallConsideredList
     )
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  suspend fun updateRecommendationWithManagerRecallDecision(
+    jsonRequest: JsonNode?,
+    recommendationId: Long,
+    readableUserName: String?
+  ): RecommendationResponse {
+    validateManagerRecallDecision(jsonRequest)
+    val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
+    val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
+    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      throw UserAccessException(Gson().toJson(userAccessResponse))
+    } else {
+      val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
+      val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
+
+      existingRecommendationEntity.data.managerRecallDecision = updateRecommendationRequest.managerRecallDecision
+        ?.copy(
+          createdDate = utcNowDateTimeString(),
+          createdBy = readableUserName
+        )
+
+      val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
+      log.info("recommendation for ${savedRecommendation.data.crn} updated with manager recall decision")
+      return buildRecommendationResponse(savedRecommendation)
+    }
   }
 
   suspend fun updateRecommendation(
@@ -601,11 +629,25 @@ internal class RecommendationService(
   @Throws(InvalidRequestException::class)
   private fun validateRecallType(jsonRequest: JsonNode?) {
     val selectedRecallType = jsonRequest?.get("recallType")?.get("selected")?.get("value")?.textValue()
+    checkRecallTypesAreValid(selectedRecallType, jsonRequest)
+  }
+
+  @Throws(InvalidRequestException::class)
+  private fun validateManagerRecallDecision(jsonRequest: JsonNode?) {
+    val selectedRecallType = jsonRequest?.get("managerRecallDecision")?.get("selected")?.get("value")?.textValue()
+    checkRecallTypesAreValid(selectedRecallType, jsonRequest)
+  }
+
+  private fun checkRecallTypesAreValid(
+    selectedRecallType: String?,
+    jsonRequest: JsonNode?
+  ) {
     if (selectedRecallType != null) {
-      val allOptions = jsonRequest.get("recallType")?.get("allOptions")
+      val allOptions = jsonRequest?.get("recallType")?.get("allOptions")
       val allOptionsList = allOptions?.map { it.get("value").asText() }?.toList()
       val valid = allOptionsList?.any { it == selectedRecallType }
-      val errorMessage = "$selectedRecallType is not a valid recall type, available types are ${allOptionsList?.joinToString(",")}"
+      val errorMessage =
+        "$selectedRecallType is not a valid recall type, available types are ${allOptionsList?.joinToString(",")}"
       if (valid == false) throw InvalidRequestException(errorMessage)
     }
   }

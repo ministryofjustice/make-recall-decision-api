@@ -19,6 +19,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.invalidUpdateRecommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequestWithIsSentToDeliusOnly
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
@@ -190,6 +192,50 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectStatus().isCreated
     )
     assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
+  fun `update with manager recall decision when pre-existing decision exists`() {
+    mappaDetailsResponse(crn)
+    userAccessAllowed(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    convictionResponse(crn, "011")
+    licenceConditionsResponse(crn, 2500614567)
+    releaseSummaryResponse(crn)
+    oasysAssessmentsResponse(crn)
+    deleteAndCreateRecommendation()
+    updateWithManagerRecallDecision(managerRecallDecisionRequest(decision = "RECALL"))
+    updateWithManagerRecallDecision(managerRecallDecisionRequestWithIsSentToDeliusOnly())
+
+    webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.id").isEqualTo(createdRecommendationId)
+      .jsonPath("$.crn").isEqualTo(crn)
+      .jsonPath("$.status").isEqualTo("DRAFT")
+      .jsonPath("$.managerRecallDecision.createdBy").isEqualTo("some_user")
+      .jsonPath("$.managerRecallDecision.createdDate").isNotEmpty
+      .jsonPath("$.managerRecallDecision.selected.value").isEqualTo("RECALL")
+      .jsonPath("$.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
+      .jsonPath("$.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
+      .jsonPath("$.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
+      .jsonPath("$.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
+      .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(true)
+  }
+
+  private fun updateWithManagerRecallDecision(request: String) {
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(request)
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
+      .exchange()
+      .expectStatus().isOk
   }
 
   @Test

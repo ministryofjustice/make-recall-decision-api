@@ -17,6 +17,7 @@ data class RecommendationResponse(
   val custodyStatus: CustodyStatus? = null,
   val localPoliceContact: LocalPoliceContact? = null,
   val crn: String? = null,
+  val managerRecallDecision: ManagerRecallDecision? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
   val whatLedToRecall: String? = null,
@@ -77,6 +78,7 @@ data class PersonOnProbation(
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false
 )
+
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
   val firstName = this.firstName
   val middleNames = this.middleNames
