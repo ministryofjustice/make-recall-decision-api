@@ -116,7 +116,7 @@ jobs:
             set +e
 
             npx cypress run \
-              --env USERNAME=${CYPRESS_USERNAME_local},PASSWORD=${CYPRESS_PASSWORD_local},CRN=${CRN_local},CRN2=${CRN2_local} \
+              --env USERNAME=${CYPRESS_USERNAME_local},PASSWORD=${CYPRESS_PASSWORD_local},USERNAME_SPO=${CYPRESS_USERNAME_SPO_local},PASSWORD_SPO=${CYPRESS_PASSWORD_SPO_local} \
               --config-file e2e_tests/cypress.config.ts \
               --browser chrome \
               --record false \
