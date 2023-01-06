@@ -210,16 +210,10 @@ internal class RecommendationService(
       val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
       val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
 
-      val manageRecallDecisionUpdate = updateRecommendationRequest.managerRecallDecision
-      val existingManagerRecallDecision = existingRecommendationEntity.data.managerRecallDecision
-
       existingRecommendationEntity.data.managerRecallDecision = updateRecommendationRequest.managerRecallDecision
         ?.copy(
-          createdDate = existingManagerRecallDecision?.createdDate ?: utcNowDateTimeString(),
-          createdBy = existingManagerRecallDecision?.createdBy ?: readableUserName,
-          allOptions = manageRecallDecisionUpdate?.allOptions ?: existingManagerRecallDecision?.allOptions,
-          selected = manageRecallDecisionUpdate?.selected ?: existingManagerRecallDecision?.selected,
-          isSentToDelius = manageRecallDecisionUpdate?.isSentToDelius ?: existingManagerRecallDecision?.isSentToDelius ?: false
+          createdDate = utcNowDateTimeString(),
+          createdBy = readableUserName
         )
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)

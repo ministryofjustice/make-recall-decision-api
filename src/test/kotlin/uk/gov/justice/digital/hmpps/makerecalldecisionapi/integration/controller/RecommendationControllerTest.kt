@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.invalidUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequestWithIsSentToDeliusOnly
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.secondUpdateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
@@ -194,7 +195,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `update with manager recall decision`() {
+  fun `update with manager recall decision when pre-existing decision exists`() {
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     allOffenderDetailsResponseOneTimeOnly(crn)
@@ -203,16 +204,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
-
-    webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(managerRecallDecisionRequest(decision = "RECALL"))
-      )
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
-      .exchange()
-      .expectStatus().isOk
+    updateWithManagerRecallDecision(managerRecallDecisionRequest(decision = "RECALL"))
+    updateWithManagerRecallDecision(managerRecallDecisionRequestWithIsSentToDeliusOnly())
 
     webTestClient.get()
       .uri("/recommendations/$createdRecommendationId")
@@ -230,7 +223,19 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
       .jsonPath("$.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
       .jsonPath("$.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
-      .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(false)
+      .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(true)
+  }
+
+  private fun updateWithManagerRecallDecision(request: String) {
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(request)
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
+      .exchange()
+      .expectStatus().isOk
   }
 
   @Test

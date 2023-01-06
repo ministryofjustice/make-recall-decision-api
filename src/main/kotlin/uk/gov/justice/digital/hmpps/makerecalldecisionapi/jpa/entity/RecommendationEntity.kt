@@ -56,6 +56,7 @@ data class RecommendationModel(
   val crn: String?,
   var recallConsideredList: List<RecallConsidered>? = null,
   var recallType: RecallType? = null,
+  @JsonMerge
   var managerRecallDecision: ManagerRecallDecision? = null,
   var custodyStatus: CustodyStatus? = null,
   var localPoliceContact: LocalPoliceContact? = null,
