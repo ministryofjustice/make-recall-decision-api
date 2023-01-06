@@ -23,10 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationStatusForRecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
@@ -639,7 +636,6 @@ internal class RecommendationService(
       ?.map {
         RecommendationsListItem(
           recommendationId = it.id,
-          statusForRecallType = mapRecommendationStatusToRecommendationStatusForRecallType(it.data.status, it.data.recallType),
           lastModifiedByName = it.data.lastModifiedByUserName,
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
@@ -647,23 +643,5 @@ internal class RecommendationService(
           recallType = it.data.recallType
         )
       }
-  }
-
-  private fun mapRecommendationStatusToRecommendationStatusForRecallType(recommendationStatus: Status?, recallType: RecallType?): RecommendationStatusForRecallType {
-
-    if (recommendationStatus == Status.RECALL_CONSIDERED) {
-      return RecommendationStatusForRecallType.CONSIDERING_RECALL
-    } else if (recommendationStatus == Status.DRAFT && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
-      return RecommendationStatusForRecallType.MAKING_DECISION_NOT_TO_RECALL
-    } else if (recommendationStatus == Status.DRAFT && recallType != null) {
-      return RecommendationStatusForRecallType.MAKING_DECISION_TO_RECALL
-    } else if (recommendationStatus == Status.DRAFT) {
-      return RecommendationStatusForRecallType.RECOMMENDATION_STARTED
-    } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null && recallType.selected?.value == RecallTypeValue.NO_RECALL) {
-      return RecommendationStatusForRecallType.DECIDED_NOT_TO_RECALL
-    } else if (recommendationStatus == Status.DOCUMENT_DOWNLOADED && recallType != null) {
-      return RecommendationStatusForRecallType.DECIDED_TO_RECALL
-    }
-    return RecommendationStatusForRecallType.UNKNOWN
   }
 }

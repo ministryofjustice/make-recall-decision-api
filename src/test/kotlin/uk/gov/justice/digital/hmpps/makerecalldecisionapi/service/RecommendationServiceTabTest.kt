@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationStatusForRecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -55,7 +54,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           RecommendationsResponse(
             null,
             null,
-            listOf(expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation3), expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation1), expectedRecommendationListItemResponse(testData.recommendationTabStatus, recommendation2)),
+            listOf(expectedRecommendationListItemResponse(recommendation3), expectedRecommendationListItemResponse(recommendation1), expectedRecommendationListItemResponse(recommendation2)),
             expectedActiveRecommendationResponse(testData.recommendationStatus, recommendation3)
           )
         )
@@ -63,10 +62,9 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
     }
   }
 
-  private fun expectedRecommendationListItemResponse(recommendationTabStatus: RecommendationStatusForRecallType, recommendation: RecommendationEntity): RecommendationsListItem {
+  private fun expectedRecommendationListItemResponse(recommendation: RecommendationEntity): RecommendationsListItem {
     return RecommendationsListItem(
       recommendationId = 1,
-      statusForRecallType = recommendationTabStatus,
       lastModifiedByName = "jack",
       createdDate = "2022-07-01T15:22:24.567Z",
       lastModifiedDate = recommendation.data.lastModifiedDate,
@@ -100,19 +98,18 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
     @JvmStatic
     private fun recommendationTabTestData(): Stream<RecommendationTabTestData> =
       Stream.of(
-        RecommendationTabTestData(Status.RECALL_CONSIDERED, RecommendationStatusForRecallType.CONSIDERING_RECALL, null),
-        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.MAKING_DECISION_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.MAKING_DECISION_TO_RECALL, RecallTypeValue.STANDARD),
-        RecommendationTabTestData(Status.DRAFT, RecommendationStatusForRecallType.RECOMMENDATION_STARTED, null),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.DECIDED_NOT_TO_RECALL, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.DECIDED_TO_RECALL, RecallTypeValue.FIXED_TERM),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecommendationStatusForRecallType.UNKNOWN, null)
+        RecommendationTabTestData(Status.RECALL_CONSIDERED, null),
+        RecommendationTabTestData(Status.DRAFT, RecallTypeValue.NO_RECALL),
+        RecommendationTabTestData(Status.DRAFT, RecallTypeValue.STANDARD),
+        RecommendationTabTestData(Status.DRAFT, null),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.NO_RECALL),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.FIXED_TERM),
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, null)
       )
   }
 
   data class RecommendationTabTestData(
     val recommendationStatus: Status,
-    val recommendationTabStatus: RecommendationStatusForRecallType,
     val recallTypeValue: RecallTypeValue?
   )
 }

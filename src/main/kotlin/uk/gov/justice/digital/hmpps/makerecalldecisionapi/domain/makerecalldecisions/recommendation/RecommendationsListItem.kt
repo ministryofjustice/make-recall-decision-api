@@ -4,7 +4,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 data class RecommendationsListItem(
   val recommendationId: Long? = null,
-  val statusForRecallType: RecommendationStatusForRecallType? = null,
   val lastModifiedByName: String? = null,
   val createdDate: String? = null,
   val lastModifiedDate: String? = null,
