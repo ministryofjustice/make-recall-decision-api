@@ -80,6 +80,18 @@ internal class RecommendationController(
     return recommendationService.getRecommendation(recommendationId)
   }
 
+  @PatchMapping("/recommendations/{recommendationId}/manager-recall-decision")
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_SPO')")
+  @Operation(summary = "Updates recommendation with manager recall decision")
+  suspend fun updateRecommendationWithManagerRecallDecision(
+    @PathVariable("recommendationId") recommendationId: Long,
+    @RequestBody updateRecommendationJson: JsonNode
+  ): RecommendationResponse {
+    log.info(normalizeSpace("Update recommendation with manager recall decision endpoint for recommendation id: $recommendationId"))
+    val readableUserName = authenticationFacade.currentNameOfUser
+    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, readableUserName)
+  }
+
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PatchMapping("/recommendations/{recommendationId}")
   @Operation(summary = "Updates a recommendation")

@@ -16,6 +16,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
@@ -102,6 +105,28 @@ class MrdTestDataBuilder {
           nextAppointment = nextAppointment(),
           indexOffenceDetails = "Juicy details",
           previousReleases = previousReleases()
+        )
+      )
+    }
+
+    fun updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation: RecommendationEntity): RecommendationModel {
+      return RecommendationModel(
+        crn = existingRecommendation.data.crn,
+        createdBy = existingRecommendation.data.createdBy,
+        createdDate = existingRecommendation.data.createdDate,
+        status = Status.DRAFT,
+        managerRecallDecision = ManagerRecallDecision(
+          selected = ManagerRecallDecisionTypeSelectedValue(
+            value = ManagerRecallDecisionTypeValue.RECALL,
+            details = "Recall"
+          ),
+          allOptions = listOf(
+            TextValueOption(value = "RECALL", text = "Recall"),
+            TextValueOption(value = "NO_RECALL", text = "Do not recall")
+          ),
+          isSentToDelius = true,
+          createdBy = "Bill",
+          createdDate = "2022-07-26T09:48:27.443Z"
         )
       )
     }
