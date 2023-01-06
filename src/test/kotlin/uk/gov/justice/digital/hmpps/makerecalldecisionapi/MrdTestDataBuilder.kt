@@ -124,7 +124,7 @@ class MrdTestDataBuilder {
             TextValueOption(value = "RECALL", text = "Recall"),
             TextValueOption(value = "NO_RECALL", text = "Do not recall")
           ),
-          isSentToDelius = false,
+          isSentToDelius = true,
           createdBy = "Bill",
           createdDate = "2022-07-26T09:48:27.443Z"
         )
