@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.7.4"
-  kotlin("jvm") version "1.7.22"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.0"
+  kotlin("jvm") version "1.8.0"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.7.22"
+  kotlin("plugin.jpa") version "1.8.0"
   id("org.sonarqube") version "3.5.0.2730"
-  kotlin("plugin.spring") version "1.7.22"
+  kotlin("plugin.spring") version "1.8.0"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -32,11 +32,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
-  implementation("io.opentelemetry:opentelemetry-api:1.21.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.22.0")
   implementation("joda-time:joda-time:2.12.2")
-  implementation("com.deepoove:poi-tl:1.12.0") {
+  implementation("com.deepoove:poi-tl:1.12.1") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.10.1")
+  implementation("org.flywaydb:flyway-core:9.11.0")
   implementation("org.postgresql:postgresql:42.5.1")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.10.0")
-  implementation("io.sentry:sentry-logback:6.10.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.11.0")
+  implementation("io.sentry:sentry-logback:6.11.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -59,7 +59,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.21.0")
+  implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
   implementation("org.json:json:20220924")
