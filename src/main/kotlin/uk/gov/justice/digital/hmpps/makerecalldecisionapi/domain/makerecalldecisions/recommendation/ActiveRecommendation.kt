@@ -9,5 +9,6 @@ data class ActiveRecommendation(
   val lastModifiedByName: String?,
   val recallType: RecallType?,
   val recallConsideredList: List<RecallConsidered>? = null,
-  val status: Status? = null
+  val status: Status? = null,
+  val managerRecallDecision: ManagerRecallDecision? = null
 )

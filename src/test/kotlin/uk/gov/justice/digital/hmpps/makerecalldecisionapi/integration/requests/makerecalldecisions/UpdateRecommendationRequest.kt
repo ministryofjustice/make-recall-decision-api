@@ -305,6 +305,24 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     { 
       "recallConsideredDetail": "This is an updated recall considered detail" 
     } 
-  ]
+  ],
+  "managerRecallDecision": {
+    "selected": {
+      "value": "NO_RECALL",
+      "details": "details of no recall selected"
+    },
+    "allOptions": [
+      {
+        "text": "Recall",
+        "value": "RECALL"
+      },
+      {
+        "text": "Do not recall",
+        "value": "NO_RECALL"
+      }
+    ],
+    "createdBy": "John Smith",
+    "createdDate": "2023-01-01T15:00:08.000Z"
+  }
 }
 """.trimIndent()
