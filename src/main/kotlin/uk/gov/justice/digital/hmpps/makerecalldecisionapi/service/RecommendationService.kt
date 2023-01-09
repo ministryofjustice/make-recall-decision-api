@@ -207,10 +207,8 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
-      val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
-
-      existingRecommendationEntity.data.managerRecallDecision = updateRecommendationRequest.managerRecallDecision
+      val updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
+      existingRecommendationEntity.data.managerRecallDecision = updatedRecommendation.managerRecallDecision
         ?.copy(
           createdDate = utcNowDateTimeString(),
           createdBy = readableUserName
@@ -258,16 +256,15 @@ internal class RecommendationService(
       if (isPartADownloaded || isDntrDownloaded) {
         updateDownloadDataForRecommendation(existingRecommendationEntity, readableUserName, userEmail, isPartADownloaded)
       } else {
-        val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
-        val updateRecommendationRequest: RecommendationModel = readerForUpdating.readValue(jsonRequest)
+        val updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
         existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
-          updateRecommendationRequest,
+          updatedRecommendation,
           existingRecommendationEntity.data,
           userId,
           readableUserName
         )
         existingRecommendationEntity.data =
-          updatePageReviewedValues(updateRecommendationRequest, existingRecommendationEntity).data
+          updatePageReviewedValues(updatedRecommendation, existingRecommendationEntity).data
         refreshData(pageRefreshIds, existingRecommendationEntity.data)
       }
 
@@ -285,6 +282,14 @@ internal class RecommendationService(
 
       return buildRecommendationResponse(savedRecommendation)
     }
+  }
+
+  private fun recommendationFromRequest(
+    existingRecommendationEntity: RecommendationEntity,
+    jsonRequest: JsonNode?
+  ): RecommendationModel {
+    val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
+    return readerForUpdating.readValue(jsonRequest)
   }
 
   private fun saveRecommendation(
