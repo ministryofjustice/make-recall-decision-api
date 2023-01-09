@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
@@ -34,6 +35,26 @@ class CommunityApiClient(
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
+  fun getStaffDetails(username: String): Mono<StaffDetailsResponse> {
+    log.info(normalizeSpace("About to get staff details for $username"))
+
+    val responseType = object : ParameterizedTypeReference<StaffDetailsResponse>() {}
+    val result = webClient
+      .get()
+      .uri("/secure/staff/$username")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "staff details"
+        )
+      }
+    log.info(normalizeSpace("Returning staff details for $username"))
+    return result
   }
 
   fun getRegistrations(crn: String): Mono<RegistrationsResponse> {

@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -56,6 +57,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -389,7 +391,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "")
+        recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
       } catch (e: InvalidRequestException) {
         // nothing to do here!!
       }
@@ -397,8 +399,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @Test
-  fun `updates a recommendation with manager recall decision to the database`() {
+  @ParameterizedTest()
+  @CsvSource("true", "false")
+  fun `updates a recommendation with manager recall decision to the database`(isSentToDelius: String) {
     runTest {
       // given
       val existingRecommendation = RecommendationEntity(
@@ -423,7 +426,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation)
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation, isSentToDelius)
 
       // and
       var recommendationToSave =
@@ -439,6 +442,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
 
       // and
+      if (isSentToDelius == "true") {
+        given(communityApiClient.getStaffDetails(anyString())).willReturn(
+          Mono.fromCallable {
+            StaffDetailsResponse(
+              staffCode = "ABC123"
+            )
+          }
+        )
+      }
+
+      // and
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
@@ -449,12 +463,38 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
+      // and
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+
       // when
-      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "Bill")
+      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "Bill", "BillS")
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
+      if (isSentToDelius == "true") {
+        val captor = argumentCaptor<MrdEvent>()
+        then(mrdEmitterMocked).should().sendEvent(captor.capture())
+        val mrdEvent = captor.firstValue
+        assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
+        assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("RECALL")
+        assertThat(mrdEvent.message?.additionalInformation?.bookedBy?.staffCode).isEqualTo("ABC123")
+        assertThat(mrdEvent.message?.additionalInformation?.recommendationUrl).isNotNull
+        assertThat(mrdEvent.type).isEqualTo("Notification")
+        assertThat(mrdEvent.messageId).isNotNull
+        assertThat(mrdEvent.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:hmpps-domain")
+        assertThat(mrdEvent.message?.eventType).isEqualTo("prison-recall.recommendation.managementOversight")
+        assertThat(mrdEvent.message?.version).isEqualTo(1)
+        assertThat(mrdEvent.message?.description).isEqualTo("Management Oversight - Recall")
+        assertThat(mrdEvent.message?.occurredAt).isNotNull
+        assertThat(mrdEvent.timeStamp).isNotNull
+        assertThat(mrdEvent.signingCertURL).isEqualTo(null) // handled by receiver
+        assertThat(mrdEvent.subscribeUrl).isEqualTo(null) // handled by receiver
+        assertThat(mrdEvent.messageAttributes?.eventType?.type).isEqualTo("String")
+        assertThat(mrdEvent.messageAttributes?.eventType?.value).isEqualTo("prison-recall.recommendation.managementOversight")
+      } else {
+        then(mrdEmitterMocked).shouldHaveNoInteractions()
+      }
     }
   }
 

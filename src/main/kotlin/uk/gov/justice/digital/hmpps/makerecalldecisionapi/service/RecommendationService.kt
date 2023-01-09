@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -199,7 +200,8 @@ internal class RecommendationService(
   suspend fun updateRecommendationWithManagerRecallDecision(
     jsonRequest: JsonNode?,
     recommendationId: Long,
-    readableUserName: String?
+    readableUserName: String?,
+    userLoginName: String?
   ): RecommendationResponse {
     validateManagerRecallDecision(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
@@ -216,6 +218,15 @@ internal class RecommendationService(
 
       val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
       log.info("recommendation for ${savedRecommendation.data.crn} updated with manager recall decision")
+      if (savedRecommendation.data.managerRecallDecision?.isSentToDelius == true) {
+        log.info("About to send domain event for ${savedRecommendation.data.crn} on manager recall decision made")
+        sendManagerRecallDecisionMadeEvent(
+          crn = savedRecommendation.data.crn,
+          contactOutcome = savedRecommendation.data.managerRecallDecision?.selected?.value.toString(),
+          staffcode = getValueAndHandleWrappedException(userLoginName?.let { communityApiClient.getStaffDetails(it) })?.staffCode
+        )
+        log.info("Sent domain event for ${savedRecommendation.data.crn} on manager recall decision made asynchronously")
+      }
       return buildRecommendationResponse(savedRecommendation)
     }
   }
@@ -480,6 +491,16 @@ internal class RecommendationService(
     } else {
       generateDntrPreview(recommendationId)
     }
+  }
+
+  private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, staffcode: String?) {
+    val payload = toManagerRecallDecisionMadeEventPayload(
+      crn = crn,
+      recommendationUrl = "$mrdUrl/cases/$crn/overview",
+      contactOutcome = contactOutcome,
+      staffCode = staffcode
+    )
+    mrdEventsEmitter?.sendEvent(payload)
   }
 
   private fun sendRecommendationStartedEvent(crn: String?) {
