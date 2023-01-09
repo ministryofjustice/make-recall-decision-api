@@ -449,6 +449,7 @@ internal class RecommendationService(
         recallType = recommendationEntity[0].data.recallType,
         recallConsideredList = recommendationEntity[0].data.recallConsideredList,
         status = recommendationEntity[0].data.status,
+        managerRecallDecision = recommendationEntity[0].data.managerRecallDecision,
       )
     } else {
       null
