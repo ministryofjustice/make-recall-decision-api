@@ -437,7 +437,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             managerRecallDecision = updateRecommendationRequest.managerRecallDecision,
             status = Status.DRAFT,
             createdBy = existingRecommendation.data.createdBy,
-            createdDate = existingRecommendation.data.createdDate
+            createdDate = existingRecommendation.data.createdDate,
+            lastModifiedByUserName = "Bill",
+            lastModifiedDate = "2022-07-26T09:48:27.443Z"
           )
         )
 
