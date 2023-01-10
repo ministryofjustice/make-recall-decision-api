@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -209,25 +210,26 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
-      existingRecommendationEntity.data.managerRecallDecision = updatedRecommendation.managerRecallDecision
+
+      existingRecommendationEntity.data.managerRecallDecision = existingRecommendationEntity.data.managerRecallDecision
         ?.copy(
           createdDate = utcNowDateTimeString(),
           createdBy = readableUserName
         )
 
-      val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
-      log.info("recommendation for ${savedRecommendation.data.crn} updated with manager recall decision, recommendationId $recommendationId")
-      if (savedRecommendation.data.managerRecallDecision?.isSentToDelius == true) {
-        log.info("About to send domain event for ${savedRecommendation.data.crn} on manager recall decision made, recommendationId $recommendationId")
+      val result = updateAndSaveRecommendation(jsonRequest, existingRecommendationEntity, null, readableUserName, null, false, false, null)
+
+      log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
+      if (result.managerRecallDecision?.isSentToDelius == true) {
+        log.info("About to send domain event for ${result.crn} on manager recall decision made for recommendationId $recommendationId")
         sendManagerRecallDecisionMadeEvent(
-          crn = savedRecommendation.data.crn,
-          contactOutcome = savedRecommendation.data.managerRecallDecision?.selected?.value.toString(),
+          crn = result.crn,
+          contactOutcome = result.managerRecallDecision?.selected?.value.toString(),
           staffcode = getValueAndHandleWrappedException(userLoginName?.let { communityApiClient.getStaffDetails(it) })?.staffCode
         )
-        log.info("Sent domain event for ${savedRecommendation.data.crn} on manager recall decision made asynchronously, recommendationId $recommendationId")
+        log.info("Sent domain event for ${result.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
       }
-      return buildRecommendationResponse(savedRecommendation)
+      return result
     }
   }
 
@@ -245,7 +247,18 @@ internal class RecommendationService(
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
-    return updateAndSaveRecommendation(jsonRequest, existingRecommendationEntity, userId, readableUserName, null, false, false, pageRefreshIds, featureFlags)
+    val result = updateAndSaveRecommendation(jsonRequest, existingRecommendationEntity, userId, readableUserName, null, false, false, pageRefreshIds)
+
+    val sendRecommendationStartedDomainEvent =
+      featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
+    if (sendRecommendationStartedDomainEvent) {
+      log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started for recommendation id $recommendationId")
+      sendRecommendationStartedEvent(existingRecommendationEntity.data.crn)
+      log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on Recommendation started asynchronously for recommendation id $recommendationId")
+      existingRecommendationEntity.data.recommendationStartedDomainEventSent = true
+    }
+
+    return result
   }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -257,8 +270,7 @@ internal class RecommendationService(
     userEmail: String?,
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false,
-    pageRefreshIds: List<String>?,
-    featureFlags: FeatureFlags?
+    pageRefreshIds: List<String>?
   ): RecommendationResponse {
     val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
@@ -277,16 +289,6 @@ internal class RecommendationService(
         existingRecommendationEntity.data =
           updatePageReviewedValues(updatedRecommendation, existingRecommendationEntity).data
         refreshData(pageRefreshIds, existingRecommendationEntity.data)
-      }
-
-      // FIXME: This should probably be moved out of this method as feels like the wrong place. Needs some thought around how we handle this for SPOs as the current pattern will not work.
-      val sendRecommendationStartedDomainEvent =
-        featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
-      if (sendRecommendationStartedDomainEvent) {
-        log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started")
-        sendRecommendationStartedEvent(existingRecommendationEntity.data.crn)
-        log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on Recommendation started asynchronously")
-        existingRecommendationEntity.data.recommendationStartedDomainEventSent = true
       }
 
       val savedRecommendation = saveRecommendation(existingRecommendationEntity, userId, readableUserName)
@@ -493,32 +495,39 @@ internal class RecommendationService(
     }
   }
 
+  private fun sendMrdEventToEventsEmitter(mrdEvent: MrdEvent) {
+    mrdEventsEmitter?.sendEvent(mrdEvent)
+  }
+
   private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, staffcode: String?) {
-    val payload = toManagerRecallDecisionMadeEventPayload(
-      crn = crn,
-      recommendationUrl = "$mrdUrl/cases/$crn/overview",
-      contactOutcome = contactOutcome,
-      staffCode = staffcode
+    sendMrdEventToEventsEmitter(
+      toManagerRecallDecisionMadeEventPayload(
+        crn = crn,
+        recommendationUrl = "$mrdUrl/cases/$crn/overview",
+        contactOutcome = contactOutcome,
+        staffCode = staffcode
+      )
     )
-    mrdEventsEmitter?.sendEvent(payload)
   }
 
   private fun sendRecommendationStartedEvent(crn: String?) {
-    val payload = toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn)
-    mrdEventsEmitter?.sendEvent(payload)
+    sendMrdEventToEventsEmitter(
+      toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn)
+    )
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
-    val payload = toDntrDownloadedEventPayload(crn)
-    mrdEventsEmitter?.sendEvent(payload)
+    sendMrdEventToEventsEmitter(
+      toDntrDownloadedEventPayload(crn)
+    )
   }
 
   private suspend fun generateDntrDownload(recommendationId: Long, userId: String?, readableUsername: String?,): DocumentResponse {
 
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
-      updateAndSaveRecommendation(null, recommendationEntity, userId, readableUsername, null, false, true, null, null)
+      updateAndSaveRecommendation(null, recommendationEntity, userId, readableUsername, null, false, true, null)
     } else {
       buildRecommendationResponse(recommendationEntity)
     }
@@ -556,7 +565,7 @@ internal class RecommendationService(
     val recommendationEntity = getRecommendationEntityById(recommendationId)
 
     val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
-      updateAndSaveRecommendation(null, recommendationEntity, username, readableUsername, userEmail, true, false, null, null)
+      updateAndSaveRecommendation(null, recommendationEntity, username, readableUsername, userEmail, true, false, null)
     } else {
       buildRecommendationResponse(recommendationEntity)
     }
