@@ -785,6 +785,35 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `given no staff code available for spo user when creating contact in delius`() {
+    runTest {
+      mappaDetailsResponse(crn)
+      userAccessAllowed(crn)
+      allOffenderDetailsResponseOneTimeOnly(crn)
+      convictionResponse(crn, "011")
+      licenceConditionsResponse(crn, 2500614567)
+      releaseSummaryResponse(crn)
+      oasysAssessmentsResponse(crn)
+      deleteAndCreateRecommendation()
+      updateWithManagerRecallDecision(managerRecallDecisionRequest(decision = "RECALL"))
+
+      webTestClient.patch()
+        .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(managerRecallDecisionRequestWithIsSentToDeliusOnly("true"))
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
+        .exchange()
+        .expectStatus().is5xxServerError
+        .expectBody()
+        .jsonPath("$.userMessage")
+        .isEqualTo("Unexpected error: No staffCode available for: SOME_USER from the community-api")
+        .jsonPath("$.developerMessage").isEqualTo("No staffCode available for: SOME_USER from the community-api")
+        .jsonPath("$.status").isEqualTo(500)
+    }
+  }
+  @Test
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {
       userAccessAllowedOnce(crn)

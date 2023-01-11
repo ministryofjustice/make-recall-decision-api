@@ -41,7 +41,7 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(NoRecommendationFoundException::class)
-  fun handleRecommendationFoundException(e: NoRecommendationFoundException): ResponseEntity<ErrorResponse> {
+  fun handleNoRecommendationFoundException(e: NoRecommendationFoundException): ResponseEntity<ErrorResponse> {
     log.info("Recommendation not found exception: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)

@@ -221,15 +221,15 @@ internal class RecommendationService(
       val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
 
       log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
-//      if (result.managerRecallDecision?.isSentToDelius == true) {
-//        log.info("About to send domain event for ${result.crn} on manager recall decision made for recommendationId $recommendationId")
-//        sendManagerRecallDecisionMadeEvent(
-//          crn = result.crn,
-//          contactOutcome = result.managerRecallDecision.selected?.value.toString(),
-//          staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
-//        )
-//        log.info("Sent domain event for ${result.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
-//      }
+      if (result.managerRecallDecision?.isSentToDelius == true) {
+        log.info("About to send domain event for ${result.crn} on manager recall decision made for recommendationId $recommendationId")
+        sendManagerRecallDecisionMadeEvent(
+          crn = result.crn,
+          contactOutcome = result.managerRecallDecision.selected?.value.toString(),
+          staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
+        )
+        log.info("Sent domain event for ${result.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
+      }
       return result
     }
   }

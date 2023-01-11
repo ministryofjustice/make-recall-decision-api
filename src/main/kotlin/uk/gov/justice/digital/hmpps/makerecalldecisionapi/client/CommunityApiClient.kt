@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import java.time.Duration
@@ -43,8 +44,12 @@ class CommunityApiClient(
     val responseType = object : ParameterizedTypeReference<StaffDetailsResponse>() {}
     val result = webClient
       .get()
-      .uri("/secure/staff/$username")
+      .uri("/secure/staff/username/$username")
       .retrieve()
+      .onStatus(
+        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
+        { throw NoStaffCodeException("No staffCode available for: $username from the community-api") }
+      )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { ex ->
