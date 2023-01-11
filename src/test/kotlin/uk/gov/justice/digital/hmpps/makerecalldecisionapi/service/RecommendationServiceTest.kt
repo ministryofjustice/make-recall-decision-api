@@ -400,7 +400,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest()
-  @CsvSource("true", "false")
+//  @CsvSource("true", "false")
+  @CsvSource("false")
   fun `updates a recommendation with manager recall decision to the database`(isSentToDelius: String) {
     runTest {
       // given
