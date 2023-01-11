@@ -14,7 +14,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import javax.validation.ValidationException
 
@@ -124,6 +126,36 @@ class MakeRecallDecisionApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(NoStaffCodeException::class)
+  fun handleNoStaffCodeException(e: NoStaffCodeException): ResponseEntity<ErrorResponse?>? {
+    log.error("No staff code found  exception", e)
+    return ResponseEntity
+      .status(INTERNAL_SERVER_ERROR)
+      .body(
+        ErrorResponse(
+          status = INTERNAL_SERVER_ERROR,
+          userMessage = "Unexpected error: ${e.message}",
+          developerMessage = e.message,
+          error = e.error
+        )
+      )
+  }
+
+  @ExceptionHandler(RecommendationUpdateException::class)
+  fun handleRecommendationUpdateException(e: RecommendationUpdateException): ResponseEntity<ErrorResponse?>? {
+    log.error("Recommendation update exception", e)
+    return ResponseEntity
+      .status(INTERNAL_SERVER_ERROR)
+      .body(
+        ErrorResponse(
+          status = INTERNAL_SERVER_ERROR,
+          userMessage = "Unexpected error: ${e.message}",
+          developerMessage = e.message,
+          error = e.error
+        )
+      )
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
@@ -134,16 +166,18 @@ data class ErrorResponse(
   val errorCode: Int? = null,
   val userMessage: String? = null,
   val developerMessage: String? = null,
-  val moreInfo: String? = null
+  val moreInfo: String? = null,
+  val error: String? = null
 ) {
   constructor(
     status: HttpStatus,
     errorCode: Int? = null,
     userMessage: String? = null,
     developerMessage: String? = null,
-    moreInfo: String? = null
+    moreInfo: String? = null,
+    error: String? = null
   ) :
-    this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
+    this(status.value(), errorCode, userMessage, developerMessage, moreInfo, error)
 }
 
 open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {

@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConv
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.DELIUS_CONTACT_CREATION_FAILED
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -48,7 +49,7 @@ class CommunityApiClient(
       .retrieve()
       .onStatus(
         { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw NoStaffCodeException("No staffCode available for: $username from the community-api") }
+        { throw NoStaffCodeException(message = "No staffCode available for: $username from the community-api", error = DELIUS_CONTACT_CREATION_FAILED.toString()) }
       )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(nDeliusTimeout))

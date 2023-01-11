@@ -34,6 +34,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -299,6 +301,7 @@ internal class RecommendationService(
     return readerForUpdating.readValue(jsonRequest)
   }
 
+  @Throws(RecommendationUpdateException::class)
   private fun saveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
@@ -307,8 +310,14 @@ internal class RecommendationService(
     existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
     existingRecommendationEntity.data.lastModifiedBy = userId
     existingRecommendationEntity.data.lastModifiedByUserName = readableUserName
-
-    val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
+    val savedRecommendation = try {
+      recommendationRepository.save(existingRecommendationEntity)
+    } catch (ex: Exception) {
+      throw RecommendationUpdateException(
+        message = "Update failed for recommendation id:: ${existingRecommendationEntity.id}$ex.message",
+        error = RECOMMENDATION_UPDATE_FAILED.toString()
+      )
+    }
     log.info("recommendation for ${existingRecommendationEntity.data.crn} updated")
     return savedRecommendation
   }

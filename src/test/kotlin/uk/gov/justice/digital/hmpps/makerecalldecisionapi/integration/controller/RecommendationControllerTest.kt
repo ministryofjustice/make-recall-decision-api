@@ -810,6 +810,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.userMessage")
         .isEqualTo("Unexpected error: No staffCode available for: SOME_USER from the community-api")
         .jsonPath("$.developerMessage").isEqualTo("No staffCode available for: SOME_USER from the community-api")
+        .jsonPath("$.error").isEqualTo("DELIUS_CONTACT_CREATION_FAILED")
         .jsonPath("$.status").isEqualTo(500)
     }
   }

@@ -29,6 +29,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.willReturn
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -62,6 +63,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -394,6 +397,41 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
       } catch (e: InvalidRequestException) {
         // nothing to do here!!
+      }
+      then(recommendationRepository).shouldHaveNoMoreInteractions()
+    }
+  }
+
+  @Test
+  fun `given save to db not successful on update, should throw recommendationUpdateException`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      // and
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation, "false")
+
+      // and
+      Mockito.`when`(recommendationRepository.save(any())).doThrow(RuntimeException())
+
+      // and
+      given(recommendationRepository.findById(any())).willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+
+      try {
+        recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
+      } catch (e: RecommendationUpdateException) {
+        assertThat(e.error).isEqualTo(RECOMMENDATION_UPDATE_FAILED.toString())
       }
       then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
