@@ -439,6 +439,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             createdBy = existingRecommendation.data.createdBy,
             createdDate = existingRecommendation.data.createdDate,
             lastModifiedByUserName = "Bill",
+            lastModifiedBy = "bill",
             lastModifiedDate = "2022-07-26T09:48:27.443Z"
           )
         )
@@ -469,7 +470,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
 
       // when
-      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "Bill", "BillS")
+      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "bill", "Bill")
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)

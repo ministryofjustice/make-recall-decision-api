@@ -89,8 +89,9 @@ internal class RecommendationController(
     userLogin: Principal
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation with manager recall decision endpoint for recommendation id: $recommendationId"))
+    val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
-    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, readableUserName, userLogin.name)
+    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, username, readableUserName)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
