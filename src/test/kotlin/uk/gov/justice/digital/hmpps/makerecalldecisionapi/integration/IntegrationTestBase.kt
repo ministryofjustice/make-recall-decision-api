@@ -397,6 +397,16 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun staffDetailsResponse(username: String? = "Bill") {
+    val convictionsRequest =
+      request().withPath("/secure/staff/$username")
+
+    communityApi.`when`(convictionsRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.staffDetailsResponse())
+        .withDelay(Delay.seconds(0L))
+    )
+  }
+
   protected fun nonCustodialConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
     val convictionsRequest =
       request().withPath("/secure/offenders/crn/$crn/convictions")
