@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.springframework.boot.context.properties.bind.Bindable.listOf
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import java.util.UUID
 
@@ -14,7 +15,7 @@ data class MrdEvent(
   @get:JsonProperty("Token")
   val token: String? = null,
   @get:JsonProperty("TopicArn")
-  val topicArn: String? = "arn: aws:sns:eu-west-2:000000000000:hmpps-domain",
+  val topicArn: String? = "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
   @get:JsonProperty("Message")
   val message: MrdEventMessageBody? = null,
   @get:JsonProperty("TimeStamp")
@@ -43,6 +44,27 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
     )
   )
 }
+
+fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, staffCode: String?): MrdEvent {
+  return MrdEvent(
+    timeStamp = utcNowDateTimeString(),
+    message = MrdEventMessageBody(
+      eventType = "prison-recall.recommendation.managementOversight",
+      version = 1,
+      description = "Management Oversight - Recall",
+      occurredAt = utcNowDateTimeString(),
+      detailUrl = "", // TODO TBD
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+      additionalInformation = AdditionalInformation(
+        contactOutcome = contactOutcome,
+        recommendationUrl = recommendationUrl,
+        bookedBy = BookedBy(staffCode = staffCode)
+      )
+    ),
+    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.managementOversight"))
+  )
+}
+
 fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?): MrdEvent {
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
@@ -53,7 +75,7 @@ fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?)
       occurredAt = utcNowDateTimeString(),
       detailUrl = "", // TODO TBD
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(recommendationUrl = recommendationUrl)
+      additionalInformation = AdditionalInformation(recommendationUrl = recommendationUrl, bookedBy = null, contactOutcome = null)
     ),
     messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
   )
@@ -79,7 +101,13 @@ data class PersonReference(
 
 data class AdditionalInformation(
   val referralId: String? = null,
-  val recommendationUrl: String? = null
+  val recommendationUrl: String? = null,
+  val contactOutcome: String?,
+  val bookedBy: BookedBy?
+)
+
+data class BookedBy(
+  val staffCode: String? = null
 )
 
 data class TypeValue(

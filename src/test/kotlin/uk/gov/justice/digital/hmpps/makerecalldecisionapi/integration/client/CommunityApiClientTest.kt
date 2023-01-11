@@ -55,6 +55,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
@@ -68,6 +69,23 @@ import java.time.OffsetDateTime
 class CommunityApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var communityApiClient: CommunityApiClient
+
+  @Test
+  fun `retrieves staffCode for username`() {
+    // given // TODO use in mg recall ep probably need to pass actual uname login
+    staffDetailsResponse("Bill")
+
+    // and
+    val expected = StaffDetailsResponse(
+      staffCode = "SH00001"
+    )
+
+    // when
+    val actual = communityApiClient.getStaffDetails("Bill").block()
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
 
   @Test
   fun `retrieves convictions`() {

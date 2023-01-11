@@ -58,7 +58,7 @@ class MrdEventsEmitterTest {
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")
-      .isEqualTo("{\"eventType\":\"prison-recall.recommendation.started\",\"version\":1,\"description\":\"Recommendation started (recall or no recall)\",\"detailUrl\":null,\"occurredAt\":\"2022-12-1T14:25:40.117Z\",\"additionalInformation\":{\"referralId\":null,\"recommendationUrl\":\"someurl/cases/crn/overview\"},\"personReference\":{\"identifiers\":[{\"type\":\"CRN\",\"value\":\"crn\"}]}}")
+      .isEqualTo("{\"eventType\":\"prison-recall.recommendation.started\",\"version\":1,\"description\":\"Recommendation started (recall or no recall)\",\"detailUrl\":null,\"occurredAt\":\"2022-12-1T14:25:40.117Z\",\"additionalInformation\":{\"referralId\":null,\"recommendationUrl\":\"someurl/cases/crn/overview\",\"contactOutcome\":null,\"bookedBy\":null},\"personReference\":{\"identifiers\":[{\"type\":\"CRN\",\"value\":\"crn\"}]}}")
   }
 
   @Test
@@ -73,7 +73,7 @@ class MrdEventsEmitterTest {
     assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(
       java.util.Map.of(
         "Message",
-        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=2022-04-26T20:39:47.778, additionalInformation={referralId=null, recommendationUrl=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
+        "{eventType=DNTR_LETTER_DOWNLOADED, version=1, description=DNTR letter downloaded, detailUrl=http://someurl, occurredAt=2022-04-26T20:39:47.778, additionalInformation={referralId=null, recommendationUrl=null, contactOutcome=null, bookedBy=null}, personReference={identifiers=[{type=some type, value=some value}]}}",
         "SubscribeUrl",
         "http://localhost:9999",
         "MessageAttributes",
@@ -103,7 +103,7 @@ class MrdEventsEmitterTest {
         occurredAt = "2022-12-1T14:25:40.117Z",
 //        detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
-        additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview")
+        additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview", bookedBy = null, contactOutcome = null)
       ),
       messageAttributes = MessageAttributes(
         eventType = TypeValue(
@@ -132,7 +132,7 @@ class MrdEventsEmitterTest {
         description = "DNTR letter downloaded",
         occurredAt = "2022-04-26T20:39:47.778",
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "some type", value = "some value"))),
-        additionalInformation = AdditionalInformation(referralId = null),
+        additionalInformation = AdditionalInformation(referralId = null, contactOutcome = null, bookedBy = null),
         detailUrl = "http://someurl"
       )
     )

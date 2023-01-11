@@ -223,7 +223,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
       .jsonPath("$.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
       .jsonPath("$.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
-      .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(true)
+      .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(false)
   }
 
   private fun updateWithManagerRecallDecision(request: String) {

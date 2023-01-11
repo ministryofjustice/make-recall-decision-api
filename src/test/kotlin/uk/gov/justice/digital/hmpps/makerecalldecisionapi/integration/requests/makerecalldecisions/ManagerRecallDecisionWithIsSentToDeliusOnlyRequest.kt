@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 fun managerRecallDecisionRequestWithIsSentToDeliusOnly(decision: String = "NO_RECALL") = """
 {
   "managerRecallDecision": {
-   "isSentToDelius": true
+   "isSentToDelius": false
   }
 }
 """.trimIndent()

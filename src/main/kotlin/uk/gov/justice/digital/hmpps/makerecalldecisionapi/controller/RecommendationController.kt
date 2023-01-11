@@ -85,11 +85,13 @@ internal class RecommendationController(
   @Operation(summary = "Updates recommendation with manager recall decision")
   suspend fun updateRecommendationWithManagerRecallDecision(
     @PathVariable("recommendationId") recommendationId: Long,
-    @RequestBody updateRecommendationJson: JsonNode
+    @RequestBody updateRecommendationJson: JsonNode,
+    userLogin: Principal
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation with manager recall decision endpoint for recommendation id: $recommendationId"))
+    val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
-    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, readableUserName)
+    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, username, readableUserName)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
