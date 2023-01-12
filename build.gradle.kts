@@ -33,7 +33,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
   implementation("io.opentelemetry:opentelemetry-api:1.22.0")
   implementation("joda-time:joda-time:2.12.2")
   implementation("com.deepoove:poi-tl:1.12.1") {
@@ -64,7 +64,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
   implementation("org.json:json:20220924")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
-  testImplementation("org.mock-server:mockserver-netty:5.14.0")
+  testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
