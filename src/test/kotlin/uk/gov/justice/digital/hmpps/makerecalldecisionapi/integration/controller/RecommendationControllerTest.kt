@@ -812,6 +812,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.developerMessage").isEqualTo("No staffCode available for: SOME_USER from the community-api")
         .jsonPath("$.error").isEqualTo("DELIUS_CONTACT_CREATION_FAILED")
         .jsonPath("$.status").isEqualTo(500)
+
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(false)
     }
   }
   @Test
