@@ -518,7 +518,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(mrdEmitterMocked).should().sendEvent(captor.capture())
         val mrdEvent = captor.firstValue
         assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
-        assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("RECALL")
+        assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("DECISION_TO_RECALL")
         assertThat(mrdEvent.message?.additionalInformation?.bookedBy?.staffCode).isEqualTo("ABC123")
         assertThat(mrdEvent.message?.additionalInformation?.recommendationUrl).isNotNull
         assertThat(mrdEvent.type).isEqualTo("Notification")

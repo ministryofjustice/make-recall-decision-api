@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toDeliusContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
@@ -226,7 +227,7 @@ internal class RecommendationService(
         try {
           sendManagerRecallDecisionMadeEvent(
             crn = existingRecommendationEntity.data.crn,
-            contactOutcome = existingRecommendationEntity.data.managerRecallDecision?.selected?.value.toString(),
+            contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.managerRecallDecision?.selected?.value).toString(),
             staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
           )
         } catch (ex: Exception) {
