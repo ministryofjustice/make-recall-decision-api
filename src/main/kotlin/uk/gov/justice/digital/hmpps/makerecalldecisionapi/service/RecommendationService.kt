@@ -34,6 +34,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -197,6 +199,7 @@ internal class RecommendationService(
     )
   }
 
+  @kotlin.Throws(Exception::class)
   @OptIn(ExperimentalStdlibApi::class)
   suspend fun updateRecommendationWithManagerRecallDecision(
     jsonRequest: JsonNode?,
@@ -218,18 +221,24 @@ internal class RecommendationService(
           createdBy = readableUserName
         )
 
+      if (existingRecommendationEntity.data.managerRecallDecision?.isSentToDelius == true) {
+        log.info("About to send domain event for ${updatedRecommendation.crn} on manager recall decision made for recommendationId $recommendationId")
+        try {
+          sendManagerRecallDecisionMadeEvent(
+            crn = existingRecommendationEntity.data.crn,
+            contactOutcome = existingRecommendationEntity.data.managerRecallDecision?.selected?.value.toString(),
+            staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
+          )
+        } catch (ex: Exception) {
+          log.info("Failed to send domain event for ${updatedRecommendation.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
+          existingRecommendationEntity.data.managerRecallDecision?.isSentToDelius = false
+          updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
+          throw ex
+        }
+        log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
+      }
       val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
-
       log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
-//      if (result.managerRecallDecision?.isSentToDelius == true) {
-//        log.info("About to send domain event for ${result.crn} on manager recall decision made for recommendationId $recommendationId")
-//        sendManagerRecallDecisionMadeEvent(
-//          crn = result.crn,
-//          contactOutcome = result.managerRecallDecision.selected?.value.toString(),
-//          staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
-//        )
-//        log.info("Sent domain event for ${result.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
-//      }
       return result
     }
   }
@@ -299,6 +308,7 @@ internal class RecommendationService(
     return readerForUpdating.readValue(jsonRequest)
   }
 
+  @Throws(RecommendationUpdateException::class)
   private fun saveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
@@ -307,8 +317,14 @@ internal class RecommendationService(
     existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
     existingRecommendationEntity.data.lastModifiedBy = userId
     existingRecommendationEntity.data.lastModifiedByUserName = readableUserName
-
-    val savedRecommendation = recommendationRepository.save(existingRecommendationEntity)
+    val savedRecommendation = try {
+      recommendationRepository.save(existingRecommendationEntity)
+    } catch (ex: Exception) {
+      throw RecommendationUpdateException(
+        message = "Update failed for recommendation id:: ${existingRecommendationEntity.id}$ex.message",
+        error = RECOMMENDATION_UPDATE_FAILED.toString()
+      )
+    }
     log.info("recommendation for ${existingRecommendationEntity.data.crn} updated")
     return savedRecommendation
   }
