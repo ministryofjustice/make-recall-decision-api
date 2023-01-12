@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 data class ManagerRecallDecision(
   val selected: ManagerRecallDecisionTypeSelectedValue? = null,
   val allOptions: List<TextValueOption>? = null,
-  val isSentToDelius: Boolean? = false,
+  var isSentToDelius: Boolean? = false,
   val createdBy: String? = null,
   val createdDate: String? = null
 )
