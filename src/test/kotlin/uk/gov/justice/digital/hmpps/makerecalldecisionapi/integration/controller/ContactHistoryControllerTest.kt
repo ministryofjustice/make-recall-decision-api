@@ -20,7 +20,7 @@ class ContactHistoryControllerTest(
   @Test
   fun `retrieves all contact history details`() {
     runTest {
-      val featureFlagString = "{\"flagConsiderRecall\": true, \"flagSystemGeneratedContacts\": false }"
+      val featureFlagString = "{\"flagConsiderRecall\": true, \"flagShowSystemGenerated\": false }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)

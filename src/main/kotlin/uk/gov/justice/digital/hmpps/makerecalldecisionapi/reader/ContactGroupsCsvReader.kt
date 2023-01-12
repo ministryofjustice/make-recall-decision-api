@@ -27,7 +27,7 @@ class ContactGroupsCsvReader {
 
     init {
       log.info("Building contact groups list on application startup")
-      // FIXME: Remove this when flagSystemGeneratedContacts feature switched on
+      // FIXME: Remove this when flagShowSystemGenerated feature switched on
       contactGroups = csvReader().open(resource.inputStream) {
         readAllAsSequence().drop(1).map {
           ContactGroup(it)
