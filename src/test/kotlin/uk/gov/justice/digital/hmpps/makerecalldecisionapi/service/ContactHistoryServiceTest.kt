@@ -54,7 +54,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagSystemGeneratedContacts = false))
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagShowSystemGenerated = false))
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
@@ -75,7 +75,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagSystemGeneratedContacts = true))
+      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagShowSystemGenerated = true))
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)

@@ -61,7 +61,7 @@ internal class ContactHistoryService(
   private fun buildRelevantContactTypeGroups(contactSummary: List<ContactSummaryResponse>, featureFlags: FeatureFlags?): List<ContactGroupResponse?> {
     val allRelevantContacts = contactSummary.distinctBy { it.code }
 
-    val contactGroupToUse = if (featureFlags?.flagSystemGeneratedContacts == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
+    val contactGroupToUse = if (featureFlags?.flagShowSystemGenerated == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
 
     val contactGroups = contactGroupToUse.groupBy(ContactGroup::groupId)
       .entries.mapNotNull { (id, contactGroups) ->
@@ -80,7 +80,7 @@ internal class ContactHistoryService(
     existingContacts: List<ContactGroupResponse>,
     featureFlags: FeatureFlags?
   ): List<ContactGroupResponse> {
-    val contactGroupToUse = if (featureFlags?.flagSystemGeneratedContacts == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
+    val contactGroupToUse = if (featureFlags?.flagShowSystemGenerated == true) ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts() else ContactGroupsCsvReader.getContactGroups()
 
     val unknownContacts = allRelevantContacts.filter { relevantContact ->
       contactGroupToUse.none { it.code == relevantContact.code }
