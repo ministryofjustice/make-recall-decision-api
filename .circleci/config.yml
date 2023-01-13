@@ -272,7 +272,7 @@ workflows:
   security:
     triggers:
       - schedule:
-          cron: "10 11 * * 1-5"
+          cron: "48 6 * * 1-5"
           filters:
             branches:
               only:
@@ -284,6 +284,7 @@ workflows:
             - hmpps-common-vars
       - hmpps/trivy_latest_scan:
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          additional_args: --debug --timeout 30m
           context:
             - hmpps-common-vars
       - hmpps/veracode_pipeline_scan:
