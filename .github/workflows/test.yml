@@ -23,4 +23,4 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Run functional test
-        run: echo hello
+        run: ./gradlew functional-test-light
