@@ -276,7 +276,7 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - circleci-editor/641/main
     jobs:
       - hmpps/gradle_owasp_dependency_check:
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
