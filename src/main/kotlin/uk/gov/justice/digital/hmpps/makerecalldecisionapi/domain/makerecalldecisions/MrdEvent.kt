@@ -49,7 +49,7 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
     message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.managementOversight",
+      eventType = "prison-recall.recommendation.management-oversight",
       version = 1,
       description = "Management Oversight - Recall",
       occurredAt = utcNowDateTimeString(),
@@ -61,7 +61,7 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
         bookedBy = BookedBy(staffCode = staffCode)
       )
     ),
-    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.managementOversight"))
+    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.management-oversight"))
   )
 }
 

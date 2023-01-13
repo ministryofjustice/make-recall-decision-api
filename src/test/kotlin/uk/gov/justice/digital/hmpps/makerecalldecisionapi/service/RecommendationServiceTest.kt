@@ -524,7 +524,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(mrdEvent.type).isEqualTo("Notification")
         assertThat(mrdEvent.messageId).isNotNull
         assertThat(mrdEvent.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:hmpps-domain")
-        assertThat(mrdEvent.message?.eventType).isEqualTo("prison-recall.recommendation.managementOversight")
+        assertThat(mrdEvent.message?.eventType).isEqualTo("prison-recall.recommendation.management-oversight")
         assertThat(mrdEvent.message?.version).isEqualTo(1)
         assertThat(mrdEvent.message?.description).isEqualTo("Management Oversight - Recall")
         assertThat(mrdEvent.message?.occurredAt).isNotNull
@@ -532,7 +532,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(mrdEvent.signingCertURL).isEqualTo(null) // handled by receiver
         assertThat(mrdEvent.subscribeUrl).isEqualTo(null) // handled by receiver
         assertThat(mrdEvent.messageAttributes?.eventType?.type).isEqualTo("String")
-        assertThat(mrdEvent.messageAttributes?.eventType?.value).isEqualTo("prison-recall.recommendation.managementOversight")
+        assertThat(mrdEvent.messageAttributes?.eventType?.value).isEqualTo("prison-recall.recommendation.management-oversight")
       } else {
         then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
