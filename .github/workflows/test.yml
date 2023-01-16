@@ -21,7 +21,9 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
+      - name: Grant Permissions to gradlew
+        run: chmod +x gradlew
       - name: Run functional test
-        run: gradle functional-test-light --info
+        run: ./gradlew functional-test-light --info
         env:
           GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false
