@@ -22,6 +22,6 @@ jobs:
           java-version: 17
           distribution: 'adopt'
       - name: Run functional test
-        run: ./gradlew functional-test-light --info
+        run: gradle functional-test-light --info
         env:
           GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false
