@@ -39,6 +39,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshDataScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
@@ -268,6 +270,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           lastRecallDate = parse("2022-02-26"),
           hasBeenRecalledPreviously = true,
           previousRecallDates = listOf(parse("2021-01-01"))
+        ),
+        currentRoshForPartA = RoshData(
+          riskToChildren = RoshDataScore.VERY_HIGH,
+          riskToPublic = RoshDataScore.HIGH,
+          riskToKnownAdult = RoshDataScore.MEDIUM,
+          riskToStaff = RoshDataScore.LOW,
+          riskToPrisoners = RoshDataScore.NOT_APPLICABLE
         )
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
@@ -315,7 +324,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(103)
+      assertThat(result.size).isEqualTo(108)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -401,6 +410,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["last_releasing_prison"]).isEqualTo("HMP Holloway")
       assertThat(result["date_of_last_release"]).isEqualTo("07/10/2022")
       assertThat(result["date_of_previous_recalls"]).isEqualTo("10/09/2022")
+      assertThat(result["risk_to_children"]).isEqualTo("Very High")
+      assertThat(result["risk_to_public"]).isEqualTo("High")
+      assertThat(result["risk_to_known_adult"]).isEqualTo("Medium")
+      assertThat(result["risk_to_staff"]).isEqualTo("Low")
+      assertThat(result["risk_to_prisoners"]).isEqualTo("N/A")
     }
   }
 
@@ -436,7 +450,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         hasArrestIssues = ValueWithDetails(value = "Yes", details = "Arrest issue details"),
         hasContrabandRisk = ValueWithDetails(value = "Yes", details = "Contraband risk details"),
         selectedStandardConditionsBreached = null,
-        additionalConditionsBreached = EMPTY_STRING
+        additionalConditionsBreached = EMPTY_STRING,
+        riskToChildren = null,
+        riskToPublic = null,
+        riskToKnownAdult = null,
+        riskToStaff = null,
+        riskToPrisoners = null
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
@@ -457,6 +476,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_to_children"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_to_public"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_to_known_adult"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_to_staff"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["risk_to_prisoners"]).isEqualTo(EMPTY_STRING)
     }
   }
 
@@ -550,7 +574,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
       lastReleasingPrison = "HMP Holloway",
       datesOfLastReleases = "07/10/2022",
-      datesOfLastRecalls = "10/09/2022"
+      datesOfLastRecalls = "10/09/2022",
+      riskToChildren = RoshDataScore.VERY_HIGH.partADisplayValue,
+      riskToPublic = RoshDataScore.HIGH.partADisplayValue,
+      riskToKnownAdult = RoshDataScore.MEDIUM.partADisplayValue,
+      riskToStaff = RoshDataScore.LOW.partADisplayValue,
+      riskToPrisoners = RoshDataScore.NOT_APPLICABLE.partADisplayValue
     )
   }
 }
