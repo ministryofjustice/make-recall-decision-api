@@ -25,4 +25,4 @@ jobs:
         run: ./gradlew functional-test-light --info
         env:
           JVM_OPTS: -Xmx2048m
-          GRADLE_OPTS: -Xmx1536m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
+          GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false
