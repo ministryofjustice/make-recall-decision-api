@@ -22,4 +22,6 @@ jobs:
           java-version: 17
           distribution: 'adopt'
       - name: Run functional test
-        run: ./gradlew functional-test-light
+        run: ./gradlew functional-test-light --info
+        env:
+          GRADLE_OPTS: -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
