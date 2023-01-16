@@ -196,7 +196,8 @@ internal class RecommendationService(
       nextAppointment = recommendationEntity.data.nextAppointment,
       previousReleases = recommendationEntity.data.previousReleases,
       previousRecalls = recommendationEntity.data.previousRecalls,
-      recallConsideredList = recommendationEntity.data.recallConsideredList
+      recallConsideredList = recommendationEntity.data.recallConsideredList,
+      currentRoshForPartA = recommendationEntity.data.currentRoshForPartA
     )
   }
 

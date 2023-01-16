@@ -410,6 +410,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.previousRecalls.previousRecallDates[1]").isEqualTo("2016-04-30")
       .jsonPath("$.previousRecalls.hasBeenRecalledPreviously").isEqualTo(true)
       .jsonPath("$.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+      .jsonPath("$.currentRoshForPartA.riskToChildren").isEqualTo("LOW")
+      .jsonPath("$.currentRoshForPartA.riskToPublic").isEqualTo("HIGH")
+      .jsonPath("$.currentRoshForPartA.riskToKnownAdult").isEqualTo("MEDIUM")
+      .jsonPath("$.currentRoshForPartA.riskToStaff").isEqualTo("VERY_HIGH")
+      .jsonPath("$.currentRoshForPartA.riskToPrisoners").isEqualTo("NOT_APPLICABLE")
   }
 
   @Test

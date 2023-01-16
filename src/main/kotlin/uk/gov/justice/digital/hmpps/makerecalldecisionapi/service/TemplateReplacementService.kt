@@ -152,6 +152,11 @@ internal class TemplateReplacementService(
       "last_releasing_prison" to documentData.lastReleasingPrison,
       "date_of_last_release" to documentData.datesOfLastReleases,
       "date_of_previous_recalls" to documentData.datesOfLastRecalls,
+      "risk_to_children" to (documentData.riskToChildren ?: EMPTY_STRING),
+      "risk_to_public" to (documentData.riskToPublic ?: EMPTY_STRING),
+      "risk_to_known_adult" to (documentData.riskToKnownAdult ?: EMPTY_STRING),
+      "risk_to_staff" to (documentData.riskToStaff ?: EMPTY_STRING),
+      "risk_to_prisoners" to (documentData.riskToPrisoners ?: EMPTY_STRING)
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))

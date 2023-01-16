@@ -110,7 +110,12 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
       lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
       datesOfLastReleases = formatMultipleDates(previousReleasesList),
-      datesOfLastRecalls = formatMultipleDates(previousRecallsList)
+      datesOfLastRecalls = formatMultipleDates(previousRecallsList),
+      riskToChildren = recommendation.currentRoshForPartA?.riskToChildren?.partADisplayValue,
+      riskToPublic = recommendation.currentRoshForPartA?.riskToPublic?.partADisplayValue,
+      riskToKnownAdult = recommendation.currentRoshForPartA?.riskToKnownAdult?.partADisplayValue,
+      riskToStaff = recommendation.currentRoshForPartA?.riskToStaff?.partADisplayValue,
+      riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue
     )
   }
 

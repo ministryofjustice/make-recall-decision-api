@@ -323,6 +323,13 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     ],
     "createdBy": "John Smith",
     "createdDate": "2023-01-01T15:00:08.000Z"
+  },
+  "currentRoshForPartA": {
+    "riskToChildren": "LOW",
+    "riskToPublic": "HIGH",
+    "riskToKnownAdult": "MEDIUM",
+    "riskToStaff": "VERY_HIGH",
+    "riskToPrisoners": "NOT_APPLICABLE"
   }
 }
 """.trimIndent()

@@ -29,6 +29,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshDataScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
@@ -168,7 +170,8 @@ class MrdTestDataBuilder {
         offenceAnalysis = "This is the offence analysis",
         previousReleases = previousReleases(),
         previousRecalls = previousRecalls(),
-        recallConsideredList = recallConsideredData()
+        recallConsideredList = recallConsideredData(),
+        currentRoshForPartA = roshDataForPartA()
       )
     }
 
@@ -383,6 +386,16 @@ class MrdTestDataBuilder {
 
     private fun reasonForNoRecall(): ReasonsForNoRecall {
       return ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail")
+    }
+
+    private fun roshDataForPartA(): RoshData? {
+      return RoshData(
+        riskToChildren = RoshDataScore.VERY_HIGH,
+        riskToPublic = RoshDataScore.HIGH,
+        riskToKnownAdult = RoshDataScore.MEDIUM,
+        riskToStaff = RoshDataScore.LOW,
+        riskToPrisoners = RoshDataScore.NOT_APPLICABLE
+      )
     }
   }
 }

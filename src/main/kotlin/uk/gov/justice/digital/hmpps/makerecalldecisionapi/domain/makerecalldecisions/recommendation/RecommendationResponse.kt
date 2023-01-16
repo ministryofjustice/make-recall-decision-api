@@ -53,7 +53,8 @@ data class RecommendationResponse(
   val nextAppointment: NextAppointment? = null,
   val previousReleases: PreviousReleases? = null,
   val previousRecalls: PreviousRecalls? = null,
-  val recallConsideredList: List<RecallConsidered>? = null
+  val recallConsideredList: List<RecallConsidered>? = null,
+  val currentRoshForPartA: RoshData? = null
 )
 
 data class UnderIntegratedOffenderManagement(
