@@ -231,10 +231,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @ParameterizedTest()
   @CsvSource("RECOMMENDATION_STARTED_EVENT_ALREADY_SENT", "RECOMMENDATION_STARTED", "NO_FLAGS")
-  fun `updates a recommendation to the database when mappa is null`(scenario: String) {
+  fun `updates a recommendation to the database`(scenario: String) {
     runTest {
       // given
-      var existingRecommendation = RecommendationEntity(
+      val existingRecommendation = RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = crn,
@@ -247,6 +247,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             )
           ),
           status = Status.RECALL_CONSIDERED,
+          personOnProbation = PersonOnProbation(name = "John Smith"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -258,7 +259,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
       updateRecommendationRequest =
-        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null), recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent)
+        updateRecommendationRequest.copy(recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent)
 
       // and
       var recommendationToSave =
@@ -266,11 +267,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           id = existingRecommendation.id,
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
-            personOnProbation = PersonOnProbation(
-              name = "John Smith",
-              hasBeenReviewed = true,
-              mappa = Mappa(hasBeenReviewed = true)
-            ),
+            personOnProbation = updateRecommendationRequest.personOnProbation,
             recallType = updateRecommendationRequest.recallType,
             custodyStatus = updateRecommendationRequest.custodyStatus,
             responseToProbation = updateRecommendationRequest.responseToProbation,
@@ -308,10 +305,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             previousReleases = updateRecommendationRequest.previousReleases,
             previousRecalls = updateRecommendationRequest.previousRecalls,
             recallConsideredList = updateRecommendationRequest.recallConsideredList,
-            recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent
+            currentRoshForPartA = updateRecommendationRequest.currentRoshForPartA
           )
         )
 
+      // and
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
@@ -322,15 +320,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      // and
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+
       val featureFlags = when (scenario) {
         "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
         "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
         else -> null
       }
-
-      // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
 
       // when
       recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, featureFlags)
@@ -354,6 +350,55 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           then(mrdEmitterMocked).shouldHaveNoInteractions()
         }
       }
+
+      then(recommendationRepository).should().save(recommendationToSave)
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
+  fun `updates a recommendation to the database when mappa is null`() {
+    runTest {
+      // given
+      var existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn
+        )
+      )
+
+      // and
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest =
+        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null))
+
+      // and
+      var recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(
+              name = "John Smith",
+              hasBeenReviewed = true,
+              mappa = Mappa(hasBeenReviewed = true)
+            )
+          )
+        )
+
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // when
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
+
       then(recommendationRepository).should().findById(1)
     }
   }
@@ -536,103 +581,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       } else {
         then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
-    }
-  }
-
-  @Test
-  fun `updates a recommendation to the database`() {
-    runTest {
-      // given
-      val existingRecommendation = RecommendationEntity(
-        id = 1,
-        data = RecommendationModel(
-          crn = crn,
-          recallConsideredList = listOf(
-            RecallConsidered(
-              createdDate = "2022-11-01T15:22:24.567Z",
-              userName = "Harry",
-              userId = "harry",
-              recallConsideredDetail = "Recall considered"
-            )
-          ),
-          status = Status.RECALL_CONSIDERED,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
-          lastModifiedBy = "Jack",
-          lastModifiedDate = "2022-07-01T15:22:24.567Z",
-          createdBy = "Jack",
-          createdDate = "2022-07-01T15:22:24.567Z",
-        )
-      )
-
-      // and
-      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-
-      // and
-      var recommendationToSave =
-        existingRecommendation.copy(
-          id = existingRecommendation.id,
-          data = RecommendationModel(
-            crn = existingRecommendation.data.crn,
-            personOnProbation = updateRecommendationRequest.personOnProbation,
-            recallType = updateRecommendationRequest.recallType,
-            custodyStatus = updateRecommendationRequest.custodyStatus,
-            responseToProbation = updateRecommendationRequest.responseToProbation,
-            whatLedToRecall = updateRecommendationRequest.whatLedToRecall,
-            isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
-            isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
-            isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
-            activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
-            hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
-            indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
-            dateVloInformed = updateRecommendationRequest.dateVloInformed,
-            hasArrestIssues = updateRecommendationRequest.hasArrestIssues,
-            hasContrabandRisk = updateRecommendationRequest.hasContrabandRisk,
-            status = Status.DRAFT,
-            lastModifiedDate = "2022-07-26T09:48:27.443Z",
-            lastModifiedBy = "bill",
-            lastModifiedByUserName = "Bill",
-            createdBy = existingRecommendation.data.createdBy,
-            createdDate = existingRecommendation.data.createdDate,
-            indexOffenceDetails = updateRecommendationRequest.indexOffenceDetails,
-            alternativesToRecallTried = updateRecommendationRequest.alternativesToRecallTried,
-            licenceConditionsBreached = updateRecommendationRequest.licenceConditionsBreached,
-            underIntegratedOffenderManagement = updateRecommendationRequest.underIntegratedOffenderManagement,
-            localPoliceContact = updateRecommendationRequest.localPoliceContact,
-            vulnerabilities = updateRecommendationRequest.vulnerabilities,
-            convictionDetail = updateRecommendationRequest.convictionDetail?.copy(hasBeenReviewed = true),
-            fixedTermAdditionalLicenceConditions = updateRecommendationRequest.fixedTermAdditionalLicenceConditions,
-            indeterminateOrExtendedSentenceDetails = updateRecommendationRequest.indeterminateOrExtendedSentenceDetails,
-            mainAddressWherePersonCanBeFound = updateRecommendationRequest.mainAddressWherePersonCanBeFound,
-            whyConsideredRecall = updateRecommendationRequest.whyConsideredRecall,
-            reasonsForNoRecall = updateRecommendationRequest.reasonsForNoRecall,
-            nextAppointment = updateRecommendationRequest.nextAppointment,
-            offenceAnalysis = "This is the offence analysis",
-            hasBeenReviewed = null,
-            previousReleases = updateRecommendationRequest.previousReleases,
-            previousRecalls = updateRecommendationRequest.previousRecalls,
-            recallConsideredList = updateRecommendationRequest.recallConsideredList
-          )
-        )
-
-      // and
-      given(recommendationRepository.save(any()))
-        .willReturn(recommendationToSave)
-
-      // and
-      given(recommendationRepository.findById(any()))
-        .willReturn(Optional.of(existingRecommendation))
-
-      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
-      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
-
-      // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
-
-      // then
-      recallConsideredIdWorkaround(recommendationToSave)
-
-      then(recommendationRepository).should().save(recommendationToSave)
-      then(recommendationRepository).should().findById(1)
     }
   }
 

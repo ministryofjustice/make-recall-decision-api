@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshDataScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
@@ -806,6 +808,30 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.datesOfLastRecalls).isEqualTo("05/09/2022")
+    }
+  }
+
+  @Test
+  fun `given rosh data then format it for the Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        currentRoshForPartA = RoshData(
+          riskToChildren = RoshDataScore.VERY_HIGH,
+          riskToPublic = RoshDataScore.HIGH,
+          riskToKnownAdult = RoshDataScore.MEDIUM,
+          riskToStaff = RoshDataScore.LOW,
+          riskToPrisoners = RoshDataScore.NOT_APPLICABLE
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+      assertThat(result.riskToChildren).isEqualTo("Very High")
+      assertThat(result.riskToPublic).isEqualTo("High")
+      assertThat(result.riskToKnownAdult).isEqualTo("Medium")
+      assertThat(result.riskToStaff).isEqualTo("Low")
+      assertThat(result.riskToPrisoners).isEqualTo("N/A")
     }
   }
 }
