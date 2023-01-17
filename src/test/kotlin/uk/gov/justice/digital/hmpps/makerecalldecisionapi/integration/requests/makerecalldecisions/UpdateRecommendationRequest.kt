@@ -144,8 +144,11 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
       ]
     },
     "additionalLicenceConditions": {
-      "selected": [
-        "NST14"
+      "selectedOptions": [
+        {
+          "mainCatCode": "NLC5",
+          "subCatCode": "NST14"
+        }
       ],
       "allOptions": [
         {
