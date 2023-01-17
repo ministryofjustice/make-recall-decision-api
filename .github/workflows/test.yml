@@ -24,7 +24,7 @@ jobs:
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
       - name: Remove Gradle Cache
-        run: rm -rf ~/.gradle
+        run: rm -rf $HOME/.gradle/caches
       - name: Add Memory Arg to gradle.properties
         run: echo org.gradle.jvmargs=-Xmx1024m >> ~/.gradle/gradle.properties
       - name: Run functional test
