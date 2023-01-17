@@ -26,7 +26,7 @@ jobs:
       - name: Remove Gradle Cache
         run: rm -rf $HOME/.gradle/caches
       - name: Add Memory Arg to gradle.properties
-        run: echo org.gradle.jvmargs=-Xmx1024m >> ~/.gradle/gradle.properties
+        run: echo org.gradle.jvmargs=-Xmx4048m > ~/.gradle/gradle.properties
       - name: Run functional test
         run: ./gradlew assemble --info
 #        env:
