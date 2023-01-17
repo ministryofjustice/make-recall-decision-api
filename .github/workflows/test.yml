@@ -23,10 +23,10 @@ jobs:
           distribution: 'adopt'
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
-      - name: Remove Gradle Cache
-        run: rm -rf $HOME/.gradle
-      - name: Add encoding fix to gradle.properties
-        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
+#      - name: Remove Gradle Cache
+#        run: rm -rf $HOME/.gradle
+#      - name: Add encoding fix to gradle.properties
+#        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
         run: ./gradlew assemble --info
 #        env:
