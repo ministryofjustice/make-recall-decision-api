@@ -31,8 +31,8 @@ jobs:
         run: echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
       - name: Add more to gradle.properties
         run: echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
-      - name: Add more to gradle.properties
-        run: echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties
+#      - name: Add more to gradle.properties
+#        run: echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties
       - name: Run functional test
 #        run: ./gradlew assemble --info
         run: ./gradlew functional-test-light --info
