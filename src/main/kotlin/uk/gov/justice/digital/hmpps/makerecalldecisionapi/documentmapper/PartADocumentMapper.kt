@@ -182,8 +182,18 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   }
 
   private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: AdditionalLicenceConditions?): String {
-    val selectedOptions = additionalLicenceConditions?.allOptions
-      ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
+
+    val selectedOptions = if (additionalLicenceConditions?.selectedOptions != null) {
+      additionalLicenceConditions.allOptions?.filter { sel ->
+        additionalLicenceConditions.selectedOptions.any {
+          it.subCatCode == sel.subCatCode && it.mainCatCode == sel.mainCatCode
+        }
+      }
+    } else {
+      // Left this line in to make the code backwards compatible after the issue described in MRD-1056 was fixed
+      additionalLicenceConditions?.allOptions
+        ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
+    }
 
     return selectedOptions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
 
