@@ -21,13 +21,18 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
+          cache: gradle
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
 #      - name: Remove Gradle Cache
 #        run: rm -rf $HOME/.gradle
-#      - name: Add encoding fix to gradle.properties
-#        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
-      - name: Run functional test
-        run: ./gradlew assemble --info
+      - name: Add encoding fix to gradle.properties
+        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
+      - name: Gradle FT
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: functional-test-light
+#      - name: Run functional test
+#        run: ./gradlew assemble --info
 #        env:
 #          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
