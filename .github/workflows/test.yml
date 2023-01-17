@@ -26,7 +26,7 @@ jobs:
       #      - name: Remove Gradle Cache
       #        run: rm -rf $HOME/.gradle/caches
       - name: Add Correction for CI Adding Unparseable Characters to gradle.properties
-        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
+        run: echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
       - name: Run functional test
 #        run: ./gradlew assemble --info
         run: ./gradlew functional-test-light --info
