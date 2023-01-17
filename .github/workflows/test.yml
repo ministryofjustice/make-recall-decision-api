@@ -31,8 +31,8 @@ jobs:
       - name: Gradle FT
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: functional-test-light
+          arguments: functional-test-light --info
 #      - name: Run functional test
 #        run: ./gradlew assemble --info
-#        env:
-#          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
