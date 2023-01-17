@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshDataScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
@@ -260,7 +261,7 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
+  fun `given deprecated selected alternative licence conditions then build up the text for alternative licences in the part A`() {
     runTest {
       val recommendation = RecommendationResponse(
         id = 1,
@@ -289,6 +290,35 @@ class PartADocumentMapperTest {
   }
 
   @Test
+  fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        licenceConditionsBreached = LicenceConditionsBreached(
+          additionalLicenceConditions = AdditionalLicenceConditions(
+            selectedOptions = listOf(SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14")),
+            allOptions = listOf(
+              AdditionalLicenceConditionOption(
+                subCatCode = "NST14",
+                mainCatCode = "NLC5",
+                title = "I am a title", details = "details1", note = "note1"
+              )
+            )
+          ),
+          standardLicenceConditions = null
+        )
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
+        .append(System.lineSeparator()).append("Note: note1")
+      assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
+    }
+  }
+
+  @Test
   fun `given multiple alternative licence conditions then build up the text with line breaks for alternative licences in the part A`() {
     runTest {
       val recommendation = RecommendationResponse(
@@ -296,7 +326,7 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         licenceConditionsBreached = LicenceConditionsBreached(
           additionalLicenceConditions = AdditionalLicenceConditions(
-            selected = listOf("NST14", "XYZ"),
+            selectedOptions = listOf(SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"), SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ")),
             allOptions = listOf(
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
@@ -307,6 +337,11 @@ class PartADocumentMapperTest {
                 subCatCode = "XYZ",
                 mainCatCode = "ABC",
                 title = "I am another title", details = "details2", note = "note2"
+              ),
+              AdditionalLicenceConditionOption(
+                subCatCode = "XYZ",
+                mainCatCode = "DIFFERENT",
+                title = "I am different title", details = "details3", note = "note3"
               )
             )
           ),
@@ -334,7 +369,7 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         licenceConditionsBreached = LicenceConditionsBreached(
           additionalLicenceConditions = AdditionalLicenceConditions(
-            selected = listOf("NST14", "XYZ"),
+            selectedOptions = listOf(SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"), SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ")),
             allOptions = listOf(
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
