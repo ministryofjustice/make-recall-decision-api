@@ -26,6 +26,6 @@ jobs:
       - name: Remove Gradle Cache
         run: rm -rf ~/.gradle
       - name: Run functional test
-        run: ./gradlew assemble --debug
+        run: ./gradlew assemble --debug -Dorg.gradle.jvmargs=-Xmx1024m
 #        env:
 #          GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false
