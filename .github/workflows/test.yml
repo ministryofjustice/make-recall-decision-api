@@ -28,4 +28,4 @@ jobs:
       - name: Run functional test
         run: ./gradlew assemble --info
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4048m
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
