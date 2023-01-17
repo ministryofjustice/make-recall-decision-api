@@ -23,7 +23,11 @@ jobs:
           distribution: 'adopt'
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
+      #      - name: Remove Gradle Cache
+      #        run: rm -rf $HOME/.gradle/caches
+      - name: Add Correction for CI Adding Unparseable Characters to gradle.properties
+        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
         run: ./gradlew assemble --info
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g" -Dfile.encoding=utf-8
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
