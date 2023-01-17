@@ -25,9 +25,7 @@ jobs:
         run: chmod +x gradlew
       - name: Remove Gradle Cache
         run: rm -rf $HOME/.gradle/caches
-      - name: Add Memory Arg to gradle.properties
-        run: echo org.gradle.jvmargs=-Xmx4048m > ~/.gradle/gradle.properties
       - name: Run functional test
         run: ./gradlew assemble --info
-#        env:
-#          GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4048m
