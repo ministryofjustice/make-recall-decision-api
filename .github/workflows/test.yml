@@ -23,6 +23,8 @@ jobs:
           distribution: 'adopt'
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
+      - name: Remove Gradle Cache
+        run: rm -rf ~/.gradle
       - name: Run functional test
         run: ./gradlew functional-test-light --info
         env:
