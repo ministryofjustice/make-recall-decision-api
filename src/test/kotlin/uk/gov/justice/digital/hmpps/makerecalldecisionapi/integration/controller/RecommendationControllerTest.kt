@@ -240,6 +240,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `update with refresh and get recommendation`() {
+    // FIXME: if getting stack overflow error when running this test in CircleCI, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     allOffenderDetailsResponseOneTimeOnly(crn)
@@ -417,6 +418,21 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.currentRoshForPartA.riskToKnownAdult").isEqualTo("MEDIUM")
       .jsonPath("$.currentRoshForPartA.riskToStaff").isEqualTo("VERY_HIGH")
       .jsonPath("$.currentRoshForPartA.riskToPrisoners").isEqualTo("NOT_APPLICABLE")
+  }
+
+  @Test
+  fun `update roshSummary with refresh and get recommendation`() {
+    userAccessAllowed(crn)
+    allOffenderDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation()
+    roSHSummaryResponse(crn)
+    updateRecommendation(updateRecommendationRequest(), "riskOfSeriousHarm")
+    webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
       .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren").isEqualTo("LOW")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic").isEqualTo("LOW")
@@ -424,6 +440,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff").isEqualTo("VERY_HIGH")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners").isEqualTo("VERY_HIGH")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren").isEqualTo("HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic").isEqualTo("HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult").isEqualTo("HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff").isEqualTo("MEDIUM")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners").isEqualTo("")
+      .jsonPath("$.roshSummary.lastUpdatedDate").isEqualTo("2022-05-19T08:26:31.000Z")
   }
 
   @Test
