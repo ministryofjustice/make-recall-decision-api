@@ -21,18 +21,10 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
-
-
-      - name: Remove Gradle home folder
-        run: rm -rf $HOME/.gradle/
-      - name: Remove gradlew
-        run: rm -rf gradlew
-
       - name: Grant Permissions to gradlew
         run: chmod +x gradlew
 #      - name: Remove Gradle Cache
 #        run: rm -rf $HOME/.gradle/caches
-
       - name: Run functional test
         run: ./gradlew assemble --info
         env:
