@@ -42,6 +42,6 @@ jobs:
 #        run: ./gradlew functional-test-light --info
         run: ./gradlew compileFunctional-testKotlin
       - name: Run functional test
-          run: ./gradlew functional-test-light
+        run: ./gradlew functional-test-light
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g" -Dfile.encoding="UTF-8" -Dorg.gradle.caching="true" -Dorg.gradle.daemon="true"
