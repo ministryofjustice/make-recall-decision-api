@@ -36,6 +36,6 @@ jobs:
       - name: Add Memory Arg to gradle.properties
         run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
-        run: ./gradlew compileJava --info
+        run: ./gradlew compileKotlin --info
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
