@@ -25,8 +25,8 @@ jobs:
         run: chmod +x gradlew
 #      - name: Remove Gradle Cache
 #        run: rm -rf $HOME/.gradle/caches
-      - name: Add Memory Arg to gradle.properties
-        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
+#      - name: Add Memory Arg to gradle.properties
+#        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
         run: ./gradlew assemble --info
         env:
