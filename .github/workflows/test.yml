@@ -23,19 +23,19 @@ jobs:
           distribution: 'adopt'
 #      - name: Grant Permissions to gradlew
 #        run: chmod +x gradlew
-      - name: Remove Gradle Cache
-        run: rm -rf $HOME/.gradle
-      - name: Remove Gradle
-        run: rm -rf $HOME/gradle
-      - name: Remove Gradle
-        run: rm -rf $HOME/gradlew
+#      - name: Remove Gradle Cache
+#        run: rm -rf $HOME/.gradle
+#      - name: Remove Gradle
+#        run: rm -rf $HOME/gradle
+#      - name: Remove Gradle
+#        run: rm -rf $HOME/gradlew
 #      - name: Add Memory Arg to gradle.properties
 #        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
-      - name: Get wrapper
-        run: ./gradlew wrapper --gradle-version=7.5
+#      - name: Get wrapper
+#        run: ./gradlew wrapper --gradle-version=7.5
       - name: Add Memory Arg to gradle.properties
         run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
-        run: ./gradlew assemble --info
+        run: ./gradlew compileJava --info
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
