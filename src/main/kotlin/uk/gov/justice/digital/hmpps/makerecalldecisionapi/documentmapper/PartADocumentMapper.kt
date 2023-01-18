@@ -250,10 +250,15 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   }
 
   private fun getIndeterminateOrExtendedSentenceDetails(indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails?, field: String): Pair<String, String?> {
-    if (indeterminateOrExtendedSentenceDetails?.selected?.any { it.value == field } == true) {
-      return Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
+    return if (indeterminateOrExtendedSentenceDetails != null) {
+      if (indeterminateOrExtendedSentenceDetails.selected?.any { it.value == field } == true) {
+        Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
+      } else {
+        Pair(NO, EMPTY_STRING)
+      }
+    } else {
+      Pair(EMPTY_STRING, EMPTY_STRING)
     }
-    return Pair(NO, EMPTY_STRING)
   }
 
   private fun formatAddressWherePersonCanBeFound(details: String?): String? {

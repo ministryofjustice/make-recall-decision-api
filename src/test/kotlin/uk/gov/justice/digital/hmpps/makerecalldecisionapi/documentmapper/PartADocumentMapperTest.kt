@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
@@ -30,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
@@ -197,7 +199,7 @@ class PartADocumentMapperTest {
 
   @ParameterizedTest(name = "given is indeterminate sentence type field {0} in recommendation data should map to the part A text {1}")
   @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "NO,No")
-  fun `given  indeterminate sentence type data then should map to the part A text`(
+  fun `given indeterminate sentence type data then should map to the part A text`(
     indeterminateSentenceType: IndeterminateSentenceTypeOptions,
     partADisplayText: String?
   ) {
@@ -867,6 +869,108 @@ class PartADocumentMapperTest {
       assertThat(result.riskToKnownAdult).isEqualTo("Medium")
       assertThat(result.riskToStaff).isEqualTo("Low")
       assertThat(result.riskToPrisoners).isEqualTo("N/A")
+    }
+  }
+
+  @Test
+  fun `given indeterminate or extended sentence then populate fields for question 24 in Part A with selected values`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
+          selected = listOf(
+            ValueWithDetails(
+              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
+              details = "Some behaviour similar to index offence"
+            ),
+            ValueWithDetails(
+              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
+              details = "Behaviour leading to sexual or violent behaviour"
+            ),
+            ValueWithDetails(
+              value = "OUT_OF_TOUCH",
+              details = "Out of touch"
+            )
+          ),
+          allOptions = listOf(
+            TextValueOption(
+              text = "Some behaviour similar to index offence",
+              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+            ),
+            TextValueOption(
+              text = "Behaviour leading to sexual or violent behaviour",
+              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+            ),
+            TextValueOption(
+              text = "Out of touch",
+              value = "OUT_OF_TOUCH",
+            )
+          )
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+      assertThat(result.behaviourSimilarToIndexOffencePresent).isEqualTo("Yes")
+      assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("Some behaviour similar to index offence")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("Yes")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("Behaviour leading to sexual or violent behaviour")
+      assertThat(result.outOfTouchPresent).isEqualTo("Yes")
+      assertThat(result.outOfTouch).isEqualTo("Out of touch")
+    }
+  }
+
+  @Test
+  fun `given indeterminate or extended sentence then populate fields for question 24 in Part A with No for values not selected`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
+          selected = null,
+          allOptions = listOf(
+            TextValueOption(
+              text = "Some behaviour similar to index offence",
+              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+            ),
+            TextValueOption(
+              text = "Behaviour leading to sexual or violent behaviour",
+              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+            ),
+            TextValueOption(
+              text = "Out of touch",
+              value = "OUT_OF_TOUCH",
+            )
+          )
+        )
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+      assertThat(result.behaviourSimilarToIndexOffencePresent).isEqualTo("No")
+      assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("No")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.outOfTouchPresent).isEqualTo("No")
+      assertThat(result.outOfTouch).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given non indeterminate or extended sentence then do not populate fields for question 24 in Part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        indeterminateOrExtendedSentenceDetails = null
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+
+      assertThat(result.behaviourSimilarToIndexOffencePresent).isEqualTo("")
+      assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("")
+      assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.outOfTouchPresent).isEqualTo("")
+      assertThat(result.outOfTouch).isEqualTo("")
     }
   }
 }
