@@ -249,7 +249,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
     allOffenderDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
-    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation")
+    roSHSummaryResponse(crn)
+    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation, riskOfSeriousHarm")
     updateRecommendation(secondUpdateRecommendationRequest())
     webTestClient.get()
       .uri("/recommendations/$createdRecommendationId")
@@ -416,6 +417,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.currentRoshForPartA.riskToKnownAdult").isEqualTo("MEDIUM")
       .jsonPath("$.currentRoshForPartA.riskToStaff").isEqualTo("VERY_HIGH")
       .jsonPath("$.currentRoshForPartA.riskToPrisoners").isEqualTo("NOT_APPLICABLE")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren").isEqualTo("LOW")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic").isEqualTo("LOW")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult").isEqualTo("HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff").isEqualTo("VERY_HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners").isEqualTo("VERY_HIGH")
+      .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren").isEqualTo("HIGH")
   }
 
   @Test

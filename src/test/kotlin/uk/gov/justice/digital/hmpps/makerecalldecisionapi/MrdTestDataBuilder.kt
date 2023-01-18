@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
@@ -106,7 +109,8 @@ class MrdTestDataBuilder {
           reasonsForNoRecall = reasonForNoRecall(),
           nextAppointment = nextAppointment(),
           indexOffenceDetails = "Juicy details",
-          previousReleases = previousReleases()
+          previousReleases = previousReleases(),
+          roshSummary = roshSummary()
         )
       )
     }
@@ -395,6 +399,29 @@ class MrdTestDataBuilder {
         riskToKnownAdult = RoshDataScore.MEDIUM,
         riskToStaff = RoshDataScore.LOW,
         riskToPrisoners = RoshDataScore.NOT_APPLICABLE
+      )
+    }
+
+    private fun roshSummary(): RoshSummary {
+      return RoshSummary(
+        riskOfSeriousHarm = RiskOfSeriousHarm(
+          overallRisk = "HIGH",
+          riskInCustody = RiskTo(
+            riskToChildren = "LOW",
+            riskToPublic = "MEDIUM",
+            riskToKnownAdult = "MEDIUM",
+            riskToStaff = "LOW",
+            riskToPrisoners = "VERY_HIGH"
+          ),
+          riskInCommunity = RiskTo(
+            riskToChildren = "HIGH",
+            riskToPublic = "MEDIUM",
+            riskToKnownAdult = "MEDIUM",
+            riskToStaff = "LOW",
+            riskToPrisoners = ""
+          )
+        ),
+        lastUpdatedDate = "2023-01-12T20:39:00.000Z"
       )
     }
   }
