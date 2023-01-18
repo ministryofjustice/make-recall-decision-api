@@ -117,9 +117,6 @@ sourceSets {
 }
 
 task<Test>("functional-test-light") {
-//  options.
-//  options.fork = true  // Fork your compilation into a child process
-//  options.forkOptions.setMemoryMaximumSize("4g") // Set maximum memory to 4g
   description = "Runs the functional test, will require start-local-development.sh " +
     "and docker-compose-postgres.yml to be started manually"
   group = "verification"
