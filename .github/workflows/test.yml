@@ -32,7 +32,7 @@ jobs:
 #      - name: Add Memory Arg to gradle.properties
 #        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Get wrapper
-        run: ./gradlew wrapper --gradle-version=7.6
+        run: gradle wrapper --gradle-version=7.6
       - name: Add Memory Arg to gradle.properties
         run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
