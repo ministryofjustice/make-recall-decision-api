@@ -60,6 +60,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryRiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
@@ -402,6 +403,40 @@ internal abstract class ServiceTestBase {
         description = "NPS London"
       ),
       notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
+    )
+  }
+
+  protected fun riskSummaryResponse(): RiskSummaryResponse {
+    return RiskSummaryResponse(
+      whoIsAtRisk = "X, Y and Z are at risk",
+      natureOfRisk = "The nature of the risk is X",
+      riskImminence = "the risk is imminent and more probably in X situation",
+      riskIncreaseFactors = "If offender in situation X the risk can be higher",
+      riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
+      riskInCommunity = RiskScore(
+        veryHigh = null,
+        high = listOf(
+          "Children",
+          "Public",
+          "Known adult"
+        ),
+        medium = listOf("Staff"),
+        low = listOf("Prisoners")
+      ),
+      riskInCustody = RiskScore(
+        veryHigh = listOf(
+          "Staff",
+          "Prisoners"
+        ),
+        high = listOf("Known adult"),
+        medium = null,
+        low = listOf(
+          "Children",
+          "Public"
+        )
+      ),
+      assessedOn = "2022-10-09T08:26:31",
+      overallRiskLevel = "HIGH"
     )
   }
 

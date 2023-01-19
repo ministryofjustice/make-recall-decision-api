@@ -726,6 +726,59 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `update recommendation with rosh summary from Delius when riskOfSeriousHarm page refresh received`() {
+    runTest {
+
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith")
+        )
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      given(arnApiClient.getRiskSummary(anyString())).willReturn(Mono.fromCallable { riskSummaryResponse() })
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("riskOfSeriousHarm"),
+        null
+      )
+
+      then(arnApiClient).should(times(1)).getRiskSummary(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToChildren).isEqualTo("LOW")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPublic).isEqualTo("LOW")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToKnownAdult).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToStaff).isEqualTo("VERY_HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPublic).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToKnownAdult).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToStaff).isEqualTo("MEDIUM")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPrisoners).isEqualTo("LOW")
+      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.overallRisk).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
+    }
+  }
+
+  @Test
   fun `update recommendation with index offence details from Delius when index offence refresh received`() {
     runTest {
 
@@ -1074,6 +1127,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.previousReleases?.lastReleaseDate).isEqualTo("2022-09-02")
     assertThat(recommendationResponse.previousReleases?.lastReleasingPrisonOrCustodialEstablishment).isEqualTo("HMP Holloway")
     assertThat(recommendationResponse.previousReleases?.previousReleaseDates?.get(0)).isEqualTo("2020-02-01")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToChildren).isEqualTo("LOW")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPublic).isEqualTo("MEDIUM")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToKnownAdult).isEqualTo("MEDIUM")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToStaff).isEqualTo("LOW")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPublic).isEqualTo("MEDIUM")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToKnownAdult).isEqualTo("MEDIUM")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToStaff).isEqualTo("LOW")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPrisoners).isEqualTo("")
+    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.overallRisk).isEqualTo("HIGH")
+    assertThat(recommendationResponse.roshSummary?.lastUpdatedDate).isEqualTo("2023-01-12T20:39:00.000Z")
   }
 
   @Test

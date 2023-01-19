@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
@@ -54,7 +55,8 @@ data class RecommendationResponse(
   val previousReleases: PreviousReleases? = null,
   val previousRecalls: PreviousRecalls? = null,
   val recallConsideredList: List<RecallConsidered>? = null,
-  val currentRoshForPartA: RoshData? = null
+  val currentRoshForPartA: RoshData? = null,
+  val roshSummary: RoshSummary? = null
 )
 
 data class UnderIntegratedOffenderManagement(

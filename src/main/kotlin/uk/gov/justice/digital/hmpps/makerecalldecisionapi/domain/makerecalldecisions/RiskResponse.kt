@@ -88,5 +88,5 @@ data class RoshSummary(
   val riskImminence: String? = null,
   val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
   val lastUpdatedDate: String? = null,
-  val error: String? = null,
+  val error: String? = null
 )
