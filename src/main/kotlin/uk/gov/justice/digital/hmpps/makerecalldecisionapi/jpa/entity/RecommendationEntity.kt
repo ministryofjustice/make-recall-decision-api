@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
@@ -105,7 +106,8 @@ data class RecommendationModel(
   @JsonMerge
   var previousRecalls: PreviousRecalls? = null,
   var recommendationStartedDomainEventSent: Boolean? = null,
-  var currentRoshForPartA: RoshData? = null
+  var currentRoshForPartA: RoshData? = null,
+  var roshSummary: RoshSummary? = null
 ) : Serializable
 
 enum class Status {

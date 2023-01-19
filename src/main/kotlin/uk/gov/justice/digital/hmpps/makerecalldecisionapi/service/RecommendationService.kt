@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -197,7 +198,8 @@ internal class RecommendationService(
       previousReleases = recommendationEntity.data.previousReleases,
       previousRecalls = recommendationEntity.data.previousRecalls,
       recallConsideredList = recommendationEntity.data.recallConsideredList,
-      currentRoshForPartA = recommendationEntity.data.currentRoshForPartA
+      currentRoshForPartA = recommendationEntity.data.currentRoshForPartA,
+      roshSummary = recommendationEntity.data.roshSummary
     )
   }
 
@@ -355,6 +357,7 @@ internal class RecommendationService(
     model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
     model.personOnProbation = getPersonalDetails(pageRefreshIds, model.crn, model.personOnProbation)
     model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
+    model.roshSummary = getRoshSummaryDetails(pageRefreshIds, model.crn, model.roshSummary)
     model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
     model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail, model.isExtendedSentence)
   }
@@ -405,6 +408,13 @@ internal class RecommendationService(
       return latestMappa
     }
     return mappa
+  }
+
+  private suspend fun getRoshSummaryDetails(pageRefreshIds: List<String>?, crn: String?, roshSummary: RoshSummary?): RoshSummary? {
+    if (pageRefreshIds?.any { it == "riskOfSeriousHarm" } == true && crn != null) {
+      return riskService?.getRoshSummary(crn)
+    }
+    return roshSummary
   }
 
   private suspend fun getIndexOffenceDetails(pageRefreshIds: List<String>?, crn: String?, indexOffenceDetails: String?): String? {
