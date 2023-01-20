@@ -21,21 +21,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
-      #      - name: Grant Permissions to gradlew
-      #        run: chmod +x gradlew
-      #      - name: Remove Gradle Cache
-      #        run: rm -rf $HOME/.gradle
-      #      - name: Remove Gradle
-      #        run: rm -rf $HOME/gradle
-      #      - name: Remove Gradle
-      #        run: rm -rf $HOME/gradlew
-      #      - name: Add Memory Arg to gradle.properties
-      #        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
-      #      - name: Get wrapper
-      #        run: ./gradlew wrapper --gradle-version=7.5
-      - name: Add Memory Arg to gradle.properties
-        run: echo file.encoding=utf-8 >> ~/.gradle/gradle.properties
       - name: Run functional test
-        run: ./gradlew functional-test-light --info
+        run: ./gradlew functional-test-light
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=1g"
+          GRADLE_OPTS: -Xmx4048m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=false
