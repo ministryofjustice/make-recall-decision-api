@@ -24,4 +24,4 @@ jobs:
       - name: Run functional test
         run: ./gradlew functional-test-light --info
         env:
-          GRADLE_OPTS: -Dorg.gradle.caching=false
+          GRADLE_OPTS: -Dorg.gradle.caching=false -Dfile.encoding=utf-8
