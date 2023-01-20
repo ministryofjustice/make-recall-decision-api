@@ -22,6 +22,6 @@ jobs:
           java-version: 17
           distribution: 'adopt'
       - name: Run functional test
-        run: ./gradlew functional-test-light --continue --info
+        run: ./gradlew functional-test-light --continue --info --scan
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4096m -Dorg.gradle.caching=false -Dfile.encoding=utf-8 -Dorg.gradle.parallel=false
