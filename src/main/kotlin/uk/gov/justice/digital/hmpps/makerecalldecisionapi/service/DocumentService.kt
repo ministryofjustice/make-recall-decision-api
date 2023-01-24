@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 
 @Service
 internal class DocumentService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
+  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val userAccessValidator: UserAccessValidator
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -39,6 +41,17 @@ internal class DocumentService(
   }
 
   fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource>? {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      val message = if (userAccessResponse?.userRestricted == true) {
+        "Access restricted for case:: $crn, message:: ${userAccessResponse.restrictionMessage}"
+      } else if (userAccessResponse?.userExcluded == true) {
+        "Access excluded for case:: $crn, message:: ${userAccessResponse.exclusionMessage}"
+      } else {
+        "User trying to access case:: $crn not found"
+      }
+      throw UserAccessException(message)
+    }
     return getValueAndHandleWrappedException(communityApiClient.getDocumentByCrnAndId(crn, documentId))
   }
 }
