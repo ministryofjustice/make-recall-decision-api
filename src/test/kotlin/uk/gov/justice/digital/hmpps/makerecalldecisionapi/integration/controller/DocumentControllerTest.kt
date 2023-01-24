@@ -20,7 +20,6 @@ class DocumentControllerTest(
   @Test
   fun `retrieves document from CRN and document ID`() {
     runTest {
-      userAccessAllowed(crn)
       getDocumentResponse(crn, documentId)
 
       webTestClient.get()
@@ -39,7 +38,6 @@ class DocumentControllerTest(
   @Test
   fun `handles scenario where no document exists for crn`() {
     runTest {
-      userAccessAllowed(crn)
       noDocumentAvailable(crn, documentId)
 
       webTestClient.get()
@@ -56,7 +54,6 @@ class DocumentControllerTest(
   @Test
   fun `gateway timeout 503 given on Community Api timeout`() {
     runTest {
-      userAccessAllowed(crn)
       getDocumentResponse(crn, documentId, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()

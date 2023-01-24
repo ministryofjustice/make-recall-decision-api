@@ -35,7 +35,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    documentService = DocumentService(communityApiClient, userAccessValidator)
+    documentService = DocumentService(communityApiClient)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
     contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 

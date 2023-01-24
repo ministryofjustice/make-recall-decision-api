@@ -116,7 +116,7 @@ internal abstract class ServiceTestBase {
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(communityApiClient)
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
-    documentService = DocumentService(communityApiClient, userAccessValidator)
+    documentService = DocumentService(communityApiClient)
     convictionService = ConvictionService(communityApiClient, documentService)
     personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, null)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, null)
