@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDoc
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionDocuments
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -29,7 +31,7 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    documentService = DocumentService(communityApiClient)
+    documentService = DocumentService(communityApiClient, userAccessValidator)
   }
 
   @Test
@@ -45,6 +47,51 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
       assertThat(response, equalTo(expectedContactDocumentResponse()))
     }
+  }
+
+  @Test
+  fun `throws exception when case excluded`() {
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(true, false, false) })
+
+    Assertions.assertThatThrownBy {
+      runTest {
+        documentService.getDocumentByCrnAndId(crn, "SOME_ID")
+      }
+    }.isInstanceOf(UserAccessException::class.java)
+      .hasMessage("Access excluded for case:: 12345, message:: I am an exclusion message")
+
+    then(communityApiClient).shouldHaveNoMoreInteractions()
+  }
+
+  @Test
+  fun `throws exception when case restricted`() {
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, true, false) })
+
+    Assertions.assertThatThrownBy {
+      runTest {
+        documentService.getDocumentByCrnAndId(crn, "SOME_ID")
+      }
+    }.isInstanceOf(UserAccessException::class.java)
+      .hasMessage("Access restricted for case:: 12345, message:: I am a restriction message")
+
+    then(communityApiClient).shouldHaveNoMoreInteractions()
+  }
+
+  @Test
+  fun `throws exception when calling user not found`() {
+    given(communityApiClient.getUserAccess(anyString()))
+      .willReturn(Mono.fromCallable { userAccessResponse(false, false, true) })
+
+    Assertions.assertThatThrownBy {
+      runTest {
+        documentService.getDocumentByCrnAndId(crn, "SOME_ID")
+      }
+    }.isInstanceOf(UserAccessException::class.java)
+      .hasMessage("User trying to access case:: 12345 not found")
+
+    then(communityApiClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
