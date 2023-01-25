@@ -783,13 +783,13 @@ class PartADocumentMapperTest {
         previousReleases = PreviousReleases(
           lastReleaseDate = LocalDate.parse("2022-09-05"),
           lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
-          previousReleaseDates = listOf(LocalDate.parse("2020-02-01"))
+          previousReleaseDates = listOf(LocalDate.parse("2022-05-09"), LocalDate.parse("2020-02-01"))
         )
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
-      assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022, 01/02/2020")
+      assertThat(result.datesOfLastReleases).isEqualTo("09/05/2022, 01/02/2020")
     }
   }
 
@@ -808,7 +808,7 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
       assertThat(result.lastReleasingPrison).isEqualTo("HMP Holloway")
-      assertThat(result.datesOfLastReleases).isEqualTo("05/09/2022")
+      assertThat(result.lastReleaseDate).isEqualTo("05/09/2022")
     }
   }
 

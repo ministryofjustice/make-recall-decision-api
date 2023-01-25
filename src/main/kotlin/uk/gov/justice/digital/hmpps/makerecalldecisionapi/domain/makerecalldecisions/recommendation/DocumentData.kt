@@ -65,6 +65,7 @@ data class DocumentData(
   val otherPossibleAddresses: String? = null,
   val primaryLanguage: String? = null,
   val lastReleasingPrison: String? = null,
+  val lastReleaseDate: String? = null,
   val datesOfLastReleases: String? = null,
   val datesOfLastRecalls: String? = null,
   val riskToChildren: String? = null,
