@@ -264,7 +264,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           lastReleaseDate = parse("2022-09-06"),
           lastReleasingPrisonOrCustodialEstablishment = "Holloway",
           hasBeenReleasedPreviously = true,
-          previousReleaseDates = listOf(parse("2022-06-01"))
+          previousReleaseDates = listOf(parse("2022-06-01"), parse("2022-01-01"))
         ),
         previousRecalls = PreviousRecalls(
           lastRecallDate = parse("2022-02-26"),
@@ -324,7 +324,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(108)
+      assertThat(result.size).isEqualTo(109)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -408,7 +408,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["section_3"]).isEqualTo("This is the third paragraph")
       assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Jim Smith")
       assertThat(result["last_releasing_prison"]).isEqualTo("HMP Holloway")
-      assertThat(result["date_of_last_release"]).isEqualTo("07/10/2022")
+      assertThat(result["last_release_date"]).isEqualTo("07/10/2021")
+      assertThat(result["dates_of_last_releases"]).isEqualTo("07/10/2022")
       assertThat(result["date_of_previous_recalls"]).isEqualTo("10/09/2022")
       assertThat(result["risk_to_children"]).isEqualTo("Very High")
       assertThat(result["risk_to_public"]).isEqualTo("High")
@@ -574,6 +575,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
       lastReleasingPrison = "HMP Holloway",
       datesOfLastReleases = "07/10/2022",
+      lastReleaseDate = "07/10/2021",
       datesOfLastRecalls = "10/09/2022",
       riskToChildren = RoshDataScore.VERY_HIGH.partADisplayValue,
       riskToPublic = RoshDataScore.HIGH.partADisplayValue,
