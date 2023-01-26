@@ -37,6 +37,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
 
+    val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
     val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
 
@@ -109,6 +110,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
       primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
       lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
+      lastReleaseDate = buildFormattedLocalDate(lastRelease),
       datesOfLastReleases = formatMultipleDates(previousReleasesList),
       datesOfLastRecalls = formatMultipleDates(previousRecallsList),
       riskToChildren = recommendation.currentRoshForPartA?.riskToChildren?.partADisplayValue,
@@ -120,11 +122,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   }
 
   private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate>? {
-    var dates: List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
-    if (previousReleases?.lastReleaseDate != null) {
-      dates = listOf(previousReleases.lastReleaseDate) + dates
-    }
-    return dates
+    return previousReleases?.previousReleaseDates ?: emptyList()
   }
 
   private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate>? {
