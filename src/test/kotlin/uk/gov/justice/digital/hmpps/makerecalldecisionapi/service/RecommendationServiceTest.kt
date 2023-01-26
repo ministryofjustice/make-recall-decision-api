@@ -133,6 +133,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
+      given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
+        .willReturn(emptyList())
+
+      // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
@@ -162,9 +166,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response.id).isNotNull
-      assertThat(response.status).isEqualTo(Status.DRAFT)
-      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response?.id).isNotNull
+      assertThat(response?.status).isEqualTo(Status.DRAFT)
+      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -226,6 +230,48 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
         then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
+    }
+  }
+
+  @Test
+  fun `create recommendation when one in progress already exists for case`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallConsideredList = listOf(
+            RecallConsidered(
+              createdDate = "2022-11-01T15:22:24.567Z",
+              userName = "Harry",
+              userId = "harry",
+              recallConsideredDetail = "Recall considered"
+            )
+          ),
+          status = Status.RECALL_CONSIDERED,
+          personOnProbation = PersonOnProbation(name = "John Smith"),
+          lastModifiedBy = "Jack",
+          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z",
+          recommendationStartedDomainEventSent = null
+        )
+      )
+      given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
+        .willReturn(listOf(existingRecommendation))
+
+      // when
+      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn, null), "UserBill", "Bill", null)
+
+      // then
+      assertThat(response?.id).isEqualTo(1)
+      assertThat(response?.status).isEqualTo(Status.RECALL_CONSIDERED)
+      assertThat(response?.personOnProbation).isEqualTo(existingRecommendation.data.personOnProbation?.toPersonOnProbationDto())
+
+      // and
+      then(recommendationRepository).should().findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
+      then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
   }
 
