@@ -234,7 +234,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `create recommendation when one in progress already exists for case`() {
+  fun `return existing recommendation when one in progress already exists for case and create endpoint hit`() {
     runTest {
       // given
       val existingRecommendation = RecommendationEntity(
