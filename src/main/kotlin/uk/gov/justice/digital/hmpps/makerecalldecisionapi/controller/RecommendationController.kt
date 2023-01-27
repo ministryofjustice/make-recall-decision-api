@@ -51,7 +51,7 @@ internal class RecommendationController(
     @RequestBody recommendationRequest: CreateRecommendationRequest,
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
     userLogin: Principal
-  ): ResponseEntity<RecommendationResponse>? {
+  ): ResponseEntity<RecommendationResponse?> {
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
