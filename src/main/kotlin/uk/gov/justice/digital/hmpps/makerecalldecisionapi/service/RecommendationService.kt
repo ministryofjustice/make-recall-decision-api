@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessEx
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
@@ -74,12 +75,11 @@ internal class RecommendationService(
     userId: String?,
     readableNameOfUser: String?,
     featureFlags: FeatureFlags?
-  ): RecommendationResponse {
+  ): RecommendationResponse? {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
@@ -98,26 +98,40 @@ internal class RecommendationService(
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
 
-      val savedRecommendation = saveNewRecommendationEntity(
-        recommendationRequest,
-        userId,
-        readableNameOfUser,
-        status,
-        recallConsideredList,
-        StaticRecommendationDataWrapper(
-          personDetails?.toPersonOnProbation(),
-          personDetails?.offenderManager?.probationAreaDescription,
-          personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
-        ),
-        sendRecommendationStartedDomainEvent
-      )
-
-      return RecommendationResponse(
-        id = savedRecommendation?.id,
-        status = savedRecommendation?.data?.status,
-        personOnProbation = savedRecommendation?.data?.personOnProbation?.toPersonOnProbationDto()
-      )
+      val existingRecommendation = findInProgressRecommendationEntityForCase(recommendationRequest.crn)
+      return if (existingRecommendation != null) {
+        existingRecommendation.toRecommendationResponse()
+      } else {
+        val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+        saveNewRecommendationEntity(
+          recommendationRequest,
+          userId,
+          readableNameOfUser,
+          status,
+          recallConsideredList,
+          StaticRecommendationDataWrapper(
+            personDetails?.toPersonOnProbation(),
+            personDetails?.offenderManager?.probationAreaDescription,
+            personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
+          ),
+          sendRecommendationStartedDomainEvent
+        )?.toRecommendationResponse()
+      }
     }
+  }
+
+  private fun findInProgressRecommendationEntityForCase(crn: String?): RecommendationEntity? {
+    val recommendationEntity = crn?.let { recommendationRepository.findByCrnAndStatus(it, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)) }
+    recommendationEntity?.let(Collections::sort)
+    return if (!recommendationEntity.isNullOrEmpty()) {
+      when {
+        recommendationEntity.size > 1 -> {
+          log.error("More than one recommendation found for CRN. Returning the latest.")
+          recommendationEntity[0]
+        }
+        else -> recommendationEntity[0]
+      }
+    } else null
   }
 
   fun buildRecallDecisionList(
