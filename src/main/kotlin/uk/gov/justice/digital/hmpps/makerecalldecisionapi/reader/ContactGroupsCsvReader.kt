@@ -10,16 +10,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.csv.ContactGrou
 @Component
 class ContactGroupsCsvReader {
   companion object {
-    private val resource: Resource = ClassPathResource("contact-groups.csv")
-    private val resourceForSystemGenerated: Resource = ClassPathResource("contact-groups-for-system-generated-contacts.csv")
-    private var contactGroups: List<ContactGroup>
+    private val resource: Resource = ClassPathResource("contact-groups-for-system-generated-contacts.csv")
     private var contactGroupsForSystemGeneratedContacts: List<ContactGroup>
 
     private val log = LoggerFactory.getLogger(this::class.java)
-
-    fun getContactGroups(): List<ContactGroup> {
-      return contactGroups
-    }
 
     fun getContactGroupsForSystemGeneratedContacts(): List<ContactGroup> {
       return contactGroupsForSystemGeneratedContacts
@@ -27,14 +21,8 @@ class ContactGroupsCsvReader {
 
     init {
       log.info("Building contact groups list on application startup")
-      // FIXME: Remove this when flagShowSystemGenerated feature switched on
-      contactGroups = csvReader().open(resource.inputStream) {
-        readAllAsSequence().drop(1).map {
-          ContactGroup(it)
-        }.iterator().asSequence().toList()
-      }
 
-      contactGroupsForSystemGeneratedContacts = csvReader().open(resourceForSystemGenerated.inputStream) {
+      contactGroupsForSystemGeneratedContacts = csvReader().open(resource.inputStream) {
         readAllAsSequence().drop(1).map {
           ContactGroup(it)
         }.iterator().asSequence().toList()

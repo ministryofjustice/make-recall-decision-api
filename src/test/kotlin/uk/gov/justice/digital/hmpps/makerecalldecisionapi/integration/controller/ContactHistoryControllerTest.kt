@@ -20,7 +20,6 @@ class ContactHistoryControllerTest(
   @Test
   fun `retrieves all contact history details`() {
     runTest {
-      val featureFlagString = "{\"flagConsiderRecall\": true, \"flagShowSystemGenerated\": false }"
 
       userAccessAllowed(crn)
       allOffenderDetailsResponse(crn)
@@ -29,7 +28,7 @@ class ContactHistoryControllerTest(
         contactSummaryResponse()
       )
       groupedDocumentsResponse(crn)
-      deleteAndCreateRecommendation(featureFlagString)
+      deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
@@ -37,8 +36,7 @@ class ContactHistoryControllerTest(
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString)
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
             )
             )
         }

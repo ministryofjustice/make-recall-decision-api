@@ -13,7 +13,6 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactSummaryResponse
@@ -54,28 +53,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagShowSystemGenerated = false))
-
-      then(communityApiClient).should().getContactSummary(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
-
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponse())))
-    }
-  }
-
-  @Test
-  fun `given a contact summary with feature flag system generated contacts on then return these details in the response`() {
-    runTest {
-
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
-      given(communityApiClient.getContactSummary(anyString()))
-        .willReturn(Mono.fromCallable { allContactSummariesResponse() })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags(flagShowSystemGenerated = true))
+      val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
@@ -95,7 +73,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         )
       )
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
+      val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getUserAccess(crn)
 
@@ -120,7 +98,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         )
       )
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
+      val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getUserAccess(crn)
 
@@ -145,7 +123,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       given(communityApiClient.getGroupedDocuments(anyString()))
         .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
 
-      val response = contactHistoryService.getContactHistory(crn, FeatureFlags())
+      val response = contactHistoryService.getContactHistory(crn)
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
