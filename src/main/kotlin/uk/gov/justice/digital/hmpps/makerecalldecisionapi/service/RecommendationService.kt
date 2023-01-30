@@ -517,9 +517,11 @@ internal class RecommendationService(
     featureFlags: FeatureFlags?
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
-      val documentResponse = generateDntrDownload(recommendationId, userId, readableUsername)
+      val recommendationEntity = getRecommendationEntityById(recommendationId)
+      val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
+      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
 
-      if (featureFlags?.flagSendDomainEvent == true) {
+      if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
         log.info("Sent domain event for DNTR download asynchronously")
@@ -558,9 +560,8 @@ internal class RecommendationService(
     )
   }
 
-  private suspend fun generateDntrDownload(recommendationId: Long, userId: String?, readableUsername: String?,): DocumentResponse {
+  private suspend fun generateDntrDownload(recommendationEntity: RecommendationEntity, userId: String?, readableUsername: String?,): DocumentResponse {
 
-    val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
       updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, null, false)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)

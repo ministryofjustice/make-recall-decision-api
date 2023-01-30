@@ -1606,6 +1606,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
         assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
+        then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
       } else {
         then(recommendationRepository).should(times(0)).save(any())
 
@@ -1616,8 +1617,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
         assertThat(recommendationResponseResult.lastDntrLetterDownloadDateTime).isEqualTo("2022-12-01T15:22:24")
         assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
+        then(mrdEmitterMocked).shouldHaveNoInteractions()
       }
-      then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
     }
   }
 
