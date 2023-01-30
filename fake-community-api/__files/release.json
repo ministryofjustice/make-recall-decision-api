@@ -1,4 +1,12 @@
 {
+  "lastRecall": {
+    "date": "2019-11-27",
+    "notes": "Recall happened",
+    "reason": {
+      "code": "ABC123",
+      "description": "Some description"
+    }
+  },
   "lastRelease": {
     "date": "2017-09-15",
     "institution": {
