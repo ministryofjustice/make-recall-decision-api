@@ -488,7 +488,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   private fun updateRecommendation(recommendationRequest: String, refreshPage: String? = null) {
     val refreshPageQueryString = if (refreshPage != null) "?refreshProperty=$refreshPage" else ""
     webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId$refreshPageQueryString")
+      .uri("/recommendations/$createdRecommendationId/$refreshPageQueryString")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(recommendationRequest)
@@ -633,7 +633,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `handles scenario where no recommendation exists for given id on update`() {
     webTestClient.patch()
-      .uri("/recommendations/999")
+      .uri("/recommendations/999/")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(updateRecommendationRequest())
@@ -780,7 +780,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userAccessExcluded(crn)
 
       webTestClient.patch()
-        .uri("/recommendations/$createdRecommendationId")
+        .uri("/recommendations/$createdRecommendationId/")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
           BodyInserters.fromValue(updateRecommendationRequest())
@@ -799,7 +799,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       deleteAndCreateRecommendation()
 
       webTestClient.patch()
-        .uri("/recommendations/$createdRecommendationId")
+        .uri("/recommendations/$createdRecommendationId/")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
           BodyInserters.fromValue(invalidUpdateRecommendationRequest())
