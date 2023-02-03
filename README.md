@@ -47,6 +47,44 @@ And to stop everything, simply run the following:
 ./scripts/stop-local-services.sh
 ```
 
+### First time users
+
+The first time the service is started on your machine may result in a database error along the lines of 'mrd_user cannot be found'
+
+To fix this there are a couple of things that can be tried:
+
+Automatic:
+1. ```docker-compose -f docker-compose-postgres.yml up```
+
+2. Start the database locally with ```./scripts/start-local-development.sh``` which should create the database automatically.
+
+Manual:
+If the above fails to work, then you will need to try and create the user and database manually
+
+1. Download a database client such as `pgadmin4` (will assume pgadmin is being used for the purpose of the below steps)
+
+2. Check if you can create an 'mrd_user' user within pgadmin. If an error is received saying user cannot be created then follow steps 3 and 4.
+
+3. Open a terminal and enter `psql` 
+
+    3a. If `psql` produces this error: `psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  database "<name>" does not exist` then try these steps:
+
+    3b. `brew update`
+
+    3c. `brew install postgres` or `brew upgrade postgresql` (if already installed)
+
+    3d. `brew services start postgresql`
+
+    3e. `createdb`
+
+    3f. `psql` - this should now enter the database terminal 
+
+4. `\du` - check that there is at least one role returned with 'Superuser'
+
+5. `sudo -u {replace with the superuser username returned in step 4} psql {replace with the superuser username returned in step 4}`
+
+6. You should now be in a position to go back to pgadmin and create the `mrd_user` user role and then the `make_recall_decision` database
+
 ### Notes for M1 Mac users
 
 If you're using an M1/arm based Mac, you'll need to also have a checkout of [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) alongside your checkouts of `make-recall-decision-ui` and `make-recall-decision-api`, and pass all of the start scripts the `-a` parameter:
