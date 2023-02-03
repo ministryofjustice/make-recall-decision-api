@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.0.1"
   kotlin("jvm") version "1.8.10"
+  kotlin("plugin.jpa") version "1.8.10"
+  kotlin("plugin.spring") version "1.8.10"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.8.10"
   id("org.sonarqube") version "4.0.0.2929"
-  kotlin("plugin.spring") version "1.8.10"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -16,10 +16,6 @@ configurations {
 
 testSets {
   "testSmoke"()
-}
-
-allOpen {
-  annotations("javax.persistence.Entity")
 }
 
 val springDocVersion = "1.6.14"
@@ -59,10 +55,12 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.8.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
+  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.13")
   implementation("org.json:json:20220924")
+  implementation("org.hibernate.orm:hibernate-core:6.1.7.Final")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
