@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration
 
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import com.nimbusds.jose.shaded.gson.Gson
 import org.flywaydb.test.annotation.FlywayTest
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterAll

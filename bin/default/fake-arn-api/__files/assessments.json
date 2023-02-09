@@ -1,0 +1,58 @@
+{
+  "crn": "string",
+  "limitedAccessOffender": true,
+  "assessments": [
+    {
+      "assessmentId": 0,
+      "assessmentType": "string",
+      "partcompStatus": "string",
+      "dateCompleted": "2022-04-24T20:39:47.778",
+      "initiationDate": "2022-09-12T15:00:08.286",
+      "assessorSignedDate": "2022-09-12T15:00:08.286",
+      "assessmentStatus": "COMPLETE",
+      "superStatus": "COMPLETE",
+      "offence": "Juicy offence details.",
+      "disinhibitors": [
+        "string"
+      ],
+      "patternOfOffending": "string",
+      "offenceInvolved": [
+        "string"
+      ],
+      "specificWeapon": "string",
+      "victimPerpetratorRelationship": "string",
+      "victimOtherInfo": "string",
+      "evidencedMotivations": [
+        "string"
+      ],
+      "offenceDetails": [
+        {
+          "type": "CURRENT",
+          "offenceDate": "2022-04-24T20:39:47.778",
+          "offenceCode": "12",
+          "offenceSubCode": "34",
+          "offence": "string",
+          "subOffence": "string"
+        }
+      ],
+      "victimDetails": [
+        {
+          "age": "string",
+          "gender": "string",
+          "ethnicCategory": "string",
+          "victimRelation": "string"
+        }
+      ],
+      "laterWIPAssessmentExists": false,
+      "latestWIPDate": "2022-09-12T15:00:08.286",
+      "laterSignLockAssessmentExists": false,
+      "latestSignLockDate": "2022-09-12T15:00:08.286",
+      "laterPartCompUnsignedAssessmentExists": false,
+      "latestPartCompUnsignedDate": "2022-09-12T15:00:08.286",
+      "laterPartCompSignedAssessmentExists": false,
+      "latestPartCompSignedDate": "2022-09-12T15:00:08.286",
+      "laterCompleteAssessmentExists": false,
+      "latestCompleteDate": "2022-09-12T15:00:08.286"
+    }
+  ]
+}

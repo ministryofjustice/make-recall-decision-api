@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/secure/offenders/crn/.*/convictions"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "convictions.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

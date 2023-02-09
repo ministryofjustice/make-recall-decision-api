@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 @ExperimentalCoroutinesApi
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class RiskControllerTest(
-  @Value("\${mrd.url}") private val mrdUrl: String?,
+  @Value("\${mrd.url}") private val mrdUrl: String? = null,
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
@@ -215,10 +215,12 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -352,10 +354,12 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
