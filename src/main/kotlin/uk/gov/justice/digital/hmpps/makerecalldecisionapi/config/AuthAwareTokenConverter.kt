@@ -12,6 +12,24 @@ class AuthAwareTokenConverter : Converter<Jwt, AbstractAuthenticationToken> {
   private val jwtGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>> =
     JwtGrantedAuthoritiesConverter()
 
+//  Converter<Jwt?, Collection<GrantedAuthority?>?>
+
+//  override fun convert(jwt: Jwt): Collection<GrantedAuthority> {
+//    val realmAccess =
+//      jwt.claims["realm_access"] as Map<String, Any>?
+//    return if (realmAccess == null || realmAccess.isEmpty()) {
+//      ArrayList()
+//    } else (realmAccess["roles"] as List<String>?)
+//      ?.stream()
+//      ?.map { roleName: String -> "ROLE_$roleName" }
+//      ?.map { role: String? ->
+//        SimpleGrantedAuthority(
+//          role
+//        )
+//      }
+//      ?.collect(Collectors.toList())!!
+//  }
+
   override fun convert(jwt: Jwt): AbstractAuthenticationToken {
     val claims = jwt.claims
     val principal = findPrincipal(claims)

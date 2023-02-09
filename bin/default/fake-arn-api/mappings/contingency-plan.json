@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/assessments/risk-management-plans/.*/ALLOW"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "contingency-scores.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

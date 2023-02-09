@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/secure/offenders/crn/.*/userAccess"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "user-access.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

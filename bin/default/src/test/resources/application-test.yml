@@ -1,0 +1,63 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:local-public-key.pub
+  flyway:
+    enabled: false
+
+server:
+  shutdown: immediate
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+offender:
+  search:
+    endpoint:
+      url: http://localhost:8093
+
+community:
+  api:
+    endpoint:
+      url: http://localhost:8092
+
+arn:
+  api:
+    endpoint:
+      url: http://localhost:8095
+
+cvl:
+  client:
+    timeout: 2
+  api:
+    endpoint:
+      url: http://localhost:8096
+
+gotenberg:
+  endpoint:
+    url: http://localhost:8094
+
+oauth:
+  endpoint:
+    url: http://localhost:9090/auth
+    client:
+      id: client-id
+      secret: client-secret
+
+#hmpps:
+#  auth.url: http://localhost:9090/auth
+
+ndelius:
+  client:
+    timeout: 2
+
+oasys:
+  arn:
+    client:
+      timeout: 2
+
+mrd:
+  url: "environment-host"

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/risks/crn/.*/predictors/rsr/history"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "historical-scores.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

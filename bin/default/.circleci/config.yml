@@ -1,0 +1,310 @@
+version: 2.1
+
+orbs:
+  hmpps: ministryofjustice/hmpps@6
+  slack: circleci/slack@4.10.1
+
+parameters:
+  alerts-slack-channel:
+    type: string
+    default: make-recall-decisions-pipeline
+  releases-slack-channel:
+    type: string
+    default: make-recall-decisions-pipeline
+  e2e-parallelism:
+    type: integer
+    default: 3
+
+slack-fail-post-step: &slack-fail-post-step
+  post-steps:
+    - slack/notify:
+        event: fail
+        branch_pattern: main
+        channel: << pipeline.parameters.alerts-slack-channel >>
+        custom: |
+          {
+            "text": "",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` - `${CIRCLE_JOB}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": { "type": "plain_text", "text": "View Job" },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                ]
+              }
+            ]
+          }
+
+jobs:
+  validate:
+    machine:
+      image: ubuntu-2204:2022.04.1
+      docker_layer_caching: true
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "build.gradle.kts" }}
+            - gradle-
+      - run:
+          name: Run check & send results to sonarcloud
+          command: |
+            export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
+            ./gradlew check sonarqube
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-{{ checksum "build.gradle.kts" }}
+      - store_test_results:
+          path: build/test-results
+      - store_artifacts:
+          path: build/reports/tests
+      - store_artifacts:
+          path: build/reports/jacoco/test/html
+
+  e2e_test:
+    executor:
+      name: hmpps/default
+      tag: "3.10"
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Run E2E tests on '<< parameters.environment >>'
+          command: ./scripts/run-e2e-tests.sh -e << parameters.environment >>
+
+  e2e_local_test:
+    machine:
+      image: ubuntu-2004:2022.10.1
+    parallelism: << pipeline.parameters.e2e-parallelism >>
+    steps:
+      - run:
+          name: Checkout/clone make-recall-decision-api
+          command: |
+            git clone https://github.com/ministryofjustice/make-recall-decision-api.git
+            cd make-recall-decision-api
+            git checkout $CIRCLE_BRANCH
+      - run:
+          name: Checkout/clone make-recall-decision-ui
+          command: git clone https://github.com/ministryofjustice/make-recall-decision-ui.git
+      - run:
+          name: Start components
+          working_directory: make-recall-decision-ui
+          command: ./scripts/start-services-for-e2e-tests.sh -p
+      - run:
+          name: Run E2E tests
+          working_directory: make-recall-decision-ui
+          command: |
+            npm ci --no-audit
+
+            SPECS=$(circleci tests glob e2e_tests/integration/*.feature | circleci tests split)
+            echo "Running feature spec(s): ${SPECS}"
+
+            set +e
+
+            npx cypress run \
+              --env USERNAME=${CYPRESS_USERNAME_local},PASSWORD=${CYPRESS_PASSWORD_local},USERNAME_SPO=${CYPRESS_USERNAME_SPO_local},PASSWORD_SPO=${CYPRESS_PASSWORD_SPO_local} \
+              --config-file e2e_tests/cypress.config.ts \
+              --browser chrome \
+              --record false \
+              --spec $SPECS
+
+            export E2E_RESULT=$?
+            node scripts/fix-junit-reports.js
+
+            set -e
+            exit $E2E_RESULT
+      - run:
+          when: on_fail
+          name: make-recall-decision-api - docker logs
+          working_directory: make-recall-decision-api
+          command: docker-compose logs
+      - run:
+          when: on_fail
+          name: make-recall-decision-ui - docker logs
+          working_directory: make-recall-decision-ui
+          command: docker-compose logs
+      - store_artifacts:
+          path: make-recall-decision-ui/e2e_tests/screenshots
+          destination: screenshots
+      - store_artifacts:
+          path: make-recall-decision-ui/e2e_tests/reports
+          destination: reports
+      - store_artifacts:
+          path: make-recall-decision-ui/e2e_tests/junit
+          destination: junit
+      - store_test_results:
+          path: make-recall-decision-ui/e2e_tests/junit
+
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - validate:
+          filters:
+            tags:
+              ignore: /.*/
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+      - hmpps/helm_lint:
+          name: helm_lint
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+      - e2e_local_test:
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+      - hmpps/build_docker:
+          name: build_docker
+          filters:
+            branches:
+              only:
+                - main
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+      - hmpps/deploy_env:
+          name: deploy_dev
+          env: "dev"
+          context:
+            - hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - validate
+            - build_docker
+            - e2e_local_test
+            - helm_lint
+          <<: *slack-fail-post-step
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_dev
+          sentry_project: make-recall-decision-api
+          sentry_environment: DEV
+          sentry_create_release: true
+          requires:
+            - deploy_dev
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+      - e2e_test:
+          name: e2e_test_dev
+          environment: dev
+          context:
+            - make-recall-decision-circleci-auth
+            - hmpps-common-vars
+          requires:
+            - deploy_dev
+          <<: *slack-fail-post-step
+
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-preprod
+          requires:
+           - e2e_test_dev
+          <<: *slack-fail-post-step
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_preprod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PRE-PROD
+          sentry_create_release: true
+          requires:
+            - deploy_preprod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+      - e2e_test:
+          name: e2e_test_preprod
+          environment: preprod
+          context:
+            - make-recall-decision-circleci-auth
+            - hmpps-common-vars
+          requires:
+            - deploy_preprod
+          <<: *slack-fail-post-step
+
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-prod
+          requires:
+            - e2e_test_preprod
+          <<: *slack-fail-post-step
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_prod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PROD
+          sentry_create_release: true
+          requires:
+            - deploy_prod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
+
+  security:
+    triggers:
+      - schedule:
+          cron: "48 6 * * 1-5"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/gradle_owasp_dependency_check:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/trivy_latest_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+
+  security-weekly:
+    triggers:
+      - schedule:
+          cron: "45 11 * * 3"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/veracode_policy_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+
+

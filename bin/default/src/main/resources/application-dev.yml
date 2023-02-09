@@ -1,0 +1,26 @@
+offender:
+  search:
+    endpoint:
+      url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
+
+community:
+  api:
+    endpoint:
+      url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
+
+arn:
+  api:
+    endpoint:
+      url: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
+
+cvl:
+  api:
+    endpoint:
+      url: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
+
+hmpps:
+  auth:
+    url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+
+mrd:
+  url: https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk

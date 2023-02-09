@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import com.nimbusds.jose.shaded.gson.Gson
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException

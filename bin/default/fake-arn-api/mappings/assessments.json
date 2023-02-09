@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/assessments/crn/.*/offence"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "assessments.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

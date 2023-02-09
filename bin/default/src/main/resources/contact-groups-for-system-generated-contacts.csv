@@ -1,0 +1,773 @@
+Group id,Group,Code,Contact name (for reference only - will not be used in UI)
+1,Administrative,C070,Case Allocated
+1,Administrative,C113,Clerical Officer Contact
+1,Administrative,C256,Order/ Licence Received
+1,Administrative,CCTR,Component Termination Removed
+1,Administrative,CMS29,CMS - Case Related Communication - Medium
+1,Administrative,CMS28,CMS - Case Related Communication - Low
+1,Administrative,CMS30,CMS - Case Related Communication - High
+1,Administrative,CMS33,CMS - Assistance with Assessments - High
+1,Administrative,CMS02,CMS - Sentence Plan Intervention Delivery - Medium
+1,Administrative,CMS03,CMS - Sentence Plan Intervention Delivery - High
+1,Administrative,CMS05,CMS - Completing & Assisting with Referrals-Medium
+1,Administrative,CMS04,CMS - Completing & Assisting with Referrals - Low
+1,Administrative,CMS06,CMS - Completing & Assisting with Referrals - High
+1,Administrative,CMS01,CMS - Sentence Plan Intervention Delivery - Low
+1,Administrative,CMS32,CMS - Assistance with Assessments - Medium
+1,Administrative,CMS13,CMS - Information & Intelligence Gathering - Low
+1,Administrative,CMS14,CMS - Information & Intelligence Gathering- Medium
+1,Administrative,CMS15,CMS - Information & Intelligence Gathering - High
+1,Administrative,CMS31,CMS - Assistance with Assessments - Low
+1,Administrative,CMS18,CMS - Home & Prison Visits - High
+1,Administrative,CMS11,CMS - Assistance with Case Conferencing - Medium
+1,Administrative,CMS12,CMS - Assistance with Case Conferencing - High
+1,Administrative,CMS08,CMS - Attending Partnership Meetings - Medium
+1,Administrative,CMS17,CMS - Home & Prison Visits - Medium
+1,Administrative,CMS09,CMS - Attending Partnership Meetings - High
+1,Administrative,CMS27,CMS - Court Liaison & Applications to Court - High
+1,Administrative,CMS10,CMS - Assistance with Case Conferencing - Low
+1,Administrative,CMS26,CMS - Court Liaison & Applications to Court-Medium
+1,Administrative,CMS07,CMS - Attending Partnership Meetings - Low
+1,Administrative,CMS16,CMS - Home & Prison Visits - Low
+1,Administrative,CMS36,CMS - ROTL Assessments & Support - High
+1,Administrative,CMS35,CMS - ROTL Assessments & Support - Medium
+1,Administrative,CMS25,CMS - Court Liaison & Applications to Court - Low
+1,Administrative,CMS34,CMS - ROTL Assessments & Support - Low
+1,Administrative,CMS21,CMS - HDC Assessments & Support - High
+1,Administrative,CMS20,CMS - HDC Assessments & Support - Medium
+1,Administrative,CMS22,CMS - Victims Services Liaison - Low
+1,Administrative,CMS23,CMS - Victims Services Liaison - Medium
+1,Administrative,CMS19,CMS - HDC Assessments & Support - Low
+1,Administrative,CMS24,CMS - Victims Services Liaison - High
+1,Administrative,CMS40,CMS - Assistance with Assessments
+1,Administrative,CMS41,CMS - Assistance with Case Conferencing
+1,Administrative,CMS42,CMS - Attending Partnership Meetings
+1,Administrative,CMS43,CMS - Case Related Communication
+1,Administrative,CMS44,CMS - Completing & Assisting with Referrals
+1,Administrative,CMS45,CMS - Court Liaison & Applications to Court
+1,Administrative,CMS46,CMS - HDC Assessments & Support
+1,Administrative,CMS47,CMS - Home & Prison Visits
+1,Administrative,CMS48,CMS - Information & Intelligence Gathering
+1,Administrative,CMS49,CMS - ROTL Assessments & Support
+1,Administrative,CMS50,CMS - Sentence Plan Intervention Delivery
+1,Administrative,CMS51,CMS - Victims Services Liaison
+1,Administrative,CRCC,Completed
+1,Administrative,CSTR,Sentence Termination Removed
+1,Administrative,DPRE,Pre Cons Received
+1,Administrative,IIRMS19,Case Management Intervention – Low
+2,Anti-terrorism,PREVENT,Prevent Activity
+3,Appointments,APAT,Programme Session (NS)
+3,Appointments,C031,Other Appointment (Non NS)
+3,Appointments,C089,Alcohol Key Worker Session (NS)
+3,Appointments,C090,Drug Key Worker Session (NS)
+3,Appointments,C107,Programme 1-2-1 Session (NS)
+3,Appointments,C253,IOM Home Visit to Case
+3,Appointments,C314,Appointment with External Agency (NS)
+3,Appointments,C444,Other Appointment (NS)
+3,Appointments,CAIS,IOM Office Visit – planned
+3,Appointments,CAPX,IAPS Attendance (NS)
+3,Appointments,CHVS,Home Visit to Case (NS)
+3,Appointments,CITD,Citizenship Drugs Session (NS)
+3,Appointments,CNOF,Notification of Failure (NS)
+3,Appointments,COAI,Initial Appointment - In office (NS)
+3,Appointments,COAP,Planned Office Visit (NS)
+3,Appointments,CODC,Planned Doorstep Contact (NS)
+3,Appointments,CODI,Initial Appointment on Doorstep (NS)
+3,Appointments,COHV,Initial Appointment - Home Visit (NS)
+3,Appointments,COPT,Planned Telephone Contact (NS)
+3,Appointments,COTI,Initial Appointment by Telephone (NS)
+3,Appointments,COVC,Planned Video Contact (NS)
+3,Appointments,CRSAPT,Appointment with CRS Provider (NS)
+3,Appointments,CTOB,Phone Contact to PoP
+3,Appointments,DRGAPT,Drug Test Appointment (NS)
+3,Appointments,EAPK,AP - Keyworker Session (NS)
+3,Appointments,MAP7,MAP - Signpost Map (NS)
+3,Appointments,NSI04,RO Appointment - (NS)
+3,Appointments,OFF8,Emotional Well-Being (NS)
+3,Appointments,POLY16,CT Polygraph Exam
+3,Appointments,RARP,RAR Programme Day
+3,Appointments,CUPA,CP/UPW - Appointment/Attendance (NS)
+3,Appointments,CRSAPT,Appointment with CRS Provider (NS)
+4,Approved premises,APSC4,AP - Welfare Check
+4,Approved premises,APBR,Breach of AP Rules
+4,Approved premises,APMH,AP - Mental Health Concerns
+4,Approved premises,APNC,AP – Notice of Concern
+4,Approved premises,APNO,AP - Suspected Overdose Incident
+4,Approved premises,APPA01,"AP PA - Attitudes, thinking & behaviours"
+4,Approved premises,APPA03,AP PA - Accommodation
+4,Approved premises,APPA06,AP PA - ETE
+4,Approved premises,APPA07,"AP PA - Finance, Benefit and Debt"
+4,Approved premises,APPA08,AP PA - Health
+4,Approved premises,APPH,AP - Physical Health
+4,Approved premises,APRS2,AP - Room Search - Non Compliance AP rules/Licence
+4,Approved premises,APSS1,AP - Suicide Self-Harm Monitoring Started
+4,Approved premises,APSS2,Ap - Suicide Self-Harm Monitoring Reviewed
+4,Approved premises,APSS3,AP - Suicide/ Self-Harm Assessment
+4,Approved premises,APSS4,AP - Suicide/ Self-Harm Monitoring Plan
+4,Approved premises,C103,AP - Purposeful Activity
+4,Approved premises,C118,AP - Advice Note/ Written Warning
+4,Approved premises,C122,AP - Out of hours recall
+4,Approved premises,C123,AP - Hostel Curfew
+4,Approved premises,C145,Curfew Violation
+4,Approved premises,C191,AP - Letters / Documents
+4,Approved premises,C350,AP - Other Contact
+4,Approved premises,C389,AP - Maintenance charge/benefits
+4,Approved premises,C466,AP - 2nd Stage Induction
+4,Approved premises,EAP0,AP INCIDENT - register
+4,Approved premises,EAPC,Other App Prem Contact
+4,Approved premises,C492,AP - PA Session - First Weeks Out 1
+4,Approved premises,APNA,AP - Naloxone Administered by staff
+4,Approved premises,C493,AP - PA Session - First Weeks Out 2
+4,Approved premises,C504,AP - PA Session - College Attendance
+4,Approved premises,C190,AP - MAPPA/ MARAC Report
+4,Approved premises,APNI1,AP - Naloxone – Issued to Resident
+4,Approved premises,C119,AP - Caution (enforceable)
+4,Approved premises,C188,AP - PO Session
+4,Approved premises,C489,AP - PA Session - Evening/Weekend
+4,Approved premises,C189,AP - Enhanced Regime
+4,Approved premises,APSC2,AP - CARE Assessment
+4,Approved premises,APSC11,AP - CARE Immediate Action Plan
+4,Approved premises,C499,AP - Resident Feedback Form
+4,Approved premises,APSC7,AP - CARE Plan
+4,Approved premises,C491,AP - PA Session - ETE
+4,Approved premises,APSC9,AP - CARE review
+4,Approved premises,C388,AP - Meeting with AP Manager
+4,Approved premises,C490,AP - PA Session - Accommodation
+4,Approved premises,APRS3,AP - Room Search - Welfare Concerns
+4,Approved premises,APCA,AP - Care Act
+4,Approved premises,APRS1,AP - Room Search - Risk
+4,Approved premises,C481,AP - Home Leave
+4,Approved premises,APMP1,AP - Medication in Possession Monitoring
+4,Approved premises,APSC10,AP - SaSP review
+4,Approved premises,APSC1,AP - SaSP Assessment
+4,Approved premises,C121,AP - Room Search - Routine
+4,Approved premises,APIN,AP - 1st Stage Induction
+4,Approved premises,APMP2,AP - Medication not in Possession
+4,Approved premises,EAPK,AP - Keyworker Session (NS)
+4,Approved premises,EAPA,AP Admission
+4,Approved premises,EAPD,AP Departure
+4,Approved premises,APRAP4,AP Communication with case
+4,Approved premises,APRAP5,AP Residence Plan Prepared
+4,Approved premises,APRAP1,AP PR Case Allocated
+4,Approved premises,APRAP3,AP PR Case Discussion
+4,Approved premises,EAPX,AP Non-arrival
+4,Approved premises,APRAP2,AP PR Case Allocation SPO Oversight
+4,Approved premises,AP02,AP NSI Status
+4,Approved premises,EAPR,AP Referral
+4,Approved premises,EAPE,AP Referral Decision
+5,Breaches and warnings,AWL2,Breach Action - Second Warning Letter Sent
+5,Breaches and warnings,AWLF,Breach Action - Final Warning Letter Sent
+5,Breaches and warnings,AWLI,Breach Action - First Warning Letter Sent
+5,Breaches and warnings,BIIR,Additional Breach Information Requested
+5,Breaches and warnings,C039,Breach Action - Other Enforcement Letter Sent
+5,Breaches and warnings,C040,Breach Action - Withdraw Warning Letter
+5,Breaches and warnings,C041,Breach Action - Recall Requested
+5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
+5,Breaches and warnings,CLBR,Breach Action - Breach Letter Sent
+5,Breaches and warnings,CLBW,Withdrawal of Warning
+5,Breaches and warnings,LCL,Licence Compliance Letter
+5,Breaches and warnings,ANFA,Breach Action - No Further Action
+5,Breaches and warnings,AWLS,Breach Action - Enforcement Letter Requested
+5,Breaches and warnings,AIBR,Breach Action - Breach / Recall Initiated
+5,Breaches and warnings,C173,Breach Action - Decision Pending Response
+5,Breaches and warnings,BIPP,Breach Information Pack Prepared
+5,Breaches and warnings,ABWD,Breach Outcome - withdrawn /de-listed
+5,Breaches and warnings,BSRQ,Breach Summons Requested
+5,Breaches and warnings,BIPC,Breach Information Report /Pack Checked
+5,Breaches and warnings,BSII,Breach Summons Issued
+5,Breaches and warnings,BRRR,Breach Required
+5,Breaches and warnings,BRRW,Breach Referral Returned to RO for Further Work
+5,Breaches and warnings,BRWS,Breach - Warrant Status
+5,Breaches and warnings,ABPC,"Breach Outcome - proven, order to continue"
+5,Breaches and warnings,ABRQ,Breach Action - Breach Requested
+5,Breaches and warnings,BIPR,Breach Information Pack Requested
+5,Breaches and warnings,ABRA,Breach Action - Breach Request Actioned
+5,Breaches and warnings,ABPP,"Breach Outcome - proven, resentenced"
+5,Breaches and warnings,ABCC,Breach Proven - Continued - Committed to Custody
+5,Breaches and warnings,BRET,Breach Action - Adjourned for breach Trial
+5,Breaches and warnings,ABSD,Breach Proven - SDO Imposed
+5,Breaches and warnings,ABNP,Breach Outcome - not proven
+5,Breaches and warnings,BRES,Breach Suspended (EDM)
+5,Breaches and warnings,C174,Breach Action - YOT OM Notified
+5,Breaches and warnings,ABCF,Breach Proven - Continued - Fine
+5,Breaches and warnings,BRER,Breach Resumed (EDM)
+5,Breaches and warnings,ABNA,Breach Proven - Continued - No Action
+6,Case discussion,C053,Case Decisions
+6,Case discussion,C238,Case Discussion
+6,Case discussion,CRCO,Case Reviewed by Case Manager 
+6,Case discussion,CSPO,Consultation with Manager
+6,Case discussion,CTPJ,Professional Judgement 
+6,Case discussion,RROD,Risk Review Discussion
+7,Communication,C101,Appointment with External Agency
+7,Communication,C129,Use of Video Link / Teleconference
+7,Communication,C325,Information / Documents Requested
+7,Communication,C326,Internal Communications
+7,Communication,CAIL,IOM Correspondence/Mail Contact
+7,Communication,CDHC,HDC - Correspondence / Communication
+7,Communication,CI3A,Information - from 3rd Party
+7,Communication,CI3B,Information - to 3rd Party
+7,Communication,CIEA,Information - from External Agency
+7,Communication,CL3A,Letter/Fax from Other
+7,Communication,CL3B,Letter/Fax to Other
+7,Communication,CM3A,eMail/Text from Other
+7,Communication,CM3B,eMail/Text to Other
+7,Communication,CRFI,Request For Information
+7,Communication,CT3B,Phone Contact to Other
+7,Communication,ICON,IOM Case Conference
+7,Communication,INFFES,Information - from EMS Provider
+7,Communication,POLY10,Disclosure - Linked to Polygraph
+7,Communication,POLY13,Disclosure - Not Linked to Polygraph
+7,Communication,POLY17,Polygraph Disclosure (CT)
+7,Communication,RRRI,NPS - Further Information Requested
+8,Communication with person on probation,CIOA,Information - from PoP
+8,Communication with person on probation,CIOB,Information - to PoP
+8,Communication with person on probation,CLOA,Letter/Fax from PoP
+8,Communication with person on probation,CLOB,Letter/Fax to PoP
+8,Communication with person on probation,CMOA,eMail/Text from PoP
+8,Communication with person on probation,CMOB,eMail/Text to PoP
+8,Communication with person on probation,COPT,Planned Telephone Contact (NS)
+8,Communication with person on probation,COSR,Interview for Report / Other
+8,Communication with person on probation,COUP,Unplanned Contact from Person on Probation
+8,Communication with person on probation,CTOA,Phone Contact from PoP
+8,Communication with person on probation,CTOB,Phone Contact to PoP
+8,Communication with person on probation,CTXT,Text Message to Send
+9,Custody,C401,QA - HDC3/PD1 Returned to Prison
+9,Custody,CPVS,Prison Visit
+9,Custody,EPOMAT,Prison Offender Manager - Automatic Transfer
+9,Custody,EPOMEX,Prison Offender Manager - External Transfer
+9,Custody,EPOMIN,Prison Offender Manager - Internal Allocation
+9,Custody,ETRN,Transfer Reason Notes
+9,Custody,NOMIS003,NOMIS Case Note - Release
+9,Custody,NOMIS025,NOMIS Case Note - OMiC Assessments/Reports
+9,Custody,NOMIS026,NOMIS Case Note - OMIC Communication
+9,Custody,NOMIS027,NOMIS Case Note - Consultation with Head of OM Del
+9,Custody,NOMIS028,NOMIS Case Note - OMIC Planned Supervision Session
+9,Custody,NOMIS029,NOMIS Case Note - OMIC Referrals
+9,Custody,NOMIS030,NOMIS Case Note -OMiC Safeguarding Adults/Children
+9,Custody,NOMIS031,NOMIS Case Note - OMIC Sentence Planning
+9,Custody,NOMISD,NOMIS Case Notes - General
+9,Custody,POM1,POM-COM handover
+9,Custody,NOMIS001,NOMIS Alert Made Active
+9,Custody,NOMIS002,NOMIS Alert Made Inactive
+9,Custody,NOMIS004,NOMIS Case Note - Transfer
+9,Custody,NOMIS003,NOMIS Case Note - Release
+9,Custody,NOMIS005,NOMIS case note – offender supervisor entry
+9,Custody,NOMIS006,NOMIS case note – key worker entry
+9,Custody,NOMIS008,NOMIS Case Note - OPD Triage Contact
+9,Custody,NOMIS013,NOMIS Case Note - Activity Joint Working with OM
+9,Custody,NOMIS022,NOMIS Case Note - Pathway Left Service
+9,Custody,NOMIS027,NOMIS Case Note - Consultation with Head of OM Del
+9,Custody,NOMIS019,NOMIS Case Note - Pathway Plan Engaged in Service
+9,Custody,NOMIS018,NOMIS Case Note - Pathway Plan Referral Accepted
+9,Custody,NOMIS015,NOMIS Case Note - Activity Other Activity
+9,Custody,NOMIS024,NOMIS Case Note - OPD Risk Management Plan
+9,Custody,NOMIS014,NOMIS Case Note - Activity OM Practice Support
+9,Custody,NOMIS023,NOMIS Case Note - Pathway Review of Existing Plan
+9,Custody,NOMIS011,NOMIS Case Note - OPD Case Formulation L2
+9,Custody,NOMIS017,NOMIS Case Note - Pathway Plan Referral
+9,Custody,NOMIS010,NOMIS Case Note - OPD  Case Formulation L1
+10,Drugs and alcohol,AAM3,Alcohol Consumption and Tamper
+10,Drugs and alcohol,AAM4,Multi-Day Alcohol Consumption with Tamper
+10,Drugs and alcohol,APNO,AP - Suspected Overdose Incident
+10,Drugs and alcohol,C071,Alcohol Test
+10,Drugs and alcohol,C089,Alcohol Key Worker Session (NS)
+10,Drugs and alcohol,C090,Drug Key Worker Session (NS)
+10,Drugs and alcohol,CGRF,Referral
+10,Drugs and alcohol,CGTS,Test
+10,Drugs and alcohol,CITD,Citizenship Drugs Session (NS)
+10,Drugs and alcohol,DRGAPT,Drug Test Appointment (NS)
+10,Drugs and alcohol,DRGCNT,Drug use - progress or suspicion
+10,Drugs and alcohol,DRGTST,Drug Test Details
+10,Drugs and alcohol,TST07,Increase testing frequency
+10,Drugs and alcohol,DGTSAP,Drug Test (Approved Premises)
+10,Drugs and alcohol,DGTSDR,Drug Test (DRR)
+10,Drugs and alcohol,DGTSLC,Drug Test (Licence Condition)
+11,Home visit,C253,Home Visit - Not Notified
+11,Home visit,CHVS,Home Visit to Case (NS)
+11,Home visit,CODC,Planned Doorstep Contact (NS)
+11,Home visit,COHV,Initial Appointment - Home Visit (NS)
+11,Home visit,IOHV,IOM Home Visit to Case
+12,Electronic monitoring,AAM3,Alcohol Consumption and Tamper
+12,Electronic monitoring,AAM4,Multi-Day Alcohol Consumption with Tamper
+12,Electronic monitoring,AAM8,Tamper/Obstruction no breach
+12,Electronic monitoring,C063,Contact with Electronic Monitoring Provider
+12,Electronic monitoring,C145,Curfew Violation
+12,Electronic monitoring,CDHC,HDC - Correspondence / Communication
+12,Electronic monitoring,EM01,Exclusion Zone Violation
+12,Electronic monitoring,EM02,Strap Tamper
+12,Electronic monitoring,INFFES,Information - from EMS Provider
+12,Electronic monitoring,INFTES,Information - to EMS Provider
+13,Management oversight,C002,Management Oversight
+13,Management oversight,C416,High Risk Review Meeting
+13,Management oversight,LRP1,Lifer Review Panel
+13,Management oversight,MO1,Management Oversight - General
+13,Management oversight,MO2,Management Oversight - Lifer/IPP Panel
+13,Management oversight,MO3,Management Oversight - MAPPA
+13,Management oversight,MO5,Management Oversight - Recall
+13,Management oversight,SPOD03,Case Allocation: SPO Oversight
+14,Mappa / IOM / Marac,C005,Marac meeting
+14,Mappa / IOM / Marac,C200,MAPPA Information
+14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
+14,Mappa / IOM / Marac,C279,MAPPA - Level 1 review - disclosure considered
+14,Mappa / IOM / Marac,C318,IOM Other Contact
+14,Mappa / IOM / Marac,CAIL,IOM Correspondence/Mail Contact
+14,Mappa / IOM / Marac,CCMM,MAPPA Meeting
+14,Mappa / IOM / Marac,CCMR,MAPPA Referral
+14,Mappa / IOM / Marac,CCON,Case Conference
+14,Mappa / IOM / Marac,EASC,MARAC Assessment
+14,Mappa / IOM / Marac,ICON,IOM Case Conference
+14,Mappa / IOM / Marac,IOAV,IOM Agency Visit
+14,Mappa / IOM / Marac,IOHV,IOM Home Visit to Case
+14,Mappa / IOM / Marac,MAPQ,MAPPA Q screening Tool
+14,Mappa / IOM / Marac,MO3,Management Oversight - MAPPA
+15,OASys,ARMS1,ARMS Referral
+15,OASys,ARMS2,ARMS assessment
+15,OASys,BCST,Basic Custody Screening Completed
+15,OASys,C004,OASys Assessment Completed
+15,OASys,C057,Sentence Plan - Final
+15,OASys,C070,Sentence Plan - Initial
+15,OASys,CSPR,Sentence Plan - Review
+16,Offender Personality Disorder (OPD),OPD007,OPD Case Consultation
+16,Offender Personality Disorder (OPD),OPD011,OPD - Person on Probation Recalled
+16,Offender Personality Disorder (OPD),OPD015,OPD Other Contact
+16,Offender Personality Disorder (OPD),OPD021,OPD Pathway - Review of Existing Plan
+17,Police,C204,Police Liaison
+17,Police,C369,Police Intelligence Check
+17,Police,C515,Police Intelligence Check-Response Received
+17,Police,CARR,Arrest Incident
+17,Police,CNOC,Notification of Charge
+18,Programmes and interventions,APAT,Programme Session (NS)
+18,Programmes and interventions,C107,Programme 1-2-1 Session (NS)
+18,Programmes and interventions,CAPX,IAPS Attendance (NS)
+18,Programmes and interventions,CRSAPT,Appointment with CRS Provider (NS)
+18,Programmes and interventions,EIAL,IAPS Status Change - Complete
+18,Programmes and interventions,EICO,IAPS Contact - Other
+18,Programmes and interventions,RARP,RAR Programme Day
+19,Recall,C041,Breach Action - Recall Requested
+19,Recall,C122,AP - Out of hours recall
+19,Recall,C439,Recall - Review Report submitted to RR Section
+19,Recall,CNPS,NPS Recall Decision - Enforcement
+19,Recall,CNPS,PS Recall Decision
+19,Recall,LCL,Licence Compliance Letter
+19,Recall,MO5,Management Oversight - Recall
+19,Recall,OPD011,OPD - Person on Probation Recalled
+19,Recall,POLY04,Polygraph linked to recall 
+19,Recall,RECDI,Recall Discussion 
+19,Recall,RECQ,Recall - Quality Decision Challenged 
+19,Recall,VOR01,Verge of Recall Support 
+19,Recall,ERCL,Recall / Return to Prison
+19,Recall,PPCS,Recall Submitted to PPCS
+19,Recall,RECI,Recall Initiated
+19,Recall,C422,Recall - Recommendation Endorsed by ACO/ Director
+19,Recall,C286,Recall - OM Recommendation made to Recall
+19,Recall,C421,Recall - Recommendation Endorsed by SPO
+19,Recall,RECO,PPCS Recall Decision Received
+19,Recall,C288,Recall - Out of Hours Recall Initiated
+19,Recall,REC10,Recall - Request Withdrawn by OM
+19,Recall,LIFE2,RO Submit to PPCS
+19,Recall,C423,Recall - Recommendation Declined by ACO/ Director
+19,Recall,LIFE4,PPCS Decision Recieved
+19,Recall,LIFE3,PPCS confirmation of receipt
+19,Recall,AIBR,Breach Action - Breach / Recall Initiated
+19,Recall,RNPS,Recall Referred to NPS
+20,Safeguarding and vulnerability,APMH,AP - Mental Health Concerns
+20,Safeguarding and vulnerability,APSS1,AP - Suicide Self-Harm Monitoring Started
+20,Safeguarding and vulnerability,APSS2,Ap - Suicide Self-Harm Monitoring Reviewed
+20,Safeguarding and vulnerability,APSS3,AP - Suicide/ Self-Harm Assessment
+20,Safeguarding and vulnerability,APSS4,AP - Suicide/ Self-Harm Monitoring Plan
+20,Safeguarding and vulnerability,C005,Marac Meeting
+20,Safeguarding and vulnerability,C078,Child Protection Meeting
+20,Safeguarding and vulnerability,C157,Safeguarding - Child Related Contact
+20,Safeguarding and vulnerability,C158,Safeguarding - Known Persons Check
+20,Safeguarding and vulnerability,C159,Safeguarding - Child Protection Core Group Meeting
+20,Safeguarding and vulnerability,C160,Safeguarding - Vulnerable Adult Strategy Meeting
+20,Safeguarding and vulnerability,C161,Safeguarding - Vulnerable Adult Contact
+20,Safeguarding and vulnerability,C203,Health and Social Service Liaison
+20,Safeguarding and vulnerability,C280,Suicide/Self Harm Information
+20,Safeguarding and vulnerability,CCCP,Safeguarding Case Conference
+20,Safeguarding and vulnerability,EASS,Safeguarding Assessment
+20,Safeguarding and vulnerability,NOMIS030,NOMIS Case Note -OMiC Safeguarding Adults/Children
+20,Safeguarding and vulnerability,NSD1,Core Group meeting
+20,Safeguarding and vulnerability,POLY10,Disclosure - Linked to Polygraph
+20,Safeguarding and vulnerability,POLY13,Disclosure - Not Linked to Polygraph
+20,Safeguarding and vulnerability,POLY17,Polygraph Disclosure (CT)
+20,Safeguarding and vulnerability,SFGC,Safeguarding Check
+20,Safeguarding and vulnerability,SFRR,Safeguarding Check - response received
+20,Safeguarding and vulnerability,SSHI,Suicide/ Self-Harm Incident
+21,Unpaid work,C038,CP/UPW Comment
+21,Unpaid work,C403,CP/UPW Placement Consultation Completed
+21,Unpaid work,C405,CP/UPW Incident/ Accident
+21,Unpaid work,UPW2,CP/UPW ELIGIBLE - not being worked intensively at commencement
+21,Unpaid work,UPW7,UPW - 6 Month Review
+21,Unpaid work,UPW8,UPW - 9 Month Review
+21,Unpaid work,EASU,CP/UPW Assessment
+21,Unpaid work,EHRS,CP/UPW Hours Adjusted
+21,Unpaid work,UPW5,"UPW Status set to ""SUSPENDED"""
+21,Unpaid work,UPW6,"UPW Status set to ""Being Worked"""
+21,Unpaid work,UPWX07,UPW Outstanding Hours:Vary
+21,Unpaid work,ERFU,CP/UPW Referral
+22,Assessment,EOGR,OGRS Assessment
+22,Assessment,EOAS,OASys Assessment
+22,Assessment,EASH,Accommodation Assessment
+22,Assessment,EASD,DRR Assessment
+22,Assessment,EASE,Employment Assessment
+22,Assessment,EAST,Basic Skills Assessment
+22,Assessment,UPW8,CP/UPW Assessment
+23,Court,EAPP,Court Appearance
+23,Court,ECRP,Court Report
+23,Court,CNOT,Notification of Court Appearance
+23,Court,CT001,Court Work Request Initiated
+23,Court,CT002,Court Pack Complete
+23,Court,CRT13,Court Process Suspended (EDM)
+23,Court,CRT14,Court Process Resumed (EDM)
+23,Court,CT004,Case Heard
+24,Education and Training,EDL02,Education or Training
+25,Licence,DGTSLC,Drug Test (Licence Condition)
+25,Licence,LV01,Licence Variation Initiated
+25,Licence,LV03,Licence Variation Authorised by head
+25,Licence,LV02,Licence Variation Form Completed
+25,Licence,LV05,Licence Variation Actioned
+25,Licence,LV)6,Licence Variation Returned
+25,Licence,LV10,Person on Probation Signed New Licence
+25,Licence ,LV11,Licence Variation EM Notification (LVEMN) Complete
+25,Licence,LV1`5,Licence variation returned to RO
+25,Licence,LV13,Licence not signed by PoP
+25,Licence,Lv13,Licence Varation actioned by diary manager
+25,Licence,LV07,Licence Variation Withdrawn
+25,Licence,POLY05,Polygraph Licence condition removed
+25,Licence,LV04,Licence Variation Rejected by head
+26,NSI,NREF,NSI Referral
+26,NSI,NTRS,NSI Transfer
+26,NSI,NTER,NSI Terminated
+26,NSI,NCOM,NSI Commenced
+26,NSI,NSIR,Inter Provider NSI Transfer Requested
+26,NSI,NSIA,Inter Provider NSI Transfer Accepted
+26,NSI,ETNE,Inter Provider NSI Transfer Modified
+26,NSI,Init,NSI Initiated
+26,NSI,NSIX,Inter Provider NSI Transfer Rejected
+26,NSI,ETNW,Inter Provider NSI Transfer Withdrawn
+26,NSI,NTC01,NSI Type changed
+26,NSI,AP02,AP NSI Status
+27,OPD,OPD002,OPD Services not required at this time
+27,OPD,OPD025,OPD Status - Pending Consultation
+27,OPD,OPD001,OPD Ready for Services
+27,OPD,OPD026,OPD Status - Pending Formulation
+27,OPD,OPD029,OPD - Formulation Not Required
+27,OPD,OPD027,OPD Status - Person Will Not Engage
+27,OPD,OPD028,OPD Status - No Services Available
+27,OPD,IIRMS7,Not Eligible for OPD Services
+28,PAROM,PRRR,PAROM1 Requested
+28,PAROM,PRRC,PAROM1 Completed
+28,PAROM,PRRA,PAROM1 Abandoned
+29,Referral,AROM,Refer to Offender Manager
+29,Referral,ERFH,Accommodation Referral
+29,Referral,C291,Referred
+29,Referral,EIAA,IAPS Status Change - Referred
+29,Referral,TSI1,Referred
+29,Referral,ERFT,ETE Referral
+29,Referral,REFACC,DSOU Referral Accepted
+29,Referral,REV03,RR - CRC Review Referred to NPS
+29,Referral,ERFD,DRR Referral
+29,Referral,CAS3B,Referral - Pending more information
+29,Referral,ERFE,Employment Referral
+29,Referral,ERFU,CP/UPW Referral
+29,Referral,REFREJ,DSOU Referral Rejected - Not Suitable
+29,Referral,RNPS,Recall Referred to NPS
+29,Referral,ERFA,Basic Skills Referral
+29,Referral,REFCOM,DSOU Referral Completed
+29,Referral,CPPC,Critical Public Protection Case Referral
+29,Referral,REFDEC,DSOU Referral Decision Pending
+29,Referral,EAPR,AP Referral
+29,Referral,EAPE,AP Referral Decision
+29,Referral,BRRW,Breach Referral Returned to RO for Further Work
+29,Referral,NREF,NSI Referral
+30,Registration Review,RGR019,Registration Review of Medium RoSH
+30,Registration Review,RGN019,Registration of Medium RoSH
+30,Registration Review,RGR017,Registration Review of MAPPA
+30,Registration Review,RGD019,De-registration of Medium RoSH
+30,Registration Review,RGR006,Registration Review of Domestic Abuse Perpetrator
+30,Registration Review,RGR016,Registration Review of Low RoSH
+30,Registration Review,RGN016,Registration of Low RoSH
+30,Registration Review,RGD016,De-registration of Low RoSH
+30,Registration Review,RGR010,Registration Review of High RoSH
+30,Registration Review,RGR020,Registration Review of Mental Health Issues
+30,Registration Review,ALT1,New ALT Registration
+30,Registration Review,RGR031,Registration Review of Risk to Children
+30,Registration Review,RGR047,Registration Review of Weapons
+30,Registration Review,RGR003,Registration Review of Child Concerns
+30,Registration Review,RGN017,Registration of MAPPA
+30,Registration Review,RGR040,Registration Review of Suicide/Self Harm
+30,Registration Review,RGD017,De-registration of MAPPA
+30,Registration Review,RGN046,Registration of Warrant / Summons
+30,Registration Review,ERGR,Registration Review
+30,Registration Review,RGR032,Registration Review of Risk to Known Adult
+30,Registration Review,RGD046,De-registration of Warrant / Summons
+30,Registration Review,RGN010,Registration of High RoSH
+30,Registration Review,RGR034,Registration Review of Risk to Public
+30,Registration Review,RGN020,Registration of Mental Health Issues
+30,Registration Review,RGR043,Registration Review of Victim Contact
+30,Registration Review,RGD010,De-registration of High RoSH
+30,Registration Review,RGN006,Registration of Domestic Abuse Perpetrator
+30,Registration Review,RGR028,Registration Review of Registered Sex Offender
+30,Registration Review,RGD006,De-registration of Domestic Abuse Perpetrator
+30,Registration Review,RGR035,Registration Review of Risk to Staff
+30,Registration Review,RGR044,Registration Review of ViSOR
+30,Registration Review,RGR018,Registration Review of MARAC
+30,Registration Review,RGR030,Registration Review of Restraining Order
+30,Registration Review,RGD020,De-registration of Mental Health Issues
+30,Registration Review,RGN040,Registration of Suicide/Self Harm
+30,Registration Review,ERGN,New Registration
+30,Registration Review,RGR005,Registration Review of Domestic Abuse History
+30,Registration Review,RGN047,Registration of Weapons
+30,Registration Review,RGR046,Registration Review of Warrant / Summons
+30,Registration Review,RGN043,Registration of Victim Contact
+30,Registration Review,RGN031,Registration of Risk to Children
+30,Registration Review,RGN003,Registration of Child Concerns
+30,Registration Review,RGN005,Registration of Domestic Abuse History
+30,Registration Review,RGN032,Registration of Risk to Known Adult
+30,Registration Review,RGN044,Registration of ViSOR
+30,Registration Review,RGR004,Registration Review of Child Protection
+30,Registration Review,RGR011,Registration Review of Integrated Offender Management
+30,Registration Review,RGD040,De-registration of Suicide/Self Harm
+30,Registration Review,RGN030,Registration of Restraining Order
+30,Registration Review,RGD003,De-registration of Child Concerns
+30,Registration Review,RGN034,Registration of Risk to Public
+30,Registration Review,RGN018,Registration of MARAC
+30,Registration Review,RGD031,De-registration of Risk to Children
+30,Registration Review,ERGD,De-registration
+30,Registration Review,RGR007,Registration Review of Domestic Abuse Victim
+30,Registration Review,RGD032,De-registration of Risk to Known Adult
+30,Registration Review,RGD011,De-registration of Integrated Offender Management
+30,Registration Review,RGN011,Registration of Integrated Offender Management
+30,Registration Review,RGD043,De-registration of Victim Contact
+30,Registration Review,RGR037,Registration Review of Sexual Harm Prevention Order / Sexual Risk Order
+30,Registration Review,RGD047,De-registration of Weapons
+30,Registration Review,RGD034,De-registration of Risk to Public
+30,Registration Review,RGN028,Registration of Registered Sex Offender
+30,Registration Review,RGN035,Registration of Risk to Staff
+30,Registration Review,RGD030,De-registration of Restraining Order
+30,Registration Review,RGD018,De-registration of MARAC
+30,Registration Review,RGD044,De-registration of ViSOR
+30,Registration Review,RGN023,Registration of Not MAPPA Eligible
+30,Registration Review,RGD035,De-registration of Risk to Staff
+30,Registration Review,RGD004,De-registration of Child Protection
+30,Registration Review,RGN004,Registration of Child Protection
+30,Registration Review,RGN007,Registration of Domestic Abuse Victim
+30,Registration Review,RGR014,Registration Review of Lifer
+30,Registration Review,RGR039,Registration Review of Street Gangs
+30,Registration Review,RGD028,De-registration of Registered Sex Offender
+30,Registration Review,RGN037,Registration of Sexual Harm Prevention Order / Sexual Risk Order
+30,Registration Review,RGD005,De-registration of Domestic Abuse History
+30,Registration Review,RGR009,Registration Review of Hate Crime
+30,Registration Review,RGD007,De-registration of Domestic Abuse Victim
+30,Registration Review,RGR024,Registration Review of Organised Crime
+30,Registration Review,ALT12,De-Registration of ALT Under MAPPA Arrangements
+30,Registration Review,RGR027,Registration Review of Record To Be Retained
+30,Registration Review,ERGX,Registration Deleted
+30,Registration Review,RGR045,Registration Review of Vulnerable Adult
+30,Registration Review,RGD023,De-registration of Not MAPPA Eligible
+30,Registration Review,RGR002,Registration Review of Barred from working with children
+30,Registration Review,RGR048,Registration Review of Women's Safety Worker
+30,Registration Review,RGR021,Registration Review of Mentally Disordered Offender
+30,Registration Review,RGD037,De-registration of Sexual Harm Prevention Order / Sexual Risk Order
+30,Registration Review,RGR042,Registration Review of Very High RoSH
+30,Registration Review,RGN027,Registration of Record To Be Retained
+30,Registration Review,RGR008,Registration Review of Duplicate Records Exist
+30,Registration Review,RGN009,Registration of Hate Crime
+30,Registration Review,RGD042,De-registration of Very High RoSH
+30,Registration Review,ALT8,De-Registration of ALT Suicide/Self harm
+30,Registration Review,RGN042,Registration of Very High RoSH
+30,Registration Review,ALT13,De-Registration of ALT Mental Health Issues
+30,Registration Review,RGR033,Registration Review of Risk to Prisoner
+30,Registration Review,RGR001,Registration Review of Alert Notice
+30,Registration Review,RGR029,Registration Review of Required Risk Review
+30,Registration Review,RGR025,Registration Review of PPO
+30,Registration Review,RGD009,De-registration of Hate Crime
+30,Registration Review,RGN048,Registration of Women's Safety Worker
+30,Registration Review,RGD027,De-registration of Record To Be Retained
+30,Registration Review,RGR022,Registration Review of Non Registered Sex Offender
+30,Registration Review,RGD025,De-registration of PPO
+30,Registration Review,RGN039,Registration of Street Gangs
+30,Registration Review,RGD048,De-registration of Women's Safety Worker
+30,Registration Review,ALT2,De-Registration of ALT Weapons
+30,Registration Review,RGN024,Registration of Organised Crime
+30,Registration Review,RGD039,De-registration of Street Gangs
+30,Registration Review,RGN021,Registration of Mentally Disordered Offender
+30,Registration Review,RGN002,Registration of Barred from working with children
+30,Registration Review,RGN014,Registration of Lifer
+30,Registration Review,RGR036,Registration Review of Risk to Vulnerable Adult
+30,Registration Review,RGD045,De-registration of Vulnerable Adult
+30,Registration Review,RGN045,Registration of Vulnerable Adult
+30,Registration Review,RGN008,Registration of Duplicate Records Exist
+30,Registration Review,ALT4,De-Registration of ALT Registered Sex Offender
+30,Registration Review,RGR026,Registration Review of Public Interest Case
+30,Registration Review,RGD024,De-registration of Organised Crime
+30,Registration Review,RGD029,De-registration of Required Risk Review
+30,Registration Review,RGD002,De-registration of Barred from working with children
+30,Registration Review,RGD021,De-registration of Mentally Disordered Offender
+30,Registration Review,ALT5,De-Registration of ALT Risk to Staff
+30,Registration Review,RGD008,De-registration of Duplicate Records Exist
+30,Registration Review,RGD001,De-registration of Alert Notice
+30,Registration Review,RGR038,Registration Review of SFO
+30,Registration Review,RGN022,Registration of Non Registered Sex Offender
+30,Registration Review,RGN029,Registration of Required Risk Review
+30,Registration Review,RGN038,Registration of SFO
+30,Registration Review,RGN033,Registration of Risk to Prisoner
+30,Registration Review,RGD014,De-registration of Lifer
+30,Registration Review,RGD022,De-registration of Non Registered Sex Offender
+30,Registration Review,RGN036,Registration of Risk to Vulnerable Adult
+30,Registration Review,RGN001,Registration of Alert Notice
+30,Registration Review,RGD036,De-registration of Risk to Vulnerable Adult
+30,Registration Review,RGD033,De-registration of Risk to Prisoner
+30,Registration Review,RGR013,Registration Review of Known Duplicate
+30,Registration Review,RGD038,De-registration of SFO
+30,Registration Review,RGR012,Registration Review of Keep IICSA
+30,Registration Review,RGN026,Registration of Public Interest Case
+30,Registration Review,RGN025,Registration of PPO
+30,Registration Review,RGD026,De-registration of Public Interest Case
+30,Registration Review,ALT9,De-Registration of ALT Street Gangs
+30,Registration Review,RGD013,De-registration of Known Duplicate
+30,Registration Review,RGR041,Registration Review of Terrorism Act Offender
+30,Registration Review,RGN013,Registration of Known Duplicate
+30,Registration Review,ALT10,De-Registration of ALT Organised Crime
+30,Registration Review,ALt6,De-Registration of ALT Child Safeguarding
+30,Registration Review,RGR015,Registration Review of Looked After Child
+30,Registration Review,RGN012,Registration of Keep IICSA
+30,Registration Review,ALT14,De-Registration of ALT Child Exploitation History
+30,Registration Review,RGN041,Registration of Terrorism Act Offender
+30,Registration Review,RGD015,De-registration of Looked After Child
+30,Registration Review,RGD041,De-registration of Terrorism Act Offender
+30,Registration Review,RGD012,De-registration of Keep IICSA
+30,Registration Review,ALT3,De-Registraton of ALT Public Interest
+30,Registration Review,ALT7,De-Registration of ALT Adult Safeguarding
+30,Registration Review,ALT11,De-Registration of ALT Terrorism Act Offender
+30,Registration Review,GtO1,Registered as GtO
+30,Registration Review,RGR023,Registration Review of Not MAPPA Eligible
+31,RR,REV06,RR - Review Report Submitted to PPCS / Prison
+31,RR,REV01,RR - PPCS Review Request Received
+31,RR,REV04,RR - Review Endorsed by PS Manager
+31,RR,REV02,RR - Review Report Completed by NPS/CRC OM
+31,RR,REV05,RR - Review Rejected by NPS Manager
+32,Transfer,ETRC,Sentence Component Transfer
+32,Transfer,ETOS,Order Supervisor Transfer
+32,Transfer,ETOM,Community Practitioner Transfer
+32,Transfer,ETCR,Inter Provider Component Transfer Requested
+32,Transfer,ETCA,Inter Provider Component Transfer Accepted
+32,Transfer,ETOR,Inter Provider Order Transfer Requested
+32,Transfer,ETOA,Inter Provider Order Transfer Accepted
+32,Transfer,CTRS,Court Report Transfer
+32,Transfer,ETTA,Transfer Accepted
+32,Transfer,ETTR,Transfer Requested
+32,Transfer,ITRS,Instituional Report Transfer
+32,Transfer,PTRS,Supervision Requirement Transfer
+32,Transfer,ETTI,Transfer - Inactive Record
+32,Transfer,ETPR,Inter Trust PSS Transfer Requested
+32,Transfer,ETPA,Inter Trust PSS Transfer Accepted
+32,Transfer,ETIRR,Institutional Report Trust Transfer Requested
+32,Transfer,ETIRA,Institutional Report Trust Transfer Accepted
+32,Transfer,ETORW,Inter Provider Order Transfer Withdrawn
+32,Transfer,ETCW,Inter Provider Component Transfer Withdrawn
+32,Transfer,ETOX,Inter Provider Order Transfer Rejected
+32,Transfer,ETCX,Inter Provider Component Transfer Rejected
+32,Transfer,ETOW,Inter Provider Person Transfer Withdrawn
+32,Transfer,ETTX,Transfer Rejected
+32,Transfer,EIAD,IAPS Status Change - Transfer
+32,Transfer,ETCE,Inter Provider Component Transfer Modified
+32,Transfer,ETORE,Inter Provider Order Transfer Modified
+32,Transfer,ETCRR,Court Report Trust Transfer Requested
+32,Transfer,ETOE,Inter Provider Person Transfer Modified
+32,Transfer,ETCRA,Court Report Trust Transfer Accepted
+32,Transfer,TSI5,Transfered to another Intevention
+32,Transfer,ETCRX,Court Report Trust Transfer Rejected
+32,Transfer,ETIRX,Institutional Report Trust Transfer Rejected
+32,Transfer,ETCRW,Inter Provider Court Report Transfer Withdrawn
+32,Transfer,ETIRW,Inter Provider Institutional Report Transfer Withdrawn
+32,Transfer,ETPX,Inter Trust PSS Transfer Rejected
+32,Transfer,ETPE,Inter Provider PSS Transfer Modified
+32,Transfer,ETCRE,Inter Provider Court Report Transfer Modified
+32,Transfer,ETIRE,Inter Provider Institutional Report Transfer Modified
+32,Transfer,ETPW,Inter Provider PSS Transfer Withdrawn
+32,Transfer,NTRS,NSI Transfer
+32,Transfer,NSIR,Inter Provider NSI Transfer Requested
+32,Transfer,NSIA,Inter Provider NSI Transfer Accepted
+32,Transfer,NSIX,Inter Provider NSI Transfer Rejected
+32,Transfer,ETNW,Inter Provider NSI Transfer Withdrawn
+33,Person,EREL,Release from Custody
+33,Person,CT003,Person on Probation Notified of Hearing Date
+33,Person,OMRG,Person Records Merged
+33,Person,TWH1,Threatened with Homelessness
+33,Person,DUSDN,Death Notified
+33,Person,ESRR,Data Protection - Subject Access Request
+33,Person,DUSDC,Death Confirmed
+33,Person,IIRMS1,Accessing Service
+33,Person,DUSOC,Official Cause of Death received
+33,Person,IIRMS2,Accessing Service - Returnee
+33,Person,POLY09,No longer a pilot participant
+33,Person,DUSCA,Person confirmed to be alive
+34,PSS,PTER,End of Post-Sentence Supervision Requirement
+34,PSS,CPSS,Start of Post-Sentence Supervision
+34,PSS,PCOM,Start of Post-Sentence Supervision Requirement
+34,PSS,ROL001,Involvement with Supervision
+35,Status,ARWS,Review Enforcement Status
+35,Status,C091,In Progress
+35,Status,C092,Completed
+35,Status,SMLI001,Local Intervention Status
+35,Status,MAP1,Not completed
+35,Status,APPA1,Active
+35,Status,EIAI,IAPS Status Change - Abandoned
+35,Status,C051,Withdrawn
+35,Status,EIAH,IAPS Status Change - Resumed
+35,Status,APRAP6,Residence Plan Completed
+35,Status,BCH001,Abandoned
+35,Status,WLSSKA,Essential Skills - Assessed
+35,Status,TSI3,Enrolled
+35,Status,TSI8,Sessions Completed
+35,Status,TSI2,Programme ready
+35,Status,HDC02,Home Circumstances Checks Complete
+35,Status,SPG003,Rejected - Unable to Proceed
+35,Status,IIRMS4,Considering Access Request
+35,Status,DUSRC,DUS - Internal Review Completed
+35,Status,C049,Suspended
+35,Status,GT456,Accepted
+35,Status,TSI7,Repeat/restart
+35,Status,TSI6,Resumed
+35,Status,TSI4,Suspended
+35,Status,IIRMS5,Signposted to Another Service
+35,Status,LIFE5,Rejected - Additonal information Required
+35,Status,NOTST,Not Started
+35,Status,ACC01,Access Provided
+35,Status,BCH002,Commenced
+35,Status,UPWX10,Record Updated
+35,Status,EYES06,Intervention Completed
+35,Status,WYES04,Intervention Commenced
+35,Status,C046,Assessed
+35,Status,ACC002,Access Accepted
+36,Operational,ICAD,Initial Case Allocation Decision
+36,Operational,ETCP,Change of Institution / Establishment
+36,Operational,EIRP,Institutional Report
+36,Operational,UCAD,Update Case Allocation Decision
+36,Operational,TAD,Tier Allocation Decision
+36,Operational,DRSR,Dynamic RSR Score
+36,Operational,LIFE1,Report Completed by OM
+36,Operational,DUSAV,Awaiting Coroner's Verdict
+36,Operational,DUSIV,Coroner's Inquest Verdict
+37,Other,ROC,Responsible Officer Change
+37,Other,ETCH20,Tier Change - Calculated in Auto Tiering Service
+37,Other,ETER,Order/Component Terminated
+37,Other,ECOM,Order/Component Commenced
+37,Other,EDSS,Data Share Update Contact
+37,Other,EICA,IAPS Contact - Comment
+37,Other,EVDL,Deleted Event
+37,Other,CRT01,Returned for further work by RO
+37,Other,POLY15,Testing Active
+37,Other,LV09,PNC Notification Sent
+37,Other,EVRC,Recovered Event
+37,Other,LV14,LVEMN sent to EM provider
+37,Other,IIRMS3,No Longer Accessing Service
+37,Other,POLY9,Polygraph Control Group
+37,Other,IIRMS8,Waiting List
+37,Other,IIRMS6,Temporary Exit from Service
+37,Other,UMRG,Records Unmerged
+37,Other,UPWX15,Other
+37,Other,SLI02,Local Intervention Started
+37,Other,UPWX13,Subsequent Community Sentence

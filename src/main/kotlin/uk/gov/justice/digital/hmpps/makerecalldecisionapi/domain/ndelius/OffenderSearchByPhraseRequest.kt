@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
 
-import javax.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotEmpty
 
 data class OffenderSearchByPhraseRequest(
   @field:NotEmpty

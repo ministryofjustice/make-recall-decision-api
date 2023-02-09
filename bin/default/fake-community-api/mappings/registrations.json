@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/secure/offenders/crn/.*/registrations"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "registrations.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
