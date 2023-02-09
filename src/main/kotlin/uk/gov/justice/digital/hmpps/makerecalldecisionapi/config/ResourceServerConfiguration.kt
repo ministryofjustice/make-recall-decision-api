@@ -1,18 +1,34 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
+//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.config.web.servlet.invoke
+import org.springframework.security.web.SecurityFilterChain
+
+
+//import org.springframework.security.config.web.servlet.invoke
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
+class ResourceServerConfiguration {
 
+  @Bean
+  @Throws(Exception::class)
+  fun filterChain(http: HttpSecurity): SecurityFilterChain? {
+    http
+      .authorizeHttpRequests(
+        Customizer<AuthorizationManagerRequestMatcherRegistry> { authz: AuthorizationManagerRequestMatcherRegistry ->
+          authz
+            .anyRequest().authenticated()
+        }
+      )
+      .httpBasic(withDefaults())
+    return http.build()
+  }
   override fun configure(http: HttpSecurity) {
     http {
       csrf { disable() }
