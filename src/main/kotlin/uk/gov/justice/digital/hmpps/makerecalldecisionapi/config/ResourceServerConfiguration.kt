@@ -9,22 +9,6 @@ import org.springframework.security.web.DefaultSecurityFilterChain
 @Configuration
 @EnableWebSecurity
 class ResourceServerConfiguration {
-
-  // rebase this on new branch + rebase ui and try e2e again
-  // google / sof security with springboot v3 upgrade
-  // ordeactivate controller test and push to ci
-  // find out why failing if stillfailing .. hard code pwd??
-  // pwd missingine2e
-
-  // stand up
-  // security scan tool has told use upgrade is critical
-  // half done... invested a good chunk of time in it (not wasted as we have to do eventually)
-  // but
-  // no one else in org has upgraded
-  // pen test/assessment has passed
-  // so is arg to keep branch/ de-prioeitise/pause work until needed and nudged  JIT devwork and then will have head start
-  // focus prep onboarding stuff
-
   @Bean
   fun configure(http: HttpSecurity): DefaultSecurityFilterChain? {
     http.authorizeHttpRequests()
@@ -44,7 +28,7 @@ class ResourceServerConfiguration {
       .and()
       .csrf()
       .disable()
-      .oauth2ResourceServer().jwt { AuthAwareTokenConverter() }
+      .oauth2ResourceServer().jwt().jwtAuthenticationConverter { AuthAwareTokenConverter().convert(it) }
     return http.build()
   }
 }
