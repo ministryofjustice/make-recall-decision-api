@@ -3,13 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonMerge
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -43,11 +42,13 @@ import kotlin.math.abs
 
 @Entity
 @Table(name = "recommendations")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+// @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 data class RecommendationEntity(
   @Id
   open var id: Long = abs(SecureRandom().nextInt().toLong()),
-  @Type(type = "jsonb")
+//  @Type(type = "jsonb")
+//  @Column(columnDefinition = "jsonb")
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel
 ) : Comparable<RecommendationEntity> {
