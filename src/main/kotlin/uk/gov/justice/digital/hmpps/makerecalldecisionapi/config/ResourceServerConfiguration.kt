@@ -25,7 +25,7 @@ class ResourceServerConfiguration {
       .requestMatchers("/webjars/**").permitAll()
       .requestMatchers("/favicon.ico").permitAll()
       .requestMatchers("/csrf").permitAll()
-//      .requestMatchers(AntPathMatcher.any).authenticated()
+      .requestMatchers("/**").authenticated()
       .and()
       .csrf()
       .disable()
