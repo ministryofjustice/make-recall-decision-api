@@ -59,7 +59,10 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
-  implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
+//  implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
+  // https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-60
+  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
   implementation("org.json:json:20220924")
