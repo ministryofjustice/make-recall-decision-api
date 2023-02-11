@@ -45,7 +45,7 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   implementation("org.flywaydb:flyway-core:9.11.0")
-  implementation("org.postgresql:postgresql:42.5.1")
+  implementation("org.postgresql:postgresql:42.5.1") // TODO update??
 
   implementation("io.sentry:sentry-spring-boot-starter:6.11.0")
   implementation("io.sentry:sentry-logback:6.11.0")
@@ -64,7 +64,7 @@ dependencies {
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.13") // TODO which versioniscompatible with SB V3?
   implementation("org.json:json:20220924")
 //  implementation("org.hibernate:hibernate-core:5.6.3.Final")
   // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core
