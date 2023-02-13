@@ -178,7 +178,7 @@ abstract class IntegrationTestBase {
 
   fun updateRecommendation(status: Status = Status.DRAFT) {
     webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId")
+      .uri("/recommendations/$createdRecommendationId/")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
         BodyInserters.fromValue(updateRecommendationRequest(status))
