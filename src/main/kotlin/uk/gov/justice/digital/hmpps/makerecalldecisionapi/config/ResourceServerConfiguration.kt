@@ -29,7 +29,6 @@ class ResourceServerConfiguration {
       .requestMatchers("/csrf").permitAll()
       .requestMatchers("/recommendations/**").hasAnyRole("MAKE_RECALL_DECISION")
       .anyRequest().authenticated()
-      //.requestMatchers("/**").permitAll()//authenticated()
       .and()
       .csrf()
       .disable()
@@ -48,5 +47,4 @@ class ResourceServerConfiguration {
     source.registerCorsConfiguration("/**", configuration)
     return source
   }
-
 }
