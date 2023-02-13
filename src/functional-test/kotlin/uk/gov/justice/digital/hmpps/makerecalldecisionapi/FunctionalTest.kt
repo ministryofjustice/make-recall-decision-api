@@ -20,11 +20,11 @@ open class FunctionalTest {
   val expectedCreated = HttpStatus.CREATED.value()
 
   companion object {
-    val client_id = "make-recall-decision-tests-client"
-    val client_secret = "hHDv9X>&l:P<.+4e;TPt6qWDuDrIVodWMEXmN>qR.r\$Px)-rRt0rHN.HpVaZ"
+    val client_id = System.getenv("SYSTEM_CLIENT_ID")
+    val client_secret = System.getenv("SYSTEM_CLIENT_SECRET")
     val base64EncodedClientCreds = Base64.getEncoder().encodeToString("$client_id:$client_secret".toByteArray())
     val authHeaderValue = "Basic $base64EncodedClientCreds"
-    val authPath = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials&username=BillSclater"
+    val authPath = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials&username=${System.getenv("USER_NAME")}"
     val path = "http://127.0.0.1:8080"
 
     @BeforeAll
