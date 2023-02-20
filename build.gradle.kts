@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.1-beta-1"
-  kotlin("jvm") version "1.8.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.3"
+  kotlin("jvm") version "1.8.10"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.8.0"
+  kotlin("plugin.jpa") version "1.8.10"
   id("org.sonarqube") version "4.0.0.2929"
-  kotlin("plugin.spring") version "1.8.0"
+  kotlin("plugin.spring") version "1.8.10"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -32,9 +32,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
-  implementation("io.opentelemetry:opentelemetry-api:1.22.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.2")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
+  implementation("io.opentelemetry:opentelemetry-api:1.23.1")
   implementation("joda-time:joda-time:2.12.2")
   implementation("com.deepoove:poi-tl:1.12.1") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.11.0")
-  implementation("org.postgresql:postgresql:42.5.1")
+  implementation("org.flywaydb:flyway-core:9.15.0")
+  implementation("org.postgresql:postgresql:42.5.4")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.11.0")
-  implementation("io.sentry:sentry-logback:6.11.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.14.0")
+  implementation("io.sentry:sentry-logback:6.14.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -58,7 +58,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.7.0")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.8.0")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
