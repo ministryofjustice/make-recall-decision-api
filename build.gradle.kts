@@ -117,7 +117,12 @@ val SourceSet.kotlin: SourceDirectorySet
 
 sourceSets {
   create("functional-test") {
-    kotlin.srcDirs("src/functional-test", "src/component-test")
+    kotlin.srcDirs("src/functional-test", )
+    compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+    runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
+  }
+  create("component-test") {
+    kotlin.srcDirs("src/component-test", )
     compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
     runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
   }
@@ -129,6 +134,14 @@ task<Test>("functional-test-light") {
   group = "verification"
   testClassesDirs = sourceSets["functional-test"].output.classesDirs
   classpath = sourceSets["functional-test"].runtimeClasspath
+  useJUnitPlatform()
+}
+
+task<Test>("component-test-light") {
+  description = "Runs the component test"
+  group = "verification"
+  testClassesDirs = sourceSets["component-test"].output.classesDirs
+  classpath = sourceSets["component-test"].runtimeClasspath
   useJUnitPlatform()
 }
 
