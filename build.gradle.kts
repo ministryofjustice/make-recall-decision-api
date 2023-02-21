@@ -71,6 +71,15 @@ dependencies {
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
 
+  testImplementation("org.testcontainers:testcontainers:1.17.5")
+  testImplementation("org.testcontainers:junit-jupiter:1.17.5")
+
+  testImplementation("org.freemarker:freemarker:2.3.31")
+
+  testImplementation("io.cucumber:cucumber-java:7.9.0")
+  testImplementation("io.cucumber:cucumber-spring:7.9.0")
+  testImplementation("io.cucumber:cucumber-junit:7.9.0")
+
   implementation("io.rest-assured:rest-assured")
   implementation("io.rest-assured:json-path")
   implementation("io.rest-assured:xml-path")
@@ -108,7 +117,7 @@ val SourceSet.kotlin: SourceDirectorySet
 
 sourceSets {
   create("functional-test") {
-    kotlin.srcDirs("src/functional-test")
+    kotlin.srcDirs("src/functional-test", "src/component-test")
     compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
     runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
   }
