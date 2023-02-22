@@ -6,32 +6,31 @@ import freemarker.template.Version
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.PendingException
 import io.cucumber.java.en.Given
-import io.cucumber.java.en.Then
-import io.cucumber.java.en.When
 import io.restassured.RestAssured
 import io.restassured.response.Response
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONArray
 import org.json.JSONObject
-import org.skyscreamer.jsonassert.JSONAssert.assertEquals
-import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import java.io.StringWriter
+import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import kotlin.collections.HashMap
 
 @Suppress("FunctionNaming")
 @ContextConfiguration(classes = [CucumberConfiguration::class])
 class StepDefinitions {
 
     private lateinit var lastResponse: Response
-    private val token = "Bearer ${getToken()}"
+//    private val token = "Bearer ${getToken()}"
+
 
   @Given("I get a token")
   fun i_get_a_token() {
-    // Write code here that turns the phrase above into concrete actions
     val token = "Bearer ${getToken()}"
     println(token)
     throw PendingException()
@@ -44,17 +43,36 @@ class StepDefinitions {
         const val client_secret = "clientsecret"
         const val authPath = "http://localhost:9090/auth/oauth/token?grant_type=client_credentials&username=MAKE_RECALL_DECISION_USER"
 
-        private fun getToken(): String {
-            val tokenResponse =
-                RestAssured.given()
-                    .contentType("application/x-www-form-urlencoded")
-                    .formParam("grant_type", "client_credentials")
-                    .formParam("client_id", client_id)
-                    .formParam("client_secret", client_secret)
-                    .post(authPath)
-            assertThat(tokenResponse.statusCode).isEqualTo(HttpStatus.OK.value())
-            return JSONObject(tokenResponse.body().asString()).getString("access_token")
-        }
+
+//      val client_id = System.getenv("SYSTEM_CLIENT_ID")
+//      val client_secret = System.getenv("SYSTEM_CLIENT_SECRET")
+      val base64EncodedClientCreds = Base64.getEncoder().encodeToString("$client_id:$client_secret".toByteArray())
+      val authHeaderValue = "Basic $base64EncodedClientCreds"
+//      val authPath = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials&username=${System.getenv("USER_NAME")}"
+//      val path = "http://127.0.0.1:8080"
+
+//      @BeforeAll
+      private fun getToken(): String {
+        val tokenResponse = RestAssured
+          .given()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .header("Authorization", authHeaderValue)
+          .post(authPath)
+        assertThat(tokenResponse.statusCode).isEqualTo(HttpStatus.OK.value())
+        return JSONObject(tokenResponse.body().asString()).getString("access_token")
+      }
+
+//        private fun getToken(): String {
+//            val tokenResponse =
+//                RestAssured.given()
+//                    .contentType("application/x-www-form-urlencoded")
+//                    .formParam("grant_type", "client_credentials")
+//                    .formParam("client_id", client_id)
+//                    .formParam("client_secret", client_secret)
+//                    .post(authPath)
+//            assertThat(tokenResponse.statusCode).isEqualTo(HttpStatus.OK.value())
+//            return JSONObject(tokenResponse.body().asString()).getString("access_token")
+//        }
 
 //        private val dockerComposeContainer: DockerComposeContainer<*> =
 //            DockerComposeContainer<Nothing>(File("docker-compose-arm64.yml")) // for ARM64 (uses non-bitnami images)

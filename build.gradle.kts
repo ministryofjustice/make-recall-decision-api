@@ -10,9 +10,9 @@ plugins {
 
 jacoco.toolVersion = "0.8.8"
 
-configurations {
-  testImplementation { exclude(group = "org.junit.vintage") }
-}
+//configurations {
+//  testImplementation { exclude(group = "org.junit.vintage") }
+//}
 
 testSets {
   "testSmoke"()
@@ -79,6 +79,8 @@ dependencies {
   testImplementation("io.cucumber:cucumber-java:7.9.0")
   testImplementation("io.cucumber:cucumber-spring:7.9.0")
   testImplementation("io.cucumber:cucumber-junit:7.9.0")
+  testImplementation("org.junit.vintage:junit-vintage-engine:5.9.0")
+
 
   implementation("io.rest-assured:rest-assured")
   implementation("io.rest-assured:json-path")
@@ -108,6 +110,10 @@ tasks.jacocoTestReport {
   reports {
     xml.required.set(true)
   }
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
 
 val SourceSet.kotlin: SourceDirectorySet
