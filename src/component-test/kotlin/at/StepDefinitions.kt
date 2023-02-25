@@ -33,7 +33,7 @@ class StepDefinitions {
   fun i_get_a_token() {
     val token = "Bearer ${getToken()}"
     println(token)
-    throw PendingException()
+//    throw PendingException()
   }
 
 
