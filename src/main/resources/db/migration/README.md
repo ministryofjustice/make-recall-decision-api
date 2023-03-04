@@ -17,7 +17,7 @@ These migrations will be applied on application startup.
 
 ## Warnings on Backwards Compatibility
 
-Keep your migrations **backwards compatible** - the reason for this is that when you deploy your application onto kubernetes it will do a "rolling deployment". This means that **2 versions** of the application are running at the same time (the old version, plus the new version). So whilst the new version of the application is starting up and performing its migrations, the old version must be able to continue to run - if not, the pods will crash, kubernetes will get into a mixed state, your deployment will fail and the app **will go offline** - you've been warned. :)  
+Keep your migrations **backwards compatible** - the reason for this is that when you deploy your application onto kubernetes it will do a "rolling deployment". This means that **2 versions** of the application are running bat the same time (the old version, plus the new version). So whilst the new version of the application is starting up and performing its migrations, the old version must be able to continue to run - if not, the pods will crash, kubernetes will get into a mixed state, your deployment will fail and the app **will go offline** - you've been warned. :)  
 
 So...
 

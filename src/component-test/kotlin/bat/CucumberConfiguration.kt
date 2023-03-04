@@ -1,14 +1,7 @@
-package at
+package bat
 
-import io.cucumber.java.Before
 import io.cucumber.spring.CucumberContextConfiguration
-import org.junit.ClassRule
 import org.springframework.test.context.ActiveProfiles
-import org.testcontainers.containers.DockerComposeContainer
-import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import java.io.File
 
 @ActiveProfiles("test")
 @CucumberContextConfiguration

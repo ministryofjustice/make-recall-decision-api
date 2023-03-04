@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+#set -euo pipefail
 
 BUILD_HMPPS_AUTH=false
 RUN_DOCKER_COMPOSE_PULL=false
@@ -92,3 +92,12 @@ printf "\n\nAll services started.\n\n"
 printf "\n\nLogs for API and UI can be found by running:\n"
 echo "  tail -f ${API_LOGFILE}"
 echo "  tail -f ${UI_LOGFILE}"
+
+PID=$(lsof -n -i :8080 | grep LISTEN | awk '{ print $2; }')
+if ./gradlew component-test-light ; then
+    kill $PID
+    exit 0
+else
+    kill -9 $PID
+    exit 1
+fi

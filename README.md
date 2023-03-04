@@ -79,7 +79,7 @@ If the above fails to work, then you will need to try and create the user and da
 
     3f. `psql` - this should now enter the database terminal 
 
-4. `\du` - check that there is at least one role returned with 'Superuser'
+4. `\du` - check that there is bat least one role returned with 'Superuser'
 
 5. `sudo -u {replace with the superuser username returned in step 4} psql {replace with the superuser username returned in step 4}`
 
