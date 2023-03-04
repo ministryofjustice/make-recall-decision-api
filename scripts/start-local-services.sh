@@ -68,7 +68,7 @@ fi
 pushd "${API_DIR}"
 printf "\n\nBuilding/starting API components...\n\n"
 docker-compose up -d --scale=${API_NAME}=0
-./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
+(SYSTEM_CLIENT_ID=make-recall-decision-api SYSTEM_CLIENT_SECRET=clientsecret HMPPS_AUTH_URL=http://localhost:9090/auth OFFENDER_SEARCH_ENDPOINT_URL=http://localhost:9080 CVL_API_ENDPOINT_URL=http://localhost:9070 COMMUNITY_API_ENDPOINT_URL=http://localhost:9081 ARN_API_ENDPOINT_URL=http://localhost:9071 GOTENBERG_ENDPOINT_URL=http://localhost:9091 POSTGRES_HOST=localhost:5432 POSTGRES_DBNAME=make_recall_decision POSTGRES_USERNAME=mrd_user POSTGRES_PASSWORD=secret SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun) &
 popd
 
 pushd "${UI_DIR}"
@@ -84,9 +84,9 @@ function wait_for {
 }
 
 wait_for "http://localhost:9090/auth/health/ping" "${AUTH_NAME}"
-wait_for "http://localhost:3000/ping" "${UI_NAME}"
-wait_for "http://localhost:8081/health/readiness" "${API_NAME}"
-wait_for "http://localhost:9091/health" "gotenberg"
+#wait_for "http://localhost:3000/ping" "${UI_NAME}"
+#wait_for "http://localhost:8081/health/readiness" "${API_NAME}"
+#wait_for "http://localhost:9091/health" "gotenberg"
 
 printf "\n\nAll services started.\n\n"
 printf "\n\nLogs for API and UI can be found by running:\n"

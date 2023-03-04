@@ -143,12 +143,30 @@ task<Test>("functional-test-light") {
   useJUnitPlatform()
 }
 
+val dockerUp = task<Exec>("dockerUp") {
+//  dependsOn("assemble")
+  commandLine("./scripts/start-local-services.sh")
+}
+
+val waitForIt = task<Exec>("waitForIt") {
+  dependsOn(dockerUp)
+  commandLine("./wait-for-it.sh", "127.0.0.1:9090/auth/health/ping", "--strict", "-t", "240", "--", "sleep", "10")
+}
+
+//val dockerDown = task<Exec>("dockerDown") {
+//  commandLine("./clean-up-docker.sh")//TODO add to before run and on compose up and wait in one script to start
+//}
+
+
 task<Test>("component-test-light") {
   description = "Runs the component test"
   group = "verification"
   testClassesDirs = sourceSets["component-test"].output.classesDirs
   classpath = sourceSets["component-test"].runtimeClasspath
   useJUnitPlatform()
+  dependsOn(dockerUp)
+  //  finalizedBy(dockerDown) //by clean up??
+
 }
 
 tasks.withType<Jar>() {
