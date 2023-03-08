@@ -79,7 +79,7 @@ If the above fails to work, then you will need to try and create the user and da
 
     3f. `psql` - this should now enter the database terminal 
 
-4. `\du` - check that there is bat least one role returned with 'Superuser'
+4. `\du` - check that there is at least one role returned with 'Superuser'
 
 5. `sudo -u {replace with the superuser username returned in step 4} psql {replace with the superuser username returned in step 4}`
 
@@ -135,3 +135,11 @@ Check style is used to ensure the codebase conforms to a coding standard.
 
 [make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
 [make-recall-decision-ui]: https://github.com/ministryofjustice/make-recall-decision-ui
+
+## Component Test
+Run with: <br>
+`./gradlew component-test`<br><br>
+or start app with: <br>
+`./gradlew start-backend-services`<br>then run:<br>
+`./gradlew component-test-light`<br> and when you have finished testing run:<br>
+`./gradlew stop-backend-services`

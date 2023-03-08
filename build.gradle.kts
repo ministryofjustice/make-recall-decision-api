@@ -146,7 +146,19 @@ task<Test>("functional-test-light") {
 task<Exec>("component-test") {
   description = "Starts all dependencies and then runs the component test"
   group = "verification"
-  commandLine("./scripts/start-local-services.sh")
+  commandLine("./scripts/run-component-test.sh")
+}
+
+task<Exec>("start-backend-services") {
+  description = "Starts api it all dependencies"
+  group = "application"
+  commandLine("./scripts/start-backend-services.sh")
+}
+
+task<Exec>("stop-backend-services") {
+  description = "Stops api it all dependencies"
+  group = "application"
+  commandLine("./scripts/stop-backend-services.sh")
 }
 
 task<Test>("component-test-light") {
