@@ -72,11 +72,7 @@ docker-compose up -d --scale=${API_NAME}=0
 popd
 
 pushd "${UI_DIR}"
-printf "\n\nBuilding/starting UI components...\n\n"
 docker-compose up -d --scale=${UI_NAME}=0
-npm install
-npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
-popd
 
 function wait_for {
   printf "\n\nWaiting for %s to be ready.\n\n" "${2}"
@@ -84,9 +80,6 @@ function wait_for {
 }
 
 wait_for "http://localhost:9090/auth/health/ping" "${AUTH_NAME}"
-#wait_for "http://localhost:3000/ping" "${UI_NAME}"
-#wait_for "http://localhost:8081/health/readiness" "${API_NAME}"
-#wait_for "http://localhost:9091/health" "gotenberg"
 
 printf "\n\nAll services started.\n\n"
 printf "\n\nLogs for API and UI can be found by running:\n"
