@@ -209,6 +209,7 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
     "licenceBreach": "Reason for breaching licence",
     "noRecallRationale": "Rationale for no recall",
     "popProgressMade": "Progress made so far detail",
+    "popThoughts": "Thoughts on bad behaviour",
     "futureExpectations": "Future expectations detail"
   },
   "nextAppointment": {
