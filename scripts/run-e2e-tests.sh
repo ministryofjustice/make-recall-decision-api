@@ -61,7 +61,7 @@ BUILD_RESPONSE=$(
     --max-time 60 \
     --header 'Content-Type: application/json' \
     --data "${POST_BODY[@]}" \
-    --url https://circleci.com/api/v2/project/github/ministryofjustice/make-recall-decision-ui/pipeline
+    --url https://circleci.com/api/v2/project/github/ministryofjustice/${E2E_PROJECT}/pipeline
 )
 
 echo "Trigger response:"
