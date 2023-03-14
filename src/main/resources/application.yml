@@ -7,8 +7,6 @@ info.app:
     email: feedback@digital.justice.gov.uk
 
 spring:
-  config:
-    use-legacy-processing: true
   jpa:
     properties:
       hibernate:

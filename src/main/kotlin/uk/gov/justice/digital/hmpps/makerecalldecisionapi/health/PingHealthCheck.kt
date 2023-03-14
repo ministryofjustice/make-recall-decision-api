@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.actuate.health.Status
-import org.springframework.http.HttpStatusCode
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -72,7 +72,7 @@ abstract class PingHealthCheck(
   private fun upWithStatus(it: ResponseEntity<String>): Mono<Health> =
     Mono.just(Health.up().withHttpStatus(it.statusCode).build())
 
-  private fun Health.Builder.withHttpStatus(status: HttpStatusCode) = this.withDetail("status", status)
+  private fun Health.Builder.withHttpStatus(status: HttpStatus) = this.withDetail("status", status)
 
   private fun Health.Builder.withBody(body: String) = this.withDetail("body", body)
 }
