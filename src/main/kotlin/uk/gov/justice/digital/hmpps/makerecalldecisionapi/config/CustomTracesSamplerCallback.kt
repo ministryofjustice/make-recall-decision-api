@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
 import io.sentry.SamplingContext
 import io.sentry.SentryOptions.TracesSamplerCallback
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Component
+import javax.servlet.http.HttpServletRequest
 
 const val defaultSampleRate = 0.05
 const val noSampleRate = 0.0

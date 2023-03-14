@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.nimbusds.jose.shaded.gson.Gson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
