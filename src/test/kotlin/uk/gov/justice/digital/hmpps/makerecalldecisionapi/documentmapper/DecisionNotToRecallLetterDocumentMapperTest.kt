@@ -68,7 +68,13 @@ class DecisionNotToRecallLetterDocumentMapperTest {
           dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
           probationPhoneNumber = "01238282838"
         ),
-        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
+        reasonsForNoRecall = ReasonsForNoRecall(
+          licenceBreach = "Reason for breaching licence",
+          noRecallRationale = "Rationale for no recall",
+          popProgressMade = "Progress made so far detail",
+          popThoughts = "Thoughts on bad behaviour",
+          futureExpectations = "Future expectations detail"
+        ),
         lastDntrLetterDownloadDateTime = LocalDateTime.parse("2022-12-26T20:39:47.778")
       )
 
@@ -85,6 +91,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
           "Reason for breaching licence\n\n" +
           "Rationale for no recall\n\n" +
           "Progress made so far detail\n\n" +
+          "Thoughts on bad behaviour\n\n" +
           "Future expectations detail\n\n" +
           "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
           "Your next appointment is by telephone on:"

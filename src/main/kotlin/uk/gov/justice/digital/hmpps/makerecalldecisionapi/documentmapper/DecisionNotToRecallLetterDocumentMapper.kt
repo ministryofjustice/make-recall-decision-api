@@ -23,6 +23,7 @@ class DecisionNotToRecallLetterDocumentMapper : LetterDocumentMapper() {
       recommendation.reasonsForNoRecall?.licenceBreach + "\n\n" +
       recommendation.reasonsForNoRecall?.noRecallRationale + "\n\n" +
       recommendation.reasonsForNoRecall?.popProgressMade + "\n\n" +
+      recommendation.reasonsForNoRecall?.popThoughts + "\n\n" +
       recommendation.reasonsForNoRecall?.futureExpectations + "\n\n" +
       DecisionNotToRecallLetter.CLARIFICATION_PARAGRAPH.content + "\n\n" +
       DecisionNotToRecallLetter.NEXT_APPOINTMENT_PARAGRAPH.content + nextAppointmentBy(recommendation) + DecisionNotToRecallLetter.ON.content
