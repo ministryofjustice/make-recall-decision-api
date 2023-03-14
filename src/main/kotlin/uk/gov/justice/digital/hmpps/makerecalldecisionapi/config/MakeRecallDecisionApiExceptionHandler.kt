@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
-import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -19,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
+import javax.validation.ValidationException
 
 @RestControllerAdvice
 class MakeRecallDecisionApiExceptionHandler {
