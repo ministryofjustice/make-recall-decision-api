@@ -59,7 +59,7 @@ dependencies {
 
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("org.json:json:20230227")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.0.0-beta-13")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.0.0")
   implementation("org.hibernate.orm:hibernate-core:6.1.7.Final")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
