@@ -58,7 +58,7 @@ dependencies {
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("org.json:json:20230227") 
+  implementation("org.json:json:20230227")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
   implementation("org.hibernate.orm:hibernate-core:6.1.7.Final")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
