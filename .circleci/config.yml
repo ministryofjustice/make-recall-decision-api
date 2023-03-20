@@ -246,7 +246,9 @@ workflows:
           requires:
             - deploy_preprod
           <<: *slack-fail-post-step
-
+          
+      - request-prod-approval:
+          type: approval   
       - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
@@ -257,7 +259,7 @@ workflows:
             - make-recall-decision-api-prod
           requires:
             - e2e_test_preprod
-          <<: *slack-fail-post-step
+          <<: *slack-fail-post-step   
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_prod
           sentry_project: make-recall-decision-api
@@ -268,8 +270,6 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-      - request-prod-approval:
-          type: approval
           
   security:
     triggers:
