@@ -248,7 +248,9 @@ workflows:
           <<: *slack-fail-post-step
           
       - request-prod-approval:
-          type: approval   
+          type: approval 
+          requires:
+            - e2e_test_preprod
       - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
