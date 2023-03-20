@@ -192,11 +192,13 @@ workflows:
             branches:
               only:
                 - main
-          requires:
-            - validate
-            - build_docker
-            - e2e_local_test
-            - helm_lint
+          - hold: # <<< A job that will require manual approval in the CircleCI web application.
+              type: approval
+                requires:
+                  - validate
+                  - build_docker
+                  - e2e_local_test
+                  - helm_lint
           <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_dev
