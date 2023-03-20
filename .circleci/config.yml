@@ -260,6 +260,7 @@ workflows:
             - hmpps-common-vars
             - make-recall-decision-api-prod
           requires:
+            - request-prod-approval
             - e2e_test_preprod
           <<: *slack-fail-post-step   
       - hmpps/sentry_release_and_deploy:
