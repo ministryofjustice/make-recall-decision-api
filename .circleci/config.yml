@@ -217,6 +217,8 @@ workflows:
           requires:
             - deploy_dev
           <<: *slack-fail-post-step
+      - request-dev-approval:
+          type: approval
 
       - hmpps/deploy_env:
           name: deploy_preprod
