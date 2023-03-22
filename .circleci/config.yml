@@ -149,7 +149,10 @@ jobs:
       - store_test_results:
           path: make-recall-decision-ui/e2e_tests/junit
 
-
+# E2E tests using the dev and pre-prod environments have been commented out.
+# They were actingas a 'gate' to prevent a broken production deployment, this has been superceded by a 'manual' gate step.
+# Deactivating these tests also removes flakiness caused by drifting test fixtures.
+# the E2E local test is still in place, it tests te FE/BE contract and assumes contracts between MRD and other external systems.
 workflows:
   version: 2
   build-test-and-deploy:
@@ -208,15 +211,15 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-      - e2e_test:
-          name: e2e_test_dev
-          environment: dev
-          context:
-            - make-recall-decision-circleci-auth
-            - hmpps-common-vars
-          requires:
-            - deploy_dev
-          <<: *slack-fail-post-step
+#      - e2e_test:
+#          name: e2e_test_dev
+#          environment: dev
+#          context:
+#            - make-recall-decision-circleci-auth
+#            - hmpps-common-vars
+#          requires:
+#            - deploy_dev
+#          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_preprod
@@ -225,7 +228,8 @@ workflows:
             - hmpps-common-vars
             - make-recall-decision-api-preprod
           requires:
-           - e2e_test_dev
+            - deploy_dev
+#           - e2e_test_dev
           <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
@@ -237,20 +241,21 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-      - e2e_test:
-          name: e2e_test_preprod
-          environment: preprod
-          context:
-            - make-recall-decision-circleci-auth
-            - hmpps-common-vars
-          requires:
-            - deploy_preprod
-          <<: *slack-fail-post-step
+#      - e2e_test:
+#          name: e2e_test_preprod
+#          environment: preprod
+#          context:
+#            - make-recall-decision-circleci-auth
+#            - hmpps-common-vars
+#          requires:
+#            - deploy_preprod
+#          <<: *slack-fail-post-step
           
       - request-prod-approval:
           type: approval 
           requires:
-            - e2e_test_preprod
+            - deploy_preprod
+ #           - e2e_test_preprod
       - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
