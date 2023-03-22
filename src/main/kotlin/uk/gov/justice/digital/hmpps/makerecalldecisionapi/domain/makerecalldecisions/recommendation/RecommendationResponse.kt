@@ -21,6 +21,7 @@ data class RecommendationResponse(
   val managerRecallDecision: ManagerRecallDecision? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
+  val thoughtsLeadingToRecall: String? = null,
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isIndeterminateSentence: Boolean? = null,
