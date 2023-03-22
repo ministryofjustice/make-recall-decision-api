@@ -177,7 +177,7 @@ internal class RecommendationService(
       status = recommendationEntity.data.status,
       custodyStatus = recommendationEntity.data.custodyStatus,
       responseToProbation = recommendationEntity.data.responseToProbation,
-      thoughtsLeadingToRecall = recommendationEntity.data.thoughtsLeadingToRecall,
+      triggerLeadingToRecall = recommendationEntity.data.triggerLeadingToRecall,
       whatLedToRecall = recommendationEntity.data.whatLedToRecall,
       isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
       isIndeterminateSentence = recommendationEntity.data.isIndeterminateSentence,

@@ -72,7 +72,7 @@ class MrdTestDataBuilder {
           recallType = recallTypeData(recallTypeValue),
           custodyStatus = custodyStatusData(),
           responseToProbation = "They have not responded well",
-          thoughtsLeadingToRecall = "Just a bad morning, I guess",
+          triggerLeadingToRecall = "Just a bad morning, I guess",
           whatLedToRecall = "Increasingly violent behaviour",
           isThisAnEmergencyRecall = true,
           isIndeterminateSentence = true,
