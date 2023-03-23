@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius
 
-import javax.validation.constraints.NotEmpty
-
 data class OffenderSearchByPhraseRequest(
-  @field:NotEmpty
-  val phrase: String,
+  val phrase: String? = null,
+  val firstName: String? = null,
+  val surname: String? = null,
+  val crn: String? = null,
   val matchAllTerms: Boolean? = false
 )

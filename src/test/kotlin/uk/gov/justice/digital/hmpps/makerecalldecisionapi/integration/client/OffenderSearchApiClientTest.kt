@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -25,14 +24,12 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
     offenderSearchResponse(crn)
 
     // and
-    val expected = OffenderDetailsResponse(
-      content = listOf(
-        OffenderDetails(
-          firstName = "Pontius",
-          surname = "Pilate",
-          dateOfBirth = LocalDate.parse("2000-11-09"),
-          otherIds = OtherIds(crn, null, null, null, null)
-        )
+    val expected = listOf(
+      OffenderDetails(
+        firstName = "Pontius",
+        surname = "Pilate",
+        dateOfBirth = LocalDate.parse("2000-11-09"),
+        otherIds = OtherIds(crn, null, null, null, null)
       )
     )
 
@@ -55,14 +52,12 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
     limitedAccessPractitionerOffenderSearchResponse(crn)
 
     // and
-    val expected = OffenderDetailsResponse(
-      content = listOf(
-        OffenderDetails(
-          firstName = null,
-          surname = null,
-          dateOfBirth = null,
-          otherIds = OtherIds(crn, null, null, null, null)
-        )
+    val expected = listOf(
+      OffenderDetails(
+        firstName = null,
+        surname = null,
+        dateOfBirth = null,
+        otherIds = OtherIds(crn, null, null, null, null)
       )
     )
 
