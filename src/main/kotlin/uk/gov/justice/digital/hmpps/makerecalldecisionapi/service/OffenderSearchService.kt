@@ -16,12 +16,10 @@ internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
-  suspend fun search(phrase: String): List<SearchByCrnResponse> {
-    val request = OffenderSearchByPhraseRequest(
-      phrase = phrase
-    )
-    val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))?.content
 
+  suspend fun search(phrase: String): List<SearchByCrnResponse> {
+    val request: OffenderSearchByPhraseRequest = buildOffenderSearchByPhraseRequest(phrase)
+    val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))
     return apiResponse?.map {
       var name = "${it.firstName} ${it.surname}"
       var excluded: Boolean? = null
@@ -52,5 +50,24 @@ internal class OffenderSearchService(
         userRestricted = restricted
       )
     }?.toList() ?: emptyList()
+  }
+
+  private fun buildOffenderSearchByPhraseRequest(phrase: String) = when {
+    containsNumeric(phrase) -> {
+      OffenderSearchByPhraseRequest(
+        crn = phrase
+      )
+    }
+
+    else -> {
+      OffenderSearchByPhraseRequest(
+        firstName = phrase,
+        surname = phrase
+      )
+    }
+  }
+
+  private fun containsNumeric(toCheck: String): Boolean {
+    return toCheck.any { char -> char.isDigit() }
   }
 }

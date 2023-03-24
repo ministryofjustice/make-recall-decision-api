@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "urlPath": "/phrase",
+    "urlPath": "/search",
     "queryParameters": {
       "paged": {
         "matches": "false"
@@ -10,7 +10,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "phrase.json",
+    "bodyFileName": "search.json",
     "headers": {
       "Content-Type": "application/json"
     }
