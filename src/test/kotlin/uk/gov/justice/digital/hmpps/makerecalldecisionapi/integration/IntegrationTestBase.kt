@@ -473,14 +473,14 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun offenderSearchResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun offenderSearchResponse(crn: String? = "X123456", firstName: String? = "Pontius", surname: String? = "Pilate", fullName: String? = "Pontius Pilate", delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
-        .withPath("/phrase")
+        .withPath("/search")
         .withQueryStringParameter("paged", "false")
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse(crn))
+      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse(crn, firstName, surname, fullName))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -488,7 +488,7 @@ abstract class IntegrationTestBase {
   protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
-        .withPath("/phrase")
+        .withPath("/search")
         .withQueryStringParameter("paged", "false")
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(

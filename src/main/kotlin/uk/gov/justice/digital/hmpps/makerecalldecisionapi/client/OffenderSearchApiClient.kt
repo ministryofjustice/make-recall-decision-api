@@ -7,7 +7,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.Duration
@@ -18,12 +18,12 @@ class OffenderSearchApiClient(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   private val timeoutCounter: Counter
 ) {
-  fun searchOffenderByPhrase(request: OffenderSearchByPhraseRequest): Mono<OffenderDetailsResponse> {
-    val responseType = object : ParameterizedTypeReference<OffenderDetailsResponse>() {}
+  fun searchOffenderByPhrase(request: OffenderSearchByPhraseRequest): Mono<List<OffenderDetails>> {
+    val responseType = object : ParameterizedTypeReference<List<OffenderDetails>>() {}
     return webClient
       .post()
       .uri { builder ->
-        builder.path("/phrase").queryParam("paged", "false").build()
+        builder.path("/search").queryParam("paged", "false").build()
       }
       .header("Content-Type", APPLICATION_JSON_VALUE)
       .body(fromValue(request))
