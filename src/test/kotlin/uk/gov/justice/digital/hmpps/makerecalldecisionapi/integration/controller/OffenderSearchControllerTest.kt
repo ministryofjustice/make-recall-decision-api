@@ -33,42 +33,6 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `retrieves simple case summary details using full name`() {
-    runTest {
-      val fullName = "Pontius Pilate"
-      offenderSearchResponse(fullName = fullName)
-      webTestClient.get()
-        .uri("/search?crn=$fullName")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo(fullName)
-        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
-        .jsonPath("$[0].crn").isEqualTo("X123456")
-    }
-  }
-
-  @Test
-  fun `retrieves simple case summary details using first name`() {
-    runTest {
-      val firstName = "Pontius"
-      offenderSearchResponse(firstName = firstName)
-      webTestClient.get()
-        .uri("/search?crn=$firstName")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
-        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
-        .jsonPath("$[0].crn").isEqualTo("X123456")
-    }
-  }
-
-  @Test
   fun `retrieves simple case summary details using last name`() {
     runTest {
       val lastName = "Pilate"

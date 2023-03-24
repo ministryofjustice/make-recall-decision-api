@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -10,12 +11,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
+import kotlin.math.log
 
 @Service
 internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   suspend fun search(phrase: String): List<SearchByCrnResponse> {
     val request: OffenderSearchByPhraseRequest = buildOffenderSearchByPhraseRequest(phrase)
@@ -54,14 +59,13 @@ internal class OffenderSearchService(
 
   private fun buildOffenderSearchByPhraseRequest(phrase: String) = when {
     containsNumeric(phrase) -> {
+      log.info("search term:: $phrase contains numeric values.")
       OffenderSearchByPhraseRequest(
         crn = phrase
       )
     }
-
     else -> {
       OffenderSearchByPhraseRequest(
-        firstName = phrase,
         surname = phrase
       )
     }
