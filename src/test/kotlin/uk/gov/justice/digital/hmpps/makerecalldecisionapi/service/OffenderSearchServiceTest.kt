@@ -75,7 +75,6 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     runTest {
       val name = "John"
       val request = OffenderSearchByPhraseRequest(
-        firstName = name,
         surname = name
       )
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
