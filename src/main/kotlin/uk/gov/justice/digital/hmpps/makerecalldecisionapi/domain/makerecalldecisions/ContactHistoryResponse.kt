@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAcc
 
 data class ContactHistoryResponse(
   val userAccessResponse: UserAccessResponse? = null,
-  val personalDetailsOverview: PersonDetails? = null,
+  val personalDetailsOverview: PersonalDetailsOverview? = null,
   val contactSummary: List<ContactSummaryResponse>? = null,
   val contactTypeGroups: List<ContactGroupResponse?>? = null,
   val activeRecommendation: ActiveRecommendation? = null,

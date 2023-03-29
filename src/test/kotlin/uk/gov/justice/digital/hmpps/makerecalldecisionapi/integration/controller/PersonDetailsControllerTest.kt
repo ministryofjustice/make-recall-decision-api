@@ -22,7 +22,7 @@ class PersonDetailsControllerTest(
       val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
 
@@ -74,7 +74,7 @@ class PersonDetailsControllerTest(
   fun `handles scenario where no person exists matching crn`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponseWithNoOffender(crn)
+      personalDetailsNotFound(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -85,7 +85,7 @@ class PersonDetailsControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.NOT_FOUND.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("No personal details available: No details available for crn: A12345")
+        .isEqualTo("No personal details available: No details available for endpoint: /case-summary/A12345/personal-details")
     }
   }
 
@@ -109,10 +109,10 @@ class PersonDetailsControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout`() {
+  fun `gateway timeout 503 given on Delius timeout`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
@@ -123,7 +123,7 @@ class PersonDetailsControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/$crn/personal-details endpoint: [No response within 2 seconds]")
     }
   }
 

@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
-data class PersonDetails(
+data class PersonalDetailsOverview(
   val fullName: String?,
   val name: String?,
   val firstName: String?,
