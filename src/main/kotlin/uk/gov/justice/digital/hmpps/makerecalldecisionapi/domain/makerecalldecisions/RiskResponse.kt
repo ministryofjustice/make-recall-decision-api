@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 
 data class RiskResponse(
   val userAccessResponse: UserAccessResponse? = null,
-  val personalDetailsOverview: PersonDetails? = null,
+  val personalDetailsOverview: PersonalDetailsOverview? = null,
   val roshSummary: RoshSummary? = null,
   val roshHistory: RoshHistory? = null,
   val mappa: Mappa? = null,

@@ -16,6 +16,7 @@ services:
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
       - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - COMMUNITY_API_ENDPOINT_URL=http://fake-community-api:8080
+      - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
       - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
@@ -77,6 +78,19 @@ services:
     command: --verbose --local-response-templating
     volumes:
       - ./fake-community-api:/home/wiremock
+
+  fake-delius-integration-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-delius-integration-api
+    ports:
+      - "9082:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-delius-integration-api:/home/wiremock
 
   fake-arn-api:
     image: wiremock/wiremock

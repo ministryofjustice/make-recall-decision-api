@@ -8,6 +8,11 @@ community:
     endpoint:
       url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
 
+delius:
+  integration:
+    endpoint:
+      url: https://make-recall-decisions-and-delius-dev.hmpps.service.justice.gov.uk
+
 arn:
   api:
     endpoint:

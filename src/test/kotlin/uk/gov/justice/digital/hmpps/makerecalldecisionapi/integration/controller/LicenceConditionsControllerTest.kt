@@ -23,7 +23,7 @@ class LicenceConditionsControllerTest(
       val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
@@ -103,7 +103,7 @@ class LicenceConditionsControllerTest(
   fun `sets isCustodial flag to false for case with non custodial conviction`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       nonCustodialConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
@@ -123,7 +123,7 @@ class LicenceConditionsControllerTest(
   fun `retrieves multiple licence condition details`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       multipleLicenceConditionsResponse(crn, convictionId)
       groupedDocumentsResponse(crn)
@@ -170,7 +170,7 @@ class LicenceConditionsControllerTest(
     runTest {
       val convictionId2 = 123456789L
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       multipleConvictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, convictionId)
       licenceConditionsResponse(crn, convictionId2)
@@ -233,7 +233,7 @@ class LicenceConditionsControllerTest(
   fun `returns empty allLicenceConditions list where where no active convictions exist`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       noActiveConvictionResponse(crn)
       groupedDocumentsResponse(crn)
 
@@ -257,7 +257,7 @@ class LicenceConditionsControllerTest(
   fun `returns empty licence conditions where no active or inactive licence conditions exist`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       noActiveLicenceConditions(crn, convictionId)
       groupedDocumentsResponse(crn)
@@ -285,7 +285,7 @@ class LicenceConditionsControllerTest(
       val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       cvlLicenceMatchResponse(nomsId, crn)
       cvlLicenceByIdResponse(123344, nomsId, crn)
       deleteAndCreateRecommendation(featureFlagString)
@@ -369,29 +369,8 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      convictionResponse(crn, staffCode)
-
-      webTestClient.get()
-        .uri("/cases/$crn/licence-conditions")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
-      groupedDocumentsResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/licence-conditions")
@@ -407,10 +386,31 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `gateway timeout 503 given on Delius timeout on personal details endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      convictionResponse(crn, staffCode)
+      groupedDocumentsResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/$crn/personal-details endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on licence conditions endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       groupedDocumentsResponse(crn)
       licenceConditionsResponse(crn, 2500614567, delaySeconds = nDeliusTimeout + 2)
@@ -432,7 +432,7 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on grouped documents endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       licenceConditionsResponse(crn, 2500614567)
       groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
@@ -454,7 +454,7 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on CVL Api timeout on licence match endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       cvlLicenceMatchResponse(nomsId, crn, delaySeconds = cvlTimeout + 2)
 
       webTestClient.get()
@@ -474,7 +474,7 @@ class LicenceConditionsControllerTest(
   fun `gateway timeout 503 given on CVL Api timeout on get licence id endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       cvlLicenceMatchResponse(nomsId, crn)
       cvlLicenceByIdResponse(123344, nomsId, crn, delaySeconds = cvlTimeout + 2)
 

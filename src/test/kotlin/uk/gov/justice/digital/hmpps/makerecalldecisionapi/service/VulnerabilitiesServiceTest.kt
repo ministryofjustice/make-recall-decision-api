@@ -30,7 +30,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risks and formats into vulnerabilities`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
       given(arnApiClient.getRisksWithFullText(anyString())).willReturn(Mono.fromCallable { riskResponse() })
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
@@ -39,7 +39,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
       val vulnerabilities = response.vulnerabilities!!
 
       assertThat(personalDetails.crn).isEqualTo(crn)
-      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse()))
+      assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
@@ -70,7 +70,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
       assertThat(vulnerabilities.hostelSetting?.currentConcernsText).isEqualTo("Risk of hostel setting concerns due to ...")
       assertThat(vulnerabilities.lastUpdatedDate).isEqualTo("2022-11-23T00:01:50.000Z")
 
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -131,7 +131,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
     expectedErrorCode: String
   ) {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString())).willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
 
       given(arnApiClient.getRisksWithFullText(crn)).willThrow(
         WebClientResponseException(

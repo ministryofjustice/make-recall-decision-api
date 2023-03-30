@@ -17,36 +17,26 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EstablishmentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institution
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -89,8 +79,8 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
@@ -128,7 +118,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(roshHistory?.registrations?.get(0)?.notes).isEqualTo("Notes on case")
       assertThat(roshHistory?.registrations?.size).isEqualTo(1)
       assertThat(personalDetails.crn).isEqualTo(crn)
-      assertThat(personalDetails.age).isEqualTo(age(allOffenderDetailsResponse))
+      assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
@@ -231,7 +221,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getRiskScores(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
       then(communityApiClient).should().getAllMappaDetails(crn)
     }
   }
@@ -239,8 +229,8 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk when assessment status is incomplete`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
@@ -574,7 +564,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -613,7 +603,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -653,7 +643,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -682,9 +672,9 @@ internal class RiskServiceTest : ServiceTestBase() {
       val age = dateOfBirth?.until(LocalDate.now())?.years
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
-      assertThat(personalDetails.gender).isEqualTo("")
+      assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
-      assertThat(personalDetails.name).isEqualTo("")
+      assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(mappa.level).isEqualTo(null)
       assertThat(mappa.lastUpdatedDate).isEqualTo("")
       assertThat(mappa.category).isNull()
@@ -700,7 +690,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -742,44 +732,20 @@ internal class RiskServiceTest : ServiceTestBase() {
         }
       )
 
-    given(communityApiClient.getAllOffenderDetails(anyString()))
-      .willReturn(
-        Mono.fromCallable {
-          allOffenderDetailsResponse.copy(
-            firstName = null,
-            surname = null,
-            gender = null,
-            contactDetails = ContactDetails(
-              addresses = listOf(
-                Address(
-                  postcode = null,
-                  district = null,
-                  addressNumber = null,
-                  buildingName = null,
-                  town = null,
-                  county = null, status = AddressStatus(code = "ABC123", description = "Main")
-                )
-              )
-            ),
-            offenderManagers = listOf(
-              OffenderManager(
-                active = true,
-                probationArea = null,
-                trustOfficer = TrustOfficer(forenames = null, surname = null),
-                staff = Staff(forenames = null, surname = null),
-                providerEmployee = ProviderEmployee(forenames = null, surname = null),
-                team = Team(
-                  telephone = null,
-                  emailAddress = null,
-                  code = null,
-                  description = null,
-                  localDeliveryUnit = null
-                )
-              )
-            )
-          )
-        }
+    given(deliusClient.getPersonalDetails(anyString())).willReturn(
+      deliusPersonalDetailsResponse(
+        manager = null,
+        address = PersonalDetails.Address(
+          postcode = null,
+          district = null,
+          addressNumber = null,
+          buildingName = null,
+          town = null,
+          county = null,
+          noFixedAbode = null
+        )
       )
+    )
 
     given(communityApiClient.getAllMappaDetails(anyString()))
       .willReturn(
@@ -1165,73 +1131,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       description = "NPS London"
     ),
     notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
-  )
-
-  private val allOffenderDetailsResponse = AllOffenderDetailsResponse(
-    dateOfBirth = LocalDate.parse("1982-10-24"),
-    firstName = "John",
-    surname = "Smith",
-    middleNames = listOf("Homer", "Bart"),
-    gender = "Male",
-    otherIds = OtherIds(
-      crn = null,
-      croNumber = "123456/04A",
-      mostRecentPrisonerNumber = "G12345",
-      nomsNumber = "A1234CR",
-      pncNumber = "2004/0712343H"
-    ),
-    contactDetails = ContactDetails(
-      addresses = listOf(
-        Address(
-          postcode = "S3 7BS",
-          district = "Sheffield City Centre",
-          addressNumber = "32",
-          buildingName = "HMPPS Digital Studio",
-          town = "Sheffield",
-          county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main")
-        ),
-        Address(
-          town = "Sheffield",
-          county = "South Yorkshire",
-          buildingName = "HMPPS Digital Studio",
-          district = "Sheffield City Centre",
-          status = AddressStatus(code = "ABC123", description = "Not Main"),
-          postcode = "S3 7BS",
-          addressNumber = "33"
-        )
-      )
-    ),
-    offenderManagers = listOf(
-      OffenderManager(
-        active = true,
-        probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-        trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-        staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-        providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-        team = Team(
-          telephone = "09056714321",
-          emailAddress = "first.last@digital.justice.gov.uk",
-          code = "C01T04",
-          description = "OMU A",
-          localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
-        )
-      ),
-      OffenderManager(
-        active = false,
-        probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-        trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-        staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-        providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-        team = Team(
-          telephone = "123",
-          emailAddress = "dua.lipa@digital.justice.gov.uk",
-          code = "C01T04",
-          description = "OMU A",
-          localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
-        )
-      )
-    ),
-    offenderProfile = OffenderProfile(ethnicity = "Ainu")
   )
 
   private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence", mainOffencePresent: Boolean? = true) = Conviction(

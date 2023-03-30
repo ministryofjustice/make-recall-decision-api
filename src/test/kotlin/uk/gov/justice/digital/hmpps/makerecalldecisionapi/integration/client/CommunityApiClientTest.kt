@@ -2,20 +2,13 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactType
@@ -36,30 +29,21 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -246,19 +230,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
     assertThat(actual, equalTo(expected))
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun `throws exception when no person matching crn exists`() {
-    val nonExistentCrn = "X123456"
-    allOffenderDetailsResponseWithNoOffender(nonExistentCrn)
-    assertThatThrownBy {
-      runBlockingTest {
-        communityApiClient.getAllOffenderDetails(nonExistentCrn).block()
-      }
-    }.isInstanceOf(PersonNotFoundException::class.java)
-      .hasMessage("No details available for crn: $nonExistentCrn")
-  }
-
   @Test
   fun `retrieves registrations`() {
     // given
@@ -339,96 +310,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getContactSummary(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
-
-  @Test
-  fun `retrieves all offender details`() {
-    // given
-    allOffenderDetailsResponse(crn)
-
-    // and
-    val expected = AllOffenderDetailsResponse(
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      firstName = "John",
-      surname = "Smith",
-      gender = "Male",
-      middleNames = listOf<String>("Homer", "Bart"),
-      otherIds = OtherIds(
-        crn = "12345C",
-        croNumber = "123456/04A",
-        mostRecentPrisonerNumber = "G12345",
-        nomsNumber = "A1234CR",
-        pncNumber = "2004/0712343H"
-      ),
-      contactDetails = ContactDetails(
-        addresses = listOf(
-          Address(
-            postcode = "90220",
-            district = "South Central",
-            streetName = "Skid Row",
-            addressNumber = "45",
-            buildingName = "Death Row Records",
-            town = "Compton",
-            county = "LA", status = AddressStatus(code = "ABC123", description = "Not Main"),
-            noFixedAbode = false
-          ),
-          Address(
-            town = "Sheffield",
-            county = "South Yorkshire",
-            buildingName = "HMPPS Digital Studio",
-            district = "Sheffield City Centre",
-            streetName = "Scotland Street",
-            status = AddressStatus(code = "ABC123", description = "Main"),
-            postcode = "S3 7BS",
-            addressNumber = "33",
-            noFixedAbode = false
-          )
-        )
-      ),
-      offenderManagers = listOf(
-        OffenderManager(
-          active = true,
-          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "09056714321",
-            emailAddress = "first.last@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A",
-            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 2")
-          )
-        ),
-        OffenderManager(
-          active = false,
-          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "123",
-            emailAddress = "dua.lipa@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A",
-            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 4")
-          )
-        )
-
-      ),
-      offenderProfile = OffenderProfile(
-        ethnicity = "Ainu",
-        offenderLanguages = OffenderLanguages(
-          primaryLanguage = "English"
-        )
-      )
-    )
-
-    // when
-    val actual = communityApiClient.getAllOffenderDetails(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

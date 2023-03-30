@@ -18,12 +18,14 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.net.URI
 
 @Configuration
 class WebClientConfiguration(
   @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
+  @Value("\${delius.integration.endpoint.url}") private val deliusIntegrationRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
@@ -84,6 +86,22 @@ class WebClientConfiguration(
 
   @Bean
   fun communityApiClientTimeoutCounter(): Counter = timeoutCounter(communityApiRootUri)
+
+  @Bean
+  fun deliusWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManager, builder, deliusIntegrationRootUri, "delius")
+  }
+
+  @Bean
+  fun deliusClient(@Qualifier("deliusWebClientAppScope") webClient: WebClient): DeliusClient {
+    return DeliusClient(webClient, nDeliusTimeout, deliusClientTimeoutCounter())
+  }
+
+  @Bean
+  fun deliusClientTimeoutCounter(): Counter = timeoutCounter(deliusIntegrationRootUri)
 
   @Bean
   fun arnWebClientAppScope(

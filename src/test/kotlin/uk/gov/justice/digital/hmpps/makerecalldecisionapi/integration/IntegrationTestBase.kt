@@ -40,7 +40,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.allOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
@@ -50,6 +49,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.roshHistoryDeliusResponse
@@ -72,16 +72,15 @@ abstract class IntegrationTestBase {
   @Autowired
   lateinit var webTestClient: WebTestClient
 
-  var oasysARNApi: ClientAndServer = startClientAndServer(8095)
-
-  var cvlApi: ClientAndServer = startClientAndServer(8096)
-
   @Autowired
   protected lateinit var repository: RecommendationRepository
 
   var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
+  var oasysARNApi: ClientAndServer = startClientAndServer(8095)
+  var cvlApi: ClientAndServer = startClientAndServer(8096)
+  var deliusIntegration: ClientAndServer = startClientAndServer(8097)
   var oauthMock: ClientAndServer = startClientAndServer(9090)
 
   private val gson: Gson = Gson()
@@ -124,22 +123,24 @@ abstract class IntegrationTestBase {
   @BeforeEach
   fun startUpServer() {
     communityApi.reset()
-    offenderSearchApi.reset()
+    cvlApi.reset()
+    deliusIntegration.reset()
     gotenbergMock.reset()
     oasysARNApi.reset()
-    cvlApi.reset()
+    offenderSearchApi.reset()
     setupOauth()
     setupHealthChecks()
   }
 
   @AfterAll
   fun tearDownServer() {
-    oasysARNApi.stop()
-    cvlApi.stop()
     communityApi.stop()
-    offenderSearchApi.stop()
+    cvlApi.stop()
+    deliusIntegration.stop()
     gotenbergMock.stop()
+    oasysARNApi.stop()
     oauthMock.stop()
+    offenderSearchApi.stop()
   }
 
   fun deleteAndCreateRecommendation(featureFlagString: String? = null) {
@@ -286,31 +287,31 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun allOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val allOffenderDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/all")
+  protected fun personalDetailsResponse(crn: String, delaySeconds: Long = 0) {
+    val personalDetailsRequest =
+      request().withPath("/case-summary/$crn/personal-details")
 
-    communityApi.`when`(allOffenderDetailsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse())
+    deliusIntegration.`when`(personalDetailsRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun allOffenderDetailsResponseOneTimeOnly(crn: String, delaySeconds: Long = 0, district: String? = "Sheffield City Centre", firstName: String? = "John") {
-    val allOffenderDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/all")
+  protected fun personalDetailsResponseOneTimeOnly(crn: String, delaySeconds: Long = 0, district: String? = "Sheffield City Centre", firstName: String? = "John") {
+    val personalDetailsRequest =
+      request().withPath("/case-summary/$crn/personal-details")
 
-    communityApi.`when`(allOffenderDetailsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(allOffenderDetailsResponse(district = district, firstName = firstName))
+    deliusIntegration.`when`(personalDetailsRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse(district = district, firstName = firstName))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun noOffenderDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val allOffenderDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/all")
+  protected fun noPersonalDetailsResponse(crn: String, delaySeconds: Long = 0) {
+    val personalDetailsRequest =
+      request().withPath("/case-summary/$crn/personal-details")
 
-    communityApi.`when`(allOffenderDetailsRequest).respond(
+    deliusIntegration.`when`(personalDetailsRequest).respond(
       response().withStatusCode(404)
     )
   }
@@ -465,10 +466,10 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun allOffenderDetailsResponseWithNoOffender(crn: String) {
+  protected fun personalDetailsNotFound(crn: String) {
     val personalDetails =
-      request().withPath("/cases/$crn/personal-details")
-    communityApi.`when`(personalDetails, exactly(1)).respond(
+      request().withPath("/case-summary/$crn/personal-details")
+    deliusIntegration.`when`(personalDetails, exactly(1)).respond(
       response().withStatusCode(404)
     )
   }

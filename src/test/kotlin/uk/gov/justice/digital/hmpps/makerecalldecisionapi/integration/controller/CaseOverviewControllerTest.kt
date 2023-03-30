@@ -24,7 +24,7 @@ class CaseOverviewControllerTest(
       val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       oasysAssessmentsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
@@ -95,7 +95,7 @@ class CaseOverviewControllerTest(
   fun `sets isCustodial flag to false for case with non custodial conviction`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       nonCustodialConvictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -115,7 +115,7 @@ class CaseOverviewControllerTest(
   fun `returns empty offences list where where no active convictions exist`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       noActiveConvictionResponse(crn)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -181,7 +181,7 @@ class CaseOverviewControllerTest(
       // Delete recommendation from database if one was created in previous tests
       deleteRecommendation()
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -200,7 +200,7 @@ class CaseOverviewControllerTest(
   fun `given case has recommendation in non-draft state in database then do not return any active recommendation`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -221,29 +221,7 @@ class CaseOverviewControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - all offenders endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on all offenders endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
       registrationsResponse()
       releaseSummaryResponse(crn)
@@ -262,10 +240,32 @@ class CaseOverviewControllerTest(
   }
 
   @Test
+  fun `gateway timeout 503 given on Delius timeout on personal details endpoint`() {
+    runTest {
+      userAccessAllowed(crn)
+      personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      convictionResponse(crn, staffCode)
+      registrationsResponse()
+      releaseSummaryResponse(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/overview")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/$crn/personal-details endpoint: [No response within $nDeliusTimeout seconds]")
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on Community Api timeout on registrations endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse(delaySeconds = nDeliusTimeout + 2)
       releaseSummaryResponse(crn)
@@ -287,7 +287,7 @@ class CaseOverviewControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on release summary endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
@@ -309,7 +309,7 @@ class CaseOverviewControllerTest(
   fun `given gateway timeout 503 given on ARN API risk management endpoint then set error to TIMEOUT`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       convictionResponse(crn, staffCode)
       registrationsResponse()
       releaseSummaryResponse(crn)

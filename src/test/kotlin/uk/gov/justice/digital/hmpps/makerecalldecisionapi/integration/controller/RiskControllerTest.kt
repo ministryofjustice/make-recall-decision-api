@@ -23,7 +23,7 @@ class RiskControllerTest(
   fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available `() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       roshHistoryResponse()
       noRiskScoresResponse(crn)
@@ -66,7 +66,7 @@ class RiskControllerTest(
   fun `retrieves risk summary when no MAPPA or risk scores are available and RoSH summary is no latest complete 404`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       noRiskScoresResponse(crn)
       noLatestCompleteRoshSummaryResponse(crn)
@@ -100,7 +100,7 @@ class RiskControllerTest(
   fun `retrieves risk summary when no MAPPA available, ARN RoSH Summary fetch fails, and Risk Scores fetch fails`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       noMappaDetailsResponse(crn)
       failedRiskScoresResponse(crn)
       failedRoSHSummaryResponse(crn)
@@ -134,7 +134,7 @@ class RiskControllerTest(
   fun `retrieves risk summary when RoSH summary has empty data`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       mappaDetailsResponse(crn)
       allRiskScoresEmptyResponse(crn)
       roSHSummaryNoDataResponse(crn)
@@ -162,7 +162,7 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       mappaDetailsResponse(crn)
       allRiskScoresEmptyResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
@@ -238,7 +238,7 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       mappaDetailsResponse(crn)
       allRiskScoresResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
@@ -373,7 +373,7 @@ class RiskControllerTest(
     roSHSummaryResponse(crn)
     mappaDetailsResponse(crn)
     allRiskScoresResponse(crn)
-    noOffenderDetailsResponse(crn)
+    noPersonalDetailsResponse(crn)
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -381,7 +381,7 @@ class RiskControllerTest(
       .exchange()
       .expectStatus().isNotFound
       .expectBody()
-      .jsonPath("$.developerMessage").isEqualTo("No details available for crn: A12345")
+      .jsonPath("$.developerMessage").isEqualTo("No details available for endpoint: /case-summary/A12345/personal-details")
   }
 
   @Test
@@ -421,7 +421,7 @@ class RiskControllerTest(
   fun `Error message in rosh summary property given on OASYS ARN rosh summary timeout`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
@@ -441,7 +441,7 @@ class RiskControllerTest(
   fun `Error message in predictor scores property given on OASYS ARN all scores timeout`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       mappaDetailsResponse(crn)
       roSHSummaryResponse(crn)
       allRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
@@ -463,7 +463,7 @@ class RiskControllerTest(
     runTest {
       userAccessAllowed(crn)
       roSHSummaryResponse(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       allRiskScoresResponse(crn)
       mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 

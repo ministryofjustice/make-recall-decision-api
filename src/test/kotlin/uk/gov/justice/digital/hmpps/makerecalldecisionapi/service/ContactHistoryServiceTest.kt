@@ -35,7 +35,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     documentService = DocumentService(communityApiClient, userAccessValidator)
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
     contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
@@ -46,8 +46,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   fun `given a contact summary and release summary then return these details in the response`() {
     runTest {
 
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.fromCallable { allContactSummariesResponse() })
       given(communityApiClient.getGroupedDocuments(anyString()))
@@ -57,7 +57,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
 
       then(communityApiClient).should().getContactSummary(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
 
       assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn())))
     }
@@ -116,8 +116,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   @Test
   fun `given no contact summary details then still retrieve release summary details`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getContactSummary(anyString()))
         .willReturn(Mono.empty())
       given(communityApiClient.getGroupedDocuments(anyString()))

@@ -38,7 +38,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, recommendationService)
+    personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
     licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, createAndVaryALicenceService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
@@ -48,8 +48,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given an active conviction and licence conditions then return these details in the response`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
@@ -61,7 +61,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
       then(communityApiClient).should().getActiveConvictions(crn)
       then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
@@ -80,8 +80,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given an active non custodial conviction then set custodial flag to false`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
@@ -92,7 +92,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       val response = licenceConditionsService.getLicenceConditions(crn)
 
       Assertions.assertThat(response.convictions!![0].isCustodial).isFalse
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
     }
   }
 
@@ -149,8 +149,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no active licence conditions then still retrieve conviction details`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
       given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
@@ -162,7 +162,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
       then(communityApiClient).should().getActiveConvictions(crn)
       then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
@@ -181,8 +181,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no offender details then still retrieve personal details`() {
     runTest {
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
         .willReturn(Mono.fromCallable { emptyList() })
       given(communityApiClient.getGroupedDocuments(anyString()))
@@ -191,7 +191,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       val response = licenceConditionsService.getLicenceConditions(crn)
 
       then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
       then(communityApiClient).should().getGroupedDocuments(crn)
       then(communityApiClient).shouldHaveNoMoreInteractions()
 
@@ -213,8 +213,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       val licenceId = 444333
       val nomsId = "A1234CR"
-      given(communityApiClient.getAllOffenderDetails(anyString()))
-        .willReturn(Mono.fromCallable { allOffenderDetailsResponse() })
+      given(deliusClient.getPersonalDetails(anyString()))
+        .willReturn(deliusPersonalDetailsResponse())
       given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId))))
         .willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
       given(cvlApiClient.getLicenceById(crn, licenceId))
@@ -222,7 +222,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
 
       val response = licenceConditionsService.getLicenceConditionsCvl(crn)
 
-      then(communityApiClient).should().getAllOffenderDetails(crn)
+      then(deliusClient).should().getPersonalDetails(crn)
       then(cvlApiClient).should().getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))
       then(cvlApiClient).should().getLicenceById(crn, licenceId)
 

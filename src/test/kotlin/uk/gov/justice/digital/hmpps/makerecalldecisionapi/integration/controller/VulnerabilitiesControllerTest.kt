@@ -20,7 +20,7 @@ class VulnerabilitiesControllerTest(
       val featureFlagString = "{\"flagConsiderRecall\": true }"
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       risksWithFullTextResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
@@ -127,7 +127,7 @@ class VulnerabilitiesControllerTest(
   fun `gateway timeout 503 given on OASYS ARN timeout on risk endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       risksWithFullTextResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
