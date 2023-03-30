@@ -8,20 +8,21 @@ import org.mockito.kotlin.doReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AddressStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionDocuments
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
@@ -32,25 +33,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institu
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderLanguages
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderProfile
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProviderEmployee
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.TrustOfficer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
@@ -72,6 +65,9 @@ internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var communityApiClient: CommunityApiClient
+
+  @Mock
+  protected lateinit var deliusClient: DeliusClient
 
   @Mock
   protected lateinit var arnApiClient: ArnApiClient
@@ -118,7 +114,7 @@ internal abstract class ServiceTestBase {
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient, userAccessValidator)
     convictionService = ConvictionService(communityApiClient, documentService)
-    personDetailsService = PersonDetailsService(communityApiClient, userAccessValidator, null)
+    personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, null)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
@@ -236,7 +232,7 @@ internal abstract class ServiceTestBase {
   }
 
   fun personDetailsResponse() = PersonDetailsResponse(
-    personalDetailsOverview = PersonDetails(
+    personalDetailsOverview = PersonalDetailsOverview(
       fullName = "John Homer Bart Smith",
       name = "John Smith",
       firstName = "John",
@@ -306,75 +302,58 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun allOffenderDetailsResponse(): AllOffenderDetailsResponse {
-    return AllOffenderDetailsResponse(
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      firstName = "John",
-      surname = "Smith",
-      middleNames = listOf("Homer", "Bart"),
-      gender = "Male",
-      otherIds = OtherIds(crn = null, croNumber = "123456/04A", mostRecentPrisonerNumber = "G12345", nomsNumber = "A1234CR", pncNumber = "2004/0712343H"),
-      contactDetails = ContactDetails(
-        addresses = listOf(
-          Address(
-            town = "Compton",
-            county = "LA",
-            buildingName = "HMPPS Digital Studio",
-            district = "South Central",
-            status = AddressStatus(code = "ABC123", description = "Not Main"),
-            postcode = "90210",
-            addressNumber = "339",
-            streetName = "Sesame Street"
-          ),
-          Address(
-            postcode = "S3 7BS",
-            district = "Sheffield City Centre",
-            addressNumber = "32",
-            buildingName = "HMPPS Digital Studio",
-            town = "Sheffield",
-            county = "South Yorkshire", status = AddressStatus(code = "ABC123", description = "Main"),
-            streetName = "Jump Street"
-          )
-        )
+  protected fun deliusPersonalDetailsResponse(
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+    address: Address? = Address(
+      postcode = "S3 7BS",
+      district = "Sheffield City Centre",
+      addressNumber = "32",
+      buildingName = "HMPPS Digital Studio",
+      town = "Sheffield",
+      county = "South Yorkshire",
+      streetName = "Jump Street",
+      noFixedAbode = null
+    ),
+    manager: Manager? = Manager(
+      team = Manager.Team(
+        telephone = "09056714321",
+        email = "first.last@digital.justice.gov.uk",
+        code = "C01T04",
+        name = "OMU A",
+        localAdminUnit = "Local admin unit description"
       ),
-      offenderManagers = listOf(
-        OffenderManager(
-          active = true,
-          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-          trustOfficer = TrustOfficer(forenames = "Sheila Linda", surname = "Hancock"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "09056714321",
-            emailAddress = "first.last@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A",
-            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description")
-          )
-        ),
-        OffenderManager(
-          active = false,
-          probationArea = ProbationArea(code = "N01", description = "NPS North West"),
-          trustOfficer = TrustOfficer(forenames = "Dua", surname = "Lipa"),
-          staff = Staff(forenames = "Sheila Linda", surname = "Hancock"),
-          providerEmployee = ProviderEmployee(forenames = "Sheila Linda", surname = "Hancock"),
-          team = Team(
-            telephone = "123",
-            emailAddress = "dua.lipa@digital.justice.gov.uk",
-            code = "C01T04",
-            description = "OMU A",
-            localDeliveryUnit = LocalDeliveryUnit(code = "ABC123", description = "Local delivery unit description 2")
-          )
-        )
+      staffCode = "C01T123",
+      name = Name(
+        forename = "Sheila",
+        middleName = "Linda",
+        surname = "Hancock"
       ),
-      offenderProfile = OffenderProfile(
-        ethnicity = "Ainu",
-        offenderLanguages = OffenderLanguages(
-          primaryLanguage = "English"
-        )
+      provider = Manager.Provider(
+        code = "N01",
+        name = "NPS North West"
       )
     )
-  }
+  ) = PersonalDetails(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
+      ),
+    ),
+    mainAddress = address,
+    communityManager = manager
+  )
 
   protected fun mappaResponse(): MappaResponse {
 
@@ -678,10 +657,10 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun expectedPersonDetailsResponse(): PersonDetails {
+  protected fun expectedPersonDetailsResponse(): PersonalDetailsOverview {
     val dateOfBirth = LocalDate.parse("1982-10-24")
 
-    return PersonDetails(
+    return PersonalDetailsOverview(
       name = "John Smith",
       firstName = "John",
       surname = "Smith",
@@ -700,5 +679,5 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  fun age(offenderDetails: AllOffenderDetailsResponse) = offenderDetails.dateOfBirth?.until(LocalDate.now())?.years
+  fun age(details: PersonalDetails) = details.personalDetails.dateOfBirth.until(LocalDate.now()).years
 }

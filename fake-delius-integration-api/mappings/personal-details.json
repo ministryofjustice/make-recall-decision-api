@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/secure/offenders/crn/.*/all"
+    "urlPathPattern": "/case-summary/.*/personal-details"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "all.json",
+    "bodyFileName": "personal-details.json",
     "headers": {
       "Content-Type": "application/json"
     }

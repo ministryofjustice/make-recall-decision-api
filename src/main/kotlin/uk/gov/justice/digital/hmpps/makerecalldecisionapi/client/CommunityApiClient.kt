@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.AllOffenderDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
@@ -24,7 +23,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.DELIUS_CONTACT_CREATION_FAILED
 import java.time.Duration
@@ -156,30 +154,6 @@ class CommunityApiClient(
           endPoint = "mappa"
         )
       }
-  }
-
-  fun getAllOffenderDetails(crn: String): Mono<AllOffenderDetailsResponse> {
-    log.info(normalizeSpace("About to get all offender details for $crn"))
-
-    val responseType = object : ParameterizedTypeReference<AllOffenderDetailsResponse>() {}
-    val result = webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/all")
-      .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw PersonNotFoundException("No details available for crn: $crn") }
-      )
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "all offenders"
-        )
-      }
-    log.info(normalizeSpace("Returning all offender details for $crn"))
-    return result
   }
 
   fun getContactSummary(crn: String): Mono<ContactSummaryResponseCommunity> {

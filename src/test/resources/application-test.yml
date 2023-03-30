@@ -24,6 +24,11 @@ community:
     endpoint:
       url: http://localhost:8092
 
+delius:
+  integration:
+    endpoint:
+      url: http://localhost:8097
+
 arn:
   api:
     endpoint:

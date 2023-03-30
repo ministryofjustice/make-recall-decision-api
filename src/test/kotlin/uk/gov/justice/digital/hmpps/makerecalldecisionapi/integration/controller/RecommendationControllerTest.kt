@@ -43,7 +43,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -89,7 +89,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation with recallConsideredList feature flag active`() {
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation("{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }")
 
     val response = convertResponseToJSONObject(
@@ -135,7 +135,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -157,7 +157,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -179,7 +179,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn, laterCompleteAssessmentExists = true)
     userAccessAllowed(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -198,7 +198,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `update with manager recall decision when pre-existing decision exists`() {
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
@@ -243,13 +243,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     // FIXME: if getting stack overflow error when running this test in CircleCI, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
-    allOffenderDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
+    personalDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
     roSHSummaryResponse(crn)
     updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation, riskOfSeriousHarm")
     updateRecommendation(secondUpdateRecommendationRequest())
@@ -363,7 +363,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.convictionDetail.extendedTerm").isEqualTo("19 days")
       .jsonPath("$.convictionDetail.hasBeenReviewed").isEqualTo(true)
       .jsonPath("$.region").isEqualTo("NPS North West")
-      .jsonPath("$.localDeliveryUnit").isEqualTo("Local delivery unit description 2")
+      .jsonPath("$.localDeliveryUnit").isEqualTo("Some description")
       .jsonPath("$.fixedTermAdditionalLicenceConditions.selected").isEqualTo(true)
       .jsonPath("$.fixedTermAdditionalLicenceConditions.details").isEqualTo("This is an additional licence condition")
       .jsonPath("$.indeterminateOrExtendedSentenceDetails.selected[0].details").isEqualTo("Some behaviour similar to index offence")
@@ -423,7 +423,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `update roshSummary with refresh and get recommendation`() {
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation()
     roSHSummaryResponse(crn)
     updateRecommendation(updateRecommendationRequest(), "riskOfSeriousHarm")
@@ -451,7 +451,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given an update that clears hidden fields then save in database and get recommendation with null values for hidden fields`() {
     mappaDetailsResponse(crn)
     userAccessAllowed(crn)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationRequest())
     updateRecommendation(updateRecommendationRequestWithClearedValues())
@@ -501,13 +501,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `generate a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
 
     val featureFlagString = "{\"flagSendDomainEvent\": false, \"unknownFeatureFlag\": true }"
 
@@ -551,7 +551,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     userAccessAllowed(crn)
     oasysAssessmentsResponse(crn)
     mappaDetailsResponse(crn)
-    allOffenderDetailsResponse(crn)
+    personalDetailsResponse(crn)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
@@ -594,13 +594,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `generate a Part A from recommendation data`() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     mappaDetailsResponse(crn, category = 1, level = 1)
     convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation()
-    allOffenderDetailsResponseOneTimeOnly(crn)
+    personalDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
 
     val response = convertResponseToJSONObject(
@@ -668,7 +668,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `retrieves recommendations for recommendation tab`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.RECALL_CONSIDERED)
 
@@ -733,7 +733,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given case is excluded when fetching a recommendation then only return user access details`() {
     runTest {
       userAccessAllowedOnce(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
@@ -775,7 +775,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given case is excluded when updating a recommendation then only return user access details`() {
     runTest {
       userAccessAllowedOnce(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
@@ -796,7 +796,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given case invalid recall type present in update then return 400`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       deleteAndCreateRecommendation()
 
       webTestClient.patch()
@@ -825,7 +825,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     runTest {
       mappaDetailsResponse(crn)
       userAccessAllowed(crn)
-      allOffenderDetailsResponseOneTimeOnly(crn)
+      personalDetailsResponseOneTimeOnly(crn)
       convictionResponse(crn, "011")
       licenceConditionsResponse(crn, 2500614567)
       releaseSummaryResponse(crn)
@@ -862,7 +862,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {
       userAccessAllowedOnce(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)

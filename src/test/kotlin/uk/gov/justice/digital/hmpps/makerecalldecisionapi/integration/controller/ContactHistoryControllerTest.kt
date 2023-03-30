@@ -22,7 +22,7 @@ class ContactHistoryControllerTest(
     runTest {
 
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       contactSummaryResponse(
         crn,
         contactSummaryResponse()
@@ -125,7 +125,7 @@ class ContactHistoryControllerTest(
   fun `given empty contact history then handle response`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       contactSummaryResponse(crn, emptyContactSummaryResponse())
       groupedDocumentsResponse(crn)
 
@@ -169,7 +169,7 @@ class ContactHistoryControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummary = contactSummaryResponse(), delaySeconds = nDeliusTimeout + 2)
       groupedDocumentsResponse(crn)
       releaseSummaryResponse(crn)
@@ -191,7 +191,7 @@ class ContactHistoryControllerTest(
   fun `gateway timeout 503 given on Community Api timeout on grouped documents endpoint`() {
     runTest {
       userAccessAllowed(crn)
-      allOffenderDetailsResponse(crn)
+      personalDetailsResponse(crn)
       contactSummaryResponse(crn, contactSummaryResponse())
       groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
       releaseSummaryResponse(crn)
