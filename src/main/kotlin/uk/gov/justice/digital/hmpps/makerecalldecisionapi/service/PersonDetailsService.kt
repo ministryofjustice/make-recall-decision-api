@@ -4,13 +4,11 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
-import java.time.LocalDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 
 @Service
 internal class PersonDetailsService(
@@ -23,14 +21,14 @@ internal class PersonDetailsService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       PersonDetailsResponse(userAccessResponse = userAccessResponse)
     } else {
-      val personalDetails = deliusClient.getPersonalDetails(crn)
-      val manager = personalDetails.communityManager
+      val deliusDetails = deliusClient.getPersonalDetails(crn)
+      val manager = deliusDetails.communityManager
       val recommendationDetails = recommendationService?.getRecommendationsInProgressForCrn(crn)
 
       return PersonDetailsResponse(
-        personalDetailsOverview = personalDetails.toOverview(crn),
+        personalDetailsOverview = deliusDetails.personalDetails.toOverview(crn),
         addresses = listOfNotNull(
-          personalDetails.mainAddress?.let {
+          deliusDetails.mainAddress?.let {
             Address(
               line1 = join(it.buildingName, it.addressNumber, it.streetName),
               line2 = it.district ?: "",
@@ -56,27 +54,7 @@ internal class PersonDetailsService(
     }
   }
 
-  fun buildPersonalDetailsOverviewResponse(crn: String) = deliusClient.getPersonalDetails(crn).toOverview(crn)
-
-  fun PersonalDetails.toOverview(crn: String) = with(personalDetails) {
-    PersonalDetailsOverview(
-      crn = crn,
-      fullName = formatFullName(name.forename, name.middleName, name.surname),
-      name = join(name.forename, name.surname),
-      firstName = name.forename,
-      middleNames = name.middleName,
-      surname = name.surname,
-      dateOfBirth = dateOfBirth,
-      age = dateOfBirth.until(LocalDate.now())?.years,
-      gender = gender,
-      ethnicity = ethnicity ?: "",
-      primaryLanguage = primaryLanguage ?: "",
-      croNumber = identifiers.croNumber ?: "",
-      pncNumber = identifiers.pncNumber ?: "",
-      nomsNumber = identifiers.nomsNumber ?: "",
-      mostRecentPrisonerNumber = identifiers.bookingNumber ?: ""
-    )
-  }
+  fun buildPersonalDetailsOverviewResponse(crn: String) = deliusClient.getPersonalDetails(crn).personalDetails.toOverview(crn)
 
   private fun isNoFixedAbode(it: PersonalDetails.Address): Boolean {
     val postcodeUppercaseNoWhiteSpace = it.postcode?.filter { !it.isWhitespace() }?.uppercase()

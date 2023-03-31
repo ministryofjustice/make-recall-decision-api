@@ -6,6 +6,6 @@ import java.time.LocalDate
 data class LastRecall(
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val date: LocalDate?,
-  val notes: String?,
-  val reason: Reason?,
+  val notes: String? = null,
+  val reason: Reason? = null,
 )

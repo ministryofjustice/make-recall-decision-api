@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExcept
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
+@Deprecated("Migrating to DeliusClient")
 class CommunityApiClient(
   private val webClient: WebClient,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,

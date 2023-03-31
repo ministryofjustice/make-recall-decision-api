@@ -1,0 +1,47 @@
+{
+  "personalDetails": {
+    "name": {
+      "forename": "Harry",
+      "middleName": "Tom",
+      "surname": "Smith"
+    },
+    "identifiers": {
+      "pncNumber": "GD123TEF",
+      "croNumber": "AB123XYZ",
+      "nomsNumber": "JG123POE",
+      "bookingNumber": "MV123EDR"
+    },
+    "dateOfBirth": "1990-09-15",
+    "gender": "Male",
+    "ethnicity": "White",
+    "primaryLanguage": "English"
+  },
+  "registerFlags": [
+    "Very High RoSH",
+    "Victim contact"
+  ],
+  "lastRelease": {
+    "releaseDate": "2017-09-15",
+    "recallDate": "2019-11-27"
+  },
+  "activeConvictions": [
+    {
+      "number": "1",
+      "mainOffence": {
+        "code": "1234",
+        "description": "Buggery and attempted buggery",
+        "date": "2022-04-24"
+      },
+      "additionalOffences": [],
+      "sentence": {
+        "description": "Extended Determinate Sentence",
+        "length": 2,
+        "lengthUnits": "Months",
+        "isCustodial": true,
+        "custodialStatusCode": "B",
+        "licenceExpiryDate": "2020-06-25",
+        "sentenceExpiryDate": "2020-06-28"
+      }
+    }
+  ]
+}

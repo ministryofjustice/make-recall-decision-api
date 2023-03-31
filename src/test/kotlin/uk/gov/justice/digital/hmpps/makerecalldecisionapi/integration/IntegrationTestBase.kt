@@ -49,6 +49,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
@@ -313,6 +316,36 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(personalDetailsRequest).respond(
       response().withStatusCode(404)
+    )
+  }
+
+  protected fun overviewResponse(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun overviewResponseNonCustodial(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponseNonCustodial())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun overviewResponseNoConvictions(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponseNoConvictions())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

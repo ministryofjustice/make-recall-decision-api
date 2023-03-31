@@ -1,19 +1,16 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Risk
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 
 @Service
 internal class CaseSummaryOverviewService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val deliusClient: DeliusClient,
   private val riskService: RiskService,
-  private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
-  private val convictionService: ConvictionService,
   private val recommendationService: RecommendationService
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
@@ -21,30 +18,22 @@ internal class CaseSummaryOverviewService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       CaseSummaryOverviewResponse(userAccessResponse)
     } else {
-      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-
-      val registrations = getValueAndHandleWrappedException(communityApiClient.getRegistrations(crn))?.registrations
-      val activeRegistrations = registrations?.filter { it.active ?: false }
-      val riskFlags = activeRegistrations?.map { it.type?.description ?: "" } ?: emptyList()
-
+      val deliusOverview = deliusClient.getOverview(crn)
       val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
-
       val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
-      val assessmentInfo = riskService.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenNoMatch = false)
-
-      val releaseSummary = getReleaseSummary(crn)
+      val assessmentInfo = riskService.fetchAssessmentInfo(crn, deliusOverview.activeConvictions, hideOffenceDetailsWhenNoMatch = false)
 
       CaseSummaryOverviewResponse(
-        personalDetailsOverview = personalDetailsOverview,
-        convictions = convictionService.buildConvictionResponseForOverview(crn),
-        releaseSummary = releaseSummary,
-        risk = Risk(flags = riskFlags, riskManagementPlan = riskManagementPlan, assessmentInfo = assessmentInfo),
+        personalDetailsOverview = deliusOverview.personalDetails.toOverview(crn),
+        activeConvictions = deliusOverview.activeConvictions,
+        lastRelease = deliusOverview.lastRelease,
+        risk = Risk(
+          flags = deliusOverview.registerFlags,
+          riskManagementPlan = riskManagementPlan,
+          assessmentInfo = assessmentInfo
+        ),
         activeRecommendation = recommendationDetails
       )
     }
-  }
-
-  private suspend fun getReleaseSummary(crn: String): ReleaseSummaryResponse? {
-    return getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
   }
 }

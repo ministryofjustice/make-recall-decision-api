@@ -266,7 +266,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -290,7 +290,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -315,7 +315,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offenceDescription).isEqualTo(null)
       assertThat(response?.error).isEqualTo("NOT_FOUND")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -338,7 +338,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -349,7 +349,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment())) })
       given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse(mainOffencePresent = false).copy(active = false)) })
+        .willReturn(Mono.fromCallable { listOf() })
 
       // when
       val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
@@ -360,7 +360,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -383,7 +383,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -431,7 +431,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -481,7 +481,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -530,7 +530,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, false)
+      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 

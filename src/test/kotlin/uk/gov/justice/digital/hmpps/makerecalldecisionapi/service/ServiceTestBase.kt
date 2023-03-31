@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiCli
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
@@ -353,6 +354,86 @@ internal abstract class ServiceTestBase {
     ),
     mainAddress = address,
     communityManager = manager
+  )
+
+  protected fun nonCustodialConviction() = Overview.Conviction(
+    number = "1",
+    mainOffence = Overview.Offence(
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+      date = LocalDate.of(2022, 8, 26)
+    ),
+    additionalOffences = listOf(
+      Overview.Offence(
+        code = "ZYX789",
+        description = "Arson",
+        date = LocalDate.of(2022, 8, 26)
+      )
+    ),
+    sentence = Overview.Sentence(
+      description = "Sentence description",
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = false,
+      custodialStatusCode = null,
+      licenceExpiryDate = null,
+      sentenceExpiryDate = null
+    ),
+  )
+
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence") = Overview.Conviction(
+    number = "1",
+    mainOffence = Overview.Offence(
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+      date = LocalDate.of(2022, 8, 26)
+    ),
+    additionalOffences = listOf(
+      Overview.Offence(
+        code = "ZYX789",
+        description = "Arson",
+        date = LocalDate.of(2022, 8, 26)
+      )
+    ),
+    sentence = Overview.Sentence(
+      description = description,
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = true,
+      custodialStatusCode = "ABC123",
+      licenceExpiryDate = LocalDate.of(2022, 5, 10),
+      sentenceExpiryDate = LocalDate.of(2022, 6, 10)
+    ),
+  )
+
+  protected fun deliusOverviewResponse(
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+    registerFlags: List<String> = listOf("Victim contact"),
+    activeConvictions: List<Overview.Conviction> = listOf(nonCustodialConviction())
+  ) = Overview(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
+      ),
+    ),
+    registerFlags = registerFlags,
+    activeConvictions = activeConvictions,
+    lastRelease = Overview.Release(
+      releaseDate = LocalDate.of(2017, 9, 15),
+      recallDate = LocalDate.of(2020, 10, 15)
+    )
   )
 
   protected fun mappaResponse(): MappaResponse {
