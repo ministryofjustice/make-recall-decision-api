@@ -25,7 +25,11 @@ internal class OffenderSearchController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN")
-  suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
+  suspend fun search(
+    @RequestParam(required = false) crn: String,
+    @RequestParam(required = false) firstName: String,
+    @RequestParam(required = false) lastName: String
+  ): List<SearchByCrnResponse> {
     log.info(normalizeSpace("Offender search endpoint hit for CRN: $crn"))
     return offenderSearchService.search(crn)
   }
