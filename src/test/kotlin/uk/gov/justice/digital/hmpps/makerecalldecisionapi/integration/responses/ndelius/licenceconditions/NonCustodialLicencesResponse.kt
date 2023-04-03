@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions
 
-fun noActiveOrInactiveLicences() = """
+fun nonCustodialLicencesResponse() = """
 {
   "personalDetails": {
     "name": {
@@ -32,12 +32,34 @@ fun noActiveOrInactiveLicences() = """
         "description": "Extended Determinate Sentence",
         "length": 12,
         "lengthUnits": "days",
-        "isCustodial": true,
-        "custodialStatusCode": "ABC123",
+        "isCustodial": false,
         "licenceExpiryDate": "2020-06-25",
         "sentenceExpiryDate": "2020-06-28"
       },
-      "licenceConditions": []
+      "licenceConditions": [
+        {
+          "notes": "I am a licence condition note",
+          "mainCategory": {
+            "code": "NLC8",
+            "description": "Freedom of movement"
+          },
+          "subCategory": {
+            "code": "NSTT8",
+            "description": "To only attend places of worship which have been previously agreed with your supervising officer."
+          }
+        },
+        {
+          "notes": "I am a second licence condition note",
+          "mainCategory": {
+            "code": "NLC7",
+            "description": "Inactive test"
+          },
+          "subCategory": {
+            "code": "NSTT7",
+            "description": "I am inactive"
+          }
+        }
+      ]
     }
   ]
 }

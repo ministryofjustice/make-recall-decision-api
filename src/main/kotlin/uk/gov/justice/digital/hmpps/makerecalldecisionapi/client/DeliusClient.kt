@@ -25,6 +25,7 @@ class DeliusClient(
 
   fun getPersonalDetails(crn: String): PersonalDetails = call("/case-summary/$crn/personal-details")
   fun getOverview(crn: String): Overview = call("/case-summary/$crn/overview")
+  fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
 
   private inline fun <reified T : Any> call(endpoint: String): T {
     log.info(normalizeSpace("About to call $endpoint"))
@@ -59,6 +60,20 @@ class DeliusClient(
     val forename: String,
     val middleName: String?,
     val surname: String
+  )
+  data class Offence(
+    val date: LocalDate,
+    val code: String,
+    val description: String
+  )
+  data class Sentence(
+    val description: String,
+    val length: Int?,
+    val lengthUnits: String?,
+    val isCustodial: Boolean,
+    val custodialStatusCode: String?,
+    val licenceExpiryDate: LocalDate?,
+    val sentenceExpiryDate: LocalDate?
   )
 
   data class PersonalDetailsOverview(
@@ -129,19 +144,27 @@ class DeliusClient(
       val mainOffence: Offence,
       val additionalOffences: List<Offence>
     )
-    data class Offence(
-      val date: LocalDate,
+  }
+
+  data class LicenceConditions(
+    val personalDetails: PersonalDetailsOverview,
+    val activeConvictions: List<ConvictionWithLicenceConditions>
+  ) {
+    data class ConvictionWithLicenceConditions(
+      val number: String? = null,
+      val sentence: Sentence?,
+      val mainOffence: Offence,
+      val additionalOffences: List<Offence>,
+      val licenceConditions: List<LicenceCondition>
+    )
+    data class LicenceCondition(
+      val mainCategory: LicenceConditionCategory,
+      val subCategory: LicenceConditionCategory?,
+      val notes: String?
+    )
+    data class LicenceConditionCategory(
       val code: String,
       val description: String
-    )
-    data class Sentence(
-      val description: String,
-      val length: Int?,
-      val lengthUnits: String?,
-      val isCustodial: Boolean,
-      val custodialStatusCode: String?,
-      val licenceExpiryDate: LocalDate?,
-      val sentenceExpiryDate: LocalDate?
     )
   }
 }

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview.Conviction
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
@@ -106,7 +106,7 @@ internal class RiskService(
       getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn, activeOnly = true))?.map {
         Conviction(
           sentence = it.sentence?.let { sentence ->
-            Overview.Sentence(
+            Sentence(
               description = sentence.description ?: "",
               length = sentence.originalLength,
               lengthUnits = sentence.originalLengthUnits,
