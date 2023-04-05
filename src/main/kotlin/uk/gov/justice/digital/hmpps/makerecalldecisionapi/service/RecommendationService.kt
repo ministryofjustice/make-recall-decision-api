@@ -172,6 +172,9 @@ internal class RecommendationService(
     return RecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
+      reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
+      reviewOffenderProfile = recommendationEntity.data.reviewOffenderProfile,
+      explainTheDecision = recommendationEntity.data.explainTheDecision,
       lastModifiedBy = recommendationEntity.data.lastModifiedBy,
       lastModifiedByUserName = recommendationEntity.data.lastModifiedByUserName,
       lastModifiedDate = recommendationEntity.data.lastModifiedDate,
