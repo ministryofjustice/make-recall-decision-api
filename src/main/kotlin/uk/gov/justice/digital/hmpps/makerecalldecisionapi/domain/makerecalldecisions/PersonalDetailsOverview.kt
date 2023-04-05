@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
 import java.time.LocalDate
 
 data class PersonalDetailsOverview(
@@ -20,4 +22,22 @@ data class PersonalDetailsOverview(
   val pncNumber: String?,
   val nomsNumber: String?,
   val primaryLanguage: String?,
+)
+
+fun DeliusClient.PersonalDetailsOverview.toOverview(crn: String) = PersonalDetailsOverview(
+  crn = crn,
+  fullName = formatFullName(name.forename, name.middleName, name.surname),
+  name = listOfNotNull(name.forename, name.surname).joinToString(" "),
+  firstName = name.forename,
+  middleNames = name.middleName,
+  surname = name.surname,
+  dateOfBirth = dateOfBirth,
+  age = dateOfBirth.until(LocalDate.now())?.years,
+  gender = gender,
+  ethnicity = ethnicity ?: "",
+  primaryLanguage = primaryLanguage ?: "",
+  croNumber = identifiers.croNumber ?: "",
+  pncNumber = identifiers.pncNumber ?: "",
+  nomsNumber = identifiers.nomsNumber ?: "",
+  mostRecentPrisonerNumber = identifiers.bookingNumber ?: ""
 )

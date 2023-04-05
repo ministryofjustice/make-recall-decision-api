@@ -9,10 +9,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview.Identifiers
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -344,7 +349,7 @@ internal abstract class ServiceTestBase {
       gender = "Male",
       ethnicity = ethnicity,
       primaryLanguage = primaryLanguage,
-      identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+      identifiers = Identifiers(
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
@@ -353,6 +358,118 @@ internal abstract class ServiceTestBase {
     ),
     mainAddress = address,
     communityManager = manager
+  )
+
+  protected fun nonCustodialConviction() = Overview.Conviction(
+    number = "1",
+    mainOffence = DeliusClient.Offence(
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+      date = LocalDate.of(2022, 8, 26)
+    ),
+    additionalOffences = listOf(
+      DeliusClient.Offence(
+        code = "ZYX789",
+        description = "Arson",
+        date = LocalDate.of(2022, 8, 26)
+      )
+    ),
+    sentence = DeliusClient.Sentence(
+      description = "Sentence description",
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = false,
+      custodialStatusCode = null,
+      licenceExpiryDate = null,
+      sentenceExpiryDate = null
+    ),
+  )
+
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence") = Overview.Conviction(
+    number = "1",
+    mainOffence = DeliusClient.Offence(
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+      date = LocalDate.of(2022, 8, 26)
+    ),
+    additionalOffences = listOf(
+      DeliusClient.Offence(
+        code = "ZYX789",
+        description = "Arson",
+        date = LocalDate.of(2022, 8, 26)
+      )
+    ),
+    sentence = DeliusClient.Sentence(
+      description = description,
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = true,
+      custodialStatusCode = "ABC123",
+      licenceExpiryDate = LocalDate.of(2022, 5, 10),
+      sentenceExpiryDate = LocalDate.of(2022, 6, 10)
+    ),
+  )
+
+  protected fun Overview.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
+    number = number,
+    mainOffence = mainOffence,
+    additionalOffences = additionalOffences,
+    sentence = sentence,
+    licenceConditions = licenceConditions
+  )
+
+  protected fun deliusOverviewResponse(
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+    registerFlags: List<String> = listOf("Victim contact"),
+    activeConvictions: List<Overview.Conviction> = listOf(nonCustodialConviction())
+  ) = Overview(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
+      ),
+    ),
+    registerFlags = registerFlags,
+    activeConvictions = activeConvictions,
+    lastRelease = Overview.Release(
+      releaseDate = LocalDate.of(2017, 9, 15),
+      recallDate = LocalDate.of(2020, 10, 15)
+    )
+  )
+
+  protected fun deliusLicenceConditionsResponse(
+    activeConvictions: List<ConvictionWithLicenceConditions> = listOf(nonCustodialConviction().withLicenceConditions(emptyList())),
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+  ) = LicenceConditions(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
+      ),
+    ),
+    activeConvictions = activeConvictions,
   )
 
   protected fun mappaResponse(): MappaResponse {

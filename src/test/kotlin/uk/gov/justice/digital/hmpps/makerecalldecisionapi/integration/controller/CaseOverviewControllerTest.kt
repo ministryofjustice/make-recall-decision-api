@@ -25,10 +25,8 @@ class CaseOverviewControllerTest(
 
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
+      overviewResponse(crn)
       oasysAssessmentsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.RECALL_CONSIDERED)
       riskManagementPlanResponse(crn)
@@ -96,9 +94,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      nonCustodialConvictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponseNonCustodial(crn)
       deleteAndCreateRecommendation()
 
       webTestClient.get()
@@ -115,10 +111,7 @@ class CaseOverviewControllerTest(
   fun `returns empty offences list where where no active convictions exist`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      noActiveConvictionResponse(crn)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponseNoConvictions(crn)
 
       val result = webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -181,10 +174,7 @@ class CaseOverviewControllerTest(
       // Delete recommendation from database if one was created in previous tests
       deleteRecommendation()
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponse(crn)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -201,9 +191,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponse(crn)
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DOCUMENT_DOWNLOADED)
 
@@ -218,13 +206,10 @@ class CaseOverviewControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout on convictions endpoint`() {
+  fun `gateway timeout 503 given on Delius timeout`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode, delaySeconds = nDeliusTimeout + 2)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/overview")
@@ -235,73 +220,7 @@ class CaseOverviewControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - convictions endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Delius timeout on personal details endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Delius integration client - /case-summary/$crn/personal-details endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on registrations endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse(delaySeconds = nDeliusTimeout + 2)
-      releaseSummaryResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - registrations endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on release summary endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
-      webTestClient.get()
-        .uri("/cases/$crn/overview")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - release summary endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/$crn/overview endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 
@@ -310,9 +229,7 @@ class CaseOverviewControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      convictionResponse(crn, staffCode)
-      registrationsResponse()
-      releaseSummaryResponse(crn)
+      overviewResponse(crn)
       riskManagementPlanResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()

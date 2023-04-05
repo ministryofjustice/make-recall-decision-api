@@ -170,7 +170,7 @@ class CommunityApiClientTest : IntegrationTestBase() {
   fun `retrieves licence conditions`() {
     // given
     val convictionId = 9876789L
-    licenceConditionsResponse(crn, convictionId)
+    communityApiLicenceConditionsResponse(crn, convictionId)
 
     // and
     val expected = LicenceConditions(

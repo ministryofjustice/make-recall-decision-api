@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions
 
-fun multipleLicenceResponse() = """
+fun licenceResponseMultipleConvictions() = """
 {
   "personalDetails": {
     "name": {
@@ -23,19 +23,19 @@ fun multipleLicenceResponse() = """
     {
       "number": "1",
       "mainOffence": {
-        "code": "1234",
+        "code": "789",
         "description": "Robbery (other than armed robbery)",
-        "date": "2022-04-24"
+        "date": "2022-04-26"
       },
       "additionalOffences": [],
       "sentence": {
         "description": "Extended Determinate Sentence",
-        "length": 12,
-        "lengthUnits": "days",
+        "length": 0,
+        "lengthUnits": "string",
         "isCustodial": true,
         "custodialStatusCode": "ABC123",
-        "licenceExpiryDate": "2020-06-25",
-        "sentenceExpiryDate": "2020-06-28"
+        "licenceExpiryDate": "2020-06-23",
+        "sentenceExpiryDate": "2020-06-23"
       },
       "licenceConditions": [
         {
@@ -50,13 +50,49 @@ fun multipleLicenceResponse() = """
           }
         },
         {
+          "notes": "I am a second licence condition note",
           "mainCategory": {
-            "code": "NLC9",
-            "description": "Another main condition"
+            "code": "NLC7",
+            "description": "Inactive test"
           },
           "subCategory": {
-            "code": "NSTT9",
-            "description": "Do not attend Hull city center after 8pm"
+            "code": "NSTT7",
+            "description": "I am inactive"
+          }
+        }
+      ]
+    },
+    {
+      "number": "2",
+      "mainOffence": {
+        "code": "123",
+        "description": "Arson",
+        "date": "2022-04-26"
+      },
+      "additionalOffences": [{
+        "code": "456",
+        "description": "Shoplifting",
+        "date": "2022-04-27"
+      }],
+      "sentence": {
+        "description": "string",
+        "length": 0,
+        "lengthUnits": "string",
+        "isCustodial": true,
+        "custodialStatusCode": "ABC123",
+        "licenceExpiryDate": "2020-06-20",
+        "sentenceExpiryDate": "2020-06-23"
+      },
+      "licenceConditions": [
+        {
+          "notes": "I am a licence condition note",
+          "mainCategory": {
+            "code": "NLC8",
+            "description": "Freedom of movement"
+          },
+          "subCategory": {
+            "code": "NSTT8",
+            "description": "To only attend places of worship which have been previously agreed with your supervising officer."
           }
         },
         {

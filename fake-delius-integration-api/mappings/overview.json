@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/.*/overview"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "overview.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

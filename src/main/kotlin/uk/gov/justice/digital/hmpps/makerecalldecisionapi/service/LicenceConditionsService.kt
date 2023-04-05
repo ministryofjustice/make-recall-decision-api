@@ -1,17 +1,16 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 
 @Service
 internal class LicenceConditionsService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val deliusClient: DeliusClient,
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
-  private val convictionService: ConvictionService,
   private val createAndVaryALicenceService: CreateAndVaryALicenceService,
   private val recommendationService: RecommendationService
 ) {
@@ -20,13 +19,12 @@ internal class LicenceConditionsService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       LicenceConditionsResponse(userAccessResponse = userAccessResponse)
     } else {
-      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-      val convictions = convictionService.buildConvictionResponse(crn, true)
+      val licenceConditions = deliusClient.getLicenceConditions(crn)
       val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       LicenceConditionsResponse(
-        personalDetailsOverview = personalDetailsOverview,
-        convictions = convictions,
+        personalDetailsOverview = licenceConditions.personalDetails.toOverview(crn),
+        activeConvictions = licenceConditions.activeConvictions,
         activeRecommendation = recommendationDetails,
       )
     }

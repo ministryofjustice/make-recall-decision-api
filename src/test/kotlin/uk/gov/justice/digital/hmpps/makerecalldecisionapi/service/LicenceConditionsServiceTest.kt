@@ -7,28 +7,23 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceConditionCategory
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Offence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -39,7 +34,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(communityApiClient, personDetailsService, userAccessValidator, convictionService, createAndVaryALicenceService, recommendationService)
+    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService)
 
     given(communityApiClient.getUserAccess(anyString()))
       .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
@@ -48,21 +43,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given an active conviction and licence conditions then return these details in the response`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.fromCallable { licenceConditions })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
+      given(deliusClient.getLicenceConditions(anyString()))
+        .willReturn(deliusLicenceConditionsResponse(listOf(custodialConviction().withLicenceConditions(licenceConditions))))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(deliusClient).should().getPersonalDetails(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
+      then(deliusClient).should().getLicenceConditions(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -80,19 +66,13 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given an active non custodial conviction then set custodial flag to false`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(nonCustodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.fromCallable { licenceConditions })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
+      given(deliusClient.getLicenceConditions(anyString()))
+        .willReturn(deliusLicenceConditionsResponse(listOf(nonCustodialConviction().withLicenceConditions(licenceConditions))))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      Assertions.assertThat(response.convictions!![0].isCustodial).isFalse
-      then(deliusClient).should().getPersonalDetails(crn)
+      Assertions.assertThat(response.activeConvictions[0].sentence?.isCustodial).isFalse
+      then(deliusClient).should().getLicenceConditions(crn)
     }
   }
 
@@ -114,7 +94,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
           )
         )
       )
@@ -139,7 +119,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
           )
         )
       )
@@ -149,21 +129,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no active licence conditions then still retrieve conviction details`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.empty())
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
+      given(deliusClient.getLicenceConditions(anyString()))
+        .willReturn(deliusLicenceConditionsResponse(listOf(custodialConviction().withLicenceConditions(emptyList()))))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(deliusClient).should().getPersonalDetails(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
+      then(deliusClient).should().getLicenceConditions(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -171,7 +142,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse(null)
+            expectedOffenceWithLicenceConditionsResponse(emptyList())
           )
         )
       )
@@ -181,19 +152,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no offender details then still retrieve personal details`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { emptyList() })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
+      given(deliusClient.getLicenceConditions(anyString()))
+        .willReturn(deliusLicenceConditionsResponse(emptyList()))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      then(communityApiClient).should().getActiveConvictions(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
-      then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).shouldHaveNoMoreInteractions()
+      then(deliusClient).should().getLicenceConditions(crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -239,80 +203,46 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     }
   }
 
-  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?): List<ConvictionResponse> {
+  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: List<LicenceCondition>): List<ConvictionWithLicenceConditions> {
     return listOf(
-      ConvictionResponse(
-        convictionId = 2500614567,
-        active = true,
-        offences = listOf(
-          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
-            mainOffence = true,
-            description = "Robbery (other than armed robbery)",
-            code = "ABC123",
-            offenceDate = LocalDate.parse("2022-08-26")
-          ),
-          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence(
-            mainOffence = false,
+      ConvictionWithLicenceConditions(
+        number = "1",
+        mainOffence = Offence(
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123",
+          date = LocalDate.parse("2022-08-26")
+        ),
+        additionalOffences = listOf(
+          Offence(
             description = "Arson",
             code = "ZYX789",
-            offenceDate = LocalDate.parse("2022-08-26")
+            date = LocalDate.parse("2022-08-26")
           )
         ),
-        sentenceDescription = "CJA - Extended Sentence",
-        sentenceOriginalLength = 6,
-        sentenceOriginalLengthUnits = "Days",
-        sentenceSecondLength = 10,
-        sentenceSecondLengthUnits = "Months",
-        sentenceStartDate = LocalDate.parse("2022-04-26"),
-        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-        licenceExpiryDate = LocalDate.parse("2022-05-10"),
-        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
-        statusCode = "ABC123",
-        statusDescription = "custody status",
-        isCustodial = true,
-        licenceConditions = licenceConditions?.licenceConditions,
-        licenceDocuments = listOf(
-          CaseDocument(
-            id = "374136ce-f863-48d8-96dc-7581636e461e",
-            documentName = "GKlicencejune2022.pdf",
-            author = "Tom Thumb",
-            type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"),
-            extendedDescription = null,
-            lastModifiedAt = "2022-06-07T17:00:29.493",
-            createdAt = "2022-06-07T17:00:29",
-            parentPrimaryKeyId = 2500614567L
-          ),
-          CaseDocument(
-            id = "374136ce-f863-48d8-96dc-7581636e123e",
-            documentName = "TDlicencejuly2022.pdf",
-            author = "Wendy Rose",
-            type = CaseDocumentType(code = "CONVICTION_DOCUMENT", description = "Sentence related"),
-            extendedDescription = null,
-            lastModifiedAt = "2022-07-08T10:00:29.493",
-            createdAt = "2022-06-08T10:00:29",
-            parentPrimaryKeyId = 2500614567L
-          ),
-        )
+        sentence = Sentence(
+          description = "CJA - Extended Sentence",
+          isCustodial = true,
+          custodialStatusCode = "ABC123",
+          length = 6,
+          lengthUnits = "Days",
+          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+          licenceExpiryDate = LocalDate.parse("2022-05-10"),
+        ),
+        licenceConditions = licenceConditions,
       )
     )
   }
 
-  private val licenceConditions = LicenceConditions(
-    licenceConditions = listOf(
-      LicenceCondition(
-        startDate = LocalDate.parse("2022-05-18"),
-        createdDateTime = LocalDateTime.parse("2022-05-18T19:33:56"),
-        active = true,
-        terminationDate = LocalDate.parse("2022-05-22"),
-        licenceConditionNotes = "Licence condition notes",
-        licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
-          code = "NLC8",
-          description = "Freedom of movement"
-        ),
-        licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
-          code = "NSTT8",
-          description = "To only attend places of worship which have been previously agreed with your supervising officer."
-        )
+  private val licenceConditions = listOf(
+    LicenceCondition(
+      notes = "Licence condition notes",
+      mainCategory = LicenceConditionCategory(
+        code = "NLC8",
+        description = "Freedom of movement"
+      ),
+      subCategory = LicenceConditionCategory(
+        code = "NSTT8",
+        description = "To only attend places of worship which have been previously agreed with your supervising officer."
       )
     )
   )

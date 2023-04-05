@@ -41,14 +41,20 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.multipleConvictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.communityApiLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseMultipleConvictions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.nonCustodialLicencesResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
@@ -316,6 +322,36 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun overviewResponse(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun overviewResponseNonCustodial(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponseNonCustodial())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun overviewResponseNoConvictions(crn: String, delaySeconds: Long = 0) {
+    val overviewRequest =
+      request().withPath("/case-summary/$crn/overview")
+
+    deliusIntegration.`when`(overviewRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(overviewResponseNoConvictions())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
   protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
@@ -428,41 +464,72 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun multipleConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/convictions")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(multipleConvictionsResponse(crn, staffCode))
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun licenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
+  protected fun communityApiLicenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
     val licenceConditions =
       request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
 
     communityApi.`when`(licenceConditions, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceResponse(convictionId))
+      response().withContentType(APPLICATION_JSON).withBody(communityApiLicenceResponse(convictionId))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun multipleLicenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
+  protected fun licenceConditionsResponse(crn: String, delaySeconds: Long = 0) {
     val licenceConditions =
-      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
+      request().withPath("/case-summary/$crn/licence-conditions")
 
-    communityApi.`when`(licenceConditions).respond(
+    deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun multipleLicenceConditionsResponse(crn: String, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/case-summary/$crn/licence-conditions")
+
+    deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(multipleLicenceResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun noActiveLicenceConditions(crn: String, convictionId: Long) {
+  protected fun noActiveLicenceConditions(crn: String) {
     val licenceConditions =
-      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
-    communityApi.`when`(licenceConditions).respond(
+      request().withPath("/case-summary/$crn/licence-conditions")
+
+    deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(noActiveOrInactiveLicences())
+    )
+  }
+
+  protected fun nonCustodialLicenceConditionsResponse(crn: String, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/case-summary/$crn/licence-conditions")
+
+    deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(nonCustodialLicencesResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun licenceConditionsResponseWithMultipleActiveConvictions(crn: String, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/case-summary/$crn/licence-conditions")
+
+    deliusIntegration.`when`(licenceConditions).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceResponseMultipleConvictions())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun licenceConditionsResponseWithNoActiveConvictions(crn: String, delaySeconds: Long = 0) {
+    val licenceConditions =
+      request().withPath("/case-summary/$crn/licence-conditions")
+
+    deliusIntegration.`when`(licenceConditions).respond(
+      response().withContentType(APPLICATION_JSON).withBody(licenceResponseNoConvictions())
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 

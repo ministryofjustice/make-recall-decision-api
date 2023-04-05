@@ -245,7 +245,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
     convictionResponse(crn, "011")
-    licenceConditionsResponse(crn, 2500614567)
+    communityApiLicenceConditionsResponse(crn, 2500614567)
     releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
