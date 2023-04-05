@@ -29,6 +29,7 @@ data class LicenceConditionsResponse(
       statusCode = it.sentence?.custodialStatusCode,
       licenceConditions = it.licenceConditions.map { licenceCondition ->
         LicenceCondition(
+          active = true,
           licenceConditionNotes = licenceCondition.notes,
           licenceConditionTypeMainCat = LicenceConditionTypeMainCat(licenceCondition.mainCategory.code, licenceCondition.mainCategory.description),
           licenceConditionTypeSubCat = licenceCondition.subCategory?.let { subCategory -> LicenceConditionTypeSubCat(subCategory.code, subCategory.description) },
