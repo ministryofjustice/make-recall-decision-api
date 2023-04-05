@@ -7,21 +7,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Address
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -36,11 +28,9 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     caseSummaryOverviewService = CaseSummaryOverviewService(
-      communityApiClient,
+      deliusClient,
       riskService,
-      personDetailsService,
       userAccessValidator,
-      convictionService,
       recommendationService
     )
 
@@ -59,23 +49,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary when convictions and offences available`() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
-      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
-        Mono.fromCallable {
-          listOf(
-            custodialConvictionResponse()
-          )
-        }
-      )
-      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.fromCallable { registrations })
-      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
-        Mono.fromCallable {
-          riskManagementResponse(
-            crn, "COMPLETE"
-          )
-        }
-      )
+      given(deliusClient.getOverview(anyString()))
+        .willReturn(deliusOverviewResponse(activeConvictions = listOf(custodialConviction())))
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -111,7 +88,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(assessments?.offencesMatch).isEqualTo(true)
       assertThat(assessments?.offenceDescription).isEqualTo("Juicy offence details.")
       assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getOverview(crn)
     }
   }
 
@@ -119,28 +96,14 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary when conviction is non custodial`() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
-      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
-        Mono.fromCallable {
-          listOf(
-            nonCustodialConvictionResponse()
-          )
-        }
-      )
-      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.fromCallable { registrations })
-      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
-        Mono.fromCallable {
-          riskManagementResponse(
-            crn, "COMPLETE"
-          )
-        }
-      )
+      given(deliusClient.getOverview(anyString())).willReturn(deliusOverviewResponse())
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
       assertThat(response.convictions!![0].isCustodial).isFalse
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getOverview(crn)
     }
   }
 
@@ -148,17 +111,10 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary when no convictions available`() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
-      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(Mono.fromCallable { emptyList() })
-      given(communityApiClient.getRegistrations(anyString())).willReturn(Mono.empty())
-      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
-      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
-        Mono.fromCallable {
-          riskManagementResponse(
-            crn, "COMPLETE"
-          )
-        }
-      )
+      given(deliusClient.getOverview(anyString()))
+        .willReturn(deliusOverviewResponse(registerFlags = emptyList(), activeConvictions = emptyList()))
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -174,7 +130,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(convictionsShouldBeEmpty).isEmpty()
       assertThat(riskFlagsShouldBeEmpty).isEmpty()
       assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getOverview(crn)
     }
   }
 
@@ -196,7 +152,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         response,
         equalTo(
           CaseSummaryOverviewResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
           )
         )
       )
@@ -221,7 +177,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         response,
         equalTo(
           CaseSummaryOverviewResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
           )
         )
       )
@@ -269,58 +225,11 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         }
       )
 
-      given(deliusClient.getPersonalDetails(anyString())).willReturn(
-        deliusPersonalDetailsResponse(
-          manager = null,
-          address = DeliusClient.PersonalDetails.Address(
-            postcode = null,
-            district = null,
-            addressNumber = null,
-            buildingName = null,
-            town = null,
-            county = null,
-            noFixedAbode = null,
-          )
-        )
-      )
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willReturn(
-        Mono.fromCallable {
-          listOf(
-            custodialConvictionResponse().copy(
-              offences = listOf(
-                Offence(
-                  mainOffence = true,
-                  offenceDate = null,
-                  detail = OffenceDetail(
-                    mainCategoryDescription = null, subCategoryDescription = null,
-                    description = null,
-                    code = null,
-                  )
-                )
-              )
-            )
-          )
-        }
-      )
-      given(communityApiClient.getRegistrations(anyString())).willReturn(
-        Mono.fromCallable {
-          registrations.copy(
-            registrations = listOf(
-              Registration(
-                active = true, type = CodeDescriptionItem(code = null, description = null)
-              ),
-            )
-          )
-        }
-      )
+      given(deliusClient.getOverview(anyString()))
+        .willReturn(deliusOverviewResponse(registerFlags = emptyList(), activeConvictions = emptyList()))
 
-      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
-        Mono.fromCallable {
-          riskManagementResponse(
-            crn, "COMPLETE"
-          )
-        }
-      )
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -336,27 +245,13 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(convictions!![0].offences?.size).isEqualTo(1)
-      assertThat(convictions[0].offences!![0].mainOffence).isTrue
-      assertThat(convictions[0].offences!![0].description).isEqualTo("")
-      assertThat(riskFlags!!.size).isEqualTo(1)
-      assertThat(riskFlags[0]).isEqualTo("")
+      assertThat(convictions).isEmpty()
+      assertThat(riskFlags).isEmpty()
       assertThat(assessments?.lastUpdatedDate).isEqualTo(null)
       assertThat(assessments?.offencesMatch).isEqualTo(false)
       assertThat(assessments?.offenceDescription).isEqualTo(null)
       assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(false)
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getOverview(crn)
     }
   }
-
-  private val registrations = RegistrationsResponse(
-    registrations = listOf(
-      Registration(
-        active = true, type = CodeDescriptionItem(code = "ABC123", description = "Victim contact")
-      ),
-      Registration(
-        active = false, type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues")
-      )
-    )
-  )
 }

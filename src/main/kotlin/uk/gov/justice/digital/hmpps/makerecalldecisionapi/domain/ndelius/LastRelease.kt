@@ -6,7 +6,7 @@ import java.time.LocalDate
 data class LastRelease(
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val date: LocalDate?,
-  val notes: String?,
-  val reason: Reason?,
-  val institution: Institution?,
+  val notes: String? = null,
+  val reason: Reason? = null,
+  val institution: Institution? = null,
 )
