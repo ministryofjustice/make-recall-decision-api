@@ -73,14 +73,16 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `returns search results for name`() {
     runTest {
-      val name = "John"
+      val firstName = "John"
+      val lastName = "Doe"
       val request = OffenderSearchByPhraseRequest(
-        surname = name
+        firstName = firstName,
+        surname = lastName
       )
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
         .willReturn(Mono.fromCallable { offenderSearchResponse })
 
-      val results = offenderSearch.search(name)
+      val results = offenderSearch.search(firstName = firstName, lastName = lastName)
 
       assertThat(results.size).isEqualTo(1)
       assertThat(results[0].name).isEqualTo("John Blair")

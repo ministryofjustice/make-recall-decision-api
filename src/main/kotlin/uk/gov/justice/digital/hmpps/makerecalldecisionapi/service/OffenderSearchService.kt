@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
-import kotlin.math.log
 
 @Service
 internal class OffenderSearchService(
@@ -22,19 +21,19 @@ internal class OffenderSearchService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun search(phrase: String): List<SearchByCrnResponse> {
-    val request: OffenderSearchByPhraseRequest = buildOffenderSearchByPhraseRequest(phrase)
+  suspend fun search(crn: String? = null, firstName: String? = null, lastName: String? = null): List<SearchByCrnResponse> {
+    val request: OffenderSearchByPhraseRequest = buildOffenderSearchByPhraseRequest(crn, firstName, lastName)
     val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchOffenderByPhrase(request))
     return apiResponse?.map {
       var name = "${it.firstName} ${it.surname}"
       var excluded: Boolean? = null
       var restricted: Boolean? = null
-      var crn: String = it.otherIds?.crn ?: phrase
+      var crn: String? = it.otherIds?.crn ?: crn
 
       // Check whether an empty name is genuinely due to a restriction or exclusion
       if (it.firstName == null && it.surname == null) {
         try {
-          getValueAndHandleWrappedException(communityApiClient.getUserAccess(crn))
+          getValueAndHandleWrappedException(communityApiClient.getUserAccess(crn!!))
           name = NO_NAME_AVAILABLE
         } catch (webClientResponseException: WebClientResponseException) {
           if (webClientResponseException.rawStatusCode == 403) {
@@ -57,21 +56,15 @@ internal class OffenderSearchService(
     }?.toList() ?: emptyList()
   }
 
-  private fun buildOffenderSearchByPhraseRequest(phrase: String) = when {
-    containsNumeric(phrase) -> {
-      log.info("search term:: $phrase contains numeric values.")
-      OffenderSearchByPhraseRequest(
-        crn = phrase
-      )
-    }
-    else -> {
-      OffenderSearchByPhraseRequest(
-        surname = phrase
-      )
-    }
-  }
-
-  private fun containsNumeric(toCheck: String): Boolean {
-    return toCheck.any { char -> char.isDigit() }
+  private fun buildOffenderSearchByPhraseRequest(
+    crn: String?,
+    firstName: String?,
+    lastName: String?
+  ): OffenderSearchByPhraseRequest {
+    return OffenderSearchByPhraseRequest(
+      crn = crn,
+      firstName = firstName,
+      surname = lastName
+    )
   }
 }
