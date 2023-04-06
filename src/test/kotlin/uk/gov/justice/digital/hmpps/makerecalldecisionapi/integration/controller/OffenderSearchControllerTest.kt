@@ -33,12 +33,13 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `retrieves simple case summary details using last name`() {
+  fun `retrieves simple case summary details using first and last name`() {
     runTest {
+      val firstName = "Pontius"
       val lastName = "Pilate"
-      offenderSearchResponse(surname = lastName)
+      offenderSearchResponse(firstName = firstName, surname = lastName) // TODO BS correct me!!
       webTestClient.get()
-        .uri("/search?crn=$lastName")
+        .uri("/search?lastName=$lastName&firstName=$firstName")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
