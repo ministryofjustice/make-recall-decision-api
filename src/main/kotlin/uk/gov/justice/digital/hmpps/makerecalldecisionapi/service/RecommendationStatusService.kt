@@ -53,7 +53,7 @@ internal class RecommendationStatusService(
         createdByUserName = readableNameOfUser
       )
     )
-    log.info("recommendation status ${newStatusToActivate?.status} for ${newStatusToActivate?.recommendationId} activated")
+    log.info("recommendation status ${newStatusToActivate?.name} for ${newStatusToActivate?.recommendationId} activated")
     return newStatusToActivate
   }
 
@@ -63,7 +63,7 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?
   ) {
-    val statusesToDeactivate = recommendationStatusRepository.findByRecommendationIdAndStatus(
+    val statusesToDeactivate = recommendationStatusRepository.findByRecommendationIdAndName(
       recommendationId,
       recommendationStatusRequest.deActivate
     )
@@ -71,10 +71,10 @@ internal class RecommendationStatusService(
       statusesToDeactivate.map {
         it.active = false
         it.modifiedBy = userId
-        it.modifiedByUserName = readableNameOfUser
+        it.modifiedByUserFullName = readableNameOfUser
         it.modified = DateTimeHelper.utcNowDateTimeString()
       }
-      saveAllRecommendationStatuses(statusesToDeactivate) // TODO - should mutate list contents!!
+      saveAllRecommendationStatuses(statusesToDeactivate)
       log.info("recommendation status ${recommendationStatusRequest.deActivate} for $recommendationId deactivated")
     } else {
       log.info("no active recommendation status ${recommendationStatusRequest.deActivate} found for $recommendationId")

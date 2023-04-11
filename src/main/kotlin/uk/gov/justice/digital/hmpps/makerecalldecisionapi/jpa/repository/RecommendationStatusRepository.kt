@@ -8,5 +8,5 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 @Repository
 interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEntity, Long> {
   fun findByRecommendationId(@Param("recommendationId") recommendationId: Long): List<RecommendationStatusEntity>
-  fun findByRecommendationIdAndStatus(recommendationId: Long, status: String?): List<RecommendationStatusEntity>
+  fun findByRecommendationIdAndName(recommendationId: Long, name: String?): List<RecommendationStatusEntity>
 }

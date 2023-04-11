@@ -14,23 +14,23 @@ data class RecommendationStatusEntity(
   open var id: Long = abs(SecureRandom().nextInt().toLong()),
   var recommendationId: Long?,
   var createdBy: String?,
-  var createdByUserName: String?,
+  var createdByUserFullName: String?,
   var created: String?,
   var modifiedBy: String? = null,
-  var modifiedByUserName: String? = null,
+  var modifiedByUserFullName: String? = null,
   var modified: String? = null,
-  var status: String?,
+  var name: String?,
   var active: Boolean
 )
 fun RecommendationStatusEntity.toRecommendationStatusResponse(): RecommendationStatusResponse =
   RecommendationStatusResponse(
-    status = status,
+    name = name,
     recommendationId = recommendationId,
     active = active,
     created = created,
     createdBy = createdBy,
-    createdByUserName = createdByUserName,
+    createdByUserFullName = createdByUserFullName,
     modified = modified,
     modifiedBy = modifiedBy,
-    modifiedByUserName = modifiedByUserName
+    modifiedByUserFullName = modifiedByUserFullName
   )

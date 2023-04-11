@@ -15,31 +15,31 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 class RecommendationStatusControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `create a recommendation status`() {
+  fun `create a recommendation name`() {
     // given
     createRecommendation()
 
     // when
-    val response = createOrUpdateRecommendationStatus(activate = "NEW_STATUS")
+    val response = createOrUpdateRecommendation(activate = "NEW_STATUS")
 
     // then
     assertThat(response.get("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(response.get("active")).isEqualTo(true)
     assertThat(response.get("createdBy")).isEqualTo("SOME_USER")
-    assertThat(response.get("createdByUserName")).isEqualTo("some_user")
+    assertThat(response.get("createdByUserFullName")).isEqualTo("some_user")
     assertThat(response.get("created")).isNotNull
     assertThat(response.get("modifiedBy")).isEqualTo(null)
     assertThat(response.get("modified")).isEqualTo(null)
-    assertThat(response.get("modifiedByUserName")).isEqualTo(null)
-    assertThat(response.get("status")).isEqualTo("NEW_STATUS")
+    assertThat(response.get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(response.get("name")).isEqualTo("NEW_STATUS")
   }
 
   @Test
-  fun `update a recommendation status`() {
+  fun `update a recommendation name`() {
     // given
     createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS")
-    createOrUpdateRecommendationStatus(activate = "NEW_STATUS", deactivate = "OLD_STATUS")
+    createOrUpdateRecommendation(activate = "OLD_STATUS")
+    createOrUpdateRecommendation(activate = "NEW_STATUS", deactivate = "OLD_STATUS")
 
     // when
     val response = convertResponseToJSONArray(
@@ -59,26 +59,26 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(activated.get("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(activated.get("active")).isEqualTo(true)
     assertThat(activated.get("createdBy")).isEqualTo("SOME_USER")
-    assertThat(activated.get("createdByUserName")).isEqualTo("some_user")
+    assertThat(activated.get("createdByUserFullName")).isEqualTo("some_user")
     assertThat(activated.get("created")).isNotNull
     assertThat(activated.get("modifiedBy")).isEqualTo(null)
     assertThat(activated.get("modified")).isEqualTo(null)
-    assertThat(activated.get("modifiedByUserName")).isEqualTo(null)
-    assertThat(activated.get("status")).isEqualTo("NEW_STATUS")
+    assertThat(activated.get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(activated.get("name")).isEqualTo("NEW_STATUS")
 
     // and
     assertThat(deactivated.get("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(deactivated.get("active")).isEqualTo(false)
     assertThat(deactivated.get("createdBy")).isEqualTo("SOME_USER")
-    assertThat(deactivated.get("createdByUserName")).isEqualTo("some_user")
+    assertThat(deactivated.get("createdByUserFullName")).isEqualTo("some_user")
     assertThat(deactivated.get("created")).isNotNull
     assertThat(deactivated.get("modifiedBy")).isEqualTo("SOME_USER")
     assertThat(deactivated.get("modified")).isNotNull
-    assertThat(deactivated.get("modifiedByUserName")).isEqualTo("some_user")
-    assertThat(deactivated.get("status")).isEqualTo("OLD_STATUS")
+    assertThat(deactivated.get("modifiedByUserFullName")).isEqualTo("some_user")
+    assertThat(deactivated.get("name")).isEqualTo("OLD_STATUS")
   }
 
-  private fun createOrUpdateRecommendationStatus(activate: String, deactivate: String? = null) =
+  private fun createOrUpdateRecommendation(activate: String, deactivate: String? = null) =
     convertResponseToJSONObject(
       webTestClient.patch()
         .uri("/recommendations/$createdRecommendationId/status")

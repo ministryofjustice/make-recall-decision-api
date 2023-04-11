@@ -4,29 +4,29 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 
 data class RecommendationStatusRequest(
-  val activate: String? = null,
-  val deActivate: String? = null
+  val activate: String? = null, // TODO change to array
+  val deActivate: String? = null // TODO change to array
 )
 
 fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(recommendationId: Long, userId: String?, createdByUserName: String?): RecommendationStatusEntity {
   return RecommendationStatusEntity(
     recommendationId = recommendationId,
     createdBy = userId,
-    createdByUserName = createdByUserName,
+    createdByUserFullName = createdByUserName,
     created = DateTimeHelper.utcNowDateTimeString(),
-    status = activate,
+    name = activate,
     active = true
   )
 }
 
 data class RecommendationStatusResponse(
-  val status: String? = null,
+  val name: String? = null,
   val active: Boolean,
   var recommendationId: Long?,
   var createdBy: String?,
   var created: String?,
   var modifiedBy: String?,
   var modified: String?,
-  val createdByUserName: String?,
-  val modifiedByUserName: String?,
+  val createdByUserFullName: String?,
+  val modifiedByUserFullName: String?
 )
