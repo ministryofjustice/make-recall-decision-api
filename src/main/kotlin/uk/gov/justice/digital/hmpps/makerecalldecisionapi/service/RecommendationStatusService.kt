@@ -27,10 +27,14 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?,
     recommendationId: Long
-  ): RecommendationStatusResponse? {
+  ): List<RecommendationStatusResponse> {
     deactivateOldStatus(recommendationId, recommendationStatusRequest, userId, readableNameOfUser)
-    return activateNewStatus(recommendationStatusRequest, recommendationId, userId, readableNameOfUser)
-      ?.toRecommendationStatusResponse()
+    return activateNewStatus(
+      recommendationStatusRequest,
+      recommendationId,
+      userId,
+      readableNameOfUser
+    ).map { it.toRecommendationStatusResponse() }
   }
 
   suspend fun fetchRecommendationStatuses(
@@ -45,16 +49,16 @@ internal class RecommendationStatusService(
     recommendationId: Long,
     userId: String?,
     readableNameOfUser: String?
-  ): RecommendationStatusEntity? {
-    val newStatusToActivate = saveRecommendationStatus(
+  ): List<RecommendationStatusEntity> {
+    val newStatusesToActivate = saveAllRecommendationStatuses(
       recommendationStatusRequest.toActiveRecommendationStatusEntity(
         recommendationId = recommendationId,
         userId = userId,
         createdByUserName = readableNameOfUser
       )
     )
-    log.info("recommendation status ${newStatusToActivate?.name} for ${newStatusToActivate?.recommendationId} activated")
-    return newStatusToActivate
+    log.info("recommendation status ${newStatusesToActivate.joinToString(",")} for ${newStatusesToActivate.first().recommendationId} activated")
+    return newStatusesToActivate
   }
 
   private fun deactivateOldStatus(
@@ -63,32 +67,26 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?
   ) {
-    val statusesToDeactivate = recommendationStatusRepository.findByRecommendationIdAndName(
-      recommendationId,
-      recommendationStatusRequest.deActivate
-    )
-    if (statusesToDeactivate.isNotEmpty()) {
-      statusesToDeactivate.map {
-        it.active = false
-        it.modifiedBy = userId
-        it.modifiedByUserFullName = readableNameOfUser
-        it.modified = DateTimeHelper.utcNowDateTimeString()
+    val statusesToDeactivate = recommendationStatusRequest.deActivate
+      .flatMap {
+        recommendationStatusRepository.findByRecommendationIdAndName(
+          recommendationId,
+          it
+        )
       }
+    if (statusesToDeactivate.isNotEmpty()) {
+      statusesToDeactivate
+        .filter { it.name != null }
+        .map {
+          it.active = false
+          it.modifiedBy = userId
+          it.modifiedByUserFullName = readableNameOfUser
+          it.modified = DateTimeHelper.utcNowDateTimeString()
+        }
       saveAllRecommendationStatuses(statusesToDeactivate)
       log.info("recommendation status ${recommendationStatusRequest.deActivate} for $recommendationId deactivated")
     } else {
       log.info("no active recommendation status ${recommendationStatusRequest.deActivate} found for $recommendationId")
-    }
-  }
-
-  private fun saveRecommendationStatus(existingRecommendationStatus: RecommendationStatusEntity): RecommendationStatusEntity? {
-    return try {
-      recommendationStatusRepository.save(existingRecommendationStatus)
-    } catch (ex: Exception) {
-      throw RecommendationUpdateException(
-        message = "Update failed for recommendation id:: ${existingRecommendationStatus.id}$ex.message",
-        error = UpdateExceptionTypes.RECOMMENDATION_STATUS_UPDATE_FAILED.toString()
-      )
     }
   }
 

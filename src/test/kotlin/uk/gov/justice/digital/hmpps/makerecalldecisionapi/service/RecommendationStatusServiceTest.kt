@@ -7,9 +7,9 @@ import org.joda.time.DateTimeUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyList
 import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.BDDMockito
 import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -41,12 +41,13 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
       )
 
       // and
-      given(recommendationStatusRepository.save(any())).willReturn(recommendationStatusToSave)
+      given(recommendationStatusRepository.saveAll(anyList())).willReturn(listOf(recommendationStatusToSave))
 
       // when
       val response = recommendationStatusService.updateRecommendationStatus(
         RecommendationStatusRequest(
-          activate = "NEW_STATUS"
+          activate = listOf("NEW_STATUS"),
+          deActivate = emptyList()
         ),
         recommendationId = 1L,
         readableNameOfUser = "Bill",
@@ -54,29 +55,29 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.recommendationId).isNotNull
-      assertThat(response?.name).isEqualTo("NEW_STATUS")
-      assertThat(response?.created).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(response?.createdBy).isEqualTo("BILL")
-      assertThat(response?.createdByUserFullName).isEqualTo("Bill")
-      assertThat(response?.active).isEqualTo(true)
-      assertThat(response?.modified).isEqualTo(null)
-      assertThat(response?.modifiedBy).isEqualTo(null)
-      assertThat(response?.modifiedByUserFullName).isEqualTo(null)
+      assertThat(response[0].recommendationId).isNotNull
+      assertThat(response[0].name).isEqualTo("NEW_STATUS")
+      assertThat(response[0].created).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(response[0].createdBy).isEqualTo("BILL")
+      assertThat(response[0].createdByUserFullName).isEqualTo("Bill")
+      assertThat(response[0].active).isEqualTo(true)
+      assertThat(response[0].modified).isEqualTo(null)
+      assertThat(response[0].modifiedBy).isEqualTo(null)
+      assertThat(response[0].modifiedByUserFullName).isEqualTo(null)
 
-      val captor = argumentCaptor<RecommendationStatusEntity>()
-      then(recommendationStatusRepository).should().save(captor.capture())
+      val captor = argumentCaptor<List<RecommendationStatusEntity>>()
+      then(recommendationStatusRepository).should().saveAll(captor.capture())
       val recommendationStatusEntity = captor.firstValue
 
-      assertThat(recommendationStatusEntity.id).isNotNull()
-      assertThat(recommendationStatusEntity.name).isEqualTo("NEW_STATUS")
-      assertThat(recommendationStatusEntity.created).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationStatusEntity.createdBy).isEqualTo("BILL")
-      assertThat(recommendationStatusEntity.createdByUserFullName).isEqualTo("Bill")
-      assertThat(recommendationStatusEntity.modified).isEqualTo(null)
-      assertThat(recommendationStatusEntity.active).isEqualTo(true)
-      assertThat(recommendationStatusEntity.modifiedBy).isEqualTo(null)
-      assertThat(recommendationStatusEntity.modifiedByUserFullName).isEqualTo(null)
+      assertThat(recommendationStatusEntity[0].id).isNotNull()
+      assertThat(recommendationStatusEntity[0].name).isEqualTo("NEW_STATUS")
+      assertThat(recommendationStatusEntity[0].created).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationStatusEntity[0].createdBy).isEqualTo("BILL")
+      assertThat(recommendationStatusEntity[0].createdByUserFullName).isEqualTo("Bill")
+      assertThat(recommendationStatusEntity[0].modified).isEqualTo(null)
+      assertThat(recommendationStatusEntity[0].active).isEqualTo(true)
+      assertThat(recommendationStatusEntity[0].modifiedBy).isEqualTo(null)
+      assertThat(recommendationStatusEntity[0].modifiedByUserFullName).isEqualTo(null)
     }
   }
 
@@ -106,14 +107,13 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
         )
 
       // and
-      given(recommendationStatusRepository.save(any())).willReturn(recommendationStatusToSave)
       given(recommendationStatusRepository.saveAll(anyList())).willReturn(listOf(recommendationStatusToSave.copy(name = "SOME_OTHER_STATUS", active = false, modified = "2022-07-26T09:48:27.443Z", modifiedBy = "BILL", modifiedByUserFullName = "Bill")))
 
       // and
       recommendationStatusService.updateRecommendationStatus(
         RecommendationStatusRequest(
-          activate = "NEW_STATUS",
-          deActivate = "SOME_OTHER_STATUS"
+          activate = listOf("NEW_STATUS"),
+          deActivate = listOf("SOME_OTHER_STATUS")
         ),
         recommendationId = 1L,
         readableNameOfUser = "Bill",
@@ -145,32 +145,29 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
       assertThat(response[1].modifiedBy).isEqualTo("BILL")
       assertThat(response[1].modifiedByUserFullName).isEqualTo("Bill")
 
-      val captor = argumentCaptor<RecommendationStatusEntity>()
-      then(recommendationStatusRepository).should().save(captor.capture())
-      val recommendationStatusEntity = captor.firstValue
+      val captor = argumentCaptor<List<RecommendationStatusEntity>>()
+      then(recommendationStatusRepository).should(BDDMockito.times(2)).saveAll(captor.capture())
+      val someOtherStatus = captor.firstValue
 
-      assertThat(recommendationStatusEntity.id).isNotNull()
-      assertThat(recommendationStatusEntity.name).isEqualTo("NEW_STATUS")
-      assertThat(recommendationStatusEntity.created).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationStatusEntity.createdBy).isEqualTo("BILL")
-      assertThat(recommendationStatusEntity.createdByUserFullName).isEqualTo("Bill")
-      assertThat(recommendationStatusEntity.modified).isEqualTo(null)
-      assertThat(recommendationStatusEntity.modifiedBy).isEqualTo(null)
-      assertThat(recommendationStatusEntity.modifiedByUserFullName).isEqualTo(null)
+      assertThat(someOtherStatus[0].id).isNotNull()
+      assertThat(someOtherStatus[0].name).isEqualTo("SOME_OTHER_STATUS")
+      assertThat(someOtherStatus[0].created).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(someOtherStatus[0].createdBy).isEqualTo("BILL")
+      assertThat(someOtherStatus[0].createdByUserFullName).isEqualTo("Bill")
+      assertThat(someOtherStatus[0].modified).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(someOtherStatus[0].modifiedBy).isEqualTo("BILL")
+      assertThat(someOtherStatus[0].modifiedByUserFullName).isEqualTo("Bill")
+      assertThat(someOtherStatus[0].active).isEqualTo(false)
 
-      val listCaptor = argumentCaptor<List<RecommendationStatusEntity>>()
-      then(recommendationStatusRepository).should().saveAll(listCaptor.capture())
-      val recommendationStatusEntityList = listCaptor.firstValue
-
-      assertThat(recommendationStatusEntityList[0].id).isNotNull()
-      assertThat(recommendationStatusEntityList[0].name).isEqualTo("SOME_OTHER_STATUS")
-      assertThat(recommendationStatusEntityList[0].created).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationStatusEntityList[0].createdBy).isEqualTo("BILL")
-      assertThat(recommendationStatusEntityList[0].createdByUserFullName).isEqualTo("Bill")
-      assertThat(recommendationStatusEntityList[0].modified).isEqualTo("2022-07-26T09:48:27.443Z")
-      assertThat(recommendationStatusEntityList[0].modifiedBy).isEqualTo("BILL")
-      assertThat(recommendationStatusEntityList[0].modifiedByUserFullName).isEqualTo("Bill")
-      assertThat(recommendationStatusEntityList[0].active).isEqualTo(false)
+      val newStatus = captor.secondValue
+      assertThat(newStatus[0].id).isNotNull()
+      assertThat(newStatus[0].name).isEqualTo("NEW_STATUS")
+      assertThat(newStatus[0].created).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(newStatus[0].createdBy).isEqualTo("BILL")
+      assertThat(newStatus[0].createdByUserFullName).isEqualTo("Bill")
+      assertThat(newStatus[0].modified).isEqualTo(null)
+      assertThat(newStatus[0].modifiedBy).isEqualTo(null)
+      assertThat(newStatus[0].modifiedByUserFullName).isEqualTo(null)
     }
   }
 }

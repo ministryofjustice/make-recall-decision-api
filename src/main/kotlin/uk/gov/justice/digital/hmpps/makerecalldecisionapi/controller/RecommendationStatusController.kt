@@ -43,7 +43,7 @@ internal class RecommendationStatusController(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody request: RecommendationStatusRequest,
     userLogin: Principal
-  ): ResponseEntity<RecommendationStatusResponse?> {
+  ): ResponseEntity<List<RecommendationStatusResponse>> {
     log.info(normalizeSpace("Create or update a recommendation status endpoint for recommendation id: $recommendationId"))
     val userId = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
