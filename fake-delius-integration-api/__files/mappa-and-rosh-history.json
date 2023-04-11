@@ -1,0 +1,34 @@
+{
+  "personalDetails": {
+    "name": {
+      "forename": "Harry",
+      "middleName": "Tom",
+      "surname": "Smith"
+    },
+    "identifiers": {
+      "pncNumber": "GD123TEF",
+      "croNumber": "AB123XYZ",
+      "nomsNumber": "JG123POE",
+      "bookingNumber": "MV123EDR"
+    },
+    "dateOfBirth": "1990-09-15",
+    "gender": "Male",
+    "ethnicity": "White",
+    "primaryLanguage": "English"
+  },
+  "mappa": {
+    "level": 1,
+    "category": 0,
+    "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note",
+    "startDate": "2021-02-10"
+  },
+  "roshHistory": [
+    {
+      "active": true,
+      "type": "RVHR",
+      "typeDescription": "Very High RoSH",
+      "notes": "Notes on Very High RoSH case",
+      "startDate": "2021-01-30"
+    }
+  ]
+}

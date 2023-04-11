@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/.*/mappa-and-rosh-history"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "mappa-and-rosh-history.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

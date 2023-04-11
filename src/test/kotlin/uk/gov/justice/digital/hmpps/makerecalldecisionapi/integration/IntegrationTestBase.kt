@@ -42,6 +42,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusNoMappaOrRoshHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.communityApiLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseMultipleConvictions
@@ -58,7 +61,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.roshHistoryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
@@ -277,22 +279,6 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun noMappaDetailsResponse(crn: String) {
-    val mappaDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
-    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
-      response().withStatusCode(404)
-    )
-  }
-
-  protected fun errorMappaDetailsResponse(crn: String) {
-    val mappaDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
-    communityApi.`when`(mappaDetailsRequest, exactly(1)).respond(
-      response().withStatusCode(500)
-    )
-  }
-
   protected fun personalDetailsResponse(crn: String, delaySeconds: Long = 0) {
     val personalDetailsRequest =
       request().withPath("/case-summary/$crn/personal-details")
@@ -352,6 +338,43 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun mappaAndRoshHistoryResponse(crn: String, delaySeconds: Long = 0) {
+    val request =
+      request().withPath("/case-summary/$crn/mappa-and-rosh-history")
+
+    deliusIntegration.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON).withBody(deliusMappaAndRoshHistoryResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun roshHistoryOnlyResponse(crn: String, delaySeconds: Long = 0) {
+    val request =
+      request().withPath("/case-summary/$crn/mappa-and-rosh-history")
+
+    deliusIntegration.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON).withBody(deliusRoshHistoryOnlyResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun noMappaOrRoshHistoryResponse(crn: String, delaySeconds: Long = 0) {
+    val request =
+      request().withPath("/case-summary/$crn/mappa-and-rosh-history")
+
+    deliusIntegration.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON).withBody(deliusNoMappaOrRoshHistoryResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun mappaAndRoshHistoryNotFound(crn: String, delaySeconds: Long = 0) {
+    val request =
+      request().withPath("/case-summary/$crn/mappa-and-rosh-history")
+
+    deliusIntegration.`when`(request).respond(response().withStatusCode(404))
+  }
+
   protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
@@ -402,16 +425,6 @@ abstract class IntegrationTestBase {
 
     communityApi.`when`(convictionsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(registrationsDeliusResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun roshHistoryResponse(delaySeconds: Long = 0) {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/registrations")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(roshHistoryDeliusResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

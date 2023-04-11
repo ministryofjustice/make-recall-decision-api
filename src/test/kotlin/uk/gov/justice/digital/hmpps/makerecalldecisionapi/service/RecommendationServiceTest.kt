@@ -367,7 +367,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
 
       val featureFlags = when (scenario) {
         "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
@@ -518,7 +518,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
 
       try {
         recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
@@ -597,7 +597,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
 
       // when
       recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "bill", "Bill")
@@ -1804,7 +1804,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       templateReplacementServiceMocked,
       userAccessValidator,
       convictionService,
-      RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService),
+      RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null),
       communityApiClient,
       mrdEmitterMocked
     )
