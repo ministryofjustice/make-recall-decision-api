@@ -28,6 +28,8 @@ data class RecommendationResponse(
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
   val triggerLeadingToRecall: String? = null,
+  val spoRecallType: String? = null,
+  val spoRecallRationale: String? = null,
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isIndeterminateSentence: Boolean? = null,

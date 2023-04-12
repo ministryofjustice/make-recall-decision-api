@@ -173,6 +173,8 @@ internal class RecommendationService(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
       reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
+      spoRecallType = recommendationEntity.data.spoRecallType,
+      spoRecallRationale = recommendationEntity.data.spoRecallRationale,
       reviewOffenderProfile = recommendationEntity.data.reviewOffenderProfile,
       explainTheDecision = recommendationEntity.data.explainTheDecision,
       lastModifiedBy = recommendationEntity.data.lastModifiedBy,
