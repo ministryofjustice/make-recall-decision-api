@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration
 
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.flywaydb.test.annotation.FlywayTest
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -200,6 +201,13 @@ abstract class IntegrationTestBase {
     val responseEntityExchangeResult = responseBodySpec.returnResult()
     val responseString = responseEntityExchangeResult.responseBody
     return JSONObject(responseString)
+  }
+
+  fun convertResponseToJSONArray(response: WebTestClient.ResponseSpec): JSONArray {
+    val responseBodySpec = response.expectBody<String>()
+    val responseEntityExchangeResult = responseBodySpec.returnResult()
+    val responseString = responseEntityExchangeResult.responseBody
+    return JSONArray(responseString)
   }
 
   protected fun riskManagementPlanResponse(crn: String, delaySeconds: Long = 0) {

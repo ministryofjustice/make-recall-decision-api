@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidReque
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import javax.validation.ValidationException
@@ -144,6 +145,21 @@ class MakeRecallDecisionApiExceptionHandler {
   @ExceptionHandler(RecommendationUpdateException::class)
   fun handleRecommendationUpdateException(e: RecommendationUpdateException): ResponseEntity<ErrorResponse?>? {
     log.error("Recommendation update exception", e)
+    return ResponseEntity
+      .status(INTERNAL_SERVER_ERROR)
+      .body(
+        ErrorResponse(
+          status = INTERNAL_SERVER_ERROR,
+          userMessage = "Unexpected error: ${e.message}",
+          developerMessage = e.message,
+          error = e.error
+        )
+      )
+  }
+
+  @ExceptionHandler(RecommendationStatusUpdateException::class)
+  fun handleRecommendationStatusUpdateException(e: RecommendationStatusUpdateException): ResponseEntity<ErrorResponse?>? {
+    log.error("Recommendation status update exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
       .body(
