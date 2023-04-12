@@ -63,6 +63,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -84,6 +85,9 @@ internal abstract class ServiceTestBase {
   protected lateinit var recommendationRepository: RecommendationRepository
 
   @Mock
+  protected lateinit var recommendationStatusRepository: RecommendationStatusRepository
+
+  @Mock
   protected lateinit var mockPersonDetailService: PersonDetailsService
 
   protected lateinit var personDetailsService: PersonDetailsService
@@ -101,6 +105,8 @@ internal abstract class ServiceTestBase {
   protected lateinit var vulnerabilitiesService: VulnerabilitiesService
 
   protected lateinit var recommendationService: RecommendationService
+
+  protected lateinit var recommendationStatusService: RecommendationStatusService
 
   protected lateinit var templateReplacementService: TemplateReplacementService
 
@@ -121,6 +127,7 @@ internal abstract class ServiceTestBase {
     convictionService = ConvictionService(communityApiClient, documentService)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, null)
+    recommendationStatusService = RecommendationStatusService(recommendationStatusRepository)
     riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }

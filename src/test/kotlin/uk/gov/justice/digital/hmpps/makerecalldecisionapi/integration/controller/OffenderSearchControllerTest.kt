@@ -37,7 +37,7 @@ class OffenderSearchControllerTest(
     runTest {
       val firstName = "Pontius"
       val lastName = "Pilate"
-      offenderSearchResponse(firstName = firstName, surname = lastName) // TODO BS correct me!!
+      offenderSearchResponse(firstName = firstName, surname = lastName)
       webTestClient.get()
         .uri("/search?lastName=$lastName&firstName=$firstName")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
