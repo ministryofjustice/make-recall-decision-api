@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import java.time.LocalDate
 
 data class RiskResponse(
   val userAccessResponse: UserAccessResponse? = null,
@@ -35,7 +36,7 @@ data class RiskTo(
 data class Mappa(
   val level: Int? = null,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-  val lastUpdatedDate: String? = null,
+  val lastUpdatedDate: LocalDate? = null,
   val category: Int? = null,
   val error: String? = null,
   val hasBeenReviewed: Boolean? = false

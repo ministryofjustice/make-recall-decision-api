@@ -17,7 +17,6 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
@@ -73,14 +72,14 @@ internal class RiskServiceTest : ServiceTestBase() {
       communityApiClient,
       null
     )
-    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
+    riskService = RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
   @Test
   fun `retrieves risk`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
+      given(deliusClient.getMappaAndRoshHistory(anyString()))
+        .willReturn(deliusMappaAndRoshHistoryResponse())
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
@@ -93,10 +92,6 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-      given(communityApiClient.getAllMappaDetails(anyString()))
-        .willReturn(Mono.fromCallable { mappaResponse })
-      given(communityApiClient.getRegistrations(anyString()))
-        .willReturn(Mono.fromCallable { registrationsResponse })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment(), assessment().copy(dateCompleted = null))) })
 
@@ -109,9 +104,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       val currentScores = response.predictorScores?.current
       val roshHistory = response.roshHistory
       assertThat(roshHistory?.registrations?.get(0)?.active).isEqualTo(true)
-      assertThat(roshHistory?.registrations?.get(0)?.registrationId).isEqualTo("2500064995")
-      assertThat(roshHistory?.registrations?.get(0)?.register?.code).isEqualTo("1")
-      assertThat(roshHistory?.registrations?.get(0)?.register?.description).isEqualTo("RoSH")
       assertThat(roshHistory?.registrations?.get(0)?.type?.code).isEqualTo("ABC123")
       assertThat(roshHistory?.registrations?.get(0)?.type?.description).isEqualTo("Victim contact")
       assertThat(roshHistory?.registrations?.get(0)?.startDate).isEqualTo("2021-01-30")
@@ -221,22 +213,19 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getRiskScores(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
-      then(communityApiClient).should().getAllMappaDetails(crn)
+      then(deliusClient).should().getMappaAndRoshHistory(crn)
     }
   }
 
   @Test
   fun `retrieves risk when assessment status is incomplete`() {
     runTest {
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
+      given(deliusClient.getMappaAndRoshHistory(anyString()))
+        .willReturn(deliusMappaAndRoshHistoryResponse())
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(currentRiskScoreResponse) })
-      given(communityApiClient.getAllMappaDetails(anyString()))
-        .willReturn(Mono.fromCallable { mappaResponse })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
 
@@ -564,7 +553,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getMappaAndRoshHistory(crn)
     }
   }
 
@@ -603,7 +592,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getMappaAndRoshHistory(crn)
     }
   }
 
@@ -643,7 +632,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getMappaAndRoshHistory(crn)
     }
   }
 
@@ -664,7 +653,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getRisk(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val mappa = response.mappa!!
+      val mappa = response.mappa
       val historicalScores = response.predictorScores?.historical
       val currentScores = response.predictorScores?.current
 
@@ -675,9 +664,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(mappa.level).isEqualTo(null)
-      assertThat(mappa.lastUpdatedDate).isEqualTo("")
-      assertThat(mappa.category).isNull()
+      assertThat(mappa).isEqualTo(null)
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
       assertThat(historicalScores).isEmpty()
       assertThat(currentScores?.date).isEqualTo(null)
@@ -690,7 +677,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       then(arnApiClient).should().getAssessments(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
-      then(deliusClient).should().getPersonalDetails(crn)
+      then(deliusClient).should().getMappaAndRoshHistory(crn)
     }
   }
 
@@ -732,27 +719,8 @@ internal class RiskServiceTest : ServiceTestBase() {
         }
       )
 
-    given(deliusClient.getPersonalDetails(anyString())).willReturn(
-      deliusPersonalDetailsResponse(
-        manager = null,
-        address = PersonalDetails.Address(
-          postcode = null,
-          district = null,
-          addressNumber = null,
-          buildingName = null,
-          town = null,
-          county = null,
-          noFixedAbode = null
-        )
-      )
-    )
-
-    given(communityApiClient.getAllMappaDetails(anyString()))
-      .willReturn(
-        Mono.fromCallable {
-          mappaResponse.copy(level = null, levelDescription = null, reviewDate = null, startDate = null, category = null)
-        }
-      )
+    given(deliusClient.getMappaAndRoshHistory(anyString()))
+      .willReturn(deliusMappaAndRoshHistoryResponse(mappa = null, roshHistory = emptyList()))
   }
 
   @Test

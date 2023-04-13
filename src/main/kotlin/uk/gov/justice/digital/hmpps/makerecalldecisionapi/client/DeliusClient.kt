@@ -26,6 +26,7 @@ class DeliusClient(
   fun getPersonalDetails(crn: String): PersonalDetails = call("/case-summary/$crn/personal-details")
   fun getOverview(crn: String): Overview = call("/case-summary/$crn/overview")
   fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
+  fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
 
   private inline fun <reified T : Any> call(endpoint: String): T {
     log.info(normalizeSpace("About to call $endpoint"))
@@ -34,7 +35,7 @@ class DeliusClient(
       .uri(endpoint)
       .retrieve()
       .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
+        { it == HttpStatus.NOT_FOUND },
         { throw PersonNotFoundException("No details available for endpoint: $endpoint") }
       )
       .bodyToMono(T::class.java)
@@ -165,6 +166,25 @@ class DeliusClient(
     data class LicenceConditionCategory(
       val code: String,
       val description: String
+    )
+  }
+
+  data class MappaAndRoshHistory(
+    val personalDetails: PersonalDetailsOverview,
+    val mappa: Mappa?,
+    val roshHistory: List<Rosh>
+  ) {
+    data class Mappa(
+      val category: Int?,
+      val level: Int?,
+      val startDate: LocalDate
+    )
+    data class Rosh(
+      val active: Boolean,
+      val type: String,
+      val typeDescription: String,
+      val notes: String?,
+      val startDate: LocalDate
     )
   }
 }

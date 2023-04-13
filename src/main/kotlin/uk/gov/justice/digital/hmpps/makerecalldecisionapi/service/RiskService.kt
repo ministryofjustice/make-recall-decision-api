@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Sentence
@@ -24,8 +25,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.toRoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
@@ -39,11 +42,11 @@ import java.time.LocalDateTime
 
 @Service
 internal class RiskService(
+  private val deliusClient: DeliusClient,
   @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val recommendationService: RecommendationService?,
-  private val personDetailsService: PersonDetailsService
+  @Lazy private val recommendationService: RecommendationService?
 ) {
 
   suspend fun getRisk(crn: String): RiskResponse {
@@ -51,19 +54,32 @@ internal class RiskService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RiskResponse(userAccessResponse = userAccessResponse, mappa = null)
     } else {
-      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val (personalDetails, mappa, roshHistory) = deliusClient.getMappaAndRoshHistory(crn)
       val roshSummary = getRoshSummary(crn)
-      val mappa = getMappa(crn)
       val predictorScores = fetchPredictorScores(crn)
       val recommendationDetails = recommendationService?.getRecommendationsInProgressForCrn(crn)
-      val roshHistory = getRoshHistory(crn)
 
       return RiskResponse(
-        personalDetailsOverview = personalDetailsOverview,
-        mappa = mappa,
+        personalDetailsOverview = personalDetails.toOverview(crn),
+        mappa = mappa?.let {
+          Mappa(
+            level = it.level,
+            category = it.category,
+            lastUpdatedDate = it.startDate,
+          )
+        },
         predictorScores = predictorScores,
         roshSummary = roshSummary,
-        roshHistory = roshHistory,
+        roshHistory = RoshHistory(
+          registrations = roshHistory.map {
+            Registration(
+              active = it.active,
+              type = CodeDescriptionItem(it.type, it.typeDescription),
+              startDate = it.startDate,
+              notes = it.notes
+            )
+          }
+        ),
         activeRecommendation = recommendationDetails,
         assessmentStatus = getAssessmentStatus(crn)
       )
@@ -339,26 +355,17 @@ internal class RiskService(
     return risks.asIterable().firstOrNull { it.value != null }?.key
   }
 
-  private suspend fun getRoshHistory(crn: String): RoshHistory {
-    val registrationsResponse = try {
-      getValueAndHandleWrappedException(communityApiClient.getRegistrations(crn))!!
-    } catch (ex: Exception) {
-      return RoshHistory(error = extractErrorCode(ex, "rosh history", crn))
-    }
-    return registrationsResponse.toRoshHistory()
-  }
-
   suspend fun getMappa(crn: String): Mappa {
     val mappaResponse = try {
       getValueAndHandleWrappedException(communityApiClient.getAllMappaDetails(crn))!!
     } catch (ex: Exception) {
       return Mappa(error = extractErrorCode(ex, "mappa", crn))
     }
-    val startDate = mappaResponse.startDate?.toString()
+    val startDate = mappaResponse.startDate
 
     return Mappa(
       level = mappaResponse.level,
-      lastUpdatedDate = startDate ?: "",
+      lastUpdatedDate = startDate,
       category = mappaResponse.category
     )
   }

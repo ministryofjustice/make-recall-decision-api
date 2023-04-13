@@ -20,12 +20,10 @@ class RiskControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available `() {
+  fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      noMappaDetailsResponse(crn)
-      roshHistoryResponse()
+      roshHistoryOnlyResponse(crn)
       noRiskScoresResponse(crn)
       noOffenderFoundRoshSummaryResponse(crn)
 
@@ -41,9 +39,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
-        .jsonPath("$.mappa.level").isEqualTo(null)
-        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
-        .jsonPath("$.mappa.category").isEqualTo(null)
+        .jsonPath("$.mappa").isEqualTo(null)
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
@@ -52,9 +48,6 @@ class RiskControllerTest(
         .jsonPath("$.roshSummary.error").isEqualTo("NOT_FOUND")
         .jsonPath("$.predictorScores.error").isEqualTo("NOT_FOUND")
         .jsonPath("$.roshHistory.error").isEqualTo(null)
-        .jsonPath("$.roshHistory.registrations[0].registrationId").isEqualTo("2500064995")
-        .jsonPath("$.roshHistory.registrations[0].register.code").isEqualTo("1")
-        .jsonPath("$.roshHistory.registrations[0].register.description").isEqualTo("RoSH")
         .jsonPath("$.roshHistory.registrations[0].type.code").isEqualTo("RVHR")
         .jsonPath("$.roshHistory.registrations[0].type.description").isEqualTo("Very High RoSH")
         .jsonPath("$.roshHistory.registrations[0].startDate").isEqualTo("2021-01-30")
@@ -67,7 +60,7 @@ class RiskControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      noMappaDetailsResponse(crn)
+      noMappaOrRoshHistoryResponse(crn)
       noRiskScoresResponse(crn)
       noLatestCompleteRoshSummaryResponse(crn)
 
@@ -83,9 +76,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
-        .jsonPath("$.mappa.level").isEqualTo(null)
-        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
-        .jsonPath("$.mappa.category").isEqualTo(null)
+        .jsonPath("$.mappa").isEqualTo(null)
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
@@ -101,7 +92,7 @@ class RiskControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      noMappaDetailsResponse(crn)
+      noMappaOrRoshHistoryResponse(crn)
       failedRiskScoresResponse(crn)
       failedRoSHSummaryResponse(crn)
 
@@ -117,9 +108,7 @@ class RiskControllerTest(
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
-        .jsonPath("$.mappa.level").isEqualTo(null)
-        .jsonPath("$.mappa.lastUpdatedDate").isEqualTo(null)
-        .jsonPath("$.mappa.category").isEqualTo(null)
+        .jsonPath("$.mappa").isEqualTo(null)
         .jsonPath("$.roshSummary.natureOfRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.whoIsAtRisk").isEqualTo(null)
         .jsonPath("$.roshSummary.riskIncreaseFactors").isEqualTo(null)
@@ -135,7 +124,7 @@ class RiskControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      mappaDetailsResponse(crn)
+      noMappaOrRoshHistoryResponse(crn)
       allRiskScoresEmptyResponse(crn)
       roSHSummaryNoDataResponse(crn)
 
@@ -163,7 +152,7 @@ class RiskControllerTest(
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
       personalDetailsResponse(crn)
-      mappaDetailsResponse(crn)
+      mappaAndRoshHistoryResponse(crn)
       allRiskScoresEmptyResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
@@ -239,7 +228,7 @@ class RiskControllerTest(
       oasysAssessmentsResponse(crn)
       roSHSummaryResponse(crn)
       personalDetailsResponse(crn)
-      mappaDetailsResponse(crn)
+      mappaAndRoshHistoryResponse(crn)
       allRiskScoresResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
@@ -371,9 +360,8 @@ class RiskControllerTest(
   fun `not found when person does not exist`() {
     userAccessAllowed(crn)
     roSHSummaryResponse(crn)
-    mappaDetailsResponse(crn)
+    mappaAndRoshHistoryNotFound(crn)
     allRiskScoresResponse(crn)
-    noPersonalDetailsResponse(crn)
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -381,7 +369,7 @@ class RiskControllerTest(
       .exchange()
       .expectStatus().isNotFound
       .expectBody()
-      .jsonPath("$.developerMessage").isEqualTo("No details available for endpoint: /case-summary/A12345/personal-details")
+      .jsonPath("$.developerMessage").isEqualTo("No details available for endpoint: /case-summary/A12345/mappa-and-rosh-history")
   }
 
   @Test
@@ -421,8 +409,7 @@ class RiskControllerTest(
   fun `Error message in rosh summary property given on OASYS ARN rosh summary timeout`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      mappaDetailsResponse(crn)
+      mappaAndRoshHistoryResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()
@@ -441,8 +428,7 @@ class RiskControllerTest(
   fun `Error message in predictor scores property given on OASYS ARN all scores timeout`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      mappaDetailsResponse(crn)
+      mappaAndRoshHistoryResponse(crn)
       roSHSummaryResponse(crn)
       allRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
@@ -454,27 +440,6 @@ class RiskControllerTest(
         .isOk
         .expectBody()
         .jsonPath("$.predictorScores.error")
-        .isEqualTo("TIMEOUT")
-    }
-  }
-
-  @Test
-  fun `Error message in mappa property given on Community API mappa timeout`() {
-    runTest {
-      userAccessAllowed(crn)
-      roSHSummaryResponse(crn)
-      personalDetailsResponse(crn)
-      allRiskScoresResponse(crn)
-      mappaDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
-      webTestClient.get()
-        .uri("/cases/$crn/risk")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .isOk
-        .expectBody()
-        .jsonPath("$.mappa.error")
         .isEqualTo("TIMEOUT")
     }
   }
