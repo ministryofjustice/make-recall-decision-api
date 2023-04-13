@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.MappaAndRoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
@@ -126,9 +127,9 @@ internal abstract class ServiceTestBase {
     documentService = DocumentService(communityApiClient, userAccessValidator)
     convictionService = ConvictionService(communityApiClient, documentService)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(communityApiClient, arnApiClient, userAccessValidator, null, personDetailsService), communityApiClient, null)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, null)
     recommendationStatusService = RecommendationStatusService(recommendationStatusRepository)
-    riskService = RiskService(communityApiClient, arnApiClient, userAccessValidator, recommendationService, personDetailsService)
+    riskService = RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, recommendationService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }
 
@@ -479,6 +480,42 @@ internal abstract class ServiceTestBase {
     activeConvictions = activeConvictions,
   )
 
+  protected fun deliusMappaAndRoshHistoryResponse(
+    mappa: MappaAndRoshHistory.Mappa? = MappaAndRoshHistory.Mappa(
+      category = 0, level = 1, startDate = LocalDate.parse("2021-02-10")
+    ),
+    roshHistory: List<MappaAndRoshHistory.Rosh> = listOf(
+      MappaAndRoshHistory.Rosh(
+        active = true,
+        type = "ABC123",
+        typeDescription = "Victim contact",
+        notes = "Notes on case",
+        startDate = LocalDate.parse("2021-01-30")
+      )
+    ),
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+  ) = MappaAndRoshHistory(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
+      ),
+    ),
+    mappa = mappa,
+    roshHistory = roshHistory
+  )
+
   protected fun mappaResponse(): MappaResponse {
 
     return MappaResponse(
@@ -703,52 +740,6 @@ internal abstract class ServiceTestBase {
         postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
       ),
       sentenceStartDate = LocalDate.parse("2022-04-26")
-    )
-  )
-
-  protected fun nonCustodialConvictionResponse() = Conviction(
-    convictionDate = LocalDate.parse("2021-06-10"),
-    sentence = Sentence(
-      startDate = LocalDate.parse("2022-04-26"),
-      terminationDate = LocalDate.parse("2022-04-26"),
-      expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
-      description = "Sentence description",
-      originalLength = 6,
-      originalLengthUnits = "Days",
-      secondLength = 10,
-      secondLengthUnits = "Days",
-      sentenceType = SentenceType(code = "ABC123")
-    ),
-    active = true,
-    offences = listOf(
-      Offence(
-        mainOffence = true,
-        offenceDate = LocalDate.parse("2022-08-26"),
-        detail = OffenceDetail(
-          mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Robbery (other than armed robbery)",
-          code = "ABC123"
-        )
-      ),
-      Offence(
-        mainOffence = false,
-        offenceDate = LocalDate.parse("2022-08-26"),
-        detail = OffenceDetail(
-          mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Arson",
-          code = "ZYX789"
-        )
-      )
-    ),
-    convictionId = 2500614567,
-    orderManagers =
-    listOf(
-      OrderManager(
-        dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
-        name = "string",
-        staffCode = "STFFCDEU",
-        gradeCode = "string"
-      )
     )
   )
 
