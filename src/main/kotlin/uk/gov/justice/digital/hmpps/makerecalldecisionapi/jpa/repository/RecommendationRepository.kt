@@ -15,4 +15,9 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
     nativeQuery = true
   )
   fun findByCrnAndStatus(@Param("crn") crn: String, @Param("statuses") statuses: List<String>): List<RecommendationEntity>
+  @Query(
+    value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE CAST(t.data ->> 'crn' AS VARCHAR) = :crn ",
+    nativeQuery = true
+  )
+  fun findByCrn(@Param("crn") crn: String): List<RecommendationEntity>
 }
