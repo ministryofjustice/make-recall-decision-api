@@ -65,6 +65,7 @@ fun RecommendationEntity.toRecommendationResponse(): RecommendationResponse {
 
 data class RecommendationModel(
   val crn: String?,
+  var sensitive: Boolean? = null,
   var recallConsideredList: List<RecallConsidered>? = null,
   var recallType: RecallType? = null,
   @JsonMerge

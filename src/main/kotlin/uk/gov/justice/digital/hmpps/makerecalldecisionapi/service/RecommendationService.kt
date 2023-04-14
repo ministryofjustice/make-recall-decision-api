@@ -172,6 +172,7 @@ internal class RecommendationService(
     return RecommendationResponse(
       id = recommendationEntity.id,
       crn = recommendationEntity.data.crn,
+      sensitive = recommendationEntity.data.sensitive,
       reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
       spoRecallType = recommendationEntity.data.spoRecallType,
       spoRecallRationale = recommendationEntity.data.spoRecallRationale,

@@ -18,6 +18,7 @@ data class RecommendationResponse(
   val custodyStatus: CustodyStatus? = null,
   val localPoliceContact: LocalPoliceContact? = null,
   val crn: String? = null,
+  var sensitive: Boolean? = null,
   var reviewPractitionersConcerns: Boolean? = null,
   var reviewOffenderProfile: Boolean? = null,
   var explainTheDecision: Boolean? = null,
