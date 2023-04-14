@@ -57,7 +57,6 @@ internal class RecommendationStatusService(
         createdByUserName = readableNameOfUser
       )
     )
-    log.info("recommendation status ${newStatusesToActivate.joinToString(",")} for ${newStatusesToActivate.first().recommendationId} activated")
     return newStatusesToActivate
   }
 
