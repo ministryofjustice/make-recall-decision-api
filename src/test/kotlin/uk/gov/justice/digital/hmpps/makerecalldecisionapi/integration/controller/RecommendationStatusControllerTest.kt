@@ -115,6 +115,36 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(anotherOldStatusDeactivated.get("name")).isEqualTo("ANOTHER_OLD_STATUS")
   }
 
+  @Test
+  fun `get recommendation statuses when only old status exists`() {
+    // given
+    createRecommendation()
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(response.length()).isEqualTo(1)
+    val oldStatus = JSONObject(response.get(0).toString())
+
+    // and
+    assertThat(oldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(oldStatus.get("active")).isEqualTo(true)
+    assertThat(oldStatus.get("createdBy")).isEqualTo("SOME_USER")
+    assertThat(oldStatus.get("createdByUserFullName")).isEqualTo(null)
+    assertThat(oldStatus.get("created")).isNotNull
+    assertThat(oldStatus.get("modifiedBy")).isEqualTo(null)
+    assertThat(oldStatus.get("modified")).isEqualTo(null)
+    assertThat(oldStatus.get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(oldStatus.get("name")).isEqualTo("DRAFT")
+  }
+
   private fun createOrUpdateRecommendation(activate: String, anotherToActivate: String? = null, deactivate: String? = null, anotherToDeactivate: String? = null) =
     convertResponseToJSONArray(
       webTestClient.patch()
