@@ -62,5 +62,13 @@ class DateTimeHelper {
       val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
       return input?.let { LocalDate.parse(it, formatter) }
     }
+
+    fun localDateTimeFromString(localDateTimeString: String?): LocalDateTime =
+      LocalDateTime.parse(
+        localDateTimeString?.replace(
+          "Z",
+          MrdTextConstants.EMPTY_STRING
+        )
+      )
   }
 }
