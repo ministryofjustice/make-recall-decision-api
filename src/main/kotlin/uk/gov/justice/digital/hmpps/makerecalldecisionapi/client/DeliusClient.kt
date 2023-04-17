@@ -63,7 +63,7 @@ class DeliusClient(
     val surname: String
   )
   data class Offence(
-    val date: LocalDate,
+    val date: LocalDate?,
     val code: String,
     val description: String
   )
