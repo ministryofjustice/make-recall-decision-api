@@ -231,7 +231,7 @@ internal class RiskService(
 
   private fun datesMatch(
     latestAssessment: Assessment?,
-    mainOffenceDate: LocalDate
+    mainOffenceDate: LocalDate?
   ) = latestAssessment?.offenceDetails?.any {
     it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate)
   } == true
