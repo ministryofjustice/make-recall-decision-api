@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreatePartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -28,7 +29,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.setFeatureFlags
@@ -59,7 +59,7 @@ internal class RecommendationController(
     val responseEntity = try {
       ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username, readableUserName, flags), CREATED)
     } catch (e: UserAccessException) {
-      ResponseEntity(RecommendationResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
+      ResponseEntity(RecommendationResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
     return responseEntity
   }
@@ -124,7 +124,7 @@ internal class RecommendationController(
     val responseEntity = try {
       ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, createPartARequest.userEmail), OK)
     } catch (e: UserAccessException) {
-      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
+      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
     return responseEntity
   }
@@ -147,7 +147,7 @@ internal class RecommendationController(
     val responseEntity = try {
       ResponseEntity(recommendationService.generateDntr(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), flags), OK)
     } catch (e: UserAccessException) {
-      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccessResponse::class.java)), FORBIDDEN)
+      ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
     return responseEntity
   }

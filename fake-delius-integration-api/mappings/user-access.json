@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/secure/offenders/crn/.*/userAccess"
+    "urlPathPattern": "/user/.*/access/.*"
   },
   "response": {
     "status": 200,

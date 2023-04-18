@@ -32,6 +32,7 @@ class DeliusClient(
   fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
   fun getRecommendationModel(crn: String): RecommendationModel = call("/case-summary/$crn/recommendation-model")
   fun getStaff(username: String): Staff = call("/user/$username/staff")
+  fun getUserAccess(username: String, crn: String): UserAccess = call("/user/$username/access/$crn")
 
   private inline fun <reified T : Any> call(endpoint: String): T {
     log.info(normalizeSpace("About to call $endpoint"))
@@ -230,6 +231,13 @@ class DeliusClient(
 
   data class Staff(
     val code: String?
+  )
+  data class UserAccess(
+    val exclusionMessage: String? = null,
+    val restrictionMessage: String? = null,
+    val userNotFound: Boolean = false,
+    val userExcluded: Boolean,
+    val userRestricted: Boolean,
   )
 }
 

@@ -11,12 +11,12 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -34,15 +34,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       recommendationService
     )
 
-    given(communityApiClient.getUserAccess(anyString())).willReturn(
-      Mono.fromCallable {
-        userAccessResponse(
-          false,
-          false,
-          false
-        )
-      }
-    )
+    given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(noAccessLimitations())
   }
 
   @Test
@@ -136,15 +128,11 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `given case user not found for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Not found", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willThrow(PersonNotFoundException("Not found"))
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -161,15 +149,11 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,

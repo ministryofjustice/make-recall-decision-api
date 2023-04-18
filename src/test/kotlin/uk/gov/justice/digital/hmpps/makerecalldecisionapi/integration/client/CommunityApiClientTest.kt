@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Convict
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.OffsetDateTime
 
@@ -71,27 +70,6 @@ class CommunityApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = communityApiClient.getContactSummary(crn).block()
-
-    // then
-    assertThat(actual, equalTo(expected))
-  }
-
-  @Test
-  fun `retrieves user access`() {
-    // given
-    userAccessAllowed(crn)
-
-    // and
-    val expected = UserAccessResponse(
-      userRestricted = false,
-      userExcluded = false,
-      userNotFound = false,
-      exclusionMessage = null,
-      restrictionMessage = null
-    )
-
-    // when
-    val actual = communityApiClient.getUserAccess(crn).block()
 
     // then
     assertThat(actual, equalTo(expected))

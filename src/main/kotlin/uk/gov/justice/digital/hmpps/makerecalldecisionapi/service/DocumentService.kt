@@ -43,9 +43,9 @@ internal class DocumentService(
   fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource>? {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      val message = if (userAccessResponse?.userRestricted == true) {
+      val message = if (userAccessResponse.userRestricted) {
         "Access restricted for case:: $crn, message:: ${userAccessResponse.restrictionMessage}"
-      } else if (userAccessResponse?.userExcluded == true) {
+      } else if (userAccessResponse.userExcluded) {
         "Access excluded for case:: $crn, message:: ${userAccessResponse.exclusionMessage}"
       } else {
         "User trying to access case:: $crn not found"

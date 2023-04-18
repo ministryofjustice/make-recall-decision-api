@@ -618,67 +618,58 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun releaseSummaryResponseWithStatusCode(crn: String, releaseSummary: String, statusCode: Int) {
-    val releaseSummaryRequest =
-      request().withPath("/secure/offenders/crn/$crn/release")
-
-    communityApi.`when`(releaseSummaryRequest).respond(
-      response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
-    )
-  }
-
   protected fun userAccessAllowed(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest).respond(
+    deliusIntegration.`when`(userAccessRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun userAccessAllowedOnce(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun userAccessExcluded(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
     )
   }
 
   protected fun userNotFound(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response()
         .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404)
     )
   }
 
   protected fun userAccessRestricted(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
     )
   }
 

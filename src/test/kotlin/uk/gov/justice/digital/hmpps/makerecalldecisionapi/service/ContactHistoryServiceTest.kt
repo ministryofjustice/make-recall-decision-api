@@ -11,7 +11,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactGroupResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ContactHistoryResponse
@@ -24,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Content
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementAction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EnforcementActionType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.OffsetDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -38,8 +38,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
     contactHistoryService = ContactHistoryService(communityApiClient, personDetailsService, userAccessValidator, documentService, recommendationService)
 
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, false, false))
   }
 
   @Test
@@ -67,15 +67,11 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = contactHistoryService.getContactHistory(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       assertThat(
         response,
@@ -92,15 +88,11 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   fun `given user not found for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Forbidden", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Forbidden"))
 
       val response = contactHistoryService.getContactHistory(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       assertThat(
         response,

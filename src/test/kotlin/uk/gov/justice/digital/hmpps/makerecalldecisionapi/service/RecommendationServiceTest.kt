@@ -31,10 +31,10 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.willReturn
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Staff
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
@@ -57,10 +57,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -1127,15 +1127,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `given case is excluded when fetching a recommendation for user then return user access response details`() {
     runTest {
       // given
-      given(communityApiClient.getUserAccess(anyString())).willThrow(
-        WebClientResponseException(
-          403,
-          "Forbidden",
-          null,
-          excludedResponse().toByteArray(),
-          null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
       given(recommendationRepository.findById(anyLong())).willReturn {
         Optional.of(
           RecommendationEntity(
@@ -1151,7 +1143,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // then
       assertThat(response.userAccessResponse).isEqualTo(
-        UserAccessResponse(
+        UserAccess(
           userRestricted = false,
           userExcluded = true,
           userNotFound = false,
@@ -1165,16 +1157,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded when creating a recommendation for user then return user access response details`() {
     runTest {
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null)
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
       try {
         recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
         fail()
       } catch (actual: UserAccessException) {
         val expected = UserAccessException(
           Gson().toJson(
-            UserAccessResponse(
+            UserAccess(
               userRestricted = false,
               userExcluded = true,
               userNotFound = false,
@@ -1185,16 +1175,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
         assertThat(actual.message, equalTo((expected.message)))
       }
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
     }
   }
 
   @Test
   fun `given case is excluded when updating a recommendation for user then no update is made to db`() {
     runTest {
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(403, "Forbidden", null, excludedResponse().toByteArray(), null)
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
 
       val existingRecommendation = RecommendationEntity(
         id = 1,
@@ -1214,7 +1202,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
       then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
   }
@@ -1254,15 +1242,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `given user is not found when updating a recommendation for user then return user access response details`() {
     runTest {
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404,
-          "Not found",
-          null,
-          null,
-          null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val existingRecommendation = RecommendationEntity(
         id = 1,
@@ -1278,7 +1258,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RecommendationResponse(
-            userAccessResponse = UserAccessResponse(
+            userAccessResponse = UserAccess(
               userRestricted = false,
               userExcluded = false,
               userNotFound = true,
@@ -1294,15 +1274,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded when updating a recommendation for user then return user access response details`() {
     runTest {
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403,
-          "Forbidden",
-          null,
-          excludedResponse().toByteArray(),
-          null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val existingRecommendation = RecommendationEntity(
         id = 1,
@@ -1318,7 +1290,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RecommendationResponse(
-            userAccessResponse = UserAccessResponse(
+            userAccessResponse = UserAccess(
               userRestricted = false,
               userExcluded = true,
               userNotFound = false,

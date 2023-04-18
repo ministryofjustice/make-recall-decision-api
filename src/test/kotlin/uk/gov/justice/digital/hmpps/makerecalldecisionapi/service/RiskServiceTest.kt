@@ -35,6 +35,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 
@@ -665,15 +666,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
 
       val response = riskService.getRisk(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -690,15 +687,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given user not found then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Not found", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willThrow(PersonNotFoundException("Not found"))
 
       val response = riskService.getRisk(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,

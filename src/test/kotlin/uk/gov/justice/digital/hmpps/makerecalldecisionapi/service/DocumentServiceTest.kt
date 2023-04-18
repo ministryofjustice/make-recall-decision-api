@@ -51,8 +51,8 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @Test
   fun `throws exception when case excluded`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(true, false, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(true, false, false))
 
     Assertions.assertThatThrownBy {
       runTest {
@@ -66,8 +66,8 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @Test
   fun `throws exception when case restricted`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, true, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, true, false))
 
     Assertions.assertThatThrownBy {
       runTest {
@@ -81,8 +81,8 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @Test
   fun `throws exception when calling user not found`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false, true) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, false, true))
 
     Assertions.assertThatThrownBy {
       runTest {

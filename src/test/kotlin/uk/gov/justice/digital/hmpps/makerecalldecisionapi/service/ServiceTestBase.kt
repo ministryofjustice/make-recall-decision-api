@@ -5,6 +5,9 @@ import org.mockito.BDDMockito.anyString
 import org.mockito.Mock
 import org.mockito.Mockito.lenient
 import org.mockito.kotlin.doReturn
+import org.springframework.security.authentication.TestingAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.context.SecurityContextImpl
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
@@ -20,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Pe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview.Identifiers
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -47,8 +51,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -113,12 +115,15 @@ internal abstract class ServiceTestBase {
 
   protected val crn = "12345"
 
+  protected val username = "SOME_USER"
+
   @BeforeEach
   fun userValidatorSetup() {
+    SecurityContextHolder.setContext(SecurityContextImpl(TestingAuthenticationToken(username, "password")))
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(personDetailsResponse())
     partADocumentMapper = PartADocumentMapper()
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
-    userAccessValidator = UserAccessValidator(communityApiClient)
+    userAccessValidator = UserAccessValidator(deliusClient)
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
@@ -608,11 +613,31 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccessResponse(
+  protected fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccess(
     userRestricted = restricted,
     userExcluded = excluded,
     userNotFound = userNotFound,
     exclusionMessage = "I am an exclusion message",
+    restrictionMessage = "I am a restriction message"
+  )
+
+  protected fun noAccessLimitations() = UserAccess(
+    userRestricted = false,
+    userExcluded = false,
+    userNotFound = false,
+  )
+
+  protected fun excludedAccess() = UserAccess(
+    userRestricted = false,
+    userExcluded = true,
+    userNotFound = false,
+    exclusionMessage = "I am an exclusion message",
+  )
+
+  protected fun restrictedAccess() = UserAccess(
+    userRestricted = true,
+    userExcluded = false,
+    userNotFound = false,
     restrictionMessage = "I am a restriction message"
   )
 

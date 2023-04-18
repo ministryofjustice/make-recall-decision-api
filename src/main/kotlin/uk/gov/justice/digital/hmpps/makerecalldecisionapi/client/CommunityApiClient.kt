@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import java.time.Duration
@@ -46,26 +45,6 @@ class CommunityApiClient(
         )
       }
     log.info(normalizeSpace("Returning contact summary for $crn"))
-    return result
-  }
-
-  fun getUserAccess(crn: String): Mono<UserAccessResponse> {
-    log.info(normalizeSpace("About to check user access details for $crn"))
-
-    val responseType = object : ParameterizedTypeReference<UserAccessResponse>() {}
-    val result = webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/userAccess")
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "user access"
-        )
-      }
-    log.info(normalizeSpace("Returning user access details for $crn"))
     return result
   }
 
