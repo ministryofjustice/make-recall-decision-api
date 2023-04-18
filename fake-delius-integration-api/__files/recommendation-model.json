@@ -16,6 +16,9 @@
     "ethnicity": "White",
     "primaryLanguage": "English"
   },
+  "mainAddress": {
+    "noFixedAbode": false
+  },
   "mappa": {
     "level": 1,
     "category": 0,
@@ -34,7 +37,7 @@
       "number": "1",
       "mainOffence": {
         "code": "1234",
-        "description": "Buggery and attempted buggery",
+        "description": "(Buggery and attempted buggery - 01600)",
         "date": "2022-04-24"
       },
       "additionalOffences": [],
@@ -54,7 +57,7 @@
       "number": "1",
       "mainOffence": {
         "code": "1234",
-        "description": "Buggery and attempted buggery",
+        "description": "(Buggery and attempted buggery - 01600)",
         "date": "2022-04-24"
       },
       "additionalOffences": [],
