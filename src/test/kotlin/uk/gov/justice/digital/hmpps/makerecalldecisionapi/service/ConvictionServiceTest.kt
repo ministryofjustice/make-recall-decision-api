@@ -1,17 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyLong
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
@@ -25,55 +16,6 @@ import java.time.LocalDateTime
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class ConvictionServiceTest : ServiceTestBase() {
-
-  @Test
-  fun `given an active conviction and licence conditions with documents then return these details in the response`() {
-    runTest {
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.fromCallable { licenceConditions })
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-
-      val response = convictionService.buildConvictionResponse(crn, true)
-
-      then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(communityApiClient).should().getGroupedDocuments(crn)
-      then(communityApiClient).shouldHaveNoMoreInteractions()
-
-      com.natpryce.hamkrest.assertion.assertThat(
-        response,
-        equalTo(
-          expectedOffenceWithLicenceConditionsResponse(licenceConditions, true),
-        )
-      )
-    }
-  }
-
-  @Test
-  fun `given an active conviction and licence conditions with no documents required then return these details in the response`() {
-    runTest {
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(custodialConvictionResponse()) })
-      given(communityApiClient.getLicenceConditionsByConvictionId(anyString(), anyLong()))
-        .willReturn(Mono.fromCallable { licenceConditions })
-
-      val response = convictionService.buildConvictionResponse(crn, false)
-
-      then(communityApiClient).should().getActiveConvictions(crn)
-      then(communityApiClient).should().getLicenceConditionsByConvictionId(crn, 2500614567)
-      then(communityApiClient).shouldHaveNoMoreInteractions()
-
-      com.natpryce.hamkrest.assertion.assertThat(
-        response,
-        equalTo(
-          expectedOffenceWithLicenceConditionsResponse(licenceConditions, false),
-        )
-      )
-    }
-  }
 
   private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: LicenceConditions?, showDocuments: Boolean): List<ConvictionResponse> {
     val documents = if (showDocuments) listOf(

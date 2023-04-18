@@ -45,7 +45,7 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
   )
 }
 
-fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, staffCode: String?): MrdEvent {
+fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, username: String, staffCode: String?): MrdEvent {
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
     message = MrdEventMessageBody(
@@ -58,7 +58,7 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
       additionalInformation = AdditionalInformation(
         contactOutcome = contactOutcome,
         recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(staffCode = staffCode)
+        bookedBy = BookedBy(username, staffCode)
       )
     ),
     messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.management-oversight"))
@@ -107,6 +107,7 @@ data class AdditionalInformation(
 )
 
 data class BookedBy(
+  val username: String,
   val staffCode: String? = null
 )
 

@@ -249,7 +249,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
-    personalDetailsResponseOneTimeOnly(crn = crn, delaySeconds = 0L, firstName = "Arthur")
+    recommendationModelResponse(crn = crn, delaySeconds = 0L, firstName = "Arthur")
     roSHSummaryResponse(crn)
     updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation, riskOfSeriousHarm")
     updateRecommendation(secondUpdateRecommendationRequest())
@@ -501,13 +501,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `generate a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
-    personalDetailsResponseOneTimeOnly(crn)
-    convictionResponse(crn, "011")
-    licenceConditionsResponse(crn, 2500614567)
+    personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
-    personalDetailsResponseOneTimeOnly(crn)
+    recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    personalDetailsResponseOneTimeOnly(crn)
 
     val featureFlagString = "{\"flagSendDomainEvent\": false, \"unknownFeatureFlag\": true }"
 
@@ -820,44 +817,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     )
   }
 
-  @Test
-  fun `given no staff code available for spo user when creating contact in delius`() {
-    runTest {
-      mappaDetailsResponse(crn)
-      userAccessAllowed(crn)
-      personalDetailsResponseOneTimeOnly(crn)
-      convictionResponse(crn, "011")
-      licenceConditionsResponse(crn, 2500614567)
-      releaseSummaryResponse(crn)
-      oasysAssessmentsResponse(crn)
-      deleteAndCreateRecommendation()
-      updateWithManagerRecallDecision(managerRecallDecisionRequest(decision = "RECALL"))
-
-      webTestClient.patch()
-        .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(managerRecallDecisionRequestWithIsSentToDeliusOnly("true"))
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
-        .exchange()
-        .expectStatus().is5xxServerError
-        .expectBody()
-        .jsonPath("$.userMessage")
-        .isEqualTo("Unexpected error: No staffCode available for: SOME_USER from the community-api")
-        .jsonPath("$.developerMessage").isEqualTo("No staffCode available for: SOME_USER from the community-api")
-        .jsonPath("$.error").isEqualTo("DELIUS_CONTACT_CREATION_FAILED")
-        .jsonPath("$.status").isEqualTo(500)
-
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.managerRecallDecision.isSentToDelius").isEqualTo(false)
-    }
-  }
   @Test
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {

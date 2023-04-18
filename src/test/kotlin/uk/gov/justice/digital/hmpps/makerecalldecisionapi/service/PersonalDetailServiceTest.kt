@@ -15,7 +15,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
@@ -177,7 +177,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
       given(communityApiClient.getUserAccess(anyString()))
         .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
       given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse(address = PersonalDetails.Address(postcode = "Nf1 1nf")))
+        .willReturn(deliusPersonalDetailsResponse(address = Address(postcode = "Nf1 1nf")))
 
       // when
       val response = personDetailsService.getPersonDetails(crn)
@@ -202,7 +202,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
           ethnicity = null,
           primaryLanguage = null,
           manager = null,
-          address = PersonalDetails.Address(
+          address = Address(
             postcode = null,
             district = null,
             addressNumber = null,

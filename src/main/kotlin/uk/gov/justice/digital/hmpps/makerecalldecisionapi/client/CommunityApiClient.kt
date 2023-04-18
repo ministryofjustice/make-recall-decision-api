@@ -11,20 +11,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ContactSummaryResponseCommunity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoActiveConvictionsException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ReleaseDetailsNotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.DELIUS_CONTACT_CREATION_FAILED
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -36,125 +26,6 @@ class CommunityApiClient(
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
-  fun getStaffDetails(username: String): Mono<StaffDetailsResponse> {
-    log.info(normalizeSpace("About to get staff details for $username"))
-
-    val responseType = object : ParameterizedTypeReference<StaffDetailsResponse>() {}
-    val result = webClient
-      .get()
-      .uri("/secure/staff/username/$username")
-      .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw NoStaffCodeException(message = "No staffCode available for: $username from the community-api", error = DELIUS_CONTACT_CREATION_FAILED.toString()) }
-      )
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "staff details"
-        )
-      }
-    log.info(normalizeSpace("Returning staff details for $username"))
-    return result
-  }
-
-  fun getRegistrations(crn: String): Mono<RegistrationsResponse> {
-    log.info(normalizeSpace("Second about to get registrations for $crn"))
-
-    val responseType = object : ParameterizedTypeReference<RegistrationsResponse>() {}
-    val result = webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/registrations")
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "registrations"
-        )
-      }
-    log.info(normalizeSpace("Returning registrations for $crn"))
-    return result
-  }
-
-  fun getActiveConvictions(crn: String, activeOnly: Boolean? = true): Mono<List<Conviction>> {
-    log.info(normalizeSpace("About to get active convictions for $crn"))
-    val responseType = object : ParameterizedTypeReference<List<Conviction>>() {}
-
-    val result = webClient
-      .get()
-      .uri {
-        it.path("/secure/offenders/crn/$crn/convictions")
-          .queryParam("activeOnly", activeOnly)
-          .build()
-      }
-      .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw NoActiveConvictionsException("No active convictions present for crn: $crn") }
-      )
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .onErrorResume { ex ->
-        when (ex) {
-          is NoActiveConvictionsException -> Mono.fromCallable { emptyList() }
-          else -> Mono.error(ex)
-        }
-      }
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "convictions"
-        )
-      }
-
-    log.info(normalizeSpace("Returning active convictions for $crn"))
-
-    return result
-  }
-
-  fun getLicenceConditionsByConvictionId(crn: String, convictionId: Long?): Mono<LicenceConditions> {
-    log.info(normalizeSpace("About to get licence conditions for $crn by convictionId $convictionId"))
-
-    val responseType = object : ParameterizedTypeReference<LicenceConditions>() {}
-    val result = webClient
-      .get()
-      .uri {
-        it.path("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
-          .build()
-      }
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "licenceConditions"
-        )
-      }
-    log.info(normalizeSpace("Returning licence conditions for $crn by convictionId $convictionId"))
-    return result
-  }
-
-  fun getAllMappaDetails(crn: String): Mono<MappaResponse> {
-    val responseType = object : ParameterizedTypeReference<MappaResponse>() {}
-    return webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/risk/mappa")
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "mappa"
-        )
-      }
   }
 
   fun getContactSummary(crn: String): Mono<ContactSummaryResponseCommunity> {
@@ -175,36 +46,6 @@ class CommunityApiClient(
         )
       }
     log.info(normalizeSpace("Returning contact summary for $crn"))
-    return result
-  }
-
-  fun getReleaseSummary(crn: String): Mono<ReleaseSummaryResponse> {
-    log.info(normalizeSpace("About to get release summary for $crn"))
-
-    val responseType = object : ParameterizedTypeReference<ReleaseSummaryResponse>() {}
-    val result = webClient
-      .get()
-      .uri("/secure/offenders/crn/$crn/release")
-      .retrieve()
-      .onStatus(
-        { httpStatus -> HttpStatus.BAD_REQUEST == httpStatus },
-        { throw ReleaseDetailsNotFoundException("No release details found for case $crn") }
-      )
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(nDeliusTimeout))
-      .onErrorResume { ex ->
-        when (ex) {
-          is ReleaseDetailsNotFoundException -> Mono.fromCallable { ReleaseSummaryResponse(lastRelease = null, lastRecall = null) }
-          else -> Mono.error(ex)
-        }
-      }
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-          endPoint = "release summary"
-        )
-      }
-    log.info(normalizeSpace("Returning release summary for $crn"))
     return result
   }
 

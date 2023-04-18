@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
@@ -35,13 +34,13 @@ import org.mockito.kotlin.willReturn
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
@@ -58,7 +57,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.StaffDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.UserAccessResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -143,9 +141,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
-        convictionService,
         riskServiceMocked,
-        communityApiClient,
+        deliusClient,
         mrdEmitterMocked
       )
 
@@ -367,7 +364,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       val featureFlags = when (scenario) {
         "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
@@ -376,7 +373,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       }
 
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, featureFlags)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), featureFlags)
 
       // then
       recallConsideredIdWorkaround(recommendationToSave)
@@ -444,7 +441,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), null)
 
       then(recommendationRepository).should().findById(1)
     }
@@ -518,7 +515,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       try {
         recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
@@ -576,13 +573,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       if (isSentToDelius == "true") {
-        given(communityApiClient.getStaffDetails(anyString())).willReturn(
-          Mono.fromCallable {
-            StaffDetailsResponse(
-              staffCode = "ABC123"
-            )
-          }
-        )
+        given(deliusClient.getStaff(anyString())).willReturn(Staff(code = "ABC123"))
       }
 
       // and
@@ -597,7 +588,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       // when
       recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "bill", "Bill")
@@ -652,7 +643,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
@@ -673,7 +664,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null
       )
 
-      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
+      then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
 
@@ -695,7 +686,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-      given(communityApiClient.getReleaseSummary(anyString())).willReturn(Mono.fromCallable { allReleaseSummariesResponse() })
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
@@ -716,7 +707,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null
       )
 
-      then(communityApiClient).should(times(1)).getReleaseSummary(anyString())
+      then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
 
@@ -739,7 +730,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-      given(communityApiClient.getAllMappaDetails(anyString())).willReturn(Mono.fromCallable { mappaResponse() })
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
@@ -760,7 +751,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null
       )
 
-      then(communityApiClient).should(times(1)).getAllMappaDetails(anyString())
+      then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
 
@@ -840,7 +831,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
-      given(communityApiClient.getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse("Extended Determinate Sentence")) })
+      given(deliusClient.getRecommendationModel(anyString()))
+        .willReturn(deliusRecommendationModelResponse(activeConvictions = listOf(custodialConviction("Extended Determinate Sentence"))))
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 
@@ -862,7 +854,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       then(arnApiClient).should().getAssessments(anyString())
-      then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
+      then(deliusClient).should().getRecommendationModel(ArgumentMatchers.anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
 
@@ -888,6 +880,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
 
       recommendationService.updateRecommendation(
         recommendationJsonNode,
@@ -901,7 +894,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null
       )
 
-      then(mockPersonDetailService).should().getPersonDetails(anyString())
+      then(deliusClient).should().getRecommendationModel(anyString())
 
       val recommendationEntity = recommendationCaptor.firstValue
       val expected = personDetailsResponse().toPersonOnProbation()
@@ -919,82 +912,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(expected.dateOfBirth).isEqualTo(actual?.dateOfBirth)
       assertThat(expected.addresses).isEqualTo(actual?.addresses)
       assertThat(expected.firstName).isEqualTo(actual?.firstName)
-    }
-  }
-
-  @ParameterizedTest()
-  @CsvSource(
-    "Extended Determinate Sentence",
-    "CJA - Extended Sentence",
-    "Random sentence description",
-    "Random sentence description with extended selected in recommendation journey"
-  )
-  fun `update recommendation with conviction details from Delius when convictionDetail page refresh received`(
-    sentenceDescription: String
-  ) {
-    runTest {
-      val existingRecommendation = RecommendationEntity(
-        id = 1,
-        data = RecommendationModel(
-          crn = crn
-        )
-      )
-
-      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
-      given(
-        communityApiClient.getActiveConvictions(
-          ArgumentMatchers.anyString(),
-          anyBoolean()
-        )
-      ).willReturn(Mono.fromCallable { listOf(custodialConvictionResponse(sentenceDescription)) })
-
-      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-
-      if (sentenceDescription == "Random sentence description with extended selected in recommendation journey") {
-        updateRecommendationRequest.isExtendedSentence = true
-      }
-
-      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
-      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
-
-      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
-
-      recommendationService.updateRecommendation(
-        recommendationJsonNode,
-        1L,
-        "bill",
-        "Bill",
-        null,
-        false,
-        false,
-        listOf("convictionDetail"),
-        null
-      )
-
-      then(communityApiClient).should().getActiveConvictions(ArgumentMatchers.anyString(), anyBoolean())
-
-      val recommendationEntity = recommendationCaptor.firstValue
-
-      val expectedCustodialTerm = if (sentenceDescription != "Random sentence description") "6 Days" else null
-      val expectedExtendedTerm = if (sentenceDescription != "Random sentence description") "10 Months" else null
-
-      assertThat(recommendationEntity.data.convictionDetail).isEqualTo(
-        ConvictionDetail(
-          indexOffenceDescription = "Robbery (other than armed robbery)",
-          dateOfOriginalOffence = LocalDate.parse("2022-08-26"),
-          dateOfSentence = LocalDate.parse("2022-04-26"),
-          lengthOfSentence = 6,
-          lengthOfSentenceUnits = "Days",
-          sentenceDescription = sentenceDescription,
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
-          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          sentenceSecondLength = 10,
-          sentenceSecondLengthUnits = "Months",
-          custodialTerm = expectedCustodialTerm,
-          extendedTerm = expectedExtendedTerm,
-          hasBeenReviewed = true,
-        )
-      )
     }
   }
 
@@ -1040,7 +957,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           null,
           false,
           false,
-          null,
+          emptyList(),
           null
         )
       }
@@ -1293,7 +1210,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), null)
       } catch (e: UserAccessException) {
         // nothing to do here!!
       }
@@ -1326,7 +1243,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       try {
-        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, null, null)
+        recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), null)
       } catch (e: InvalidRequestException) {
         // nothing to do here!!
       }
@@ -1632,9 +1549,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
-        convictionService,
         riskServiceMocked,
-        communityApiClient,
+        deliusClient,
         mrdEmitterMocked
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
@@ -1803,9 +1719,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       mockPersonDetailService,
       templateReplacementServiceMocked,
       userAccessValidator,
-      convictionService,
-      RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null),
-      communityApiClient,
+      RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+      deliusClient,
       mrdEmitterMocked
     )
   }

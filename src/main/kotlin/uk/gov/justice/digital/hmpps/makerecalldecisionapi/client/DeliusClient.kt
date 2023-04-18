@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
@@ -27,6 +30,8 @@ class DeliusClient(
   fun getOverview(crn: String): Overview = call("/case-summary/$crn/overview")
   fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
   fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
+  fun getRecommendationModel(crn: String): RecommendationModel = call("/case-summary/$crn/recommendation-model")
+  fun getStaff(username: String): Staff = call("/user/$username/staff")
 
   private inline fun <reified T : Any> call(endpoint: String): T {
     log.info(normalizeSpace("About to call $endpoint"))
@@ -94,21 +99,22 @@ class DeliusClient(
     )
   }
 
+  data class Address(
+    val buildingName: String? = null,
+    val addressNumber: String? = null,
+    val streetName: String? = null,
+    val district: String? = null,
+    val town: String? = null,
+    val county: String? = null,
+    val postcode: String? = null,
+    val noFixedAbode: Boolean? = null,
+  )
+
   data class PersonalDetails(
     val personalDetails: PersonalDetailsOverview,
     val mainAddress: Address?,
     val communityManager: Manager?,
   ) {
-    data class Address(
-      val buildingName: String? = null,
-      val addressNumber: String? = null,
-      val streetName: String? = null,
-      val district: String? = null,
-      val town: String? = null,
-      val county: String? = null,
-      val postcode: String? = null,
-      val noFixedAbode: Boolean? = null,
-    )
     data class Manager(
       val staffCode: String,
       val name: Name,
@@ -129,23 +135,24 @@ class DeliusClient(
     }
   }
 
+  data class Release(
+    val releaseDate: LocalDate,
+    val recallDate: LocalDate?
+  )
+
+  data class Conviction(
+    val number: String? = null,
+    val sentence: Sentence?,
+    val mainOffence: Offence,
+    val additionalOffences: List<Offence>
+  )
+
   data class Overview(
     val personalDetails: PersonalDetailsOverview,
     val registerFlags: List<String>,
     val lastRelease: Release?,
     val activeConvictions: List<Conviction>
-  ) {
-    data class Release(
-      val releaseDate: LocalDate,
-      val recallDate: LocalDate?
-    )
-    data class Conviction(
-      val number: String? = null,
-      val sentence: Sentence?,
-      val mainOffence: Offence,
-      val additionalOffences: List<Offence>
-    )
-  }
+  )
 
   data class LicenceConditions(
     val personalDetails: PersonalDetailsOverview,
@@ -169,16 +176,17 @@ class DeliusClient(
     )
   }
 
+  data class Mappa(
+    val category: Int?,
+    val level: Int?,
+    val startDate: LocalDate
+  )
+
   data class MappaAndRoshHistory(
     val personalDetails: PersonalDetailsOverview,
     val mappa: Mappa?,
     val roshHistory: List<Rosh>
   ) {
-    data class Mappa(
-      val category: Int?,
-      val level: Int?,
-      val startDate: LocalDate
-    )
     data class Rosh(
       val active: Boolean,
       val type: String,
@@ -187,4 +195,73 @@ class DeliusClient(
       val startDate: LocalDate
     )
   }
+
+  data class RecommendationModel(
+    val personalDetails: PersonalDetailsOverview,
+    val mainAddress: Address?,
+    val lastRelease: Release?,
+    val lastReleasedFromInstitution: Institution?,
+    val mappa: Mappa?,
+    val activeConvictions: List<Conviction>,
+    val activeCustodialConvictions: List<ConvictionDetails>
+  ) {
+    data class Institution(
+      val name: String,
+    )
+    data class ConvictionDetails(
+      val number: String? = null,
+      val sentence: ExtendedSentence,
+      val mainOffence: Offence,
+      val additionalOffences: List<Offence>
+    )
+    data class ExtendedSentence(
+      val description: String,
+      val length: Int?,
+      val lengthUnits: String?,
+      val secondLength: Int?,
+      val secondLengthUnits: String?,
+      val isCustodial: Boolean,
+      val custodialStatusCode: String?,
+      val startDate: LocalDate?,
+      val licenceExpiryDate: LocalDate?,
+      val sentenceExpiryDate: LocalDate?
+    )
+  }
+
+  data class Staff(
+    val code: String?
+  )
+}
+
+fun DeliusClient.RecommendationModel.toPersonOnProbation() = PersonOnProbation(
+  croNumber = personalDetails.identifiers.croNumber,
+  mostRecentPrisonerNumber = personalDetails.identifiers.bookingNumber,
+  nomsNumber = personalDetails.identifiers.nomsNumber,
+  pncNumber = personalDetails.identifiers.pncNumber,
+  name = joinToString(personalDetails.name.forename, personalDetails.name.surname),
+  firstName = personalDetails.name.forename,
+  middleNames = personalDetails.name.middleName,
+  surname = personalDetails.name.surname,
+  gender = personalDetails.gender,
+  ethnicity = personalDetails.ethnicity ?: "",
+  primaryLanguage = personalDetails.primaryLanguage,
+  dateOfBirth = personalDetails.dateOfBirth,
+  addresses = mainAddress.toAddresses(),
+)
+
+fun DeliusClient.Address?.toAddresses() = listOfNotNull(
+  this?.let {
+    Address(
+      line1 = joinToString(buildingName, addressNumber, streetName),
+      line2 = district ?: "",
+      town = town ?: "",
+      postcode = postcode ?: "",
+      noFixedAbode = isNoFixedAbode(it)
+    )
+  }
+)
+
+private fun isNoFixedAbode(it: DeliusClient.Address): Boolean {
+  val postcodeUppercaseNoWhiteSpace = it.postcode?.filter { !it.isWhitespace() }?.uppercase()
+  return postcodeUppercaseNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
 }

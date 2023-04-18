@@ -42,18 +42,17 @@ class CaseOverviewControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].offences.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].offences[0].mainOffence").isEqualTo("true")
-        .jsonPath("$.convictions[0].offences[0].description").isEqualTo("Robbery (other than armed robbery)")
-        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("Extended Determinate Sentence")
-        .jsonPath("$.convictions[0].sentenceOriginalLength").isEqualTo("12")
-        .jsonPath("$.convictions[0].sentenceOriginalLengthUnits").isEqualTo("days")
-        .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
-        .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
-        .jsonPath("$.convictions[0].statusCode").isEqualTo("ABC123")
-        .jsonPath("$.releaseSummary.lastRelease.date").isEqualTo("2017-09-15")
+        .jsonPath("$.activeConvictions.length()").isEqualTo(1)
+        .jsonPath("$.activeConvictions[0].additionalOffences.length()").isEqualTo(0)
+        .jsonPath("$.activeConvictions[0].mainOffence.description").isEqualTo("Robbery (other than armed robbery)")
+        .jsonPath("$.activeConvictions[0].sentence.description").isEqualTo("Extended Determinate Sentence")
+        .jsonPath("$.activeConvictions[0].sentence.length").isEqualTo("12")
+        .jsonPath("$.activeConvictions[0].sentence.lengthUnits").isEqualTo("days")
+        .jsonPath("$.activeConvictions[0].sentence.licenceExpiryDate").isEqualTo("2020-06-25")
+        .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-28")
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
+        .jsonPath("$.activeConvictions[0].sentence.custodialStatusCode").isEqualTo("ABC123")
+        .jsonPath("$.lastRelease.releaseDate").isEqualTo("2017-09-15")
         .jsonPath("$.risk.flags.length()").isEqualTo(1)
         .jsonPath("$.risk.flags[0]").isEqualTo("Victim contact")
         .jsonPath("$.risk.riskManagementPlan.assessmentStatusComplete").isEqualTo(true)
@@ -103,7 +102,7 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(false)
     }
   }
 
@@ -125,7 +124,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(0)
+        .jsonPath("$.activeConvictions.length()").isEqualTo(0)
     }
   }
 

@@ -10,5 +10,7 @@ open class RecommendationDataToDocumentMapper {
       } else "$firstName $middleNames $surname"
       return formattedField
     }
+
+    fun joinToString(vararg parts: String?) = parts.filter { !it.isNullOrBlank() }.joinToString(" ")
   }
 }

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
@@ -16,9 +17,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Ma
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview.Identifiers
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -39,12 +40,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institu
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LastRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Reason
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ReleaseSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
@@ -101,8 +99,6 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var documentService: DocumentService
 
-  protected lateinit var convictionService: ConvictionService
-
   protected lateinit var vulnerabilitiesService: VulnerabilitiesService
 
   protected lateinit var recommendationService: RecommendationService
@@ -125,11 +121,10 @@ internal abstract class ServiceTestBase {
     userAccessValidator = UserAccessValidator(communityApiClient)
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(communityApiClient, userAccessValidator)
-    convictionService = ConvictionService(communityApiClient, documentService)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
-    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, convictionService, RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, null), communityApiClient, null)
+    recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, null)
     recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, recommendationRepository)
-    riskService = RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, recommendationService)
+    riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }
 
@@ -368,7 +363,7 @@ internal abstract class ServiceTestBase {
     communityManager = manager
   )
 
-  protected fun nonCustodialConviction() = Overview.Conviction(
+  protected fun nonCustodialConviction() = DeliusClient.Conviction(
     number = "1",
     mainOffence = DeliusClient.Offence(
       code = "ABC123",
@@ -393,7 +388,7 @@ internal abstract class ServiceTestBase {
     ),
   )
 
-  protected fun custodialConviction(description: String = "CJA - Extended Sentence") = Overview.Conviction(
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
     number = "1",
     mainOffence = DeliusClient.Offence(
       code = "ABC123",
@@ -418,7 +413,7 @@ internal abstract class ServiceTestBase {
     ),
   )
 
-  protected fun Overview.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
+  protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
     number = number,
     mainOffence = mainOffence,
     additionalOffences = additionalOffences,
@@ -433,7 +428,7 @@ internal abstract class ServiceTestBase {
     ethnicity: String? = "Ainu",
     primaryLanguage: String? = "English",
     registerFlags: List<String> = listOf("Victim contact"),
-    activeConvictions: List<Overview.Conviction> = listOf(nonCustodialConviction())
+    activeConvictions: List<DeliusClient.Conviction> = listOf(nonCustodialConviction())
   ) = Overview(
     personalDetails = DeliusClient.PersonalDetailsOverview(
       name = Name(forename, middleName, surname),
@@ -450,7 +445,7 @@ internal abstract class ServiceTestBase {
     ),
     registerFlags = registerFlags,
     activeConvictions = activeConvictions,
-    lastRelease = Overview.Release(
+    lastRelease = DeliusClient.Release(
       releaseDate = LocalDate.of(2017, 9, 15),
       recallDate = LocalDate.of(2020, 10, 15)
     )
@@ -481,7 +476,7 @@ internal abstract class ServiceTestBase {
   )
 
   protected fun deliusMappaAndRoshHistoryResponse(
-    mappa: MappaAndRoshHistory.Mappa? = MappaAndRoshHistory.Mappa(
+    mappa: DeliusClient.Mappa? = DeliusClient.Mappa(
       category = 0, level = 1, startDate = LocalDate.parse("2021-02-10")
     ),
     roshHistory: List<MappaAndRoshHistory.Rosh> = listOf(
@@ -516,35 +511,68 @@ internal abstract class ServiceTestBase {
     roshHistory = roshHistory
   )
 
-  protected fun mappaResponse(): MappaResponse {
-
-    return MappaResponse(
-      level = 1,
-      levelDescription = "MAPPA Level 1",
-      category = 0,
-      categoryDescription = "All - Category to be determined",
-      startDate = LocalDate.parse("2021-02-10"),
-      reviewDate = LocalDate.parse("2021-05-10"),
-      team = Team(
-        code = "N07CHT",
-        description = "Automation SPG",
-        emailAddress = null,
-        telephone = null,
-        localDeliveryUnit = null
+  protected fun deliusRecommendationModelResponse(
+    activeConvictions: List<DeliusClient.Conviction> = listOf(custodialConviction(), nonCustodialConviction()),
+    mappa: DeliusClient.Mappa? = DeliusClient.Mappa(
+      category = 0, level = 1, startDate = LocalDate.parse("2021-02-10")
+    ),
+    forename: String = "John",
+    middleName: String? = "Homer Bart",
+    surname: String = "Smith",
+    ethnicity: String? = "Ainu",
+    primaryLanguage: String? = "English",
+  ) = RecommendationModel(
+    personalDetails = DeliusClient.PersonalDetailsOverview(
+      name = Name(forename, middleName, surname),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = ethnicity,
+      primaryLanguage = primaryLanguage,
+      identifiers = Identifiers(
+        pncNumber = "2004/0712343H",
+        croNumber = "123456/04A",
+        nomsNumber = "A1234CR",
+        bookingNumber = "G12345"
       ),
-      officer = Officer(
-        code = "N07A060",
-        forenames = "NDelius26",
-        surname = "Anderson",
-        unallocated = false
-      ),
-      probationArea = ProbationArea(
-        code = "N07",
-        description = "NPS London"
-      ),
-      notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
+    ),
+    mainAddress = Address(
+      addressNumber = "Line 1 address",
+      district = "Line 2 address",
+      town = "Town address",
+      postcode = "TS1 1ST",
+      noFixedAbode = false
+    ),
+    mappa = mappa,
+    activeConvictions = activeConvictions,
+    activeCustodialConvictions = listOf(
+      custodialConviction().let {
+        RecommendationModel.ConvictionDetails(
+          number = it.number,
+          sentence = it.sentence!!.let { sentence ->
+            RecommendationModel.ExtendedSentence(
+              secondLength = 2,
+              secondLengthUnits = "Years",
+              startDate = LocalDate.parse("2021-01-01"),
+              description = sentence.description,
+              length = sentence.length,
+              lengthUnits = sentence.lengthUnits,
+              isCustodial = sentence.isCustodial,
+              custodialStatusCode = sentence.custodialStatusCode,
+              licenceExpiryDate = sentence.licenceExpiryDate,
+              sentenceExpiryDate = sentence.sentenceExpiryDate
+            )
+          },
+          mainOffence = it.mainOffence,
+          additionalOffences = it.additionalOffences
+        )
+      }
+    ),
+    lastReleasedFromInstitution = RecommendationModel.Institution("In the Community"),
+    lastRelease = DeliusClient.Release(
+      releaseDate = LocalDate.of(2017, 9, 15),
+      recallDate = LocalDate.of(2020, 10, 15)
     )
-  }
+  )
 
   protected fun riskSummaryResponse(): RiskSummaryResponse {
     return RiskSummaryResponse(

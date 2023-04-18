@@ -45,6 +45,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusNoMappaOrRoshHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRecommendationModelResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.communityApiLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
@@ -381,6 +382,16 @@ abstract class IntegrationTestBase {
       request().withPath("/case-summary/$crn/mappa-and-rosh-history")
 
     deliusIntegration.`when`(request).respond(response().withStatusCode(404))
+  }
+
+  protected fun recommendationModelResponse(crn: String, delaySeconds: Long = 0, firstName: String = "John") {
+    val request =
+      request().withPath("/case-summary/$crn/recommendation-model")
+
+    deliusIntegration.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON).withBody(deliusRecommendationModelResponse(firstName))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
   }
 
   protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {

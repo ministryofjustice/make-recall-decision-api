@@ -57,7 +57,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val convictions = response.convictions
+      val convictions = response.activeConvictions
       val riskFlags = response.risk!!.flags
       val riskManagementPlan = response.risk!!.riskManagementPlan
       val assessments = response.risk?.assessmentInfo
@@ -67,18 +67,16 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("John Smith")
-      assertThat(convictions?.size).isEqualTo(1)
-      assertThat(convictions!![0].offences?.size).isEqualTo(2)
-      assertThat(convictions[0].active).isTrue
-      assertThat(convictions[0].offences!![0].mainOffence).isTrue
-      assertThat(convictions[0].offences!![0].description).isEqualTo("Robbery (other than armed robbery)")
-      assertThat(convictions[0].sentenceDescription).isEqualTo("CJA - Extended Sentence")
-      assertThat(convictions[0].sentenceOriginalLength).isEqualTo(6)
-      assertThat(convictions[0].sentenceOriginalLengthUnits).isEqualTo("Days")
-      assertThat(convictions[0].sentenceExpiryDate).isEqualTo("2022-06-10")
-      assertThat(convictions[0].licenceExpiryDate).isEqualTo("2022-05-10")
-      assertThat(convictions[0].isCustodial).isTrue
-      assertThat(convictions[0].statusCode).isEqualTo("ABC123")
+      assertThat(convictions.size).isEqualTo(1)
+      assertThat(convictions[0].additionalOffences.size).isEqualTo(1)
+      assertThat(convictions[0].mainOffence.description).isEqualTo("Robbery (other than armed robbery)")
+      assertThat(convictions[0].sentence?.description).isEqualTo("CJA - Extended Sentence")
+      assertThat(convictions[0].sentence?.length).isEqualTo(6)
+      assertThat(convictions[0].sentence?.lengthUnits).isEqualTo("Days")
+      assertThat(convictions[0].sentence?.sentenceExpiryDate).isEqualTo("2022-06-10")
+      assertThat(convictions[0].sentence?.licenceExpiryDate).isEqualTo("2022-05-10")
+      assertThat(convictions[0].sentence?.isCustodial).isTrue
+      assertThat(convictions[0].sentence?.custodialStatusCode).isEqualTo("ABC123")
       assertThat(riskFlags!!.size).isEqualTo(1)
       assertThat(riskManagementPlan!!.assessmentStatusComplete).isEqualTo(true)
       assertThat(riskManagementPlan.lastUpdatedDate).isEqualTo("2022-10-01T14:20:27.000Z")
@@ -87,7 +85,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(assessments?.offencesMatch).isEqualTo(true)
       assertThat(assessments?.offenceDescription).isEqualTo("Juicy offence details.")
-      assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
+      assertThat(response.lastRelease?.releaseDate).isEqualTo("2017-09-15")
       then(deliusClient).should().getOverview(crn)
     }
   }
@@ -102,7 +100,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
-      assertThat(response.convictions!![0].isCustodial).isFalse
+      assertThat(response.activeConvictions[0].sentence!!.isCustodial).isFalse
       then(deliusClient).should().getOverview(crn)
     }
   }
@@ -119,7 +117,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val convictionsShouldBeEmpty = response.convictions
+      val convictionsShouldBeEmpty = response.activeConvictions
       val riskFlagsShouldBeEmpty = response.risk!!.flags
 
       assertThat(personalDetails.crn).isEqualTo(crn)
@@ -129,7 +127,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(convictionsShouldBeEmpty).isEmpty()
       assertThat(riskFlagsShouldBeEmpty).isEmpty()
-      assertThat(response.releaseSummary?.lastRelease?.date).isEqualTo("2017-09-15")
+      assertThat(response.lastRelease?.releaseDate).isEqualTo("2017-09-15")
       then(deliusClient).should().getOverview(crn)
     }
   }
@@ -234,7 +232,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val response = caseSummaryOverviewService.getOverview(crn)
 
       val personalDetails = response.personalDetailsOverview!!
-      val convictions = response.convictions
+      val convictions = response.activeConvictions
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth?.until(LocalDate.now())?.years
       val riskFlags = response.risk!!.flags
