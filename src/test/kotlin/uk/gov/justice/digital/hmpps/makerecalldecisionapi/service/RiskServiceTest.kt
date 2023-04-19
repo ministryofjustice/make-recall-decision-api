@@ -18,13 +18,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -946,54 +939,6 @@ internal class RiskServiceTest : ServiceTestBase() {
     violencePredictorScore = null
   )
 
-  private val registrationsResponse = RegistrationsResponse(
-    registrations = listOf(
-      Registration(
-        registrationId = "2500064995",
-        active = true,
-        register = CodeDescriptionItem(code = "1", description = "RoSH"),
-        type = CodeDescriptionItem(code = "ABC123", description = "Victim contact"),
-        startDate = LocalDate.parse("2021-01-30"),
-        notes = "Notes on case"
-      ),
-      Registration(
-        registrationId = "2500064995",
-        active = false,
-        register = CodeDescriptionItem(code = "ABC123", description = "Some description"),
-        type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues"),
-        startDate = LocalDate.parse("2021-01-30"),
-        notes = "string"
-      )
-    )
-  )
-
-  private val mappaResponse = MappaResponse(
-    level = 1,
-    levelDescription = "MAPPA Level 1",
-    category = 0,
-    categoryDescription = "All - Category to be determined",
-    startDate = LocalDate.parse("2021-02-10"),
-    reviewDate = LocalDate.parse("2021-05-10"),
-    team = Team(
-      code = "N07CHT",
-      description = "Automation SPG",
-      emailAddress = null,
-      telephone = null,
-      localDeliveryUnit = null
-    ),
-    officer = Officer(
-      code = "N07A060",
-      forenames = "NDelius26",
-      surname = "Anderson",
-      unallocated = false
-    ),
-    probationArea = ProbationArea(
-      code = "N07",
-      description = "NPS London"
-    ),
-    notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
-  )
-
   private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
     sentence = DeliusClient.Sentence(
       description = sentenceDescription,
@@ -1017,7 +962,4 @@ internal class RiskServiceTest : ServiceTestBase() {
       )
     )
   )
-
-  private fun nonCustodialConviction(sentenceDescription: String = "CJA - Extended Sentence") = convictionResponse(sentenceDescription)
-    .let { it.copy(sentence = it.sentence!!.copy(custodialStatusCode = null, isCustodial = false)) }
 }

@@ -207,26 +207,6 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     )
   }
 
-  private fun expectedContactTypeGroupsResponse(): List<ContactGroupResponse> {
-    return listOf(
-      ContactGroupResponse(
-        groupId = "3",
-        label = "Appointments",
-        contactTypeCodes = listOf("CHVS", "COAI", "COAP")
-      ),
-      ContactGroupResponse(
-        groupId = "11",
-        label = "Home visit",
-        contactTypeCodes = listOf("CHVS")
-      ),
-      ContactGroupResponse(
-        groupId = "unknown",
-        label = "Not categorised",
-        contactTypeCodes = listOf("EASU", "EFGH")
-      )
-    )
-  }
-
   private fun expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn(): List<ContactGroupResponse> {
     return listOf(
       ContactGroupResponse(

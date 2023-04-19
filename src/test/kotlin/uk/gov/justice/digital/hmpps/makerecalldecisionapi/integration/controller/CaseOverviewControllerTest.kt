@@ -16,8 +16,6 @@ class CaseOverviewControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
 
-  val staffCode = "STFFCDEU"
-
   @Test
   fun `retrieves case summary details`() {
     runTest {

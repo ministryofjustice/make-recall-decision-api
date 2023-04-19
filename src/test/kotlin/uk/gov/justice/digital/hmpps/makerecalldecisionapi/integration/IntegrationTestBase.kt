@@ -288,15 +288,6 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun noPersonalDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val personalDetailsRequest =
-      request().withPath("/case-summary/$crn/personal-details")
-
-    deliusIntegration.`when`(personalDetailsRequest).respond(
-      response().withStatusCode(404)
-    )
-  }
-
   protected fun overviewResponse(crn: String, delaySeconds: Long = 0) {
     val overviewRequest =
       request().withPath("/case-summary/$crn/overview")
