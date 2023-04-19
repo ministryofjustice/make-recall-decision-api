@@ -19,11 +19,6 @@ offender:
     endpoint:
       url: http://localhost:8093
 
-community:
-  api:
-    endpoint:
-      url: http://localhost:8092
-
 delius:
   integration:
     endpoint:

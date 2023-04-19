@@ -64,7 +64,7 @@ class HealthCheckTest : IntegrationTestBase() {
       HttpStatus.OK,
       "status" to "UP",
       "components.hmppsAuth.status" to "UP",
-      "components.communityApi.status" to "UP",
+      "components.deliusIntegration.status" to "UP",
       "components.offenderSearchApi.status" to "UP",
       "components.gotenberg.status" to "UP"
     )
@@ -75,8 +75,8 @@ class HealthCheckTest : IntegrationTestBase() {
     oauthMock.clear(request().withPath("/auth/health/ping"))
     oauthMock.`when`(request().withPath("/auth/health/ping")).error(HttpError.error())
 
-    communityApi.clear(request().withPath("/ping"))
-    communityApi.`when`(request().withPath("/ping")).error(HttpError.error())
+    deliusIntegration.clear(request().withPath("/ping"))
+    deliusIntegration.`when`(request().withPath("/ping")).error(HttpError.error())
 
     offenderSearchApi.clear(request().withPath("/health/ping"))
     offenderSearchApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
@@ -88,7 +88,7 @@ class HealthCheckTest : IntegrationTestBase() {
       "/health",
       HttpStatus.SERVICE_UNAVAILABLE,
       "components.hmppsAuth.status" to "DOWN",
-      "components.communityApi.status" to "DOWN",
+      "components.deliusIntegration.status" to "DOWN",
       "components.offenderSearchApi.status" to "DOWN",
       "components.gotenberg.status" to "DOWN"
     )

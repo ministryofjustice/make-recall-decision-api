@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/secure/offenders/crn/.*/documents/630ca741-cbb6-4f2e-8e86-73825d8c4d82"
+    "urlPathPattern": "/document/.*/630ca741-cbb6-4f2e-8e86-73825d8c4d82"
   },
   "response": {
     "status": 200,

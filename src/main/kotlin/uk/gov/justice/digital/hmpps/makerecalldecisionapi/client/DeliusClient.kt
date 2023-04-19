@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
@@ -28,11 +29,16 @@ class DeliusClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPersonalDetails(crn: String): PersonalDetails = call("/case-summary/$crn/personal-details")
-  fun getOverview(crn: String): Overview = call("/case-summary/$crn/overview")
-  fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
-  fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
-  fun getRecommendationModel(crn: String): RecommendationModel = call("/case-summary/$crn/recommendation-model")
+  fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
+
+  fun getOverview(crn: String): Overview = getBody("/case-summary/$crn/overview")
+
+  fun getLicenceConditions(crn: String): LicenceConditions = getBody("/case-summary/$crn/licence-conditions")
+
+  fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = getBody("/case-summary/$crn/mappa-and-rosh-history")
+
+  fun getRecommendationModel(crn: String): RecommendationModel = getBody("/case-summary/$crn/recommendation-model")
+
   fun getContactHistory(
     crn: String,
     query: String? = null,
@@ -40,7 +46,7 @@ class DeliusClient(
     to: LocalDate? = null,
     typeCodes: List<String> = emptyList(),
     includeSystemGenerated: Boolean = true
-  ): ContactHistory = call(
+  ): ContactHistory = getBody(
     endpoint = "/case-summary/$crn/contact-history",
     parameters = mapOf(
       "query" to listOfNotNull(query),
@@ -51,12 +57,16 @@ class DeliusClient(
     )
   )
 
-  fun getDocument(crn: String, id: String): Resource = call("/document/$crn/$id")
+  fun getStaff(username: String): Staff = getBody("/user/$username/staff")
 
-  fun getStaff(username: String): Staff = call("/user/$username/staff")
-  fun getUserAccess(username: String, crn: String): UserAccess = call("/user/$username/access/$crn")
+  fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
-  private inline fun <reified T : Any> call(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): T {
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id")
+
+  private inline fun <reified T : Any> getBody(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()) =
+    get<T>(endpoint, parameters).body!!
+
+  private inline fun <reified T : Any> get(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): ResponseEntity<T> {
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
@@ -67,7 +77,7 @@ class DeliusClient(
         { it == HttpStatus.NOT_FOUND },
         { throw PersonNotFoundException("No details available for endpoint: $endpoint") }
       )
-      .bodyToMono(T::class.java)
+      .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
     log.info(normalizeSpace("Returning $endpoint details"))

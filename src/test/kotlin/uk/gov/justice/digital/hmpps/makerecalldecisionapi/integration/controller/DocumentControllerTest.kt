@@ -49,12 +49,12 @@ class DocumentControllerTest(
         .expectStatus()
         .isNotFound
         .expectBody()
-        .jsonPath("$.userMessage").isEqualTo("No document found for crn: A12345 and documentId: 543456")
+        .jsonPath("$.userMessage").isEqualTo("No personal details available: No details available for endpoint: /document/A12345/543456")
     }
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout`() {
+  fun `gateway timeout 503 given on Delius timeout`() {
     runTest {
       userAccessAllowed(crn)
       getDocumentResponse(crn, documentId, delaySeconds = nDeliusTimeout + 2)
@@ -68,7 +68,7 @@ class DocumentControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - document by CRN and ID endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /document/A12345/543456 endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 }

@@ -3,11 +3,6 @@ offender:
     endpoint:
       url: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
 
-community:
-  api:
-    endpoint:
-      url: https://community-api-secure.test.delius.probation.hmpps.dsd.io
-
 delius:
   integration:
     endpoint:

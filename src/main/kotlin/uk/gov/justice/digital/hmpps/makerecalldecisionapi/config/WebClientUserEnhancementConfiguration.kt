@@ -26,7 +26,6 @@ import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import java.io.IOException
@@ -72,7 +71,6 @@ object UserContext {
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
-  @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
@@ -136,23 +134,6 @@ class WebClientUserEnhancementConfiguration(
 
   @Bean
   fun offenderSearchApiClientTimeoutCounter2(): Counter = timeoutCounter(offenderSearchApiRootUri)
-
-  @Bean
-  @RequestScope
-  fun communityWebClientUserEnhancedAppScope(
-    clientRegistrationRepository: ClientRegistrationRepository,
-    builder: WebClient.Builder
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, communityApiRootUri, "community-api")
-  }
-
-  @Bean
-  fun communityApiClientUserEnhanced(@Qualifier("communityWebClientUserEnhancedAppScope") webClient: WebClient): CommunityApiClient {
-    return CommunityApiClient(webClient, nDeliusTimeout, communityApiClientUserEnhancedTimeoutCounter())
-  }
-
-  @Bean
-  fun communityApiClientUserEnhancedTimeoutCounter(): Counter = timeoutCounter(communityApiRootUri)
 
   private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
     val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)

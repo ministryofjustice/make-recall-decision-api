@@ -9,7 +9,6 @@ import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Address
@@ -23,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Pe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails.Manager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview.Identifiers
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
@@ -65,9 +65,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 internal abstract class ServiceTestBase {
-
-  @Mock
-  protected lateinit var communityApiClient: CommunityApiClient
 
   @Mock
   protected lateinit var deliusClient: DeliusClient
@@ -121,7 +118,7 @@ internal abstract class ServiceTestBase {
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(deliusClient)
     templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
-    documentService = DocumentService(communityApiClient, userAccessValidator)
+    documentService = DocumentService(deliusClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, null)
     recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, recommendationRepository)
@@ -446,7 +443,7 @@ internal abstract class ServiceTestBase {
     ),
     registerFlags = registerFlags,
     activeConvictions = activeConvictions,
-    lastRelease = DeliusClient.Release(
+    lastRelease = Release(
       releaseDate = LocalDate.of(2017, 9, 15),
       recallDate = LocalDate.of(2020, 10, 15)
     )
@@ -569,7 +566,7 @@ internal abstract class ServiceTestBase {
       }
     ),
     lastReleasedFromInstitution = RecommendationModel.Institution("In the Community"),
-    lastRelease = DeliusClient.Release(
+    lastRelease = Release(
       releaseDate = LocalDate.of(2017, 9, 15),
       recallDate = LocalDate.of(2020, 10, 15)
     )

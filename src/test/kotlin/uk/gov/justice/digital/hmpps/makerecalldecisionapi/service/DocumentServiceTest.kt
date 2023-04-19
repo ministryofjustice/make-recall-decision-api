@@ -15,7 +15,6 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.io.Resource
 import org.springframework.http.ResponseEntity
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 
 @ExtendWith(MockitoExtension::class)
@@ -27,7 +26,7 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    documentService = DocumentService(communityApiClient, userAccessValidator)
+    documentService = DocumentService(deliusClient, userAccessValidator)
   }
 
   @Test
@@ -42,7 +41,7 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("Access excluded for case:: 12345, message:: I am an exclusion message")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
@@ -57,7 +56,7 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("Access restricted for case:: 12345, message:: I am a restriction message")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
@@ -72,19 +71,19 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("User trying to access case:: 12345 not found")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
   fun `given a get document request then return the requested document`() {
     runTest {
 
-      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
-        .willReturn(Mono.fromCallable { responseEntity })
+      given(deliusClient.getDocument(anyString(), anyString()))
+        .willReturn(responseEntity)
 
       val response = documentService.getDocumentByCrnAndId(crn, documentId)
 
-      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+      then(deliusClient).should().getDocument(crn, documentId)
 
       assertThat(response, equalTo(responseEntity))
     }
@@ -94,12 +93,12 @@ internal class DocumentServiceTest : ServiceTestBase() {
   fun `given no document in request then return empty result`() {
     runTest {
 
-      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
-        .willReturn(Mono.empty())
+      given(deliusClient.getDocument(anyString(), anyString()))
+        .willReturn(null)
 
       val response = documentService.getDocumentByCrnAndId(crn, documentId)
 
-      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+      then(deliusClient).should().getDocument(crn, documentId)
 
       assertThat(response, equalTo(null))
     }

@@ -39,10 +39,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
     personalDetailsResponse(crn)
 
     val response = convertResponseToJSONObject(
@@ -131,10 +129,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when oasys offence date doesn't match in delius`() {
     licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011", offenceDate = "1984-04-24T20:39:47.778Z")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
     personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -153,10 +149,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when Delius and OASys offence codes do not match`() {
     licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011", offenceCode = "not a match")
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
     personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -175,10 +169,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation when there is a more recent assessment available from OASys than from Delius`() {
     licenceConditionsResponse(crn, 2500614567)
-    convictionResponse(crn, "011")
     oasysAssessmentsResponse(crn, laterCompleteAssessmentExists = true)
     userAccessAllowed(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
     personalDetailsResponse(crn)
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -196,12 +188,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `update with manager recall decision when pre-existing decision exists`() {
-    mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
-    convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
-    releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
     updateWithManagerRecallDecision(managerRecallDecisionRequest(decision = "RECALL"))
@@ -241,12 +230,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   @Test
   fun `update with refresh and get recommendation`() {
     // FIXME: if getting stack overflow error when running this test in CircleCI, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
-    mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
-    convictionResponse(crn, "011")
-    communityApiLicenceConditionsResponse(crn, 2500614567)
-    releaseSummaryResponse(crn)
     oasysAssessmentsResponse(crn)
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn = crn, delaySeconds = 0L, firstName = "Arthur")
@@ -449,7 +434,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `given an update that clears hidden fields then save in database and get recommendation with null values for hidden fields`() {
-    mappaDetailsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
@@ -547,9 +531,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `preview a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
     oasysAssessmentsResponse(crn)
-    mappaDetailsResponse(crn)
     personalDetailsResponse(crn)
-    convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationForNoRecallRequest())
@@ -592,8 +574,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     personalDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation()

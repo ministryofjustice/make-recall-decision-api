@@ -1,18 +1,17 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.io.Resource
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 
 @Service
 internal class DocumentService(
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val deliusClient: DeliusClient,
   private val userAccessValidator: UserAccessValidator
 ) {
-  fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource>? {
+  fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource> {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       val message = if (userAccessResponse.userRestricted) {
@@ -24,6 +23,6 @@ internal class DocumentService(
       }
       throw UserAccessException(message)
     }
-    return getValueAndHandleWrappedException(communityApiClient.getDocumentByCrnAndId(crn, documentId))
+    return deliusClient.getDocument(crn, documentId)
   }
 }

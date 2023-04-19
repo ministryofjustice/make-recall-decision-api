@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
@@ -24,7 +23,6 @@ import java.net.URI
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${community.api.endpoint.url}") private val communityApiRootUri: String,
   @Value("\${delius.integration.endpoint.url}") private val deliusIntegrationRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
@@ -70,22 +68,6 @@ class WebClientConfiguration(
 
   @Bean
   fun offenderSearchApiClientTimeoutCounter(): Counter = timeoutCounter(offenderSearchApiRootUri)
-
-  @Bean
-  fun communityWebClientAppScope(
-    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
-    builder: WebClient.Builder
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, communityApiRootUri, "community-api")
-  }
-
-  @Bean
-  fun communityApiClient(@Qualifier("communityWebClientAppScope") webClient: WebClient): CommunityApiClient {
-    return CommunityApiClient(webClient, nDeliusTimeout, communityApiClientTimeoutCounter())
-  }
-
-  @Bean
-  fun communityApiClientTimeoutCounter(): Counter = timeoutCounter(communityApiRootUri)
 
   @Bean
   fun deliusWebClientAppScope(
