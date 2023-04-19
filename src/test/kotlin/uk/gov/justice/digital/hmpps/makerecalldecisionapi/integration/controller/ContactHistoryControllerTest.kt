@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.contactSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.deliusContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
@@ -23,11 +23,7 @@ class ContactHistoryControllerTest(
 
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
-      contactSummaryResponse(
-        crn,
-        contactSummaryResponse()
-      )
-      groupedDocumentsResponse(crn)
+      deliusContactHistoryResponse(crn, deliusContactHistoryResponse())
       deleteAndCreateRecommendation()
       updateRecommendation(Status.DRAFT)
 
@@ -74,30 +70,10 @@ class ContactHistoryControllerTest(
         .jsonPath("$.contactSummary[2].contactDocuments.length()").isEqualTo(1)
         .jsonPath("$.contactSummary[0].contactDocuments[0].id").isEqualTo("f2943b31-2250-41ab-a04d-004e27a97add")
         .jsonPath("$.contactSummary[0].contactDocuments[0].documentName").isEqualTo("test doc.docx")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].author").isEqualTo("Trevor Small")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].type.description").isEqualTo("Contact related document")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].extendedDescription").isEqualTo("Contact on 21/06/2022 for Information - from 3rd Party")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:27:23.407")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:27:23")
-        .jsonPath("$.contactSummary[0].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504412185")
         .jsonPath("$.contactSummary[1].contactDocuments[0].id").isEqualTo("630ca741-cbb6-4f2e-8e86-73825d8c4d82")
         .jsonPath("$.contactSummary[1].contactDocuments[0].documentName").isEqualTo("a test.pdf")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].author").isEqualTo("Jackie Gough")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].type.description").isEqualTo("Contact related document")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].extendedDescription").isEqualTo("Contact on 21/06/2020 for Complementary Therapy Session (NS)")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-21T20:29:17.324")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].createdAt").isEqualTo("2022-06-21T20:29:17")
-        .jsonPath("$.contactSummary[1].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435532")
         .jsonPath("$.contactSummary[2].contactDocuments[0].id").isEqualTo("374136ce-f863-48d8-96dc-7581636e461e")
         .jsonPath("$.contactSummary[2].contactDocuments[0].documentName").isEqualTo("ContactDoc.pdf")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].author").isEqualTo("Terry Tibbs")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].type.code").isEqualTo("CONTACT_DOCUMENT")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].type.description").isEqualTo("Contact document")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].lastModifiedAt").isEqualTo("2022-06-07T17:00:29.493")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].createdAt").isEqualTo("2022-06-07T17:00:29")
-        .jsonPath("$.contactSummary[2].contactDocuments[0].parentPrimaryKeyId").isEqualTo("2504435999")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
@@ -125,9 +101,7 @@ class ContactHistoryControllerTest(
   fun `given empty contact history then handle response`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      contactSummaryResponse(crn, emptyContactSummaryResponse())
-      groupedDocumentsResponse(crn)
+      deliusContactHistoryResponse(crn, emptyContactSummaryResponse())
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
@@ -166,13 +140,10 @@ class ContactHistoryControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout on contact summary endpoint`() {
+  fun `gateway timeout 503 given on Delius timeout`() {
     runTest {
       userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      contactSummaryResponse(crn, contactSummary = contactSummaryResponse(), delaySeconds = nDeliusTimeout + 2)
-      groupedDocumentsResponse(crn)
-      releaseSummaryResponse(crn)
+      deliusContactHistoryResponse(crn, body = deliusContactHistoryResponse(), delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/cases/$crn/contact-history")
@@ -183,29 +154,7 @@ class ContactHistoryControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - contact summary endpoint: [No response within $nDeliusTimeout seconds]")
-    }
-  }
-
-  @Test
-  fun `gateway timeout 503 given on Community Api timeout on grouped documents endpoint`() {
-    runTest {
-      userAccessAllowed(crn)
-      personalDetailsResponse(crn)
-      contactSummaryResponse(crn, contactSummaryResponse())
-      groupedDocumentsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      releaseSummaryResponse(crn)
-
-      webTestClient.get()
-        .uri("/cases/$crn/contact-history")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus()
-        .is5xxServerError
-        .expectBody()
-        .jsonPath("$.status").isEqualTo(GATEWAY_TIMEOUT.value())
-        .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - grouped documents endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/A12345/contact-history endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 

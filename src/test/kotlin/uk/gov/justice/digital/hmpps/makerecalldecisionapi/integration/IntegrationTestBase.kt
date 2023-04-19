@@ -573,6 +573,12 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun personalDetailsError(crn: String) {
+    val personalDetails =
+      request().withPath("/case-summary/$crn/personal-details")
+    deliusIntegration.`when`(personalDetails).respond(response().withStatusCode(500))
+  }
+
   protected fun offenderSearchResponse(crn: String? = "X123456", firstName: String? = "Pontius", surname: String? = "Pilate", fullName: String? = "Pontius Pilate", delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
@@ -597,13 +603,13 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun contactSummaryResponse(crn: String, contactSummary: String, delaySeconds: Long = 0) {
-    val contactSummaryUrl = "/secure/offenders/crn/$crn/contact-summary"
+  protected fun deliusContactHistoryResponse(crn: String, body: String, delaySeconds: Long = 0) {
+    val contactSummaryUrl = "/case-summary/$crn/contact-history"
     val contactSummaryRequest = request()
       .withPath(contactSummaryUrl)
 
-    communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(contactSummary)
+    deliusIntegration.`when`(contactSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(body)
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

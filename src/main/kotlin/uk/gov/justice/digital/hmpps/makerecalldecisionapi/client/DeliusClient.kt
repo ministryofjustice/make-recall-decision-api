@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Counter
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
@@ -15,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeoutException
 
 class DeliusClient(
@@ -31,14 +33,35 @@ class DeliusClient(
   fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
   fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
   fun getRecommendationModel(crn: String): RecommendationModel = call("/case-summary/$crn/recommendation-model")
+  fun getContactHistory(
+    crn: String,
+    query: String? = null,
+    from: LocalDate? = null,
+    to: LocalDate? = null,
+    typeCodes: List<String> = emptyList(),
+    includeSystemGenerated: Boolean = true
+  ): ContactHistory = call(
+    endpoint = "/case-summary/$crn/contact-history",
+    parameters = mapOf(
+      "query" to listOfNotNull(query),
+      "from" to listOfNotNull(from),
+      "to" to listOfNotNull(to),
+      "type" to typeCodes,
+      "includeSystemGenerated" to listOfNotNull(includeSystemGenerated),
+    )
+  )
+
+  fun getDocument(crn: String, id: String): Resource = call("/document/$crn/$id")
+
   fun getStaff(username: String): Staff = call("/user/$username/staff")
   fun getUserAccess(username: String, crn: String): UserAccess = call("/user/$username/access/$crn")
 
-  private inline fun <reified T : Any> call(endpoint: String): T {
+  private inline fun <reified T : Any> call(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): T {
     log.info(normalizeSpace("About to call $endpoint"))
-    val result = webClient
-      .get()
-      .uri(endpoint)
+    val result = webClient.get()
+      .uri {
+        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+      }
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
@@ -228,6 +251,32 @@ class DeliusClient(
       val sentenceExpiryDate: LocalDate?
     )
   }
+
+  data class ContactHistory(
+    val personalDetails: PersonalDetailsOverview,
+    val contacts: List<Contact>,
+    val summary: ContactSummary
+  ) {
+    data class Contact(
+      val description: String?,
+      val documents: List<DocumentReference>,
+      val enforcementAction: String?,
+      val notes: String?,
+      val outcome: String?,
+      val sensitive: Boolean?,
+      val startDateTime: ZonedDateTime,
+      val type: Type
+    ) {
+      data class Type(val code: String, val description: String, val systemGenerated: Boolean)
+      data class DocumentReference(val id: String, val name: String, val lastUpdated: ZonedDateTime)
+    }
+    data class ContactSummary(
+      val types: List<ContactTypeSummary>,
+      val hits: Int,
+      val total: Int = types.sumOf { it.total }
+    )
+  }
+  data class ContactTypeSummary(val code: String, val description: String, val total: Int)
 
   data class Staff(
     val code: String?

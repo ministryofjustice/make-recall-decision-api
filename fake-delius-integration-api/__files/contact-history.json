@@ -1,0 +1,273 @@
+{
+  "personalDetails": {
+    "name": {
+      "forename": "Charles",
+      "middleName": "",
+      "surname": "Edwin"
+    },
+    "identifiers": {},
+    "dateOfBirth": "1980-07-24",
+    "gender": "Male"
+  },
+  "contacts": [
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
+      "startDateTime": "2022-06-03T08:00:00+01:00",
+      "type": {
+        "code": "ERGR",
+        "description": "Registration Review",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nTransfer Reason: Automatic Transfer\nTransfer Date: 05/05/2022",
+      "startDateTime": "2022-05-05T00:00:00+01:00",
+      "type": {
+        "code": "EPOMAT",
+        "description": "Prison Offender Manager - Automatic Transfer",
+        "systemGenerated": false
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nNew Details:\nResponsible Officer Type: Prison Offender Manager\nResponsible Officer: Unallocated (All Staff, Unallocated)\nStart Date: 05/05/2022 14:53:22\nAllocation Reason: Automatic Transfer",
+      "startDateTime": "2022-05-05T00:00:00+01:00",
+      "type": {
+        "code": "ROC",
+        "description": "Responsible Officer Change",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by Tiering Service on 05/05/2022 at 17:45\nTier Change Date: 05/05/2022 17:45:12\nTier: A-2\nTier Change Reason: Calculated in Automated Tiering Service",
+      "startDateTime": "2022-05-05T17:45:12+01:00",
+      "type": {
+        "code": "ETCH20",
+        "description": "Tier Change - Calculated in Auto Tiering Service",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by Tiering Service on 05/05/2022 at 14:53\nTier Change Date: 05/05/2022 14:53:32\nTier: D-2\nTier Change Reason: Calculated in Automated Tiering Service",
+      "startDateTime": "2022-05-05T14:53:32+01:00",
+      "type": {
+        "code": "ETCH20",
+        "description": "Tier Change - Calculated in Auto Tiering Service",
+        "systemGenerated": true
+      }
+    },
+    {
+      "description": "sent letter for licence compliance",
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 19:01\nMr Edwin said in our regular meeting that he'd had to go into a pub to charge his phone behind the bar and didn't drink anything. Didn't represent an increase in risk so sending licence compliance letter",
+      "sensitive": false,
+      "startDateTime": "2022-04-05T14:02:00+01:00",
+      "type": {
+        "code": "C002",
+        "description": "Management Oversight",
+        "systemGenerated": false
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 06/05/2022 at 13:11\nspoke to SPO about Charles Edwin, recommended against recall because CE was in pub but did not drink anything.",
+      "sensitive": false,
+      "startDateTime": "2022-04-05T13:15:00+01:00",
+      "type": {
+        "code": "SPOD02",
+        "description": "Recall Discussion SPO/OM",
+        "systemGenerated": false
+      }
+    },
+    {
+      "documents": [],
+      "sensitive": false,
+      "startDateTime": "2022-04-05T13:08:00+01:00",
+      "type": {
+        "code": "SPOD02",
+        "description": "Recall Discussion SPO/OM",
+        "systemGenerated": false
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nNext Review Date: 03/06/2022 08:00:00\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
+      "startDateTime": "2022-03-03T00:00:00Z",
+      "type": {
+        "code": "ERGN",
+        "description": "New Registration",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 18:52\nCustodial Status: Sentenced - In Custody\nCustodial Establishment: Wakefield (HMP)\nLocation Change Date: Tue Mar 01 00:00:00 GMT 2022",
+      "startDateTime": "2022-03-01T00:00:00Z",
+      "type": {
+        "code": "ETCP",
+        "description": "Change of Institution / Establishment",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 18:52\nRelease Type: Adult Licence",
+      "startDateTime": "2022-03-01T00:00:00Z",
+      "type": {
+        "code": "EREL",
+        "description": "Release from Custody",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nOrder: ORA Adult Custody (not PSS)\nLength: 36 Months",
+      "startDateTime": "2021-10-01T00:00:00+01:00",
+      "type": {
+        "code": "ECOM",
+        "description": "Order/Component Commenced",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nMain Offence: Assaults occasioning actual bodily harm - 00806 (x1) on 01/07/2021\nCourt: Wood Green Crown Court\nAppearance Type: Sentence\nOutcome: ORA Adult Custody (not PSS)",
+      "startDateTime": "2021-10-01T00:00:00+01:00",
+      "type": {
+        "code": "EAPP",
+        "description": "Court Appearance",
+        "systemGenerated": true
+      }
+    },
+    {
+      "documents": [],
+      "notes": "Tier Change Date: 11/08/2021 18:36:25\nTier: D-0\nTier Change Reason: Calculated in Automated Tiering Service",
+      "startDateTime": "2021-08-11T18:36:25+01:00",
+      "type": {
+        "code": "ETCH20",
+        "description": "Tier Change - Calculated in Auto Tiering Service",
+        "systemGenerated": true
+      }
+    }
+  ],
+  "summary": {
+    "types": [
+      {
+        "code": "AWLS",
+        "description": "Breach Action - Enforcement Letter Requested",
+        "total": 1
+      },
+      {
+        "code": "C002",
+        "description": "Management Oversight",
+        "total": 1
+      },
+      {
+        "code": "C204",
+        "description": "Police Liaison",
+        "total": 1
+      },
+      {
+        "code": "CGTS",
+        "description": "Test",
+        "total": 1
+      },
+      {
+        "code": "CNOT",
+        "description": "Notification of Court Appearance",
+        "total": 4
+      },
+      {
+        "code": "EAPP",
+        "description": "Court Appearance",
+        "total": 5
+      },
+      {
+        "code": "ECOM",
+        "description": "Order/Component Commenced",
+        "total": 5
+      },
+      {
+        "code": "EPOMAT",
+        "description": "Prison Offender Manager - Automatic Transfer",
+        "total": 3
+      },
+      {
+        "code": "ERCL",
+        "description": "Recall / Return to Prison",
+        "total": 1
+      },
+      {
+        "code": "EREL",
+        "description": "Release from Custody",
+        "total": 3
+      },
+      {
+        "code": "ERGN",
+        "description": "New Registration",
+        "total": 1
+      },
+      {
+        "code": "ERGR",
+        "description": "Registration Review",
+        "total": 1
+      },
+      {
+        "code": "ETCH20",
+        "description": "Tier Change - Calculated in Auto Tiering Service",
+        "total": 3
+      },
+      {
+        "code": "ETCP",
+        "description": "Change of Institution / Establishment",
+        "total": 2
+      },
+      {
+        "code": "ETER",
+        "description": "Order/Component Terminated",
+        "total": 11
+      },
+      {
+        "code": "MRD01",
+        "description": "Recommendation Started (Recall or No Recall)",
+        "total": 4
+      },
+      {
+        "code": "NREF",
+        "description": "NSI Referral",
+        "total": 1
+      },
+      {
+        "code": "NTER",
+        "description": "NSI Terminated",
+        "total": 1
+      },
+      {
+        "code": "RECI",
+        "description": "Recall Initiated",
+        "total": 1
+      },
+      {
+        "code": "RECO",
+        "description": "PPCS Recall Decision Received",
+        "total": 1
+      },
+      {
+        "code": "ROC",
+        "description": "Responsible Officer Change",
+        "total": 3
+      },
+      {
+        "code": "SPOD02",
+        "description": "Recall Discussion SPO/OM",
+        "total": 2
+      }
+    ],
+    "hits": 14,
+    "total": 56
+  }
+}
