@@ -6,11 +6,9 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Conviction
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview.Conviction
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
@@ -43,7 +41,6 @@ import java.time.LocalDateTime
 @Service
 internal class RiskService(
   private val deliusClient: DeliusClient,
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
   @Lazy private val recommendationService: RecommendationService?
@@ -114,44 +111,6 @@ internal class RiskService(
       latestCompleteAssessment = latestCompleteAssessment,
       hideOffenceDetailsWhenNoMatch = hideOffenceDetailsWhenNoMatch
     )
-  }
-
-  @Deprecated("This method will be removed once the update recommendation endpoint has switched over to use the Delius client")
-  suspend fun fetchAssessmentInfo(crn: String, hideOffenceDetailsWhenNoMatch: Boolean): AssessmentInfo? {
-    val convictionsFromDelius = try {
-      getValueAndHandleWrappedException(communityApiClient.getActiveConvictions(crn, activeOnly = true))?.map {
-        Conviction(
-          sentence = it.sentence?.let { sentence ->
-            Sentence(
-              description = sentence.description ?: "",
-              length = sentence.originalLength,
-              lengthUnits = sentence.originalLengthUnits,
-              isCustodial = it.isCustodial,
-              custodialStatusCode = it.custody?.status?.code,
-              licenceExpiryDate = it.custody?.keyDates?.licenceExpiryDate,
-              sentenceExpiryDate = it.custody?.keyDates?.sentenceExpiryDate
-            )
-          },
-          mainOffence = it.offences!!.first { offence -> offence.mainOffence == true }.let { offence ->
-            Offence(
-              date = offence.offenceDate!!,
-              code = offence.detail!!.code!!,
-              description = offence.detail.description!!,
-            )
-          },
-          additionalOffences = it.offences.filter { offence -> offence.mainOffence != true }.map { offence ->
-            Offence(
-              date = offence.offenceDate!!,
-              code = offence.detail!!.code!!,
-              description = offence.detail.description!!,
-            )
-          },
-        )
-      } ?: emptyList()
-    } catch (ex: Exception) {
-      return AssessmentInfo(error = extractErrorCode(ex, "convictions", crn))
-    }
-    return fetchAssessmentInfo(crn, convictionsFromDelius, hideOffenceDetailsWhenNoMatch)
   }
 
   private fun buildAssessmentInfo(
@@ -353,21 +312,6 @@ internal class RiskService(
     )
 
     return risks.asIterable().firstOrNull { it.value != null }?.key
-  }
-
-  suspend fun getMappa(crn: String): Mappa {
-    val mappaResponse = try {
-      getValueAndHandleWrappedException(communityApiClient.getAllMappaDetails(crn))!!
-    } catch (ex: Exception) {
-      return Mappa(error = extractErrorCode(ex, "mappa", crn))
-    }
-    val startDate = mappaResponse.startDate
-
-    return Mappa(
-      level = mappaResponse.level,
-      lastUpdatedDate = startDate,
-      category = mappaResponse.category
-    )
   }
 
   suspend fun getRoshSummary(crn: String): RoshSummary {

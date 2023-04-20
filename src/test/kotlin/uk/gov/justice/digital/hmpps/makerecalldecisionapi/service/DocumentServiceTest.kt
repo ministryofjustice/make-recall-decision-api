@@ -15,11 +15,6 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.io.Resource
 import org.springframework.http.ResponseEntity
-import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocumentType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ConvictionDocuments
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.GroupedDocuments
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 
 @ExtendWith(MockitoExtension::class)
@@ -31,28 +26,13 @@ internal class DocumentServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    documentService = DocumentService(communityApiClient, userAccessValidator)
-  }
-
-  @Test
-  fun `given a contact document type then return all contact documents`() {
-    runTest {
-
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsResponse() })
-
-      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(expectedContactDocumentResponse()))
-    }
+    documentService = DocumentService(deliusClient, userAccessValidator)
   }
 
   @Test
   fun `throws exception when case excluded`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(true, false, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(true, false, false))
 
     Assertions.assertThatThrownBy {
       runTest {
@@ -61,13 +41,13 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("Access excluded for case:: 12345, message:: I am an exclusion message")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
   fun `throws exception when case restricted`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, true, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, true, false))
 
     Assertions.assertThatThrownBy {
       runTest {
@@ -76,13 +56,13 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("Access restricted for case:: 12345, message:: I am a restriction message")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
   fun `throws exception when calling user not found`() {
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false, true) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, false, true))
 
     Assertions.assertThatThrownBy {
       runTest {
@@ -91,63 +71,19 @@ internal class DocumentServiceTest : ServiceTestBase() {
     }.isInstanceOf(UserAccessException::class.java)
       .hasMessage("User trying to access case:: 12345 not found")
 
-    then(communityApiClient).shouldHaveNoMoreInteractions()
-  }
-
-  @Test
-  fun `given no contact documents then handle request`() {
-    runTest {
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.empty())
-
-      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(null))
-    }
-  }
-
-  @Test
-  fun `given a contact with no documents and no conviction documents then handle request`() {
-    runTest {
-
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { GroupedDocuments(documents = null, convictions = listOf(ConvictionDocuments(convictionId = "2500614567", null))) })
-
-      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(null))
-    }
-  }
-
-  @Test
-  fun `given a contact document type with no conviction documents then return all available contact documents`() {
-    runTest {
-
-      given(communityApiClient.getGroupedDocuments(anyString()))
-        .willReturn(Mono.fromCallable { groupedDocumentsNoConvictionDocumentsResponse() })
-
-      val response = documentService.getDocumentsByDocumentType(crn, "CONTACT_DOCUMENT")
-
-      then(communityApiClient).should().getGroupedDocuments(crn)
-
-      assertThat(response, equalTo(expectedContactDocumentWithNoConvictionsResponse()))
-    }
+    then(deliusClient).shouldHaveNoMoreInteractions()
   }
 
   @Test
   fun `given a get document request then return the requested document`() {
     runTest {
 
-      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
-        .willReturn(Mono.fromCallable { responseEntity })
+      given(deliusClient.getDocument(anyString(), anyString()))
+        .willReturn(responseEntity)
 
       val response = documentService.getDocumentByCrnAndId(crn, documentId)
 
-      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+      then(deliusClient).should().getDocument(crn, documentId)
 
       assertThat(response, equalTo(responseEntity))
     }
@@ -157,89 +93,14 @@ internal class DocumentServiceTest : ServiceTestBase() {
   fun `given no document in request then return empty result`() {
     runTest {
 
-      given(communityApiClient.getDocumentByCrnAndId(anyString(), anyString()))
-        .willReturn(Mono.empty())
+      given(deliusClient.getDocument(anyString(), anyString()))
+        .willReturn(null)
 
       val response = documentService.getDocumentByCrnAndId(crn, documentId)
 
-      then(communityApiClient).should().getDocumentByCrnAndId(crn, documentId)
+      then(deliusClient).should().getDocument(crn, documentId)
 
       assertThat(response, equalTo(null))
     }
-  }
-
-  private fun expectedContactDocumentResponse(): List<CaseDocument>? {
-    return listOf(
-      CaseDocument(
-        id = "f2943b31-2250-41ab-a04d-004e27a97add",
-        documentName = "test doc.docx",
-        author = "Trevor Small",
-        type = CaseDocumentType(
-          code = "CONTACT_DOCUMENT",
-          description = "Contact related document"
-        ),
-        extendedDescription = "Contact on 21/06/2022 for Information - from 3rd Party",
-        lastModifiedAt = "2022-06-21T20:27:23.407",
-        createdAt = "2022-06-21T20:27:23",
-        parentPrimaryKeyId = 2504763194L
-      ),
-      CaseDocument(
-        id = "630ca741-cbb6-4f2e-8e86-73825d8c4d82",
-        documentName = "a test.pdf",
-        author = "Jackie Gough",
-        type = CaseDocumentType(
-          code = "CONTACT_DOCUMENT",
-          description = "Contact related document"
-        ),
-        extendedDescription = "Contact on 21/06/2020 for Complementary Therapy Session (NS)",
-        lastModifiedAt = "2022-06-21T20:29:17.324",
-        createdAt = "2022-06-21T20:29:17",
-        parentPrimaryKeyId = 2504763206L
-      ),
-      CaseDocument(
-        id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
-        documentName = "conviction contact doc.pdf",
-        author = "Luke Smith",
-        type = CaseDocumentType(
-          code = "CONTACT_DOCUMENT",
-          description = "Contact related conviction document"
-        ),
-        extendedDescription = "Contact on 23/06/2020 for Complementary Therapy Session (NS)",
-        lastModifiedAt = "2022-06-23T20:29:17.324",
-        createdAt = "2022-06-23T20:29:17",
-        parentPrimaryKeyId = 2504763206L
-      )
-    )
-  }
-
-  private fun expectedContactDocumentWithNoConvictionsResponse(): List<CaseDocument>? {
-    return listOf(
-      CaseDocument(
-        id = "f2943b31-2250-41ab-a04d-004e27a97add",
-        documentName = "test doc.docx",
-        author = "Trevor Small",
-        type = CaseDocumentType(
-          code = "CONTACT_DOCUMENT",
-          description = "Contact related document"
-        ),
-        extendedDescription = "Contact on 21/06/2022 for Information - from 3rd Party",
-        lastModifiedAt = "2022-06-21T20:27:23.407",
-        createdAt = "2022-06-21T20:27:23",
-        parentPrimaryKeyId = 2504763194L
-      ),
-      CaseDocument(
-        id = "630ca741-cbb6-4f2e-8e86-73825d8c4d82",
-        documentName = "a test.pdf",
-        author = "Jackie Gough",
-        type = CaseDocumentType(
-          code = "CONTACT_DOCUMENT",
-          description = "Contact related document"
-        ),
-        extendedDescription = "Contact on 21/06/2020 for Complementary Therapy Session (NS)",
-        lastModifiedAt = "2022-06-21T20:29:17.324",
-        createdAt = "2022-06-21T20:29:17",
-        parentPrimaryKeyId = 2504763206L
-      )
-    )
   }
 }

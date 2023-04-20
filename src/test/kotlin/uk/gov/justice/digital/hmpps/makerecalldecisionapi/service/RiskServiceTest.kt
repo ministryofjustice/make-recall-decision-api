@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
@@ -17,25 +16,8 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Custody
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CustodyStatus
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.EstablishmentType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institution
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.KeyDates
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.MappaResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Officer
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OrderManager
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.ProbationArea
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RegistrationsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SentenceType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Team
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
@@ -46,16 +28,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
 internal class RiskServiceTest : ServiceTestBase() {
-
-  @Mock
-  lateinit var convictionService2: ConvictionService
 
   @Mock
   lateinit var templateReplacementService2: TemplateReplacementService
@@ -67,12 +46,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       personDetailsService,
       templateReplacementService2,
       userAccessValidator,
-      convictionService2,
       null,
-      communityApiClient,
+      deliusClient,
       null
     )
-    riskService = RiskService(deliusClient, communityApiClient, arnApiClient, userAccessValidator, recommendationService)
+    riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
   }
 
   @Test
@@ -237,40 +215,15 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is true and offences match because no later assessment exists`() {
-    runTest {
-      // given
-      given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
-
-      // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = true)
-
-      // then
-      val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
-      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
-      assertThat(shouldBeTrueBecauseNoLaterCompleteAssessmentExists).isEqualTo(true)
-      assertThat(response?.offencesMatch).isEqualTo(true)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
-      then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
-    }
-  }
-
-  @Test
   fun `retrieves assessments information when hideOffenceDetailsWhenNoMatch is false and at least one active conviction from Delius with a main offence matches the offence from OaSys`() {
     runTest {
       // given
-      val custodialConvictionNotRequired = null
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = custodialConvictionNotRequired), convictionResponse().copy(custody = custodialConvictionNotRequired)) })
+      val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -279,7 +232,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -287,14 +239,12 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `retrieves assessments information and returns not found error`() {
     runTest {
       // given
-      val custodialConvictionNotRequired = null
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false, offence = null))) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = custodialConvictionNotRequired), convictionResponse().copy(custody = custodialConvictionNotRequired)) })
+      val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -304,7 +254,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offenceDescription).isEqualTo(null)
       assertThat(response?.error).isEqualTo("NOT_FOUND")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -314,11 +263,10 @@ internal class RiskServiceTest : ServiceTestBase() {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
+      val convictions = listOf(convictionResponse())
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = true)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = true)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -327,7 +275,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -337,11 +284,9 @@ internal class RiskServiceTest : ServiceTestBase() {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment())) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf() })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, emptyList(), hideOffenceDetailsWhenNoMatch = false)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -349,7 +294,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -359,11 +303,9 @@ internal class RiskServiceTest : ServiceTestBase() {
       // given
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse()) })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = true)
+      val response = riskService.fetchAssessmentInfo(crn, listOf(convictionResponse()), hideOffenceDetailsWhenNoMatch = true)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -372,7 +314,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(true)
       assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -407,12 +348,10 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
+      val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -420,7 +359,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -456,12 +394,10 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
+      val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -470,7 +406,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -505,12 +440,10 @@ internal class RiskServiceTest : ServiceTestBase() {
             )
           }
         )
-
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean()))
-        .willReturn(Mono.fromCallable { listOf(convictionResponse().copy(custody = null), convictionResponse().copy(custody = null)) })
+      val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -519,7 +452,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
       then(arnApiClient).should().getAssessments(crn)
-      then(communityApiClient).should().getActiveConvictions(crn, true)
     }
   }
 
@@ -727,15 +659,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
 
       val response = riskService.getRisk(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -752,15 +680,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given user not found then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Not found", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(anyString(), anyString())).willThrow(PersonNotFoundException("Not found"))
 
       val response = riskService.getRisk(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -822,21 +746,6 @@ internal class RiskServiceTest : ServiceTestBase() {
 
   @ParameterizedTest(name = "given call to fetch risk assessments fails with {1} exception then set this in the error field response")
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
-  fun `given call to fetch risk assessments fails on call to community api with given exception then set this in the error field response`(
-    code: Int,
-    expectedErrorCode: String
-  ) {
-    runTest {
-      given(communityApiClient.getActiveConvictions(anyString(), anyBoolean())).willThrow(WebClientResponseException(code, null, null, null, null))
-
-      val response = riskService.fetchAssessmentInfo(crn, true)
-
-      assertThat(response?.error).isEqualTo(expectedErrorCode)
-    }
-  }
-
-  @ParameterizedTest(name = "given call to fetch risk assessments fails with {1} exception then set this in the error field response")
-  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
     code: Int,
     expectedErrorCode: String
@@ -844,7 +753,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn, true)
+      val response = riskService.fetchAssessmentInfo(crn, emptyList(), true)
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }
@@ -891,29 +800,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
       val response = riskService.getLatestRiskManagementPlan(crn)
-
-      assertThat(response.error).isEqualTo(expectedErrorCode)
-    }
-  }
-
-  @ParameterizedTest(name = "given call to mappa fails with {1} exception then set this in the error field response")
-  @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
-  fun `given call to mappa fails with given exception then set this in the error field response`(
-    code: Int,
-    expectedErrorCode: String
-  ) {
-    runTest {
-      given(communityApiClient.getAllMappaDetails(crn)).willThrow(
-        WebClientResponseException(
-          code,
-          null,
-          null,
-          null,
-          null
-        )
-      )
-
-      val response = riskService.getMappa(crn)
 
       assertThat(response.error).isEqualTo(expectedErrorCode)
     }
@@ -1053,126 +939,27 @@ internal class RiskServiceTest : ServiceTestBase() {
     violencePredictorScore = null
   )
 
-  private val registrationsResponse = RegistrationsResponse(
-    registrations = listOf(
-      Registration(
-        registrationId = "2500064995",
-        active = true,
-        register = CodeDescriptionItem(code = "1", description = "RoSH"),
-        type = CodeDescriptionItem(code = "ABC123", description = "Victim contact"),
-        startDate = LocalDate.parse("2021-01-30"),
-        notes = "Notes on case"
-      ),
-      Registration(
-        registrationId = "2500064995",
-        active = false,
-        register = CodeDescriptionItem(code = "ABC123", description = "Some description"),
-        type = CodeDescriptionItem(code = "ABC124", description = "Mental health issues"),
-        startDate = LocalDate.parse("2021-01-30"),
-        notes = "string"
-      )
-    )
-  )
-
-  private val mappaResponse = MappaResponse(
-    level = 1,
-    levelDescription = "MAPPA Level 1",
-    category = 0,
-    categoryDescription = "All - Category to be determined",
-    startDate = LocalDate.parse("2021-02-10"),
-    reviewDate = LocalDate.parse("2021-05-10"),
-    team = Team(
-      code = "N07CHT",
-      description = "Automation SPG",
-      emailAddress = null,
-      telephone = null,
-      localDeliveryUnit = null
-    ),
-    officer = Officer(
-      code = "N07A060",
-      forenames = "NDelius26",
-      surname = "Anderson",
-      unallocated = false
-    ),
-    probationArea = ProbationArea(
-      code = "N07",
-      description = "NPS London"
-    ),
-    notes = "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note"
-  )
-
-  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence", mainOffencePresent: Boolean? = true) = Conviction(
-    convictionDate = LocalDate.parse("2021-06-10"),
-    sentence = Sentence(
-      startDate = LocalDate.parse("2022-04-26"),
-      terminationDate = LocalDate.parse("2022-04-26"),
-      expectedSentenceEndDate = LocalDate.parse("2022-04-26"),
+  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
+    sentence = DeliusClient.Sentence(
       description = sentenceDescription,
-      originalLength = 6,
-      originalLengthUnits = "Days",
-      secondLength = 10,
-      secondLengthUnits = "Months",
-      sentenceType = SentenceType(code = "ABC123")
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = true,
+      custodialStatusCode = "ABC123",
+      licenceExpiryDate = LocalDate.parse("2022-05-10"),
+      sentenceExpiryDate = LocalDate.parse("2022-06-10"),
     ),
-    active = true,
-    offences = listOf(
-      Offence(
-        mainOffence = mainOffencePresent,
-        offenceDate = LocalDate.parse("2022-08-26"),
-        detail = OffenceDetail(
-          mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Robbery (other than armed robbery)",
-          code = "ABC123",
-        )
-      ),
-      Offence(
-        mainOffence = false,
-        offenceDate = LocalDate.parse("2022-08-26"),
-        detail = OffenceDetail(
-          mainCategoryDescription = "string", subCategoryDescription = "string",
-          description = "Arson",
-          code = "ZYX789"
-        )
+    mainOffence = DeliusClient.Offence(
+      date = LocalDate.parse("2022-08-26"),
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+    ),
+    additionalOffences = listOf(
+      DeliusClient.Offence(
+        date = LocalDate.parse("2022-08-26"),
+        code = "ZYX789",
+        description = "Arson"
       )
-    ),
-    convictionId = 2500614567,
-    orderManagers =
-    listOf(
-      OrderManager(
-        dateStartOfAllocation = LocalDateTime.parse("2022-04-26T20:39:47.778"),
-        name = "string",
-        staffCode = "STFFCDEU",
-        gradeCode = "string"
-      )
-    ),
-    custody = Custody(
-      bookingNumber = "12345",
-      institution = Institution(
-        code = "COMMUN",
-        description = "In the Community",
-        establishmentType = EstablishmentType(
-          code = "E",
-          description = "Prison"
-        ),
-        institutionId = 156,
-        institutionName = "In the Community",
-        isEstablishment = true,
-        isPrivate = false,
-        nomsPrisonInstitutionCode = "AB124",
-      ),
-      status = CustodyStatus(code = "ABC123", description = "custody status"),
-      keyDates = KeyDates(
-        conditionalReleaseDate = LocalDate.parse("2020-06-20"),
-        expectedPrisonOffenderManagerHandoverDate = LocalDate.parse("2020-06-21"),
-        expectedPrisonOffenderManagerHandoverStartDate = LocalDate.parse("2020-06-22"),
-        expectedReleaseDate = LocalDate.parse("2020-06-23"),
-        hdcEligibilityDate = LocalDate.parse("2020-06-24"),
-        licenceExpiryDate = LocalDate.parse("2022-05-10"),
-        paroleEligibilityDate = LocalDate.parse("2020-06-26"),
-        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-        postSentenceSupervisionEndDate = LocalDate.parse("2022-05-11"),
-      ),
-      sentenceStartDate = LocalDate.parse("2022-04-26")
     )
   )
 }
