@@ -23,13 +23,12 @@ internal class ManagementOversightService(
   }
 
   suspend fun getManagementOversightResponse(
-    crn: String,
-    userId: String?,
-    readableNameOfUser: String?
+    crn: String
   ): ResponseEntity<ManagementOversightResponse> {
     val recommendations = recommendationRepository.findByCrn(crn)
     Collections.sort(recommendations)
     val dateTime = splitDateTime(localDateTimeFromString(recommendations[0].data.managerRecallDecision?.createdDate))
+    val readableNameOfUser = recommendations[0].data.managerRecallDecision?.createdBy
     return ResponseEntity(
       ManagementOversightResponse(
         sensitive = recommendations[0].data.sensitive ?: false,

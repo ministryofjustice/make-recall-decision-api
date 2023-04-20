@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ManagementOversightResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ManagementOversightService
-import java.security.Principal
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -29,15 +28,10 @@ internal class ManagementOversightController(
   @Operation(summary = "Provides notes on case for Delius")
   suspend fun getRecommendationStatus(
     @PathVariable("crn") crn: String,
-    userLogin: Principal
   ): ResponseEntity<ManagementOversightResponse> {
     log.info(normalizeSpace("Management oversight endpoint hit for crn: $crn"))
-    val userId = userLogin.name
-    val readableUserName = authenticationFacade.currentNameOfUser
     return managementOversightService.getManagementOversightResponse(
-      crn = crn,
-      userId = userId,
-      readableNameOfUser = readableUserName
+      crn = crn
     )
   }
 }

@@ -116,22 +116,22 @@ class MrdTestDataBuilder {
       )
     }
 
-    fun updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation: RecommendationEntity, isSentToDelius: String): RecommendationModel {
+    fun updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation: RecommendationEntity, sendSpoRationaleToDelius: String): RecommendationModel {
       return RecommendationModel(
+        spoRecallType = "RECALL",
+        spoRecallRationale = "Recall",
+        sendSpoRationaleToDelius = sendSpoRationaleToDelius != "false",
         crn = existingRecommendation.data.crn,
         createdBy = existingRecommendation.data.createdBy,
         createdDate = existingRecommendation.data.createdDate,
         status = Status.DRAFT,
         managerRecallDecision = ManagerRecallDecision(
+          isSentToDelius = true,
           selected = ManagerRecallDecisionTypeSelectedValue(
             value = ManagerRecallDecisionTypeValue.RECALL,
             details = "Recall"
           ),
-          allOptions = listOf(
-            TextValueOption(value = "RECALL", text = "Recall"),
-            TextValueOption(value = "NO_RECALL", text = "Do not recall")
-          ),
-          isSentToDelius = if (isSentToDelius == "false") false else true,
+          allOptions = null,
           createdBy = "Bill",
           createdDate = "2022-07-26T09:48:27.443Z"
         )
