@@ -73,7 +73,7 @@ services:
     ports:
       - "9082:8080"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
     command: --verbose --local-response-templating
     volumes:
       - ./fake-delius-integration-api:/home/wiremock

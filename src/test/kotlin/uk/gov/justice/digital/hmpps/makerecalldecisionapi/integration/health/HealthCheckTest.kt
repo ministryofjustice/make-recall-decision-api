@@ -75,8 +75,8 @@ class HealthCheckTest : IntegrationTestBase() {
     oauthMock.clear(request().withPath("/auth/health/ping"))
     oauthMock.`when`(request().withPath("/auth/health/ping")).error(HttpError.error())
 
-    deliusIntegration.clear(request().withPath("/ping"))
-    deliusIntegration.`when`(request().withPath("/ping")).error(HttpError.error())
+    deliusIntegration.clear(request().withPath("/health"))
+    deliusIntegration.`when`(request().withPath("/health")).error(HttpError.error())
 
     offenderSearchApi.clear(request().withPath("/health/ping"))
     offenderSearchApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
