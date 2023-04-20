@@ -639,7 +639,7 @@ abstract class IntegrationTestBase {
       )
 
     deliusIntegration
-      .`when`(request().withPath("/ping"))
+      .`when`(request().withPath("/health"))
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
