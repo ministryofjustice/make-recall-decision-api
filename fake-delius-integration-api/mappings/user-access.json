@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/secure/offenders/crn/.*/convictions/2500565594/licenceConditions"
+    "urlPathPattern": "/user/.*/access/.*"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "licence-conditions2.json",
+    "bodyFileName": "user-access.json",
     "headers": {
       "Content-Type": "application/json"
     }

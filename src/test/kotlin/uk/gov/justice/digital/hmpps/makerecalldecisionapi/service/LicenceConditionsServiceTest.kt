@@ -11,7 +11,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
@@ -23,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -36,8 +36,8 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
     licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService)
 
-    given(communityApiClient.getUserAccess(anyString()))
-      .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+    given(deliusClient.getUserAccess(anyString(), anyString()))
+      .willReturn(userAccessResponse(false, false, false))
   }
 
   @Test
@@ -80,15 +80,11 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -105,15 +101,11 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   fun `given user is not found for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Forbidden", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,

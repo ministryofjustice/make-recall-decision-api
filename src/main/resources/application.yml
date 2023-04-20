@@ -40,11 +40,6 @@ spring:
             client-id: ${system.client.id:make-recall-decision-api}
             client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
-          community-api:
-            provider: hmpps-auth
-            client-id: ${system.client.id:make-recall-decision-api}
-            client-secret: ${system.client.secret:clientsecret}
-            authorization-grant-type: client_credentials
           delius:
             provider: hmpps-auth
             client-id: ${system.client.id:make-recall-decision-api}
@@ -122,11 +117,6 @@ offender:
   search:
     endpoint:
       url: http://localhost:9080
-
-community:
-  api:
-    endpoint:
-      url: http://localhost:9081
 
 delius:
   integration:

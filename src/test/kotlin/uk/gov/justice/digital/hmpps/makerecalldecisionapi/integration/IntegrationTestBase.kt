@@ -40,13 +40,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.documents.groupedDocumentsDeliusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.convictionsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.convictions.nonCustodialConvictionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusNoMappaOrRoshHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRecommendationModelResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.communityApiLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseMultipleConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseNoConvictions
@@ -54,14 +51,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.nonCustodialLicencesResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.mappaDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.registrationsDeliusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.release.releaseSummaryDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
@@ -84,7 +78,6 @@ abstract class IntegrationTestBase {
   @Autowired
   protected lateinit var repository: RecommendationRepository
 
-  var communityApi: ClientAndServer = startClientAndServer(8092)
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
   var oasysARNApi: ClientAndServer = startClientAndServer(8095)
@@ -108,7 +101,7 @@ abstract class IntegrationTestBase {
       jwtAuthHelper.createJwt(
         subject = "SOME_USER",
         roles = roles,
-        clientId = "community-api"
+        clientId = "make-recall-decisions-api"
       )
     )
   }
@@ -131,7 +124,6 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
-    communityApi.reset()
     cvlApi.reset()
     deliusIntegration.reset()
     gotenbergMock.reset()
@@ -143,7 +135,6 @@ abstract class IntegrationTestBase {
 
   @AfterAll
   fun tearDownServer() {
-    communityApi.stop()
     cvlApi.stop()
     deliusIntegration.stop()
     gotenbergMock.stop()
@@ -277,16 +268,6 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun mappaDetailsResponse(crn: String, delaySeconds: Long = 0, level: Int? = 1, category: Int? = 0) {
-    val mappaDetailsRequest =
-      request().withPath("/secure/offenders/crn/$crn/risk/mappa")
-
-    communityApi.`when`(mappaDetailsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(mappaDetailsResponse(level, category))
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
   protected fun personalDetailsResponse(crn: String, delaySeconds: Long = 0) {
     val personalDetailsRequest =
       request().withPath("/case-summary/$crn/personal-details")
@@ -304,15 +285,6 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(personalDetailsRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse(district = district, firstName = firstName))
         .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun noPersonalDetailsResponse(crn: String, delaySeconds: Long = 0) {
-    val personalDetailsRequest =
-      request().withPath("/case-summary/$crn/personal-details")
-
-    deliusIntegration.`when`(personalDetailsRequest).respond(
-      response().withStatusCode(404)
     )
   }
 
@@ -383,6 +355,16 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(request).respond(response().withStatusCode(404))
   }
 
+  protected fun recommendationModelResponse(crn: String, delaySeconds: Long = 0, firstName: String = "John") {
+    val request =
+      request().withPath("/case-summary/$crn/recommendation-model")
+
+    deliusIntegration.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON).withBody(deliusRecommendationModelResponse(firstName))
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
   protected fun roSHSummaryResponse(crn: String, delaySeconds: Long = 0) {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
@@ -424,74 +406,6 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest).respond(
       response().withBody(riskSummaryUnavailableResponse()).withStatusCode(500)
-    )
-  }
-
-  protected fun registrationsResponse(delaySeconds: Long = 0) {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/registrations")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(registrationsDeliusResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun noActiveConvictionResponse(crn: String) {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/convictions")
-    communityApi.`when`(convictionsRequest).respond(
-      response().withStatusCode(404)
-    )
-  }
-
-  protected fun convictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0, active: Boolean? = true, offenceCode: String? = "1234", offenceDate: String? = "2022-04-24T20:39:47.778Z") {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/convictions")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(convictionsResponse(crn, staffCode, active, offenceCode, offenceDate))
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun staffDetailsResponse(username: String? = "Bill") {
-    val convictionsRequest =
-      request().withPath("/secure/staff/username/$username")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.staffDetailsResponse())
-        .withDelay(Delay.seconds(0L))
-    )
-  }
-
-  protected fun staffDetailsNotFoundResponse(username: String? = "Bill") {
-    val convictionsRequest =
-      request().withPath("/secure/staff/username/$username")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.staffDetailsResponse())
-        .withDelay(Delay.seconds(0L))
-    )
-  }
-
-  protected fun nonCustodialConvictionResponse(crn: String, staffCode: String, delaySeconds: Long = 0) {
-    val convictionsRequest =
-      request().withPath("/secure/offenders/crn/$crn/convictions")
-
-    communityApi.`when`(convictionsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(nonCustodialConvictionsResponse(crn, staffCode))
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun communityApiLicenceConditionsResponse(crn: String, convictionId: Long, delaySeconds: Long = 0) {
-    val licenceConditions =
-      request().withPath("/secure/offenders/crn/$crn/convictions/$convictionId/licenceConditions")
-
-    communityApi.`when`(licenceConditions, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(communityApiLicenceResponse(convictionId))
-        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
@@ -562,6 +476,12 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun personalDetailsError(crn: String) {
+    val personalDetails =
+      request().withPath("/case-summary/$crn/personal-details")
+    deliusIntegration.`when`(personalDetails).respond(response().withStatusCode(500))
+  }
+
   protected fun offenderSearchResponse(crn: String? = "X123456", firstName: String? = "Pontius", surname: String? = "Pilate", fullName: String? = "Pontius Pilate", delaySeconds: Long = 0) {
     val offenderSearchRequest =
       request()
@@ -586,106 +506,77 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun contactSummaryResponse(crn: String, contactSummary: String, delaySeconds: Long = 0) {
-    val contactSummaryUrl = "/secure/offenders/crn/$crn/contact-summary"
+  protected fun deliusContactHistoryResponse(crn: String, body: String, delaySeconds: Long = 0) {
+    val contactSummaryUrl = "/case-summary/$crn/contact-history"
     val contactSummaryRequest = request()
       .withPath(contactSummaryUrl)
 
-    communityApi.`when`(contactSummaryRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(contactSummary)
+    deliusIntegration.`when`(contactSummaryRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(body)
         .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun releaseSummaryResponse(crn: String, delaySeconds: Long = 0) {
-    val releaseSummaryRequest =
-      request().withPath("/secure/offenders/crn/$crn/release")
-
-    communityApi.`when`(releaseSummaryRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(releaseSummaryDeliusResponse())
-        .withDelay(Delay.seconds(delaySeconds))
-    )
-  }
-
-  protected fun releaseSummaryResponseWithStatusCode(crn: String, releaseSummary: String, statusCode: Int) {
-    val releaseSummaryRequest =
-      request().withPath("/secure/offenders/crn/$crn/release")
-
-    communityApi.`when`(releaseSummaryRequest).respond(
-      response().withContentType(APPLICATION_JSON).withStatusCode(statusCode).withBody(releaseSummary)
     )
   }
 
   protected fun userAccessAllowed(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest).respond(
+    deliusIntegration.`when`(userAccessRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun userAccessAllowedOnce(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun userAccessExcluded(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
     )
   }
 
   protected fun userNotFound(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response()
         .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404)
     )
   }
 
   protected fun userAccessRestricted(crn: String, delaySeconds: Long = 0) {
-    val userAccessUrl = "/secure/offenders/crn/$crn/userAccess"
+    val userAccessUrl = "/user/.*/access/$crn"
     val userAccessRequest = request()
       .withPath(userAccessUrl)
 
-    communityApi.`when`(userAccessRequest, exactly(1)).respond(
+    deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(403)
-    )
-  }
-
-  protected fun groupedDocumentsResponse(crn: String, delaySeconds: Long = 0) {
-    val groupedDocumentsRequest =
-      request().withPath("/secure/offenders/crn/$crn/documents/grouped")
-
-    communityApi.`when`(groupedDocumentsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(groupedDocumentsDeliusResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
     )
   }
 
   protected fun getDocumentResponse(crn: String, documentId: String, delaySeconds: Long = 0) {
     val documentRequest =
-      request().withPath("/secure/offenders/crn/$crn/documents/$documentId")
+      request().withPath("/document/$crn/$documentId")
 
-    communityApi.`when`(documentRequest).respond(
+    deliusIntegration.`when`(documentRequest).respond(
       response()
         .withHeader(HttpHeaders.CONTENT_TYPE, "application/pdf;charset=UTF-8")
         .withHeader(HttpHeaders.ACCEPT_RANGES, "bytes")
@@ -701,9 +592,9 @@ abstract class IntegrationTestBase {
 
   protected fun noDocumentAvailable(crn: String, documentId: String) {
     val documentRequest =
-      request().withPath("/secure/offenders/crn/$crn/documents/$documentId")
+      request().withPath("/document/$crn/$documentId")
 
-    communityApi.`when`(documentRequest, exactly(1)).respond(
+    deliusIntegration.`when`(documentRequest, exactly(1)).respond(
       response().withStatusCode(404)
     )
   }
@@ -747,7 +638,7 @@ abstract class IntegrationTestBase {
           .withBody(gson.toJson(mapOf("status" to "OK")))
       )
 
-    communityApi
+    deliusIntegration
       .`when`(request().withPath("/ping"))
       .respond(
         response()

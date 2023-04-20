@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -21,5 +22,14 @@ class DeliusClientTest : IntegrationTestBase() {
       deliusClient.getPersonalDetails(nonExistentCrn)
     }.isInstanceOf(PersonNotFoundException::class.java)
       .hasMessage("No details available for endpoint: /case-summary/X123456/personal-details")
+  }
+
+  @Test
+  fun `throws exception on http error`() {
+    personalDetailsError("X123456")
+    assertThatThrownBy {
+      deliusClient.getPersonalDetails("X123456")
+    }.isInstanceOf(WebClientResponseException.InternalServerError::class.java)
+      .hasMessage("500 Internal Server Error from GET http://localhost:8097/case-summary/X123456/personal-details")
   }
 }

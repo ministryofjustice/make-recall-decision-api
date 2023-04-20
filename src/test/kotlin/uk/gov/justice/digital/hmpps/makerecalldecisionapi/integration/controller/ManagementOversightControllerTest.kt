@@ -34,8 +34,6 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
-    mappaDetailsResponse(crn, category = 1, level = 1)
-    convictionResponse(crn, "011")
     licenceConditionsResponse(crn, 2500614567)
     personalDetailsResponseOneTimeOnly(crn)
     deleteAndCreateRecommendation()

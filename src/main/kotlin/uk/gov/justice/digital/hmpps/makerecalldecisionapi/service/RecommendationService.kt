@@ -4,19 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CommunityApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel.ConvictionDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ConvictionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -52,6 +51,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.OffsetDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel as DeliusRecommendationModel
 
 @Transactional
 @Service
@@ -60,9 +60,8 @@ internal class RecommendationService(
   @Lazy val personDetailsService: PersonDetailsService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
-  private val convictionService: ConvictionService,
   @Lazy private val riskService: RiskService?,
-  @Qualifier("communityApiClientUserEnhanced") private val communityApiClient: CommunityApiClient,
+  private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
   @Value("\${mrd.url}") private val mrdUrl: String? = null
 ) {
@@ -232,7 +231,7 @@ internal class RecommendationService(
   suspend fun updateRecommendationWithManagerRecallDecision(
     jsonRequest: JsonNode?,
     recommendationId: Long,
-    userId: String?,
+    userId: String,
     readableUserName: String?,
   ): RecommendationResponse {
     validateManagerRecallDecision(jsonRequest)
@@ -255,7 +254,8 @@ internal class RecommendationService(
           sendManagerRecallDecisionMadeEvent(
             crn = existingRecommendationEntity.data.crn,
             contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.managerRecallDecision?.selected?.value).toString(),
-            staffcode = getValueAndHandleWrappedException(userId?.let { communityApiClient.getStaffDetails(it) })?.staffCode
+            username = userId,
+            staffcode = deliusClient.getStaff(userId).code
           )
         } catch (ex: Exception) {
           log.info("Failed to send domain event for ${updatedRecommendation.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
@@ -279,7 +279,7 @@ internal class RecommendationService(
     userEmail: String?,
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false,
-    pageRefreshIds: List<String>?,
+    pageRefreshIds: List<String>,
     featureFlags: FeatureFlags?
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
@@ -376,90 +376,68 @@ internal class RecommendationService(
     return existingRecommendation.recallConsideredList
   }
 
-  private suspend fun refreshData(pageRefreshIds: List<String>?, model: RecommendationModel) {
-    model.previousReleases = getPreviousReleaseDetails(pageRefreshIds, model.crn, model.previousReleases)
-    model.previousRecalls = getPreviousRecallDetails(pageRefreshIds, model.crn, model.previousRecalls)
-    model.personOnProbation = getPersonalDetails(pageRefreshIds, model.crn, model.personOnProbation)
-    model.personOnProbation?.mappa = getMappaDetails(pageRefreshIds, model.crn, model.personOnProbation?.mappa)
-    model.roshSummary = getRoshSummaryDetails(pageRefreshIds, model.crn, model.roshSummary)
-    model.indexOffenceDetails = getIndexOffenceDetails(pageRefreshIds, model.crn, model.indexOffenceDetails)
-    model.convictionDetail = getConvictionDetail(pageRefreshIds, model.crn, model.convictionDetail, model.isExtendedSentence)
+  private suspend fun refreshData(pageRefreshIds: List<String>, model: RecommendationModel) {
+    model.crn?.let {
+      val deliusDetails = lazy { deliusClient.getRecommendationModel(model.crn) }
+      if ("previousReleases" in pageRefreshIds) model.refreshPreviousReleases(deliusDetails.value)
+      if ("previousRecalls" in pageRefreshIds) model.refreshPreviousRecalls(deliusDetails.value)
+      if ("personOnProbation" in pageRefreshIds) model.refreshPersonOnProbation(deliusDetails.value)
+      if ("mappa" in pageRefreshIds) model.refreshMappa(deliusDetails.value)
+      if ("riskOfSeriousHarm" in pageRefreshIds) model.refreshRoshSummary(model.crn)
+      if ("indexOffenceDetails" in pageRefreshIds) model.refreshIndexOffenceDetails(model.crn, deliusDetails.value)
+      if ("convictionDetail" in pageRefreshIds) model.refreshConvictionDetail(deliusDetails.value)
+    }
   }
 
-  private fun getPreviousReleaseDetails(pageRefreshIds: List<String>?, crn: String?, previousReleases: PreviousReleases?): PreviousReleases? {
-    if (pageRefreshIds?.any { it == "previousReleases" } == true && crn != null) {
+  private fun RecommendationModel.refreshPreviousReleases(deliusDetails: DeliusRecommendationModel) {
+    previousReleases = PreviousReleases(
+      lastReleaseDate = deliusDetails.lastRelease?.releaseDate,
+      lastReleasingPrisonOrCustodialEstablishment = deliusDetails.lastReleasedFromInstitution?.name,
+      hasBeenReleasedPreviously = previousReleases?.hasBeenReleasedPreviously,
+      previousReleaseDates = previousReleases?.previousReleaseDates,
+    )
+  }
 
-      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
+  private fun RecommendationModel.refreshPreviousRecalls(deliusDetails: DeliusRecommendationModel) {
+    previousRecalls = PreviousRecalls(
+      lastRecallDate = deliusDetails.lastRelease?.recallDate,
+      hasBeenRecalledPreviously = previousRecalls?.hasBeenRecalledPreviously,
+      previousRecallDates = previousRecalls?.previousRecallDates,
+    )
+  }
 
-      return PreviousReleases(
-        lastReleaseDate = releaseSummaryResponse?.lastRelease?.date,
-        lastReleasingPrisonOrCustodialEstablishment = releaseSummaryResponse?.lastRelease?.institution?.institutionName,
-        hasBeenReleasedPreviously = previousReleases?.hasBeenReleasedPreviously,
-        previousReleaseDates = previousReleases?.previousReleaseDates,
+  private fun RecommendationModel.refreshPersonOnProbation(deliusDetails: DeliusRecommendationModel) {
+    personOnProbation = deliusDetails.toPersonOnProbation().copy(
+      hasBeenReviewed = personOnProbation?.hasBeenReviewed,
+      mappa = personOnProbation?.mappa
+    )
+  }
+
+  private fun RecommendationModel.refreshMappa(deliusDetails: DeliusRecommendationModel) {
+    personOnProbation?.mappa = deliusDetails.mappa?.let {
+      Mappa(
+        level = deliusDetails.mappa.level,
+        lastUpdatedDate = deliusDetails.mappa.startDate,
+        category = deliusDetails.mappa.category,
+        hasBeenReviewed = personOnProbation?.mappa?.hasBeenReviewed
       )
     }
-    return previousReleases
   }
 
-  private fun getPreviousRecallDetails(pageRefreshIds: List<String>?, crn: String?, previousRecalls: PreviousRecalls?): PreviousRecalls? {
-    if (pageRefreshIds?.any { it == "previousRecalls" } == true && crn != null) {
-
-      val releaseSummaryResponse = getValueAndHandleWrappedException(communityApiClient.getReleaseSummary(crn))
-
-      return PreviousRecalls(
-        lastRecallDate = releaseSummaryResponse?.lastRecall?.date,
-        hasBeenRecalledPreviously = previousRecalls?.hasBeenRecalledPreviously,
-        previousRecallDates = previousRecalls?.previousRecallDates,
-      )
-    }
-    return previousRecalls
+  private suspend fun RecommendationModel.refreshRoshSummary(crn: String) {
+    roshSummary = riskService?.getRoshSummary(crn)
   }
 
-  private suspend fun getPersonalDetails(pageRefreshIds: List<String>?, crn: String?, personDetails: PersonOnProbation?): PersonOnProbation? {
-    if (pageRefreshIds?.any { it == "personOnProbation" } == true && crn != null) {
-      var latestPersonDetails = personDetailsService.getPersonDetails(crn).toPersonOnProbation()
-      val existingMappa = personDetails?.mappa
-      latestPersonDetails = latestPersonDetails.copy(hasBeenReviewed = personDetails?.hasBeenReviewed, mappa = existingMappa)
-      return latestPersonDetails
-    }
-    return personDetails
+  private suspend fun RecommendationModel.refreshIndexOffenceDetails(crn: String, deliusDetails: DeliusRecommendationModel) {
+    indexOffenceDetails = riskService?.fetchAssessmentInfo(crn, deliusDetails.activeConvictions, hideOffenceDetailsWhenNoMatch = true)?.offenceDescription
   }
 
-  private suspend fun getMappaDetails(pageRefreshIds: List<String>?, crn: String?, mappa: Mappa?): Mappa? {
-    if (pageRefreshIds?.any { it == "mappa" } == true && crn != null) {
-      var latestMappa = riskService?.getMappa(crn)
-      latestMappa = latestMappa?.copy(hasBeenReviewed = mappa?.hasBeenReviewed)
-      return latestMappa
-    }
-    return mappa
-  }
-
-  private suspend fun getRoshSummaryDetails(pageRefreshIds: List<String>?, crn: String?, roshSummary: RoshSummary?): RoshSummary? {
-    if (pageRefreshIds?.any { it == "riskOfSeriousHarm" } == true && crn != null) {
-      return riskService?.getRoshSummary(crn)
-    }
-    return roshSummary
-  }
-
-  private suspend fun getIndexOffenceDetails(pageRefreshIds: List<String>?, crn: String?, indexOffenceDetails: String?): String? {
-    if (pageRefreshIds?.any { it == "indexOffenceDetails" } == true && crn != null) {
-      val latestIndexOffenceDetails = riskService?.fetchAssessmentInfo(crn = crn, hideOffenceDetailsWhenNoMatch = true)
-      return latestIndexOffenceDetails?.offenceDescription
-    }
-    return indexOffenceDetails
-  }
-
-  private suspend fun getConvictionDetail(pageRefreshIds: List<String>?, crn: String?, convictionDetail: ConvictionDetail?, isExtendedSentenceInRecommendation: Boolean?): ConvictionDetail? {
-    if (pageRefreshIds?.any { it == "convictionDetail" } == true && crn != null) {
-      val latestConvictionResponse = convictionService.buildConvictionResponse(crn, false)
-
-      return buildRecommendationConvictionResponse(
-        latestConvictionResponse.filter { it.isCustodial == true },
-        convictionDetail?.hasBeenReviewed,
-        isExtendedSentenceInRecommendation
-      )
-    }
-    return convictionDetail
+  private fun RecommendationModel.refreshConvictionDetail(deliusDetails: DeliusRecommendationModel) {
+    convictionDetail = buildRecommendationConvictionResponse(
+      deliusDetails.activeCustodialConvictions,
+      convictionDetail?.hasBeenReviewed,
+      isExtendedSentence
+    )
   }
 
   private fun updatePageReviewedValues(
@@ -546,12 +524,13 @@ internal class RecommendationService(
     mrdEventsEmitter?.sendEvent(mrdEvent)
   }
 
-  private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, staffcode: String?) {
+  private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, username: String, staffcode: String?) {
     sendMrdEventToEventsEmitter(
       toManagerRecallDecisionMadeEventPayload(
         crn = crn,
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = contactOutcome,
+        username = username,
         staffCode = staffcode
       )
     )
@@ -672,23 +651,23 @@ internal class RecommendationService(
     return recommendationRepository.save(recommendationEntity)
   }
 
-  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionResponse>?, hasBeenReviewed: Boolean? = false, isExtendedSentenceInRecommendation: Boolean?): ConvictionDetail? {
-    if (convictionResponse?.size == 1) {
+  private fun buildRecommendationConvictionResponse(convictionResponse: List<ConvictionDetails>, hasBeenReviewed: Boolean? = false, isExtendedSentenceInRecommendation: Boolean?): ConvictionDetail? {
+    if (convictionResponse.size == 1) {
 
-      val mainOffence = convictionResponse[0].offences?.filter { it.mainOffence == true }?.get(0)
+      val mainOffence = convictionResponse[0].mainOffence
       val (custodialTerm, extendedTerm) = extendedSentenceDetails(convictionResponse[0], isExtendedSentenceInRecommendation)
 
       return ConvictionDetail(
-        mainOffence?.description,
-        mainOffence?.offenceDate,
-        convictionResponse[0].sentenceStartDate,
-        convictionResponse[0].sentenceOriginalLength,
-        convictionResponse[0].sentenceOriginalLengthUnits,
-        convictionResponse[0].sentenceDescription,
-        convictionResponse[0].licenceExpiryDate,
-        convictionResponse[0].sentenceExpiryDate,
-        convictionResponse[0].sentenceSecondLength,
-        convictionResponse[0].sentenceSecondLengthUnits,
+        mainOffence.description,
+        mainOffence.date,
+        convictionResponse[0].sentence.startDate,
+        convictionResponse[0].sentence.length,
+        convictionResponse[0].sentence.lengthUnits,
+        convictionResponse[0].sentence.description,
+        convictionResponse[0].sentence.licenceExpiryDate,
+        convictionResponse[0].sentence.sentenceExpiryDate,
+        convictionResponse[0].sentence.secondLength,
+        convictionResponse[0].sentence.secondLengthUnits,
         custodialTerm,
         extendedTerm,
         hasBeenReviewed
@@ -697,14 +676,14 @@ internal class RecommendationService(
     return null
   }
 
-  private fun extendedSentenceDetails(conviction: ConvictionResponse?, isExtendedSentenceInRecommendation: Boolean?): Pair<String?, String?> {
-    return if ("Extended Determinate Sentence" == conviction?.sentenceDescription ||
-      "CJA - Extended Sentence" == conviction?.sentenceDescription ||
+  private fun extendedSentenceDetails(conviction: ConvictionDetails, isExtendedSentenceInRecommendation: Boolean?): Pair<String?, String?> {
+    return if ("Extended Determinate Sentence" == conviction.sentence.description ||
+      "CJA - Extended Sentence" == conviction.sentence.description ||
       isExtendedSentenceInRecommendation == true
     ) {
-      val custodialTerm = conviction?.sentenceOriginalLength?.toString() + MrdTextConstants.WHITE_SPACE + conviction?.sentenceOriginalLengthUnits
-      val sentenceSecondLength = conviction?.sentenceSecondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
-      val sentenceSecondLengthUnits = conviction?.sentenceSecondLengthUnits ?: MrdTextConstants.EMPTY_STRING
+      val custodialTerm = conviction.sentence.length?.toString() + MrdTextConstants.WHITE_SPACE + conviction.sentence.lengthUnits
+      val sentenceSecondLength = conviction.sentence.secondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
+      val sentenceSecondLengthUnits = conviction.sentence.secondLengthUnits ?: MrdTextConstants.EMPTY_STRING
 
       Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
     } else Pair(null, null)

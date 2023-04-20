@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import com.fasterxml.jackson.annotation.JsonFormat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.formatFullName
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import java.time.LocalDate
 
 data class PersonalDetailsOverview(
@@ -27,7 +28,7 @@ data class PersonalDetailsOverview(
 fun DeliusClient.PersonalDetailsOverview.toOverview(crn: String) = PersonalDetailsOverview(
   crn = crn,
   fullName = formatFullName(name.forename, name.middleName, name.surname),
-  name = listOfNotNull(name.forename, name.surname).joinToString(" "),
+  name = joinToString(name.forename, name.surname),
   firstName = name.forename,
   middleNames = name.middleName,
   surname = name.surname,

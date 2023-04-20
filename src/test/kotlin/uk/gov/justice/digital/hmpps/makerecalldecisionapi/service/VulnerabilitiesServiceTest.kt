@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.VulnerabilitiesResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -78,15 +79,11 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   fun `given case user not found for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Not found", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -103,15 +100,11 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,

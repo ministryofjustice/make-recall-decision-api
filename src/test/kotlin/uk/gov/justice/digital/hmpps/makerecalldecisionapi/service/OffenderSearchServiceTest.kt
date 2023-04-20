@@ -10,7 +10,6 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
@@ -29,7 +28,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    offenderSearch = OffenderSearchService(offenderSearchApiClient, communityApiClient)
+    offenderSearch = OffenderSearchService(offenderSearchApiClient, userAccessValidator)
   }
 
   @Test
@@ -103,11 +102,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
         .willReturn(Mono.fromCallable { omittedDetailsResponse })
 
-      given(communityApiClient.getUserAccess("X12345")).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, restrictedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, "X12345")).willReturn(restrictedAccess())
+
       val results = offenderSearch.search(crn)
 
       assertThat(results.size).isEqualTo(1)
@@ -131,8 +127,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       given(offenderSearchApiClient.searchOffenderByPhrase(request))
         .willReturn(Mono.fromCallable { omittedDetailsResponse })
 
-      given(communityApiClient.getUserAccess(crn))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+      given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
       val results = offenderSearch.search(crn)
 
@@ -140,8 +135,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       assertThat(results[0].name).isEqualTo("No name available")
       assertThat(results[0].crn).isEqualTo(crn)
       assertThat(results[0].dateOfBirth).isNull()
-      assertThat(results[0].userExcluded).isNull()
-      assertThat(results[0].userRestricted).isNull()
+      assertThat(results[0].userExcluded).isFalse
+      assertThat(results[0].userRestricted).isFalse
 
       then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
     }

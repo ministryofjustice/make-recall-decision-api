@@ -13,9 +13,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import java.time.LocalDate
@@ -49,15 +47,11 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `given case is excluded for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          403, "Forbidden", null, excludedResponse().toByteArray(), null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = personDetailsService.getPersonDetails(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -74,15 +68,11 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `given user not found for user then return user access response details`() {
     runTest {
 
-      given(communityApiClient.getUserAccess(crn)).willThrow(
-        WebClientResponseException(
-          404, "Not found", null, null, null
-        )
-      )
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = personDetailsService.getPersonDetails(crn)
 
-      then(communityApiClient).should().getUserAccess(crn)
+      then(deliusClient).should().getUserAccess(username, crn)
 
       com.natpryce.hamkrest.assertion.assertThat(
         response,
@@ -99,8 +89,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when no registration available`() {
     runTest {
       val crn = "12345"
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+      given(deliusClient.getUserAccess(anyString(), anyString()))
+        .willReturn(userAccessResponse(false, false, false))
       given(deliusClient.getPersonalDetails(anyString()))
         .willReturn(deliusPersonalDetailsResponse())
 
@@ -138,8 +128,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when no addresses available`() {
     runTest {
       val crn = "12345"
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+      given(deliusClient.getUserAccess(anyString(), anyString()))
+        .willReturn(userAccessResponse(false, false, false))
       given(deliusClient.getPersonalDetails(anyString()))
         .willReturn(deliusPersonalDetailsResponse(address = null))
 
@@ -174,10 +164,10 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       // given
       val crn = "12345"
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+      given(deliusClient.getUserAccess(anyString(), anyString()))
+        .willReturn(userAccessResponse(false, false, false))
       given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse(address = PersonalDetails.Address(postcode = "Nf1 1nf")))
+        .willReturn(deliusPersonalDetailsResponse(address = Address(postcode = "Nf1 1nf")))
 
       // when
       val response = personDetailsService.getPersonDetails(crn)
@@ -194,15 +184,15 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when optional fields are missing`() {
     runTest {
       val crn = "12345"
-      given(communityApiClient.getUserAccess(anyString()))
-        .willReturn(Mono.fromCallable { userAccessResponse(false, false, false) })
+      given(deliusClient.getUserAccess(anyString(), anyString()))
+        .willReturn(userAccessResponse(false, false, false))
       given(deliusClient.getPersonalDetails(anyString())).willReturn(
         deliusPersonalDetailsResponse(
           middleName = null,
           ethnicity = null,
           primaryLanguage = null,
           manager = null,
-          address = PersonalDetails.Address(
+          address = Address(
             postcode = null,
             district = null,
             addressNumber = null,

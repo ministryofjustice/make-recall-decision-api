@@ -15,7 +15,6 @@ class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long
 ) : IntegrationTestBase() {
-  val staffCode = "STFFCDEU"
 
   @Test
   fun `retrieves licence condition details for case with custodial conviction`() {
@@ -39,18 +38,18 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(2)
-        .jsonPath("$.convictions[0].sentenceDescription").isEqualTo("Extended Determinate Sentence")
-        .jsonPath("$.convictions[0].sentenceOriginalLength").isEqualTo("12")
-        .jsonPath("$.convictions[0].sentenceOriginalLengthUnits").isEqualTo("days")
-        .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
-        .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions.length()").isEqualTo(1)
+        .jsonPath("$.activeConvictions[0].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.activeConvictions[0].sentence.description").isEqualTo("Extended Determinate Sentence")
+        .jsonPath("$.activeConvictions[0].sentence.length").isEqualTo("12")
+        .jsonPath("$.activeConvictions[0].sentence.lengthUnits").isEqualTo("days")
+        .jsonPath("$.activeConvictions[0].sentence.licenceExpiryDate").isEqualTo("2020-06-25")
+        .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-28")
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
@@ -88,7 +87,7 @@ class LicenceConditionsControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(false)
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(false)
     }
   }
 
@@ -109,19 +108,19 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(3)
-        .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-25")
-        .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-28")
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
-        .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeMainCat.code").isEqualTo("NLC9")
-        .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeMainCat.description").isEqualTo("Another main condition")
-        .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.code").isEqualTo("NSTT9")
-        .jsonPath("$.convictions[0].licenceConditions[1].licenceConditionTypeSubCat.description").isEqualTo("Do not attend Hull city center after 8pm")
+        .jsonPath("$.activeConvictions.length()").isEqualTo(1)
+        .jsonPath("$.activeConvictions[0].licenceConditions.length()").isEqualTo(3)
+        .jsonPath("$.activeConvictions[0].sentence.licenceExpiryDate").isEqualTo("2020-06-25")
+        .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-28")
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].mainCategory.code").isEqualTo("NLC9")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].mainCategory.description").isEqualTo("Another main condition")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].subCategory.code").isEqualTo("NSTT9")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].subCategory.description").isEqualTo("Do not attend Hull city center after 8pm")
     }
   }
 
@@ -142,32 +141,29 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(2)
-        .jsonPath("$.convictions[0].offences[0].description").isEqualTo("Robbery (other than armed robbery)")
-        .jsonPath("$.convictions[0].offences[0].mainOffence").isEqualTo(true)
-        .jsonPath("$.convictions[0].offences[0].code").isEqualTo("789")
-        .jsonPath("$.convictions[1].offences[0].description").isEqualTo("Arson")
-        .jsonPath("$.convictions[1].offences[0].mainOffence").isEqualTo(true)
-        .jsonPath("$.convictions[1].offences[0].code").isEqualTo("123")
-        .jsonPath("$.convictions[1].offences[1].description").isEqualTo("Shoplifting")
-        .jsonPath("$.convictions[1].offences[1].mainOffence").isEqualTo(false)
-        .jsonPath("$.convictions[1].offences[1].code").isEqualTo("456")
-        .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(2)
-        .jsonPath("$.convictions[1].licenceConditions.length()").isEqualTo(2)
-        .jsonPath("$.convictions[0].licenceExpiryDate").isEqualTo("2020-06-23")
-        .jsonPath("$.convictions[0].sentenceExpiryDate").isEqualTo("2020-06-23")
-        .jsonPath("$.convictions[0].isCustodial").isEqualTo(true)
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
-        .jsonPath("$.convictions[0].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
-        .jsonPath("$.convictions[1].licenceExpiryDate").isEqualTo("2020-06-20")
-        .jsonPath("$.convictions[1].sentenceExpiryDate").isEqualTo("2020-06-23")
-        .jsonPath("$.convictions[1].isCustodial").isEqualTo(true)
-        .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeMainCat.code").isEqualTo("NLC8")
-        .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeMainCat.description").isEqualTo("Freedom of movement")
-        .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeSubCat.code").isEqualTo("NSTT8")
-        .jsonPath("$.convictions[1].licenceConditions[0].licenceConditionTypeSubCat.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions.length()").isEqualTo(2)
+        .jsonPath("$.activeConvictions[0].mainOffence.description").isEqualTo("Robbery (other than armed robbery)")
+        .jsonPath("$.activeConvictions[0].mainOffence.code").isEqualTo("789")
+        .jsonPath("$.activeConvictions[1].mainOffence.description").isEqualTo("Arson")
+        .jsonPath("$.activeConvictions[1].mainOffence.code").isEqualTo("123")
+        .jsonPath("$.activeConvictions[1].additionalOffences[0].description").isEqualTo("Shoplifting")
+        .jsonPath("$.activeConvictions[1].additionalOffences[0].code").isEqualTo("456")
+        .jsonPath("$.activeConvictions[0].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.activeConvictions[1].licenceConditions.length()").isEqualTo(2)
+        .jsonPath("$.activeConvictions[0].sentence.licenceExpiryDate").isEqualTo("2020-06-23")
+        .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-23")
+        .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[1].sentence.licenceExpiryDate").isEqualTo("2020-06-20")
+        .jsonPath("$.activeConvictions[1].sentence.sentenceExpiryDate").isEqualTo("2020-06-23")
+        .jsonPath("$.activeConvictions[1].sentence.isCustodial").isEqualTo(true)
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
     }
   }
 
@@ -189,7 +185,7 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(0)
+        .jsonPath("$.activeConvictions.length()").isEqualTo(0)
     }
   }
 
@@ -211,8 +207,8 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-        .jsonPath("$.convictions.length()").isEqualTo(1)
-        .jsonPath("$.convictions[0].licenceConditions.length()").isEqualTo(0)
+        .jsonPath("$.activeConvictions.length()").isEqualTo(1)
+        .jsonPath("$.activeConvictions[0].licenceConditions.length()").isEqualTo(0)
     }
   }
 

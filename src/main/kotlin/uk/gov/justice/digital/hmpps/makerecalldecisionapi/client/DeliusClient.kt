@@ -5,13 +5,19 @@ import io.micrometer.core.instrument.Counter
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeoutException
 
 class DeliusClient(
@@ -23,22 +29,55 @@ class DeliusClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPersonalDetails(crn: String): PersonalDetails = call("/case-summary/$crn/personal-details")
-  fun getOverview(crn: String): Overview = call("/case-summary/$crn/overview")
-  fun getLicenceConditions(crn: String): LicenceConditions = call("/case-summary/$crn/licence-conditions")
-  fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = call("/case-summary/$crn/mappa-and-rosh-history")
+  fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
-  private inline fun <reified T : Any> call(endpoint: String): T {
+  fun getOverview(crn: String): Overview = getBody("/case-summary/$crn/overview")
+
+  fun getLicenceConditions(crn: String): LicenceConditions = getBody("/case-summary/$crn/licence-conditions")
+
+  fun getMappaAndRoshHistory(crn: String): MappaAndRoshHistory = getBody("/case-summary/$crn/mappa-and-rosh-history")
+
+  fun getRecommendationModel(crn: String): RecommendationModel = getBody("/case-summary/$crn/recommendation-model")
+
+  fun getContactHistory(
+    crn: String,
+    query: String? = null,
+    from: LocalDate? = null,
+    to: LocalDate? = null,
+    typeCodes: List<String> = emptyList(),
+    includeSystemGenerated: Boolean = true
+  ): ContactHistory = getBody(
+    endpoint = "/case-summary/$crn/contact-history",
+    parameters = mapOf(
+      "query" to listOfNotNull(query),
+      "from" to listOfNotNull(from),
+      "to" to listOfNotNull(to),
+      "type" to typeCodes,
+      "includeSystemGenerated" to listOfNotNull(includeSystemGenerated),
+    )
+  )
+
+  fun getStaff(username: String): Staff = getBody("/user/$username/staff")
+
+  fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
+
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id")
+
+  private inline fun <reified T : Any> getBody(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()) =
+    get<T>(endpoint, parameters).body!!
+
+  private inline fun <reified T : Any> get(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): ResponseEntity<T> {
     log.info(normalizeSpace("About to call $endpoint"))
-    val result = webClient
-      .get()
-      .uri(endpoint)
+    val result = webClient.get()
+      .uri {
+        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+      }
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
         { throw PersonNotFoundException("No details available for endpoint: $endpoint") }
       )
-      .bodyToMono(T::class.java)
+      .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
     log.info(normalizeSpace("Returning $endpoint details"))
@@ -94,21 +133,22 @@ class DeliusClient(
     )
   }
 
+  data class Address(
+    val buildingName: String? = null,
+    val addressNumber: String? = null,
+    val streetName: String? = null,
+    val district: String? = null,
+    val town: String? = null,
+    val county: String? = null,
+    val postcode: String? = null,
+    val noFixedAbode: Boolean? = null,
+  )
+
   data class PersonalDetails(
     val personalDetails: PersonalDetailsOverview,
     val mainAddress: Address?,
     val communityManager: Manager?,
   ) {
-    data class Address(
-      val buildingName: String? = null,
-      val addressNumber: String? = null,
-      val streetName: String? = null,
-      val district: String? = null,
-      val town: String? = null,
-      val county: String? = null,
-      val postcode: String? = null,
-      val noFixedAbode: Boolean? = null,
-    )
     data class Manager(
       val staffCode: String,
       val name: Name,
@@ -129,23 +169,24 @@ class DeliusClient(
     }
   }
 
+  data class Release(
+    val releaseDate: LocalDate,
+    val recallDate: LocalDate?
+  )
+
+  data class Conviction(
+    val number: String? = null,
+    val sentence: Sentence?,
+    val mainOffence: Offence,
+    val additionalOffences: List<Offence>
+  )
+
   data class Overview(
     val personalDetails: PersonalDetailsOverview,
     val registerFlags: List<String>,
     val lastRelease: Release?,
     val activeConvictions: List<Conviction>
-  ) {
-    data class Release(
-      val releaseDate: LocalDate,
-      val recallDate: LocalDate?
-    )
-    data class Conviction(
-      val number: String? = null,
-      val sentence: Sentence?,
-      val mainOffence: Offence,
-      val additionalOffences: List<Offence>
-    )
-  }
+  )
 
   data class LicenceConditions(
     val personalDetails: PersonalDetailsOverview,
@@ -169,16 +210,17 @@ class DeliusClient(
     )
   }
 
+  data class Mappa(
+    val category: Int?,
+    val level: Int?,
+    val startDate: LocalDate
+  )
+
   data class MappaAndRoshHistory(
     val personalDetails: PersonalDetailsOverview,
     val mappa: Mappa?,
     val roshHistory: List<Rosh>
   ) {
-    data class Mappa(
-      val category: Int?,
-      val level: Int?,
-      val startDate: LocalDate
-    )
     data class Rosh(
       val active: Boolean,
       val type: String,
@@ -187,4 +229,106 @@ class DeliusClient(
       val startDate: LocalDate
     )
   }
+
+  data class RecommendationModel(
+    val personalDetails: PersonalDetailsOverview,
+    val mainAddress: Address?,
+    val lastRelease: Release?,
+    val lastReleasedFromInstitution: Institution?,
+    val mappa: Mappa?,
+    val activeConvictions: List<Conviction>,
+    val activeCustodialConvictions: List<ConvictionDetails>
+  ) {
+    data class Institution(
+      val name: String,
+    )
+    data class ConvictionDetails(
+      val number: String? = null,
+      val sentence: ExtendedSentence,
+      val mainOffence: Offence,
+      val additionalOffences: List<Offence>
+    )
+    data class ExtendedSentence(
+      val description: String,
+      val length: Int?,
+      val lengthUnits: String?,
+      val secondLength: Int?,
+      val secondLengthUnits: String?,
+      val isCustodial: Boolean,
+      val custodialStatusCode: String?,
+      val startDate: LocalDate?,
+      val licenceExpiryDate: LocalDate?,
+      val sentenceExpiryDate: LocalDate?
+    )
+  }
+
+  data class ContactHistory(
+    val personalDetails: PersonalDetailsOverview,
+    val contacts: List<Contact>,
+    val summary: ContactSummary
+  ) {
+    data class Contact(
+      val description: String?,
+      val documents: List<DocumentReference>,
+      val enforcementAction: String?,
+      val notes: String?,
+      val outcome: String?,
+      val sensitive: Boolean?,
+      val startDateTime: ZonedDateTime,
+      val type: Type
+    ) {
+      data class Type(val code: String, val description: String, val systemGenerated: Boolean)
+      data class DocumentReference(val id: String, val name: String, val lastUpdated: ZonedDateTime)
+    }
+    data class ContactSummary(
+      val types: List<ContactTypeSummary>,
+      val hits: Int,
+      val total: Int = types.sumOf { it.total }
+    )
+  }
+  data class ContactTypeSummary(val code: String, val description: String, val total: Int)
+
+  data class Staff(
+    val code: String?
+  )
+  data class UserAccess(
+    val exclusionMessage: String? = null,
+    val restrictionMessage: String? = null,
+    val userNotFound: Boolean = false,
+    val userExcluded: Boolean,
+    val userRestricted: Boolean,
+  )
+}
+
+fun DeliusClient.RecommendationModel.toPersonOnProbation() = PersonOnProbation(
+  croNumber = personalDetails.identifiers.croNumber,
+  mostRecentPrisonerNumber = personalDetails.identifiers.bookingNumber,
+  nomsNumber = personalDetails.identifiers.nomsNumber,
+  pncNumber = personalDetails.identifiers.pncNumber,
+  name = joinToString(personalDetails.name.forename, personalDetails.name.surname),
+  firstName = personalDetails.name.forename,
+  middleNames = personalDetails.name.middleName,
+  surname = personalDetails.name.surname,
+  gender = personalDetails.gender,
+  ethnicity = personalDetails.ethnicity ?: "",
+  primaryLanguage = personalDetails.primaryLanguage,
+  dateOfBirth = personalDetails.dateOfBirth,
+  addresses = mainAddress.toAddresses(),
+)
+
+fun DeliusClient.Address?.toAddresses() = listOfNotNull(
+  this?.let {
+    Address(
+      line1 = joinToString(buildingName, addressNumber, streetName),
+      line2 = district ?: "",
+      town = town ?: "",
+      postcode = postcode ?: "",
+      noFixedAbode = isNoFixedAbode(it)
+    )
+  }
+)
+
+private fun isNoFixedAbode(it: DeliusClient.Address): Boolean {
+  val postcodeUppercaseNoWhiteSpace = it.postcode?.filter { !it.isWhitespace() }?.uppercase()
+  return postcodeUppercaseNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
 }

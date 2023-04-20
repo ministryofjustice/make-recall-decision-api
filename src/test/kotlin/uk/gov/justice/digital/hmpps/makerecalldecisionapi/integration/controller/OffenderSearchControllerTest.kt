@@ -88,8 +88,8 @@ class OffenderSearchControllerTest(
         .jsonPath("$[0].name").isEqualTo("No name available")
         .jsonPath("$[0].dateOfBirth").isEqualTo(null)
         .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(null)
-        .jsonPath("$[0].userRestricted").isEqualTo(null)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -130,8 +130,8 @@ class OffenderSearchControllerTest(
         .jsonPath("$[0].name").isEqualTo("No name available")
         .jsonPath("$[0].dateOfBirth").isEqualTo(null)
         .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(null)
-        .jsonPath("$[0].userRestricted").isEqualTo(null)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -155,7 +155,7 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Community Api timeout on user access endpoint`() {
+  fun `gateway timeout 503 given on Delius timeout on user access endpoint`() {
     runTest {
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
@@ -170,7 +170,7 @@ class OffenderSearchControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Community API Client - user access endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /user/SOME_USER/access/$crn endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 
