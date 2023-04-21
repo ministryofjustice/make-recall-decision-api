@@ -560,7 +560,8 @@ internal class RecommendationService(
         crn = crn,
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = contactOutcome,
-        username = username
+        username = username,
+        detailUrl = "$mrdUrl/managementOversight/$crn"
       )
     )
   }
