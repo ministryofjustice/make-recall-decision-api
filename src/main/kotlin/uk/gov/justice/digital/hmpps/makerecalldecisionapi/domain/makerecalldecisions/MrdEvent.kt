@@ -44,7 +44,7 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
   )
 }
 
-fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, username: String): MrdEvent {
+fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, username: String, detailUrl: String): MrdEvent {
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
     message = MrdEventMessageBody(
@@ -52,7 +52,7 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
       version = 1,
       description = "Management Oversight - Recall",
       occurredAt = utcNowDateTimeString(),
-      detailUrl = "", // TODO TBD
+      detailUrl = detailUrl, // TODO TBD
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
       additionalInformation = AdditionalInformation(
         contactOutcome = contactOutcome,
