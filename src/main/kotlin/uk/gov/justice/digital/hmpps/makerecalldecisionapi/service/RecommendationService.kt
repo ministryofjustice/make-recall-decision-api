@@ -275,7 +275,9 @@ internal class RecommendationService(
     var updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
     val requestJson = JSONObject(jsonRequest.toString())
+    log.info("Checking request for domain event:: $requestJson")
     val sendToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
+    log.info("sendToDelius:: $sendToDelius")
     if (sendToDelius) {
       existingRecommendationEntity.data = addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
