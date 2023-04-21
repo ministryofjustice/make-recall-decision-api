@@ -57,8 +57,6 @@ class DeliusClient(
     )
   )
 
-  fun getStaff(username: String): Staff = getBody("/user/$username/staff")
-
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
   fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id")
@@ -288,9 +286,6 @@ class DeliusClient(
   }
   data class ContactTypeSummary(val code: String, val description: String, val total: Int)
 
-  data class Staff(
-    val code: String?
-  )
   data class UserAccess(
     val exclusionMessage: String? = null,
     val restrictionMessage: String? = null,
