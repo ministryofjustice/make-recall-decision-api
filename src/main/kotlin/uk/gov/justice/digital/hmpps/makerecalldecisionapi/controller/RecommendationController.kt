@@ -80,6 +80,7 @@ internal class RecommendationController(
     return recommendationService.getRecommendation(recommendationId)
   }
 
+  @Deprecated("Now using updateRecommendation endpoint")
   @PatchMapping("/recommendations/{recommendationId}/manager-recall-decision")
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_SPO')")
   @Operation(summary = "Updates recommendation with manager recall decision")

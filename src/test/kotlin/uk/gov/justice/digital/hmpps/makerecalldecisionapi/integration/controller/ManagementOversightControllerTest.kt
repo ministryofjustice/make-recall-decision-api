@@ -26,7 +26,7 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
     )
 
     // then
-    assertThat(response.get("notes")).isEqualTo("Comment added by some_user on 01/01/2023 at 15:00: some_user entered the following into the service 'Decide if someone should be recalled or not': details of no recall selected View the case summary: environment-host/cases/A12345/overview")
+    assertThat(response.get("notes")).isEqualTo("Comment added by John Smith on 01/01/2023 at 15:00: John Smith entered the following into the service 'Decide if someone should be recalled or not': details of no recall selected View the case summary: environment-host/cases/A12345/overview")
     assertThat(response.get("sensitive")).isEqualTo(false)
   }
 

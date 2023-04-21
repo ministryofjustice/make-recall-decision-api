@@ -68,6 +68,8 @@ data class RecommendationModel(
   var sensitive: Boolean? = null,
   var recallConsideredList: List<RecallConsidered>? = null,
   var recallType: RecallType? = null,
+//  @JsonIgnore
+  val sendSpoRationaleToDelius: Boolean? = false,
   @JsonMerge
   var managerRecallDecision: ManagerRecallDecision? = null,
   var custodyStatus: CustodyStatus? = null,
