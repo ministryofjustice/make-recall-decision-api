@@ -33,7 +33,6 @@ import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.willReturn
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Staff
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
@@ -572,11 +571,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         )
 
       // and
-      if (isSentToDelius == "true") {
-        given(deliusClient.getStaff(anyString())).willReturn(Staff(code = "ABC123"))
-      }
-
-      // and
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
@@ -602,7 +596,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         val mrdEvent = captor.firstValue
         assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
         assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("DECISION_TO_RECALL")
-        assertThat(mrdEvent.message?.additionalInformation?.bookedBy?.staffCode).isEqualTo("ABC123")
         assertThat(mrdEvent.message?.additionalInformation?.recommendationUrl).isNotNull
         assertThat(mrdEvent.type).isEqualTo("Notification")
         assertThat(mrdEvent.messageId).isNotNull

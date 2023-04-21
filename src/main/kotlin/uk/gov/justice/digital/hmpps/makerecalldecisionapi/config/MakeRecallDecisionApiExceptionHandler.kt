@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoStaffCodeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
@@ -123,21 +122,6 @@ class MakeRecallDecisionApiExceptionHandler {
           status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
           developerMessage = e.message
-        )
-      )
-  }
-
-  @ExceptionHandler(NoStaffCodeException::class)
-  fun handleNoStaffCodeException(e: NoStaffCodeException): ResponseEntity<ErrorResponse?>? {
-    log.error("No staff code found  exception", e)
-    return ResponseEntity
-      .status(INTERNAL_SERVER_ERROR)
-      .body(
-        ErrorResponse(
-          status = INTERNAL_SERVER_ERROR,
-          userMessage = "Unexpected error: ${e.message}",
-          developerMessage = e.message,
-          error = e.error
         )
       )
   }
