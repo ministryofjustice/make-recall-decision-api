@@ -254,8 +254,7 @@ internal class RecommendationService(
           sendManagerRecallDecisionMadeEvent(
             crn = existingRecommendationEntity.data.crn,
             contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.managerRecallDecision?.selected?.value).toString(),
-            username = userId,
-            staffcode = deliusClient.getStaff(userId).code
+            username = userId
           )
         } catch (ex: Exception) {
           log.info("Failed to send domain event for ${updatedRecommendation.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
@@ -524,14 +523,13 @@ internal class RecommendationService(
     mrdEventsEmitter?.sendEvent(mrdEvent)
   }
 
-  private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, username: String, staffcode: String?) {
+  private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, username: String) {
     sendMrdEventToEventsEmitter(
       toManagerRecallDecisionMadeEventPayload(
         crn = crn,
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = contactOutcome,
-        username = username,
-        staffCode = staffcode
+        username = username
       )
     )
   }
