@@ -527,7 +527,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @ParameterizedTest()
   @CsvSource("true", "false")
-  fun `updates a recommendation with manager recall decision to the database`(isSentToDelius: String) {
+  fun `updates a recommendation with manager recall decision to the database`(sentToDelius: String) {
     runTest {
       // given
       val existingRecommendation = RecommendationEntity(
@@ -552,7 +552,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation, isSentToDelius)
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithManagerRecallDecisionRequestData(existingRecommendation, sentToDelius)
 
       // and
       var recommendationToSave =
@@ -560,6 +560,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           id = existingRecommendation.id,
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
+            sensitive = null,
+            recallConsideredList = null,
+            recallType = null,
+            spoRecallType = "RECALL",
+            spoRecallRationale = "Recall",
+            sendSpoRationaleToDelius = sentToDelius.toBoolean(),
             managerRecallDecision = updateRecommendationRequest.managerRecallDecision,
             status = Status.DRAFT,
             createdBy = existingRecommendation.data.createdBy,
@@ -585,12 +591,22 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       // when
-      recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "bill", "Bill")
+      recommendationService.updateRecommendation(
+        jsonRequest = recommendationJsonNode,
+        recommendationId = 1L,
+        userId = "bill",
+        readableUserName = "Bill",
+        featureFlags = null,
+        isDntrDownloaded = false,
+        isPartADownloaded = false,
+        userEmail = null,
+        pageRefreshIds = emptyList()
+      )
 
       // then
       then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
-      if (isSentToDelius == "true") {
+      if (sentToDelius == "true") {
         val captor = argumentCaptor<MrdEvent>()
         then(mrdEmitterMocked).should().sendEvent(captor.capture())
         val mrdEvent = captor.firstValue

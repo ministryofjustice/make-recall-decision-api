@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/user/.*/staff"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "user-access.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

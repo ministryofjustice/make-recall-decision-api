@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -20,6 +21,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
@@ -226,6 +230,7 @@ internal class RecommendationService(
     )
   }
 
+  @Deprecated("Now using updateRecommendation")
   @kotlin.Throws(Exception::class)
   @OptIn(ExperimentalStdlibApi::class)
   suspend fun updateRecommendationWithManagerRecallDecision(
@@ -247,23 +252,6 @@ internal class RecommendationService(
           createdDate = utcNowDateTimeString(),
           createdBy = readableUserName
         )
-
-      if (existingRecommendationEntity.data.managerRecallDecision?.isSentToDelius == true) {
-        log.info("About to send domain event for ${updatedRecommendation.crn} on manager recall decision made for recommendationId $recommendationId")
-        try {
-          sendManagerRecallDecisionMadeEvent(
-            crn = existingRecommendationEntity.data.crn,
-            contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.managerRecallDecision?.selected?.value).toString(),
-            username = userId
-          )
-        } catch (ex: Exception) {
-          log.info("Failed to send domain event for ${updatedRecommendation.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
-          existingRecommendationEntity.data.managerRecallDecision?.isSentToDelius = false
-          updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
-          throw ex
-        }
-        log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
-      }
       val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
       log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
       return result
@@ -284,8 +272,14 @@ internal class RecommendationService(
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
-    val updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
+    var updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
+    val requestJson = JSONObject(jsonRequest.toString())
+    val sendToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
+    if (sendToDelius) {
+      existingRecommendationEntity.data = addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
+      sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,
       existingRecommendationEntity.data,
@@ -310,6 +304,43 @@ internal class RecommendationService(
     }
 
     return result
+  }
+
+  private fun addSpoRationale(
+    existingRecommendationEntity: RecommendationEntity,
+    updatedRecommendation: RecommendationModel,
+    readableUserName: String?
+  ): RecommendationModel {
+    return existingRecommendationEntity.data.copy(
+      managerRecallDecision = ManagerRecallDecision(
+        isSentToDelius = true,
+        selected = ManagerRecallDecisionTypeSelectedValue(
+          value = ManagerRecallDecisionTypeValue.valueOf(updatedRecommendation.spoRecallType!!),
+          details = updatedRecommendation.spoRecallRationale
+        ),
+        createdBy = readableUserName,
+        createdDate = utcNowDateTimeString()
+      )
+    )
+  }
+
+  private fun sendManagementOversightDomainEvent(
+    recommendationId: Long,
+    existingRecommendationEntity: RecommendationEntity,
+    userId: String?
+  ) {
+    log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made for recommendationId $recommendationId")
+    try {
+      sendManagerRecallDecisionMadeEvent(
+        crn = existingRecommendationEntity.data.crn,
+        contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.spoRecallType).toString(),
+        username = userId ?: MrdTextConstants.EMPTY_STRING
+      )
+    } catch (ex: Exception) {
+      log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
+      throw ex
+    }
+    log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
   }
 
   @OptIn(ExperimentalStdlibApi::class)
