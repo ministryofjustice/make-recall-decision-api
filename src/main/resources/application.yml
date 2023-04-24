@@ -151,6 +151,8 @@ oasys:
 ---
 mrd:
   url: ${mrd.url}
+  api:
+    url: ${mrd.api.url}
 
 cloud:
   aws:
