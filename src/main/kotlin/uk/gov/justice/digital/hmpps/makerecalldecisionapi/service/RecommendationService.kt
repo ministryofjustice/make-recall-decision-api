@@ -68,7 +68,7 @@ internal class RecommendationService(
   private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
   @Value("\${mrd.url}") private val mrdUrl: String? = null,
-  @Value("\${mrd.api.url}") private val mrdApi: String? = null
+  @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -595,7 +595,7 @@ internal class RecommendationService(
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = contactOutcome,
         username = username,
-        detailUrl = "$mrdUrl/managementOversight/$crn"
+        detailUrl = "$mrdApiUrl/managementOversight/$crn"
       )
     )
   }
