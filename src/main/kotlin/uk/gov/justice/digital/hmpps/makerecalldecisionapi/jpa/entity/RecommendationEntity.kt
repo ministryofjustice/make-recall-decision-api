@@ -126,7 +126,11 @@ data class RecommendationModel(
   var previousRecalls: PreviousRecalls? = null,
   var recommendationStartedDomainEventSent: Boolean? = null,
   var currentRoshForPartA: RoshData? = null,
-  var roshSummary: RoshSummary? = null
+  var roshSummary: RoshSummary? = null,
+  val countersignAcoTelephone: String? = null,
+  val countersignSpoTelephone: String? = null,
+  val countersignSpoExposition: String? = null,
+  val countersignAcoExposition: String? = null,
 ) : Serializable
 
 enum class Status {
