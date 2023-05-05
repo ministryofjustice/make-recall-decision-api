@@ -234,7 +234,11 @@ internal class RecommendationService(
       previousRecalls = recommendationEntity.data.previousRecalls,
       recallConsideredList = recommendationEntity.data.recallConsideredList,
       currentRoshForPartA = recommendationEntity.data.currentRoshForPartA,
-      roshSummary = recommendationEntity.data.roshSummary
+      roshSummary = recommendationEntity.data.roshSummary,
+      countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
+      countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
+      countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
+      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
     )
   }
 

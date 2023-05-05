@@ -66,7 +66,11 @@ data class RecommendationResponse(
   val previousRecalls: PreviousRecalls? = null,
   val recallConsideredList: List<RecallConsidered>? = null,
   val currentRoshForPartA: RoshData? = null,
-  val roshSummary: RoshSummary? = null
+  val roshSummary: RoshSummary? = null,
+  val countersignAcoTelephone: String? = null,
+  val countersignSpoTelephone: String? = null,
+  val countersignSpoExposition: String? = null,
+  val countersignAcoExposition: String? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
