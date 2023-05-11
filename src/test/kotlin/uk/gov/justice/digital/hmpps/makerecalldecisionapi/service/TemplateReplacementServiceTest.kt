@@ -277,7 +277,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           riskToKnownAdult = RoshDataScore.MEDIUM,
           riskToStaff = RoshDataScore.LOW,
           riskToPrisoners = RoshDataScore.NOT_APPLICABLE
-        )
+        ),
+        countersignSpoName = "Spo Name",
+        countersignSpoTelephone = "12345678",
+        countersignSpoDateTime = LocalDateTime.now(),
+        countersignSpoExposition = "Spo comments on case"
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
     }
@@ -324,7 +328,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(109)
+      assertThat(result.size).isEqualTo(114)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -416,6 +420,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["risk_to_known_adult"]).isEqualTo("Medium")
       assertThat(result["risk_to_staff"]).isEqualTo("Low")
       assertThat(result["risk_to_prisoners"]).isEqualTo("N/A")
+      assertThat(result["countersign_spo_name"]).isEqualTo("Spo Name")
+      assertThat(result["countersign_spo_telephone"]).isEqualTo("12345678")
+      assertThat(result["countersign_spo_date"]).isEqualTo("11/05/2023")
+      assertThat(result["countersign_spo_time"]).isEqualTo("11:03")
+      assertThat(result["countersign_spo_exposition"]).isEqualTo("Spo comments on case")
     }
   }
 
@@ -456,7 +465,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         riskToPublic = null,
         riskToKnownAdult = null,
         riskToStaff = null,
-        riskToPrisoners = null
+        riskToPrisoners = null,
+        countersignSpoName = null,
+        countersignSpoTelephone = null,
+        countersignSpoDate = null,
+        countersignSpoTime = null,
+        countersignSpoExposition = null
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
@@ -482,6 +496,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["risk_to_known_adult"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_staff"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_prisoners"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_spo_name"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_spo_telephone"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_spo_date"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_spo_time"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_spo_exposition"]).isEqualTo(EMPTY_STRING)
     }
   }
 
@@ -581,7 +600,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       riskToPublic = RoshDataScore.HIGH.partADisplayValue,
       riskToKnownAdult = RoshDataScore.MEDIUM.partADisplayValue,
       riskToStaff = RoshDataScore.LOW.partADisplayValue,
-      riskToPrisoners = RoshDataScore.NOT_APPLICABLE.partADisplayValue
+      riskToPrisoners = RoshDataScore.NOT_APPLICABLE.partADisplayValue,
+      countersignSpoName = "Spo Name",
+      countersignSpoTelephone = "12345678",
+      countersignSpoDate = "11/05/2023",
+      countersignSpoTime = "11:03",
+      countersignSpoExposition = "Spo comments on case"
     )
   }
 }

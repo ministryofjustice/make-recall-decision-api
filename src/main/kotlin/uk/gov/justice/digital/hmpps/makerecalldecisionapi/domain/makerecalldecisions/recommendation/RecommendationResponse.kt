@@ -71,6 +71,15 @@ data class RecommendationResponse(
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
   val countersignAcoExposition: String? = null,
+  val countersignSpoName: String? = null,
+  val countersignSpoDateTime: LocalDateTime? = null
+)
+
+data class CountersignSpoDetails(
+  val name: String? = null,
+  val emailAddress: String? = null,
+  val date: String? = null,
+  val time: String? = null
 )
 
 data class UnderIntegratedOffenderManagement(

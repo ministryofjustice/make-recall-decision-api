@@ -36,6 +36,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
+    val (countersignSpoDate, countersignSpoTime) = splitDateTime(recommendation.countersignSpoDateTime)
 
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
@@ -117,7 +118,12 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       riskToPublic = recommendation.currentRoshForPartA?.riskToPublic?.partADisplayValue,
       riskToKnownAdult = recommendation.currentRoshForPartA?.riskToKnownAdult?.partADisplayValue,
       riskToStaff = recommendation.currentRoshForPartA?.riskToStaff?.partADisplayValue,
-      riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue
+      riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue,
+      countersignSpoName = recommendation.countersignSpoName,
+      countersignSpoTelephone = recommendation.countersignSpoTelephone,
+      countersignSpoDate = countersignSpoDate,
+      countersignSpoTime = countersignSpoTime,
+      countersignSpoExposition = recommendation.countersignSpoExposition
     )
   }
 

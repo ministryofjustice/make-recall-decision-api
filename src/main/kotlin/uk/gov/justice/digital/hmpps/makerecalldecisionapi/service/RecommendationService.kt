@@ -239,6 +239,8 @@ internal class RecommendationService(
       countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
       countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
       countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
+      countersignSpoName = recommendationEntity.data.countersignSpoName,
+      countersignSpoDateTime = recommendationEntity.data.countersignSpoDateTime
     )
   }
 
@@ -294,6 +296,10 @@ internal class RecommendationService(
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
+    if (jsonRequest?.hasNonNull("countersignSpoExposition") == true) {
+      existingRecommendationEntity.data.countersignSpoName = readableUserName
+      existingRecommendationEntity.data.countersignSpoDateTime = localNowDateTime()
     }
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,

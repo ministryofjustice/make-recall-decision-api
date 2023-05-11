@@ -72,7 +72,12 @@ data class DocumentData(
   val riskToPublic: String? = null,
   val riskToKnownAdult: String? = null,
   val riskToStaff: String? = null,
-  val riskToPrisoners: String? = null
+  val riskToPrisoners: String? = null,
+  val countersignSpoName: String? = null,
+  val countersignSpoTelephone: String? = null,
+  val countersignSpoDate: String? = null,
+  val countersignSpoTime: String? = null,
+  val countersignSpoExposition: String? = null
 )
 
 data class ValueWithDetails(

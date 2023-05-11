@@ -131,6 +131,8 @@ data class RecommendationModel(
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
   val countersignAcoExposition: String? = null,
+  var countersignSpoName: String? = null,
+  var countersignSpoDateTime: LocalDateTime? = null
 ) : Serializable
 
 enum class Status {

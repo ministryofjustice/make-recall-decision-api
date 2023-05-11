@@ -403,6 +403,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.currentRoshForPartA.riskToKnownAdult").isEqualTo("MEDIUM")
       .jsonPath("$.currentRoshForPartA.riskToStaff").isEqualTo("VERY_HIGH")
       .jsonPath("$.currentRoshForPartA.riskToPrisoners").isEqualTo("NOT_APPLICABLE")
+      .jsonPath("$.countersignSpoName").isEqualTo("some_user")
+      .jsonPath("$.countersignSpoTelephone").isEqualTo("12345678")
+      .jsonPath("$.countersignSpoDateTime").isNotEmpty
+      .jsonPath("$.countersignSpoExposition").isEqualTo("Spo comments on case")
   }
 
   @Test

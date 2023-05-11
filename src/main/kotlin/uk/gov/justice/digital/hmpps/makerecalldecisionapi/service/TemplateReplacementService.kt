@@ -60,7 +60,6 @@ internal class TemplateReplacementService(
       mappingsForTemplate(documentData)
     )
 //    ).writeToFile("out_template.docx")
-
     return writeDataToFile(file)
   }
 
@@ -157,7 +156,12 @@ internal class TemplateReplacementService(
       "risk_to_public" to (documentData.riskToPublic ?: EMPTY_STRING),
       "risk_to_known_adult" to (documentData.riskToKnownAdult ?: EMPTY_STRING),
       "risk_to_staff" to (documentData.riskToStaff ?: EMPTY_STRING),
-      "risk_to_prisoners" to (documentData.riskToPrisoners ?: EMPTY_STRING)
+      "risk_to_prisoners" to (documentData.riskToPrisoners ?: EMPTY_STRING),
+      "countersign_spo_name" to (documentData.countersignSpoName ?: EMPTY_STRING),
+      "countersign_spo_telephone" to (documentData.countersignSpoTelephone ?: EMPTY_STRING),
+      "countersign_spo_date" to (documentData.countersignSpoDate ?: EMPTY_STRING),
+      "countersign_spo_time" to (documentData.countersignSpoTime ?: EMPTY_STRING),
+      "countersign_spo_exposition" to (documentData.countersignSpoExposition ?: EMPTY_STRING)
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))

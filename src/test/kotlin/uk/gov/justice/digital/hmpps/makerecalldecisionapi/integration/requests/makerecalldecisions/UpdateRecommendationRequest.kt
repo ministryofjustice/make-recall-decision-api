@@ -135,12 +135,12 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
         },
         {
           "value": "NAME_CHANGE",
-          "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence."        
+          "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence."
         },
         {
           "value": "CONTACT_DETAILS",
-          "text": "Tell your supervising officer if you change or add any contact details, including phone number or email."        
-        }        
+          "text": "Tell your supervising officer if you change or add any contact details, including phone number or email."
+        }
       ]
     },
     "additionalLicenceConditions": {
@@ -304,10 +304,10 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   "previousRecalls": {
     "hasBeenRecalledPreviously": true
   },
-  "recallConsideredList" : [
-    { 
-      "recallConsideredDetail": "This is an updated recall considered detail" 
-    } 
+  "recallConsideredList": [
+    {
+      "recallConsideredDetail": "This is an updated recall considered detail"
+    }
   ],
   "managerRecallDecision": {
     "selected": {
@@ -333,6 +333,8 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "riskToKnownAdult": "MEDIUM",
     "riskToStaff": "VERY_HIGH",
     "riskToPrisoners": "NOT_APPLICABLE"
-  }
+  },
+  "countersignSpoTelephone": "12345678",
+  "countersignSpoExposition": "Spo comments on case"
 }
 """.trimIndent()
