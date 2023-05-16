@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoManagementOversightException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
@@ -40,6 +41,20 @@ class MakeRecallDecisionApiExceptionHandler {
   fun handleUserAccessException(e: UserAccessException): ResponseEntity<Unit> {
     log.info("UserAccess exception: {}", e.message)
     return ResponseEntity(FORBIDDEN)
+  }
+
+  @ExceptionHandler(NoManagementOversightException::class)
+  fun handleNoNoManagementOversightException(e: NoManagementOversightException): ResponseEntity<ErrorResponse> {
+    log.info("Management Oversight not found exception: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "No management oversight available: ${e.message}",
+          developerMessage = e.message
+        )
+      )
   }
 
   @ExceptionHandler(NoRecommendationFoundException::class)

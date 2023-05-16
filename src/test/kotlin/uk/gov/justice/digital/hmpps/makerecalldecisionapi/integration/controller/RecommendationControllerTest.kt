@@ -473,19 +473,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.lastModifiedByUserName, equalTo("some_user"))
   }
 
-  private fun updateRecommendation(recommendationRequest: String, refreshPage: String? = null) {
-    val refreshPageQueryString = if (refreshPage != null) "?refreshProperty=$refreshPage" else ""
-    webTestClient.patch()
-      .uri("/recommendations/$createdRecommendationId$refreshPageQueryString")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(recommendationRequest)
-      )
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-      .expectStatus().isOk
-  }
-
   @Test
   fun `generate a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
