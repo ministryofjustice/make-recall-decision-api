@@ -189,6 +189,19 @@ abstract class IntegrationTestBase {
       .expectStatus().is2xxSuccessful
   }
 
+  fun updateRecommendation(recommendationRequest: String, refreshPage: String? = null) {
+    val refreshPageQueryString = if (refreshPage != null) "?refreshProperty=$refreshPage" else ""
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId$refreshPageQueryString")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest)
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+  }
+
   fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
     val responseBodySpec = response.expectBody<String>()
     val responseEntityExchangeResult = responseBodySpec.returnResult()
