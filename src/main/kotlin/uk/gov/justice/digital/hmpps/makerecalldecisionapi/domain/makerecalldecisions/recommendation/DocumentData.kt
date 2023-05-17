@@ -77,7 +77,13 @@ data class DocumentData(
   val countersignSpoTelephone: String? = null,
   val countersignSpoDate: String? = null,
   val countersignSpoTime: String? = null,
-  val countersignSpoExposition: String? = null
+  val countersignSpoExposition: String? = null,
+
+  val countersignAcoName: String? = null,
+  val countersignAcoTelephone: String? = null,
+  val countersignAcoDate: String? = null,
+  val countersignAcoTime: String? = null,
+  val countersignAcoExposition: String? = null
 )
 
 data class ValueWithDetails(

@@ -235,12 +235,14 @@ internal class RecommendationService(
       recallConsideredList = recommendationEntity.data.recallConsideredList,
       currentRoshForPartA = recommendationEntity.data.currentRoshForPartA,
       roshSummary = recommendationEntity.data.roshSummary,
-      countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
       countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
       countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
-      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
       countersignSpoName = recommendationEntity.data.countersignSpoName,
-      countersignSpoDateTime = recommendationEntity.data.countersignSpoDateTime
+      countersignSpoDateTime = recommendationEntity.data.countersignSpoDateTime,
+      countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
+      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
+      countersignAcoName = recommendationEntity.data.countersignSpoName,
+      countersignAcoDateTime = recommendationEntity.data.countersignSpoDateTime
     )
   }
 
@@ -300,6 +302,10 @@ internal class RecommendationService(
     if (jsonRequest?.hasNonNull("countersignSpoExposition") == true) {
       existingRecommendationEntity.data.countersignSpoName = readableUserName
       existingRecommendationEntity.data.countersignSpoDateTime = localNowDateTime()
+    }
+    if (jsonRequest?.hasNonNull("countersignAcoExposition") == true) {
+      existingRecommendationEntity.data.countersignAcoName = readableUserName
+      existingRecommendationEntity.data.countersignAcoDateTime = localNowDateTime()
     }
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,

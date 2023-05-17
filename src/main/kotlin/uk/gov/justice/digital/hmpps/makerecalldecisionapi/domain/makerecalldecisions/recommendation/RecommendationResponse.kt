@@ -67,19 +67,15 @@ data class RecommendationResponse(
   val recallConsideredList: List<RecallConsidered>? = null,
   val currentRoshForPartA: RoshData? = null,
   val roshSummary: RoshSummary? = null,
-  val countersignAcoTelephone: String? = null,
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
-  val countersignAcoExposition: String? = null,
   val countersignSpoName: String? = null,
-  val countersignSpoDateTime: LocalDateTime? = null
-)
+  val countersignSpoDateTime: LocalDateTime? = null,
 
-data class CountersignSpoDetails(
-  val name: String? = null,
-  val emailAddress: String? = null,
-  val date: String? = null,
-  val time: String? = null
+  val countersignAcoTelephone: String? = null,
+  val countersignAcoExposition: String? = null,
+  val countersignAcoName: String? = null,
+  val countersignAcoDateTime: LocalDateTime? = null
 )
 
 data class UnderIntegratedOffenderManagement(

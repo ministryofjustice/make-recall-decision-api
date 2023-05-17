@@ -37,7 +37,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
     val (countersignSpoDate, countersignSpoTime) = splitDateTime(recommendation.countersignSpoDateTime)
-
+    val (countersignAcoDate, countersignAcoTime) = splitDateTime(recommendation.countersignAcoDateTime)
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
     val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
@@ -123,7 +123,12 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       countersignSpoTelephone = recommendation.countersignSpoTelephone,
       countersignSpoDate = countersignSpoDate,
       countersignSpoTime = countersignSpoTime,
-      countersignSpoExposition = recommendation.countersignSpoExposition
+      countersignSpoExposition = recommendation.countersignSpoExposition,
+      countersignAcoName = recommendation.countersignAcoName,
+      countersignAcoTelephone = recommendation.countersignAcoTelephone,
+      countersignAcoDate = countersignAcoDate,
+      countersignAcoTime = countersignAcoTime,
+      countersignAcoExposition = recommendation.countersignAcoExposition
     )
   }
 

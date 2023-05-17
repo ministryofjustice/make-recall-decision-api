@@ -335,6 +335,8 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
     "riskToPrisoners": "NOT_APPLICABLE"
   },
   "countersignSpoTelephone": "12345678",
-  "countersignSpoExposition": "Spo comments on case"
+  "countersignSpoExposition": "Spo comments on case",
+  "countersignAcoTelephone": "87654321",
+  "countersignAcoExposition": "Aco comments on case"
 }
 """.trimIndent()
