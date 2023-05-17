@@ -127,12 +127,15 @@ data class RecommendationModel(
   var recommendationStartedDomainEventSent: Boolean? = null,
   var currentRoshForPartA: RoshData? = null,
   var roshSummary: RoshSummary? = null,
-  val countersignAcoTelephone: String? = null,
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
-  val countersignAcoExposition: String? = null,
   var countersignSpoName: String? = null,
-  var countersignSpoDateTime: LocalDateTime? = null
+  var countersignSpoDateTime: LocalDateTime? = null,
+
+  val countersignAcoExposition: String? = null,
+  val countersignAcoTelephone: String? = null,
+  var countersignAcoName: String? = null,
+  var countersignAcoDateTime: LocalDateTime? = null
 ) : Serializable
 
 enum class Status {
