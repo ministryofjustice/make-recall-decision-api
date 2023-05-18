@@ -332,7 +332,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(119)
+      assertThat(result.size).isEqualTo(121)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -360,6 +360,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["contact_details_changed"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["spo_countersign_complete"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["aco_countersign_complete"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["officer_visit_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["address_approved_condition"]).isEqualTo(TICK_CHARACTER)
@@ -500,6 +502,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["spo_countersign_complete"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["aco_countersign_complete"]).isEqualTo(EMPTY_STRING)
       assertThat(result["keep_in_touch_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["officer_visit_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["address_approved_condition"]).isEqualTo(EMPTY_STRING)
