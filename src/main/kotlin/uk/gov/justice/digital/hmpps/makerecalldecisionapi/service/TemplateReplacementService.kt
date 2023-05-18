@@ -162,12 +162,13 @@ internal class TemplateReplacementService(
       "countersign_spo_date" to (documentData.countersignSpoDate ?: EMPTY_STRING),
       "countersign_spo_time" to (documentData.countersignSpoTime ?: EMPTY_STRING),
       "countersign_spo_exposition" to (documentData.countersignSpoExposition ?: EMPTY_STRING),
-
+      "spo_countersign_complete" to (if (!documentData.countersignSpoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
       "countersign_aco_name" to (documentData.countersignAcoName ?: EMPTY_STRING),
       "countersign_aco_telephone" to (documentData.countersignAcoTelephone ?: EMPTY_STRING),
       "countersign_aco_date" to (documentData.countersignAcoDate ?: EMPTY_STRING),
       "countersign_aco_time" to (documentData.countersignAcoTime ?: EMPTY_STRING),
-      "countersign_aco_exposition" to (documentData.countersignAcoExposition ?: EMPTY_STRING)
+      "countersign_aco_exposition" to (documentData.countersignAcoExposition ?: EMPTY_STRING),
+      "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING)
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
