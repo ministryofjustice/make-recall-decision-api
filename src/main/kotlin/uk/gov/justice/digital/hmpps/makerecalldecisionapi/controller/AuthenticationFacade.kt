@@ -21,6 +21,17 @@ class AuthenticationFacade {
       }
     }
 
+  val isSpoOrAco: Boolean
+    get() {
+      val credentials = authentication.credentials as Jwt
+      return if (credentials.claims is Map<*, *>) {
+        val authorites = credentials.claims["authorities"] as List<String>
+        authorites.contains("ROLE_MAKE_RECALL_DECISION_SPO")
+      } else {
+        false
+      }
+    }
+
   val currentNameOfUser: String?
     get() {
       val credentials = authentication.credentials as Jwt
