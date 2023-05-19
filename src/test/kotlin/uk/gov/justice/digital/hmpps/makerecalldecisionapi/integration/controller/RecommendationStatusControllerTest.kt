@@ -155,7 +155,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
 
     // and
     webTestClient.post()
@@ -205,7 +205,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
 
     // and
     webTestClient.post()
@@ -242,14 +242,14 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation not closed on DNTR document download without trigger feature flag`() {
+  fun `recommendation not closed on DNTR document download with trigger feature flag`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
 
     // and
     webTestClient.post()
@@ -293,7 +293,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
 
     // and
     webTestClient.post()
@@ -343,7 +343,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
 
     // and
     webTestClient.post()
@@ -380,14 +380,14 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation not closed on Part A document download without trigger feature flag`() {
+  fun `recommendation not closed on Part A document download with trigger feature flag`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
 
     // and
     webTestClient.post()
