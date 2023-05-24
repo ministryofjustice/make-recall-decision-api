@@ -112,7 +112,7 @@ internal class RecommendationController(
     return recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, readableUserName, null, false, false, refreshProperty, flags)
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
   @PostMapping("/recommendations/{recommendationId}/part-a")
   @Operation(summary = "Generates a Part A document")
   suspend fun generatePartADocument(
@@ -122,15 +122,16 @@ internal class RecommendationController(
     userLogin: Principal
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
+    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val responseEntity = try {
-      ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, createPartARequest.userEmail), OK)
+      ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, createPartARequest.userEmail, authenticationFacade.isSpoOrAco, flags), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
     return responseEntity
   }
 
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
   @PostMapping("/recommendations/{recommendationId}/no-recall-letter")
   @Operation(
     summary = "Generates a Decision not to Recall document",
@@ -146,7 +147,7 @@ internal class RecommendationController(
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val responseEntity = try {
-      ResponseEntity(recommendationService.generateDntr(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), flags), OK)
+      ResponseEntity(recommendationService.generateDntr(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), authenticationFacade.isSpoOrAco, flags), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }

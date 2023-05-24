@@ -44,9 +44,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExcept
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
@@ -61,6 +63,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 @Service
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
+  val recommmendationStatusRepository: RecommendationStatusRepository,
   @Lazy val personDetailsService: PersonDetailsService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
@@ -558,7 +561,10 @@ internal class RecommendationService(
       recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
     Collections.sort(recommendationEntity)
 
-    if (recommendationEntity.size > 1) {
+    val legacyRecommendationOpen = recommendationEntity.size > 1
+    val recommendationStatusOpen = recommendationEntity.isNotEmpty() && recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id).any { it.active && it.name != "CLOSED" }
+
+    if (legacyRecommendationOpen || recommendationStatusOpen) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
     return if (recommendationEntity.isNotEmpty()) {
@@ -582,12 +588,18 @@ internal class RecommendationService(
     userId: String?,
     readableUsername: String?,
     documentRequestType: DocumentRequestType?,
+    isUserSpoOrAco: Boolean? = false,
     featureFlags: FeatureFlags?
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
       val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
+
+      if (isUserSpoOrAco == true && featureFlags?.flagTriggerWork == true) {
+        log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
+        closeRecommendation(recommendationId, userId, readableUsername)
+      }
 
       if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
@@ -675,28 +687,50 @@ internal class RecommendationService(
     recommendationId: Long,
     userId: String?,
     readableUsername: String?,
-    userEmail: String?
+    userEmail: String?,
+    isUserSpoOrAco: Boolean? = false,
+    featureFlags: FeatureFlags? = null
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
-
     val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
       updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, userEmail, true)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
       buildRecommendationResponse(recommendationEntity)
     }
-
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT)
+
+      if (isUserSpoOrAco == true && featureFlags?.flagTriggerWork == true) {
+        log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
+        closeRecommendation(recommendationId, userId, readableUsername)
+      }
+
       return DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
+  }
+
+  private fun closeRecommendation(recommendationId: Long, userId: String?, readableUsername: String?) {
+    val oldStatuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
+    if (oldStatuses.isNotEmpty()) {
+      oldStatuses
+        .filter { it.name != null }
+        .map {
+          it.active = false
+          it.modifiedBy = userId
+          it.modifiedByUserFullName = readableUsername
+          it.modified = utcNowDateTimeString()
+        }
+      recommmendationStatusRepository.saveAll(oldStatuses)
+    }
+    recommmendationStatusRepository.save(RecommendationStatusEntity(recommendationId = recommendationId, createdBy = userId, createdByUserFullName = readableUsername, created = utcNowDateTimeString(), name = "CLOSED", active = true))
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {
@@ -822,10 +856,14 @@ internal class RecommendationService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val recommendationDetails = getRecommendationsInProgressForCrn(crn)
-      val recommendations = recommendationRepository.findByCrnAndStatus(
+      val recommendationsWithLegacyStatuses = recommendationRepository.findByCrnAndStatus(
         crn,
         listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name)
       )
+      val recommendations = recommmendationStatusRepository.findByNameNot("CLOSED")
+        .mapNotNull { recommendationStatus -> recommendationStatus.recommendationId?.let(recommendationRepository::findById) }
+        .map { it.get() }
+        .plus(recommendationsWithLegacyStatuses)
 
       return RecommendationsResponse(
         personalDetailsOverview = personalDetailsOverview,
