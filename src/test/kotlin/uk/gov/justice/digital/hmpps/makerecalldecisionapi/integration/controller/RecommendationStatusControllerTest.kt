@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 
 @ActiveProfiles("test")
@@ -180,7 +179,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     val response = convertResponseToJSONArray(
       webTestClient.get()
         .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO","ROLE_MAKE_RECALL_DECISION")))) }
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO", "ROLE_MAKE_RECALL_DECISION")))) }
         .exchange()
         .expectStatus().isOk
     )
