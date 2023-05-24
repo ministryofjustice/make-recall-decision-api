@@ -137,6 +137,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
+        recommendationStatusRepository,
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
@@ -363,7 +364,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       val featureFlags = when (scenario) {
         "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
@@ -514,7 +515,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       try {
         recommendationService.updateRecommendationWithManagerRecallDecision(recommendationJsonNode, 1L, "", "")
@@ -588,7 +589,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
       // and
-      recommendationService = RecommendationService(recommendationRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
+      recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       // when
       recommendationService.updateRecommendation(
@@ -1429,6 +1430,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         "john.smith",
         "John Smith",
         DocumentRequestType.DOWNLOAD_DOC_X,
+        null,
         null
       )
 
@@ -1493,6 +1495,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         "john.smith",
         "John Smith",
         DocumentRequestType.DOWNLOAD_DOC_X,
+        null,
         FeatureFlags(flagSendDomainEvent = true)
       )
 
@@ -1527,6 +1530,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     runTest {
       recommendationService = RecommendationService(
         recommendationRepository,
+        recommendationStatusRepository,
         mockPersonDetailService,
         templateReplacementService,
         userAccessValidator,
@@ -1539,7 +1543,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
-      val result = recommendationService.generateDntr(1L, "john.smith", "John Smith", DocumentRequestType.PREVIEW, null)
+      val result = recommendationService.generateDntr(1L, "john.smith", "John Smith", DocumentRequestType.PREVIEW, null, null)
 
       assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
       assertThat(result.letterContent?.letterAddress).isEqualTo(
@@ -1697,6 +1701,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   private fun initialiseWithMockedTemplateReplacementService() {
     recommendationService = RecommendationService(
       recommendationRepository,
+      recommendationStatusRepository,
       mockPersonDetailService,
       templateReplacementServiceMocked,
       userAccessValidator,

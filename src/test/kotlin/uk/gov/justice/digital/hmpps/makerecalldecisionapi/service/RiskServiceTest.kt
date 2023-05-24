@@ -43,6 +43,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun setup() {
     recommendationService = RecommendationService(
       recommendationRepository,
+      recommendationStatusRepository,
       personDetailsService,
       templateReplacementService2,
       userAccessValidator,
