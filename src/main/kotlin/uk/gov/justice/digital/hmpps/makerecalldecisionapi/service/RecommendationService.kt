@@ -597,7 +597,7 @@ internal class RecommendationService(
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
       val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
 
-      if (isUserSpoOrAco == true && featureFlags?.flagTriggerWork != true) {
+      if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
         log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
         closeRecommendation(recommendationId, userId, readableUsername)
       }
@@ -706,7 +706,7 @@ internal class RecommendationService(
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT)
 
-      if (isUserSpoOrAco == true && featureFlags?.flagTriggerWork != true) {
+      if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
         log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
         closeRecommendation(recommendationId, userId, readableUsername)
       }
