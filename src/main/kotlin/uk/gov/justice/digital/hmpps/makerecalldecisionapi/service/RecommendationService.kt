@@ -857,14 +857,7 @@ internal class RecommendationService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val recommendationDetails = getRecommendationsInProgressForCrn(crn)
-      val closedRecommendations = recommmendationStatusRepository.findByName("CLOSED")
-        .filter { it.name != "DELETED" }
-        .map { it.recommendationId }
-
-      // TODO BS check recommendation_status table too once these are set in createRecommendation(..)
-      val recommendations =
-        recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
-          .filterNot { closedRecommendations.contains(it.id) }
+      val recommendations = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
 
       return RecommendationsResponse(
         personalDetailsOverview = personalDetailsOverview,
