@@ -155,7 +155,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
+    val featureFlagString = "{\"flagSendDomainEvent\": false }"
 
     // and
     webTestClient.post()
