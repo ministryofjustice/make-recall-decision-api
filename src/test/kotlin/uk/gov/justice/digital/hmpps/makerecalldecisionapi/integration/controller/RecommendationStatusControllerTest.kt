@@ -148,7 +148,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation closed on DNTR document download`() {
+  fun `recommendation closed by PP user on DNTR document download`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
@@ -167,7 +167,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -198,7 +198,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation not closed on DNTR document download for PO user`() {
+  fun `recommendation not closed on DNTR document download for SPO user`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
@@ -217,7 +217,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -261,7 +261,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -286,7 +286,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation closed on Part A document download`() {
+  fun `recommendation closed on Part A document download for PP user`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
@@ -305,7 +305,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -336,7 +336,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation not closed on Part A document download for PO user`() {
+  fun `recommendation not closed on Part A document download for SPO user`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
@@ -355,7 +355,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -399,7 +399,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )

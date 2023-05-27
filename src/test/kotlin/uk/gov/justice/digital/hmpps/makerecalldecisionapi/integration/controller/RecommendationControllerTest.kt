@@ -541,7 +541,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             it.set("X-Feature-Flags", featureFlagString)
           )
           )
@@ -553,7 +553,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     val response = convertResponseToJSONArray(
       webTestClient.get()
         .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
         .exchange()
         .expectStatus().isOk
     )
