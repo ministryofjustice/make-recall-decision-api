@@ -86,7 +86,7 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
+      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT // TODO BS set status in recommendation_status table too
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
           userId = userId,
@@ -559,12 +559,13 @@ internal class RecommendationService(
   fun getRecommendationsInProgressForCrn(crn: String): ActiveRecommendation? {
     val recommendationEntity =
       recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
-    Collections.sort(recommendationEntity)
+    Collections.sort(recommendationEntity) // TODO BS check recommendation_status table too once these are set in createRecommendation(..)
 
     val legacyRecommendationOpen = recommendationEntity.size > 1
-    val recommendationStatusOpen = recommendationEntity.isNotEmpty() && recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id).any { it.active && it.name != "CLOSED" }
+    val recommendationStatusOpen = recommendationEntity.isNotEmpty() &&
+      recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id).any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
 
-    if (legacyRecommendationOpen || recommendationStatusOpen) {
+    if (legacyRecommendationOpen && recommendationStatusOpen) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
     return if (recommendationEntity.isNotEmpty()) {
@@ -856,14 +857,14 @@ internal class RecommendationService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val recommendationDetails = getRecommendationsInProgressForCrn(crn)
-      val recommendationsWithLegacyStatuses = recommendationRepository.findByCrnAndStatus(
-        crn,
-        listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name)
-      )
-      val recommendations = recommmendationStatusRepository.findByNameNot("CLOSED")
-        .mapNotNull { recommendationStatus -> recommendationStatus.recommendationId?.let(recommendationRepository::findById) }
-        .map { it.get() }
-        .plus(recommendationsWithLegacyStatuses)
+      val closedRecommendations = recommmendationStatusRepository.findByName("CLOSED")
+        .filter { it.name != "DELETED" }
+        .map { it.recommendationId }
+
+      // TODO BS check recommendation_status table too once these are set in createRecommendation(..)
+      val recommendations =
+        recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
+          .filterNot { closedRecommendations.contains(it.id) }
 
       return RecommendationsResponse(
         personalDetailsOverview = personalDetailsOverview,
