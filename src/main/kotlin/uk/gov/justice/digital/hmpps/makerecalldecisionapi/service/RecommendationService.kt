@@ -244,7 +244,7 @@ internal class RecommendationService(
       countersignSpoDateTime = recommendationEntity.data.countersignSpoDateTime,
       countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
       countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
-      countersignAcoName = recommendationEntity.data.countersignSpoName,
+      countersignAcoName = recommendationEntity.data.countersignAcoName,
       countersignAcoDateTime = recommendationEntity.data.countersignSpoDateTime
     )
   }
