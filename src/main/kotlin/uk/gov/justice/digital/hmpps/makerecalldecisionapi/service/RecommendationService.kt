@@ -105,7 +105,7 @@ internal class RecommendationService(
       }
 
       val existingRecommendation = findInProgressRecommendationEntityForCase(recommendationRequest.crn)
-      return if (existingRecommendation != null) {
+      return if (existingRecommendation != null && featureFlags?.flagTriggerWork != true) {
         existingRecommendation.toRecommendationResponse()
       } else {
         val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
