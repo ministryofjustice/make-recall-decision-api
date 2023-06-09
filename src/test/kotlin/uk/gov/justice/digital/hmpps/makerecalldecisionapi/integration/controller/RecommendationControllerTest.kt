@@ -126,6 +126,51 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `create multiple recommendations for same case with flagTriggerWork feature flag active`() {
+    repository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    val featureFlagString = "{\"flagTriggerWork\": true }"
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
+    assertThat(result.size).isEqualTo(2)
+  }
+
+  @Test
   fun `create recommendation when oasys offence date doesn't match in delius`() {
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
