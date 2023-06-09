@@ -60,6 +60,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectStatus().isCreated
     )
 
+
     val idOfRecommendationJustCreated = response.get("id")
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
@@ -123,6 +124,51 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(recallConsidered.get("createdDate")).isNotNull
     assertThat(recallConsidered.get("userId")).isEqualTo("SOME_USER")
     assertThat(recallConsidered.get("recallConsideredDetail")).isEqualTo("I have concerns around their behaviour")
+  }
+
+  @Test
+  fun `create multiple recommendations for same case with flagTriggerWork feature flag active`() {
+    repository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    val featureFlagString = "{\"flagTriggerWork\": true }"
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+
+    val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
+    assertThat(result.size).isEqualTo(2)
   }
 
   @Test
