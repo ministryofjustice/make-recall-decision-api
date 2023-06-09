@@ -422,7 +422,9 @@ internal class RecommendationService(
     existingRecommendationEntity: RecommendationEntity,
     readableUserName: String?,
     userEmail: String?,
-    isPartADownloaded: Boolean
+    isPartADownloaded: Boolean,
+    isUserSpoOrAco: Boolean? = false,
+    featureFlags: FeatureFlags? = null
   ) {
     if (isPartADownloaded) {
       existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
@@ -432,7 +434,9 @@ internal class RecommendationService(
       existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
       existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
     }
-    existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+    if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
+      existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
+    }
   }
 
   private fun updateRecallConsideredList(
@@ -595,7 +599,7 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
-      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
+      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername, isUserSpoOrAco, featureFlags)
 
       if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
         log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
@@ -646,10 +650,12 @@ internal class RecommendationService(
     recommendationEntity: RecommendationEntity,
     userId: String?,
     readableUsername: String?,
+    isUserSpoOrAco: Boolean? = false,
+    featureFlags: FeatureFlags? = null
   ): DocumentResponse {
 
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
-      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, null, false)
+      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, null, false, isUserSpoOrAco, featureFlags)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
       buildRecommendationResponse(recommendationEntity)
@@ -694,7 +700,7 @@ internal class RecommendationService(
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
-      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, userEmail, true)
+      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, userEmail, true, isUserSpoOrAco, featureFlags)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
       buildRecommendationResponse(recommendationEntity)
@@ -724,7 +730,6 @@ internal class RecommendationService(
       oldStatuses
         .filter { it.name != null }
         .map {
-          it.active = false
           it.modifiedBy = userId
           it.modifiedByUserFullName = readableUsername
           it.modified = utcNowDateTimeString()
