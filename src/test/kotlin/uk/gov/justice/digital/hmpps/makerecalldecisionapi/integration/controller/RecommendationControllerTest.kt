@@ -60,7 +60,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectStatus().isCreated
     )
 
-
     val idOfRecommendationJustCreated = response.get("id")
 
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
