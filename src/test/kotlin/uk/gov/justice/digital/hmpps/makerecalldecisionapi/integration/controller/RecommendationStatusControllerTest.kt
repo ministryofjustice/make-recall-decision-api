@@ -151,8 +151,8 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   fun `recommendation closed by PP user on DNTR document download`() {
     // given
     userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    deleteAndCreateRecommendation()
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
     recommendationModelResponse(crn)
     updateRecommendation(updateRecommendationRequest())
     val featureFlagString = "{\"flagSendDomainEvent\": false }"
@@ -195,6 +195,11 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(recommendationStatus.get("modified")).isEqualTo(null)
     assertThat(recommendationStatus.get("modifiedByUserFullName")).isEqualTo(null)
     assertThat(recommendationStatus.get("name")).isEqualTo("CLOSED")
+
+    // and
+    val oldStatus = JSONObject(response.get(1).toString())
+    assertThat(oldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(oldStatus.get("active")).isEqualTo(true)
   }
 
   @Test
@@ -283,6 +288,18 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(recommendationStatus.get("active")).isEqualTo(true)
     assertThat(recommendationStatus.get("name")).isNotEqualTo("CLOSED")
+
+    // and
+    val activeRecommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/cases/$crn/recommendations"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    ).getJSONObject("activeRecommendation")
+    assertThat(activeRecommendation.get("status")).isEqualTo("DRAFT")
   }
 
   @Test
