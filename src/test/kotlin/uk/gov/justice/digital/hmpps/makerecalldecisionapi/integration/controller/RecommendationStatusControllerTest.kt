@@ -303,6 +303,49 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `statuses list present on recomendations response`() {
+    // given
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "NEW_STATUS", anotherToActivate = "ANOTHER_NEW_STATUS")
+
+    // when
+    val recommendations = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/cases/$crn/recommendations"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    val statuses = recommendations.getJSONArray("recommendations").getJSONObject(0).getJSONArray("statuses")
+    assertThat(statuses.getJSONObject(0).getString("createdByUserFullName")).isEqualTo("some_user")
+    assertThat(statuses.getJSONObject(0).getString("createdBy")).isEqualTo("SOME_USER")
+    assertThat(statuses.getJSONObject(0).getString("created")).isNotNull
+    assertThat(statuses.getJSONObject(0).getString("name")).isEqualTo("NEW_STATUS")
+    assertThat(statuses.getJSONObject(0).get("modified")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(0).get("active")).isEqualTo(true)
+    assertThat(statuses.getJSONObject(0).get("modifiedBy")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(0).get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(0).get("id")).isNotNull
+    assertThat(statuses.getJSONObject(0).get("recommendationId")).isNotNull
+
+    // and
+    assertThat(statuses.getJSONObject(1).getString("createdByUserFullName")).isEqualTo("some_user")
+    assertThat(statuses.getJSONObject(1).getString("createdBy")).isEqualTo("SOME_USER")
+    assertThat(statuses.getJSONObject(1).getString("created")).isNotNull
+    assertThat(statuses.getJSONObject(1).getString("name")).isEqualTo("ANOTHER_NEW_STATUS")
+    assertThat(statuses.getJSONObject(1).get("modified")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(1).get("active")).isEqualTo(true)
+    assertThat(statuses.getJSONObject(1).get("modifiedBy")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(1).get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(statuses.getJSONObject(1).get("id")).isNotNull
+    assertThat(statuses.getJSONObject(1).get("recommendationId")).isNotNull
+  }
+
+  @Test
   fun `recommendation closed on Part A document download for PP user`() {
     // given
     userAccessAllowed(crn)
