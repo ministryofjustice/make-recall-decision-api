@@ -885,6 +885,7 @@ internal class RecommendationService(
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
           status = it.data.status,
+          statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
           recallType = it.data.recallType
         )
       }

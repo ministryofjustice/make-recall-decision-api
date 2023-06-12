@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 data class RecommendationsListItem(
@@ -8,5 +9,6 @@ data class RecommendationsListItem(
   val createdDate: String? = null,
   val lastModifiedDate: String? = null,
   val status: Status? = null,
+  val statuses: List<RecommendationStatusEntity>? = emptyList(),
   val recallType: RecallType? = null
 )
