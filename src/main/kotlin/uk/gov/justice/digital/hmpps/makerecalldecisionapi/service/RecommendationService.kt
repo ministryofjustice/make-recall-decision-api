@@ -297,6 +297,8 @@ internal class RecommendationService(
 
     val requestJson = JSONObject(jsonRequest.toString())
     val sendToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
+    log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))
+    log.info("send to delius value::" + sendToDelius)
     if (sendToDelius) {
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
