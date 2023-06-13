@@ -36,10 +36,9 @@ internal class ManagementOversightService(
     return ResponseEntity(
       ManagementOversightResponse(
         sensitive = recommendations[0].data.sensitive ?: false,
-        notes = "Comment added by $readableNameOfUser on ${dateTime.first} at ${dateTime.second}: " +
-          "$readableNameOfUser entered the following into the service 'Decide if someone should be recalled or not': " +
-          "${managerRecallDecision.selected?.details} " +
-          "View the case summary: $mrdUrl/cases/${recommendations[0].data.crn}/overview"
+        notes = "$readableNameOfUser said:\n" +
+          "${managerRecallDecision.selected?.details}\n" +
+          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview"
       ),
       HttpStatus.OK
     )
