@@ -86,7 +86,7 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT // TODO BS set status in recommendation_status table too
+      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
         RecallConsidered(
           userId = userId,
@@ -727,17 +727,17 @@ internal class RecommendationService(
   }
 
   private fun closeRecommendation(recommendationId: Long, userId: String?, readableUsername: String?) {
-    val oldStatuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
-    if (oldStatuses.isNotEmpty()) {
-      oldStatuses
-        .filter { it.name != null }
-        .map {
-          it.modifiedBy = userId
-          it.modifiedByUserFullName = readableUsername
-          it.modified = utcNowDateTimeString()
-        }
-      recommmendationStatusRepository.saveAll(oldStatuses)
-    }
+//    val oldStatuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
+//    if (oldStatuses.isNotEmpty()) {
+//      oldStatuses
+//        .filter { it.name != null }
+//        .map {
+//          it.modifiedBy = userId
+//          it.modifiedByUserFullName = readableUsername
+//          it.modified = utcNowDateTimeString()
+//        }
+//      recommmendationStatusRepository.saveAll(oldStatuses)
+//    } TODO BS
     recommmendationStatusRepository.save(RecommendationStatusEntity(recommendationId = recommendationId, createdBy = userId, createdByUserFullName = readableUsername, created = utcNowDateTimeString(), name = "CLOSED", active = true))
   }
 
