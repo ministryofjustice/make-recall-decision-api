@@ -101,7 +101,6 @@ class MrdEventsEmitterTest {
         version = 1,
         description = "Recommendation started (recall or no recall)",
         occurredAt = "2022-12-1T14:25:40.117Z",
-//        detailUrl = "", // TODO TBD
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
         additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview", bookedBy = null, contactOutcome = null)
       ),

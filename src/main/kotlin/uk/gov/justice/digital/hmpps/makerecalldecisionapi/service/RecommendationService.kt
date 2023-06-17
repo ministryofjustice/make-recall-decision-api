@@ -565,7 +565,7 @@ internal class RecommendationService(
   fun getRecommendationsInProgressForCrn(crn: String): ActiveRecommendation? {
     val recommendationEntity =
       recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
-    Collections.sort(recommendationEntity) // TODO BS check recommendation_status table too once these are set in createRecommendation(..)
+    Collections.sort(recommendationEntity)
 
     val legacyRecommendationOpen = recommendationEntity.size > 1
     val recommendationStatusOpen = recommendationEntity.isNotEmpty() &&
@@ -727,17 +727,6 @@ internal class RecommendationService(
   }
 
   private fun closeRecommendation(recommendationId: Long, userId: String?, readableUsername: String?) {
-//    val oldStatuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
-//    if (oldStatuses.isNotEmpty()) {
-//      oldStatuses
-//        .filter { it.name != null }
-//        .map {
-//          it.modifiedBy = userId
-//          it.modifiedByUserFullName = readableUsername
-//          it.modified = utcNowDateTimeString()
-//        }
-//      recommmendationStatusRepository.saveAll(oldStatuses)
-//    } TODO BS
     recommmendationStatusRepository.save(RecommendationStatusEntity(recommendationId = recommendationId, createdBy = userId, createdByUserFullName = readableUsername, created = utcNowDateTimeString(), name = "CLOSED", active = true))
   }
 

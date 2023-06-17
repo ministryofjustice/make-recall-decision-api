@@ -38,7 +38,7 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
       version = 1,
       description = "DNTR letter downloaded",
       occurredAt = utcNowDateTimeString(),
-      detailUrl = "", // TODO TBD
+      detailUrl = "",
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn)))
     )
   )
@@ -52,7 +52,7 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
       version = 1,
       description = "Management Oversight - Recall",
       occurredAt = utcNowDateTimeString(),
-      detailUrl = detailUrl, // TODO TBD
+      detailUrl = detailUrl,
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
       additionalInformation = AdditionalInformation(
         contactOutcome = contactOutcome,
@@ -72,7 +72,7 @@ fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?)
       version = 1,
       description = "Recommendation started (recall or no recall)",
       occurredAt = utcNowDateTimeString(),
-      detailUrl = "", // TODO TBD
+      detailUrl = "",
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
       additionalInformation = AdditionalInformation(recommendationUrl = recommendationUrl, bookedBy = null, contactOutcome = null)
     ),
@@ -88,7 +88,7 @@ data class MrdEventMessageBody(
   val eventType: String? = null,
   val version: Int? = null,
   val description: String? = null,
-  val detailUrl: String? = null, // TODO TBD
+  val detailUrl: String? = null,
   val occurredAt: String? = utcNowDateTimeString(),
   val additionalInformation: AdditionalInformation? = null,
   val personReference: PersonReference? = null
