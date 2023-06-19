@@ -185,7 +185,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     )
 
     // then
-    val recommendationStatus = JSONObject(response.get(0).toString())
+    val recommendationStatus = JSONObject(response.get(2).toString())
     assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(recommendationStatus.get("active")).isEqualTo(true)
     assertThat(recommendationStatus.get("createdBy")).isEqualTo("SOME_USER")
@@ -197,9 +197,9 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(recommendationStatus.get("name")).isEqualTo("CLOSED")
 
     // and
-    val oldStatus = JSONObject(response.get(1).toString())
-    assertThat(oldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
-    assertThat(oldStatus.get("active")).isEqualTo(true)
+    val anotherOldStatus = JSONObject(response.get(1).toString())
+    assertThat(anotherOldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(anotherOldStatus.get("active")).isEqualTo(true)
   }
 
   @Test
