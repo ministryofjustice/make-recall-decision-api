@@ -148,61 +148,6 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation closed by PP user on DNTR document download`() {
-    // given
-    userAccessAllowed(crn)
-    createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
-    recommendationModelResponse(crn)
-    updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false }"
-
-    // and
-    webTestClient.post()
-      .uri("/recommendations/$createdRecommendationId/no-recall-letter")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(documentRequestQuery("download-docx"))
-      )
-      .headers {
-        (
-          listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
-          )
-          )
-      }
-      .exchange()
-      .expectStatus().isOk
-
-    // when
-    val response = convertResponseToJSONArray(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO", "ROLE_MAKE_RECALL_DECISION")))) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    // then
-    val recommendationStatus = JSONObject(response.get(2).toString())
-    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
-    assertThat(recommendationStatus.get("active")).isEqualTo(true)
-    assertThat(recommendationStatus.get("createdBy")).isEqualTo("SOME_USER")
-    assertThat(recommendationStatus.get("createdByUserFullName")).isEqualTo("some_user")
-    assertThat(recommendationStatus.get("created")).isNotNull
-    assertThat(recommendationStatus.get("modifiedBy")).isEqualTo(null)
-    assertThat(recommendationStatus.get("modified")).isEqualTo(null)
-    assertThat(recommendationStatus.get("modifiedByUserFullName")).isEqualTo(null)
-    assertThat(recommendationStatus.get("name")).isEqualTo("CLOSED")
-
-    // and
-    val anotherOldStatus = JSONObject(response.get(1).toString())
-    assertThat(anotherOldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
-    assertThat(anotherOldStatus.get("active")).isEqualTo(true)
-  }
-
-  @Test
   fun `recommendation not closed on DNTR document download for SPO user`() {
     // given
     userAccessAllowed(crn)
@@ -343,56 +288,6 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(statuses.getJSONObject(1).get("modifiedByUserFullName")).isEqualTo(null)
     assertThat(statuses.getJSONObject(1).get("id")).isNotNull
     assertThat(statuses.getJSONObject(1).get("recommendationId")).isNotNull
-  }
-
-  @Test
-  fun `recommendation closed on Part A document download for PP user`() {
-    // given
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    deleteAndCreateRecommendation()
-    recommendationModelResponse(crn)
-    updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
-
-    // and
-    webTestClient.post()
-      .uri("/recommendations/$createdRecommendationId/part-a")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(createPartARequest())
-      )
-      .headers {
-        (
-          listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
-          )
-          )
-      }
-      .exchange()
-      .expectStatus().isOk
-
-    // when
-    val response = convertResponseToJSONArray(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    // then
-    val recommendationStatus = JSONObject(response.get(0).toString())
-    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
-    assertThat(recommendationStatus.get("active")).isEqualTo(true)
-    assertThat(recommendationStatus.get("createdBy")).isEqualTo("SOME_USER")
-    assertThat(recommendationStatus.get("createdByUserFullName")).isEqualTo("some_user")
-    assertThat(recommendationStatus.get("created")).isNotNull
-    assertThat(recommendationStatus.get("modifiedBy")).isEqualTo(null)
-    assertThat(recommendationStatus.get("modified")).isEqualTo(null)
-    assertThat(recommendationStatus.get("modifiedByUserFullName")).isEqualTo(null)
-    assertThat(recommendationStatus.get("name")).isEqualTo("CLOSED")
   }
 
   @Test

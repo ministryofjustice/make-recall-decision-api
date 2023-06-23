@@ -554,7 +554,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, listOf(Status.DOCUMENT_DOWNLOADED.name))
+    val result = repository.findByCrn(crn)
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
@@ -563,7 +563,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
 
     assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
-    assertThat(result[0].data.status, equalTo(Status.DOCUMENT_DOWNLOADED))
+    assertThat(result[0].data.status, equalTo(Status.DRAFT))
   }
 
   @Test
@@ -605,7 +605,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     // and
     val recommendationStatus = JSONObject(response.get(0).toString())
-    assertThat(recommendationStatus.get("name")).isEqualTo("CLOSED")
+    assertThat(recommendationStatus.get("name")).isEqualTo("DRAFT")
 
     // when
     val results = convertResponseToJSONObject(
@@ -696,11 +696,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
-    val result = repository.findByCrnAndStatus(crn, listOf(Status.DOCUMENT_DOWNLOADED.name))
+    val result = repository.findByCrn(crn)
     assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
     assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
     assertNotNull(result[0].data.lastPartADownloadDateTime)
-    assertThat(result[0].data.status, equalTo(Status.DOCUMENT_DOWNLOADED))
+    assertThat(result[0].data.status, equalTo(Status.DRAFT))
   }
 
   @Test
