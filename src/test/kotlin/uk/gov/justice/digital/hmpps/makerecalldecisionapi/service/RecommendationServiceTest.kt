@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.DateTimeUtils
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -130,10 +131,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
-        .willReturn(emptyList())
-
-      // and
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
@@ -230,6 +227,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
+  @Disabled // originally for mrd-1089
   @Test
   fun `return existing recommendation when one in progress already exists for case and create endpoint hit`() {
     runTest {
@@ -1443,7 +1441,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
-        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
+        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DRAFT)
       } else {
         then(recommendationRepository).should(times(0)).save(any())
 
@@ -1508,7 +1506,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
-        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
+        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DRAFT)
         then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
       } else {
         then(recommendationRepository).should(times(0)).save(any())
@@ -1575,7 +1573,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
                   surname = "Smith"
                 ),
                 indexOffenceDetails = null,
-                status = Status.DOCUMENT_DOWNLOADED,
                 userNamePartACompletedBy = "Jack",
                 userEmailPartACompletedBy = "Jack@test.com",
                 lastPartADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")
@@ -1619,7 +1616,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(savedRecommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
         assertThat(savedRecommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
         assertThat(savedRecommendationEntity.data.lastPartADownloadDateTime).isNotNull
-        assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       } else {
         val captor = argumentCaptor<RecommendationResponse>()
         then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
@@ -1628,7 +1624,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(recommendationResponseResult.userNamePartACompletedBy).isEqualTo("Jack")
         assertThat(recommendationResponseResult.userEmailPartACompletedBy).isEqualTo("Jack@test.com")
         assertThat(recommendationResponseResult.lastPartADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
-        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
     }
   }

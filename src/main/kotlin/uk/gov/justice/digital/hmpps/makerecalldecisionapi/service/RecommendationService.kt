@@ -44,7 +44,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExcept
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -76,6 +75,7 @@ internal class RecommendationService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
+
   suspend fun createRecommendation(
     recommendationRequest: CreateRecommendationRequest,
     userId: String?,
@@ -95,7 +95,6 @@ internal class RecommendationService(
           recallConsideredDetail = recommendationRequest.recallConsideredDetail
         )
       ) else null
-
       val sendRecommendationStartedDomainEvent =
         featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
       if (sendRecommendationStartedDomainEvent) {
@@ -103,47 +102,21 @@ internal class RecommendationService(
         sendRecommendationStartedEvent(recommendationRequest.crn)
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
-
-      val existingRecommendation = findInProgressRecommendationEntityForCase(recommendationRequest.crn)
-      return if (existingRecommendation != null && featureFlags?.flagTriggerWork != true) {
-        existingRecommendation.toRecommendationResponse()
-      } else {
-        val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-        saveNewRecommendationEntity(
-          recommendationRequest,
-          userId,
-          readableNameOfUser,
-          status,
-          recallConsideredList,
-          StaticRecommendationDataWrapper(
-            personDetails?.toPersonOnProbation(),
-            personDetails?.offenderManager?.probationAreaDescription,
-            personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
-          ),
-          sendRecommendationStartedDomainEvent
-        )?.toRecommendationResponse()
-      }
+      val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      return saveNewRecommendationEntity(
+        recommendationRequest,
+        userId,
+        readableNameOfUser,
+        status,
+        recallConsideredList,
+        StaticRecommendationDataWrapper(
+          personDetails?.toPersonOnProbation(),
+          personDetails?.offenderManager?.probationAreaDescription,
+          personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
+        ),
+        sendRecommendationStartedDomainEvent
+      )?.toRecommendationResponse()
     }
-  }
-
-  private fun findInProgressRecommendationEntityForCase(crn: String?): RecommendationEntity? {
-    val recommendationEntity = crn?.let {
-      recommendationRepository.findByCrnAndStatus(
-        it,
-        listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)
-      )
-    }
-    recommendationEntity?.let(Collections::sort)
-    return if (!recommendationEntity.isNullOrEmpty()) {
-      when {
-        recommendationEntity.size > 1 -> {
-          log.error("More than one recommendation found for CRN. Returning the latest.")
-          recommendationEntity[0]
-        }
-
-        else -> recommendationEntity[0]
-      }
-    } else null
   }
 
   fun buildRecallDecisionList(
@@ -436,9 +409,6 @@ internal class RecommendationService(
       existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
       existingRecommendationEntity.data.lastDntrLetterADownloadDateTime = localNowDateTime()
     }
-    if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
-      existingRecommendationEntity.data.status = Status.DOCUMENT_DOWNLOADED
-    }
   }
 
   private fun updateRecallConsideredList(
@@ -602,12 +572,6 @@ internal class RecommendationService(
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
       val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername, isUserSpoOrAco, featureFlags)
-
-      if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
-        log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
-        closeRecommendation(recommendationId, userId, readableUsername)
-      }
-
       if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
@@ -713,21 +677,11 @@ internal class RecommendationService(
     } else {
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT)
-
-      if (isUserSpoOrAco != true && featureFlags?.flagTriggerWork != true) {
-        log.info("Closing recommendation for case:: ${recommendationEntity.data.crn}")
-        closeRecommendation(recommendationId, userId, readableUsername)
-      }
-
       return DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
-  }
-
-  private fun closeRecommendation(recommendationId: Long, userId: String?, readableUsername: String?) {
-    recommmendationStatusRepository.save(RecommendationStatusEntity(recommendationId = recommendationId, createdBy = userId, createdByUserFullName = readableUsername, created = utcNowDateTimeString(), name = "CLOSED", active = true))
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {
