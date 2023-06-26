@@ -124,6 +124,7 @@ data class RecommendationModel(
   var previousReleases: PreviousReleases? = null,
   @JsonMerge
   var previousRecalls: PreviousRecalls? = null,
+  // deprecated
   var recommendationStartedDomainEventSent: Boolean? = null,
   var currentRoshForPartA: RoshData? = null,
   var roshSummary: RoshSummary? = null,

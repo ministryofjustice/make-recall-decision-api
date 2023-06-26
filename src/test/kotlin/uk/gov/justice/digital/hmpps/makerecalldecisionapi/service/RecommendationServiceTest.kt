@@ -95,9 +95,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Mock
   protected lateinit var templateReplacementServiceMocked: TemplateReplacementService
 
-  @ParameterizedTest()
-  @CsvSource("RECOMMENDATION_STARTED", "NO_FLAGS")
-  fun `create recommendation with and without recall considered flag`(featureFlag: String) {
+  @Test
+  fun `create recommendation with and without recall considered flag`() {
     runTest {
       // given
       val recommendationToSave = RecommendationEntity(
@@ -142,19 +141,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         deliusClient,
         mrdEmitterMocked
       )
-
-      // and
-      val featureFlags = when (featureFlag) {
-        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
-        else -> null
-      }
-
       // when
       val response = recommendationService.createRecommendation(
         CreateRecommendationRequest(crn, null),
         "UserBill",
         "Bill",
-        featureFlags
+        null
       )
 
       // then
@@ -204,22 +196,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
 
-      if (featureFlag == "RECALL_CONSIDERED") {
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
-        then(mrdEmitterMocked).shouldHaveNoInteractions()
-      } else if (featureFlag == "RECOMMENDATION_STARTED") {
-        then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
-      } else {
-        assertThat(recommendationEntity.data.recallConsideredList).isNull()
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
-        then(mrdEmitterMocked).shouldHaveNoInteractions()
-      }
+      assertThat(recommendationEntity.data.recallConsideredList).isNull()
+      then(mrdEmitterMocked).shouldHaveNoInteractions()
     }
   }
 
@@ -266,9 +244,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @ParameterizedTest()
-  @CsvSource("RECOMMENDATION_STARTED_EVENT_ALREADY_SENT", "RECOMMENDATION_STARTED", "NO_FLAGS")
-  fun `updates a recommendation to the database`(scenario: String) {
+  @Test
+  fun `updates a recommendation to the database`() {
     runTest {
       // given
       val existingRecommendation = RecommendationEntity(
@@ -289,7 +266,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
           createdDate = "2022-07-01T15:22:24.567Z",
-          recommendationStartedDomainEventSent = if (scenario == "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT") true else null
+          recommendationStartedDomainEventSent = null
         )
       )
 
@@ -360,35 +337,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
-      val featureFlags = when (scenario) {
-        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
-        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
-        else -> null
-      }
-
       // when
-      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), featureFlags)
+      recommendationService.updateRecommendation(recommendationJsonNode, 1L, "bill", "Bill", null, false, false, emptyList(), null)
 
       // then
       recallConsideredIdWorkaround(recommendationToSave)
-
-      when (scenario) {
-        "RECOMMENDATION_STARTED" -> {
-          recommendationToSave.data.recommendationStartedDomainEventSent = true
-          then(recommendationRepository).should().save(recommendationToSave)
-          then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
-        }
-        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> {
-          recommendationToSave.data.recommendationStartedDomainEventSent = true
-          then(recommendationRepository).should().save(recommendationToSave)
-          then(mrdEmitterMocked).shouldHaveNoInteractions()
-        }
-        else -> {
-          then(recommendationRepository).should().save(recommendationToSave)
-          then(mrdEmitterMocked).shouldHaveNoInteractions()
-        }
-      }
-
+      then(recommendationRepository).should().save(recommendationToSave)
+      then(mrdEmitterMocked).shouldHaveNoInteractions()
       then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
     }

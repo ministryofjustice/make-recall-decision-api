@@ -87,12 +87,6 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val status = Status.DRAFT
-      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true
-      if (sendRecommendationStartedDomainEvent) {
-        log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
-        sendRecommendationStartedEvent(recommendationRequest.crn)
-        log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
-      }
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
       return saveNewRecommendationEntity(
         recommendationRequest,
@@ -104,8 +98,7 @@ internal class RecommendationService(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
-        ),
-        sendRecommendationStartedDomainEvent
+        )
       )?.toRecommendationResponse()
     }
   }
@@ -289,17 +282,6 @@ internal class RecommendationService(
     val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
 
     log.info("recommendation for ${result.crn} updated for recommendationId $recommendationId")
-
-    val sendRecommendationStartedDomainEvent =
-      featureFlags?.flagDomainEventRecommendationStarted == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
-
-    if (sendRecommendationStartedDomainEvent) {
-      log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started for recommendation id $recommendationId")
-      sendRecommendationStartedEvent(existingRecommendationEntity.data.crn)
-      log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on Recommendation started asynchronously for recommendation id $recommendationId")
-      existingRecommendationEntity.data.recommendationStartedDomainEventSent = true
-    }
-
     return result
   }
 
@@ -692,8 +674,7 @@ internal class RecommendationService(
     readableNameOfUser: String?,
     status: Status?,
     recallConsideredList: List<RecallConsidered>?,
-    recommendationWrapper: StaticRecommendationDataWrapper?,
-    recommendationStartedDomainEventSent: Boolean?
+    recommendationWrapper: StaticRecommendationDataWrapper?
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
@@ -708,8 +689,7 @@ internal class RecommendationService(
         createdDate = now,
         personOnProbation = recommendationWrapper?.personOnProbation,
         region = recommendationWrapper?.region,
-        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
-        recommendationStartedDomainEventSent = recommendationStartedDomainEventSent
+        localDeliveryUnit = recommendationWrapper?.localDeliveryUnit
       )
     )
 
