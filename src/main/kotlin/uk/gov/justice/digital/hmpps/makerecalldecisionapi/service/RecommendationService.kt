@@ -86,17 +86,8 @@ internal class RecommendationService(
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
-      val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
-        RecallConsidered(
-          userId = userId,
-          createdDate = utcNowDateTimeString(),
-          userName = readableNameOfUser,
-          recallConsideredDetail = recommendationRequest.recallConsideredDetail
-        )
-      ) else null
-      val sendRecommendationStartedDomainEvent =
-        featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
+      val status = Status.DRAFT
+      val sendRecommendationStartedDomainEvent = featureFlags?.flagDomainEventRecommendationStarted == true
       if (sendRecommendationStartedDomainEvent) {
         log.info("About to send domain event for ${recommendationRequest.crn} on Recommendation started")
         sendRecommendationStartedEvent(recommendationRequest.crn)
@@ -108,7 +99,7 @@ internal class RecommendationService(
         userId,
         readableNameOfUser,
         status,
-        recallConsideredList,
+        null,
         StaticRecommendationDataWrapper(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
@@ -300,7 +291,7 @@ internal class RecommendationService(
     log.info("recommendation for ${result.crn} updated for recommendationId $recommendationId")
 
     val sendRecommendationStartedDomainEvent =
-      featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
+      featureFlags?.flagDomainEventRecommendationStarted == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
 
     if (sendRecommendationStartedDomainEvent) {
       log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started for recommendation id $recommendationId")

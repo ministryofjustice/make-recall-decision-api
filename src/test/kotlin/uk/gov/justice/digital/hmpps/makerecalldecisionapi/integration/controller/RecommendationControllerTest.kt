@@ -84,48 +84,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `create recommendation with recallConsideredList feature flag active`() {
-    userAccessAllowed(crn)
-    personalDetailsResponseOneTimeOnly(crn)
-    deleteAndCreateRecommendation("{\"flagConsiderRecall\": true, \"unknownFeatureFlag\": true }")
-
-    val response = convertResponseToJSONObject(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-    )
-    assertThat(response.get("id")).isEqualTo(createdRecommendationId)
-    assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
-    val personOnProbation = JSONObject(response.get("personOnProbation").toString())
-    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
-    assertThat(personOnProbation.get("gender")).isEqualTo("Male")
-    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
-    assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
-    assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
-    assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
-    assertThat(personOnProbation.get("croNumber")).isEqualTo("123456/04A")
-    assertThat(personOnProbation.get("nomsNumber")).isEqualTo("A1234CR")
-    assertThat(personOnProbation.get("pncNumber")).isEqualTo("2004/0712343H")
-    val personOnProbationAddress = JSONArray(personOnProbation.get("addresses").toString())
-    val address = JSONObject(personOnProbationAddress.get(0).toString())
-    assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
-    assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
-    assertThat(address.get("town")).isEqualTo("Sheffield")
-    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
-    assertThat(address.get("noFixedAbode")).isEqualTo(false)
-    val recallConsideredList = JSONArray(response.get("recallConsideredList").toString())
-    val recallConsidered = JSONObject(recallConsideredList.get(0).toString())
-    assertThat(recallConsideredList.length()).isEqualTo(1)
-    assertThat(recallConsidered.get("id")).isNotNull
-    assertThat(recallConsidered.get("userName")).isEqualTo("some_user")
-    assertThat(recallConsidered.get("createdDate")).isNotNull
-    assertThat(recallConsidered.get("userId")).isEqualTo("SOME_USER")
-    assertThat(recallConsidered.get("recallConsideredDetail")).isEqualTo("I have concerns around their behaviour")
-  }
-
-  @Test
   fun `create multiple recommendations for same case with flagTriggerWork feature flag active`() {
     repository.deleteAll()
     licenceConditionsResponse(crn, 2500614567)

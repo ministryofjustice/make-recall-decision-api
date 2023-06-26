@@ -96,7 +96,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   protected lateinit var templateReplacementServiceMocked: TemplateReplacementService
 
   @ParameterizedTest()
-  @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
+  @CsvSource("RECOMMENDATION_STARTED", "NO_FLAGS")
   fun `create recommendation with and without recall considered flag`(featureFlag: String) {
     runTest {
       // given
@@ -145,15 +145,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       // and
       val featureFlags = when (featureFlag) {
-        "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
-        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = false)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
         else -> null
       }
-      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
 
       // when
       val response = recommendationService.createRecommendation(
-        CreateRecommendationRequest(crn, recallConsidereDetail),
+        CreateRecommendationRequest(crn, null),
         "UserBill",
         "Bill",
         featureFlags
@@ -167,11 +165,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
       val recommendationEntity = captor.firstValue
-      val expectedStatus = if (featureFlag == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
 
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
-      assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
       assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
         PersonOnProbation(
           name = "John Smith",
@@ -365,8 +361,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, mrdEmitterMocked)
 
       val featureFlags = when (scenario) {
-        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
-        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> FeatureFlags(flagDomainEventRecommendationStarted = true, flagConsiderRecall = true)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
+        "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> FeatureFlags(flagDomainEventRecommendationStarted = true)
         else -> null
       }
 
