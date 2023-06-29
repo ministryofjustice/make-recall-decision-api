@@ -1,6 +1,5 @@
-drop table if exists recommendations;
-
-CREATE TABLE recommendations
+CREATE TABLE if not exists recommendations
 (
-    data JSON
+    id serial primary key,
+    data jsonb
 );
