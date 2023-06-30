@@ -24,3 +24,4 @@ So...
 If you need to rename a database field or change its type, simply create a **new** field and copy across the data into it (as part of the migration) whilst also changing the application code to use the new field. Once the application version is deployed and happily running, create a second migration to remove the old field.
 
 If you need to rename a table, the approach is the same - create and copy in the first migration/release, then clean up in a second migration/release.
+
