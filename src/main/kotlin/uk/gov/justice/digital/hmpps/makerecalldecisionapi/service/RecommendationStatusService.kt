@@ -10,16 +10,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.Recommendati
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationStatusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
-import kotlin.jvm.optionals.getOrNull
+import java.util.Collections
 
 @Transactional
 @Service
 internal class RecommendationStatusService(
   val recommendationStatusRepository: RecommendationStatusRepository,
-  val recommendationRepository: RecommendationRepository
+  val recommendationHistoryRepository: RecommendationHistoryRepository? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -45,15 +45,7 @@ internal class RecommendationStatusService(
   ): List<RecommendationStatusResponse> {
     return recommendationStatusRepository.findByRecommendationId(recommendationId)
       .map { it.toRecommendationStatusResponse() }
-      .ifEmpty { useOldStatuses(recommendationId) }
   }
-
-  private fun useOldStatuses(recommendationId: Long) = listOf(
-    RecommendationStatusResponse.fromRecommendationModel(
-      model = recommendationRepository.findById(recommendationId).getOrNull()?.data,
-      recommendationId = recommendationId
-    )
-  )
 
   private fun activateNewStatus(
     recommendationStatusRequest: RecommendationStatusRequest,
@@ -61,11 +53,19 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?
   ): List<RecommendationStatusEntity> {
+    val recommendationHistories = recommendationHistoryRepository?.findByrecommendationId(recommendationId = recommendationId)
+    if (recommendationHistories != null) {
+      Collections.sort(recommendationHistories)
+    }
+    val recommendationHistoryId = if (recommendationHistories?.isNotEmpty() == true) {
+      recommendationHistories[0].recommendationId
+    } else null
     val newStatusesToActivate = saveAllRecommendationStatuses(
       recommendationStatusRequest.toActiveRecommendationStatusEntity(
         recommendationId = recommendationId,
         userId = userId,
-        createdByUserName = readableNameOfUser
+        createdByUserName = readableNameOfUser,
+        recommendationHistoryId = recommendationHistoryId
       )
     )
     return newStatusesToActivate

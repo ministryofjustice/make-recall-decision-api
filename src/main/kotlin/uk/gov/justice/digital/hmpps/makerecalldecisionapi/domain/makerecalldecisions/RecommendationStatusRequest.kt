@@ -12,7 +12,8 @@ data class RecommendationStatusRequest(
 fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
   recommendationId: Long,
   userId: String?,
-  createdByUserName: String?
+  createdByUserName: String?,
+  recommendationHistoryId: Long? = null
 ): List<RecommendationStatusEntity> {
   return activate
     .map {
@@ -22,7 +23,8 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
         createdByUserFullName = createdByUserName,
         created = DateTimeHelper.utcNowDateTimeString(),
         name = it,
-        active = true
+        active = true,
+        recommendationHistoryId = recommendationHistoryId
       )
     }
 }
@@ -36,7 +38,8 @@ data class RecommendationStatusResponse(
   var modifiedBy: String?,
   var modified: String?,
   val createdByUserFullName: String?,
-  val modifiedByUserFullName: String?
+  val modifiedByUserFullName: String?,
+  val recommendationHistoryId: Long?
 ) {
   companion object {
     fun fromRecommendationModel(model: RecommendationModel?, recommendationId: Long): RecommendationStatusResponse {
@@ -49,7 +52,8 @@ data class RecommendationStatusResponse(
         createdByUserFullName = null,
         modified = null,
         modifiedBy = null,
-        modifiedByUserFullName = null
+        modifiedByUserFullName = null,
+        recommendationHistoryId = null
       )
     }
   }
