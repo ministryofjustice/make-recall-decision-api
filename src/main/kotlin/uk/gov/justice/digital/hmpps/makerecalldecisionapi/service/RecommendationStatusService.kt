@@ -58,7 +58,7 @@ internal class RecommendationStatusService(
       Collections.sort(recommendationHistories)
     }
     val recommendationHistoryId = if (recommendationHistories?.isNotEmpty() == true) {
-      recommendationHistories[0].recommendationId
+      recommendationHistories[0].id
     } else null
     val newStatusesToActivate = saveAllRecommendationStatuses(
       recommendationStatusRequest.toActiveRecommendationStatusEntity(
