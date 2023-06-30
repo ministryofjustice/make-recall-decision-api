@@ -109,7 +109,7 @@ internal abstract class ServiceTestBase {
     documentService = DocumentService(deliusClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, null)
-    recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, null)
+    recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, recommendationRepository)
     riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
   }

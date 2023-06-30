@@ -109,16 +109,14 @@ jobs:
           working_directory: make-recall-decision-ui
           command: |
             npm ci --no-audit
-            
-            shopt -s globstar
-            
-            SPECS=$(circleci tests glob "e2e_tests/features/**/*.feature" | circleci tests split --split-by=timings --show-counts)
-            echo "Running feature file(s): $SPECS"
+
+            SPECS=$(circleci tests glob e2e_tests/integration/*.feature | circleci tests split)
+            echo "Running feature spec(s): ${SPECS}"
 
             set +e
 
             npx cypress run \
-              --env TAGS='not @E2E',USERNAME=${CYPRESS_USERNAME_local},PASSWORD=${CYPRESS_PASSWORD_local},USERNAME_SPO=${CYPRESS_USERNAME_SPO_local},PASSWORD_SPO=${CYPRESS_PASSWORD_SPO_local},USERNAME_ACO=${CYPRESS_USERNAME_ACO_local},PASSWORD_ACO=${CYPRESS_PASSWORD_ACO_local} \
+              --env TAGS='(@Trigger or @Rationale) and not @E2E',USERNAME=${CYPRESS_USERNAME_local},PASSWORD=${CYPRESS_PASSWORD_local},USERNAME_SPO=${CYPRESS_USERNAME_SPO_local},PASSWORD_SPO=${CYPRESS_PASSWORD_SPO_local},USERNAME_ACO=${CYPRESS_USERNAME_ACO_local},PASSWORD_ACO=${CYPRESS_PASSWORD_ACO_local} \
               --config-file e2e_tests/cypress.config.ts \
               --browser chrome \
               --record false \
@@ -222,27 +220,27 @@ workflows:
 #          requires:
 #            - deploy_dev
 #          <<: *slack-fail-post-step
-# TODO BS enable once verified dev DB intact, remove baseline-on-migrate that point too
-#      - hmpps/deploy_env:
-#          name: deploy_preprod
-#          env: "preprod"
-#          context:
-#            - hmpps-common-vars
-#            - make-recall-decision-api-preprod
-#          requires:
-#            - deploy_dev
-##           - e2e_test_dev
-#          <<: *slack-fail-post-step
-#      - hmpps/sentry_release_and_deploy:
-#          name: notify_sentry_preprod
-#          sentry_project: make-recall-decision-api
-#          sentry_environment: PRE-PROD
-#          sentry_create_release: true
-#          requires:
-#            - deploy_preprod
-#          context:
-#            - hmpps-common-vars
-#          <<: *slack-fail-post-step
+
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-preprod
+          requires:
+            - deploy_dev
+#           - e2e_test_dev
+          <<: *slack-fail-post-step
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_preprod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PRE-PROD
+          sentry_create_release: true
+          requires:
+            - deploy_preprod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 #      - e2e_test:
 #          name: e2e_test_preprod
 #          environment: preprod
@@ -253,32 +251,32 @@ workflows:
 #            - deploy_preprod
 #          <<: *slack-fail-post-step
           
-#      - request-prod-approval:
-#          type: approval
-#          requires:
-#            - deploy_preprod
+      - request-prod-approval:
+          type: approval 
+          requires:
+            - deploy_preprod
  #           - e2e_test_preprod
-#      - hmpps/deploy_env:
-#          name: deploy_prod
-#          env: "prod"
-#          slack_notification: true
-#          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-#          context:
-#            - hmpps-common-vars
-#            - make-recall-decision-api-prod
-#          requires:
-#            - request-prod-approval
-#          <<: *slack-fail-post-step
-#      - hmpps/sentry_release_and_deploy:
-#          name: notify_sentry_prod
-#          sentry_project: make-recall-decision-api
-#          sentry_environment: PROD
-#          sentry_create_release: true
-#          requires:
-#            - deploy_prod
-#          context:
-#            - hmpps-common-vars
-#          <<: *slack-fail-post-step
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - make-recall-decision-api-prod
+          requires:
+            - request-prod-approval
+          <<: *slack-fail-post-step   
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_prod
+          sentry_project: make-recall-decision-api
+          sentry_environment: PROD
+          sentry_create_release: true
+          requires:
+            - deploy_prod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
           
   security:
     triggers:
