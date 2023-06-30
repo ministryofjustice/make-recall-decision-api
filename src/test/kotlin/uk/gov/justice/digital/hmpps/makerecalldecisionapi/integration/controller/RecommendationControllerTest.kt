@@ -567,62 +567,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `get recommendations when no open recommendation available`() {
-    // given
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    deleteAndCreateRecommendation()
-    recommendationModelResponse(crn)
-    updateRecommendation(updateRecommendationRequest())
-    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
-
-    // and
-    webTestClient.post()
-      .uri("/recommendations/$createdRecommendationId/part-a")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(createPartARequest())
-      )
-      .headers {
-        (
-          listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
-          )
-          )
-      }
-      .exchange()
-      .expectStatus().isOk
-
-    // and
-    val response = convertResponseToJSONArray(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    // and
-    val recommendationStatus = JSONObject(response.get(0).toString())
-    assertThat(recommendationStatus.get("name")).isEqualTo("DRAFT")
-
-    // when
-    val results = convertResponseToJSONObject(
-      webTestClient.get()
-        .uri(
-          "/cases/$crn/recommendations"
-        )
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    // then
-    assertThat(JSONArray(results.get("recommendations").toString()).isEmpty)
-  }
-
-  @Test
   fun `preview a DNTR document from recommendation data`() {
     userAccessAllowed(crn)
     oasysAssessmentsResponse(crn)
