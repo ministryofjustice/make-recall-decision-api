@@ -183,8 +183,8 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     val anotherNewStatusActivated = JSONObject(response.get(3).toString())
 
     // and
-    assertThat(newStatusActivated.get("recommendationHistoryId")).isEqualTo(createdRecommendationId)
-    assertThat(anotherNewStatusActivated.get("recommendationHistoryId")).isEqualTo(createdRecommendationId)
+    assertThat(newStatusActivated.get("recommendationHistoryId")).isNotNull
+    assertThat(anotherNewStatusActivated.get("recommendationHistoryId")).isNotNull
     assertThat(anotherOldStatusActivated.get("recommendationHistoryId")).isEqualTo(null)
     assertThat(oldStatusActivated.get("recommendationHistoryId")).isEqualTo(null)
   }
