@@ -4,8 +4,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 
 @ActiveProfiles("test")
@@ -13,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 class RecommendationStatusControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `create recommendation statuses`() {
+  fun `create a recommendation statuses`() {
     // given
     createRecommendation()
 
@@ -46,7 +50,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `update recommendation statuses`() {
+  fun `update a recommendation statuses`() {
     // given
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
@@ -114,7 +118,137 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `statuses list present on recommendations response`() {
+  fun `get recommendation statuses when only old status exists`() {
+    // given
+    createRecommendation()
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(response.length()).isEqualTo(1)
+    val oldStatus = JSONObject(response.get(0).toString())
+
+    // and
+    assertThat(oldStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(oldStatus.get("active")).isEqualTo(true)
+    assertThat(oldStatus.get("createdBy")).isEqualTo("SOME_USER")
+    assertThat(oldStatus.get("createdByUserFullName")).isEqualTo(null)
+    assertThat(oldStatus.get("created")).isNotNull
+    assertThat(oldStatus.get("modifiedBy")).isEqualTo(null)
+    assertThat(oldStatus.get("modified")).isEqualTo(null)
+    assertThat(oldStatus.get("modifiedByUserFullName")).isEqualTo(null)
+    assertThat(oldStatus.get("name")).isEqualTo("DRAFT")
+  }
+
+  @Test
+  fun `recommendation not closed on DNTR document download for SPO user`() {
+    // given
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    deleteAndCreateRecommendation()
+    recommendationModelResponse(crn)
+    updateRecommendation(updateRecommendationRequest())
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
+
+    // and
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/no-recall-letter")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(documentRequestQuery("download-docx"))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION",)))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    val recommendationStatus = JSONObject(response.get(0).toString())
+    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(recommendationStatus.get("active")).isEqualTo(true)
+    assertThat(recommendationStatus.get("name")).isNotEqualTo("CLOSED")
+  }
+
+  @Test
+  fun `recommendation not closed on DNTR document download with trigger feature flag`() {
+    // given
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    deleteAndCreateRecommendation()
+    recommendationModelResponse(crn)
+    updateRecommendation(updateRecommendationRequest())
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
+
+    // and
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/no-recall-letter")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(documentRequestQuery("download-docx"))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION",)))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    val recommendationStatus = JSONObject(response.get(0).toString())
+    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(recommendationStatus.get("active")).isEqualTo(true)
+    assertThat(recommendationStatus.get("name")).isNotEqualTo("CLOSED")
+
+    // and
+    val activeRecommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/cases/$crn/recommendations"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    ).getJSONObject("activeRecommendation")
+    assertThat(activeRecommendation.get("status")).isEqualTo("DRAFT")
+  }
+
+  @Test
+  fun `statuses list present on recomendations response`() {
     // given
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "NEW_STATUS", anotherToActivate = "ANOTHER_NEW_STATUS")
@@ -157,36 +291,91 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `recommendation history id set on statuses for update of recommendation`() {
+  fun `recommendation not closed on Part A document download for SPO user`() {
     // given
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
     deleteAndCreateRecommendation()
     recommendationModelResponse(crn)
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS")
     updateRecommendation(updateRecommendationRequest())
-    createOrUpdateRecommendationStatus(activate = "NEW_STATUS", anotherToActivate = "ANOTHER_NEW_STATUS")
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": false }"
+
+    // and
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/part-a")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(createPartARequest())
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
 
     // when
     val response = convertResponseToJSONArray(
       webTestClient.get()
         .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION",)))) }
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
         .exchange()
         .expectStatus().isOk
     )
 
     // then
-    val oldStatusActivated = JSONObject(response.get(0).toString())
-    val anotherOldStatusActivated = JSONObject(response.get(1).toString())
-    val newStatusActivated = JSONObject(response.get(2).toString())
-    val anotherNewStatusActivated = JSONObject(response.get(3).toString())
+    val recommendationStatus = JSONObject(response.get(0).toString())
+    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(recommendationStatus.get("active")).isEqualTo(true)
+    assertThat(recommendationStatus.get("name")).isNotEqualTo("CLOSED")
+  }
+
+  @Test
+  fun `recommendation not closed on Part A document download with trigger feature flag`() {
+    // given
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    deleteAndCreateRecommendation()
+    recommendationModelResponse(crn)
+    updateRecommendation(updateRecommendationRequest())
+    val featureFlagString = "{\"flagSendDomainEvent\": false, \"flagTriggerWork\": true }"
 
     // and
-    assertThat(newStatusActivated.get("recommendationHistoryId")).isEqualTo(createdRecommendationId)
-    assertThat(anotherNewStatusActivated.get("recommendationHistoryId")).isEqualTo(createdRecommendationId)
-    assertThat(anotherOldStatusActivated.get("recommendationHistoryId")).isEqualTo(null)
-    assertThat(oldStatusActivated.get("recommendationHistoryId")).isEqualTo(null)
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/part-a")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(createPartARequest())
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    val recommendationStatus = JSONObject(response.get(0).toString())
+    assertThat(recommendationStatus.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(recommendationStatus.get("active")).isEqualTo(true)
+    assertThat(recommendationStatus.get("name")).isNotEqualTo("CLOSED")
   }
 
   private fun createRecommendation() {

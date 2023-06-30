@@ -15,8 +15,15 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.willReturn
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -168,6 +175,54 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
       assertThat(newStatus[0].modified).isEqualTo(null)
       assertThat(newStatus[0].modifiedBy).isEqualTo(null)
       assertThat(newStatus[0].modifiedByUserFullName).isEqualTo(null)
+    }
+  }
+
+  @Test()
+  fun `get recommendation status when only old type exists`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallConsideredList = listOf(
+            RecallConsidered(
+              createdDate = "2022-11-01T15:22:24.567Z",
+              userName = "Harry",
+              userId = "harry",
+              recallConsideredDetail = "Recall considered"
+            )
+          ),
+          status = Status.RECALL_CONSIDERED,
+          personOnProbation = PersonOnProbation(name = "John Smith"),
+          lastModifiedBy = "Jack",
+          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z",
+          recommendationStartedDomainEventSent = null
+        )
+      )
+
+      given(recommendationStatusRepository.findByRecommendationId(anyLong()))
+        .willReturn(emptyList())
+
+      // and
+      given(recommendationRepository.findById(anyLong())).willReturn { Optional.of(existingRecommendation) }
+
+      // when
+      val response = recommendationStatusService.fetchRecommendationStatuses(1L)
+
+      // then
+      assertThat(response[0].recommendationId).isNotNull
+      assertThat(response[0].name).isEqualTo("RECALL_CONSIDERED")
+      assertThat(response[0].created).isEqualTo("2022-07-01T15:22:24.567Z")
+      assertThat(response[0].createdBy).isEqualTo("Jack")
+      assertThat(response[0].createdByUserFullName).isEqualTo(null)
+      assertThat(response[0].active).isEqualTo(true)
+      assertThat(response[0].modified).isEqualTo(null)
+      assertThat(response[0].modifiedBy).isEqualTo(null)
+      assertThat(response[0].modifiedByUserFullName).isEqualTo(null)
     }
   }
 }
