@@ -43,9 +43,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.Recommendati
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationHistoryEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
@@ -70,7 +72,8 @@ internal class RecommendationService(
   private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
   @Value("\${mrd.url}") private val mrdUrl: String? = null,
-  @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null
+  @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
+  val recommendationHistoryRepository: RecommendationHistoryRepository? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -264,7 +267,6 @@ internal class RecommendationService(
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
-
     var updatedRecommendation: RecommendationModel =
       recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
@@ -360,8 +362,25 @@ internal class RecommendationService(
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
       val savedRecommendation = saveRecommendation(existingRecommendationEntity, userId, readableUserName)
+      auditUpdate(savedRecommendation, userId, readableUserName)
       return buildRecommendationResponse(savedRecommendation)
     }
+  }
+
+  private fun auditUpdate(
+    savedRecommendation: RecommendationEntity,
+    userId: String?,
+    readableUserName: String?
+  ) {
+    val recommendationHistory = recommendationHistoryRepository?.save(
+      RecommendationHistoryEntity(
+        recommendationId = savedRecommendation.id,
+        modifiedBy = userId,
+        modifiedByUserFullName = readableUserName,
+        modified = utcNowDateTimeString(),
+        recommendation = savedRecommendation.data
+      )
+    )
   }
 
   private fun recommendationFromRequest(
