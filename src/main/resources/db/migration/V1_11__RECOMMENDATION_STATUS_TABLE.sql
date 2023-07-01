@@ -1,4 +1,6 @@
-CREATE TABLE if not exists recommendation_status
+drop table if exists recommendation_status;
+
+CREATE TABLE recommendation_status
 (
     id                         serial primary key,
     recommendation_id          int,
