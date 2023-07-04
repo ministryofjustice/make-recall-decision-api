@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,5 +32,12 @@ class DeliusClientTest : IntegrationTestBase() {
       deliusClient.getPersonalDetails("X123456")
     }.isInstanceOf(WebClientResponseException.InternalServerError::class.java)
       .hasMessage("500 Internal Server Error from GET http://localhost:8097/case-summary/X123456/personal-details")
+  }
+
+  @Test
+  fun `fetch user details`() {
+    userResponse("fred")
+    val userDetails = deliusClient.getUserInfo("fred")
+    assertThat(userDetails.email).isEqualTo("test@digital.justice.gov.uk")
   }
 }

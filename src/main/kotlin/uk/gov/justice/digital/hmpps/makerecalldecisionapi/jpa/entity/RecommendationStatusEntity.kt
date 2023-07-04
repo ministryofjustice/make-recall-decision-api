@@ -21,7 +21,8 @@ data class RecommendationStatusEntity(
   var modified: String? = null,
   var name: String?,
   var recommendationHistoryId: Long? = null,
-  var active: Boolean
+  var active: Boolean,
+  var emailAddress: String? = null
 ) : Comparable<RecommendationStatusEntity> {
   override fun compareTo(other: RecommendationStatusEntity) = compareValuesBy(
     other, this
@@ -39,5 +40,6 @@ fun RecommendationStatusEntity.toRecommendationStatusResponse(): RecommendationS
     modified = modified,
     modifiedBy = modifiedBy,
     modifiedByUserFullName = modifiedByUserFullName,
-    recommendationHistoryId = recommendationHistoryId
+    recommendationHistoryId = recommendationHistoryId,
+    emailAddress = emailAddress
   )

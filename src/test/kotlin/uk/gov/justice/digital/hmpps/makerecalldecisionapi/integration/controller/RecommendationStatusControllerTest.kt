@@ -15,6 +15,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation statuses`() {
     // given
+    userResponse("some_user")
     createRecommendation()
 
     // when
@@ -111,6 +112,95 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(anotherOldStatusDeactivated.get("modified")).isNotNull
     assertThat(anotherOldStatusDeactivated.get("modifiedByUserFullName")).isEqualTo("some_user")
     assertThat(anotherOldStatusDeactivated.get("name")).isEqualTo("ANOTHER_OLD_STATUS")
+  }
+
+  @Test
+  fun `update recommendation statuses adds email address on ACO_SIGNED`() {
+    // given
+    userResponse("some_user")
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = "ACO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS") // 3 here
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(response.length()).isEqualTo(4)
+    val newStatusActivated = JSONObject(response.get(0).toString())
+    val anotherNewStatusActivated = JSONObject(response.get(1).toString())
+    val oldStatusDeactivated = JSONObject(response.get(2).toString())
+    val anotherOldStatusDeactivated = JSONObject(response.get(3).toString())
+
+    // and
+    assertThat(newStatusActivated.get("emailAddress")).isEqualTo("test@digital.justice.gov.uk")
+    assertThat(anotherNewStatusActivated.get("emailAddress")).isEqualTo(null)
+    assertThat(oldStatusDeactivated.get("emailAddress")).isEqualTo(null)
+    assertThat(anotherOldStatusDeactivated.get("emailAddress")).isEqualTo(null)
+  }
+
+  @Test
+  fun `update recommendation statuses adds email address on SPO_SIGNED`() {
+    // given
+    userResponse("some_user")
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS") // 3 here
+
+    // when
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(response.length()).isEqualTo(4)
+    val newStatusActivated = JSONObject(response.get(0).toString())
+    val anotherNewStatusActivated = JSONObject(response.get(1).toString())
+    val oldStatusDeactivated = JSONObject(response.get(2).toString())
+    val anotherOldStatusDeactivated = JSONObject(response.get(3).toString())
+
+    // and
+    assertThat(newStatusActivated.get("emailAddress")).isEqualTo("test@digital.justice.gov.uk")
+    assertThat(anotherNewStatusActivated.get("emailAddress")).isEqualTo(null)
+    assertThat(oldStatusDeactivated.get("emailAddress")).isEqualTo(null)
+    assertThat(anotherOldStatusDeactivated.get("emailAddress")).isEqualTo(null)
+  }
+
+  @Test
+  fun `ACO and SPO details present on recommendations response`() {
+    // given
+    userResponse("some_user")
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "ACO_SIGNED")
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.getString("countersignAcoEmail")).isEqualTo("test@digital.justice.gov.uk")
+    assertThat(recommendation.getString("countersignSpoEmail")).isEqualTo("test@digital.justice.gov.uk")
+    assertThat(recommendation.getString("countersignAcoName")).isEqualTo("some_user")
+    assertThat(recommendation.getString("countersignSpoName")).isEqualTo("some_user")
+    assertThat(recommendation.getString("countersignSpoDateTime")).isNotNull
+    assertThat(recommendation.getString("countersignSpoDateTime")).isNotNull
   }
 
   @Test

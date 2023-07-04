@@ -64,6 +64,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUnavailableResponse
 import java.util.concurrent.TimeUnit
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -448,6 +449,15 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userResponse(username: String, delaySeconds: Long = 0) {
+    val userResponse =
+      request().withPath("/user/$username")
+    deliusIntegration.`when`(userResponse, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userResponseJson(username))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
