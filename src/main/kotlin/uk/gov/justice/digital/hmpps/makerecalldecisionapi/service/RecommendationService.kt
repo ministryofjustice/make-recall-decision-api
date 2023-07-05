@@ -223,7 +223,7 @@ internal class RecommendationService(
       countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
       countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
       countersignAcoName = recommendationEntity.data.countersignAcoName,
-      countersignAcoDateTime = recommendationEntity.data.countersignSpoDateTime
+      countersignAcoDateTime = recommendationEntity.data.countersignAcoDateTime
     )
   }
 

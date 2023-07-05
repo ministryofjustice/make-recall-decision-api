@@ -36,7 +36,7 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `fetch user details`() {
-    userResponse("fred")
+    userResponse("fred", "test@digital.justice.gov.uk")
     val userDetails = deliusClient.getUserInfo("fred")
     assertThat(userDetails.email).isEqualTo("test@digital.justice.gov.uk")
   }

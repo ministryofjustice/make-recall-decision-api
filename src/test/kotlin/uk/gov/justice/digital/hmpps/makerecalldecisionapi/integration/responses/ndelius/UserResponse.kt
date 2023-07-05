@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun userResponse(username: String) = """
+fun userResponse(username: String, email: String) = """
 {
   "username": "$username",
-  "email": "test@digital.justice.gov.uk",
+  "email": "$email",
   "staffCode": "TEST01",
   "name": {
     "forename": "John",
