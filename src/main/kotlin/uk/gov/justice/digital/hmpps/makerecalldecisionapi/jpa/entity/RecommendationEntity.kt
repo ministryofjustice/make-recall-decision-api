@@ -130,8 +130,9 @@ data class RecommendationModel(
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
   var countersignSpoName: String? = null,
+  var acoCounterSignEmail: String? = null,
+  var spoCounterSignEmail: String? = null,
   var countersignSpoDateTime: LocalDateTime? = null,
-
   val countersignAcoExposition: String? = null,
   val countersignAcoTelephone: String? = null,
   var countersignAcoName: String? = null,
