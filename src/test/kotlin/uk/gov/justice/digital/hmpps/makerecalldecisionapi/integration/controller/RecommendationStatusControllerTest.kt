@@ -15,6 +15,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   @Test
   fun `create recommendation statuses`() {
     // given
+    userResponse("some_user", "test@digital.justice.gov.uk")
     createRecommendation()
 
     // when
@@ -111,6 +112,164 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(anotherOldStatusDeactivated.get("modified")).isNotNull
     assertThat(anotherOldStatusDeactivated.get("modifiedByUserFullName")).isEqualTo("some_user")
     assertThat(anotherOldStatusDeactivated.get("name")).isEqualTo("ANOTHER_OLD_STATUS")
+  }
+
+  @Test
+  fun `update recommendation statuses adds email address on ACO_SIGNED`() {
+    // given
+    userResponse("some_user", "test@digital.justice.gov.uk")
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = "ACO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS") // 3 here
+
+    // when
+    val expectBody = webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId/statuses")
+      .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+
+    // then
+    expectBody
+      .jsonPath("$[0].name").isEqualTo("ACO_SIGNED")
+      .jsonPath("$[0].emailAddress").isEqualTo("test@digital.justice.gov.uk")
+      .jsonPath("$[1].emailAddress").doesNotExist()
+      .jsonPath("$[2].emailAddress").doesNotExist()
+      .jsonPath("$[3].emailAddress").doesNotExist()
+  }
+
+  @Test
+  fun `update recommendation statuses adds email address on SPO_SIGNED`() {
+    // given
+    userResponse("some_user", "test@digital.justice.gov.uk")
+    createRecommendation()
+    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS") // 3 here
+
+    // when
+    val expectBody = webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId/statuses")
+      .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+
+    // then
+    expectBody
+      .jsonPath("$[0].name").isEqualTo("SPO_SIGNED")
+      .jsonPath("$[0].emailAddress").isEqualTo("test@digital.justice.gov.uk")
+      .jsonPath("$[1].emailAddress").doesNotExist()
+      .jsonPath("$[2].emailAddress").doesNotExist()
+      .jsonPath("$[3].emailAddress").doesNotExist()
+  }
+
+  @Test
+  fun `ACO and SPO details present on recommendations response`() {
+    // given
+    createRecommendation()
+    userResponse("spo_user", "spo@domain.com")
+    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "FOO", subject = "spo_user")
+    userResponse("aco_user", "aco@domain.com")
+    createOrUpdateRecommendationStatus(activate = "ACO_SIGNED", anotherToActivate = "BAR", subject = "aco_user")
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.getString("countersignAcoEmail")).isEqualTo("aco@domain.com")
+    assertThat(recommendation.getString("countersignSpoEmail")).isEqualTo("spo@domain.com")
+    assertThat(recommendation.getString("countersignAcoName")).isEqualTo("aco_user")
+    assertThat(recommendation.getString("countersignSpoName")).isEqualTo("spo_user")
+    assertThat(recommendation.getString("countersignSpoDateTime")).isNotNull
+    assertThat(recommendation.getString("countersignAcoDateTime")).isNotNull
+  }
+
+  @Test
+  fun `ACO details present on recommendations response`() {
+    // given
+    createRecommendation()
+    userResponse("aco_user", "aco@domain.com")
+    createOrUpdateRecommendationStatus(activate = "ACO_SIGNED", anotherToActivate = "BAR", subject = "aco_user")
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.getString("countersignAcoEmail")).isEqualTo("aco@domain.com")
+    assertThat(recommendation.get("countersignSpoEmail")).isEqualTo(null)
+    assertThat(recommendation.getString("countersignAcoName")).isEqualTo("aco_user")
+    assertThat(recommendation.get("countersignSpoName")).isEqualTo(null)
+    assertThat(recommendation.get("countersignSpoDateTime")).isEqualTo(null)
+    assertThat(recommendation.getString("countersignAcoDateTime")).isNotNull
+  }
+
+  @Test
+  fun `SPO details present on recommendations response`() {
+    // given
+    createRecommendation()
+    userResponse("spo_user", "spo@domain.com")
+    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "FOO", subject = "spo_user")
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.get("countersignAcoEmail")).isEqualTo(null)
+    assertThat(recommendation.getString("countersignSpoEmail")).isEqualTo("spo@domain.com")
+    assertThat(recommendation.get("countersignAcoName")).isEqualTo(null)
+    assertThat(recommendation.getString("countersignSpoName")).isEqualTo("spo_user")
+    assertThat(recommendation.getString("countersignSpoDateTime")).isNotNull
+    assertThat(recommendation.get("countersignAcoDateTime")).isEqualTo(null)
+  }
+
+  @Test
+  fun `ACO and SPO details both absent on recommendations response`() {
+    // given
+    createRecommendation()
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.get("countersignAcoEmail")).isEqualTo(null)
+    assertThat(recommendation.get("countersignSpoEmail")).isEqualTo(null)
+    assertThat(recommendation.get("countersignAcoName")).isEqualTo(null)
+    assertThat(recommendation.get("countersignSpoName")).isEqualTo(null)
+    assertThat(recommendation.get("countersignSpoDateTime")).isEqualTo(null)
+    assertThat(recommendation.get("countersignAcoDateTime")).isEqualTo(null)
   }
 
   @Test

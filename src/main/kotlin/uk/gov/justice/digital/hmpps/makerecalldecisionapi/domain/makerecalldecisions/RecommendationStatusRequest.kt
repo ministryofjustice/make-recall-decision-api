@@ -13,7 +13,8 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
   recommendationId: Long,
   userId: String?,
   createdByUserName: String?,
-  recommendationHistoryId: Long? = null
+  recommendationHistoryId: Long? = null,
+  email: String? = null
 ): List<RecommendationStatusEntity> {
   return activate
     .map {
@@ -24,7 +25,8 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
         created = DateTimeHelper.utcNowDateTimeString(),
         name = it,
         active = true,
-        recommendationHistoryId = recommendationHistoryId
+        recommendationHistoryId = recommendationHistoryId,
+        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED") email else null
       )
     }
 }
@@ -39,7 +41,8 @@ data class RecommendationStatusResponse(
   var modified: String?,
   val createdByUserFullName: String?,
   val modifiedByUserFullName: String?,
-  val recommendationHistoryId: Long?
+  val recommendationHistoryId: Long?,
+  val emailAddress: String? = null
 ) {
   companion object {
     fun fromRecommendationModel(model: RecommendationModel?, recommendationId: Long): RecommendationStatusResponse {

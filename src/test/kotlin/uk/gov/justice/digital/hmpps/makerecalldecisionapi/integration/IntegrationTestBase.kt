@@ -64,6 +64,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUnavailableResponse
 import java.util.concurrent.TimeUnit
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -97,10 +98,10 @@ abstract class IntegrationTestBase {
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
 
-  internal fun HttpHeaders.authToken(roles: List<String> = emptyList()) {
+  internal fun HttpHeaders.authToken(roles: List<String> = emptyList(), subject: String? = "SOME_USER") {
     this.setBearerAuth(
       jwtAuthHelper.createJwt(
-        subject = "SOME_USER",
+        subject = "$subject",
         roles = roles,
         clientId = "make-recall-decisions-api"
       )
@@ -203,7 +204,7 @@ abstract class IntegrationTestBase {
       .expectStatus().isOk
   }
 
-  fun createOrUpdateRecommendationStatus(activate: String, anotherToActivate: String? = null, deactivate: String? = null, anotherToDeactivate: String? = null) =
+  fun createOrUpdateRecommendationStatus(activate: String, anotherToActivate: String? = null, deactivate: String? = null, anotherToDeactivate: String? = null, subject: String? = "SOME_USER") =
     convertResponseToJSONArray(
       webTestClient.patch()
         .uri("/recommendations/$createdRecommendationId/status")
@@ -214,7 +215,7 @@ abstract class IntegrationTestBase {
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"))
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"), subject = subject)
             )
             )
         }
@@ -448,6 +449,15 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse())
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun userResponse(username: String, email: String, delaySeconds: Long = 0) {
+    val userResponse =
+      request().withPath("/user/$username")
+    deliusIntegration.`when`(userResponse, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(userResponseJson(username, email))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

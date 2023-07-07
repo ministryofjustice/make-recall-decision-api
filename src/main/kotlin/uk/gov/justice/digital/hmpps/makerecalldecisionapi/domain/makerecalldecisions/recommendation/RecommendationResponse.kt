@@ -71,10 +71,11 @@ data class RecommendationResponse(
   val countersignSpoExposition: String? = null,
   val countersignSpoName: String? = null,
   val countersignSpoDateTime: LocalDateTime? = null,
-
   val countersignAcoTelephone: String? = null,
   val countersignAcoExposition: String? = null,
   val countersignAcoName: String? = null,
+  val countersignAcoEmail: String? = null,
+  val countersignSpoEmail: String? = null,
   val countersignAcoDateTime: LocalDateTime? = null
 )
 

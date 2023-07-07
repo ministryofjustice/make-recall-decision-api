@@ -279,10 +279,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           riskToPrisoners = RoshDataScore.NOT_APPLICABLE
         ),
         countersignSpoName = "Spo Name",
+        countersignSpoEmail = "john-the-spo@bla.com",
         countersignSpoTelephone = "12345678",
         countersignSpoDateTime = LocalDateTime.now(),
         countersignSpoExposition = "Spo comments on case",
         countersignAcoName = "Aco Name",
+        countersignAcoEmail = "jane-the-aco@bla.com",
         countersignAcoTelephone = "87654321",
         countersignAcoDateTime = LocalDateTime.now(),
         countersignAcoExposition = "Aco comments on case"
@@ -332,7 +334,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(121)
+      assertThat(result.size).isEqualTo(123)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -431,7 +433,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["countersign_spo_date"]).isEqualTo("11/05/2023")
       assertThat(result["countersign_spo_time"]).isEqualTo("11:03")
       assertThat(result["countersign_spo_exposition"]).isEqualTo("Spo comments on case")
-
+      assertThat(result["countersign_spo_email"]).isEqualTo("john-the-spo@bla.com")
+      assertThat(result["countersign_aco_email"]).isEqualTo("jane-the-aco@bla.com")
       assertThat(result["countersign_aco_name"]).isEqualTo("Aco Name")
       assertThat(result["countersign_aco_telephone"]).isEqualTo("87654321")
       assertThat(result["countersign_aco_date"]).isEqualTo("12/05/2023")
@@ -487,7 +490,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         countersignAcoTelephone = null,
         countersignAcoDate = null,
         countersignAcoTime = null,
-        countersignAcoExposition = null
+        countersignAcoExposition = null,
+        countersignAcoEmail = null,
+        counterSignSpoEmail = null
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
@@ -523,6 +528,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["countersign_aco_name"]).isEqualTo(EMPTY_STRING)
       assertThat(result["countersign_aco_telephone"]).isEqualTo(EMPTY_STRING)
       assertThat(result["countersign_aco_date"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_aco_time"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["countersign_aco_exposition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["countersign_aco_time"]).isEqualTo(EMPTY_STRING)
       assertThat(result["countersign_aco_exposition"]).isEqualTo(EMPTY_STRING)
     }
@@ -634,7 +641,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignAcoTelephone = "87654321",
       countersignAcoDate = "12/05/2023",
       countersignAcoTime = "12:03",
-      countersignAcoExposition = "Aco comments on case"
+      countersignAcoExposition = "Aco comments on case",
+      counterSignSpoEmail = "john-the-spo@bla.com",
+      countersignAcoEmail = "jane-the-aco@bla.com"
     )
   }
 }

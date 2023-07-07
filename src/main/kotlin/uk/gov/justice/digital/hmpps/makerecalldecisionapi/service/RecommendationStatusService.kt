@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toActiveRecommendationStatusEntity
@@ -11,15 +12,20 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExcept
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import java.util.Collections
+import kotlin.jvm.optionals.getOrNull
 
 @Transactional
 @Service
 internal class RecommendationStatusService(
   val recommendationStatusRepository: RecommendationStatusRepository,
-  val recommendationHistoryRepository: RecommendationHistoryRepository? = null
+  val recommendationHistoryRepository: RecommendationHistoryRepository? = null,
+  val recommendationRepository: RecommendationRepository? = null,
+  val deliusClient: DeliusClient? = null
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -53,22 +59,65 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?
   ): List<RecommendationStatusEntity> {
-    val recommendationHistories = recommendationHistoryRepository?.findByrecommendationId(recommendationId = recommendationId)
+    return saveAllRecommendationStatuses(
+      recommendationStatusRequest.toActiveRecommendationStatusEntity(
+        recommendationId = recommendationId,
+        userId = userId,
+        createdByUserName = readableNameOfUser,
+        recommendationHistoryId = findRecHistoryId(recommendationId),
+        email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId, recommendationId, readableNameOfUser)
+      )
+    )
+  }
+
+  private fun fetchEmailAndPersistDetails(
+    recommendationStatusRequest: RecommendationStatusRequest,
+    userId: String?,
+    recommendationId: Long?,
+    readableNameOfUser: String?
+  ): String? {
+    val emailAddress =
+      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED")) {
+        val email = userId?.let { deliusClient?.getUserInfo(it) }?.email
+        saveSpoAcoDetailsToRecDoc(email, recommendationId, recommendationStatusRequest, readableNameOfUser)
+        email
+      } else {
+        null
+      }
+    return emailAddress
+  }
+
+  private fun saveSpoAcoDetailsToRecDoc(
+    emailAddress: String?,
+    recommendationId: Long?,
+    recommendationStatusRequest: RecommendationStatusRequest,
+    readableNameOfUser: String?
+  ) {
+    val recommendation = recommendationId?.let { recommendationRepository?.findById(it)?.getOrNull() }
+    if (recommendationStatusRequest.activate.contains("ACO_SIGNED")) {
+      recommendation?.data?.countersignAcoName = readableNameOfUser
+      recommendation?.data?.countersignAcoDateTime = localNowDateTime()
+      recommendation?.data?.acoCounterSignEmail = emailAddress
+      recommendation?.let { recommendationRepository?.save(it) }
+    }
+    if (recommendationStatusRequest.activate.contains("SPO_SIGNED")) {
+      recommendation?.data?.countersignSpoName = readableNameOfUser
+      recommendation?.data?.countersignSpoDateTime = localNowDateTime()
+      recommendation?.data?.spoCounterSignEmail = emailAddress
+      recommendation?.let { recommendationRepository?.save(it) }
+    }
+  }
+
+  private fun findRecHistoryId(recommendationId: Long): Long? {
+    val recommendationHistories =
+      recommendationHistoryRepository?.findByrecommendationId(recommendationId = recommendationId)
     if (recommendationHistories != null) {
       Collections.sort(recommendationHistories)
     }
     val recommendationHistoryId = if (recommendationHistories?.isNotEmpty() == true) {
       recommendationHistories[0].id
     } else null
-    val newStatusesToActivate = saveAllRecommendationStatuses(
-      recommendationStatusRequest.toActiveRecommendationStatusEntity(
-        recommendationId = recommendationId,
-        userId = userId,
-        createdByUserName = readableNameOfUser,
-        recommendationHistoryId = recommendationHistoryId
-      )
-    )
-    return newStatusesToActivate
+    return recommendationHistoryId
   }
 
   private fun deactivateOldStatus(

@@ -31,6 +31,8 @@ class DeliusClient(
 
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
+  fun getUserInfo(name: String): UserInfo = getBody("/user/$name")
+
   fun getOverview(crn: String): Overview = getBody("/case-summary/$crn/overview")
 
   fun getLicenceConditions(crn: String): LicenceConditions = getBody("/case-summary/$crn/licence-conditions")
@@ -140,6 +142,10 @@ class DeliusClient(
     val county: String? = null,
     val postcode: String? = null,
     val noFixedAbode: Boolean? = null,
+  )
+
+  data class UserInfo(
+    val email: String? = null
   )
 
   data class PersonalDetails(

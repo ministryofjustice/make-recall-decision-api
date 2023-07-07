@@ -119,6 +119,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       riskToKnownAdult = recommendation.currentRoshForPartA?.riskToKnownAdult?.partADisplayValue,
       riskToStaff = recommendation.currentRoshForPartA?.riskToStaff?.partADisplayValue,
       riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue,
+      countersignAcoEmail = recommendation.countersignAcoEmail,
+      counterSignSpoEmail = recommendation.countersignSpoEmail,
       countersignSpoName = recommendation.countersignSpoName,
       countersignSpoTelephone = recommendation.countersignSpoTelephone,
       countersignSpoDate = countersignSpoDate,

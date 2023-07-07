@@ -15,6 +15,7 @@ services:
       - "./src/main/resources/db/migration/V1_11__RECOMMENDATION_STATUS_TABLE.sql:/docker-entrypoint-initdb.d/4.sql"
       - "./src/main/resources/db/migration/V1_13__RECOMMENDATION_STATUS_TABLE.sql:/docker-entrypoint-initdb.d/5.sql"
       - "./src/main/resources/db/migration/V1_14__RECOMMENDATION_HISTORY_TABLE.sql:/docker-entrypoint-initdb.d/6.sql"
+      - "./src/main/resources/db/migration/V1_15__RECOMMENDATION_STATUS_TABLE.sql:/docker-entrypoint-initdb.d/7.sql"
     ports:
       - "5432:5432"
     networks:
