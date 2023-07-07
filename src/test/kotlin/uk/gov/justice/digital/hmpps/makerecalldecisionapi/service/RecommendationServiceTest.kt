@@ -1582,6 +1582,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           val recommendationToSave = RecommendationEntity(
             data = RecommendationModel(
               crn = crn,
+              userNamePartACompletedBy = "John Smith",
+              userEmailPartACompletedBy = "John.Smith@test.com",
               personOnProbation = PersonOnProbation(
                 name = "John Smith",
                 firstName = "John",
@@ -1603,7 +1605,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(Optional.of(existingRecommendation))
 
       // when
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", "John.Smith@test.com")
+      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
@@ -1613,8 +1615,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
         val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
 
-        assertThat(savedRecommendationEntity.data.userNamePartACompletedBy).isEqualTo("John Smith")
-        assertThat(savedRecommendationEntity.data.userEmailPartACompletedBy).isEqualTo("John.Smith@test.com")
+        assertThat(savedRecommendationEntity.data.userNamePartACompletedBy).isEqualTo(null)
+        assertThat(savedRecommendationEntity.data.userEmailPartACompletedBy).isEqualTo(null)
         assertThat(savedRecommendationEntity.data.lastPartADownloadDateTime).isNotNull
       } else {
         val captor = argumentCaptor<RecommendationResponse>()
@@ -1636,7 +1638,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", "John.Smith@test.com")
+      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
       assertThat(result.fileContents).isNotNull

@@ -77,7 +77,7 @@ internal class RecommendationStatusService(
     readableNameOfUser: String?
   ): String? {
     val emailAddress =
-      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED")) {
+      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains("PO_RECALL_CONSULT_SPO")) {
         val email = userId?.let { deliusClient?.getUserInfo(it) }?.email
         saveSpoAcoDetailsToRecDoc(email, recommendationId, recommendationStatusRequest, readableNameOfUser)
         email
@@ -104,6 +104,11 @@ internal class RecommendationStatusService(
       recommendation?.data?.countersignSpoName = readableNameOfUser
       recommendation?.data?.countersignSpoDateTime = localNowDateTime()
       recommendation?.data?.spoCounterSignEmail = emailAddress
+      recommendation?.let { recommendationRepository?.save(it) }
+    }
+    if (recommendationStatusRequest.activate.contains("PO_RECALL_CONSULT_SPO")) {
+      recommendation?.data?.userNamePartACompletedBy = readableNameOfUser
+      recommendation?.data?.userEmailPartACompletedBy = emailAddress
       recommendation?.let { recommendationRepository?.save(it) }
     }
   }

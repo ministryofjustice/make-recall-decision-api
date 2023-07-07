@@ -396,8 +396,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
       assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
       assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["last_person_completing_form_name"]).isEqualTo("Henry Richarlison")
-      assertThat(result["last_person_completing_form_email"]).isEqualTo("Henry.Richarlison@test.com")
+      assertThat(result["pp_name"]).isEqualTo("Henry Richarlison")
+      assertThat(result["pp_email"]).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result["region"]).isEqualTo("NPS London")
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
@@ -609,8 +609,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
       letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
       noFixedAbode = "",
-      lastPersonCompletingFormName = "Henry Richarlison",
-      lastPersonCompletingFormEmail = "Henry.Richarlison@test.com",
+      probationPracticionerName = "Henry Richarlison",
+      probationPracticionerEmail = "Henry.Richarlison@test.com",
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
       dateOfDecision = "13/09/2022",

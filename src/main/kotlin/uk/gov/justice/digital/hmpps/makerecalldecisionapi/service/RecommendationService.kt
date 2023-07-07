@@ -409,14 +409,9 @@ internal class RecommendationService(
   private fun updateDownloadLetterDataForRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     readableUserName: String?,
-    userEmail: String?,
-    isPartADownloaded: Boolean,
-    isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags? = null
+    isPartADownloaded: Boolean
   ) {
     if (isPartADownloaded) {
-      existingRecommendationEntity.data.userNamePartACompletedBy = readableUserName
-      existingRecommendationEntity.data.userEmailPartACompletedBy = userEmail
       existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
     } else {
       existingRecommendationEntity.data.userNameDntrLetterCompletedBy = readableUserName
@@ -584,7 +579,7 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
-      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername, isUserSpoOrAco, featureFlags)
+      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
       if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
@@ -628,13 +623,11 @@ internal class RecommendationService(
   private suspend fun generateDntrDownload(
     recommendationEntity: RecommendationEntity,
     userId: String?,
-    readableUsername: String?,
-    isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags? = null
+    readableUsername: String?
   ): DocumentResponse {
 
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
-      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, null, false, isUserSpoOrAco, featureFlags)
+      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, false)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
       buildRecommendationResponse(recommendationEntity)
@@ -673,13 +666,12 @@ internal class RecommendationService(
     recommendationId: Long,
     userId: String?,
     readableUsername: String?,
-    userEmail: String?,
     isUserSpoOrAco: Boolean? = false,
     featureFlags: FeatureFlags? = null
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
-      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, userEmail, true, isUserSpoOrAco, featureFlags)
+      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, true)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
       buildRecommendationResponse(recommendationEntity)

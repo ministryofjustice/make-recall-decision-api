@@ -248,6 +248,29 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `PP details present on recommendations response`() {
+    // given
+    createRecommendation()
+    userResponse("pp_user", "pp@domain.com")
+    createOrUpdateRecommendationStatus(activate = "PO_RECALL_CONSULT_SPO", anotherToActivate = "FOO", subject = "pp_user")
+
+    // when
+    val recommendation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri(
+          "/recommendations/$createdRecommendationId"
+        )
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(recommendation.get("userNamePartACompletedBy")).isEqualTo("pp_user")
+    assertThat(recommendation.getString("userEmailPartACompletedBy")).isEqualTo("pp@domain.com")
+  }
+
+  @Test
   fun `ACO and SPO details both absent on recommendations response`() {
     // given
     createRecommendation()

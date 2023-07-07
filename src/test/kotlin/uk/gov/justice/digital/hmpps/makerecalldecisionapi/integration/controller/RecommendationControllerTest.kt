@@ -10,6 +10,7 @@ import org.joda.time.DateTimeFieldType
 import org.joda.time.LocalDateTime
 import org.json.JSONArray
 import org.json.JSONObject
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -641,8 +642,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrn(crn)
-    assertThat(result[0].data.userNamePartACompletedBy, equalTo("some_user"))
-    assertThat(result[0].data.userEmailPartACompletedBy, equalTo("some.user@email.com"))
+    assertNull(result[0].data.userNamePartACompletedBy)
+    assertNull(result[0].data.userEmailPartACompletedBy)
     assertNotNull(result[0].data.lastPartADownloadDateTime)
     assertThat(result[0].data.status, equalTo(Status.DRAFT))
   }
