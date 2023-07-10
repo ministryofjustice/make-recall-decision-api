@@ -66,6 +66,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExcept
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
@@ -1072,9 +1073,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("months")
     assertThat(recommendationResponse.region).isEqualTo("London")
     assertThat(recommendationResponse.localDeliveryUnit).isEqualTo("LDU London")
-    assertThat(recommendationResponse.userNamePartACompletedBy).isEqualTo("Ben Baker")
-    assertThat(recommendationResponse.userEmailPartACompletedBy).isEqualTo("Ben.Baker@test.com")
-    assertThat(recommendationResponse.lastPartADownloadDateTime).isNull()
     assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.selected).isEqualTo(true)
     assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.details).isEqualTo("This is an additional licence condition")
     assertThat(recommendationResponse.mainAddressWherePersonCanBeFound?.selected).isEqualTo(false)
@@ -1397,6 +1395,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   // FIXME: Can probably remove this test once domain events feature is on as duplicated below
   fun `generate DNTR letter from recommendation data`(firstDownload: Boolean) {
     runTest {
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
       initialiseWithMockedTemplateReplacementService()
 
       val existingRecommendation =
@@ -1417,7 +1416,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1446,7 +1445,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(recommendationRepository).should(times(0)).save(any())
 
         val captor = argumentCaptor<RecommendationResponse>()
-        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
+        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
         val recommendationResponseResult = captor.firstValue
 
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
@@ -1462,8 +1461,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @CsvSource("true", "false")
   fun `generate DNTR letter from recommendation data and send domain event`(firstDownload: Boolean) {
     runTest {
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
       initialiseWithMockedTemplateReplacementService()
-
       val existingRecommendation =
         if (!firstDownload) {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
@@ -1482,7 +1481,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1512,7 +1511,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(recommendationRepository).should(times(0)).save(any())
 
         val captor = argumentCaptor<RecommendationResponse>()
-        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
+        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
         val recommendationResponseResult = captor.firstValue
 
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
@@ -1554,51 +1553,25 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
-  @ParameterizedTest()
-  @CsvSource("true", "false")
-  fun `generate Part A document from recommendation data`(firstDownload: Boolean) {
+  @Test
+  fun `generate Part A document from recommendation data`() {
     runTest {
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
       initialiseWithMockedTemplateReplacementService()
-      val existingRecommendation =
-        if (!firstDownload) {
-          then(recommendationRepository).should(times(0)).save(any())
+      then(recommendationRepository).should(times(0)).save(any())
 
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
-            .copy(
-              data = RecommendationModel(
-                crn = crn,
-                personOnProbation = PersonOnProbation(
-                  name = "John Smith",
-                  firstName = "John",
-                  surname = "Smith"
-                ),
-                indexOffenceDetails = null,
-                userNamePartACompletedBy = "Jack",
-                userEmailPartACompletedBy = "Jack@test.com",
-                lastPartADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24")
-              )
-            )
-        } else {
-          val recommendationToSave = RecommendationEntity(
-            data = RecommendationModel(
-              crn = crn,
-              userNamePartACompletedBy = "John Smith",
-              userEmailPartACompletedBy = "John.Smith@test.com",
-              personOnProbation = PersonOnProbation(
-                name = "John Smith",
-                firstName = "John",
-                surname = "Smith"
-              )
+      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+        .copy(
+          data = RecommendationModel(
+            crn = crn,
+            personOnProbation = PersonOnProbation(
+              name = "John Smith",
+              firstName = "John",
+              surname = "Smith"
             )
           )
-          given(recommendationRepository.save(any()))
-            .willReturn(recommendationToSave)
-
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
-            .copy(data = RecommendationModel(crn = crn, personOnProbation = null, indexOffenceDetails = null))
-        }
-
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject()))
+        )
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1610,33 +1583,22 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
 
-      if (firstDownload) {
-        val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
-        then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
-        val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
-
-        assertThat(savedRecommendationEntity.data.userNamePartACompletedBy).isEqualTo(null)
-        assertThat(savedRecommendationEntity.data.userEmailPartACompletedBy).isEqualTo(null)
-        assertThat(savedRecommendationEntity.data.lastPartADownloadDateTime).isNotNull
-      } else {
-        val captor = argumentCaptor<RecommendationResponse>()
-        then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject())
-        val recommendationResponseResult = captor.firstValue
-
-        assertThat(recommendationResponseResult.userNamePartACompletedBy).isEqualTo("Jack")
-        assertThat(recommendationResponseResult.userEmailPartACompletedBy).isEqualTo("Jack@test.com")
-        assertThat(recommendationResponseResult.lastPartADownloadDateTime).isEqualTo("2022-12-01T15:22:24")
-      }
+      val captor = argumentCaptor<RecommendationResponse>()
+      then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
     }
   }
 
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
+
       var existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn, "", "")
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
+
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
 
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
 

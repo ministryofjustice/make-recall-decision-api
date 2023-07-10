@@ -26,7 +26,7 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
         name = it,
         active = true,
         recommendationHistoryId = recommendationHistoryId,
-        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED") email else null
+        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED" || it == "PO_RECALL_CONSULT_SPO") email else null
       )
     }
 }

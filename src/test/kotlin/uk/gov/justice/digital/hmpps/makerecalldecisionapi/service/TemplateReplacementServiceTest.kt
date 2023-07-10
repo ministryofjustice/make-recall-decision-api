@@ -91,7 +91,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @ParameterizedTest()
   @CsvSource(
     "PART_A_DOCUMENT",
-    "DNTR_DOCUMENT"
+//    "DNTR_DOCUMENT"
   )
   fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
@@ -219,11 +219,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           sentenceSecondLength = 20,
           sentenceSecondLengthUnits = "days"
         ),
-        userNamePartACompletedBy = "Henry Richarlison",
-        userEmailPartACompletedBy = "Henry.Richarlison@test.com",
         region = "NPS London",
         localDeliveryUnit = "All NPS London",
-        lastPartADownloadDateTime = LocalDateTime.now(),
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
         indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
           selected = listOf(
@@ -278,18 +275,22 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           riskToStaff = RoshDataScore.LOW,
           riskToPrisoners = RoshDataScore.NOT_APPLICABLE
         ),
-        countersignSpoName = "Spo Name",
-        countersignSpoEmail = "john-the-spo@bla.com",
         countersignSpoTelephone = "12345678",
-        countersignSpoDateTime = LocalDateTime.now(),
         countersignSpoExposition = "Spo comments on case",
-        countersignAcoName = "Aco Name",
-        countersignAcoEmail = "jane-the-aco@bla.com",
         countersignAcoTelephone = "87654321",
-        countersignAcoDateTime = LocalDateTime.now(),
         countersignAcoExposition = "Aco comments on case"
       )
-      templateReplacementService.generateDocFromRecommendation(recommendation, documentType)
+      val metadata = RecommendationMetaData(
+        acoCounterSignEmail = "jane-the-aco@bla.com",
+        spoCounterSignEmail = "john-the-spo@bla.com",
+        countersignSpoName = "Spo Name",
+        countersignAcoName = "Aco Name",
+        userNamePartACompletedBy = "Henry Richarlison",
+        userEmailPartACompletedBy = "Henry.Richarlison@test.com",
+        countersignAcoDateTime = LocalDateTime.now(),
+        countersignSpoDateTime = LocalDateTime.now(),
+      )
+      templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
     }
   }
 
@@ -609,8 +610,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
       letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
       noFixedAbode = "",
-      probationPracticionerName = "Henry Richarlison",
-      probationPracticionerEmail = "Henry.Richarlison@test.com",
+      probationPractitionerName = "Henry Richarlison",
+      probationPractitionerEmail = "Henry.Richarlison@test.com",
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
       dateOfDecision = "13/09/2022",

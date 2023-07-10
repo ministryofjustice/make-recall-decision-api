@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
@@ -27,17 +28,17 @@ import java.time.LocalDate
 @Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse): DocumentData {
+  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse, metadata: RecommendationMetaData): DocumentData {
     val firstName = recommendation.personOnProbation?.firstName
     val middleNames = recommendation.personOnProbation?.middleNames
     val lastName = recommendation.personOnProbation?.surname
     val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.personOnProbation?.addresses)
-    val (lastDownloadDate, lastDownloadTime) = splitDateTime(recommendation.lastPartADownloadDateTime)
+    val (lastDownloadDate, lastDownloadTime) = splitDateTime(metadata.userPartACompletedByDateTime)
     val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
-    val (countersignSpoDate, countersignSpoTime) = splitDateTime(recommendation.countersignSpoDateTime)
-    val (countersignAcoDate, countersignAcoTime) = splitDateTime(recommendation.countersignAcoDateTime)
+    val (countersignSpoDate, countersignSpoTime) = splitDateTime(metadata.countersignSpoDateTime)
+    val (countersignAcoDate, countersignAcoTime) = splitDateTime(metadata.countersignAcoDateTime)
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
     val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
@@ -94,8 +95,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       mappa = recommendation.personOnProbation?.mappa,
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
-      probationPracticionerName = recommendation.userNamePartACompletedBy,
-      probationPracticionerEmail = recommendation.userEmailPartACompletedBy,
+
       region = recommendation.region,
       localDeliveryUnit = recommendation.localDeliveryUnit,
       dateOfDecision = lastDownloadDate,
@@ -119,17 +119,20 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       riskToKnownAdult = recommendation.currentRoshForPartA?.riskToKnownAdult?.partADisplayValue,
       riskToStaff = recommendation.currentRoshForPartA?.riskToStaff?.partADisplayValue,
       riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue,
-      countersignAcoEmail = recommendation.countersignAcoEmail,
-      counterSignSpoEmail = recommendation.countersignSpoEmail,
-      countersignSpoName = recommendation.countersignSpoName,
-      countersignSpoTelephone = recommendation.countersignSpoTelephone,
+
+      countersignAcoEmail = metadata.acoCounterSignEmail,
+      counterSignSpoEmail = metadata.spoCounterSignEmail,
+      countersignSpoName = metadata.countersignSpoName,
+      countersignAcoName = metadata.countersignAcoName,
+      probationPractitionerName = metadata.userNamePartACompletedBy,
+      probationPractitionerEmail = metadata.userEmailPartACompletedBy,
       countersignSpoDate = countersignSpoDate,
       countersignSpoTime = countersignSpoTime,
-      countersignSpoExposition = recommendation.countersignSpoExposition,
-      countersignAcoName = recommendation.countersignAcoName,
-      countersignAcoTelephone = recommendation.countersignAcoTelephone,
       countersignAcoDate = countersignAcoDate,
       countersignAcoTime = countersignAcoTime,
+      countersignSpoTelephone = recommendation.countersignSpoTelephone,
+      countersignSpoExposition = recommendation.countersignSpoExposition,
+      countersignAcoTelephone = recommendation.countersignAcoTelephone,
       countersignAcoExposition = recommendation.countersignAcoExposition
     )
   }

@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
@@ -47,14 +48,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localDateTimeFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
@@ -196,9 +200,6 @@ internal class RecommendationService(
       convictionDetail = recommendationEntity.data.convictionDetail,
       region = recommendationEntity.data.region,
       localDeliveryUnit = recommendationEntity.data.localDeliveryUnit,
-      userNamePartACompletedBy = recommendationEntity.data.userNamePartACompletedBy,
-      userEmailPartACompletedBy = recommendationEntity.data.userEmailPartACompletedBy,
-      lastPartADownloadDateTime = recommendationEntity.data.lastPartADownloadDateTime,
       userNameDntrLetterCompletedBy = recommendationEntity.data.userNameDntrLetterCompletedBy,
       lastDntrLetterDownloadDateTime = recommendationEntity.data.lastDntrLetterADownloadDateTime,
       indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
@@ -216,14 +217,8 @@ internal class RecommendationService(
       roshSummary = recommendationEntity.data.roshSummary,
       countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
       countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
-      countersignAcoEmail = recommendationEntity.data.acoCounterSignEmail,
-      countersignSpoEmail = recommendationEntity.data.spoCounterSignEmail,
-      countersignSpoName = recommendationEntity.data.countersignSpoName,
-      countersignSpoDateTime = recommendationEntity.data.countersignSpoDateTime,
       countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
-      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
-      countersignAcoName = recommendationEntity.data.countersignAcoName,
-      countersignAcoDateTime = recommendationEntity.data.countersignAcoDateTime
+      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition
     )
   }
 
@@ -579,7 +574,7 @@ internal class RecommendationService(
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
-      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername)
+      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername, recommendationId)
       if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
@@ -623,7 +618,8 @@ internal class RecommendationService(
   private suspend fun generateDntrDownload(
     recommendationEntity: RecommendationEntity,
     userId: String?,
-    readableUsername: String?
+    readableUsername: String?,
+    recommendationId: Long
   ): DocumentResponse {
 
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
@@ -637,8 +633,9 @@ internal class RecommendationService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
+      val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.DNTR_DOCUMENT)
+        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.DNTR_DOCUMENT, metaData)
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "No_Recall"),
         fileContents = fileContents
@@ -670,23 +667,25 @@ internal class RecommendationService(
     featureFlags: FeatureFlags? = null
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
-    val recommendationResponse = if (recommendationEntity.data.userNamePartACompletedBy == null) {
-      updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, true)
-      updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
-    } else {
-      buildRecommendationResponse(recommendationEntity)
-    }
+    val recommendationResponse = buildRecommendationResponse(recommendationEntity)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       throw UserAccessException(Gson().toJson(userAccessResponse))
     } else {
+      val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT)
+        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT, metaData)
       return DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
     }
+  }
+
+  private fun getRecDocMetaData(userId: String?, recommendationId: Long, readableUsername: String?): RecommendationMetaData {
+    val statuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
+      .map { it.toRecommendationStatusResponse() }
+    return RecommendationMetaData().fromFetchRecommendationsStatusResponse(statuses)
   }
 
   private fun generateDocumentFileName(recommendation: RecommendationResponse, prefix: String): String {
@@ -840,4 +839,39 @@ internal class RecommendationService(
         )
       }
   }
+}
+
+data class RecommendationMetaData(
+  var countersignAcoName: String? = null,
+  var countersignAcoDateTime: LocalDateTime? = null,
+  var acoCounterSignEmail: String? = null,
+  var countersignSpoName: String? = null,
+  var countersignSpoDateTime: LocalDateTime? = null,
+  var spoCounterSignEmail: String? = null,
+  var userNamePartACompletedBy: String? = null,
+  var userEmailPartACompletedBy: String? = null,
+  var userPartACompletedByDateTime: LocalDateTime? = null
+)
+
+fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
+  fetchRecommendationStatusesResponse: List<RecommendationStatusResponse>
+): RecommendationMetaData {
+  fetchRecommendationStatusesResponse.forEach {
+    if (it.name.equals("ACO_SIGNED")) {
+      this.countersignAcoName = it.createdByUserFullName
+      this.countersignAcoDateTime = localDateTimeFromString(it.created)
+      this.acoCounterSignEmail = it.emailAddress
+    }
+    if (it.name.equals("SPO_SIGNED")) {
+      this.countersignSpoName = it.createdByUserFullName
+      this.countersignSpoDateTime = localDateTimeFromString(it.created)
+      this.spoCounterSignEmail = it.emailAddress
+    }
+    if (it.name.equals("PO_RECALL_CONSULT_SPO")) {
+      this.userNamePartACompletedBy = it.createdByUserFullName
+      this.userPartACompletedByDateTime = localNowDateTime()
+      this.userEmailPartACompletedBy = it.emailAddress
+    }
+  }
+  return this
 }
