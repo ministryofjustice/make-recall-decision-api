@@ -25,7 +25,7 @@ class DateTimeHelper {
     }
 
     fun localNowDateTime(): LocalDateTime {
-      return LocalDateTime.now()
+      return LocalDateTime.now(ZoneOffset.UTC)
     }
 
     fun convertLocalDateToReadableDate(date: LocalDate?): String {

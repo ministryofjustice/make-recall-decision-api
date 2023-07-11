@@ -124,7 +124,7 @@ internal class RecommendationController(
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val responseEntity = try {
-      ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, createPartARequest.userEmail, authenticationFacade.isSpoOrAco, flags), OK)
+      ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, authenticationFacade.isSpoOrAco, flags), OK)
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }

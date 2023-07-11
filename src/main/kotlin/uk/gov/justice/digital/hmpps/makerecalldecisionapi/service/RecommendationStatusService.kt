@@ -15,9 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import java.util.Collections
-import kotlin.jvm.optionals.getOrNull
 
 @Transactional
 @Service
@@ -59,53 +57,27 @@ internal class RecommendationStatusService(
     userId: String?,
     readableNameOfUser: String?
   ): List<RecommendationStatusEntity> {
-    return saveAllRecommendationStatuses(
-      recommendationStatusRequest.toActiveRecommendationStatusEntity(
-        recommendationId = recommendationId,
-        userId = userId,
-        createdByUserName = readableNameOfUser,
-        recommendationHistoryId = findRecHistoryId(recommendationId),
-        email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId, recommendationId, readableNameOfUser)
-      )
+    val statuses = recommendationStatusRequest.toActiveRecommendationStatusEntity(
+      recommendationId = recommendationId,
+      userId = userId,
+      createdByUserName = readableNameOfUser,
+      recommendationHistoryId = findRecHistoryId(recommendationId),
+      email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId)
     )
+    return saveAllRecommendationStatuses(statuses)
   }
 
   private fun fetchEmailAndPersistDetails(
     recommendationStatusRequest: RecommendationStatusRequest,
-    userId: String?,
-    recommendationId: Long?,
-    readableNameOfUser: String?
+    userId: String?
   ): String? {
     val emailAddress =
-      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED")) {
-        val email = userId?.let { deliusClient?.getUserInfo(it) }?.email
-        saveSpoAcoDetailsToRecDoc(email, recommendationId, recommendationStatusRequest, readableNameOfUser)
-        email
+      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains("PO_RECALL_CONSULT_SPO")) {
+        userId?.let { deliusClient?.getUserInfo(it) }?.email
       } else {
         null
       }
     return emailAddress
-  }
-
-  private fun saveSpoAcoDetailsToRecDoc(
-    emailAddress: String?,
-    recommendationId: Long?,
-    recommendationStatusRequest: RecommendationStatusRequest,
-    readableNameOfUser: String?
-  ) {
-    val recommendation = recommendationId?.let { recommendationRepository?.findById(it)?.getOrNull() }
-    if (recommendationStatusRequest.activate.contains("ACO_SIGNED")) {
-      recommendation?.data?.countersignAcoName = readableNameOfUser
-      recommendation?.data?.countersignAcoDateTime = localNowDateTime()
-      recommendation?.data?.acoCounterSignEmail = emailAddress
-      recommendation?.let { recommendationRepository?.save(it) }
-    }
-    if (recommendationStatusRequest.activate.contains("SPO_SIGNED")) {
-      recommendation?.data?.countersignSpoName = readableNameOfUser
-      recommendation?.data?.countersignSpoDateTime = localNowDateTime()
-      recommendation?.data?.spoCounterSignEmail = emailAddress
-      recommendation?.let { recommendationRepository?.save(it) }
-    }
   }
 
   private fun findRecHistoryId(recommendationId: Long): Long? {

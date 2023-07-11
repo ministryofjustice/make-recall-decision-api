@@ -48,10 +48,10 @@ internal class TemplateReplacementService(
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 ) {
 
-  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType): String {
+  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType, metaData: RecommendationMetaData): String {
 
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
-      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
     } else {
       decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     }
@@ -125,8 +125,8 @@ internal class TemplateReplacementService(
       "extended_term" to documentData.extendedTerm,
       "mappa_level" to formatMappaLevel(documentData.mappa),
       "mappa_category" to formatMappaCategory(documentData.mappa),
-      "last_person_completing_form_name" to documentData.lastPersonCompletingFormName,
-      "last_person_completing_form_email" to documentData.lastPersonCompletingFormEmail,
+      "pp_name" to documentData.probationPractitionerName,
+      "pp_email" to documentData.probationPractitionerEmail,
       "region" to documentData.region,
       "local_delivery_unit" to documentData.localDeliveryUnit,
       "date_of_decision" to documentData.dateOfDecision,
