@@ -90,9 +90,6 @@ data class RecommendationModel(
   var status: Status? = null,
   var region: String? = null,
   var localDeliveryUnit: String? = null,
-  var userNamePartACompletedBy: String? = null,
-  var userEmailPartACompletedBy: String? = null,
-  var lastPartADownloadDateTime: LocalDateTime? = null,
   var userNameDntrLetterCompletedBy: String? = null,
   var lastDntrLetterADownloadDateTime: LocalDateTime? = null,
   var reviewPractitionersConcerns: Boolean? = null,
@@ -129,14 +126,18 @@ data class RecommendationModel(
   var roshSummary: RoshSummary? = null,
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
-  var countersignSpoName: String? = null,
-  var acoCounterSignEmail: String? = null,
-  var spoCounterSignEmail: String? = null,
-  var countersignSpoDateTime: LocalDateTime? = null,
   val countersignAcoExposition: String? = null,
   val countersignAcoTelephone: String? = null,
-  var countersignAcoName: String? = null,
-  var countersignAcoDateTime: LocalDateTime? = null
+
+  var userNamePartACompletedBy: String? = null, // deprecated
+  var userEmailPartACompletedBy: String? = null, // deprecated
+  var lastPartADownloadDateTime: LocalDateTime? = null, // deprecated
+  var countersignSpoDateTime: LocalDateTime? = null, // deprecated
+  var countersignSpoName: String? = null, // deprecated
+  var acoCounterSignEmail: String? = null, // deprecated
+  var spoCounterSignEmail: String? = null, // deprecated
+  var countersignAcoName: String? = null, // deprecated
+  var countersignAcoDateTime: LocalDateTime? = null // deprecated
 ) : Serializable
 
 enum class Status {

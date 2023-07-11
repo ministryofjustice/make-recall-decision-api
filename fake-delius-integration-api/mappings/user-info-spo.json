@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/user/.*"
+    "urlPathPattern": "/user/MAKE_RECALL_DECISION_SPO_USER"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "user-info.json",
+    "bodyFileName": "user-info-spo.json",
     "headers": {
       "Content-Type": "application/json"
     }

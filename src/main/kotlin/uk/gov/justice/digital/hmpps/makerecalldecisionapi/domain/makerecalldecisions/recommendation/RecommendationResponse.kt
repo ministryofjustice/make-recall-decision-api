@@ -49,9 +49,6 @@ data class RecommendationResponse(
   val convictionDetail: ConvictionDetail? = null,
   val region: String? = null,
   val localDeliveryUnit: String? = null,
-  val userNamePartACompletedBy: String? = null,
-  val userEmailPartACompletedBy: String? = null,
-  val lastPartADownloadDateTime: LocalDateTime? = null,
   val userNameDntrLetterCompletedBy: String? = null,
   val lastDntrLetterDownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
@@ -69,14 +66,8 @@ data class RecommendationResponse(
   val roshSummary: RoshSummary? = null,
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
-  val countersignSpoName: String? = null,
-  val countersignSpoDateTime: LocalDateTime? = null,
   val countersignAcoTelephone: String? = null,
-  val countersignAcoExposition: String? = null,
-  val countersignAcoName: String? = null,
-  val countersignAcoEmail: String? = null,
-  val countersignSpoEmail: String? = null,
-  val countersignAcoDateTime: LocalDateTime? = null
+  val countersignAcoExposition: String? = null
 )
 
 data class UnderIntegratedOffenderManagement(
