@@ -42,6 +42,7 @@ fun licenceResponse(releasedOnLicence: Boolean? = false, licenceStartDate: Strin
           },
           "licenceConditions": [
             {
+              "startDate" : "$licenceStartDate",
               "notes": "I am a licence condition note",
               "mainCategory": {
                 "code": "NLC8",
@@ -53,6 +54,7 @@ fun licenceResponse(releasedOnLicence: Boolean? = false, licenceStartDate: Strin
               }
             },
             {
+              "startDate" : "$licenceStartDate",
               "notes": "I am a second licence condition note",
               "mainCategory": {
                 "code": "NLC7",

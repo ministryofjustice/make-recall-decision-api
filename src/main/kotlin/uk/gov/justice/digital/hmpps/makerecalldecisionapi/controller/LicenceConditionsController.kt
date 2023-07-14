@@ -44,6 +44,6 @@ internal class LicenceConditionsController(
   @Operation(summary = "Returns details of the licence conditions on a case")
   suspend fun licenseConditionsV2(@PathVariable("crn") crn: String): SelectedLicenceConditionsResponse {
     log.info(normalizeSpace("Licence conditions endpoint hit for CRN: $crn"))
-    return licenceConditionsService.getLicenceConditionsFromCvlOrNd(crn)
+    return licenceConditionsService.getLicenceConditionsV2(crn)
   }
 }

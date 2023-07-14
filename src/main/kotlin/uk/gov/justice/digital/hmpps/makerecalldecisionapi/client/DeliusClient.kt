@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
@@ -112,7 +113,6 @@ class DeliusClient(
     val lengthUnits: String?,
     val isCustodial: Boolean,
     val custodialStatusCode: String?,
-    val licenceStartDate: LocalDate? = null,
     val licenceExpiryDate: LocalDate?,
     val sentenceExpiryDate: LocalDate?
   )
@@ -204,11 +204,7 @@ class DeliusClient(
       val additionalOffences: List<Offence>,
       val licenceConditions: List<LicenceCondition>
     )
-    data class LicenceCondition(
-      val mainCategory: LicenceConditionCategory,
-      val subCategory: LicenceConditionCategory?,
-      val notes: String?
-    )
+
     data class LicenceConditionCategory(
       val code: String,
       val description: String

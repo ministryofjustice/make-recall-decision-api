@@ -19,7 +19,7 @@ class LicenceConditionsControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `AC 1 - not on licence`() {
+  fun `not on licence`() {
     runTest {
       // given
       userAccessAllowed(crn)
@@ -40,13 +40,13 @@ class LicenceConditionsControllerTest(
       )
 
       // then
-      assertThat(response.getString("source")).isEqualTo("nDelius")
+      assertThat(response.get("cvlLicence")).isEqualTo(null)
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(false)
     }
   }
 
   @Test
-  fun `AC 2 - active more recent matching CVL licence present`() {
+  fun `active more recent matching CVL licence present`() {
     runTest {
       // given
       userAccessAllowed(crn)
@@ -67,16 +67,15 @@ class LicenceConditionsControllerTest(
       )
 
       // then
-      assertThat(response.getString("source")).isEqualTo("cvl")
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
-      assertCvlLicenceConditions(response = response, licenceStartDate = "3000-06-14")
+      assertcvlLicence(response = response)
     }
   }
 
   @Test
-  fun `AC 3 - more recent matching ND licence present`() {
+  fun `more recent matching ND licence present`() {
     runTest {
       // given
       userAccessAllowed(crn)
@@ -97,16 +96,18 @@ class LicenceConditionsControllerTest(
       )
 
       // then
-      assertThat(response.getString("source")).isEqualTo("nDelius")
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
       assertNDeliusLicenceConditions(response = response, licenceStartDate = "3000-06-01")
+
+      // and
+      assertThat(response.get("cvlLicence")).isEqualTo(null)
     }
   }
 
   @Test
-  fun `AC 3 - no active CVL licence conditions available`() {
+  fun `no active CVL licence conditions available`() {
     runTest {
       // given
       userAccessAllowed(crn)
@@ -127,16 +128,18 @@ class LicenceConditionsControllerTest(
       )
 
       // then
-      assertThat(response.getString("source")).isEqualTo("nDelius")
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
       assertNDeliusLicenceConditions(response = response, licenceStartDate = "3000-06-01")
+
+      // and
+      assertThat(response.get("cvlLicence")).isEqualTo(null)
     }
   }
 
   @Test
-  fun `AC 4 - same licence start dates`() {
+  fun `same licence start dates`() {
     runTest {
       // given
       userAccessAllowed(crn)
@@ -157,11 +160,10 @@ class LicenceConditionsControllerTest(
       )
 
       // then
-      assertThat(response.getString("source")).isEqualTo("cvl")
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
-      assertCvlLicenceConditions(response = response, licenceStartDate = "3000-06-01")
+      assertcvlLicence(response = response)
     }
   }
 
@@ -519,64 +521,38 @@ class LicenceConditionsControllerTest(
   }
 
   private fun assertNDeliusLicenceConditions(response: JSONObject, licenceStartDate: String) {
-    assertThat(response.getJSONObject("personalDetailsOverview").getString("name")).isEqualTo("John Smith")
-    assertThat(response.getJSONObject("personalDetailsOverview").getString("dateOfBirth")).isEqualTo("1982-10-24")
-    assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(40)
-    assertThat(response.getJSONObject("personalDetailsOverview").getString("gender")).isEqualTo("Male")
-    assertThat(response.getJSONObject("personalDetailsOverview").getString("crn")).isEqualTo(crn)
-    assertThat(response.getJSONObject("activeRecommendation").getInt("recommendationId")).isEqualTo(createdRecommendationId)
-    assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedDate")).isNotEmpty()
-    assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedBy")).isEqualTo("SOME_USER")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("recallType").getJSONObject("selected").getString("value")).isEqualTo("FIXED_TERM")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("userName")).isEqualTo("some_user")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("createdDate")).isNotEmpty
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getInt("id")).isNotNull()
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("userId")).isEqualTo("SOME_USER")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("recallConsideredDetail")).isEqualTo("This is an updated recall considered detail")
-    assertThat(response.getJSONObject("activeRecommendation").getString("status")).isEqualTo("DRAFT")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected").getString("value")).isEqualTo("NO_RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected").getString("details")).isEqualTo("details of no recall selected")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(0).getString("value")).isEqualTo("RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(0).getString("text")).isEqualTo("Recall")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(1).getString("value")).isEqualTo("NO_RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(1).getString("text")).isEqualTo("Do not recall")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getBoolean("isSentToDelius")).isEqualTo(false)
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdBy")).isEqualTo("John Smith")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdDate")).isEqualTo("2023-01-01T15:00:08.000Z")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("description")).isEqualTo("Robbery (other than armed robbery)")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("code")).isEqualTo("1234")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("additionalOffences").isEmpty())
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("licenceExpiryDate")).isEqualTo("2020-06-25")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("licenceStartDate")).isEqualTo(licenceStartDate)
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("sentenceExpiryDate")).isEqualTo("2020-06-28")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getBoolean("isCustodial")).isEqualTo(true)
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("description")).isEqualTo("Extended Determinate Sentence")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getInt("length")).isEqualTo(12)
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("lengthUnits")).isEqualTo("days")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("mainCategory").getString("code")).isEqualTo("NLC8")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("mainCategory").getString("description")).isEqualTo("Freedom of movement")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("subCategory").getString("code")).isEqualTo("NSTT8")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("subCategory").getString("description")).isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+    assertPersonalDetailsOverview(response)
+    assertActiveRecommendation(response)
+    assertActiveConvictions(response)
   }
 
-  private fun assertCvlLicenceConditions(response: JSONObject, licenceStartDate: String) {
+  private fun assertcvlLicence(response: JSONObject) {
+    assertPersonalDetailsOverview(response)
+    assertActiveRecommendation(response)
+    assertActiveConvictions(response)
+    assertThat(response.getJSONObject("cvlLicence").getString("conditionalReleaseDate")).isEqualTo("2022-06-10")
+    assertThat(response.getJSONObject("cvlLicence").getString("actualReleaseDate")).isEqualTo("2022-06-11")
+    assertThat(response.getJSONObject("cvlLicence").getString("sentenceStartDate")).isEqualTo("2022-06-12")
+    assertThat(response.getJSONObject("cvlLicence").getString("sentenceEndDate")).isEqualTo("2022-06-13")
+    assertThat(response.getJSONObject("cvlLicence").getString("licenceStartDate")).isNotNull()
+    assertThat(response.getJSONObject("cvlLicence").getString("licenceExpiryDate")).isEqualTo("2022-06-15")
+    assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionStartDate")).isEqualTo("2022-06-16")
+    assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionExpiryDate")).isEqualTo("2022-06-17")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is a standard licence condition")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is an additional licence condition")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("expandedText")).isEqualTo("Expanded additional licence condition")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("text")).isEqualTo("This is a bespoke condition")
+  }
+
+  private fun assertPersonalDetailsOverview(response: JSONObject) {
     assertThat(response.getJSONObject("personalDetailsOverview").getString("name")).isEqualTo("John Smith")
     assertThat(response.getJSONObject("personalDetailsOverview").getString("dateOfBirth")).isEqualTo("1982-10-24")
     assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(40)
     assertThat(response.getJSONObject("personalDetailsOverview").getString("gender")).isEqualTo("Male")
     assertThat(response.getJSONObject("personalDetailsOverview").getString("crn")).isEqualTo(crn)
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("conditionalReleaseDate")).isEqualTo("2022-06-10")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("actualReleaseDate")).isEqualTo("2022-06-11")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("sentenceStartDate")).isEqualTo("2022-06-12")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("sentenceEndDate")).isEqualTo("2022-06-13")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("licenceStartDate")).isEqualTo(licenceStartDate)
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("licenceExpiryDate")).isEqualTo("2022-06-15")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("topupSupervisionStartDate")).isEqualTo("2022-06-16")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getString("topupSupervisionExpiryDate")).isEqualTo("2022-06-17")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is a standard licence condition")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is an additional licence condition")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("expandedText")).isEqualTo("Expanded additional licence condition")
-    assertThat(response.getJSONArray("licenceConditions").getJSONObject(0).getJSONArray("bespokeConditions").getJSONObject(0).getString("text")).isEqualTo("This is a bespoke condition")
+  }
+
+  private fun assertActiveRecommendation(response: JSONObject) {
     assertThat(response.getJSONObject("activeRecommendation").getInt("recommendationId")).isEqualTo(createdRecommendationId)
     assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedDate")).isNotEmpty()
     assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedBy")).isEqualTo("SOME_USER")
@@ -596,6 +572,9 @@ class LicenceConditionsControllerTest(
     assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getBoolean("isSentToDelius")).isEqualTo(false)
     assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdBy")).isEqualTo("John Smith")
     assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdDate")).isEqualTo("2023-01-01T15:00:08.000Z")
+  }
+
+  private fun assertActiveConvictions(response: JSONObject) {
     assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("description")).isEqualTo("Robbery (other than armed robbery)")
     assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("code")).isEqualTo("1234")
     assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("additionalOffences").isEmpty())

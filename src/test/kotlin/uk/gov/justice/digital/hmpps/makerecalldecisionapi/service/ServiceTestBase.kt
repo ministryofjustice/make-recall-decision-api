@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.MappaAndRoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Overview
@@ -34,6 +33,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeMainCat
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -333,8 +335,7 @@ internal abstract class ServiceTestBase {
       isCustodial = false,
       custodialStatusCode = null,
       licenceExpiryDate = null,
-      sentenceExpiryDate = null,
-      licenceStartDate = null
+      sentenceExpiryDate = null
     ),
   )
 
@@ -361,8 +362,7 @@ internal abstract class ServiceTestBase {
           length = 6,
           lengthUnits = "Days",
           sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
-          licenceStartDate = null
+          licenceExpiryDate = LocalDate.parse("2022-05-10")
         ),
         licenceConditions = licenceConditions,
       )
@@ -391,7 +391,6 @@ internal abstract class ServiceTestBase {
         isCustodial = isCustodial,
         custodialStatusCode = if (releasedOnLicence == true) "B" else "ABC123",
         licenceExpiryDate = LocalDate.of(2022, 5, 10),
-        licenceStartDate = licenceStartDate,
         sentenceExpiryDate = LocalDate.of(2022, 6, 10)
       ),
     )
@@ -435,17 +434,35 @@ internal abstract class ServiceTestBase {
     )
   )
 
+  protected fun deliusLicenceConditions(startDate: LocalDate): List<LicenceCondition> {
+    return listOf(
+      LicenceCondition(
+        licenceConditionNotes = "Licence condition notes",
+        licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
+          code = "NLC8",
+          description = "Freedom of movement"
+        ),
+        licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
+          code = "NSTT8",
+          description = "To only attend places of worship which have been previously agreed with your supervising officer."
+        ),
+        startDate = startDate
+      )
+    )
+  }
+
   protected val licenceConditions = listOf(
     LicenceCondition(
-      notes = "Licence condition notes",
-      mainCategory = LicenceConditions.LicenceConditionCategory(
+      licenceConditionNotes = "Licence condition notes",
+      licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
         code = "NLC8",
         description = "Freedom of movement"
       ),
-      subCategory = LicenceConditions.LicenceConditionCategory(
+      licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
         code = "NSTT8",
         description = "To only attend places of worship which have been previously agreed with your supervising officer."
-      )
+      ),
+      startDate = LocalDate.now()
     )
   )
 

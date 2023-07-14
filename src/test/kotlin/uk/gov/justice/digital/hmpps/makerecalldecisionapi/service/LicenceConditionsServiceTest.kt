@@ -26,7 +26,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService)
+    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService, LicenceConditionsCoordinator())
 
     given(deliusClient.getUserAccess(anyString(), anyString()))
       .willReturn(userAccessResponse(false, false, false))
@@ -96,6 +96,48 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
+
+      then(deliusClient).should().getUserAccess(username, crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given case is excluded for user then return user access response details V2`() {
+    runTest {
+
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
+
+      val response = licenceConditionsService.getLicenceConditionsV2(crn)
+
+      then(deliusClient).should().getUserAccess(username, crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user is not found for user then return user access response details V2`() {
+    runTest {
+
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
+
+      val response = licenceConditionsService.getLicenceConditionsV2(crn)
 
       then(deliusClient).should().getUserAccess(username, crn)
 

@@ -15,7 +15,7 @@ internal class CreateAndVaryALicenceService(
   @Qualifier("cvlApiClientUserEnhanced") private val cvlApiClient: CvlApiClient
 ) {
 
-  suspend fun buildLicenceConditions(crn: String, nomsId: String): List<LicenceConditionResponse?> {
+  suspend fun buildLicenceConditions(crn: String, nomsId: String): List<LicenceConditionResponse> {
 
     val matchedLicences =
       getValueAndHandleWrappedException(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(listOf(nomsId))))

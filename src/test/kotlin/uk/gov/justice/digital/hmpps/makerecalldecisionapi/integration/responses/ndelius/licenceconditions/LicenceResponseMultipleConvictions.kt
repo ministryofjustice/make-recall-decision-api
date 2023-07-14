@@ -39,6 +39,7 @@ fun licenceResponseMultipleConvictions() = """
       },
       "licenceConditions": [
         {
+          "startDate": "2022-04-24",
           "notes": "I am a licence condition note",
           "mainCategory": {
             "code": "NLC8",
@@ -50,6 +51,7 @@ fun licenceResponseMultipleConvictions() = """
           }
         },
         {
+          "startDate": "2022-04-24",
           "notes": "I am a second licence condition note",
           "mainCategory": {
             "code": "NLC7",
@@ -85,6 +87,7 @@ fun licenceResponseMultipleConvictions() = """
       },
       "licenceConditions": [
         {
+          "startDate": "2022-04-24",
           "notes": "I am a licence condition note",
           "mainCategory": {
             "code": "NLC8",
@@ -96,6 +99,7 @@ fun licenceResponseMultipleConvictions() = """
           }
         },
         {
+          "startDate": "2022-04-24",
           "notes": "I am a second licence condition note",
           "mainCategory": {
             "code": "NLC7",
