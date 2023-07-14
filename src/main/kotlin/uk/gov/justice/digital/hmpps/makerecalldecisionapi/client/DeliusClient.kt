@@ -112,6 +112,7 @@ class DeliusClient(
     val lengthUnits: String?,
     val isCustodial: Boolean,
     val custodialStatusCode: String?,
+    val licenceStartDate: LocalDate? = null,
     val licenceExpiryDate: LocalDate?,
     val sentenceExpiryDate: LocalDate?
   )

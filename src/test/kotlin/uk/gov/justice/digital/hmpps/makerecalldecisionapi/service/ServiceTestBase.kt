@@ -29,13 +29,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Conviction
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Institution
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -335,34 +333,69 @@ internal abstract class ServiceTestBase {
       isCustodial = false,
       custodialStatusCode = null,
       licenceExpiryDate = null,
-      sentenceExpiryDate = null
+      sentenceExpiryDate = null,
+      licenceStartDate = null
     ),
   )
 
-  protected fun custodialConviction(description: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
-    number = "1",
-    mainOffence = DeliusClient.Offence(
-      code = "ABC123",
-      description = "Robbery (other than armed robbery)",
-      date = LocalDate.of(2022, 8, 26)
-    ),
-    additionalOffences = listOf(
-      DeliusClient.Offence(
-        code = "ZYX789",
-        description = "Arson",
-        date = LocalDate.of(2022, 8, 26)
+  protected fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: List<LicenceCondition>): List<ConvictionWithLicenceConditions> {
+    return listOf(
+      ConvictionWithLicenceConditions(
+        number = "1",
+        mainOffence = DeliusClient.Offence(
+          description = "Robbery (other than armed robbery)",
+          code = "ABC123",
+          date = LocalDate.parse("2022-08-26")
+        ),
+        additionalOffences = listOf(
+          DeliusClient.Offence(
+            description = "Arson",
+            code = "ZYX789",
+            date = LocalDate.parse("2022-08-26")
+          )
+        ),
+        sentence = DeliusClient.Sentence(
+          description = "CJA - Extended Sentence",
+          isCustodial = true,
+          custodialStatusCode = "ABC123",
+          length = 6,
+          lengthUnits = "Days",
+          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+          licenceExpiryDate = LocalDate.parse("2022-05-10"),
+          licenceStartDate = null
+        ),
+        licenceConditions = licenceConditions,
       )
-    ),
-    sentence = DeliusClient.Sentence(
-      description = description,
-      length = 6,
-      lengthUnits = "Days",
-      isCustodial = true,
-      custodialStatusCode = "ABC123",
-      licenceExpiryDate = LocalDate.of(2022, 5, 10),
-      sentenceExpiryDate = LocalDate.of(2022, 6, 10)
-    ),
-  )
+    )
+  }
+
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence", isCustodial: Boolean = true, releasedOnLicence: Boolean? = false, licenceStartDate: LocalDate? = null): DeliusClient.Conviction {
+    return DeliusClient.Conviction(
+      number = "1",
+      mainOffence = DeliusClient.Offence(
+        code = "ABC123",
+        description = "Robbery (other than armed robbery)",
+        date = LocalDate.of(2022, 8, 26)
+      ),
+      additionalOffences = listOf(
+        DeliusClient.Offence(
+          code = "ZYX789",
+          description = "Arson",
+          date = LocalDate.of(2022, 8, 26)
+        )
+      ),
+      sentence = DeliusClient.Sentence(
+        description = description,
+        length = 6,
+        lengthUnits = "Days",
+        isCustodial = isCustodial,
+        custodialStatusCode = if (releasedOnLicence == true) "B" else "ABC123",
+        licenceExpiryDate = LocalDate.of(2022, 5, 10),
+        licenceStartDate = licenceStartDate,
+        sentenceExpiryDate = LocalDate.of(2022, 6, 10)
+      ),
+    )
+  }
 
   protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
     number = number,
@@ -399,6 +432,20 @@ internal abstract class ServiceTestBase {
     lastRelease = Release(
       releaseDate = LocalDate.of(2017, 9, 15),
       recallDate = LocalDate.of(2020, 10, 15)
+    )
+  )
+
+  protected val licenceConditions = listOf(
+    LicenceCondition(
+      notes = "Licence condition notes",
+      mainCategory = LicenceConditions.LicenceConditionCategory(
+        code = "NLC8",
+        description = "Freedom of movement"
+      ),
+      subCategory = LicenceConditions.LicenceConditionCategory(
+        code = "NSTT8",
+        description = "To only attend places of worship which have been previously agreed with your supervising officer."
+      )
     )
   )
 
@@ -461,6 +508,38 @@ internal abstract class ServiceTestBase {
     mappa = mappa,
     roshHistory = roshHistory
   )
+
+  protected fun expectedCvlLicenceConditionsResponse(licenceStatus: String? = null, licenceStartDate: LocalDate? = LocalDate.parse("2022-06-14")): List<LicenceConditionResponse> {
+
+    return listOf(
+      LicenceConditionResponse(
+        licenceStatus = licenceStatus,
+        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+        actualReleaseDate = LocalDate.parse("2022-06-11"),
+        sentenceStartDate = LocalDate.parse("2022-06-12"),
+        sentenceEndDate = LocalDate.parse("2022-06-13"),
+        licenceStartDate = licenceStartDate,
+        licenceExpiryDate = LocalDate.parse("2022-06-15"),
+        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+        additionalLicenceConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional licence condition",
+            expandedText = "Expanded additional licence condition"
+          )
+        ),
+        additionalPssConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional PSS licence condition",
+            expandedText = "Expanded additional PSS licence condition"
+          )
+        ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      )
+    )
+  }
 
   protected fun deliusRecommendationModelResponse(
     activeConvictions: List<DeliusClient.Conviction> = listOf(custodialConviction(), nonCustodialConviction()),
@@ -657,7 +736,7 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun expectedPersonDetailsResponse(): PersonalDetailsOverview {
+  fun expectedPersonDetailsResponse(): PersonalDetailsOverview {
     val dateOfBirth = LocalDate.parse("1982-10-24")
 
     return PersonalDetailsOverview(

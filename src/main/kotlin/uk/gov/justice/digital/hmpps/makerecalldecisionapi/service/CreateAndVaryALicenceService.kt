@@ -27,6 +27,7 @@ internal class CreateAndVaryALicenceService(
           val licence = getValueAndHandleWrappedException(cvlApiClient.getLicenceById(crn, matched.licenceId))
 
           LicenceConditionResponse(
+            licenceStatus = matched.licenceStatus,
             conditionalReleaseDate = convertDateStringToIso8601Date(licence?.conditionalReleaseDate),
             actualReleaseDate = convertDateStringToIso8601Date(licence?.actualReleaseDate),
             sentenceStartDate = convertDateStringToIso8601Date(licence?.sentenceStartDate),

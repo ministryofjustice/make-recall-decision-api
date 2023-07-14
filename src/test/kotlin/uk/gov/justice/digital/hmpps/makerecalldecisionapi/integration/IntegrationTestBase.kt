@@ -302,12 +302,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun personalDetailsResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun personalDetailsResponse(crn: String, delaySeconds: Long = 0, nomisId: String? = "A1234CR") {
     val personalDetailsRequest =
       request().withPath("/case-summary/$crn/personal-details")
 
     deliusIntegration.`when`(personalDetailsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse())
+      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse(nomisId = nomisId))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -443,12 +443,12 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun licenceConditionsResponse(crn: String, delaySeconds: Long = 0) {
+  protected fun licenceConditionsResponse(crn: String, delaySeconds: Long = 0, releasedOnLicence: Boolean? = false, licenceStartDate: String? = "2020-06-25") {
     val licenceConditions =
       request().withPath("/case-summary/$crn/licence-conditions")
 
     deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceResponse())
+      response().withContentType(APPLICATION_JSON).withBody(licenceResponse(releasedOnLicence, licenceStartDate))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
@@ -642,22 +642,22 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun cvlLicenceMatchResponse(nomisId: String, crn: String, delaySeconds: Long = 0) {
+  protected fun cvlLicenceMatchResponse(nomisId: String, crn: String, delaySeconds: Long = 0, licenceStatus: String? = "IN_PROGRESS", licenceId: Int? = 123344) {
     val licenceMatchRequest =
       request().withPath("/licence/match")
 
     cvlApi.`when`(licenceMatchRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceMatchResponse(nomisId, crn))
+      response().withContentType(APPLICATION_JSON).withBody(licenceMatchResponse(nomisId, crn, licenceStatus, licenceId))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
-  protected fun cvlLicenceByIdResponse(licenceId: Int, nomisId: String, crn: String, delaySeconds: Long = 0) {
+  protected fun cvlLicenceByIdResponse(licenceId: Int, nomisId: String, crn: String, delaySeconds: Long = 0, licenceStartDate: String? = "14/06/2022") {
     val licenceIdRequesst =
       request().withPath("/licence/id/$licenceId")
 
     cvlApi.`when`(licenceIdRequesst).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceIdResponse(licenceId, nomisId, crn))
+      response().withContentType(APPLICATION_JSON).withBody(licenceIdResponse(licenceId, nomisId, crn, licenceStartDate))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
