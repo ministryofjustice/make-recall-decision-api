@@ -19,6 +19,38 @@ class LicenceConditionsControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
+  fun `CVL licence null when exception thrown`() {
+    runTest {
+      // given
+      userAccessAllowed(crn)
+      personalDetailsResponse(crn = crn, nomisId = nomsId)
+      licenceConditionsResponse(crn = crn, releasedOnLicence = true, licenceStartDate = "1999-06-01")
+      cvlLicenceMatchResponse(licenceId = 123344, nomisId = nomsId, crn = crn, licenceStatus = "ACTIVE")
+      cvlLicenceByIdResponseThrowsException(licenceId = 123344)
+      deleteAndCreateRecommendation()
+      updateRecommendation(Status.DRAFT)
+
+      // when
+      val response = convertResponseToJSONObject(
+        webTestClient.get()
+          .uri("/cases/$crn/licence-conditions/v2")
+          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus().isOk
+      )
+
+      // then
+      assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
+
+      // and
+      assertNDeliusLicenceConditions(response = response, licenceStartDate = "3000-06-01")
+
+      // and
+      assertThat(response.get("cvlLicence")).isEqualTo(null)
+    }
+  }
+
+  @Test
   fun `not on licence`() {
     runTest {
       // given

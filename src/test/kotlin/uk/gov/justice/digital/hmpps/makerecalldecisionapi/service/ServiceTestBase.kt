@@ -369,7 +369,7 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun custodialConviction(description: String = "CJA - Extended Sentence", isCustodial: Boolean = true, releasedOnLicence: Boolean? = false, licenceStartDate: LocalDate? = null): DeliusClient.Conviction {
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence", isCustodial: Boolean = true, custodialStatusCode: String? = "ABC123", licenceStartDate: LocalDate? = null): DeliusClient.Conviction {
     return DeliusClient.Conviction(
       number = "1",
       mainOffence = DeliusClient.Offence(
@@ -389,7 +389,7 @@ internal abstract class ServiceTestBase {
         length = 6,
         lengthUnits = "Days",
         isCustodial = isCustodial,
-        custodialStatusCode = if (releasedOnLicence == true) "B" else "ABC123",
+        custodialStatusCode = custodialStatusCode,
         licenceExpiryDate = LocalDate.of(2022, 5, 10),
         sentenceExpiryDate = LocalDate.of(2022, 6, 10)
       ),
@@ -536,6 +536,63 @@ internal abstract class ServiceTestBase {
         sentenceStartDate = LocalDate.parse("2022-06-12"),
         sentenceEndDate = LocalDate.parse("2022-06-13"),
         licenceStartDate = licenceStartDate,
+        licenceExpiryDate = LocalDate.parse("2022-06-15"),
+        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+        additionalLicenceConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional licence condition",
+            expandedText = "Expanded additional licence condition"
+          )
+        ),
+        additionalPssConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional PSS licence condition",
+            expandedText = "Expanded additional PSS licence condition"
+          )
+        ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      )
+    )
+  }
+
+  protected fun expectedMultipleCvlLicenceConditionsResponse(licenceStatus: String? = null, licenceStartDate1: LocalDate? = LocalDate.parse("2022-06-14"), licenceStartDate2: LocalDate? = LocalDate.parse("2022-06-14")): List<LicenceConditionResponse> {
+    return listOf(
+      LicenceConditionResponse(
+        licenceStatus = licenceStatus,
+        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+        actualReleaseDate = LocalDate.parse("2022-06-11"),
+        sentenceStartDate = LocalDate.parse("2022-06-12"),
+        sentenceEndDate = LocalDate.parse("2022-06-13"),
+        licenceStartDate = licenceStartDate1,
+        licenceExpiryDate = LocalDate.parse("2022-06-15"),
+        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+        additionalLicenceConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional licence condition",
+            expandedText = "Expanded additional licence condition"
+          )
+        ),
+        additionalPssConditions = listOf(
+          LicenceConditionDetail(
+            text = "This is an additional PSS licence condition",
+            expandedText = "Expanded additional PSS licence condition"
+          )
+        ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      ),
+      LicenceConditionResponse(
+        licenceStatus = licenceStatus,
+        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+        actualReleaseDate = LocalDate.parse("2022-06-11"),
+        sentenceStartDate = LocalDate.parse("2022-06-12"),
+        sentenceEndDate = LocalDate.parse("2022-06-13"),
+        licenceStartDate = licenceStartDate2,
         licenceExpiryDate = LocalDate.parse("2022-06-15"),
         topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
         topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),

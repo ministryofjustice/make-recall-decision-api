@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCvlLicenceByIdException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertDateStringToIso8601Date
 
@@ -43,7 +44,12 @@ internal class CreateAndVaryALicenceService(
             bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.text) }
           )
         } catch (ex: NoCvlLicenceByIdException) {
-          log.info(ex.message)
+          log.error(ex.message)
+          LicenceConditionResponse()
+        } catch (ex: ClientTimeoutException) {
+          throw ex
+        } catch (ex: Exception) {
+          log.error(ex.message)
           LicenceConditionResponse()
         }
       } ?: emptyList()

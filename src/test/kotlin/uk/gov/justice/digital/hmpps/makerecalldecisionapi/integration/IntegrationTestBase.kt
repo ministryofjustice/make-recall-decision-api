@@ -662,6 +662,15 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun cvlLicenceByIdResponseThrowsException(licenceId: Int) {
+    val licenceIdRequesst =
+      request().withPath("/licence/id/$licenceId")
+
+    cvlApi.`when`(licenceIdRequesst).respond(
+      response().withStatusCode(500)
+    )
+  }
+
   fun setupOauth() {
     oauthMock
       .`when`(request().withPath("/auth/oauth/token"))
