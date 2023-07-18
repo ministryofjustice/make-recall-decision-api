@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import java.time.LocalDate
 
 data class LicenceConditionResponse(
+  val licenceStatus: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val actualReleaseDate: LocalDate? = null,
   val sentenceStartDate: LocalDate? = null,

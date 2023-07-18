@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl
 
-fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String) = """
-{
+fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStartDate: String? = "14/06/2022") = """{
   "id": $licenceId,
   "typeCode": "AP",
   "version": "1.4",
@@ -23,7 +22,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String) = """
   "actualReleaseDate": "11/06/2022",
   "sentenceStartDate": "12/06/2022",
   "sentenceEndDate": "13/06/2022",
-  "licenceStartDate": "14/06/2022",
+  "licenceStartDate": "$licenceStartDate",
   "licenceExpiryDate": "15/06/2022",
   "topupSupervisionStartDate": "16/06/2022",
   "topupSupervisionExpiryDate": "17/06/2022",

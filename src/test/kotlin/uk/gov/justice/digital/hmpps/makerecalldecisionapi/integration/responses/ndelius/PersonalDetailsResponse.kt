@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstName: String? = "John") = """
+fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstName: String? = "John", nomisId: String? = "A1234CR") = """
 {
   "personalDetails": {
     "name": {
@@ -11,7 +11,7 @@ fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstNa
     "identifiers": {
       "pncNumber": "2004/0712343H",
       "croNumber": "123456/04A",
-      "nomsNumber": "A1234CR",
+      "nomsNumber": "$nomisId",
       "bookingNumber": "G12345"
     },
     "dateOfBirth": "1982-10-24",

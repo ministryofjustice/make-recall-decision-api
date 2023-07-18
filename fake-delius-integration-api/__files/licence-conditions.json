@@ -44,6 +44,7 @@
       },
       "licenceConditions": [
         {
+          "startDate": "2022-04-24",
           "mainCategory": {
             "code": "NLC8",
             "description": "Freedom of movement"

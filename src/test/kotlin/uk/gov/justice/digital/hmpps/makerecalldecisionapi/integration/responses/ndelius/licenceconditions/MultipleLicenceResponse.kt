@@ -39,6 +39,7 @@ fun multipleLicenceResponse() = """
       },
       "licenceConditions": [
         {
+          "startDate": "2022-04-24",
           "notes": "I am a licence condition note",
           "mainCategory": {
             "code": "NLC8",
@@ -50,6 +51,7 @@ fun multipleLicenceResponse() = """
           }
         },
         {
+          "startDate": "2022-04-24",
           "mainCategory": {
             "code": "NLC9",
             "description": "Another main condition"
@@ -60,6 +62,7 @@ fun multipleLicenceResponse() = """
           }
         },
         {
+          "startDate": "2022-04-24",
           "notes": "I am a second licence condition note",
           "mainCategory": {
             "code": "NLC7",

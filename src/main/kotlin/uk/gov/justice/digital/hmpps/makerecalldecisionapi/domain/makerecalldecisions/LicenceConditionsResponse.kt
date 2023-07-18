@@ -8,5 +8,8 @@ data class LicenceConditionsResponse(
   val userAccessResponse: UserAccess? = null,
   val personalDetailsOverview: PersonalDetailsOverview? = null,
   val activeConvictions: List<ConvictionWithLicenceConditions> = emptyList(),
-  val activeRecommendation: ActiveRecommendation? = null
-)
+  val activeRecommendation: ActiveRecommendation? = null,
+  val source: String? = null,
+  val hasAllConvictionsReleasedOnLicence: Boolean? = null,
+  val cvlLicence: LicenceConditionResponse? = null
+) : SelectedLicenceConditionsResponse
