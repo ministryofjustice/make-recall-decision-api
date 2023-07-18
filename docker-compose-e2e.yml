@@ -16,6 +16,7 @@ services:
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
       - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
+      - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
       - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
