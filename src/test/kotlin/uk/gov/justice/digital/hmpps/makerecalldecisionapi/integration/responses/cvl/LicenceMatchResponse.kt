@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl
 
-fun licenceMatchResponse(nomisId: String, crn: String) = """
+fun licenceMatchResponse(nomisId: String, crn: String, licenceStatus: String? = "IN_PROGRESS", licenceId: Int? = 123344) = """
 [
   {
-    "licenceId": 123344,
+    "licenceId": $licenceId,
     "licenceType": "AP",
-    "licenceStatus": "IN_PROGRESS",
+    "licenceStatus": "$licenceStatus",
     "nomisId": "$nomisId",
     "surname": "Smith",
     "forename": "Brian",

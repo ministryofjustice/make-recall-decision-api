@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SelectedLicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceConditionsService
 
 @RestController
@@ -36,5 +37,13 @@ internal class LicenceConditionsController(
   suspend fun licenseConditionsCvl(@PathVariable("crn") crn: String): LicenceConditionsCvlResponse {
     log.info(normalizeSpace("Licence conditions CVL endpoint hit for CRN: $crn"))
     return licenceConditionsService.getLicenceConditionsCvl(crn)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/cases/{crn}/licence-conditions/v2")
+  @Operation(summary = "Returns details of the licence conditions on a case")
+  suspend fun licenseConditionsV2(@PathVariable("crn") crn: String): SelectedLicenceConditionsResponse {
+    log.info(normalizeSpace("Licence conditions endpoint hit for CRN: $crn"))
+    return licenceConditionsService.getLicenceConditionsV2(crn)
   }
 }

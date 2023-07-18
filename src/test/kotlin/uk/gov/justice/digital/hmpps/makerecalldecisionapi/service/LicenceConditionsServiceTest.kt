@@ -12,18 +12,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.junit.jupiter.MockitoExtension
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.ConvictionWithLicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceCondition
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions.LicenceConditionCategory
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Offence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
-import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -34,7 +26,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService)
+    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService, LicenceConditionsCoordinator())
 
     given(deliusClient.getUserAccess(anyString(), anyString()))
       .willReturn(userAccessResponse(false, false, false))
@@ -119,6 +111,48 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `given case is excluded for user then return user access response details V2`() {
+    runTest {
+
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
+
+      val response = licenceConditionsService.getLicenceConditionsV2(crn)
+
+      then(deliusClient).should().getUserAccess(username, crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `given user is not found for user then return user access response details V2`() {
+    runTest {
+
+      given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
+
+      val response = licenceConditionsService.getLicenceConditionsV2(crn)
+
+      then(deliusClient).should().getUserAccess(username, crn)
+
+      com.natpryce.hamkrest.assertion.assertThat(
+        response,
+        equalTo(
+          LicenceConditionsResponse(
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
+          )
+        )
+      )
+    }
+  }
+
+  @Test
   fun `given no active licence conditions then still retrieve conviction details`() {
     runTest {
       given(deliusClient.getLicenceConditions(anyString()))
@@ -188,85 +222,10 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsCvlResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedCvlLicenceConditionsResponse()
+            expectedCvlLicenceConditionsResponse(licenceStatus = "IN_PROGRESS")
           )
         )
       )
     }
-  }
-
-  private fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: List<LicenceCondition>): List<ConvictionWithLicenceConditions> {
-    return listOf(
-      ConvictionWithLicenceConditions(
-        number = "1",
-        mainOffence = Offence(
-          description = "Robbery (other than armed robbery)",
-          code = "ABC123",
-          date = LocalDate.parse("2022-08-26")
-        ),
-        additionalOffences = listOf(
-          Offence(
-            description = "Arson",
-            code = "ZYX789",
-            date = LocalDate.parse("2022-08-26")
-          )
-        ),
-        sentence = Sentence(
-          description = "CJA - Extended Sentence",
-          isCustodial = true,
-          custodialStatusCode = "ABC123",
-          length = 6,
-          lengthUnits = "Days",
-          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
-        ),
-        licenceConditions = licenceConditions,
-      )
-    )
-  }
-
-  private val licenceConditions = listOf(
-    LicenceCondition(
-      notes = "Licence condition notes",
-      mainCategory = LicenceConditionCategory(
-        code = "NLC8",
-        description = "Freedom of movement"
-      ),
-      subCategory = LicenceConditionCategory(
-        code = "NSTT8",
-        description = "To only attend places of worship which have been previously agreed with your supervising officer."
-      )
-    )
-  )
-
-  private fun expectedCvlLicenceConditionsResponse(): List<LicenceConditionResponse> {
-
-    return listOf(
-      LicenceConditionResponse(
-        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-        actualReleaseDate = LocalDate.parse("2022-06-11"),
-        sentenceStartDate = LocalDate.parse("2022-06-12"),
-        sentenceEndDate = LocalDate.parse("2022-06-13"),
-        licenceStartDate = LocalDate.parse("2022-06-14"),
-        licenceExpiryDate = LocalDate.parse("2022-06-15"),
-        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(
-          LicenceConditionDetail(
-            text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition"
-          )
-        ),
-        additionalPssConditions = listOf(
-          LicenceConditionDetail(
-            text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition"
-          )
-        ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
-      )
-    )
   }
 }
