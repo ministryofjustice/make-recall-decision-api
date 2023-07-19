@@ -20,7 +20,6 @@ internal class CreateAndVaryALicenceService(
 
     val matchedLicences =
       getValueAndHandleWrappedException(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(listOf(nomsId))))
-
     return matchedLicences
       ?.filter { it.crn.equals(crn) }
       ?.map { matched ->

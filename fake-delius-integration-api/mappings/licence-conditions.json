@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/.*/licence-conditions"
+    "urlPathPattern": "/case-summary/X098092/licence-conditions"
   },
   "response": {
     "status": 200,

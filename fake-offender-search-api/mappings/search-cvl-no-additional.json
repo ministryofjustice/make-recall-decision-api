@@ -10,13 +10,13 @@
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
         "expression": "crn",
-        "contains": "X098082"
+        "contains": "X098097"
       }
     } ]
   },
   "response": {
     "status": 200,
-    "bodyFileName": "search.json",
+    "bodyFileName": "search-cvl-no-additional.json",
     "headers": {
       "Content-Type": "application/json"
     }

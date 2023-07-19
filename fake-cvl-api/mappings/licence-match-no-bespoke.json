@@ -1,22 +1,17 @@
 {
   "request": {
     "method": "POST",
-    "urlPath": "/search",
-    "queryParameters": {
-      "paged": {
-        "matches": "false"
-      }
-    },
+    "urlPath": "/licence/match",
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
-        "expression": "crn",
-        "contains": "X098082"
+        "expression": "$.nomsId",
+        "contains": "XXXYYY119"
       }
     } ]
   },
   "response": {
     "status": 200,
-    "bodyFileName": "search.json",
+    "bodyFileName": "licence-match-no-bespoke.json",
     "headers": {
       "Content-Type": "application/json"
     }
