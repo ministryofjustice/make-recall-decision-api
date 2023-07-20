@@ -15,6 +15,27 @@ class OffenderSearchControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
+  fun `backward compatible endpoint retrieves simple case summary details using crn`() {
+    runTest {
+      val crn = "X123456"
+      val firstName = "Pontius"
+      val lastName = "Pilate"
+      val dateOfBirth = "2000-11-30"
+      offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
+      webTestClient.get()
+        .uri("/search?crn=$crn")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("$firstName $lastName")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(dateOfBirth)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+    }
+  }
+
+  @Test
   fun `retrieves simple case summary details using crn`() {
     runTest {
       val crn = "A123456"
@@ -23,7 +44,7 @@ class OffenderSearchControllerTest(
       val dateOfBirth = "2000-11-09"
       offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -44,7 +65,7 @@ class OffenderSearchControllerTest(
       val dateOfBirth = "2000-11-09"
       offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
-        .uri("/search?lastName=$lastName&firstName=$firstName")
+        .uri("/paged-search?lastName=$lastName&firstName=$firstName")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -63,7 +84,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -84,7 +105,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -105,7 +126,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessRestricted(crn)
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -126,7 +147,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userNotFound(crn)
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -147,7 +168,7 @@ class OffenderSearchControllerTest(
       offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -167,7 +188,7 @@ class OffenderSearchControllerTest(
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/paged-search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -182,6 +203,7 @@ class OffenderSearchControllerTest(
   @Test
   fun `access denied when insufficient privileges used`() {
     runTest {
+      // TODO: This URL looks wrong
       webTestClient.get()
         .uri("/cases/$crn/search")
         .exchange()

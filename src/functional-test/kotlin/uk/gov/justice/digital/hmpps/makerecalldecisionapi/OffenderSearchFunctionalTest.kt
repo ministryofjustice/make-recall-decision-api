@@ -13,7 +13,7 @@ class OffenderSearchTest() : FunctionalTest() {
       .given()
       .queryParam("crn", testCrn)
       .header("Authorization", token)
-      .get("$path/search")
+      .get("$path/paged-search")
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
@@ -22,13 +22,15 @@ class OffenderSearchTest() : FunctionalTest() {
 }
 
 fun offenderSearchExpectation() = """
-[
-    {
-        "userExcluded": null,
-        "userRestricted": null,
-        "name": "Ikenberry Camploongo",
-        "crn": "D006296",
-        "dateOfBirth": "1986-05-11"
-    }
-]
+{
+  "results" = [
+        {
+            "userExcluded": null,
+            "userRestricted": null,
+            "name": "Ikenberry Camploongo",
+            "crn": "D006296",
+            "dateOfBirth": "1986-05-11"
+        }
+    ]
+}
 """.trimIndent()

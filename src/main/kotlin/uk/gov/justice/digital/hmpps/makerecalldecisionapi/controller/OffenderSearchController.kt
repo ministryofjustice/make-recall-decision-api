@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.LogHelper.Helper.redact
 
@@ -25,8 +26,26 @@ internal class OffenderSearchController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/search")
+  @Operation(summary = "Returns a list of people on probation based on a given CRN")
+  @Deprecated("This endpoint has been replaced by the /paged-search endpoint", level = DeprecationLevel.WARNING)
+  suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
+    log.info(normalizeSpace("Offender search endpoint hit for CRN: $crn"))
+    val response = offenderSearchService.search(crn)
+    return response.results.map {
+      SearchByCrnResponse(
+        userExcluded = it.userExcluded,
+        userRestricted = it.userRestricted,
+        name = it.name,
+        crn = it.crn,
+        dateOfBirth = it.dateOfBirth
+      )
+    }
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/paged-search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN or name")
-  suspend fun search(
+  suspend fun pagedSearch(
     @RequestParam(required = false) crn: String,
     @RequestParam(required = false) firstName: String,
     @RequestParam(required = false) lastName: String
