@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.LogHelper.Helper.redact
 
@@ -30,8 +30,8 @@ internal class OffenderSearchController(
     @RequestParam(required = false) crn: String,
     @RequestParam(required = false) firstName: String,
     @RequestParam(required = false) lastName: String
-  ): List<SearchByCrnResponse> {
+  ): OffenderSearchResponse {
     log.info(normalizeSpace("Offender search endpoint hit for CRN: '$crn', FirstName: '${redact(firstName)}', LastName: '${redact(lastName)}'}"))
-    return offenderSearchService.search(crn)
+    return offenderSearchService.search(crn, firstName, lastName)
   }
 }

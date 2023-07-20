@@ -17,37 +17,42 @@ class OffenderSearchControllerTest(
   @Test
   fun `retrieves simple case summary details using crn`() {
     runTest {
-      val crn = "X123456"
-      offenderSearchResponse(crn)
+      val crn = "A123456"
+      val firstName = "Pontius"
+      val lastName = "Pilate"
+      val dateOfBirth = "2000-11-09"
+      offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
         .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
-        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
-        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEqualTo("$firstName $lastName")
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(dateOfBirth)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
     }
   }
 
   @Test
   fun `retrieves simple case summary details using first and last name`() {
     runTest {
+      val crn = "A123456"
       val firstName = "Pontius"
       val lastName = "Pilate"
-      offenderSearchResponse(firstName = firstName, surname = lastName)
+      val dateOfBirth = "2000-11-09"
+      offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
         .uri("/search?lastName=$lastName&firstName=$firstName")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
-        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
-        .jsonPath("$[0].crn").isEqualTo("X123456")
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEqualTo("$firstName $lastName")
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(dateOfBirth)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
     }
   }
 
@@ -63,12 +68,12 @@ class OffenderSearchControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("null null")
-        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(true)
-        .jsonPath("$[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEmpty()
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
+        .jsonPath("$.results[0].userExcluded").isEqualTo(true)
+        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -84,12 +89,12 @@ class OffenderSearchControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("No name available")
-        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(false)
-        .jsonPath("$[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEqualTo("No name available")
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
+        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
+        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -105,12 +110,12 @@ class OffenderSearchControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("null null")
-        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(false)
-        .jsonPath("$[0].userRestricted").isEqualTo(true)
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEmpty
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
+        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
+        .jsonPath("$.results[0].userRestricted").isEqualTo(true)
     }
   }
 
@@ -126,20 +131,20 @@ class OffenderSearchControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("No name available")
-        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$[0].crn").isEqualTo(crn)
-        .jsonPath("$[0].userExcluded").isEqualTo(false)
-        .jsonPath("$[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.results.length()").isEqualTo(1)
+        .jsonPath("$.results[0].name").isEqualTo("No name available")
+        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$.results[0].crn").isEqualTo(crn)
+        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
+        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
     }
   }
 
   @Test
-  fun `gateway timeout 503 given on Offender Search Api timeout on offenders search by phrase endpoint`() {
+  fun `gateway timeout 504 given on Offender Search Api timeout on offenders search people endpoint`() {
     runTest {
       val crn = "X123456"
-      offenderSearchResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
         .uri("/search?crn=$crn")
@@ -177,8 +182,6 @@ class OffenderSearchControllerTest(
   @Test
   fun `access denied when insufficient privileges used`() {
     runTest {
-      val crn = "X123456"
-      offenderSearchResponse(crn)
       webTestClient.get()
         .uri("/cases/$crn/search")
         .exchange()
