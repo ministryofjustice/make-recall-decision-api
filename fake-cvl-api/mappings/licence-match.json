@@ -1,7 +1,13 @@
 {
   "request": {
     "method": "POST",
-    "urlPath": "/licence/match"
+    "urlPath": "/licence/match",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "$.nomsId",
+        "contains": "JG123POE"
+      }
+    } ]
   },
   "response": {
     "status": 200,

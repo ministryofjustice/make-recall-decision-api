@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/X098092/personal-details"
+    "urlPath": "/licence/id/123399"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "personal-details.json",
+    "bodyFileName": "licence-by-id-not-so-recent-cvl.json",
     "headers": {
       "Content-Type": "application/json"
     }
