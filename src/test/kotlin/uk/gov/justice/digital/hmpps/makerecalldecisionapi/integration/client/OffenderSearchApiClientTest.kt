@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offende
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -39,7 +40,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = offenderSearchApiClient.searchPeople(
-      OffenderSearchPeopleRequest(searchOptions = SearchOptions(crn = crn))
+      buildSearchPeopleRequest(crn = crn)
     ).block()
 
     // then
@@ -51,7 +52,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   @Test
   fun `retrieves offender details by crn when practitioner is excluded from viewing the case`() {
     // given
-    val crn = "X123456"
+    val crn = "A123456"
     limitedAccessPractitionerOffenderSearchResponse(crn)
 
     // and
@@ -68,10 +69,19 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = offenderSearchApiClient.searchPeople(
-      OffenderSearchPeopleRequest(searchOptions = SearchOptions(crn = crn))
+      buildSearchPeopleRequest(crn = crn)
     ).block()
 
     // then
     assertThat(actual, equalTo(expected))
+  }
+
+  private fun buildSearchPeopleRequest(
+    crn: String? = null
+  ): OffenderSearchPeopleRequest {
+    return OffenderSearchPeopleRequest(
+      searchOptions = SearchOptions(crn = crn),
+      pageable = Pageable(page = 0, size = 10, sort = emptyList())
+    )
   }
 }

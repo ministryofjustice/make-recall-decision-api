@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
 
@@ -17,8 +18,13 @@ internal class OffenderSearchService(
   private val userAccessValidator: UserAccessValidator
 ) {
 
-  suspend fun search(crn: String? = null, firstName: String? = null, lastName: String? = null): OffenderSearchResponse {
-    val request = OffenderSearchPeopleRequest(SearchOptions(crn = crn, firstName = firstName, surname = lastName))
+  val stableSortOrder = listOf("surname", "firstName", "crn", "offenderId")
+
+  suspend fun search(crn: String? = null, firstName: String? = null, lastName: String? = null, page: Int, pageSize: Int): OffenderSearchResponse {
+    val request = OffenderSearchPeopleRequest(
+      Pageable(page = page, size = pageSize, sort = stableSortOrder),
+      SearchOptions(crn = crn, firstName = firstName, surname = lastName)
+    )
     val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchPeople(request))
 
     return if (apiResponse == null) {

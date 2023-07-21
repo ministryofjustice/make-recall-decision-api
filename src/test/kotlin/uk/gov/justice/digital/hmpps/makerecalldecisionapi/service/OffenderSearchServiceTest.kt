@@ -20,9 +20,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offende
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.LocalDate
+import kotlin.random.Random
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -33,22 +35,27 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Mock
   private lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
+  private var page = 0
+
+  private var pageSize = 0
+
   @BeforeEach
   fun setup() {
     offenderSearch = OffenderSearchService(offenderSearchApiClient, userAccessValidator)
+    page = Random.Default.nextInt(0, 10)
+    pageSize = Random.Default.nextInt(1, 10)
   }
 
   @Test
   fun `returns empty list when search by CRN returns no results`() {
     runTest {
       val nonExistentCrn = "X123456"
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = nonExistentCrn)
-      )
+      val request = buildSearchPeopleRequest(crn = nonExistentCrn, page = page, pageSize = pageSize)
+
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeopleEmptyResultClientResponse })
 
-      val response = offenderSearch.search(crn = nonExistentCrn)
+      val response = offenderSearch.search(crn = nonExistentCrn, page = page, pageSize = pageSize)
 
       assertThat(response.results).isEmpty()
       then(offenderSearchApiClient).should().searchPeople(request)
@@ -60,13 +67,22 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     runTest {
       val nonExistentFirstName = "Laura"
       val nonExistentSurname = "Biding"
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(firstName = nonExistentFirstName, surname = nonExistentSurname)
+      val request = buildSearchPeopleRequest(
+        firstName = nonExistentFirstName,
+        surname = nonExistentSurname,
+        page = page,
+        pageSize = pageSize
       )
+
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeopleEmptyResultClientResponse })
 
-      val response = offenderSearch.search(firstName = nonExistentFirstName, lastName = nonExistentSurname)
+      val response = offenderSearch.search(
+        firstName = nonExistentFirstName,
+        lastName = nonExistentSurname,
+        page = page,
+        pageSize = pageSize
+      )
 
       assertThat(response.results).isEmpty()
       then(offenderSearchApiClient).should().searchPeople(request)
@@ -76,13 +92,15 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `returns search results when searching by CRN`() {
     runTest {
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
 
-      val response = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
@@ -99,16 +117,16 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     runTest {
       val firstName = "John"
       val lastName = "Blair"
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(
-          firstName = firstName,
-          surname = lastName
-        )
+      val request = buildSearchPeopleRequest(
+        firstName = firstName,
+        surname = lastName,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
 
-      val response = offenderSearch.search(firstName = firstName, lastName = lastName)
+      val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
@@ -123,14 +141,16 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `given search result contains case with populated name then do not check user access`() {
     runTest {
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
       lenient().`when`(deliusClient.getUserAccess(username, crn)).doReturn(restrictedAccess())
 
-      offenderSearch.search(crn)
+      offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
       then(deliusClient).shouldHaveNoInteractions()
     }
@@ -139,15 +159,17 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
     runTest {
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(restrictedAccess())
 
-      val response = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
@@ -159,15 +181,17 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `given search result contains case with null name and dob fields and user is excluded then set user access fields`() {
     runTest {
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
-      val response = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
@@ -179,15 +203,17 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `given search result contains case with null name and dob fields and access is not restricted then default the name for the case`() {
     runTest {
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
         .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
-      val response = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
@@ -203,21 +229,37 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `throws ClientTimeoutException when client throws ClientTimeoutException`() {
     runTest {
       val errorType = "Timeout error"
-      val request = OffenderSearchPeopleRequest(
-        searchOptions = SearchOptions(crn = crn)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
       )
       whenever(offenderSearchApiClient.searchPeople(request)).then {
         throw ClientTimeoutException("Client", errorType)
       }
 
       try {
-        offenderSearch.search(crn)
+        offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
         fail("No exception was thrown")
       } catch (ex: Throwable) {
         assertThat(ex).isInstanceOf(ClientTimeoutException::class.java)
         assertThat(ex.message).contains(errorType)
       }
     }
+  }
+
+  private fun buildSearchPeopleRequest(
+    firstName: String? = null,
+    surname: String? = null,
+    crn: String? = null,
+    page: Int = 0,
+    pageSize: Int = 10
+  ): OffenderSearchPeopleRequest {
+    val sort = listOf("surname", "firstName", "crn", "offenderId")
+    return OffenderSearchPeopleRequest(
+      searchOptions = SearchOptions(firstName = firstName, surname = surname, crn = crn),
+      pageable = Pageable(page, pageSize, sort = sort)
+    )
   }
 
   private val searchPeopleEmptyResultClientResponse =

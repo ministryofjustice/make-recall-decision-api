@@ -30,7 +30,7 @@ internal class OffenderSearchController(
   @Deprecated("This endpoint has been replaced by the /paged-search endpoint", level = DeprecationLevel.WARNING)
   suspend fun search(@RequestParam(required = false) crn: String): List<SearchByCrnResponse> {
     log.info(normalizeSpace("Offender search endpoint hit for CRN: $crn"))
-    val response = offenderSearchService.search(crn)
+    val response = offenderSearchService.search(crn = crn, page = 0, pageSize = 10)
     return response.results.map {
       SearchByCrnResponse(
         userExcluded = it.userExcluded,
@@ -48,9 +48,16 @@ internal class OffenderSearchController(
   suspend fun pagedSearch(
     @RequestParam(required = false) crn: String,
     @RequestParam(required = false) firstName: String,
-    @RequestParam(required = false) lastName: String
+    @RequestParam(required = false) lastName: String,
+    @RequestParam(required = true) page: Int,
+    @RequestParam(required = true) pageSize: Int
   ): OffenderSearchResponse {
-    log.info(normalizeSpace("Offender search endpoint hit for CRN: '$crn', FirstName: '${redact(firstName)}', LastName: '${redact(lastName)}'}"))
-    return offenderSearchService.search(crn, firstName, lastName)
+    log.info(
+      normalizeSpace(
+        "Offender paged search endpoint hit for " +
+          "CRN: '$crn', FirstName: '${redact(firstName)}', LastName: '${redact(lastName)}'}"
+      )
+    )
+    return offenderSearchService.search(crn, firstName, lastName, page = page, pageSize = pageSize)
   }
 }

@@ -44,7 +44,7 @@ class OffenderSearchControllerTest(
       val dateOfBirth = "2000-11-09"
       offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -65,7 +65,7 @@ class OffenderSearchControllerTest(
       val dateOfBirth = "2000-11-09"
       offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       webTestClient.get()
-        .uri("/paged-search?lastName=$lastName&firstName=$firstName")
+        .uri("/paged-search?lastName=$lastName&firstName=$firstName&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -84,7 +84,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -105,7 +105,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -126,7 +126,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessRestricted(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -147,7 +147,7 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userNotFound(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
@@ -168,7 +168,7 @@ class OffenderSearchControllerTest(
       offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -188,7 +188,7 @@ class OffenderSearchControllerTest(
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/paged-search?crn=$crn")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -201,11 +201,22 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `access denied when insufficient privileges used`() {
+  fun `access denied on paged search endpoint when insufficient privileges used`() {
     runTest {
-      // TODO: This URL looks wrong
       webTestClient.get()
-        .uri("/cases/$crn/search")
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
+
+  @Test
+  @Deprecated("Endpoint is deprecated", ReplaceWith(""), DeprecationLevel.WARNING)
+  fun `access denied on deprecated search endpoint when insufficient privileges used`() {
+    runTest {
+      webTestClient.get()
+        .uri("/search?crn=$crn")
         .exchange()
         .expectStatus()
         .isUnauthorized

@@ -10,10 +10,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
+import org.mockserver.matchers.MatchType
 import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.JsonBody.json
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -532,16 +534,17 @@ abstract class IntegrationTestBase {
     dateOfBirth: String = "2000-11-09",
     delaySeconds: Long = 0
   ) {
-    val offenderSearchRequest =
-      request()
-        .withPath("/search/people")
-        .withBody(
-          "{" +
-            "\"searchOptions\":{" +
-            "\"crn\":\"$crn\"" +
-            "}" +
-            "}"
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "    \"crn\":\"$crn\"" +
+            "    }" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
         )
+      )
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
@@ -557,17 +560,18 @@ abstract class IntegrationTestBase {
     dateOfBirth: String = "1980-12-01",
     delaySeconds: Long = 0
   ) {
-    val offenderSearchRequest =
-      request()
-        .withPath("/search/people")
-        .withBody(
-          "{" +
-            "\"searchOptions\":{" +
-            "\"firstName\":\"$firstName\"," +
-            "\"surname\":\"$surname\"" +
-            "}" +
-            "}"
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "    \"firstName\":\"$firstName\"," +
+            "    \"surname\":\"$surname\"" +
+            "    }" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
         )
+      )
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
@@ -577,16 +581,16 @@ abstract class IntegrationTestBase {
   }
 
   protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
-    val offenderSearchRequest =
-      request()
-        .withPath("/search/people")
-        .withBody(
-          "{" +
-            "\"searchOptions\":{" +
-            "\"crn\":\"$crn\"" +
-            "}" +
-            "}"
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "\"crn\":\"$crn\"}" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
         )
+      )
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON)
