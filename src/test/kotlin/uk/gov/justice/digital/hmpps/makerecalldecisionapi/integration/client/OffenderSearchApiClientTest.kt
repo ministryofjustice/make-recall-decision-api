@@ -35,7 +35,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           dateOfBirth = LocalDate.parse("2000-11-09"),
           otherIds = OtherIds(crn, null, null, null, null)
         )
-      )
+      ),
+      totalPages = 1
     )
 
     // when
@@ -64,7 +65,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           dateOfBirth = null,
           otherIds = OtherIds(crn, null, null, null, null)
         )
-      )
+      ),
+      totalPages = 1
     )
 
     // when

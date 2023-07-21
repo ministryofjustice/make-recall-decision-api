@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import kotlin.random.Random
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -74,6 +75,22 @@ class OffenderSearchControllerTest(
         .jsonPath("$.results[0].name").isEqualTo("$firstName $lastName")
         .jsonPath("$.results[0].dateOfBirth").isEqualTo(dateOfBirth)
         .jsonPath("$.results[0].crn").isEqualTo(crn)
+    }
+  }
+
+  @Test
+  fun `search response contains paging data`() {
+    runTest {
+      val crn = "A123456"
+      val totalPages = Random.Default.nextInt(1, 20)
+      offenderSearchByCrnResponse(crn = crn, totalPages = totalPages)
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.totalNumberOfPages").isEqualTo(totalPages)
     }
   }
 

@@ -2,4 +2,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class OffenderSearchResponse(
   val results: List<OffenderSearchOffender> = emptyList(),
+  val totalNumberOfPages: Int = 0
 )

@@ -98,7 +98,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
@@ -124,7 +124,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
 
       val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
 
@@ -139,6 +139,24 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `returns page information when searching`() {
+    runTest {
+      val totalPages = Random.Default.nextInt(1, 10)
+      val request = buildSearchPeopleRequest(
+        crn = crn,
+        page = page,
+        pageSize = pageSize
+      )
+      given(offenderSearchApiClient.searchPeople(request))
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(totalPages = totalPages) })
+
+      val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
+
+      assertThat(response.totalNumberOfPages).isEqualTo(totalPages)
+    }
+  }
+
+  @Test
   fun `given search result contains case with populated name then do not check user access`() {
     runTest {
       val request = buildSearchPeopleRequest(
@@ -147,7 +165,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { searchPeople1ResultClientResponse })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
       lenient().`when`(deliusClient.getUserAccess(username, crn)).doReturn(restrictedAccess())
 
       offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
@@ -262,12 +280,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     )
   }
 
-  private val searchPeopleEmptyResultClientResponse =
-    OffenderSearchPagedResults(
-      content = emptyList()
-    )
-
-  private val searchPeople1ResultClientResponse =
+  private fun buildSearchPeople1ResultClientResponse(totalPages: Int = 1) =
     OffenderSearchPagedResults(
       content = listOf(
         OffenderDetails(
@@ -276,7 +289,14 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           dateOfBirth = LocalDate.parse("1982-10-24"),
           otherIds = OtherIds(crn = crn, null, null, null, null)
         )
-      )
+      ),
+      totalPages = totalPages
+    )
+
+  private val searchPeopleEmptyResultClientResponse =
+    OffenderSearchPagedResults(
+      content = emptyList(),
+      totalPages = 0
     )
 
   private val searchPeopleOmittedDetailsResponse =
@@ -288,6 +308,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           dateOfBirth = null,
           otherIds = OtherIds(crn = crn, null, null, null, null)
         )
-      )
+      ),
+      totalPages = 1
     )
 }

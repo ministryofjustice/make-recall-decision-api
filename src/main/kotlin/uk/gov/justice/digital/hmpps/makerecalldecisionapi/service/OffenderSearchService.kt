@@ -20,7 +20,13 @@ internal class OffenderSearchService(
 
   val stableSortOrder = listOf("surname", "firstName", "crn", "offenderId")
 
-  suspend fun search(crn: String? = null, firstName: String? = null, lastName: String? = null, page: Int, pageSize: Int): OffenderSearchResponse {
+  suspend fun search(
+    crn: String? = null,
+    firstName: String? = null,
+    lastName: String? = null,
+    page: Int,
+    pageSize: Int
+  ): OffenderSearchResponse {
     val request = OffenderSearchPeopleRequest(
       Pageable(page = page, size = pageSize, sort = stableSortOrder),
       SearchOptions(crn = crn, firstName = firstName, surname = lastName)
@@ -34,7 +40,8 @@ internal class OffenderSearchService(
         results = apiResponse.content.map {
           val (userExcluded, userRestricted) = determineAccessRestrictions(it)
           toOffenderSearchOffender(it, userExcluded, userRestricted)
-        }
+        },
+        totalNumberOfPages = apiResponse.totalPages ?: 0
       )
     }
   }

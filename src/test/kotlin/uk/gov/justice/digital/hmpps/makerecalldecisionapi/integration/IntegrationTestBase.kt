@@ -532,6 +532,7 @@ abstract class IntegrationTestBase {
     firstName: String = "Pontius",
     surname: String = "Pilate",
     dateOfBirth: String = "2000-11-09",
+    totalPages: Int = 1,
     delaySeconds: Long = 0
   ) {
     val offenderSearchRequest = request()
@@ -548,7 +549,7 @@ abstract class IntegrationTestBase {
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(offenderSearchDeliusResponse(crn, firstName, surname, dateOfBirth))
+        .withBody(offenderSearchDeliusResponse(crn, firstName, surname, dateOfBirth, totalPages))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

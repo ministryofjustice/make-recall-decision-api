@@ -4,10 +4,11 @@ fun offenderSearchDeliusResponse(
   crn: String? = "X123456",
   firstName: String? = "Pontius",
   surname: String? = "Pilate",
-  dateOfBirth: String? = "2000-11-09"
+  dateOfBirth: String? = "2000-11-09",
+  totalPages: Int = 1
 ) = """
 {
-  "content" :[
+  "content": [
     {
       "firstName": "$firstName",
       "surname": "$surname",
@@ -16,6 +17,7 @@ fun offenderSearchDeliusResponse(
         "crn": "$crn"
       }
     }
-  ]
+  ],
+  "totalPages": $totalPages
 }
 """.trimIndent()

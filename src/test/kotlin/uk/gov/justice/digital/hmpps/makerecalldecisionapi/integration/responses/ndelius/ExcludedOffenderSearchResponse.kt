@@ -10,6 +10,7 @@ fun limitedAccessOffenderSearchResponse(crn: String) = """
       },
       "accessDenied": true
     }
-]
+  ],
+  "totalPages": 1  
 }
 """.trimIndent()
