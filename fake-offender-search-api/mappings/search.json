@@ -6,7 +6,13 @@
       "paged": {
         "matches": "false"
       }
-    }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "crn",
+        "contains": "X098082"
+      }
+    } ]
   },
   "response": {
     "status": 200,

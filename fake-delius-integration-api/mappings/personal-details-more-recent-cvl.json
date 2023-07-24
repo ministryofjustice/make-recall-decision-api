@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/X098084/personal-details"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "personal-details-more-recent-cvl.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

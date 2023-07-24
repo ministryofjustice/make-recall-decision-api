@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/search",
+    "queryParameters": {
+      "paged": {
+        "matches": "false"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "crn",
+        "contains": "X098084"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-more-recent-active-cvl.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

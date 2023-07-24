@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/X098083/personal-details"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "personal-details-not-on-licence.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

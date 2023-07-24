@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/search",
+    "queryParameters": {
+      "paged": {
+        "matches": "false"
+      }
+    },
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "crn",
+        "contains": "X098096"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-cvl-no-bespoke.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/licence/id/666666"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-by-id-no-additional.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

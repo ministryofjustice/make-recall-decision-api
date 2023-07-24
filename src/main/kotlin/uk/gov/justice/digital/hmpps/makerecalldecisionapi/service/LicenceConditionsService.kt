@@ -12,7 +12,8 @@ internal class LicenceConditionsService(
   private val personDetailsService: PersonDetailsService,
   private val userAccessValidator: UserAccessValidator,
   private val createAndVaryALicenceService: CreateAndVaryALicenceService,
-  private val recommendationService: RecommendationService
+  private val recommendationService: RecommendationService,
+  private val licenceConditionsCoordinator: LicenceConditionsCoordinator
 ) {
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -43,6 +44,28 @@ internal class LicenceConditionsService(
         personalDetailsOverview = personalDetailsOverview,
         licenceConditions = licenceConditions,
         activeRecommendation = recommendationDetails
+      )
+    }
+  }
+
+  suspend fun getLicenceConditionsV2(crn: String): LicenceConditionsResponse {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      LicenceConditionsResponse(userAccessResponse = userAccessResponse)
+    } else {
+      val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+      val cvlLicenceConditions =
+        personalDetailsOverview.nomsNumber.let { createAndVaryALicenceService.buildLicenceConditions(crn, it!!) }
+      val deliusLicenceConditions = deliusClient.getLicenceConditions(crn)
+      val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
+      val selectedLicenceConditions =
+        licenceConditionsCoordinator.selectLicenceConditions(deliusLicenceConditions, cvlLicenceConditions)
+      LicenceConditionsResponse(
+        hasAllConvictionsReleasedOnLicence = selectedLicenceConditions.hasAllConvictionsReleasedOnLicence,
+        personalDetailsOverview = deliusLicenceConditions.personalDetails.toOverview(crn),
+        activeConvictions = deliusLicenceConditions.activeConvictions,
+        activeRecommendation = recommendationDetails,
+        cvlLicence = selectedLicenceConditions.cvlLicenceCondition,
       )
     }
   }

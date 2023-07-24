@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/licence/id/123346"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-by-id-more-recent-cvl.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/licence/match",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "$.nomsId",
+        "contains": "XYZ8910"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-match-nd-and-cvl-same-start-dates.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

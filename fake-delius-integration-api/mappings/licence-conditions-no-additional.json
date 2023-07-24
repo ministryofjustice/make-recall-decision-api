@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/X098097/licence-conditions"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-conditions-no-additional.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

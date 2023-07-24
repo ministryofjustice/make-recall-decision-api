@@ -948,7 +948,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       isCustodial = true,
       custodialStatusCode = "ABC123",
       licenceExpiryDate = LocalDate.parse("2022-05-10"),
-      sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+      sentenceExpiryDate = LocalDate.parse("2022-06-10")
     ),
     mainOffence = DeliusClient.Offence(
       date = LocalDate.parse("2022-08-26"),

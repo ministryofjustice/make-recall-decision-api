@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/licence/id/123347"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-by-id-nd-and-cvl-same-start-dates.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

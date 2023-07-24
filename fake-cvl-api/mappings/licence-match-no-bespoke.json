@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/licence/match",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "$.nomsId",
+        "contains": "XXXYYY119"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-match-no-bespoke.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

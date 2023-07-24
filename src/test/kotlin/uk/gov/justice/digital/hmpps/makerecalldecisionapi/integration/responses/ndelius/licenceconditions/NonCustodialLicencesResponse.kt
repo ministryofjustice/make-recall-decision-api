@@ -38,6 +38,7 @@ fun nonCustodialLicencesResponse() = """
       },
       "licenceConditions": [
         {
+          "startDate": "2022-04-24",
           "notes": "I am a licence condition note",
           "mainCategory": {
             "code": "NLC8",
@@ -49,6 +50,7 @@ fun nonCustodialLicencesResponse() = """
           }
         },
         {
+          "startDate": "2022-04-24",
           "notes": "I am a second licence condition note",
           "mainCategory": {
             "code": "NLC7",
