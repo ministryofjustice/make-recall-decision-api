@@ -12,6 +12,8 @@ class OffenderSearchTest() : FunctionalTest() {
     lastResponse = RestAssured
       .given()
       .queryParam("crn", testCrn)
+      .queryParam("page", 0)
+      .queryParam("pageSize", 1)
       .header("Authorization", token)
       .get("$path/paged-search")
 
@@ -23,7 +25,7 @@ class OffenderSearchTest() : FunctionalTest() {
 
 fun offenderSearchExpectation() = """
 {
-  "results" = [
+  "content" = [
         {
             "userExcluded": null,
             "userRestricted": null,

@@ -22,7 +22,13 @@ class OffenderSearchControllerTest(
       val firstName = "Pontius"
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-30"
-      offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
+      offenderSearchByCrnResponse(
+        crn = crn,
+        firstName = firstName,
+        surname = lastName,
+        dateOfBirth = dateOfBirth,
+        pageSize = 10
+      )
       webTestClient.get()
         .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -82,15 +88,19 @@ class OffenderSearchControllerTest(
   fun `search response contains paging data`() {
     runTest {
       val crn = "A123456"
-      val totalPages = Random.Default.nextInt(1, 20)
-      offenderSearchByCrnResponse(crn = crn, totalPages = totalPages)
+      val page = Random.Default.nextInt(0, 20)
+      val pageSize = Random.Default.nextInt(1, 10)
+      val totalNumberOfPages = Random.Default.nextInt(page + 1, 20 + 1)
+      offenderSearchByCrnResponse(crn = crn, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/paged-search?crn=$crn&page=$page&pageSize=$pageSize")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.totalNumberOfPages").isEqualTo(totalPages)
+        .jsonPath("$.paging.page").isEqualTo(page)
+        .jsonPath("$.paging.pageSize").isEqualTo(pageSize)
+        .jsonPath("$.paging.totalNumberOfPages").isEqualTo(totalNumberOfPages)
     }
   }
 

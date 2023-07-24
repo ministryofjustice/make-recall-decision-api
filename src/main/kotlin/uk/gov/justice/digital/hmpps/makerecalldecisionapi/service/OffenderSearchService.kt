@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Paging
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
@@ -41,7 +42,11 @@ internal class OffenderSearchService(
           val (userExcluded, userRestricted) = determineAccessRestrictions(it)
           toOffenderSearchOffender(it, userExcluded, userRestricted)
         },
-        totalNumberOfPages = apiResponse.totalPages ?: 0
+        paging = Paging(
+          page = apiResponse.pageable.pageNumber,
+          pageSize = apiResponse.pageable.pageSize,
+          totalNumberOfPages = apiResponse.totalPages
+        )
       )
     }
   }

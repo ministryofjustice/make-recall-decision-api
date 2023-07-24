@@ -11,9 +11,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offende
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
+import kotlin.random.Random
 
 @ActiveProfiles("test")
 class OffenderSearchApiClientTest : IntegrationTestBase() {
@@ -24,7 +26,9 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   fun `retrieves offender details`() {
     // given
     val crn = "X123456"
-    offenderSearchByCrnResponse(crn)
+    val page = Random.Default.nextInt(0, 5)
+    val pageSize = Random.Default.nextInt(1, 10)
+    offenderSearchByCrnResponse(crn = crn, pageNumber = page, pageSize = pageSize)
 
     // and
     val expected = OffenderSearchPagedResults(
@@ -36,12 +40,13 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           otherIds = OtherIds(crn, null, null, null, null)
         )
       ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
       totalPages = 1
     )
 
     // when
     val actual = offenderSearchApiClient.searchPeople(
-      buildSearchPeopleRequest(crn = crn)
+      buildSearchPeopleRequest(crn = crn, page = page, pageSize = pageSize)
     ).block()
 
     // then
@@ -66,6 +71,10 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           otherIds = OtherIds(crn, null, null, null, null)
         )
       ),
+      pageable = PageableResponse(
+        pageNumber = 0,
+        pageSize = 1
+      ),
       totalPages = 1
     )
 
@@ -79,11 +88,13 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   }
 
   private fun buildSearchPeopleRequest(
-    crn: String? = null
+    crn: String? = null,
+    page: Int = 0,
+    pageSize: Int = 10
   ): OffenderSearchPeopleRequest {
     return OffenderSearchPeopleRequest(
       searchOptions = SearchOptions(crn = crn),
-      pageable = Pageable(page = 0, size = 10, sort = emptyList())
+      pageable = Pageable(page = page, size = pageSize, sort = emptyList())
     )
   }
 }

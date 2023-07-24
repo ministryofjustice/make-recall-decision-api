@@ -11,6 +11,10 @@ fun limitedAccessOffenderSearchResponse(crn: String) = """
       "accessDenied": true
     }
   ],
+  "pageable": {
+    "pageSize": 1,
+    "pageNumber": 0
+  },
   "totalPages": 1  
 }
 """.trimIndent()

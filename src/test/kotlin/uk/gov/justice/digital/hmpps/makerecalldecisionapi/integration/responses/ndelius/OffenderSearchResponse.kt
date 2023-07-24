@@ -5,6 +5,8 @@ fun offenderSearchDeliusResponse(
   firstName: String? = "Pontius",
   surname: String? = "Pilate",
   dateOfBirth: String? = "2000-11-09",
+  pageSize: Int = 1,
+  pageNumber: Int = 1,
   totalPages: Int = 1
 ) = """
 {
@@ -18,6 +20,10 @@ fun offenderSearchDeliusResponse(
       }
     }
   ],
+  "pageable": {
+    "pageSize": $pageSize,
+    "pageNumber": $pageNumber
+  },
   "totalPages": $totalPages
 }
 """.trimIndent()

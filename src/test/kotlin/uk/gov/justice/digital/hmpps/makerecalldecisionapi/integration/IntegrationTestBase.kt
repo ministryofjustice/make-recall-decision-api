@@ -532,6 +532,8 @@ abstract class IntegrationTestBase {
     firstName: String = "Pontius",
     surname: String = "Pilate",
     dateOfBirth: String = "2000-11-09",
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
     totalPages: Int = 1,
     delaySeconds: Long = 0
   ) {
@@ -541,6 +543,10 @@ abstract class IntegrationTestBase {
         json(
           "{\"searchOptions\":{" +
             "    \"crn\":\"$crn\"" +
+            "    }," +
+            "\"pageable\":{" +
+            "    \"page\":$pageNumber," +
+            "    \"size\":$pageSize" +
             "    }" +
             "}",
           MatchType.ONLY_MATCHING_FIELDS
@@ -549,7 +555,17 @@ abstract class IntegrationTestBase {
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(offenderSearchDeliusResponse(crn, firstName, surname, dateOfBirth, totalPages))
+        .withBody(
+          offenderSearchDeliusResponse(
+            crn = crn,
+            firstName = firstName,
+            surname = surname,
+            dateOfBirth = dateOfBirth,
+            pageNumber = pageNumber,
+            pageSize = pageSize,
+            totalPages = totalPages
+          )
+        )
         .withDelay(Delay.seconds(delaySeconds))
     )
   }

@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offende
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.LocalDate
@@ -98,7 +99,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
@@ -124,7 +125,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
 
       val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
 
@@ -148,11 +149,19 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(totalPages = totalPages) })
+        .willReturn(Mono.fromCallable {
+          buildSearchPeople1ResultClientResponse(
+            page = page,
+            pageSize = pageSize,
+            totalPages = totalPages
+          )
+        })
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
-      assertThat(response.totalNumberOfPages).isEqualTo(totalPages)
+      assertThat(response.paging.page).isEqualTo(page)
+      assertThat(response.paging.pageSize).isEqualTo(pageSize)
+      assertThat(response.paging.totalNumberOfPages).isEqualTo(totalPages)
     }
   }
 
@@ -165,7 +174,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse() })
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
       lenient().`when`(deliusClient.getUserAccess(username, crn)).doReturn(restrictedAccess())
 
       offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
@@ -280,7 +289,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     )
   }
 
-  private fun buildSearchPeople1ResultClientResponse(totalPages: Int = 1) =
+  private fun buildSearchPeople1ResultClientResponse(page: Int = 0, pageSize: Int = 1, totalPages: Int = page + 1) =
     OffenderSearchPagedResults(
       content = listOf(
         OffenderDetails(
@@ -290,12 +299,14 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           otherIds = OtherIds(crn = crn, null, null, null, null)
         )
       ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
       totalPages = totalPages
     )
 
   private val searchPeopleEmptyResultClientResponse =
     OffenderSearchPagedResults(
       content = emptyList(),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
       totalPages = 0
     )
 
@@ -309,6 +320,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           otherIds = OtherIds(crn = crn, null, null, null, null)
         )
       ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
       totalPages = 1
     )
 }
