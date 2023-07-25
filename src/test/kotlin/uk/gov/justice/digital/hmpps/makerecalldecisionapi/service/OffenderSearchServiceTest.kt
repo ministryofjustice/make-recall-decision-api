@@ -149,13 +149,15 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         pageSize = pageSize
       )
       given(offenderSearchApiClient.searchPeople(request))
-        .willReturn(Mono.fromCallable {
-          buildSearchPeople1ResultClientResponse(
-            page = page,
-            pageSize = pageSize,
-            totalPages = totalPages
-          )
-        })
+        .willReturn(
+          Mono.fromCallable {
+            buildSearchPeople1ResultClientResponse(
+              page = page,
+              pageSize = pageSize,
+              totalPages = totalPages
+            )
+          }
+        )
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
