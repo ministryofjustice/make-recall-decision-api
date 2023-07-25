@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
-fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
+fun updateRecommendationRequest(status: Status = Status.DRAFT, recallConsideredDetail: String? = "This is an updated recall considered detail") = """
 {
   "custodyStatus": {
     "selected": "YES_PRISON",
@@ -306,7 +306,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "recallConsideredList": [
     {
-      "recallConsideredDetail": "This is an updated recall considered detail"
+      "recallConsideredDetail": "$recallConsideredDetail"
     }
   ],
   "managerRecallDecision": {

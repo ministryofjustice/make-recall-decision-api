@@ -64,6 +64,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUnavailableResponse
 import java.util.concurrent.TimeUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
@@ -81,6 +82,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var repository: RecommendationRepository
+
+  @Autowired
+  protected lateinit var statusRepository: RecommendationStatusRepository
 
   var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
