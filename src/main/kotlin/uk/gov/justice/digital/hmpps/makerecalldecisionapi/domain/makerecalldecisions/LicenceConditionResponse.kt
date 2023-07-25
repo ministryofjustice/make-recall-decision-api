@@ -21,5 +21,6 @@ data class LicenceConditionResponse(
 
 data class LicenceConditionDetail(
   val text: String? = null,
-  val expandedText: String? = null
+  val expandedText: String? = null,
+  val category: String? = null
 )

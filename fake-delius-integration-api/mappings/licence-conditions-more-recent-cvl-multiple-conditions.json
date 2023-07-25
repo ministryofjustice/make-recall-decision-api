@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/case-summary/X098099/licence-conditions"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "licence-conditions-more-recent-cvl-multiple-conditions.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

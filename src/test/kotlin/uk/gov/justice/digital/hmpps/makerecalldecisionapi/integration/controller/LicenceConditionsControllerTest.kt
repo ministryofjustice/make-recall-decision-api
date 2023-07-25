@@ -102,7 +102,7 @@ class LicenceConditionsControllerTest(
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
-      assertcvlLicence(response = response)
+      assertCvlLicence(response = response)
     }
   }
 
@@ -195,7 +195,7 @@ class LicenceConditionsControllerTest(
       assertThat(response.getBoolean("hasAllConvictionsReleasedOnLicence")).isEqualTo(true)
 
       // and
-      assertcvlLicence(response = response)
+      assertCvlLicence(response = response)
     }
   }
 
@@ -558,7 +558,7 @@ class LicenceConditionsControllerTest(
     assertActiveConvictions(response)
   }
 
-  private fun assertcvlLicence(response: JSONObject) {
+  private fun assertCvlLicence(response: JSONObject) {
     assertPersonalDetailsOverview(response)
     assertActiveRecommendation(response)
     assertActiveConvictions(response)
@@ -573,6 +573,7 @@ class LicenceConditionsControllerTest(
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is a standard licence condition")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is an additional licence condition")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("expandedText")).isEqualTo("Expanded additional licence condition")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("category")).isEqualTo("Freedom of movement")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("text")).isEqualTo("This is a bespoke condition")
   }
 

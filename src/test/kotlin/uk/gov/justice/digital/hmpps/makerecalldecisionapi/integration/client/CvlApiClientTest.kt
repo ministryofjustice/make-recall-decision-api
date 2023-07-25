@@ -62,8 +62,8 @@ class CvlApiClientTest : IntegrationTestBase() {
         topupSupervisionExpiryDate = "17/06/2022",
         standardLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard licence condition")),
         standardPssConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
-        additionalPssConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
+        additionalLicenceConditions = listOf(LicenceConditionCvlDetail(category = "Freedom of movement", text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
+        additionalPssConditions = listOf(LicenceConditionCvlDetail(category = "Freedom of movement", text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
         bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition"))
       )
 
