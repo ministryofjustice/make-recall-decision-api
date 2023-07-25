@@ -10,10 +10,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
+import org.mockserver.matchers.MatchType
 import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.JsonBody.json
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -525,26 +527,91 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(personalDetails).respond(response().withStatusCode(500))
   }
 
-  protected fun offenderSearchResponse(crn: String? = "X123456", firstName: String? = "Pontius", surname: String? = "Pilate", fullName: String? = "Pontius Pilate", delaySeconds: Long = 0) {
-    val offenderSearchRequest =
-      request()
-        .withPath("/search")
-        .withQueryStringParameter("paged", "false")
+  protected fun offenderSearchByCrnResponse(
+    crn: String = "X123456",
+    firstName: String = "Pontius",
+    surname: String = "Pilate",
+    dateOfBirth: String = "2000-11-09",
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
+    totalPages: Int = 1,
+    delaySeconds: Long = 0
+  ) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "    \"crn\":\"$crn\"" +
+            "    }," +
+            "\"pageable\":{" +
+            "    \"page\":$pageNumber," +
+            "    \"size\":$pageSize" +
+            "    }" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
+        )
+      )
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(offenderSearchDeliusResponse(crn, firstName, surname, fullName))
+      response().withContentType(APPLICATION_JSON)
+        .withBody(
+          offenderSearchDeliusResponse(
+            crn = crn,
+            firstName = firstName,
+            surname = surname,
+            dateOfBirth = dateOfBirth,
+            pageNumber = pageNumber,
+            pageSize = pageSize,
+            totalPages = totalPages
+          )
+        )
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun offenderSearchByNameResponse(
+    crn: String = "Y654321",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
+    dateOfBirth: String = "1980-12-01",
+    delaySeconds: Long = 0
+  ) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "    \"firstName\":\"$firstName\"," +
+            "    \"surname\":\"$surname\"" +
+            "    }" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
+        )
+      )
+
+    offenderSearchApi.`when`(offenderSearchRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(offenderSearchDeliusResponse(crn, firstName, surname, dateOfBirth))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
   protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
-    val offenderSearchRequest =
-      request()
-        .withPath("/search")
-        .withQueryStringParameter("paged", "false")
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{\"searchOptions\":{" +
+            "\"crn\":\"$crn\"}" +
+            "}",
+          MatchType.ONLY_MATCHING_FIELDS
+        )
+      )
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(limitedAccessOffenderSearchResponse(crn))
+      response().withContentType(APPLICATION_JSON)
+        .withBody(limitedAccessOffenderSearchResponse(crn))
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
