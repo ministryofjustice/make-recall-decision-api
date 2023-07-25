@@ -130,8 +130,10 @@ class PersonDetailsControllerTest(
   @Test
   fun `access denied when insufficient privileges used`() {
     runTest {
+      val crn = "X123456"
+      offenderSearchResponse(crn)
       webTestClient.get()
-        .uri("/cases/$crn/personal-details")
+        .uri("/cases/$crn/personalDetailsOverview")
         .exchange()
         .expectStatus()
         .isUnauthorized

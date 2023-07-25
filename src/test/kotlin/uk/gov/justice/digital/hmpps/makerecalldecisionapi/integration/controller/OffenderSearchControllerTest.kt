@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import kotlin.random.Random
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -16,19 +15,10 @@ class OffenderSearchControllerTest(
 ) : IntegrationTestBase() {
 
   @Test
-  fun `backward compatible endpoint retrieves simple case summary details using crn`() {
+  fun `retrieves simple case summary details using crn`() {
     runTest {
       val crn = "X123456"
-      val firstName = "Pontius"
-      val lastName = "Pilate"
-      val dateOfBirth = "2000-11-30"
-      offenderSearchByCrnResponse(
-        crn = crn,
-        firstName = firstName,
-        surname = lastName,
-        dateOfBirth = dateOfBirth,
-        pageSize = 10
-      )
+      offenderSearchResponse(crn)
       webTestClient.get()
         .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -36,71 +26,28 @@ class OffenderSearchControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.length()").isEqualTo(1)
-        .jsonPath("$[0].name").isEqualTo("$firstName $lastName")
-        .jsonPath("$[0].dateOfBirth").isEqualTo(dateOfBirth)
+        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
+        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
         .jsonPath("$[0].crn").isEqualTo(crn)
-    }
-  }
-
-  @Test
-  fun `retrieves simple case summary details using crn`() {
-    runTest {
-      val crn = "A123456"
-      val firstName = "Pontius"
-      val lastName = "Pilate"
-      val dateOfBirth = "2000-11-09"
-      offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
-      webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("$firstName $lastName")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(dateOfBirth)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
     }
   }
 
   @Test
   fun `retrieves simple case summary details using first and last name`() {
     runTest {
-      val crn = "A123456"
       val firstName = "Pontius"
       val lastName = "Pilate"
-      val dateOfBirth = "2000-11-09"
-      offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
+      offenderSearchResponse(firstName = firstName, surname = lastName)
       webTestClient.get()
-        .uri("/paged-search?lastName=$lastName&firstName=$firstName&page=0&pageSize=1")
+        .uri("/search?lastName=$lastName&firstName=$firstName")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("$firstName $lastName")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(dateOfBirth)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-    }
-  }
-
-  @Test
-  fun `search response contains paging data`() {
-    runTest {
-      val crn = "A123456"
-      val page = Random.Default.nextInt(0, 20)
-      val pageSize = Random.Default.nextInt(1, 10)
-      val totalNumberOfPages = Random.Default.nextInt(page + 1, 20 + 1)
-      offenderSearchByCrnResponse(crn = crn, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
-      webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=$page&pageSize=$pageSize")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.paging.page").isEqualTo(page)
-        .jsonPath("$.paging.pageSize").isEqualTo(pageSize)
-        .jsonPath("$.paging.totalNumberOfPages").isEqualTo(totalNumberOfPages)
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("Pontius Pilate")
+        .jsonPath("$[0].dateOfBirth").isEqualTo("2000-11-09")
+        .jsonPath("$[0].crn").isEqualTo("X123456")
     }
   }
 
@@ -111,17 +58,17 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEmpty()
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(true)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("null null")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(true)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -132,17 +79,17 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("No name available")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("No name available")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
@@ -153,17 +100,17 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessRestricted(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEmpty
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(true)
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("null null")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(true)
     }
   }
 
@@ -174,28 +121,28 @@ class OffenderSearchControllerTest(
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userNotFound(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("No name available")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("No name available")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(null)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+        .jsonPath("$[0].userExcluded").isEqualTo(false)
+        .jsonPath("$[0].userRestricted").isEqualTo(false)
     }
   }
 
   @Test
-  fun `gateway timeout 504 given on Offender Search Api timeout on offenders search people endpoint`() {
+  fun `gateway timeout 503 given on Offender Search Api timeout on offenders search by phrase endpoint`() {
     runTest {
       val crn = "X123456"
-      offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      offenderSearchResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -215,7 +162,7 @@ class OffenderSearchControllerTest(
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
 
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus()
@@ -228,22 +175,12 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `access denied on paged search endpoint when insufficient privileges used`() {
+  fun `access denied when insufficient privileges used`() {
     runTest {
+      val crn = "X123456"
+      offenderSearchResponse(crn)
       webTestClient.get()
-        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
-        .exchange()
-        .expectStatus()
-        .isUnauthorized
-    }
-  }
-
-  @Test
-  @Deprecated("Endpoint is deprecated", ReplaceWith(""), DeprecationLevel.WARNING)
-  fun `access denied on deprecated search endpoint when insufficient privileges used`() {
-    runTest {
-      webTestClient.get()
-        .uri("/search?crn=$crn")
+        .uri("/cases/$crn/search")
         .exchange()
         .expectStatus()
         .isUnauthorized

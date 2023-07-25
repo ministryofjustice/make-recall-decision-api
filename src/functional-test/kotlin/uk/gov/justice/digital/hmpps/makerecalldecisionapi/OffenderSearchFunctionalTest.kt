@@ -12,10 +12,8 @@ class OffenderSearchTest() : FunctionalTest() {
     lastResponse = RestAssured
       .given()
       .queryParam("crn", testCrn)
-      .queryParam("page", 0)
-      .queryParam("pageSize", 1)
       .header("Authorization", token)
-      .get("$path/paged-search")
+      .get("$path/search")
 
     // then
     assertThat(lastResponse.statusCode).isEqualTo(expectedOk)
@@ -24,15 +22,13 @@ class OffenderSearchTest() : FunctionalTest() {
 }
 
 fun offenderSearchExpectation() = """
-{
-  "content" = [
-        {
-            "userExcluded": null,
-            "userRestricted": null,
-            "name": "Ikenberry Camploongo",
-            "crn": "D006296",
-            "dateOfBirth": "1986-05-11"
-        }
-    ]
-}
+[
+    {
+        "userExcluded": null,
+        "userRestricted": null,
+        "name": "Ikenberry Camploongo",
+        "crn": "D006296",
+        "dateOfBirth": "1986-05-11"
+    }
+]
 """.trimIndent()

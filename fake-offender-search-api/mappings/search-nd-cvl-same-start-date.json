@@ -1,10 +1,15 @@
 {
   "request": {
     "method": "POST",
-    "urlPath": "/search/people",
+    "urlPath": "/search",
+    "queryParameters": {
+      "paged": {
+        "matches": "false"
+      }
+    },
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
-        "expression": "searchOptions.crn",
+        "expression": "crn",
         "contains": "X098095"
       }
     } ]
