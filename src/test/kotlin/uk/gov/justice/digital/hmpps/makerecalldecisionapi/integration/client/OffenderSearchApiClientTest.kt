@@ -8,11 +8,8 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import kotlin.random.Random
@@ -45,9 +42,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
     )
 
     // when
-    val actual = offenderSearchApiClient.searchPeople(
-      buildSearchPeopleRequest(crn = crn, page = page, pageSize = pageSize)
-    ).block()
+    val actual = offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize)
+      .block()
 
     // then
     assertThat(
@@ -59,6 +55,8 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   fun `retrieves offender details by crn when practitioner is excluded from viewing the case`() {
     // given
     val crn = "A123456"
+    val page = 0
+    val pageSize = 1
     limitedAccessPractitionerOffenderSearchResponse(crn)
 
     // and
@@ -72,29 +70,16 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
         )
       ),
       pageable = PageableResponse(
-        pageNumber = 0,
-        pageSize = 1
+        pageNumber = page,
+        pageSize = pageSize
       ),
       totalPages = 1
     )
 
     // when
-    val actual = offenderSearchApiClient.searchPeople(
-      buildSearchPeopleRequest(crn = crn)
-    ).block()
+    val actual = offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize).block()
 
     // then
     assertThat(actual, equalTo(expected))
-  }
-
-  private fun buildSearchPeopleRequest(
-    crn: String? = null,
-    page: Int = 0,
-    pageSize: Int = 10
-  ): OffenderSearchPeopleRequest {
-    return OffenderSearchPeopleRequest(
-      searchOptions = SearchOptions(crn = crn),
-      pageable = Pageable(page = page, size = pageSize, sort = emptyList())
-    )
   }
 }

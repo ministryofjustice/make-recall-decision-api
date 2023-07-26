@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
-import org.mockserver.matchers.MatchType
 import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
@@ -539,17 +538,11 @@ abstract class IntegrationTestBase {
   ) {
     val offenderSearchRequest = request()
       .withPath("/search/people")
+      .withQueryStringParameter("page", pageNumber.toString())
+      .withQueryStringParameter("size", pageSize.toString())
       .withBody(
         json(
-          "{\"searchOptions\":{" +
-            "    \"crn\":\"$crn\"" +
-            "    }," +
-            "\"pageable\":{" +
-            "    \"page\":$pageNumber," +
-            "    \"size\":$pageSize" +
-            "    }" +
-            "}",
-          MatchType.ONLY_MATCHING_FIELDS
+          "{\"crn\":\"$crn\"}"
         )
       )
 
@@ -581,12 +574,10 @@ abstract class IntegrationTestBase {
       .withPath("/search/people")
       .withBody(
         json(
-          "{\"searchOptions\":{" +
-            "    \"firstName\":\"$firstName\"," +
-            "    \"surname\":\"$surname\"" +
-            "    }" +
-            "}",
-          MatchType.ONLY_MATCHING_FIELDS
+          "{" +
+            "\"firstName\":\"$firstName\"," +
+            "\"surname\":\"$surname\"" +
+            "}"
         )
       )
 
@@ -602,10 +593,9 @@ abstract class IntegrationTestBase {
       .withPath("/search/people")
       .withBody(
         json(
-          "{\"searchOptions\":{" +
-            "\"crn\":\"$crn\"}" +
-            "}",
-          MatchType.ONLY_MATCHING_FIELDS
+          "{" +
+            "\"crn\":\"$crn\"" +
+            "}"
         )
       )
 

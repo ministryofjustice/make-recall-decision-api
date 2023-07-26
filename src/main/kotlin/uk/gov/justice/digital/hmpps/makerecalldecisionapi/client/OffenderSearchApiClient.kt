@@ -19,12 +19,22 @@ class OffenderSearchApiClient(
   private val timeoutCounter: Counter
 ) {
 
-  fun searchPeople(request: OffenderSearchPeopleRequest): Mono<OffenderSearchPagedResults> {
+  fun searchPeople(
+    crn: String? = null,
+    firstName: String? = null,
+    surname: String? = null,
+    page: Int,
+    pageSize: Int
+  ): Mono<OffenderSearchPagedResults> {
+    val request = OffenderSearchPeopleRequest(crn = crn, firstName = firstName, surname = surname)
     val responseType = object : ParameterizedTypeReference<OffenderSearchPagedResults>() {}
     return webClient
       .post()
       .uri { builder ->
-        builder.path("/search/people").build()
+        builder.path("/search/people")
+          .queryParam("page", page)
+          .queryParam("size", pageSize)
+          .build()
       }
       .header("Content-Type", APPLICATION_JSON_VALUE)
       .body(fromValue(request))

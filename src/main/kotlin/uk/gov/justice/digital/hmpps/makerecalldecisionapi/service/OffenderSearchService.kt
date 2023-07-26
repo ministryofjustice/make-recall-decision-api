@@ -8,9 +8,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Paging
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Pageable
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.SearchOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO_NAME_AVAILABLE
 
 @Service
@@ -18,9 +15,6 @@ internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
   private val userAccessValidator: UserAccessValidator
 ) {
-
-  val stableSortOrder = listOf("surname", "firstName", "crn", "offenderId")
-
   suspend fun search(
     crn: String? = null,
     firstName: String? = null,
@@ -28,11 +22,15 @@ internal class OffenderSearchService(
     page: Int,
     pageSize: Int
   ): OffenderSearchResponse {
-    val request = OffenderSearchPeopleRequest(
-      Pageable(page = page, size = pageSize, sort = stableSortOrder),
-      SearchOptions(crn = crn, firstName = firstName, surname = lastName)
+    val apiResponse = getValueAndHandleWrappedException(
+      offenderSearchApiClient.searchPeople(
+        crn = crn,
+        firstName = firstName,
+        surname = lastName,
+        page = page,
+        pageSize = pageSize
+      )
     )
-    val apiResponse = getValueAndHandleWrappedException(offenderSearchApiClient.searchPeople(request))
 
     return if (apiResponse == null) {
       OffenderSearchResponse()
@@ -40,7 +38,7 @@ internal class OffenderSearchService(
       return OffenderSearchResponse(
         results = apiResponse.content.map {
           val (userExcluded, userRestricted) = determineAccessRestrictions(it)
-          toOffenderSearchOffender(it, userExcluded, userRestricted)
+          it.toOffenderSearchOffender(userExcluded, userRestricted)
         },
         paging = Paging(
           page = apiResponse.pageable.pageNumber,
@@ -66,21 +64,20 @@ internal class OffenderSearchService(
     }
   }
 
-  private fun toOffenderSearchOffender(
-    offenderDetails: OffenderDetails,
+  private fun OffenderDetails.toOffenderSearchOffender(
     userExcluded: Boolean,
     userRestricted: Boolean
   ): OffenderSearchOffender {
     val name =
-      if (offenderDetails.isNameNullOrBlank && !userExcluded && !userRestricted) {
+      if (this.isNameNullOrBlank && !userExcluded && !userRestricted) {
         NO_NAME_AVAILABLE
       } else {
-        joinToString(offenderDetails.firstName, offenderDetails.surname)
+        joinToString(this.firstName, this.surname)
       }
     return OffenderSearchOffender(
       name = name,
-      crn = offenderDetails.otherIds.crn,
-      dateOfBirth = offenderDetails.dateOfBirth,
+      crn = this.otherIds.crn,
+      dateOfBirth = this.dateOfBirth,
       userExcluded = userExcluded,
       userRestricted = userRestricted
     )

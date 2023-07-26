@@ -4,7 +4,7 @@
     "urlPath": "/search/people",
     "bodyPatterns" : [ {
       "matchesJsonPath" : {
-        "expression": "searchOptions.crn",
+        "expression": "crn",
         "contains": "X098095"
       }
     } ]
