@@ -20,7 +20,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
   private lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
   @Test
-  fun `retrieves offender details`() {
+  fun `retrieves offender details by crn`() {
     // given
     val crn = "X123456"
     val page = Random.Default.nextInt(0, 5)
@@ -44,6 +44,48 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
     // when
     val actual = offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize)
       .block()
+
+    // then
+    assertThat(
+      actual, equalTo(expected)
+    )
+  }
+
+  @Test
+  fun `retrieves offender details by name`() {
+    // given
+    val firstName = "Joe"
+    val surname = "Bloggs"
+    val dateOfBirth = "2000-11-09"
+    val page = Random.Default.nextInt(0, 5)
+    val pageSize = Random.Default.nextInt(1, 10)
+    offenderSearchByNameResponse(
+      crn = crn,
+      firstName = firstName,
+      surname = surname,
+      dateOfBirth = dateOfBirth,
+      pageNumber = page,
+      pageSize = pageSize
+    )
+
+    // and
+    val expected = OffenderSearchPagedResults(
+      content = listOf(
+        OffenderDetails(
+          firstName = firstName,
+          surname = surname,
+          dateOfBirth = LocalDate.parse(dateOfBirth),
+          otherIds = OtherIds(crn, null, null, null, null)
+        )
+      ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
+      totalPages = 1
+    )
+
+    // when
+    val actual =
+      offenderSearchApiClient.searchPeople(firstName = firstName, surname = surname, page = page, pageSize = pageSize)
+        .block()
 
     // then
     assertThat(

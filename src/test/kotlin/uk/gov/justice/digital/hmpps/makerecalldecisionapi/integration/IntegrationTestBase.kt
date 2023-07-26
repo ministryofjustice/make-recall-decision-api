@@ -568,10 +568,14 @@ abstract class IntegrationTestBase {
     firstName: String = "Joe",
     surname: String = "Bloggs",
     dateOfBirth: String = "1980-12-01",
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
     delaySeconds: Long = 0
   ) {
     val offenderSearchRequest = request()
       .withPath("/search/people")
+      .withQueryStringParameter("page", pageNumber.toString())
+      .withQueryStringParameter("size", pageSize.toString())
       .withBody(
         json(
           "{" +
@@ -583,7 +587,16 @@ abstract class IntegrationTestBase {
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(offenderSearchDeliusResponse(crn, firstName, surname, dateOfBirth))
+        .withBody(
+          offenderSearchDeliusResponse(
+            crn = crn,
+            firstName = firstName,
+            surname = surname,
+            dateOfBirth = dateOfBirth,
+            pageNumber = pageNumber,
+            pageSize = pageSize
+          )
+        )
         .withDelay(Delay.seconds(delaySeconds))
     )
   }
