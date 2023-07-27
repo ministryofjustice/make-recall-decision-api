@@ -6,16 +6,23 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
+import org.mockito.Mockito.lenient
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchByPhraseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.LocalDate
+import kotlin.random.Random
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -26,137 +33,252 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Mock
   private lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
+  private var page = 0
+
+  private var pageSize = 0
+
   @BeforeEach
   fun setup() {
     offenderSearch = OffenderSearchService(offenderSearchApiClient, userAccessValidator)
+    page = Random.Default.nextInt(0, 10)
+    pageSize = Random.Default.nextInt(1, 10)
   }
 
   @Test
-  fun `returns empty list when search returns no results`() {
+  fun `returns empty list when search by CRN returns no results`() {
     runTest {
       val nonExistentCrn = "X123456"
-      val request = OffenderSearchByPhraseRequest(
-        crn = "X123456"
-      )
-      given(offenderSearchApiClient.searchOffenderByPhrase(request))
-        .willReturn(Mono.empty())
 
-      val results = offenderSearch.search(nonExistentCrn)
+      given(offenderSearchApiClient.searchPeople(crn = nonExistentCrn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { searchPeopleEmptyResultClientResponse })
 
-      assertThat(results).isEmpty()
-      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+      val response = offenderSearch.search(crn = nonExistentCrn, page = page, pageSize = pageSize)
+
+      assertThat(response.results).isEmpty()
+      then(offenderSearchApiClient).should().searchPeople(crn = nonExistentCrn, page = page, pageSize = pageSize)
     }
   }
 
   @Test
-  fun `returns search results`() {
+  fun `returns empty list when search by name returns no results`() {
     runTest {
-      val crn = "X12345"
-      val request = OffenderSearchByPhraseRequest(
-        crn = crn
+      val nonExistentFirstName = "Laura"
+      val nonExistentSurname = "Biding"
+      given(
+        offenderSearchApiClient.searchPeople(
+          firstName = nonExistentFirstName,
+          surname = nonExistentSurname,
+          page = page,
+          pageSize = pageSize
+        )
+      ).willReturn(Mono.fromCallable { searchPeopleEmptyResultClientResponse })
+
+      val response = offenderSearch.search(
+        firstName = nonExistentFirstName,
+        lastName = nonExistentSurname,
+        page = page,
+        pageSize = pageSize
       )
-      given(offenderSearchApiClient.searchOffenderByPhrase(request))
-        .willReturn(Mono.fromCallable { offenderSearchResponse })
 
-      val results = offenderSearch.search(crn)
-
-      assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("John Blair")
-      assertThat(results[0].crn).isEqualTo(crn)
-      assertThat(results[0].dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-
-      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+      assertThat(response.results).isEmpty()
+      then(offenderSearchApiClient).should().searchPeople(
+        firstName = nonExistentFirstName,
+        surname = nonExistentSurname,
+        page = page,
+        pageSize = pageSize
+      )
     }
   }
 
   @Test
-  fun `returns search results for name`() {
+  fun `returns search results when searching by CRN`() {
+    runTest {
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
+
+      val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
+
+      assertThat(response.results.size).isEqualTo(1)
+      val result = response.results.first()
+      assertThat(result.name).isEqualTo("John Blair")
+      assertThat(result.crn).isEqualTo(crn)
+      assertThat(result.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
+
+      then(offenderSearchApiClient).should().searchPeople(crn = crn, page = page, pageSize = pageSize)
+    }
+  }
+
+  @Test
+  fun `returns search results when searching by name`() {
     runTest {
       val firstName = "John"
-      val lastName = "Doe"
-      val request = OffenderSearchByPhraseRequest(
+      val lastName = "Blair"
+      given(
+        offenderSearchApiClient.searchPeople(
+          firstName = firstName,
+          surname = lastName,
+          page = page,
+          pageSize = pageSize
+        )
+      ).willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
+
+      val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
+
+      assertThat(response.results.size).isEqualTo(1)
+      val result = response.results.first()
+      assertThat(result.name).isEqualTo("John Blair")
+      assertThat(result.crn).isEqualTo(crn)
+      assertThat(result.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
+
+      then(offenderSearchApiClient).should().searchPeople(
         firstName = firstName,
-        surname = lastName
+        surname = lastName,
+        page = page,
+        pageSize = pageSize
       )
-      given(offenderSearchApiClient.searchOffenderByPhrase(request))
-        .willReturn(Mono.fromCallable { offenderSearchResponse })
+    }
+  }
 
-      val results = offenderSearch.search(firstName = firstName, lastName = lastName)
+  @Test
+  fun `returns page information when searching`() {
+    runTest {
+      val totalPages = Random.Default.nextInt(1, 10)
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(
+          Mono.fromCallable {
+            buildSearchPeople1ResultClientResponse(
+              page = page,
+              pageSize = pageSize,
+              totalPages = totalPages
+            )
+          }
+        )
 
-      assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("John Blair")
-      assertThat(results[0].crn).isEqualTo("X12345")
-      assertThat(results[0].dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
+      val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
 
-      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+      assertThat(response.paging.page).isEqualTo(page)
+      assertThat(response.paging.pageSize).isEqualTo(pageSize)
+      assertThat(response.paging.totalNumberOfPages).isEqualTo(totalPages)
+    }
+  }
+
+  @Test
+  fun `given search result contains case with populated name then do not check user access`() {
+    runTest {
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
+      lenient().`when`(deliusClient.getUserAccess(username, crn)).doReturn(restrictedAccess())
+
+      offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
+
+      then(deliusClient).shouldHaveNoInteractions()
     }
   }
 
   @Test
   fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
     runTest {
-      val crn = "X12345"
-      val request = OffenderSearchByPhraseRequest(
-        crn = "X12345"
-      )
-      given(offenderSearchApiClient.searchOffenderByPhrase(request))
-        .willReturn(Mono.fromCallable { omittedDetailsResponse })
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
 
-      given(deliusClient.getUserAccess(username, "X12345")).willReturn(restrictedAccess())
+      given(deliusClient.getUserAccess(username, crn)).willReturn(restrictedAccess())
 
-      val results = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
-      assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("null null")
-      assertThat(results[0].crn).isEqualTo("X12345")
-      assertThat(results[0].dateOfBirth).isNull()
-      assertThat(results[0].userExcluded).isEqualTo(false)
-      assertThat(results[0].userRestricted).isEqualTo(true)
+      assertThat(response.results.size).isEqualTo(1)
+      val result = response.results.first()
+      assertThat(result.userExcluded).isEqualTo(false)
+      assertThat(result.userRestricted).isEqualTo(true)
+    }
+  }
 
-      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+  @Test
+  fun `given search result contains case with null name and dob fields and user is excluded then set user access fields`() {
+    runTest {
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
+
+      given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
+
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
+
+      assertThat(response.results.size).isEqualTo(1)
+      val result = response.results.first()
+      assertThat(result.userExcluded).isEqualTo(true)
+      assertThat(result.userRestricted).isEqualTo(false)
     }
   }
 
   @Test
   fun `given search result contains case with null name and dob fields and access is not restricted then default the name for the case`() {
     runTest {
-      val crn = "X12345"
-      val request = OffenderSearchByPhraseRequest(
-        crn = crn
-      )
-      given(offenderSearchApiClient.searchOffenderByPhrase(request))
-        .willReturn(Mono.fromCallable { omittedDetailsResponse })
+      given(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize))
+        .willReturn(Mono.fromCallable { searchPeopleOmittedDetailsResponse })
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
-      val results = offenderSearch.search(crn)
+      val response = offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
 
-      assertThat(results.size).isEqualTo(1)
-      assertThat(results[0].name).isEqualTo("No name available")
-      assertThat(results[0].crn).isEqualTo(crn)
-      assertThat(results[0].dateOfBirth).isNull()
-      assertThat(results[0].userExcluded).isFalse
-      assertThat(results[0].userRestricted).isFalse
-
-      then(offenderSearchApiClient).should().searchOffenderByPhrase(request)
+      assertThat(response.results.size).isEqualTo(1)
+      val result = response.results.first()
+      assertThat(result.name).isEqualTo("No name available")
+      assertThat(result.crn).isEqualTo(crn)
+      assertThat(result.dateOfBirth).isNull()
+      assertThat(result.userExcluded).isFalse
+      assertThat(result.userRestricted).isFalse
     }
   }
 
-  private val offenderSearchResponse = listOf(
-    OffenderDetails(
-      firstName = "John",
-      surname = "Blair",
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      otherIds = OtherIds(crn = "X12345", null, null, null, null)
-    )
-  )
+  @Test
+  fun `throws ClientTimeoutException when client throws ClientTimeoutException`() {
+    runTest {
+      val errorType = "Timeout error"
+      whenever(offenderSearchApiClient.searchPeople(crn = crn, page = page, pageSize = pageSize)).then {
+        throw ClientTimeoutException("Client", errorType)
+      }
 
-  private val omittedDetailsResponse = listOf(
-    OffenderDetails(
-      firstName = null,
-      surname = null,
-      dateOfBirth = null,
-      otherIds = OtherIds(crn = "X12345", null, null, null, null)
+      try {
+        offenderSearch.search(crn = crn, page = page, pageSize = pageSize)
+        fail("No exception was thrown")
+      } catch (ex: Throwable) {
+        assertThat(ex).isInstanceOf(ClientTimeoutException::class.java)
+        assertThat(ex.message).contains(errorType)
+      }
+    }
+  }
+
+  private fun buildSearchPeople1ResultClientResponse(page: Int = 0, pageSize: Int = 1, totalPages: Int = page + 1) =
+    OffenderSearchPagedResults(
+      content = listOf(
+        OffenderDetails(
+          firstName = "John",
+          surname = "Blair",
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          otherIds = OtherIds(crn = crn, null, null, null, null)
+        )
+      ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
+      totalPages = totalPages
     )
-  )
+
+  private val searchPeopleEmptyResultClientResponse =
+    OffenderSearchPagedResults(
+      content = emptyList(),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
+      totalPages = 0
+    )
+
+  private val searchPeopleOmittedDetailsResponse =
+    OffenderSearchPagedResults(
+      content = listOf(
+        OffenderDetails(
+          firstName = null,
+          surname = null,
+          dateOfBirth = null,
+          otherIds = OtherIds(crn = crn, null, null, null, null)
+        )
+      ),
+      pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
+      totalPages = 1
+    )
 }
