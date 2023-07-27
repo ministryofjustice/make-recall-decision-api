@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
@@ -154,6 +155,16 @@ internal class RecommendationService(
     val recommendationEntity = getRecommendationEntityById(recommendationId)
 
     return buildRecommendationResponse(recommendationEntity)
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  fun getLatestCompleteRecommendation(crn: String): RecommendationResponse {
+    val recommendationEntities = recommendationRepository.findByCrn(crn)
+    val latestCompleteRecommendation = recommendationEntities
+      .filter { recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" } }
+      .sorted()
+      .firstOrNull() ?: throw NoCompletedRecommendationFoundException("No completed recommendation found for crn: $crn")
+    return buildRecommendationResponse(latestCompleteRecommendation)
   }
 
   @OptIn(ExperimentalStdlibApi::class)

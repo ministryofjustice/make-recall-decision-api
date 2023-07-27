@@ -7,12 +7,14 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoManagementOversightException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
@@ -66,6 +68,20 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No recommendation available: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
+  @ExceptionHandler(NoCompletedRecommendationFoundException::class)
+  fun handleNoCompletedRecommendationFoundException(e: NoCompletedRecommendationFoundException): ResponseEntity<ErrorResponse> {
+    log.info("No Completed Recommendation found exception: {}", e.message)
+    return ResponseEntity
+      .status(NO_CONTENT)
+      .body(
+        ErrorResponse(
+          status = NO_CONTENT,
+          userMessage = "No completed recommendation available: ${e.message}",
           developerMessage = e.message
         )
       )

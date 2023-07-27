@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequestWithIsSentToDeliusOnly
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
@@ -35,6 +36,40 @@ import java.time.format.DateTimeFormatter
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class RecommendationControllerTest() : IntegrationTestBase() {
+
+  @Test
+  fun `get latest complete recommendation`() {
+    // given
+    createMultipleRecommendationsWithStatuses()
+
+    // when
+    val response = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/recommendation/latest-complete/$crn")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    )
+
+    // then
+    assertThat(response.getJSONArray("recallConsideredList").getJSONObject(0).getString("recallConsideredDetail")).isEqualTo("This is the latest recommendation")
+    assertStatusIsCompleted()
+  }
+
+  @Test
+  fun `get latest complete recommendation when nothing with completed status available`() {
+    // given
+    createMultipleIncompleteRecommendationsWithStatuses()
+
+    // when
+    val response = webTestClient.get()
+      .uri("/recommendation/latest-complete/$crn")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+
+    // then
+    response.expectStatus().isNoContent
+  }
 
   @Test
   fun `create recommendation`() {
@@ -128,47 +163,9 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
   fun `create multiple recommendations for same case with flagTriggerWork feature flag active`() {
-    repository.deleteAll()
-    licenceConditionsResponse(crn, 2500614567)
-    oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    val featureFlagString = "{\"flagTriggerWork\": true }"
-    webTestClient.post()
-      .uri("/recommendations")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
-      )
-      .headers {
-        (
-          listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
-          )
-          )
-      }
-      .exchange()
-      .expectStatus().isCreated
-    webTestClient.post()
-      .uri("/recommendations")
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
-      )
-      .headers {
-        (
-          listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
-          )
-          )
-      }
-      .exchange()
-      .expectStatus().isCreated
-
+    createMultipleRecommendations()
     val result = repository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name))
-    assertThat(result.size).isEqualTo(2)
+    assertThat(result.size).isEqualTo(3)
   }
 
   @Test
@@ -863,5 +860,135 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
+  }
+
+  private fun createMultipleRecommendationsWithStatuses() {
+    repository.deleteAll()
+    statusRepository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    createRecommendationsWithStatus("INCOMPLETE", null)
+    createRecommendationsWithStatus("COMPLETED", null)
+    Thread.sleep(3000)
+    createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
+  }
+
+  private fun createMultipleIncompleteRecommendationsWithStatuses() {
+    repository.deleteAll()
+    statusRepository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    createRecommendationsWithStatus("INCOMPLETE", null)
+    createRecommendationsWithStatus("INCOMPLETE", null)
+    createRecommendationsWithStatus("INCOMPLETE", "This is the latest recommendation")
+  }
+
+  private fun createRecommendationsWithStatus(status: String, recallConsideredDetail: String?) {
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(recommendationRequest(crn))
+        )
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
+            )
+            )
+        }
+        .exchange()
+    )
+    createdRecommendationId = response.get("id") as Int
+    updateRecommendation(updateRecommendationRequest(recallConsideredDetail = recallConsideredDetail))
+
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId/status")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationStatusRequest(activate = status, anotherToActivate = "SOME_STATUS"))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"))
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
+    Thread.sleep(3000)
+  }
+
+  private fun assertStatusIsCompleted() {
+    val response = convertResponseToJSONArray(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId/statuses")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .exchange()
+    )
+    assertThat(response.getJSONObject(0).getString("name")).isEqualTo("COMPLETED")
+  }
+
+  private fun createMultipleRecommendations() {
+    repository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
+    val featureFlagString = "{\"flagTriggerWork\": true }"
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
+    webTestClient.post()
+      .uri("/recommendations")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(recommendationRequest(crn))
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            it.set("X-Feature-Flags", featureFlagString)
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isCreated
   }
 }
