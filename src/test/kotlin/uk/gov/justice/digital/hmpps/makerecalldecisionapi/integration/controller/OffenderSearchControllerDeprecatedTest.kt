@@ -6,16 +6,42 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.web.reactive.function.BodyInserters.fromValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import kotlin.random.Random
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class OffenderSearchControllerTest(
+@Deprecated("Endpoints are deprecated and replaced with POST on paged-search", ReplaceWith(""), DeprecationLevel.WARNING)
+class OffenderSearchControllerDeprecatedTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
 ) : IntegrationTestBase() {
+
+  @Test
+  fun `backward compatible endpoint retrieves simple case summary details using crn`() {
+    runTest {
+      val crn = "X123456"
+      val firstName = "Pontius"
+      val lastName = "Pilate"
+      val dateOfBirth = "2000-11-30"
+      offenderSearchByCrnResponse(
+        crn = crn,
+        firstName = firstName,
+        surname = lastName,
+        dateOfBirth = dateOfBirth,
+        pageSize = 10
+      )
+      webTestClient.get()
+        .uri("/search?crn=$crn")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.length()").isEqualTo(1)
+        .jsonPath("$[0].name").isEqualTo("$firstName $lastName")
+        .jsonPath("$[0].dateOfBirth").isEqualTo(dateOfBirth)
+        .jsonPath("$[0].crn").isEqualTo(crn)
+    }
+  }
 
   @Test
   fun `retrieves simple case summary details using crn`() {
@@ -25,11 +51,9 @@ class OffenderSearchControllerTest(
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-09"
       offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -48,11 +72,9 @@ class OffenderSearchControllerTest(
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-09"
       offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
-      val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?lastName=$lastName&firstName=$firstName&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -71,11 +93,9 @@ class OffenderSearchControllerTest(
       val pageSize = Random.Default.nextInt(1, 10)
       val totalNumberOfPages = Random.Default.nextInt(page + 1, 20 + 1)
       offenderSearchByCrnResponse(crn = crn, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=$page&pageSize=$pageSize")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=$page&pageSize=$pageSize")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -91,11 +111,9 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -114,11 +132,9 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -137,11 +153,9 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessRestricted(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -160,11 +174,9 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userNotFound(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus().isOk
         .expectBody()
@@ -182,11 +194,10 @@ class OffenderSearchControllerTest(
     runTest {
       val crn = "X123456"
       offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -203,11 +214,10 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
         .exchange()
         .expectStatus()
         .is5xxServerError
@@ -221,8 +231,19 @@ class OffenderSearchControllerTest(
   @Test
   fun `access denied on paged search endpoint when insufficient privileges used`() {
     runTest {
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+      webTestClient.get()
+        .uri("/paged-search?crn=$crn&page=0&pageSize=1")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized
+    }
+  }
+
+  @Test
+  fun `access denied on deprecated search endpoint when insufficient privileges used`() {
+    runTest {
+      webTestClient.get()
+        .uri("/search?crn=$crn")
         .exchange()
         .expectStatus()
         .isUnauthorized
