@@ -166,11 +166,10 @@ internal class RecommendationService(
   }
 
   fun getLatestCompleteRecommendationOverview(crn: String): RecommendationsResponse {
-    val latestCompleteRecommendation = getLatestRecommendationEntity(crn)
     val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-    val recommendationDetails = getRecommendationsInProgressForCrn(crn)
 
-    val recommendationList = listOf(
+    val completedRecommendation = try {
+      val latestCompleteRecommendation = getLatestRecommendationEntity(crn)
       RecommendationsListItem(
         recommendationId = latestCompleteRecommendation.id,
         lastModifiedByName = latestCompleteRecommendation.data.lastModifiedByUserName,
@@ -180,11 +179,13 @@ internal class RecommendationService(
         statuses = recommmendationStatusRepository.findByRecommendationId(latestCompleteRecommendation.id),
         recallType = latestCompleteRecommendation.data.recallType
       )
-    )
+    } catch (ignore: NoCompletedRecommendationFoundException) {
+      null
+    }
+
     return RecommendationsResponse(
       personalDetailsOverview = personalDetailsOverview,
-      activeRecommendation = recommendationDetails,
-      recommendations = recommendationList
+      recommendations = completedRecommendation?.let { listOf(it) }
     )
   }
 
@@ -195,7 +196,8 @@ internal class RecommendationService(
         recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" }
       }
       .sorted()
-      .firstOrNull() ?: throw NoCompletedRecommendationFoundException("No completed recommendation found for crn: $crn")
+      .firstOrNull()
+      ?: throw NoCompletedRecommendationFoundException("No completed recommendation found for crn: $crn")
     return latestCompleteRecommendation
   }
 
