@@ -159,12 +159,44 @@ internal class RecommendationService(
 
   @OptIn(ExperimentalStdlibApi::class)
   fun getLatestCompleteRecommendation(crn: String): RecommendationResponse {
+    val userAccessResponse = userAccessValidator.checkUserAccess(crn)
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) RecommendationResponse(
+      userAccessResponse
+    ) else buildRecommendationResponse(getLatestRecommendationEntity(crn))
+  }
+
+  fun getLatestCompleteRecommendationOverview(crn: String): RecommendationsResponse {
+    val latestCompleteRecommendation = getLatestRecommendationEntity(crn)
+    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+    val recommendationDetails = getRecommendationsInProgressForCrn(crn)
+
+    val recommendationList = listOf(
+      RecommendationsListItem(
+        recommendationId = latestCompleteRecommendation.id,
+        lastModifiedByName = latestCompleteRecommendation.data.lastModifiedByUserName,
+        createdDate = latestCompleteRecommendation.data.createdDate,
+        lastModifiedDate = latestCompleteRecommendation.data.lastModifiedDate,
+        status = latestCompleteRecommendation.data.status,
+        statuses = recommmendationStatusRepository.findByRecommendationId(latestCompleteRecommendation.id),
+        recallType = latestCompleteRecommendation.data.recallType
+      )
+    )
+    return RecommendationsResponse(
+      personalDetailsOverview = personalDetailsOverview,
+      activeRecommendation = recommendationDetails,
+      recommendations = recommendationList
+    )
+  }
+
+  private fun getLatestRecommendationEntity(crn: String): RecommendationEntity {
     val recommendationEntities = recommendationRepository.findByCrn(crn)
     val latestCompleteRecommendation = recommendationEntities
-      .filter { recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" } }
+      .filter {
+        recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" }
+      }
       .sorted()
       .firstOrNull() ?: throw NoCompletedRecommendationFoundException("No completed recommendation found for crn: $crn")
-    return buildRecommendationResponse(latestCompleteRecommendation)
+    return latestCompleteRecommendation
   }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -836,7 +868,6 @@ internal class RecommendationService(
     val sorted = recommendationEntityList?.sortedBy {
       OffsetDateTime.parse(it.data.lastModifiedDate).toLocalDateTime()
     }?.reversed()
-
     return sorted
       ?.map {
         RecommendationsListItem(

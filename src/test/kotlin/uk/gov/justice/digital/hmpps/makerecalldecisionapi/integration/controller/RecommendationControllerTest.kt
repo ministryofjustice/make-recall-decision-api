@@ -38,6 +38,47 @@ import java.time.format.DateTimeFormatter
 class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
+  fun `get latest complete recommendation overview`() {
+    // given
+    createMultipleRecommendationsWithStatuses()
+
+    // when
+    val response = webTestClient.get()
+      .uri("/cases/$crn/last-completed")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+
+    // then
+    response
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
+      .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+      .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
+      .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
+      .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
+      .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
+      .jsonPath("$.recommendations.length()").isEqualTo(1)
+      .jsonPath("$.recommendations[0].recommendationId").isNotEmpty
+      .jsonPath("$.recommendations[0].lastModifiedByName").isEqualTo("some_user")
+      .jsonPath("$.recommendations[0].createdDate").isNotEmpty
+      .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
+      .jsonPath("$.recommendations[0].recallType.selected.value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.recommendations[0].statuses[0].name").isEqualTo("COMPLETED")
+      .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
+      .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
+      .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
+      .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
+      .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
+      .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("some_user")
+      .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
+      .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
+      .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
+      .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+      .isEqualTo("This is the latest recommendation")
+  }
+
+  @Test
   fun `get latest complete recommendation`() {
     // given
     createMultipleRecommendationsWithStatuses()
