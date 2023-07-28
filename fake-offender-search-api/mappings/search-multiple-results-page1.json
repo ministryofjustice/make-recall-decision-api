@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/search/people?page=1&size=20",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "[?($.surname =~ /o'connor/i)]"
+      },
+      {
+        "matchesJsonPath": "[?($.firstName =~ /john/i)]"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-multiple-results-page1.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
