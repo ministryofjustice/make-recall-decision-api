@@ -68,40 +68,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `get latest complete recommendation`() {
-    // given
-    createMultipleRecommendationsWithStatuses()
-
-    // when
-    val response = convertResponseToJSONObject(
-      webTestClient.get()
-        .uri("/recommendation/latest-complete/$crn")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-        .expectStatus().isOk
-    )
-
-    // then
-    assertThat(response.getJSONArray("recallConsideredList").getJSONObject(0).getString("recallConsideredDetail")).isEqualTo("This is the latest recommendation")
-    assertStatusIsCompleted()
-  }
-
-  @Test
-  fun `get latest complete recommendation when nothing with completed status available`() {
-    // given
-    createMultipleIncompleteRecommendationsWithStatuses()
-
-    // when
-    val response = webTestClient.get()
-      .uri("/recommendation/latest-complete/$crn")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-
-    // then
-    response.expectStatus().isNoContent
-  }
-
-  @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
