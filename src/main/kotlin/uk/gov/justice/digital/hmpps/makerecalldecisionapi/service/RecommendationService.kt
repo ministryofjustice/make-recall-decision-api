@@ -39,7 +39,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
@@ -157,14 +156,34 @@ internal class RecommendationService(
     return buildRecommendationResponse(recommendationEntity)
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
-  fun getLatestCompleteRecommendation(crn: String): RecommendationResponse {
-    val recommendationEntities = recommendationRepository.findByCrn(crn)
-    val latestCompleteRecommendation = recommendationEntities
-      .filter { recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" } }
-      .sorted()
-      .firstOrNull() ?: throw NoCompletedRecommendationFoundException("No completed recommendation found for crn: $crn")
-    return buildRecommendationResponse(latestCompleteRecommendation)
+  fun getLatestCompleteRecommendationOverview(crn: String): RecommendationsResponse {
+    val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
+
+    val completedRecommendation = getLatestRecommendationEntity(crn)
+
+    return RecommendationsResponse(
+      personalDetailsOverview = personalDetailsOverview,
+      recommendations = completedRecommendation?.let {
+        listOf(
+          RecommendationsListItem(
+            recommendationId = it.id,
+            lastModifiedByName = it.data.lastModifiedByUserName,
+            createdDate = it.data.createdDate,
+            lastModifiedDate = it.data.lastModifiedDate,
+            status = it.data.status,
+            statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
+            recallType = it.data.recallType
+          )
+        )
+      }
+    )
+  }
+
+  private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? {
+    return recommendationRepository.findByCrn(crn)
+      .filter {
+        recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" }
+      }.minOrNull()
   }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -836,7 +855,6 @@ internal class RecommendationService(
     val sorted = recommendationEntityList?.sortedBy {
       OffsetDateTime.parse(it.data.lastModifiedDate).toLocalDateTime()
     }?.reversed()
-
     return sorted
       ?.map {
         RecommendationsListItem(
