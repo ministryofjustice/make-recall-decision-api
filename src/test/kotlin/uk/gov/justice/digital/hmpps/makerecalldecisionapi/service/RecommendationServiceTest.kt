@@ -383,11 +383,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           then(recommendationRepository).should().save(recommendationToSave)
           then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
         }
+
         "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> {
           recommendationToSave.data.recommendationStartedDomainEventSent = true
           then(recommendationRepository).should().save(recommendationToSave)
           then(mrdEmitterMocked).shouldHaveNoInteractions()
         }
+
         else -> {
           then(recommendationRepository).should().save(recommendationToSave)
           then(mrdEmitterMocked).shouldHaveNoInteractions()
@@ -1654,6 +1656,47 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationEntity = captor.firstValue
 
       assertThat(recommendationEntity.data.convictionDetail).isNull()
+    }
+  }
+
+  @Test
+  fun `return case overview response for last completed`() {
+    runTest {
+
+      val lastModifiedDate1 = "2022-07-02T15:22:24.567Z"
+      val lastModifiedDate2 = "2022-07-01T15:22:24.567Z"
+      val lastModifiedDate3 = "2022-07-03T15:22:24.567Z"
+
+      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = Status.DOCUMENT_DOWNLOADED, recallTypeValue = RecallTypeValue.NO_RECALL, lastModifiedDate = lastModifiedDate1)
+      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = Status.DOCUMENT_DOWNLOADED, recallTypeValue = RecallTypeValue.NO_RECALL, lastModifiedDate = lastModifiedDate2)
+      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = Status.DOCUMENT_DOWNLOADED, recallTypeValue = RecallTypeValue.STANDARD, lastModifiedDate = lastModifiedDate3)
+
+      given(recommendationStatusRepository.findByRecommendationId(recommendation3.id)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = "COMPLETED", recommendationId = recommendation3.id)))
+
+      given(recommendationRepository.findByCrn(crn)).willReturn(listOf(recommendation1, recommendation2, recommendation3))
+
+      val response = recommendationService.getLatestCompleteRecommendationOverview(crn)
+
+      response.recommendations!!.get(0).let {
+        assertThat(it.recommendationId, equalTo(recommendation3.id))
+        assertThat(it.createdDate, equalTo(recommendation3.data.createdDate))
+        assertThat(it.lastModifiedDate, equalTo(recommendation3.data.lastModifiedDate))
+        assertThat(it.recallType, equalTo(recommendation3.data.recallType))
+      }
+    }
+  }
+
+  @Test
+  fun `return case overview response for last completed when there are none`() {
+    runTest {
+
+      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = Status.DOCUMENT_DOWNLOADED, recallTypeValue = RecallTypeValue.STANDARD, lastModifiedDate = "2022-07-03T15:22:24.567Z")
+
+      given(recommendationRepository.findByCrn(crn)).willReturn(listOf(recommendation3))
+
+      val response = recommendationService.getLatestCompleteRecommendationOverview(crn)
+
+      assertThat(response.recommendations, equalTo(null))
     }
   }
 

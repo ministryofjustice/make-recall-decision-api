@@ -73,11 +73,11 @@ internal class RecommendationController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/recommendation/latest-complete/{crn}")
-  @Operation(summary = "Gets latetst complete recommendation for case")
-  suspend fun getLatestRecommendation(@PathVariable("crn") crn: String): RecommendationResponse {
-    log.info(normalizeSpace("Get latest complete recommendation for crn: $crn"))
-    return recommendationService.getLatestCompleteRecommendation(crn)
+  @GetMapping("/cases/{crn}/last-completed")
+  @Operation(summary = "Gets latest complete recommendation overview for case")
+  suspend fun getLatestRecommendationForOverview(@PathVariable("crn") crn: String): RecommendationsResponse {
+    log.info(normalizeSpace("Gets latest complete recommendation overview for crn: $crn"))
+    return recommendationService.getLatestCompleteRecommendationOverview(crn)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
