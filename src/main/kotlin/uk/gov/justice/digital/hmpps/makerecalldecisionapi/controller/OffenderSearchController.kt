@@ -46,26 +46,6 @@ internal class OffenderSearchController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/paged-search")
-  @Operation(summary = "Returns a list of people on probation based on a given CRN or name")
-  @Deprecated("This endpoint has been replaced by the /paged-search POST endpoint", level = DeprecationLevel.WARNING)
-  suspend fun pagedSearchGet(
-    @RequestParam(required = false) crn: String,
-    @RequestParam(required = false) firstName: String,
-    @RequestParam(required = false) lastName: String,
-    @RequestParam(required = true) page: Int,
-    @RequestParam(required = true) pageSize: Int
-  ): OffenderSearchResponse {
-    log.info(
-      normalizeSpace(
-        "Offender paged search endpoint hit for " +
-          "CRN: '$crn', FirstName: '${redact(firstName)}', LastName: '${redact(lastName)}'}"
-      )
-    )
-    return offenderSearchService.search(crn, firstName, lastName, page = page, pageSize = pageSize)
-  }
-
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/paged-search")
   @Operation(summary = "Returns a list of people on probation based on a given CRN or name")
   suspend fun pagedSearch(
