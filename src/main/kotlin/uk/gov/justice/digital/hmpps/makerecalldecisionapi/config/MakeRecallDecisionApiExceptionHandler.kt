@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_GATEWAY
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -43,6 +45,20 @@ class MakeRecallDecisionApiExceptionHandler {
   fun handleUserAccessException(e: UserAccessException): ResponseEntity<Unit> {
     log.info("UserAccess exception: {}", e.message)
     return ResponseEntity(FORBIDDEN)
+  }
+
+  @ExceptionHandler(WebClientResponseException.InternalServerError::class)
+  fun handleDownstreamDependencyErrorException(e: WebClientResponseException.InternalServerError): ResponseEntity<ErrorResponse> {
+    log.info("Downstream dependency error exception: {}", e.message)
+    return ResponseEntity
+      .status(BAD_GATEWAY)
+      .body(
+        ErrorResponse(
+          status = BAD_GATEWAY,
+          userMessage = "A system on which we depend has failed: ${e.message}",
+          developerMessage = e.message
+        )
+      )
   }
 
   @ExceptionHandler(NoManagementOversightException::class)
