@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.8.3"
-  kotlin("jvm") version "1.8.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.10.0"
+  kotlin("jvm") version "1.9.0"
   id("org.unbroken-dome.test-sets") version "4.0.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.8.10"
-  id("org.sonarqube") version "4.0.0.2929"
-  kotlin("plugin.spring") version "1.8.10"
+  kotlin("plugin.jpa") version "1.9.0"
+  id("org.sonarqube") version "4.3.0.3225"
+  kotlin("plugin.spring") version "1.9.0"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -22,7 +22,7 @@ allOpen {
   annotations("javax.persistence.Entity")
 }
 
-val springDocVersion = "1.6.15"
+val springDocVersion = "1.7.0"
 
 dependencies {
 
@@ -32,10 +32,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.0.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
-  implementation("io.opentelemetry:opentelemetry-api:1.24.0")
-  implementation("joda-time:joda-time:2.12.2")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.1.2")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.11.2")
+  implementation("io.opentelemetry:opentelemetry-api:1.28.0")
+  implementation("joda-time:joda-time:2.12.5")
   implementation("com.deepoove:poi-tl:1.12.1") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.15.2")
-  implementation("org.postgresql:postgresql:42.5.4")
+  implementation("org.flywaydb:flyway-core:9.21.1")
+  implementation("org.postgresql:postgresql:42.6.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.15.0")
-  implementation("io.sentry:sentry-logback:6.15.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.28.0")
+  implementation("io.sentry:sentry-logback:6.28.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -58,10 +58,10 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.8.0")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.1")
   implementation("org.json:json:20230618")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
