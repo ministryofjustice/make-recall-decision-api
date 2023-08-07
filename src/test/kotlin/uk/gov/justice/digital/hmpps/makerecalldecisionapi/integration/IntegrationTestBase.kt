@@ -14,6 +14,7 @@ import org.mockserver.matchers.Times.exactly
 import org.mockserver.model.Delay
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.HttpStatusCode
 import org.mockserver.model.JsonBody.json
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
@@ -401,6 +402,13 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(request).respond(
       response().withContentType(APPLICATION_JSON).withBody(deliusRecommendationModelResponse(firstName))
         .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
+  protected fun deliusInternalServerErrorResponse() {
+    deliusIntegration.`when`(request()).respond(
+      response()
+        .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
     )
   }
 

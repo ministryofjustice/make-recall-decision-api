@@ -742,6 +742,21 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `given downstream dependency returns internal server error when calling an endpoint then a bad gateway response is returned`() {
+    runTest {
+      userAccessAllowed(crn)
+      deliusInternalServerErrorResponse()
+
+      webTestClient.get()
+        .uri("/cases/$crn/recommendations")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_GATEWAY)
+    }
+  }
+
+  @Test
   fun `given case is excluded when fetching a recommendation then only return user access details`() {
     runTest {
       userAccessAllowedOnce(crn)
@@ -823,15 +838,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     }
   }
 
-  private fun getRecommendation(): JSONObject {
-    return convertResponseToJSONObject(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .exchange()
-    )
-  }
-
   @Test
   fun `given case is excluded when generating a Part A then only return user access details`() {
     runTest {
@@ -871,18 +877,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
   }
 
-  private fun createMultipleIncompleteRecommendationsWithStatuses() {
-    repository.deleteAll()
-    statusRepository.deleteAll()
-    licenceConditionsResponse(crn, 2500614567)
-    oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    createRecommendationsWithStatus("INCOMPLETE", null)
-    createRecommendationsWithStatus("INCOMPLETE", null)
-    createRecommendationsWithStatus("INCOMPLETE", "This is the latest recommendation")
-  }
-
   private fun createRecommendationsWithStatus(status: String, recallConsideredDetail: String?) {
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -919,16 +913,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
     Thread.sleep(3000)
-  }
-
-  private fun assertStatusIsCompleted() {
-    val response = convertResponseToJSONArray(
-      webTestClient.get()
-        .uri("/recommendations/$createdRecommendationId/statuses")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
-        .exchange()
-    )
-    assertThat(response.getJSONObject(0).getString("name")).isEqualTo("COMPLETED")
   }
 
   private fun createMultipleRecommendations() {
