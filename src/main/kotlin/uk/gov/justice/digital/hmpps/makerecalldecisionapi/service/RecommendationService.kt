@@ -53,13 +53,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localDateTimeFromString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel as DeliusRecommendationModel
@@ -882,23 +883,23 @@ data class RecommendationMetaData(
   var userPartACompletedByDateTime: LocalDateTime? = null
 )
 
-fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
+private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
   fetchRecommendationStatusesResponse: List<RecommendationStatusResponse>
 ): RecommendationMetaData {
   fetchRecommendationStatusesResponse.forEach {
     if (it.name.equals("ACO_SIGNED")) {
       this.countersignAcoName = it.createdByUserFullName
-      this.countersignAcoDateTime = localDateTimeFromString(it.created)
+      this.countersignAcoDateTime = dateTimeWithDaylightSavingFromString(utcDateTimeString = it.created)
       this.acoCounterSignEmail = it.emailAddress
     }
     if (it.name.equals("SPO_SIGNED")) {
       this.countersignSpoName = it.createdByUserFullName
-      this.countersignSpoDateTime = localDateTimeFromString(it.created)
+      this.countersignSpoDateTime = dateTimeWithDaylightSavingFromString(utcDateTimeString = it.created)
       this.spoCounterSignEmail = it.emailAddress
     }
     if (it.name.equals("PO_RECALL_CONSULT_SPO")) {
       this.userNamePartACompletedBy = it.createdByUserFullName
-      this.userPartACompletedByDateTime = localNowDateTime()
+      this.userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
       this.userEmailPartACompletedBy = it.emailAddress
     }
   }
