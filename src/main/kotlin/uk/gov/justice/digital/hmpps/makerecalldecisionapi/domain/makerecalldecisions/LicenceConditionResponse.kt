@@ -20,6 +20,7 @@ data class LicenceConditionResponse(
 )
 
 data class LicenceConditionDetail(
+  val code: String? = null,
   val text: String? = null,
   val expandedText: String? = null,
   val category: String? = null

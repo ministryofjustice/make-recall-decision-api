@@ -570,10 +570,13 @@ class LicenceConditionsControllerTest(
     assertThat(response.getJSONObject("cvlLicence").getString("licenceExpiryDate")).isEqualTo("2022-06-15")
     assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionStartDate")).isEqualTo("2022-06-16")
     assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionExpiryDate")).isEqualTo("2022-06-17")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee43")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is a standard licence condition")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee45")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is an additional licence condition")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("expandedText")).isEqualTo("Expanded additional licence condition")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("category")).isEqualTo("Freedom of movement")
+    assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee47")
     assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("text")).isEqualTo("This is a bespoke condition")
   }
 
