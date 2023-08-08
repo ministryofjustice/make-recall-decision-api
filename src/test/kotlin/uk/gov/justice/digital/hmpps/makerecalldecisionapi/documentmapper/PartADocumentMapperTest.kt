@@ -37,10 +37,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationMetaData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @ExperimentalCoroutinesApi
 class PartADocumentMapperTest {
@@ -1007,7 +1009,12 @@ class PartADocumentMapperTest {
     countersignAcoName = "Aco Name",
     userNamePartACompletedBy = "Henry Richarlison",
     userEmailPartACompletedBy = "Henry.Richarlison@test.com",
-    countersignAcoDateTime = LocalDateTime.now(),
-    countersignSpoDateTime = LocalDateTime.now(),
+    countersignAcoDateTime = DateTimeHelper.dateTimeWithDaylightSavingFromString(
+      LocalDateTime.now(ZoneId.of("UTC")).toString()
+    ),
+    countersignSpoDateTime = DateTimeHelper.dateTimeWithDaylightSavingFromString(
+      LocalDateTime.now(ZoneId.of("UTC")).toString()
+    ),
+    userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
   )
 }

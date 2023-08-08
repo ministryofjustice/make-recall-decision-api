@@ -1558,7 +1558,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate Part A document from recommendation data`() {
     runTest {
-      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = null, createdBy = null, name = null, recommendationId = 1L)))
+      val status = RecommendationStatusEntity(createdByUserFullName = "John Smith", active = true, created = "2023-08-08T08:20:05.047Z", createdBy = null, name = "DRAFT", recommendationId = 1L)
+      val acoSignedStatus = status.copy(name = "ACO_SIGNED")
+      val spoSignedStatus = status.copy(name = "SPO_SIGNED")
+      val poRecallConsultSpoStatus = status.copy(name = "PO_RECALL_CONSULT_SPO")
+
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(listOf(status, acoSignedStatus, spoSignedStatus, poRecallConsultSpoStatus))
       initialiseWithMockedTemplateReplacementService()
       then(recommendationRepository).should(times(0)).save(any())
 
@@ -1585,8 +1590,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
 
-      val captor = argumentCaptor<RecommendationResponse>()
-      then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
+      val recommendationResponseCaptor = argumentCaptor<RecommendationResponse>()
+      val metaDataCaptor = argumentCaptor<RecommendationMetaData>()
+      then(templateReplacementServiceMocked).should(times(1)).generateDocFromRecommendation(recommendationResponseCaptor.capture(), anyObject(), metaDataCaptor.capture())
+      assertThat(metaDataCaptor.firstValue.countersignAcoDateTime).isNotNull
+      assertThat(metaDataCaptor.firstValue.countersignSpoDateTime).isNotNull
+      assertThat(metaDataCaptor.firstValue.userPartACompletedByDateTime).isNotNull
     }
   }
 
