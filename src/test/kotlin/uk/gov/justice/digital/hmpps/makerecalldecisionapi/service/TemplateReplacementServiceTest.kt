@@ -72,11 +72,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate.now
 import java.time.LocalDate.parse
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -287,8 +289,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         countersignAcoName = "Aco Name",
         userNamePartACompletedBy = "Henry Richarlison",
         userEmailPartACompletedBy = "Henry.Richarlison@test.com",
-        countersignAcoDateTime = LocalDateTime.now(),
-        countersignSpoDateTime = LocalDateTime.now(),
+        countersignAcoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
+        countersignSpoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
+        userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
     }

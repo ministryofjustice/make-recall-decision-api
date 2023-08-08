@@ -6,7 +6,9 @@ import org.joda.time.format.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -22,6 +24,11 @@ class DateTimeHelper {
     fun utcNowDateTimeString(): String {
       val formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
       return formatter.print(DateTime(DateTimeZone.UTC)).toString()
+    }
+
+    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime {
+      val utcZonedDateTime = ZonedDateTime.of(LocalDateTime.parse(utcDateTimeString?.replace("Z", MrdTextConstants.EMPTY_STRING)), ZoneId.of("UTC"))
+      return utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
     }
 
     fun localNowDateTime(): LocalDateTime {
