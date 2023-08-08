@@ -36,11 +36,11 @@ internal class CreateAndVaryALicenceService(
             licenceExpiryDate = convertDateStringToIso8601Date(licence?.licenceExpiryDate),
             topupSupervisionStartDate = convertDateStringToIso8601Date(licence?.topupSupervisionStartDate),
             topupSupervisionExpiryDate = convertDateStringToIso8601Date(licence?.topupSupervisionExpiryDate),
-            standardLicenceConditions = licence?.standardLicenceConditions?.map { LicenceConditionDetail(it.text) },
-            standardPssConditions = licence?.standardPssConditions?.map { LicenceConditionDetail(it.text) },
-            additionalLicenceConditions = licence?.additionalLicenceConditions?.map { LicenceConditionDetail(it.text, it.expandedText, it.category,) },
-            additionalPssConditions = licence?.additionalPssConditions?.map { LicenceConditionDetail(it.text, it.expandedText) },
-            bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.text) }
+            standardLicenceConditions = licence?.standardLicenceConditions?.map { LicenceConditionDetail(it.code, it.text) },
+            standardPssConditions = licence?.standardPssConditions?.map { LicenceConditionDetail(it.code, it.text) },
+            additionalLicenceConditions = licence?.additionalLicenceConditions?.map { LicenceConditionDetail(it.code, it.text, it.expandedText, it.category,) },
+            additionalPssConditions = licence?.additionalPssConditions?.map { LicenceConditionDetail(it.code, it.text, it.expandedText) },
+            bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.code, it.text) }
           )
         } catch (ex: NoCvlLicenceByIdException) {
           log.error(ex.message)
