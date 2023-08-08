@@ -54,7 +54,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStart
   "standardLicenceConditions": [
     {
       "id": 98987,
-      "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee43",
       "sequence": 1,
       "text": "This is a standard licence condition"
     }
@@ -62,7 +62,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStart
   "standardPssConditions": [
     {
       "id": 98987,
-      "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee44",
       "sequence": 1,
       "text": "This is a standard PSS licence condition"
     }
@@ -70,7 +70,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStart
   "additionalLicenceConditions": [
     {
       "id": 98989,
-      "code": "meetingAddress",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee45",
       "category": "Freedom of movement",
       "sequence": 1,
       "text": "This is an additional licence condition",
@@ -100,7 +100,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStart
   "additionalPssConditions": [
     {
       "id": 98989,
-      "code": "meetingAddress",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee46",
       "category": "Freedom of movement",
       "sequence": 1,
       "text": "This is an additional PSS licence condition",
@@ -129,6 +129,7 @@ fun licenceIdResponse(licenceId: Int, nomisId: String, crn: String, licenceStart
   ],
   "bespokeConditions": [
     {
+      "code": "9ce9d594-e346-4785-9642-c87e764bee47",
       "id": 98989,
       "sequence": 1,
       "text": "This is a bespoke condition"

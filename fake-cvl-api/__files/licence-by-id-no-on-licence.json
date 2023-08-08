@@ -60,7 +60,7 @@
   "standardPssConditions": [
     {
       "id": 98987,
-      "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee38",
       "sequence": 1,
       "text": "This is a standard PSS licence condition"
     }
@@ -68,7 +68,7 @@
   "additionalLicenceConditions": [
     {
       "id": 98989,
-      "code": "meetingAddress",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee42",
       "category": "Freedom of movement",
       "sequence": 1,
       "text": "This is an additional licence condition",
@@ -98,7 +98,7 @@
   "additionalPssConditions": [
     {
       "id": 98989,
-      "code": "meetingAddress",
+      "code": "9ce9d594-e346-4785-9642-c87e764bee43",
       "category": "Freedom of movement",
       "sequence": 1,
       "text": "This is an additional PSS licence condition",
