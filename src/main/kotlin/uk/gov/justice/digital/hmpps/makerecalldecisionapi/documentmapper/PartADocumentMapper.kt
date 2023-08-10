@@ -9,11 +9,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
@@ -71,8 +73,15 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
         convertBooleanToYesNo(recommendation.hasContrabandRisk?.selected),
         recommendation.hasContrabandRisk?.details
       ),
-      selectedStandardConditionsBreached = recommendation.licenceConditionsBreached?.standardLicenceConditions?.selected,
-      additionalConditionsBreached = buildAlternativeConditionsBreachedText(recommendation.licenceConditionsBreached?.additionalLicenceConditions),
+      selectedStandardConditionsBreached = buildStandardLicenceCodes(
+        recommendation.licenceConditionsBreached?.standardLicenceConditions?.selected,
+        recommendation.cvlLicenceConditionsBreached?.standardLicenceConditions?.selected
+      ),
+      additionalConditionsBreached = buildAlternativeConditionsBreachedText(
+        recommendation.licenceConditionsBreached?.additionalLicenceConditions,
+        recommendation.cvlLicenceConditionsBreached?.additionalLicenceConditions,
+        recommendation.cvlLicenceConditionsBreached?.bespokeLicenceConditions,
+      ),
       isUnderIntegratedOffenderManagement = recommendation.underIntegratedOffenderManagement?.selected,
       localPoliceContact = recommendation.localPoliceContact,
       vulnerabilities = recommendation.vulnerabilities,
@@ -195,38 +204,80 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     return if (value == true) YES else if (value == false) NO else EMPTY_STRING
   }
 
-  private fun buildAlternativeConditionsBreachedText(additionalLicenceConditions: AdditionalLicenceConditions?): String {
+  private fun buildStandardLicenceCodes(standardCodes: List<String>?, cvlStandardCodes: List<String>?): List<String>? {
+    if (standardCodes !== null) {
+      return standardCodes
+    }
+    if (cvlStandardCodes !== null) {
+      return cvlStandardCodes
+        .map { code -> SelectedStandardLicenceConditions.values().find { it.isCodeForCvl(code) } }
+        .filter { it != null }
+        .map { it?.name as String }
+    }
+    return null
+  }
 
-    val selectedOptions = if (additionalLicenceConditions?.selectedOptions != null) {
-      additionalLicenceConditions.allOptions?.filter { sel ->
-        additionalLicenceConditions.selectedOptions.any {
-          it.subCatCode == sel.subCatCode && it.mainCatCode == sel.mainCatCode
+  private fun buildAlternativeConditionsBreachedText(
+    additionalLicenceConditions: AdditionalLicenceConditions?,
+    cvlAdditionalLicenceConditions: LicenceConditionSection?,
+    cvlBespokeLicenceConditions: LicenceConditionSection?,
+  ): String {
+
+    if (additionalLicenceConditions != null) {
+
+      val selectedOptions = if (additionalLicenceConditions?.selectedOptions != null) {
+        additionalLicenceConditions.allOptions?.filter { sel ->
+          additionalLicenceConditions.selectedOptions.any {
+            it.subCatCode == sel.subCatCode && it.mainCatCode == sel.mainCatCode
+          }
         }
+      } else {
+        // Left this line in to make the code backwards compatible after the issue described in MRD-1056 was fixed
+        additionalLicenceConditions?.allOptions
+          ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
       }
-    } else {
-      // Left this line in to make the code backwards compatible after the issue described in MRD-1056 was fixed
-      additionalLicenceConditions?.allOptions
-        ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
+
+      return selectedOptions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+
+        builder.append(licenceCondition.title)
+        builder.append(System.lineSeparator())
+        builder.append(licenceCondition.details)
+
+        if (licenceCondition.note != null) {
+          builder.append(System.lineSeparator())
+          builder.append("Note: " + licenceCondition.note)
+        }
+
+        if (selectedOptions.size - 1 != index) {
+          builder.append(System.lineSeparator())
+          builder.append(System.lineSeparator())
+        }
+        builder
+      }?.toString()
+        ?: EMPTY_STRING
     }
 
-    return selectedOptions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+    val builder = StringBuilder()
 
-      builder.append(licenceCondition.title)
-      builder.append(System.lineSeparator())
-      builder.append(licenceCondition.details)
-
-      if (licenceCondition.note != null) {
+    cvlAdditionalLicenceConditions?.selected
+      ?.map { code -> cvlAdditionalLicenceConditions.allOptions?.find { it.code == code }?.text }
+      ?.foldIndexed(builder) { index, buffer, text ->
+        buffer.append(text)
         builder.append(System.lineSeparator())
-        builder.append("Note: " + licenceCondition.note)
+        builder.append(System.lineSeparator())
+        buffer
       }
 
-      if (selectedOptions.size - 1 != index) {
+    cvlBespokeLicenceConditions?.selected
+      ?.map { code -> cvlBespokeLicenceConditions.allOptions?.find { it.code == code }?.text }
+      ?.foldIndexed(builder) { index, buffer, text ->
+        buffer.append(text)
         builder.append(System.lineSeparator())
         builder.append(System.lineSeparator())
+        buffer
       }
-      builder
-    }?.toString()
-      ?: EMPTY_STRING
+
+    return builder.toString().trim()
   }
 
   private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {

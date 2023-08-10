@@ -97,10 +97,10 @@
     {
       "id": 98789,
       "code": "9ce9d594-e346-4785-9642-c87e764bee41",
-      "category": "Freedom of movement",
+      "category": "Address Approved Category",
       "sequence": 1,
-      "text": "This is another additional licence condition",
-      "expandedText": "Expanded additional licence condition",
+      "text": "Address approved Text",
+      "expandedText": "Address approved expandedText",
       "data": [
         {
           "id": 98789,
@@ -127,7 +127,7 @@
     {
       "id": 98989,
       "code": "9ce9d594-e346-4785-9642-c87e764bee43",
-      "category": "Freedom of movement",
+      "category": "Work Restrictions",
       "sequence": 1,
       "text": "This is an additional PSS licence condition",
       "expandedText": "Expanded additional PSS licence condition",
@@ -156,6 +156,7 @@
   "bespokeConditions": [
     {
       "id": 98989,
+      "code": "9ce9d594-e346-4785-9642-c87e764bee45",
       "sequence": 1,
       "text": "This is a bespoke condition"
     }

@@ -44,6 +44,7 @@ data class RecommendationResponse(
   val personOnProbation: PersonOnProbationDto? = null,
   val alternativesToRecallTried: AlternativesToRecallTried? = null,
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
+  val cvlLicenceConditionsBreached: CvlLicenceConditionsBreached? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   val vulnerabilities: VulnerabilitiesRecommendation? = null,
   val convictionDetail: ConvictionDetail? = null,

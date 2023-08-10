@@ -225,6 +225,7 @@ internal class RecommendationService(
       personOnProbation = recommendationEntity.data.personOnProbation?.toPersonOnProbationDto(),
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
+      cvlLicenceConditionsBreached = recommendationEntity.data.cvlLicenceConditionsBreached,
       underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
       localPoliceContact = recommendationEntity.data.localPoliceContact,
       vulnerabilities = recommendationEntity.data.vulnerabilities,

@@ -13,9 +13,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CvlLicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
@@ -325,6 +328,32 @@ class PartADocumentMapperTest {
   }
 
   @Test
+  fun `given alternative licence conditions from cvl then build up the text for alternative licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        licenceConditionsBreached = null,
+        cvlLicenceConditionsBreached = CvlLicenceConditionsBreached(
+          standardLicenceConditions = null,
+          additionalLicenceConditions = LicenceConditionSection(
+            selected = listOf("1", "2"),
+            allOptions = listOf(LicenceConditionOption("1", "one"), LicenceConditionOption("3", "three"), LicenceConditionOption("2", "two"))
+          ),
+          bespokeLicenceConditions = LicenceConditionSection(
+            selected = listOf("5", "6"),
+            allOptions = listOf(LicenceConditionOption("5", "five"), LicenceConditionOption("6", "six"))
+          )
+        )
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.additionalConditionsBreached).isEqualTo("one\n\ntwo\n\nfive\n\nsix")
+    }
+  }
+
+  @Test
   fun `given multiple alternative licence conditions then build up the text with line breaks for alternative licences in the part A`() {
     runTest {
       val recommendation = RecommendationResponse(
@@ -459,6 +488,29 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
       assertThat(result.selectedStandardConditionsBreached?.get(0)).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+    }
+  }
+
+  @Test
+  fun `given selected standard licence conditions from cvl then return this for standard licences in the part A`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        licenceConditionsBreached = null,
+        cvlLicenceConditionsBreached = CvlLicenceConditionsBreached(
+          standardLicenceConditions = LicenceConditionSection(
+            selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode, SelectedStandardLicenceConditions.ADDRESS_APPROVED.cvlCode)
+          ),
+          additionalLicenceConditions = null,
+          bespokeLicenceConditions = null
+        )
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.selectedStandardConditionsBreached?.get(0)).isEqualTo(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
+      assertThat(result.selectedStandardConditionsBreached?.get(1)).isEqualTo(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name)
     }
   }
 
