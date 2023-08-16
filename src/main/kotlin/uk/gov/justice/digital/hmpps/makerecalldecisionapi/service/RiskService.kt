@@ -102,28 +102,31 @@ internal class RiskService(
       log.info("No assessments available for CRN: $crn - ${ex.message}")
       return AssessmentInfo(error = extractErrorCode(ex, "risk assessments", crn))
     }
-    val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
-    val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment, hideOffenceDetailsWhenNoMatch)
+
     return buildAssessmentInfo(
       crn = crn,
-      activeConvictionPresent = convictionsFromDelius.isNotEmpty(),
-      offences = offences,
-      latestCompleteAssessment = latestCompleteAssessment,
+      convictionsFromDelius = convictionsFromDelius,
+      assessmentsResponse = assessmentsResponse,
       hideOffenceDetailsWhenNoMatch = hideOffenceDetailsWhenNoMatch
     )
   }
 
   private fun buildAssessmentInfo(
     crn: String?,
-    activeConvictionPresent: Boolean,
-    offences: List<Offence>,
-    latestCompleteAssessment: Assessment?,
+    convictionsFromDelius: List<Conviction>,
+    assessmentsResponse: AssessmentsResponse,
     hideOffenceDetailsWhenNoMatch: Boolean?
   ): AssessmentInfo {
+
+    val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
+
+    val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment, hideOffenceDetailsWhenNoMatch)
     val offencesMatch = offences.any {
       currentOffenceCodesMatch(latestCompleteAssessment, it) && datesMatch(latestCompleteAssessment, it.date)
-    }
+    } && convictionsFromDelius.isNotEmpty()
+
     val lastUpdatedDate = latestCompleteAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
+
     val offenceDescription = if (hideOffenceDetailsWhenNoMatch == true) {
       getOffenceDescriptionWhenOffencesDoNotMatch(offences, latestCompleteAssessment)
     } else {
@@ -138,10 +141,9 @@ internal class RiskService(
     return AssessmentInfo(
       error = errorOnBlankOffenceDescription,
       offenceDescription = offenceDescription,
-      offencesMatch = offencesMatch && activeConvictionPresent,
+      offencesMatch = offencesMatch,
       lastUpdatedDate = lastUpdatedDate,
-      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment) &&
-        (latestCompleteAssessment?.assessmentStatus == "COMPLETE" && latestCompleteAssessment.superStatus == "COMPLETE")
+      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment)
     )
   }
 
