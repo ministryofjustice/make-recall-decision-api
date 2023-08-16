@@ -235,6 +235,8 @@ internal class RecommendationService(
       userNameDntrLetterCompletedBy = recommendationEntity.data.userNameDntrLetterCompletedBy,
       lastDntrLetterDownloadDateTime = recommendationEntity.data.lastDntrLetterADownloadDateTime,
       indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
+      offenceDataFromLatestCompleteAssessment = recommendationEntity.data.offenceDataFromLatestCompleteAssessment,
+      offencesMatch = recommendationEntity.data.offencesMatch,
       offenceAnalysis = recommendationEntity.data.offenceAnalysis,
       fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
       indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
@@ -518,11 +520,15 @@ internal class RecommendationService(
     crn: String,
     deliusDetails: DeliusRecommendationModel
   ) {
-    indexOffenceDetails = riskService?.fetchAssessmentInfo(
+    val assessmentInfo = riskService?.fetchAssessmentInfo(
       crn,
       deliusDetails.activeConvictions,
       hideOffenceDetailsWhenNoMatch = true
-    )?.offenceDescription
+    )
+
+    indexOffenceDetails = assessmentInfo?.offenceDescription
+    offenceDataFromLatestCompleteAssessment = assessmentInfo?.offenceDataFromLatestCompleteAssessment
+    offencesMatch = assessmentInfo?.offencesMatch
   }
 
   private fun RecommendationModel.refreshConvictionDetail(deliusDetails: DeliusRecommendationModel) {

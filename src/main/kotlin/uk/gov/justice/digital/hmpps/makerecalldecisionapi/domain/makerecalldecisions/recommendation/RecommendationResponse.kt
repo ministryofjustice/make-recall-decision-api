@@ -53,6 +53,8 @@ data class RecommendationResponse(
   val userNameDntrLetterCompletedBy: String? = null,
   val lastDntrLetterDownloadDateTime: LocalDateTime? = null,
   val indexOffenceDetails: String? = null,
+  val offenceDataFromLatestCompleteAssessment: Boolean? = null,
+  val offencesMatch: Boolean? = null,
   val offenceAnalysis: String? = null,
   val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
