@@ -224,7 +224,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
       val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -245,7 +245,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
       val shouldBeTrueBecauseNoLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -259,27 +259,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is true and offences do not match as a later complete assessment exists`() {
-    runTest {
-      // given
-      given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
-      val convictions = listOf(convictionResponse())
-
-      // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = true)
-
-      // then
-      val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
-      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
-      assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(response?.offencesMatch).isEqualTo(true)
-      assertThat(response?.offenceDescription).isEqualTo(null)
-      then(arnApiClient).should().getAssessments(crn)
-    }
-  }
-
-  @Test
   fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as no active conviction with main offence exists`() {
     runTest {
       // given
@@ -287,33 +266,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment())) })
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, emptyList(), hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, emptyList())
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(false)
       assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
-      then(arnApiClient).should().getAssessments(crn)
-    }
-  }
-
-  @Test
-  fun `retrieves assessments when hideOffenceDetailsWhenNoMatch is false and offences do not match as a later complete assessment exists`() {
-    runTest {
-      // given
-      given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = true))) })
-
-      // when
-      val response = riskService.fetchAssessmentInfo(crn, listOf(convictionResponse()), hideOffenceDetailsWhenNoMatch = true)
-
-      // then
-      val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
-      assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
-      assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
-      assertThat(response?.offencesMatch).isEqualTo(true)
-      assertThat(response?.offenceDescription).isEqualTo(null)
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -352,7 +311,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
@@ -398,7 +357,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -444,7 +403,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
-      val response = riskService.fetchAssessmentInfo(crn, convictions, hideOffenceDetailsWhenNoMatch = false)
+      val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
       val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
@@ -754,7 +713,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
 
-      val response = riskService.fetchAssessmentInfo(crn, emptyList(), true)
+      val response = riskService.fetchAssessmentInfo(crn, emptyList())
 
       assertThat(response?.error).isEqualTo(expectedErrorCode)
     }

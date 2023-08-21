@@ -520,11 +520,7 @@ internal class RecommendationService(
     crn: String,
     deliusDetails: DeliusRecommendationModel
   ) {
-    val assessmentInfo = riskService?.fetchAssessmentInfo(
-      crn,
-      deliusDetails.activeConvictions,
-      hideOffenceDetailsWhenNoMatch = true
-    )
+    val assessmentInfo = riskService?.fetchAssessmentInfo(crn, deliusDetails.activeConvictions)
 
     indexOffenceDetails = assessmentInfo?.offenceDescription
     offenceDataFromLatestCompleteAssessment = assessmentInfo?.offenceDataFromLatestCompleteAssessment

@@ -21,7 +21,7 @@ internal class CaseSummaryOverviewService(
       val deliusOverview = deliusClient.getOverview(crn)
       val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
       val riskManagementPlan = riskService.getLatestRiskManagementPlan(crn)
-      val assessmentInfo = riskService.fetchAssessmentInfo(crn, deliusOverview.activeConvictions, hideOffenceDetailsWhenNoMatch = false)
+      val assessmentInfo = riskService.fetchAssessmentInfo(crn, deliusOverview.activeConvictions)
 
       CaseSummaryOverviewResponse(
         personalDetailsOverview = deliusOverview.personalDetails.toOverview(crn),
