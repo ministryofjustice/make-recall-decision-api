@@ -12,7 +12,7 @@ class LicenceConditionsCoordinator {
     return SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence,
       ndeliusLicenceConditions = nDeliusLicenceConditions,
-      cvlLicenceCondition = if (onLicenceCvlWithLaterOrSameStartDate) cvlLicenceConditions.first() else null
+      cvlLicenceCondition = if (onLicenceCvlWithLaterOrSameStartDate) cvlLicenceConditions.firstOrNull() else null
     )
   }
 
