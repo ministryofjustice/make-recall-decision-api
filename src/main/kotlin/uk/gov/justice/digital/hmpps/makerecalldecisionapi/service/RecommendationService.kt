@@ -252,7 +252,9 @@ internal class RecommendationService(
       countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
       countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
       countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
-      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition
+      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
+      whoCompletedPartA = recommendationEntity.data.whoCompletedPartA,
+      practitionerForPartA = recommendationEntity.data.practitionerForPartA
     )
   }
 

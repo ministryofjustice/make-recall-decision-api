@@ -1112,6 +1112,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPrisoners).isEqualTo("")
     assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.overallRisk).isEqualTo("HIGH")
     assertThat(recommendationResponse.roshSummary?.lastUpdatedDate).isEqualTo("2023-01-12T20:39:00.000Z")
+    assertThat(recommendationResponse.whoCompletedPartA?.name).isEqualTo("Mr Jenkins")
+    assertThat(recommendationResponse.whoCompletedPartA?.email).isEqualTo("jenkins@onsabatical.com")
+    assertThat(recommendationResponse.whoCompletedPartA?.telephone).isEqualTo("1234567")
+    assertThat(recommendationResponse.whoCompletedPartA?.region).isEqualTo("London")
+    assertThat(recommendationResponse.whoCompletedPartA?.isPersonProbationPractitionerForOffender).isEqualTo(false)
+    assertThat(recommendationResponse.whoCompletedPartA?.localDeliveryUnit).isEqualTo("A123")
+    assertThat(recommendationResponse.practitionerForPartA?.name).isEqualTo("Mr Jenkins 1")
+    assertThat(recommendationResponse.practitionerForPartA?.email).isEqualTo("jenkins1@onsabatical.com")
+    assertThat(recommendationResponse.practitionerForPartA?.telephone).isEqualTo("12345678")
+    assertThat(recommendationResponse.practitionerForPartA?.region).isEqualTo("London2")
+    assertThat(recommendationResponse.practitionerForPartA?.localDeliveryUnit).isEqualTo("A1234")
   }
 
   @Test

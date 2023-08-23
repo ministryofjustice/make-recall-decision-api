@@ -70,7 +70,9 @@ data class RecommendationResponse(
   val countersignSpoTelephone: String? = null,
   val countersignSpoExposition: String? = null,
   val countersignAcoTelephone: String? = null,
-  val countersignAcoExposition: String? = null
+  val countersignAcoExposition: String? = null,
+  val whoCompletedPartA: WhoCompletedPartA? = null,
+  val practitionerForPartA: PractitionerForPartA? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
@@ -94,6 +96,23 @@ data class PersonOnProbation(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false
+)
+
+data class WhoCompletedPartA(
+  val name: String? = null,
+  val email: String? = null,
+  val telephone: String? = null,
+  val region: String? = null,
+  val localDeliveryUnit: String? = null,
+  val isPersonProbationPractitionerForOffender: Boolean? = null
+)
+
+data class PractitionerForPartA(
+  val name: String? = null,
+  val email: String? = null,
+  val telephone: String? = null,
+  val region: String? = null,
+  val localDeliveryUnit: String? = null
 )
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
