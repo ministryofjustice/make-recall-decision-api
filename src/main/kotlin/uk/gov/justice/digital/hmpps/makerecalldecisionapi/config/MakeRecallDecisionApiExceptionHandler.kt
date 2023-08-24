@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommenda
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RequestFailedException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import javax.validation.ValidationException
 
@@ -49,6 +50,20 @@ class MakeRecallDecisionApiExceptionHandler {
 
   @ExceptionHandler(WebClientResponseException.InternalServerError::class)
   fun handleDownstreamDependencyErrorException(e: WebClientResponseException.InternalServerError): ResponseEntity<ErrorResponse> {
+    log.info("Downstream dependency error exception: {}", e.message)
+    return ResponseEntity
+      .status(BAD_GATEWAY)
+      .body(
+        ErrorResponse(
+          status = BAD_GATEWAY,
+          userMessage = "A system on which we depend has failed: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
+  @ExceptionHandler(RequestFailedException::class)
+  fun handleRequestFailedException(e: RequestFailedException): ResponseEntity<ErrorResponse> {
     log.info("Downstream dependency error exception: {}", e.message)
     return ResponseEntity
       .status(BAD_GATEWAY)

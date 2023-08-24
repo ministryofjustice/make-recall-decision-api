@@ -501,6 +501,25 @@ class LicenceConditionsControllerTest(
   }
 
   @Test
+  fun `bad gateway 502 given on Delius max retries exceeded`() {
+    runTest {
+      userAccessAllowed(crn)
+      licenceConditionsError(crn)
+
+      webTestClient.get()
+        .uri("/cases/$crn/licence-conditions")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.BAD_GATEWAY.value())
+        .jsonPath("$.userMessage")
+        .isEqualTo("A system on which we depend has failed: Request failed for endpoint: /case-summary/A12345/licence-conditions after 3 retries")
+    }
+  }
+
+  @Test
   fun `gateway timeout 503 given on CVL Api timeout on licence match endpoint`() {
     runTest {
       userAccessAllowed(crn)

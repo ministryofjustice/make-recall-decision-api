@@ -5,9 +5,9 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RequestFailedException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
@@ -30,8 +30,8 @@ class DeliusClientTest : IntegrationTestBase() {
     personalDetailsError("X123456")
     assertThatThrownBy {
       deliusClient.getPersonalDetails("X123456")
-    }.isInstanceOf(WebClientResponseException.InternalServerError::class.java)
-      .hasMessage("500 Internal Server Error from GET http://localhost:8097/case-summary/X123456/personal-details")
+    }.isInstanceOf(RequestFailedException::class.java)
+      .hasMessage("Request failed for endpoint: /case-summary/X123456/personal-details after 3 retries")
   }
 
   @Test

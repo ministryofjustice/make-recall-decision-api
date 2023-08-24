@@ -466,6 +466,12 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun licenceConditionsError(crn: String) {
+    val licenceConditions =
+      request().withPath("/case-summary/$crn/licence-conditions")
+    deliusIntegration.`when`(licenceConditions).respond(response().withStatusCode(500))
+  }
+
   protected fun userResponse(username: String, email: String, delaySeconds: Long = 0) {
     val userResponse =
       request().withPath("/user/$username")

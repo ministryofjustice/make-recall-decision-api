@@ -9,12 +9,14 @@ import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RequestFailedException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
 import java.time.Duration
 import java.time.LocalDate
@@ -67,7 +69,10 @@ class DeliusClient(
   private inline fun <reified T : Any> getBody(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()) =
     get<T>(endpoint, parameters).body!!
 
-  private inline fun <reified T : Any> get(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): ResponseEntity<T> {
+  private inline fun <reified T : Any> get(
+    endpoint: String,
+    parameters: Map<String, List<Any>> = emptyMap()
+  ): ResponseEntity<T> {
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
@@ -78,9 +83,20 @@ class DeliusClient(
         { it == HttpStatus.NOT_FOUND },
         { throw PersonNotFoundException("No details available for endpoint: $endpoint") }
       )
+      .onStatus(
+        { it == HttpStatus.INTERNAL_SERVER_ERROR },
+        { throw RequestFailedException("Request failed for endpoint: $endpoint") }
+      )
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
+      .retryWhen(
+        Retry.backoff(3, Duration.ofSeconds(2))
+          .filter { it: Throwable ->
+            it is RequestFailedException
+          }
+          .onRetryExhaustedThrow { _, retrySignal -> RequestFailedException(message = "Request failed for endpoint: $endpoint after ${retrySignal.totalRetries()} retries") }
+      )
     log.info(normalizeSpace("Returning $endpoint details"))
     return getValueAndHandleWrappedException(result)!!
   }
@@ -203,11 +219,6 @@ class DeliusClient(
       val mainOffence: Offence,
       val additionalOffences: List<Offence>,
       val licenceConditions: List<LicenceCondition>
-    )
-
-    data class LicenceConditionCategory(
-      val code: String,
-      val description: String
     )
   }
 
