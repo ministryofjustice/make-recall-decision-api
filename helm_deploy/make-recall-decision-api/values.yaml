@@ -56,9 +56,8 @@ generic-service:
       POSTGRES_PASSWORD: "password"
     hmpps-domain-events-topic:
       HMPPS_DOMAIN_EVENT_TOPIC_ARN: "topic_arn"
-#      HMPPS_DOMAIN_EVENT_TOPIC_ACCESS_KEY_ID: "access_key_id"
-#      HMPPS_DOMAIN_EVENT_TOPIC_SECRET_ACCESS_KEY: "secret_access_key"
-      HMPPS_SQS_USE_WEB_TOKEN: "true"
+      HMPPS_DOMAIN_EVENT_TOPIC_ACCESS_KEY_ID: "access_key_id"
+      HMPPS_DOMAIN_EVENT_TOPIC_SECRET_ACCESS_KEY: "secret_access_key"
 
   allowlist:
     pen_tester: "195.95.131.65"
