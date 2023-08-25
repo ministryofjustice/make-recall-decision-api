@@ -367,6 +367,35 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
   }
 
   @Test
+  fun `No CVL Data and ND response missing licence conditions`() {
+    // given
+    val onLicenceStatusCode = "B"
+
+    // and
+    val deliusResponseWithoutLicenceConditions = deliusLicenceConditionsResponse(
+      listOf(
+        custodialConviction(
+          isCustodial = true,
+          custodialStatusCode = onLicenceStatusCode
+        ).withLicenceConditions(emptyList())
+      )
+    )
+
+    // and
+    val expected = SelectedLicenceConditions(
+      hasAllConvictionsReleasedOnLicence = true,
+      cvlLicenceCondition = null,
+      ndeliusLicenceConditions = deliusResponseWithoutLicenceConditions
+    )
+
+    // when
+    val actual = licenceConditionsCoordinator.selectLicenceConditions(nDeliusLicenceConditions = deliusResponseWithoutLicenceConditions, cvlLicenceConditions = emptyList())
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
   fun `Two CVL licences present with different start dates, one earlier and one later than the ND dates`() {
     // given
     val onLicenceStatusCode = "B"
