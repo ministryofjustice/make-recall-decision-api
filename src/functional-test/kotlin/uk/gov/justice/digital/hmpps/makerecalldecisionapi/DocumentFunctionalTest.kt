@@ -8,7 +8,6 @@ class DocumentFunctionalTest() : FunctionalTest() {
 
   @Test
   fun `fetch document`() {
-
     // when
     lastResponse = RestAssured
       .given()

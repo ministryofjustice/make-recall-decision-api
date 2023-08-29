@@ -8,7 +8,6 @@ class PersonalDetailsTest() : FunctionalTest() {
 
   @Test
   fun `fetch personal details`() {
-
     // when
     lastResponse = RestAssured
       .given()

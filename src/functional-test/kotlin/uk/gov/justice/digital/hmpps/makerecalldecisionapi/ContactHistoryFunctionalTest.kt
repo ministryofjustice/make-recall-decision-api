@@ -8,7 +8,6 @@ class ContactHistoryTest() : FunctionalTest() {
 
   @Test
   fun `fetch contact history, expected 200`() {
-
     // when
     lastResponse = RestAssured
       .given()

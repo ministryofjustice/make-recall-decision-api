@@ -8,7 +8,6 @@ class LicenceConditionsFunctionalTest() : FunctionalTest() {
 
   @Test
   fun `retrieve licence conditions`() {
-
     // when
     lastResponse = RestAssured
       .given()
