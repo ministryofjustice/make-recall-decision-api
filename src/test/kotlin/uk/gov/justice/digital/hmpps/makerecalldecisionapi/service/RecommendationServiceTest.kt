@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.joda.time.DateTimeUtils
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -1177,23 +1175,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `given case is excluded when creating a recommendation for user then return user access response details`() {
     runTest {
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
-      try {
-        recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
-        fail()
-      } catch (actual: UserAccessException) {
-        val expected = UserAccessException(
-          Gson().toJson(
-            UserAccess(
-              userRestricted = false,
-              userExcluded = true,
-              userNotFound = false,
-              exclusionMessage = "I am an exclusion message",
-              restrictionMessage = null
-            )
-          )
+      val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
+      // then
+      assertThat(response?.userAccessResponse).isEqualTo(
+        UserAccess(
+          userRestricted = false,
+          userExcluded = true,
+          userNotFound = false,
+          exclusionMessage = "I am an exclusion message",
+          restrictionMessage = null
         )
-        assertThat(actual.message, equalTo((expected.message)))
-      }
+      )
       then(deliusClient).should().getUserAccess(username, crn)
     }
   }
