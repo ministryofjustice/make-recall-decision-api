@@ -8,7 +8,6 @@ class OverviewTest() : FunctionalTest() {
 
   @Test
   fun `fetch overview details`() {
-
     // when
     lastResponse = RestAssured
       .given()

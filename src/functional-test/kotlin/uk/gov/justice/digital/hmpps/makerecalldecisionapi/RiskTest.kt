@@ -8,7 +8,6 @@ class RiskTest() : FunctionalTest() {
 
   @Test
   fun `retrieve risk data`() {
-
     // when
     lastResponse = RestAssured
       .given()
