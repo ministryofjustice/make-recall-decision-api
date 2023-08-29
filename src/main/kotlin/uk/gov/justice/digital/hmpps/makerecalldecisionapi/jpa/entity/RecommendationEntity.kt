@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
@@ -30,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import java.io.Serializable
@@ -132,6 +134,8 @@ data class RecommendationModel(
   val countersignSpoExposition: String? = null,
   val countersignAcoExposition: String? = null,
   val countersignAcoTelephone: String? = null,
+  var whoCompletedPartA: WhoCompletedPartA? = null,
+  var practitionerForPartA: PractitionerForPartA? = null,
 
   var userNamePartACompletedBy: String? = null, // deprecated
   var userEmailPartACompletedBy: String? = null, // deprecated

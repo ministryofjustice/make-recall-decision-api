@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
@@ -43,6 +44,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
@@ -111,7 +113,22 @@ class MrdTestDataBuilder {
           nextAppointment = nextAppointment(),
           indexOffenceDetails = "Juicy details",
           previousReleases = previousReleases(),
-          roshSummary = roshSummary()
+          roshSummary = roshSummary(),
+          whoCompletedPartA = WhoCompletedPartA(
+            name = "Mr Jenkins",
+            email = "jenkins@onsabatical.com",
+            telephone = "1234567",
+            region = "London",
+            localDeliveryUnit = "A123",
+            isPersonProbationPractitionerForOffender = false
+          ),
+          practitionerForPartA = PractitionerForPartA(
+            name = "Mr Jenkins 1",
+            email = "jenkins1@onsabatical.com",
+            telephone = "12345678",
+            region = "London2",
+            localDeliveryUnit = "A1234"
+          )
         )
       )
     }
