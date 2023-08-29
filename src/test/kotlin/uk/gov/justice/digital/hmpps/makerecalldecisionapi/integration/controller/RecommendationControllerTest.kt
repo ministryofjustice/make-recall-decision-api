@@ -789,7 +789,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isForbidden
+        .expectStatus().isCreated
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
@@ -815,7 +815,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isForbidden
+        .expectStatus().isOk
     }
   }
 
@@ -855,7 +855,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isForbidden
+        .expectStatus().isOk
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)

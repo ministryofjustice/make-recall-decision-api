@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -42,7 +41,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidReque
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationHistoryEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -92,7 +90,7 @@ internal class RecommendationService(
   ): RecommendationResponse? {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+      return RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
       val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
@@ -252,7 +250,9 @@ internal class RecommendationService(
       countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
       countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
       countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
-      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition
+      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
+      whoCompletedPartA = recommendationEntity.data.whoCompletedPartA,
+      practitionerForPartA = recommendationEntity.data.practitionerForPartA
     )
   }
 
@@ -268,8 +268,8 @@ internal class RecommendationService(
     validateManagerRecallDecision(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
     val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
 
       val updatedRecommendation: RecommendationModel =
@@ -281,7 +281,7 @@ internal class RecommendationService(
         )
       val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
       log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
-      return result
+      result
     }
   }
 
@@ -381,12 +381,12 @@ internal class RecommendationService(
     readableUserName: String?
   ): RecommendationResponse {
     val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
       val savedRecommendation = saveRecommendation(existingRecommendationEntity, userId, readableUserName)
       auditUpdate(savedRecommendation, userId, readableUserName)
-      return buildRecommendationResponse(savedRecommendation)
+      buildRecommendationResponse(savedRecommendation)
     }
   }
 
@@ -665,7 +665,7 @@ internal class RecommendationService(
 
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+      DocumentResponse(userAccessResponse)
     } else {
       val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
@@ -682,7 +682,7 @@ internal class RecommendationService(
     val recommendationResponse = getRecommendationResponseById(recommendationId)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+      DocumentResponse(userAccessResponse)
     } else {
       val letterContent =
         templateReplacementService.generateLetterContentForPreviewFromRecommendation(recommendationResponse)
@@ -703,13 +703,13 @@ internal class RecommendationService(
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = buildRecommendationResponse(recommendationEntity)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
-    if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
-      throw UserAccessException(Gson().toJson(userAccessResponse))
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      DocumentResponse(userAccessResponse)
     } else {
       val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT, metaData)
-      return DocumentResponse(
+      DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
         fileContents = fileContents
       )
