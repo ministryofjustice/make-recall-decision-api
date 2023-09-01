@@ -136,6 +136,7 @@ data class RecommendationModel(
   val countersignAcoTelephone: String? = null,
   var whoCompletedPartA: WhoCompletedPartA? = null,
   var practitionerForPartA: PractitionerForPartA? = null,
+  var revocationOrderRecipients: List<String>? = null,
 
   var userNamePartACompletedBy: String? = null, // deprecated
   var userEmailPartACompletedBy: String? = null, // deprecated
