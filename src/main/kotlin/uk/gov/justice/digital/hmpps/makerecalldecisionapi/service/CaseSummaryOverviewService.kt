@@ -11,7 +11,7 @@ internal class CaseSummaryOverviewService(
   private val deliusClient: DeliusClient,
   private val riskService: RiskService,
   private val userAccessValidator: UserAccessValidator,
-  private val recommendationService: RecommendationService
+  private val recommendationService: RecommendationService,
 ) {
   suspend fun getOverview(crn: String): CaseSummaryOverviewResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)

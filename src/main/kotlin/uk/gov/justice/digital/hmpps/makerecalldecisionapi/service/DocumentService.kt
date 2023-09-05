@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessEx
 @Service
 internal class DocumentService(
   private val deliusClient: DeliusClient,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
 ) {
   fun getDocumentByCrnAndId(crn: String, documentId: String): ResponseEntity<Resource> {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)

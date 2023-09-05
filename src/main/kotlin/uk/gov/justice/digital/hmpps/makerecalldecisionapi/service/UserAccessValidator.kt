@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFou
 internal class UserAccessValidator(private val deliusClient: DeliusClient) {
   fun checkUserAccess(
     crn: String,
-    username: String = SecurityContextHolder.getContext().authentication.name
+    username: String = SecurityContextHolder.getContext().authentication.name,
   ) = try {
     deliusClient.getUserAccess(username, crn)
   } catch (e: PersonNotFoundException) {
