@@ -546,7 +546,7 @@ abstract class IntegrationTestBase {
     pageNumber: Int = 0,
     pageSize: Int = 1,
     totalPages: Int = 1,
-    delaySeconds: Long = 0
+    delaySeconds: Long = 0,
   ) {
     val offenderSearchRequest = request()
       .withPath("/search/people")
@@ -582,7 +582,7 @@ abstract class IntegrationTestBase {
     dateOfBirth: String = "1980-12-01",
     pageNumber: Int = 0,
     pageSize: Int = 1,
-    delaySeconds: Long = 0
+    delaySeconds: Long = 0,
   ) {
     val offenderSearchRequest = request()
       .withPath("/search/people")

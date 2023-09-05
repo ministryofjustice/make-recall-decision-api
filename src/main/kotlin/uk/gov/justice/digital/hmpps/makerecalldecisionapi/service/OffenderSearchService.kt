@@ -13,14 +13,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 @Service
 internal class OffenderSearchService(
   @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
-  private val userAccessValidator: UserAccessValidator
+  private val userAccessValidator: UserAccessValidator,
 ) {
   suspend fun search(
     crn: String? = null,
     firstName: String? = null,
     lastName: String? = null,
     page: Int,
-    pageSize: Int
+    pageSize: Int,
   ): OffenderSearchResponse {
     val apiResponse = getValueAndHandleWrappedException(
       offenderSearchApiClient.searchPeople(
@@ -66,7 +66,7 @@ internal class OffenderSearchService(
 
   private fun OffenderDetails.toOffenderSearchOffender(
     userExcluded: Boolean,
-    userRestricted: Boolean
+    userRestricted: Boolean,
   ): OffenderSearchOffender {
     val name =
       if (this.isNameNullOrBlank && !userExcluded && !userRestricted) {

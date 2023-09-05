@@ -21,7 +21,7 @@ import java.util.stream.Collectors
 class MrdEventsEmitter(
   hmppsQueueService: HmppsQueueService,
   objectMapper: ObjectMapper,
-  customTelemetryClient: TelemetryClient
+  customTelemetryClient: TelemetryClient,
 ) {
   private val domainEventTopicSnsClient: AmazonSNSAsync
   private val topicArn: String

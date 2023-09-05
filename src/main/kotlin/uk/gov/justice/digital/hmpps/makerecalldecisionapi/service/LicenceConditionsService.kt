@@ -13,7 +13,7 @@ internal class LicenceConditionsService(
   private val userAccessValidator: UserAccessValidator,
   private val createAndVaryALicenceService: CreateAndVaryALicenceService,
   private val recommendationService: RecommendationService,
-  private val licenceConditionsCoordinator: LicenceConditionsCoordinator
+  private val licenceConditionsCoordinator: LicenceConditionsCoordinator,
 ) {
   suspend fun getLicenceConditions(crn: String): LicenceConditionsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)

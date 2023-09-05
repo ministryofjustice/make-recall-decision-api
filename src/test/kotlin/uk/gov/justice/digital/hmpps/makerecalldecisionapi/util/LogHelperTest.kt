@@ -25,7 +25,7 @@ class LogHelperTest {
   )
   fun `given string value when redact is invoked then first letter followed by asterisks is returned`(
     value: String,
-    expected: String
+    expected: String,
   ) {
     val redacted = redact(value)
     assertThat(redacted).isEqualTo(expected)

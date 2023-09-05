@@ -456,8 +456,18 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(
           Mono.fromCallable {
             listOf(
-              currentRiskScoreResponseWithOptionalFields.copy(riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore("10", "MEDIUM")),
-              historicalRiskScoreResponseWhereValuesNull.copy(riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore("10", "MEDIUM"))
+              currentRiskScoreResponseWithOptionalFields.copy(
+                riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+                  "10",
+                  "MEDIUM"
+                )
+              ),
+              historicalRiskScoreResponseWhereValuesNull.copy(
+                riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+                  "10",
+                  "MEDIUM"
+                )
+              )
             )
           }
         )
@@ -664,7 +674,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   )
   fun `given multiple risk management plans then return latest with assessment status set`(
     status: String,
-    assessmentStatusComplete: Boolean
+    assessmentStatusComplete: Boolean,
   ) {
     runTest {
 
@@ -708,7 +718,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -723,7 +733,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk scores fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -739,7 +749,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given call to fetch risk summary fails with given exception then set this in the error field response`(
     code: Int,
     exceptionMessage: String,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, exceptionMessage.toByteArray(Charsets.UTF_8), null))
@@ -754,7 +764,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to risk management plan fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))

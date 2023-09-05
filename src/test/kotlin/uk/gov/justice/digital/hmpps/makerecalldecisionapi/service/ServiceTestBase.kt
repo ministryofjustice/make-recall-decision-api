@@ -295,7 +295,7 @@ internal abstract class ServiceTestBase {
         code = "N01",
         name = "NPS North West"
       )
-    )
+    ),
   ) = PersonalDetails(
     personalDetails = DeliusClient.PersonalDetailsOverview(
       name = Name(forename, middleName, surname),

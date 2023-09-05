@@ -16,7 +16,7 @@ import java.time.LocalDate
 internal class ContactHistoryService(
   private val deliusClient: DeliusClient,
   private val userAccessValidator: UserAccessValidator,
-  private val recommendationService: RecommendationService
+  private val recommendationService: RecommendationService,
 ) {
   suspend fun getContactHistory(
     crn: String,
@@ -24,7 +24,7 @@ internal class ContactHistoryService(
     from: LocalDate? = null,
     to: LocalDate? = null,
     typeCodes: List<String> = emptyList(),
-    includeSystemGenerated: Boolean = true
+    includeSystemGenerated: Boolean = true,
   ): ContactHistoryResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
@@ -75,7 +75,7 @@ internal class ContactHistoryService(
 
   private fun addUnknownContactGroupToList(
     allRelevantContacts: List<ContactTypeSummary>,
-    existingContacts: List<ContactGroupResponse>
+    existingContacts: List<ContactGroupResponse>,
   ): List<ContactGroupResponse> {
     val contactGroupToUse = ContactGroupsCsvReader.getContactGroupsForSystemGeneratedContacts()
 

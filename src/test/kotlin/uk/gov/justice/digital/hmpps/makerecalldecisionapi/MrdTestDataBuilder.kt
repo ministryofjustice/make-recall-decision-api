@@ -63,7 +63,7 @@ class MrdTestDataBuilder {
       surname: String = "Long",
       status: Status = Status.DRAFT,
       recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM,
-      lastModifiedDate: String = "2022-07-01T15:22:24.567Z"
+      lastModifiedDate: String = "2022-07-01T15:22:24.567Z",
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,

@@ -15,7 +15,7 @@ internal class VulnerabilitiesService(
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
   private val recommendationService: RecommendationService,
-  private val personDetailsService: PersonDetailsService
+  private val personDetailsService: PersonDetailsService,
 ) {
 
   suspend fun getVulnerabilities(crn: String): VulnerabilitiesResponse {

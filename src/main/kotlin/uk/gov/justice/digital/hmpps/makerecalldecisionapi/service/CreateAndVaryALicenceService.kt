@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 
 @Service
 internal class CreateAndVaryALicenceService(
-  @Qualifier("cvlApiClientUserEnhanced") private val cvlApiClient: CvlApiClient
+  @Qualifier("cvlApiClientUserEnhanced") private val cvlApiClient: CvlApiClient,
 ) {
 
   suspend fun buildLicenceConditions(crn: String, nomsId: String): List<LicenceConditionResponse> {

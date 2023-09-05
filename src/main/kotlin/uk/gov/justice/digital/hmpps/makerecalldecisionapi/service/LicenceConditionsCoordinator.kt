@@ -6,7 +6,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 
 @Service
 class LicenceConditionsCoordinator {
-  internal fun selectLicenceConditions(nDeliusLicenceConditions: LicenceConditions, cvlLicenceConditions: List<LicenceConditionResponse>): SelectedLicenceConditions {
+  internal fun selectLicenceConditions(
+    nDeliusLicenceConditions: LicenceConditions,
+    cvlLicenceConditions: List<LicenceConditionResponse>,
+  ): SelectedLicenceConditions {
     val hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence(nDeliusLicenceConditions)
     val onLicenceCvlWithLaterOrSameStartDate = isCvlLicenceMoreOrAsRecent(nDeliusLicenceConditions, cvlLicenceConditions, hasAllConvictionsReleasedOnLicence)
     return SelectedLicenceConditions(
@@ -23,7 +26,11 @@ class LicenceConditionsCoordinator {
       }
   }
 
-  private fun isCvlLicenceMoreOrAsRecent(nDeliusLicenceConditions: LicenceConditions, cvlLicenceConditions: List<LicenceConditionResponse>, onLicence: Boolean): Boolean {
+  private fun isCvlLicenceMoreOrAsRecent(
+    nDeliusLicenceConditions: LicenceConditions,
+    cvlLicenceConditions: List<LicenceConditionResponse>,
+    onLicence: Boolean,
+  ): Boolean {
     val cvlLicenceStartDates = cvlLicenceConditions
       .filter { it.licenceStatus == "ACTIVE" }
       .mapNotNull { it.licenceStartDate }
@@ -38,4 +45,8 @@ class LicenceConditionsCoordinator {
   }
 }
 
-data class SelectedLicenceConditions(val hasAllConvictionsReleasedOnLicence: Boolean, val ndeliusLicenceConditions: LicenceConditions, val cvlLicenceCondition: LicenceConditionResponse? = null)
+data class SelectedLicenceConditions(
+  val hasAllConvictionsReleasedOnLicence: Boolean,
+  val ndeliusLicenceConditions: LicenceConditions,
+  val cvlLicenceCondition: LicenceConditionResponse? = null,
+)

@@ -61,7 +61,7 @@ class PartADocumentMapperTest {
   @CsvSource("YES_POLICE,Police Custody", "YES_PRISON,Prison Custody", "NO,No")
   fun `given custody status in recommendation data then should map to the part A text`(
     custodyValue: CustodyStatusValue,
-    partADisplayText: String
+    partADisplayText: String,
   ) {
     runTest {
       val recommendation = RecommendationResponse(
@@ -122,7 +122,7 @@ class PartADocumentMapperTest {
   @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
   fun `given is emergency recall data then should map to the part A text`(
     isThisAnEmergencyRecall: Boolean?,
-    partADisplayText: String?
+    partADisplayText: String?,
   ) {
     runTest {
       val recommendation = RecommendationResponse(
@@ -141,7 +141,7 @@ class PartADocumentMapperTest {
   @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
   fun `given is extended sentence data then should map to the part A text`(
     isExtendedSentence: Boolean?,
-    partADisplayText: String?
+    partADisplayText: String?,
   ) {
     runTest {
       val recommendation = RecommendationResponse(
@@ -160,7 +160,7 @@ class PartADocumentMapperTest {
   @CsvSource("YES,Yes", "NO,No", "NOT_APPLICABLE,N/A")
   fun `given victims in contact scheme data then should map to the part A text`(
     victimsInContactScheme: YesNoNotApplicableOptions,
-    partADisplayText: String?
+    partADisplayText: String?,
   ) {
     runTest {
       val recommendation = RecommendationResponse(
@@ -208,7 +208,7 @@ class PartADocumentMapperTest {
   @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "NO,No")
   fun `given indeterminate sentence type data then should map to the part A text`(
     indeterminateSentenceType: IndeterminateSentenceTypeOptions,
-    partADisplayText: String?
+    partADisplayText: String?,
   ) {
     runTest {
       val recommendation = RecommendationResponse(
