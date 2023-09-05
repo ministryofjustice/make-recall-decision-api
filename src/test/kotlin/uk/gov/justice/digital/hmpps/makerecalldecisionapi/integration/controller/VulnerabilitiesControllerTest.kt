@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class VulnerabilitiesControllerTest(
-  @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long
+  @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
 ) : IntegrationTestBase() {
 
   @Test

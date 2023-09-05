@@ -335,7 +335,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         description = null,
         documents = listOf()
       )
-    )
+    ),
   ) = ContactHistory(
     personalDetails = deliusPersonalDetailsResponse().personalDetails,
     summary = ContactSummary(

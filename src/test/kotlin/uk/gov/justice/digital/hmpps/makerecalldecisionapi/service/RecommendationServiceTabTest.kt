@@ -110,6 +110,6 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
 
   data class RecommendationTabTestData(
     val recommendationStatus: Status,
-    val recallTypeValue: RecallTypeValue?
+    val recallTypeValue: RecallTypeValue?,
   )
 }
