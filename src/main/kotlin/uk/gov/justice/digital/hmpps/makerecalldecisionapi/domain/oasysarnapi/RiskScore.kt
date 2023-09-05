@@ -10,5 +10,5 @@ data class RiskScore(
   @JsonProperty("MEDIUM")
   val medium: List<String?>?,
   @JsonProperty("LOW")
-  val low: List<String?>?
+  val low: List<String?>?,
 )

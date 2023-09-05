@@ -73,12 +73,12 @@ internal class RiskService(
               active = it.active,
               type = CodeDescriptionItem(it.type, it.typeDescription),
               startDate = it.startDate,
-              notes = it.notes
+              notes = it.notes,
             )
-          }
+          },
         ),
         activeRecommendation = recommendationDetails,
-        assessmentStatus = getAssessmentStatus(crn)
+        assessmentStatus = getAssessmentStatus(crn),
       )
     }
   }
@@ -106,7 +106,7 @@ internal class RiskService(
     return buildAssessmentInfo(
       crn = crn,
       convictionsFromDelius = convictionsFromDelius,
-      assessmentsResponse = assessmentsResponse
+      assessmentsResponse = assessmentsResponse,
     )
   }
 
@@ -115,7 +115,6 @@ internal class RiskService(
     convictionsFromDelius: List<Conviction>,
     assessmentsResponse: AssessmentsResponse,
   ): AssessmentInfo {
-
     val latestCompleteAssessment = getLatestCompleteAssessment(assessmentsResponse)
 
     val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment)
@@ -130,14 +129,16 @@ internal class RiskService(
     val errorOnBlankOffenceDescription = if (offenceDescription == null) {
       log.info("No offence description available for CRN: $crn ")
       "NOT_FOUND"
-    } else null
+    } else {
+      null
+    }
 
     return AssessmentInfo(
       error = errorOnBlankOffenceDescription,
       offenceDescription = offenceDescription,
       offencesMatch = offencesMatch,
       lastUpdatedDate = lastUpdatedDate,
-      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment)
+      offenceDataFromLatestCompleteAssessment = isLatestAssessment(latestCompleteAssessment),
     )
   }
 
@@ -188,7 +189,7 @@ internal class RiskService(
       return PredictorScores(
         error = extractErrorCode(ex, "risk management plan", crn),
         current = null,
-        historical = null
+        historical = null,
       )
     }
     val latestScores = riskScoresResponse.sortedBy { LocalDateTime.parse(it.completedDate) }.reversed().firstOrNull()
@@ -196,33 +197,69 @@ internal class RiskService(
 
     return PredictorScores(
       current = latestScores?.let { createTimelineDataPoint(it) },
-      historical = historicalScores.mapNotNull { createTimelineDataPoint(it) }
+      historical = historicalScores.mapNotNull { createTimelineDataPoint(it) },
     )
   }
 
   private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse): PredictorScore? {
     val scores = Scores(
       rsr = rsrLevelWithScore(riskScoreResponse),
-      ospc = buildLevelWithScore(riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel, riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore, "OSP/C"),
-      ospi = buildLevelWithScore(riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel, riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore, "OSP/I"),
-      ogrs = buildTwoYearScore(riskScoreResponse.groupReconvictionScore?.scoreLevel, riskScoreResponse.groupReconvictionScore?.oneYear, riskScoreResponse.groupReconvictionScore?.twoYears, "OGRS"),
-      ogp = buildTwoYearScore(riskScoreResponse.generalPredictorScore?.ogpRisk, riskScoreResponse.generalPredictorScore?.ogp1Year, riskScoreResponse.generalPredictorScore?.ogp2Year, "OGP"),
-      ovp = buildTwoYearScore(riskScoreResponse.violencePredictorScore?.ovpRisk, riskScoreResponse.violencePredictorScore?.oneYear, riskScoreResponse.violencePredictorScore?.twoYears, "OVP"),
+      ospc = buildLevelWithScore(
+        riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
+        riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
+        "OSP/C",
+      ),
+      ospi = buildLevelWithScore(
+        riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
+        riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
+        "OSP/I",
+      ),
+      ogrs = buildTwoYearScore(
+        riskScoreResponse.groupReconvictionScore?.scoreLevel,
+        riskScoreResponse.groupReconvictionScore?.oneYear,
+        riskScoreResponse.groupReconvictionScore?.twoYears,
+        "OGRS",
+      ),
+      ogp = buildTwoYearScore(
+        riskScoreResponse.generalPredictorScore?.ogpRisk,
+        riskScoreResponse.generalPredictorScore?.ogp1Year,
+        riskScoreResponse.generalPredictorScore?.ogp2Year,
+        "OGP",
+      ),
+      ovp = buildTwoYearScore(
+        riskScoreResponse.violencePredictorScore?.ovpRisk,
+        riskScoreResponse.violencePredictorScore?.oneYear,
+        riskScoreResponse.violencePredictorScore?.twoYears,
+        "OVP",
+      ),
     )
-    return if (scores.ogp == null && scores.ogrs == null && scores.ovp == null && scores.rsr == null && scores.ospc == null && scores.ospi == null) null else PredictorScore(
-      date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
-      scores = scores
-    )
+    return if (scores.ogp == null && scores.ogrs == null && scores.ovp == null && scores.rsr == null && scores.ospc == null && scores.ospi == null) {
+      null
+    } else {
+      PredictorScore(
+        date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
+        scores = scores,
+      )
+    }
   }
 
-  private fun buildTwoYearScore(level: String?, oneYear: String?, twoYears: String?, type: String?): LevelWithTwoYearScores? {
+  private fun buildTwoYearScore(
+    level: String?,
+    oneYear: String?,
+    twoYears: String?,
+    type: String?,
+  ): LevelWithTwoYearScores? {
     val scoreEmpty = level == null && twoYears == null && oneYear == null
-    return if (scoreEmpty) null else LevelWithTwoYearScores(
-      level = level,
-      oneYear = oneYear,
-      twoYears = twoYears,
-      type = type
-    )
+    return if (scoreEmpty) {
+      null
+    } else {
+      LevelWithTwoYearScores(
+        level = level,
+        oneYear = oneYear,
+        twoYears = twoYears,
+        type = type,
+      )
+    }
   }
 
   private fun buildLevelWithScore(level: String?, percentageScore: String?, type: String?): LevelWithScore? {
@@ -230,29 +267,36 @@ internal class RiskService(
     val notApplicableWithZeroPercentScorePresent =
       level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
     val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
-    return if (noScore) null else LevelWithScore(
-      level = level,
-      score = if (type == "OSP/I" || type == "OSP/C") null else percentageScore,
-      type = type
-    )
+    return if (noScore) {
+      null
+    } else {
+      LevelWithScore(
+        level = level,
+        score = if (type == "OSP/I" || type == "OSP/C") null else percentageScore,
+        type = type,
+      )
+    }
   }
 
   private fun rsrLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
     val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
     val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
-    return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) null
-    else LevelWithScore(
-      level = rsr?.scoreLevel,
-      score = rsr?.percentageScore,
-      type = "RSR"
-    )
+    return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) {
+      null
+    } else {
+      LevelWithScore(
+        level = rsr?.scoreLevel,
+        score = rsr?.percentageScore,
+        type = "RSR",
+      )
+    }
   }
 
   private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
     return RiskOfSeriousHarm(
       overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
       riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
-      riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity)
+      riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity),
     )
   }
 
@@ -267,7 +311,6 @@ internal class RiskService(
   }
 
   private fun getRiskLevel(riskScore: RiskScore?, key: String): String? {
-
     val veryHigh = riskScore?.veryHigh
       ?.firstOrNull { it?.lowercase() == key }
     val high = riskScore?.high
@@ -277,9 +320,7 @@ internal class RiskService(
     val low = riskScore?.low
       ?.firstOrNull { it?.lowercase() == key }
 
-    val risks = linkedMapOf<String?, String?>(
-      "VERY_HIGH" to veryHigh, "HIGH" to high, "MEDIUM" to medium, "LOW" to low
-    )
+    val risks = linkedMapOf<String?, String?>("VERY_HIGH" to veryHigh, "HIGH" to high, "MEDIUM" to medium, "LOW" to low)
 
     return risks.asIterable().firstOrNull { it.value != null }?.key
   }
@@ -304,7 +345,7 @@ internal class RiskService(
       riskIncreaseFactors = riskSummaryResponse?.riskIncreaseFactors,
       riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors,
       riskImminence = riskSummaryResponse?.riskImminence,
-      lastUpdatedDate = riskSummaryResponse?.assessedOn?.let { convertUtcDateTimeStringToIso8601Date(it) }
+      lastUpdatedDate = riskSummaryResponse?.assessedOn?.let { convertUtcDateTimeStringToIso8601Date(it) },
     )
   }
 
@@ -348,7 +389,7 @@ internal class RiskService(
       latestDateCompleted = latestPlan?.latestCompleteDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
       initiationDate = latestPlan?.initiationDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
       lastUpdatedDate = lastUpdatedDate?.let { convertUtcDateTimeStringToIso8601Date(it) },
-      contingencyPlans = latestPlan?.contingencyPlans
+      contingencyPlans = latestPlan?.contingencyPlans,
     )
   }
 

@@ -30,9 +30,9 @@ internal class CaseSummaryOverviewService(
         risk = Risk(
           flags = deliusOverview.registerFlags,
           riskManagementPlan = riskManagementPlan,
-          assessmentInfo = assessmentInfo
+          assessmentInfo = assessmentInfo,
         ),
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
       )
     }
   }

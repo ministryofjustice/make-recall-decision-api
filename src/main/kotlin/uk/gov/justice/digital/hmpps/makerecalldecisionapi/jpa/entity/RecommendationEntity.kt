@@ -52,17 +52,19 @@ data class RecommendationEntity(
   open var id: Long = abs(SecureRandom().nextInt().toLong()),
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
-  var data: RecommendationModel
+  var data: RecommendationModel,
 ) : Comparable<RecommendationEntity> {
   override fun compareTo(other: RecommendationEntity) = compareValuesBy(
-    other, this
+    other,
+    this,
   ) { it.data.lastModifiedDate }
 }
+
 fun RecommendationEntity.toRecommendationResponse(): RecommendationResponse {
   return RecommendationResponse(
     id = id,
     status = data.status,
-    personOnProbation = data.personOnProbation?.toPersonOnProbationDto()
+    personOnProbation = data.personOnProbation?.toPersonOnProbationDto(),
   )
 }
 
@@ -146,7 +148,7 @@ data class RecommendationModel(
   var acoCounterSignEmail: String? = null, // deprecated
   var spoCounterSignEmail: String? = null, // deprecated
   var countersignAcoName: String? = null, // deprecated
-  var countersignAcoDateTime: LocalDateTime? = null // deprecated
+  var countersignAcoDateTime: LocalDateTime? = null, // deprecated
 ) : Serializable
 
 enum class Status {
@@ -155,5 +157,5 @@ enum class Status {
 
 data class TextValueOption(
   val value: String? = null,
-  val text: String? = null
+  val text: String? = null,
 )

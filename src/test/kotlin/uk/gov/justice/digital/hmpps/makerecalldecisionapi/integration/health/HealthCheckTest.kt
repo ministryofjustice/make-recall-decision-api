@@ -22,7 +22,10 @@ import javax.sql.DataSource
 
 @ExperimentalCoroutinesApi
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = ["management.server.port=9999", "server.port=9999"])
+@SpringBootTest(
+  webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+  properties = ["management.server.port=9999", "server.port=9999"],
+)
 class HealthCheckTest : IntegrationTestBase() {
 
   @Test
@@ -38,7 +41,7 @@ class HealthCheckTest : IntegrationTestBase() {
       "/health",
       HttpStatus.OK,
       "status" to "UP",
-      "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE)
+      "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
     )
   }
 
@@ -66,7 +69,7 @@ class HealthCheckTest : IntegrationTestBase() {
       "components.hmppsAuth.status" to "UP",
       "components.deliusIntegration.status" to "UP",
       "components.offenderSearchApi.status" to "UP",
-      "components.gotenberg.status" to "UP"
+      "components.gotenberg.status" to "UP",
     )
   }
 
@@ -90,7 +93,7 @@ class HealthCheckTest : IntegrationTestBase() {
       "components.hmppsAuth.status" to "DOWN",
       "components.deliusIntegration.status" to "DOWN",
       "components.offenderSearchApi.status" to "DOWN",
-      "components.gotenberg.status" to "DOWN"
+      "components.gotenberg.status" to "DOWN",
     )
   }
 
@@ -98,7 +101,11 @@ class HealthCheckTest : IntegrationTestBase() {
     healthCheckIsUpWith(healthUrl, HttpStatus.OK, "status" to "UP")
   }
 
-  private fun healthCheckIsUpWith(healthUrl: String, expectedStatus: HttpStatus, vararg jsonPathAssertions: Pair<String, String>,) {
+  private fun healthCheckIsUpWith(
+    healthUrl: String,
+    expectedStatus: HttpStatus,
+    vararg jsonPathAssertions: Pair<String, String>,
+  ) {
     webTestClient.get()
       .uri(healthUrl)
       .exchange()

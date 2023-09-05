@@ -13,12 +13,12 @@ data class LicenceConditionCvlResponse(
   val standardPssConditions: List<LicenceConditionCvlDetail>? = null,
   val additionalLicenceConditions: List<LicenceConditionCvlDetail>? = null,
   val additionalPssConditions: List<LicenceConditionCvlDetail>? = null,
-  val bespokeConditions: List<LicenceConditionCvlDetail>? = null
+  val bespokeConditions: List<LicenceConditionCvlDetail>? = null,
 )
 
 data class LicenceConditionCvlDetail(
   val code: String? = null,
   val text: String? = null,
   val expandedText: String? = null,
-  val category: String? = null
+  val category: String? = null,
 )

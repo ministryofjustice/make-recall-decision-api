@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.Vulnerabilitie
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class VulnerabilitiesController(
-  private val vulnerabilitiesService: VulnerabilitiesService
+  private val vulnerabilitiesService: VulnerabilitiesService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

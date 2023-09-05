@@ -74,8 +74,8 @@ class DateTimeHelper {
       LocalDateTime.parse(
         localDateTimeString?.replace(
           "Z",
-          MrdTextConstants.EMPTY_STRING
-        )
+          MrdTextConstants.EMPTY_STRING,
+        ),
       )
   }
 }

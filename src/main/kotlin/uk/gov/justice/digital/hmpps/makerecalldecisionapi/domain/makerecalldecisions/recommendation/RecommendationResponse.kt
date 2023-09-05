@@ -73,12 +73,12 @@ data class RecommendationResponse(
   val countersignAcoExposition: String? = null,
   val whoCompletedPartA: WhoCompletedPartA? = null,
   val practitionerForPartA: PractitionerForPartA? = null,
-  val revocationOrderRecipients: List<String>? = null
+  val revocationOrderRecipients: List<String>? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
   val selected: String? = null,
-  val allOptions: List<TextValueOption>? = null
+  val allOptions: List<TextValueOption>? = null,
 )
 
 data class PersonOnProbation(
@@ -96,7 +96,7 @@ data class PersonOnProbation(
   var mappa: Mappa? = null,
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
-  val hasBeenReviewed: Boolean? = false
+  val hasBeenReviewed: Boolean? = false,
 )
 
 data class WhoCompletedPartA(
@@ -105,7 +105,7 @@ data class WhoCompletedPartA(
   val telephone: String? = null,
   val region: String? = null,
   val localDeliveryUnit: String? = null,
-  val isPersonProbationPractitionerForOffender: Boolean? = null
+  val isPersonProbationPractitionerForOffender: Boolean? = null,
 )
 
 data class PractitionerForPartA(
@@ -113,7 +113,7 @@ data class PractitionerForPartA(
   val email: String? = null,
   val telephone: String? = null,
   val region: String? = null,
-  val localDeliveryUnit: String? = null
+  val localDeliveryUnit: String? = null,
 )
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
@@ -136,7 +136,7 @@ fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
     mappa = this.mappa,
     addresses = this.addresses,
     primaryLanguage = this.primaryLanguage,
-    hasBeenReviewed = this.hasBeenReviewed
+    hasBeenReviewed = this.hasBeenReviewed,
   )
 }
 
@@ -156,7 +156,7 @@ data class PersonOnProbationDto(
   var mappa: Mappa? = null,
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
-  val hasBeenReviewed: Boolean? = false
+  val hasBeenReviewed: Boolean? = false,
 )
 
 data class ConvictionDetail(
@@ -172,5 +172,5 @@ data class ConvictionDetail(
   val sentenceSecondLengthUnits: String? = null,
   val custodialTerm: String? = null,
   val extendedTerm: String? = null,
-  val hasBeenReviewed: Boolean? = false
+  val hasBeenReviewed: Boolean? = false,
 )

@@ -11,5 +11,5 @@ data class LicenceConditionsResponse(
   val activeRecommendation: ActiveRecommendation? = null,
   val source: String? = null,
   val hasAllConvictionsReleasedOnLicence: Boolean? = null,
-  val cvlLicence: LicenceConditionResponse? = null
+  val cvlLicence: LicenceConditionResponse? = null,
 ) : SelectedLicenceConditionsResponse

@@ -24,14 +24,14 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
         .uri("/managementOversight/$crn")
         .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isOk,
     )
 
     // then
     assertThat(response.get("notes")).isEqualTo(
       "John Smith said:\n" +
         "details of no recall selected\n" +
-        "View the case summary for John Smith: environment-host/cases/A12345/overview"
+        "View the case summary for John Smith: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
   }

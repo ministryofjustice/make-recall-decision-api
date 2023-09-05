@@ -11,5 +11,5 @@ data class KeyDates(
   val licenceExpiryDate: LocalDate?,
   val paroleEligibilityDate: LocalDate?,
   val sentenceExpiryDate: LocalDate?,
-  val postSentenceSupervisionEndDate: LocalDate?
+  val postSentenceSupervisionEndDate: LocalDate?,
 )

@@ -4,7 +4,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 
 data class StandardLicenceConditions(
   val selected: List<String>? = null,
-  val allOptions: List<TextValueOption>? = null
+  val allOptions: List<TextValueOption>? = null,
 )
 
 enum class SelectedStandardLicenceConditions(val cvlCode: String) {
@@ -16,7 +16,8 @@ enum class SelectedStandardLicenceConditions(val cvlCode: String) {
   NO_WORK_UNDERTAKEN("88069445-08cb-4f16-915f-5a162d085c26"),
   NO_TRAVEL_OUTSIDE_UK("7d416906-0e94-4fde-ae86-8339d339ccb7"),
   NAME_CHANGE("78A5F860-4791-48F2-B707-D6D4413850EE"),
-  CONTACT_DETAILS("6FA6E492-F0AB-4E76-B868-63813DB44696");
+  CONTACT_DETAILS("6FA6E492-F0AB-4E76-B868-63813DB44696"),
+  ;
 
   fun isCodeForCvl(cvlCode: String): Boolean {
     return this.cvlCode.equals(cvlCode, ignoreCase = true)

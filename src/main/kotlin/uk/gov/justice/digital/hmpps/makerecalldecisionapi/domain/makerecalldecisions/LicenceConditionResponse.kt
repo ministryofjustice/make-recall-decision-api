@@ -16,12 +16,12 @@ data class LicenceConditionResponse(
   val standardPssConditions: List<LicenceConditionDetail>? = null,
   val additionalLicenceConditions: List<LicenceConditionDetail>? = null,
   val additionalPssConditions: List<LicenceConditionDetail>? = null,
-  val bespokeConditions: List<LicenceConditionDetail>? = null
+  val bespokeConditions: List<LicenceConditionDetail>? = null,
 )
 
 data class LicenceConditionDetail(
   val code: String? = null,
   val text: String? = null,
   val expandedText: String? = null,
-  val category: String? = null
+  val category: String? = null,
 )

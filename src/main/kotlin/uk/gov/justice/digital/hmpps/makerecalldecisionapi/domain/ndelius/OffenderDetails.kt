@@ -8,7 +8,7 @@ data class OffenderDetails(
   val surname: String?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val dateOfBirth: LocalDate?,
-  val otherIds: OtherIds
+  val otherIds: OtherIds,
 ) {
   val isNameNullOrBlank = firstName.isNullOrBlank() && surname.isNullOrBlank()
 }
@@ -18,5 +18,5 @@ data class OtherIds(
   val croNumber: String?,
   val mostRecentPrisonerNumber: String?,
   val pncNumber: String?,
-  val nomsNumber: String?
+  val nomsNumber: String?,
 )

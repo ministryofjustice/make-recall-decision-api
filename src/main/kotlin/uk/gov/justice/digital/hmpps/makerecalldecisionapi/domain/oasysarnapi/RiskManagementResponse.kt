@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 data class RiskManagementResponse(
   val crn: String,
   val limitedAccessOffender: Boolean?,
-  val riskManagementPlan: List<RiskManagementPlanResponse>?
+  val riskManagementPlan: List<RiskManagementPlanResponse>?,
 )
 
 data class RiskManagementPlanResponse(
@@ -30,5 +30,5 @@ data class RiskManagementPlanResponse(
   val laterPartCompSignedAssessmentExists: Boolean? = null,
   val latestPartCompSignedDate: String? = null,
   val laterCompleteAssessmentExists: Boolean? = null,
-  val latestCompleteDate: String? = null
+  val latestCompleteDate: String? = null,
 )

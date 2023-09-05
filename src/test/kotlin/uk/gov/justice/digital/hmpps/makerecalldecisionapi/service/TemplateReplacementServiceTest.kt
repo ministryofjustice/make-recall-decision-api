@@ -101,8 +101,18 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         id = 1,
         crn = crn,
         indexOffenceDetails = "Juicy details!",
-        custodyStatus = CustodyStatus(selected = CustodyStatusValue.YES_POLICE, details = "Bromsgrove Police Station\r\nLondon", allOptions = null),
-        recallType = RecallType(selected = RecallTypeSelectedValue(value = RecallTypeValue.FIXED_TERM, details = "My details"), allOptions = null),
+        custodyStatus = CustodyStatus(
+          selected = CustodyStatusValue.YES_POLICE,
+          details = "Bromsgrove Police Station\r\nLondon",
+          allOptions = null,
+        ),
+        recallType = RecallType(
+          selected = RecallTypeSelectedValue(
+            value = RecallTypeValue.FIXED_TERM,
+            details = "My details",
+          ),
+          allOptions = null,
+        ),
         responseToProbation = "They did not respond well",
         whatLedToRecall = "Increasingly violent behaviour",
         isThisAnEmergencyRecall = true,
@@ -127,16 +137,29 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
               town = "Address line town",
               postcode = "TS1 1ST",
               noFixedAbode = false,
-            )
+            ),
           ),
-          primaryLanguage = "English"
+          primaryLanguage = "English",
         ).toPersonOnProbationDto(),
         hasVictimsInContactScheme = VictimsInContactScheme(selected = YES, allOptions = null),
-        indeterminateSentenceType = IndeterminateSentenceType(selected = IndeterminateSentenceTypeOptions.LIFE, allOptions = null),
+        indeterminateSentenceType = IndeterminateSentenceType(
+          selected = IndeterminateSentenceTypeOptions.LIFE,
+          allOptions = null,
+        ),
         dateVloInformed = now(),
         alternativesToRecallTried = AlternativesToRecallTried(
-          selected = listOf(ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022")),
-          allOptions = listOf(TextValueOption(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, text = "Warnings/licence breach letters"))
+          selected = listOf(
+            ValueWithDetails(
+              value = SelectedAlternativeOptions.WARNINGS_LETTER.name,
+              details = "We sent a warning letter on 27th July 2022",
+            ),
+          ),
+          allOptions = listOf(
+            TextValueOption(
+              value = SelectedAlternativeOptions.WARNINGS_LETTER.name,
+              text = "Warnings/licence breach letters",
+            ),
+          ),
         ),
         hasArrestIssues = SelectedWithDetails(selected = true, details = "Has arrest issues"),
         hasContrabandRisk = SelectedWithDetails(selected = true, details = "Has contraband risk"),
@@ -150,8 +173,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
               SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
               SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
               SelectedStandardLicenceConditions.NAME_CHANGE.name,
-              SelectedStandardLicenceConditions.CONTACT_DETAILS.name
-            )
+              SelectedStandardLicenceConditions.CONTACT_DETAILS.name,
+            ),
           ),
           additionalLicenceConditions = AdditionalLicenceConditions(
             selected = listOf("NST14"),
@@ -159,16 +182,27 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
                 mainCatCode = "NLC5",
-                title = "Additional title", details = "Additional details", note = "Additional note"
-              )
-            )
-          )
+                title = "Additional title",
+                details = "Additional details",
+                note = "Additional note",
+              ),
+            ),
+          ),
         ),
         underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
           selected = "NOT_APPLICABLE",
-          allOptions = listOf(TextValueOption(value = "YES", text = "Yes"), TextValueOption(value = "NO", text = "No"), TextValueOption(value = "NOT_APPLICABLE", text = "N/A"))
+          allOptions = listOf(
+            TextValueOption(value = "YES", text = "Yes"),
+            TextValueOption(value = "NO", text = "No"),
+            TextValueOption(value = "NOT_APPLICABLE", text = "N/A"),
+          ),
         ),
-        localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+        localPoliceContact = LocalPoliceContact(
+          contactName = "Thomas Magnum",
+          phoneNumber = "555-0100",
+          faxNumber = "555-0199",
+          emailAddress = "thomas.magnum@gmail.com",
+        ),
         vulnerabilities = VulnerabilitiesRecommendation(
           selected = listOf(
             ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide"),
@@ -179,7 +213,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
             ValueWithDetails(value = DRUG_OR_ALCOHOL_USE.name, details = "Has an alcohol dependency"),
             ValueWithDetails(value = BULLYING_OTHERS.name, details = "Bullying"),
             ValueWithDetails(value = BEING_BULLIED_BY_OTHERS.name, details = "Bullied"),
-            ValueWithDetails(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, details = "At risk of serious harm"),
+            ValueWithDetails(
+              value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
+              details = "At risk of serious harm",
+            ),
             ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
             ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
             ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
@@ -187,7 +224,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
             ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
             ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
             ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
-            ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist")
+            ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist"),
           ),
           allOptions = listOf(
             TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
@@ -198,16 +235,25 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
             TextValueOption(value = DRUG_OR_ALCOHOL_USE.name, text = "Drug or alcohol use"),
             TextValueOption(value = BULLYING_OTHERS.name, text = "Bullying others"),
             TextValueOption(value = BEING_BULLIED_BY_OTHERS.name, text = "Being bullied by others"),
-            TextValueOption(value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, text = "Being at risk of serious harm from others"),
-            TextValueOption(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, text = "Adult or child safeguarding concerns"),
+            TextValueOption(
+              value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
+              text = "Being at risk of serious harm from others",
+            ),
+            TextValueOption(
+              value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name,
+              text = "Adult or child safeguarding concerns",
+            ),
             TextValueOption(value = MENTAL_HEALTH_CONCERNS.name, text = "Mental health concerns"),
             TextValueOption(value = PHYSICAL_HEALTH_CONCERNS.name, text = "Physical health concerns"),
-            TextValueOption(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, text = "Medication taken including compliance with medication"),
+            TextValueOption(
+              value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name,
+              text = "Medication taken including compliance with medication",
+            ),
             TextValueOption(value = BEREAVEMENT_ISSUES.name, text = "Bereavement issues"),
             TextValueOption(value = LEARNING_DIFFICULTIES.name, text = "Learning difficulties"),
             TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
-            TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences")
-          )
+            TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences"),
+          ),
         ),
         convictionDetail = ConvictionDetail(
           indexOffenceDescription = "Armed robbery",
@@ -219,33 +265,68 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           licenceExpiryDate = parse("2022-09-06"),
           sentenceExpiryDate = parse("2022-09-07"),
           sentenceSecondLength = 20,
-          sentenceSecondLengthUnits = "days"
+          sentenceSecondLengthUnits = "days",
         ),
         region = "NPS London",
         localDeliveryUnit = "All NPS London",
-        fixedTermAdditionalLicenceConditions = SelectedWithDetails(selected = true, "This is an additional licence condition"),
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(
+          selected = true,
+          "This is an additional licence condition",
+        ),
         indeterminateOrExtendedSentenceDetails = IndeterminateOrExtendedSentenceDetails(
           selected = listOf(
-            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, details = "behaviour similar to index offence"),
-            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, details = "behaviour leading to sexual or violent behaviour"),
-            ValueWithDetails(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, details = "out of touch")
+            ValueWithDetails(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name,
+              details = "behaviour similar to index offence",
+            ),
+            ValueWithDetails(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
+              details = "behaviour leading to sexual or violent behaviour",
+            ),
+            ValueWithDetails(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
+              details = "out of touch",
+            ),
           ),
           allOptions = listOf(
-            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name, text = "behaviour similar to index offence"),
-            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name, text = "behaviour leading to sexual or violent behaviour"),
-            TextValueOption(value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name, text = "out of touch")
-          )
+            TextValueOption(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name,
+              text = "behaviour similar to index offence",
+            ),
+            TextValueOption(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
+              text = "behaviour leading to sexual or violent behaviour",
+            ),
+            TextValueOption(
+              value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
+              text = "out of touch",
+            ),
+          ),
         ),
-        mainAddressWherePersonCanBeFound = SelectedWithDetails(selected = false, "123 Acacia Avenue, Birmingham, B23 1AV"),
+        mainAddressWherePersonCanBeFound = SelectedWithDetails(
+          selected = false,
+          "123 Acacia Avenue, Birmingham, B23 1AV",
+        ),
         whyConsideredRecall = WhyConsideredRecall(
           selected = WhyConsideredRecallValue.RISK_INCREASED,
           allOptions = listOf(
             TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
-            TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
-            TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
-          )
+            TextValueOption(
+              value = "CONTACT_STOPPED",
+              text = "Contact with your probation practitioner has broken down",
+            ),
+            TextValueOption(
+              value = "RISK_INCREASED_AND_CONTACT_STOPPED",
+              text = "Your risk is assessed as increased and contact with your probation practitioner has broken down",
+            ),
+          ),
         ),
-        reasonsForNoRecall = ReasonsForNoRecall(licenceBreach = "Reason for breaching licence", noRecallRationale = "Rationale for no recall", popProgressMade = "Progress made so far detail", futureExpectations = "Future expectations detail"),
+        reasonsForNoRecall = ReasonsForNoRecall(
+          licenceBreach = "Reason for breaching licence",
+          noRecallRationale = "Rationale for no recall",
+          popProgressMade = "Progress made so far detail",
+          futureExpectations = "Future expectations detail",
+        ),
         nextAppointment = NextAppointment(
           HowWillAppointmentHappen(
             selected = NextAppointmentValue.TELEPHONE,
@@ -253,34 +334,34 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
               TextValueOption(text = "Telephone", value = "TELEPHONE"),
               TextValueOption(text = "Video call", value = "VIDEO_CALL"),
               TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
-              TextValueOption(text = "Home visit", value = "HOME_VISIT")
-            )
+              TextValueOption(text = "Home visit", value = "HOME_VISIT"),
+            ),
           ),
           dateTimeOfAppointment = "2022-04-24T20:39:00.000Z",
-          probationPhoneNumber = "01238282838"
+          probationPhoneNumber = "01238282838",
         ),
         previousReleases = PreviousReleases(
           lastReleaseDate = parse("2022-09-06"),
           lastReleasingPrisonOrCustodialEstablishment = "Holloway",
           hasBeenReleasedPreviously = true,
-          previousReleaseDates = listOf(parse("2022-06-01"), parse("2022-01-01"))
+          previousReleaseDates = listOf(parse("2022-06-01"), parse("2022-01-01")),
         ),
         previousRecalls = PreviousRecalls(
           lastRecallDate = parse("2022-02-26"),
           hasBeenRecalledPreviously = true,
-          previousRecallDates = listOf(parse("2021-01-01"))
+          previousRecallDates = listOf(parse("2021-01-01")),
         ),
         currentRoshForPartA = RoshData(
           riskToChildren = RoshDataScore.VERY_HIGH,
           riskToPublic = RoshDataScore.HIGH,
           riskToKnownAdult = RoshDataScore.MEDIUM,
           riskToStaff = RoshDataScore.LOW,
-          riskToPrisoners = RoshDataScore.NOT_APPLICABLE
+          riskToPrisoners = RoshDataScore.NOT_APPLICABLE,
         ),
         countersignSpoTelephone = "12345678",
         countersignSpoExposition = "Spo comments on case",
         countersignAcoTelephone = "87654321",
-        countersignAcoExposition = "Aco comments on case"
+        countersignAcoExposition = "Aco comments on case",
       )
       val metadata = RecommendationMetaData(
         acoCounterSignEmail = "jane-the-aco@bla.com",
@@ -291,7 +372,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         userEmailPartACompletedBy = "Henry.Richarlison@test.com",
         countersignAcoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
         countersignSpoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
-        userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
+        userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London")),
       )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
     }
@@ -309,13 +390,16 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         section1 = "Section 1",
         section2 = "Section 2",
         section3 = "Section 3",
-        signedByParagraph = "Signed by"
+        signedByParagraph = "Signed by",
       )
 
       BDDMockito.given(decisionNotToRecallLetterDocumentMapperMocked.mapRecommendationDataToDocumentData(recommendation))
         .willReturn(documentData)
 
-      val letterContent = TemplateReplacementService(partADocumentMapperMocked, decisionNotToRecallLetterDocumentMapperMocked).generateLetterContentForPreviewFromRecommendation(recommendation)
+      val letterContent = TemplateReplacementService(
+        partADocumentMapperMocked,
+        decisionNotToRecallLetterDocumentMapperMocked,
+      ).generateLetterContentForPreviewFromRecommendation(recommendation)
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")
       assertThat(letterContent.letterDate).isEqualTo(DateTimeHelper.convertLocalDateToDateWithSlashes(now()))
@@ -464,9 +548,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @Test
   fun `given empty some data then build the mappings with blank strings for the Part A template`() {
     runTest {
-
       val partA = DocumentData(
-        custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
+        custodyStatus = ValueWithDetails(
+          value = CustodyStatusValue.YES_POLICE.partADisplayValue,
+          details = "Bromsgrove Police Station\r\nLondon",
+        ),
         recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
         responseToProbation = "They have not responded well",
         whatLedToRecall = "Increasingly violent behaviour",
@@ -496,7 +582,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         countersignAcoTime = null,
         countersignAcoExposition = null,
         countersignAcoEmail = null,
-        counterSignSpoEmail = null
+        counterSignSpoEmail = null,
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
@@ -541,14 +627,32 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
   private fun documentData(): DocumentData {
     val alternativesList: List<ValueWithDetails> = listOf(
-      ValueWithDetails(value = SelectedAlternativeOptions.WARNINGS_LETTER.name, details = "We sent a warning letter on 27th July 2022"),
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.WARNINGS_LETTER.name,
+        details = "We sent a warning letter on 27th July 2022",
+      ),
       ValueWithDetails(value = SelectedAlternativeOptions.DRUG_TESTING.name, details = "drugs test passed"),
       ValueWithDetails(value = SelectedAlternativeOptions.INCREASED_FREQUENCY.name, details = "increased frequency"),
-      ValueWithDetails(value = SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name, details = "licence conditions added"),
-      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name, details = "referred to approved premises"),
-      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name, details = "referral to other team"),
-      ValueWithDetails(value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name, details = "referred to partner agency"),
-      ValueWithDetails(value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name, details = "alternative action")
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name,
+        details = "licence conditions added",
+      ),
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name,
+        details = "referred to approved premises",
+      ),
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name,
+        details = "referral to other team",
+      ),
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name,
+        details = "referred to partner agency",
+      ),
+      ValueWithDetails(
+        value = SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name,
+        details = "alternative action",
+      ),
     )
     return DocumentData(
       salutation = "Dear Duncan Edwards",
@@ -559,7 +663,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       section3 = "This is the third paragraph",
       signedByParagraph = "Yours faithfully, Jim Smith",
       offenceAnalysis = "Juicy details!",
-      custodyStatus = ValueWithDetails(value = CustodyStatusValue.YES_POLICE.partADisplayValue, details = "Bromsgrove Police Station\r\nLondon"),
+      custodyStatus = ValueWithDetails(
+        value = CustodyStatusValue.YES_POLICE.partADisplayValue,
+        details = "Bromsgrove Police Station\r\nLondon",
+      ),
       recallType = ValueWithDetails(value = RecallTypeValue.FIXED_TERM.displayValue, details = "My details"),
       responseToProbation = "They have not responded well",
       whatLedToRecall = "Increasingly violent behaviour",
@@ -580,17 +687,22 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
         SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
         SelectedStandardLicenceConditions.NAME_CHANGE.name,
-        SelectedStandardLicenceConditions.CONTACT_DETAILS.name
+        SelectedStandardLicenceConditions.CONTACT_DETAILS.name,
       ),
       additionalConditionsBreached = "These are the additional conditions breached",
       isUnderIntegratedOffenderManagement = "YES",
-      localPoliceContact = LocalPoliceContact(contactName = "Thomas Magnum", phoneNumber = "555-0100", faxNumber = "555-0199", emailAddress = "thomas.magnum@gmail.com"),
+      localPoliceContact = LocalPoliceContact(
+        contactName = "Thomas Magnum",
+        phoneNumber = "555-0100",
+        faxNumber = "555-0199",
+        emailAddress = "thomas.magnum@gmail.com",
+      ),
       vulnerabilities = VulnerabilitiesRecommendation(
         selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
         allOptions = listOf(
           TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
-          TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown")
-        )
+          TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
+        ),
       ),
       gender = "Male",
       name = "Homer Bart Simpson",
@@ -647,7 +759,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignAcoTime = "12:03",
       countersignAcoExposition = "Aco comments on case",
       counterSignSpoEmail = "john-the-spo@bla.com",
-      countersignAcoEmail = "jane-the-aco@bla.com"
+      countersignAcoEmail = "jane-the-aco@bla.com",
     )
   }
 }

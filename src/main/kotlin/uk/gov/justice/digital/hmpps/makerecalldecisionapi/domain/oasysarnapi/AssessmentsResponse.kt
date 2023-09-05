@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 data class AssessmentsResponse(
   val crn: String?,
   val limitedAccessOffender: Boolean?,
-  val assessments: List<Assessment>?
+  val assessments: List<Assessment>?,
 )
 
 data class Assessment(
@@ -24,12 +24,12 @@ data class Assessment(
   val monitoringAndControl: String?,
   val interventionsAndTreatment: String?,
   val victimSafetyPlanning: String?,
-  val contingencyPlans: String?
+  val contingencyPlans: String?,
 )
 
 data class AssessmentOffenceDetail(
   val type: String?,
   val offenceCode: String?,
   val offenceSubCode: String?,
-  val offenceDate: String?
+  val offenceDate: String?,
 )

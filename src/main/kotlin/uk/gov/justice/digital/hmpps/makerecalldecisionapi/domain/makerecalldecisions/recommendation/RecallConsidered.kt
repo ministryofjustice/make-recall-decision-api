@@ -8,5 +8,5 @@ data class RecallConsidered(
   val userId: String?,
   val createdDate: String?,
   val userName: String?,
-  val recallConsideredDetail: String?
+  val recallConsideredDetail: String?,
 )

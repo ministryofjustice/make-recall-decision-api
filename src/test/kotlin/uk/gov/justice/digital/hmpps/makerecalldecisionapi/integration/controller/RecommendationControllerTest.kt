@@ -79,17 +79,17 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             )
             )
         }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isCreated,
     )
 
     val idOfRecommendationJustCreated = response.get("id")
@@ -126,7 +126,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isOk,
     )
     assertThat(response.get("id")).isEqualTo(createdRecommendationId)
     assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
@@ -175,11 +175,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isCreated,
     )
     assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
   }
@@ -195,11 +195,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isCreated,
     )
     assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
   }
@@ -215,11 +215,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isCreated,
     )
     assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
   }
@@ -258,7 +258,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations/$createdRecommendationId/manager-recall-decision")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(request)
+        BodyInserters.fromValue(request),
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")) }
       .exchange()
@@ -488,7 +488,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     webTestClient.get()
       .uri(
-        "/recommendations/$createdRecommendationId"
+        "/recommendations/$createdRecommendationId",
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
@@ -531,19 +531,18 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId/no-recall-letter")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(documentRequestQuery("download-docx"))
+          BodyInserters.fromValue(documentRequestQuery("download-docx")),
         )
         .headers {
           (
             listOf(
               it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString)
+              it.set("X-Feature-Flags", featureFlagString),
             )
             )
         }
         .exchange()
-        .expectStatus().isOk
-
+        .expectStatus().isOk,
     )
 
     assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
@@ -551,7 +550,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val result = repository.findByCrn(crn)
     assertThat(result[0].data.userNameDntrLetterCompletedBy, equalTo("some_user"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line1, equalTo("HMPPS Digital Studio 33 Scotland Street"))
+    assertThat(
+      result[0].data.personOnProbation?.addresses?.get(0)?.line1,
+      equalTo("HMPPS Digital Studio 33 Scotland Street"),
+    )
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
@@ -570,21 +572,26 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     updateRecommendation(updateRecommendationForNoRecallRequest())
 
-    val nextAppointmentDateTimeString = JSONObject(updateRecommendationForNoRecallRequest()).getJSONObject("nextAppointment").getString("dateTimeOfAppointment")
-    val nextAppointmentDateTime = LocalDateTime(ZonedDateTime.parse(nextAppointmentDateTimeString).toInstant().toEpochMilli())
+    val nextAppointmentDateTimeString =
+      JSONObject(updateRecommendationForNoRecallRequest()).getJSONObject("nextAppointment")
+        .getString("dateTimeOfAppointment")
+    val nextAppointmentDateTime =
+      LocalDateTime(ZonedDateTime.parse(nextAppointmentDateTimeString).toInstant().toEpochMilli())
 
     webTestClient.post()
       .uri("/recommendations/$createdRecommendationId/no-recall-letter")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(documentRequestQuery("preview"))
+        BodyInserters.fromValue(documentRequestQuery("preview")),
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$.letterContent.letterAddress").isEqualTo("John Smith\nHMPPS Digital Studio 33 Scotland Street\nSheffield City Centre\nSheffield\nS3 7BS")
-      .jsonPath("$.letterContent.letterDate").isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+      .jsonPath("$.letterContent.letterAddress")
+      .isEqualTo("John Smith\nHMPPS Digital Studio 33 Scotland Street\nSheffield City Centre\nSheffield\nS3 7BS")
+      .jsonPath("$.letterContent.letterDate")
+      .isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
       .jsonPath("$.letterContent.salutation").isEqualTo("Dear John Smith,")
       .jsonPath("$.letterContent.letterTitle").isEqualTo("DECISION NOT TO RECALL")
       .jsonPath("$.letterContent.section1").isEqualTo(
@@ -596,11 +603,14 @@ class RecommendationControllerTest() : IntegrationTestBase() {
           "Thoughts on bad behaviour\n\n" +
           "Future expectations detail\n\n" +
           "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
-          "Your next appointment is by telephone on:"
+          "Your next appointment is by telephone on:",
       )
-      .jsonPath("$.letterContent.section2").isEqualTo("Sunday 24th April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
-      .jsonPath("$.letterContent.section3").isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
-      .jsonPath("$.letterContent.signedByParagraph").isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
+      .jsonPath("$.letterContent.section2")
+      .isEqualTo("Sunday 24th April 2022 at ${nextAppointmentDateTime.get(DateTimeFieldType.hourOfDay())}:39am\n")
+      .jsonPath("$.letterContent.section3")
+      .isEqualTo("You must please contact me immediately if you are not able to keep this appointment. Should you wish to discuss anything before then, please contact me by the following telephone number: 01238282838\n")
+      .jsonPath("$.letterContent.signedByParagraph")
+      .isEqualTo("Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU")
   }
 
   @Test
@@ -620,7 +630,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId/part-a")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(createPartARequest())
+          BodyInserters.fromValue(createPartARequest()),
         )
         .headers {
           (
@@ -630,7 +640,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
             )
         }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isOk,
     )
 
     assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
@@ -649,7 +659,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations/999")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(updateRecommendationRequest())
+        BodyInserters.fromValue(updateRecommendationRequest()),
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
@@ -711,7 +721,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("RECALL_CONSIDERED")
     }
   }
@@ -734,7 +745,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
+        BodyInserters.fromValue(recommendationRequest(crn)),
       )
       .exchange()
       .expectStatus()
@@ -772,7 +783,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }
@@ -785,7 +797,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -793,7 +805,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }
@@ -811,7 +824,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(updateRecommendationRequest())
+          BodyInserters.fromValue(updateRecommendationRequest()),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -830,7 +843,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(invalidUpdateRecommendationRequest())
+          BodyInserters.fromValue(invalidUpdateRecommendationRequest()),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -851,7 +864,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId/part-a")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(createPartARequest())
+          BodyInserters.fromValue(createPartARequest()),
         )
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -859,7 +872,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }
@@ -883,16 +897,16 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             )
             )
         }
-        .exchange()
+        .exchange(),
     )
     createdRecommendationId = response.get("id") as Int
     updateRecommendation(updateRecommendationRequest(recallConsideredDetail = recallConsideredDetail))
@@ -901,12 +915,12 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations/$createdRecommendationId/status")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationStatusRequest(activate = status, anotherToActivate = "SOME_STATUS"))
+        BodyInserters.fromValue(recommendationStatusRequest(activate = status, anotherToActivate = "SOME_STATUS")),
       )
       .headers {
         (
           listOf(
-            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"))
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")),
           )
           )
       }
@@ -926,13 +940,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
+        BodyInserters.fromValue(recommendationRequest(crn)),
       )
       .headers {
         (
           listOf(
             it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
+            it.set("X-Feature-Flags", featureFlagString),
           )
           )
       }
@@ -942,13 +956,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
+        BodyInserters.fromValue(recommendationRequest(crn)),
       )
       .headers {
         (
           listOf(
             it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
+            it.set("X-Feature-Flags", featureFlagString),
           )
           )
       }
@@ -958,13 +972,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest(crn))
+        BodyInserters.fromValue(recommendationRequest(crn)),
       )
       .headers {
         (
           listOf(
             it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-            it.set("X-Feature-Flags", featureFlagString)
+            it.set("X-Feature-Flags", featureFlagString),
           )
           )
       }

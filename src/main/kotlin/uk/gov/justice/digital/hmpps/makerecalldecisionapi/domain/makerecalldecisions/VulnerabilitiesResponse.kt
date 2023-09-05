@@ -7,7 +7,7 @@ data class VulnerabilitiesResponse(
   val userAccessResponse: UserAccess? = null,
   val personalDetailsOverview: PersonalDetailsOverview? = null,
   val vulnerabilities: Vulnerabilities? = null,
-  val activeRecommendation: ActiveRecommendation? = null
+  val activeRecommendation: ActiveRecommendation? = null,
 )
 
 data class Vulnerabilities(
@@ -17,7 +17,7 @@ data class Vulnerabilities(
   val selfHarm: VulnerabilityDetail? = null,
   val vulnerability: VulnerabilityDetail? = null,
   val custody: VulnerabilityDetail? = null,
-  val hostelSetting: VulnerabilityDetail? = null
+  val hostelSetting: VulnerabilityDetail? = null,
 )
 
 data class VulnerabilityDetail(
@@ -25,6 +25,5 @@ data class VulnerabilityDetail(
   val previous: String? = null,
   val previousConcernsText: String? = null,
   val current: String? = null,
-  val currentConcernsText: String? = null
-
+  val currentConcernsText: String? = null,
 )

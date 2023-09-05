@@ -6,5 +6,5 @@ data class OrderManager(
   val dateStartOfAllocation: LocalDateTime?,
   val name: String?,
   val staffCode: String?,
-  val gradeCode: String?
+  val gradeCode: String?,
 )

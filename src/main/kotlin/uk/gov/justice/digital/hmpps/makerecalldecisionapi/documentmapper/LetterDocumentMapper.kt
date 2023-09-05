@@ -10,11 +10,16 @@ import java.time.ZonedDateTime
 
 abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToLetterDocumentData(recommendation: RecommendationResponse, paragraph1: String?, paragraph2: String?, paragraph3: String?): DocumentData {
+  fun mapRecommendationDataToLetterDocumentData(
+    recommendation: RecommendationResponse,
+    paragraph1: String?,
+    paragraph2: String?,
+    paragraph3: String?,
+  ): DocumentData {
     val name = formatFullName(
       recommendation.personOnProbation?.firstName,
       null,
-      recommendation.personOnProbation?.surname
+      recommendation.personOnProbation?.surname,
     )
 
     return DocumentData(
@@ -25,7 +30,7 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
       letterAddress = getLetterAddressDetails(recommendation.personOnProbation?.addresses, name),
       section1 = paragraph1,
       section2 = paragraph2,
-      section3 = paragraph3
+      section3 = paragraph3,
     )
   }
 
@@ -50,11 +55,13 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
   fun getDayOfMonthSuffix(n: Int): String? {
     return if (n in 11..13) {
       "th"
-    } else when (n % 10) {
-      1 -> "st"
-      2 -> "nd"
-      3 -> "rd"
-      else -> "th"
+    } else {
+      when (n % 10) {
+        1 -> "st"
+        2 -> "nd"
+        3 -> "rd"
+        else -> "th"
+      }
     }
   }
 
@@ -79,7 +86,9 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
         it.separatorFormattedAddress("\n", true, name)
       }
       addressConcat[0]
-    } else ""
+    } else {
+      ""
+    }
   }
 
   private fun buildSalutationName(popName: String?): String {

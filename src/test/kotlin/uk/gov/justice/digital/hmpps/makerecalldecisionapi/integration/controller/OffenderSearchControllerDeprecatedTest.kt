@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 @Deprecated(
   "Endpoints are deprecated and replaced with POST on paged-search",
   ReplaceWith(""),
-  DeprecationLevel.WARNING
+  DeprecationLevel.WARNING,
 )
 class OffenderSearchControllerDeprecatedTest : IntegrationTestBase() {
 
@@ -27,7 +27,7 @@ class OffenderSearchControllerDeprecatedTest : IntegrationTestBase() {
         firstName = firstName,
         surname = lastName,
         dateOfBirth = dateOfBirth,
-        pageSize = 10
+        pageSize = 10,
       )
       webTestClient.get()
         .uri("/search?crn=$crn")

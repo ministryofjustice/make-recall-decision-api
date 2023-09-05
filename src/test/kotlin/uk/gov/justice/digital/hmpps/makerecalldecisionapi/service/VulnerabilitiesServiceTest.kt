@@ -25,7 +25,8 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
 
   @BeforeEach
   fun setup() {
-    vulnerabilitiesService = VulnerabilitiesService(arnApiClient, userAccessValidator, recommendationService, personDetailsService)
+    vulnerabilitiesService =
+      VulnerabilitiesService(arnApiClient, userAccessValidator, recommendationService, personDetailsService)
   }
 
   @Test
@@ -78,7 +79,6 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   @Test
   fun `given case user not found for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
@@ -89,9 +89,12 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
         response,
         equalTo(
           VulnerabilitiesResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -99,7 +102,6 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)
@@ -110,9 +112,12 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
         response,
         equalTo(
           VulnerabilitiesResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -132,8 +137,8 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
           null,
           null,
           null,
-          null
-        )
+          null,
+        ),
       )
 
       val response = vulnerabilitiesService.getVulnerabilities(crn)

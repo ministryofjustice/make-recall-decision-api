@@ -6,5 +6,5 @@ data class Offence(
   val mainOffence: Boolean?,
   val description: String?,
   val code: String?,
-  val offenceDate: LocalDate?
+  val offenceDate: LocalDate?,
 )

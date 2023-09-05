@@ -109,8 +109,8 @@ abstract class IntegrationTestBase {
       jwtAuthHelper.createJwt(
         subject = "$subject",
         roles = roles,
-        clientId = "make-recall-decisions-api"
-      )
+        clientId = "make-recall-decisions-api",
+      ),
     )
   }
 
@@ -122,9 +122,19 @@ abstract class IntegrationTestBase {
     @BeforeAll
     fun setUpDb() {
       if (postgresStarted) return
-      val postgresProcess = ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
+      val postgresProcess =
+        ProcessBuilder("docker-compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
       postgresProcess.waitFor(120L, TimeUnit.SECONDS)
-      val waitForProcess = ProcessBuilder("./scripts/wait-for-it.sh", "127.0.0.1:5432", "--strict", "-t", "600", "--", "sleep", "10").start()
+      val waitForProcess = ProcessBuilder(
+        "./scripts/wait-for-it.sh",
+        "127.0.0.1:5432",
+        "--strict",
+        "-t",
+        "600",
+        "--",
+        "sleep",
+        "10",
+      ).start()
       waitForProcess.waitFor(60L, TimeUnit.SECONDS)
       postgresStarted = true
     }
@@ -168,18 +178,18 @@ abstract class IntegrationTestBase {
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationRequest(crn))
+          BodyInserters.fromValue(recommendationRequest(crn)),
         )
         .headers {
           (
             listOf(
               it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
-              it.set("X-Feature-Flags", featureFlagString)
+              it.set("X-Feature-Flags", featureFlagString),
             )
             )
         }
         .exchange()
-        .expectStatus().isCreated
+        .expectStatus().isCreated,
     )
 
     createdRecommendationId = response.get("id") as Int
@@ -190,7 +200,7 @@ abstract class IntegrationTestBase {
       .uri("/recommendations/$createdRecommendationId")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(updateRecommendationRequest(status))
+        BodyInserters.fromValue(updateRecommendationRequest(status)),
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
@@ -203,30 +213,43 @@ abstract class IntegrationTestBase {
       .uri("/recommendations/$createdRecommendationId$refreshPageQueryString")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationRequest)
+        BodyInserters.fromValue(recommendationRequest),
       )
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isOk
   }
 
-  fun createOrUpdateRecommendationStatus(activate: String, anotherToActivate: String? = null, deactivate: String? = null, anotherToDeactivate: String? = null, subject: String? = "SOME_USER") =
+  fun createOrUpdateRecommendationStatus(
+    activate: String,
+    anotherToActivate: String? = null,
+    deactivate: String? = null,
+    anotherToDeactivate: String? = null,
+    subject: String? = "SOME_USER",
+  ) =
     convertResponseToJSONArray(
       webTestClient.patch()
         .uri("/recommendations/$createdRecommendationId/status")
         .contentType(MediaType.APPLICATION_JSON)
         .body(
-          BodyInserters.fromValue(recommendationStatusRequest(activate = activate, anotherToActivate = anotherToActivate, deactivate = deactivate, anotherToDeactivate = anotherToDeactivate))
+          BodyInserters.fromValue(
+            recommendationStatusRequest(
+              activate = activate,
+              anotherToActivate = anotherToActivate,
+              deactivate = deactivate,
+              anotherToDeactivate = anotherToDeactivate,
+            ),
+          ),
         )
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"), subject = subject)
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"), subject = subject),
             )
             )
         }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isOk,
     )
 
   fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
@@ -248,7 +271,7 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/risk-management-plan")
     oasysARNApi.`when`(riskManagementPlanRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(riskManagementResponse(crn))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -257,7 +280,7 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/fulltext")
     oasysARNApi.`when`(risksRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(risksDataResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -267,7 +290,7 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -276,17 +299,30 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/predictors/all")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(allRiskScoresEmptyResponse())
+      response().withContentType(APPLICATION_JSON).withBody(allRiskScoresEmptyResponse()),
     )
   }
 
-  protected fun oasysAssessmentsResponse(crn: String, delaySeconds: Long = 0, laterCompleteAssessmentExists: Boolean? = false, offenceType: String? = "CURRENT", superStatus: String? = "COMPLETE") {
+  protected fun oasysAssessmentsResponse(
+    crn: String,
+    delaySeconds: Long = 0,
+    laterCompleteAssessmentExists: Boolean? = false,
+    offenceType: String? = "CURRENT",
+    superStatus: String? = "COMPLETE",
+  ) {
     val assessmentsRequest =
       request().withPath("/assessments/crn/$crn/offence")
 
     oasysARNApi.`when`(assessmentsRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(assessmentsResponse(crn, laterCompleteAssessmentExists = laterCompleteAssessmentExists, offenceType = offenceType, superStatus = superStatus))
-        .withDelay(Delay.seconds(delaySeconds))
+      response().withContentType(APPLICATION_JSON).withBody(
+        assessmentsResponse(
+          crn,
+          laterCompleteAssessmentExists = laterCompleteAssessmentExists,
+          offenceType = offenceType,
+          superStatus = superStatus,
+        ),
+      )
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -295,7 +331,7 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/predictors/all")
 
     oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
-      response().withStatusCode(404)
+      response().withStatusCode(404),
     )
   }
 
@@ -304,7 +340,7 @@ abstract class IntegrationTestBase {
       request().withPath("/risks/crn/$crn/predictors/all")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
-      response().withStatusCode(500)
+      response().withStatusCode(500),
     )
   }
 
@@ -314,17 +350,23 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(personalDetailsRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse(nomisId = nomisId))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
-  protected fun personalDetailsResponseOneTimeOnly(crn: String, delaySeconds: Long = 0, district: String? = "Sheffield City Centre", firstName: String? = "John") {
+  protected fun personalDetailsResponseOneTimeOnly(
+    crn: String,
+    delaySeconds: Long = 0,
+    district: String? = "Sheffield City Centre",
+    firstName: String? = "John",
+  ) {
     val personalDetailsRequest =
       request().withPath("/case-summary/$crn/personal-details")
 
     deliusIntegration.`when`(personalDetailsRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse(district = district, firstName = firstName))
-        .withDelay(Delay.seconds(delaySeconds))
+      response().withContentType(APPLICATION_JSON)
+        .withBody(personalDetailsResponse(district = district, firstName = firstName))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -334,7 +376,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(overviewRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(overviewResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -344,7 +386,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(overviewRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(overviewResponseNonCustodial())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -354,7 +396,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(overviewRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(overviewResponseNoConvictions())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -364,7 +406,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(request).respond(
       response().withContentType(APPLICATION_JSON).withBody(deliusMappaAndRoshHistoryResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -374,7 +416,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(request).respond(
       response().withContentType(APPLICATION_JSON).withBody(deliusRoshHistoryOnlyResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -384,7 +426,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(request).respond(
       response().withContentType(APPLICATION_JSON).withBody(deliusNoMappaOrRoshHistoryResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -401,14 +443,14 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(request).respond(
       response().withContentType(APPLICATION_JSON).withBody(deliusRecommendationModelResponse(firstName))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
   protected fun deliusInternalServerErrorResponse() {
     deliusIntegration.`when`(request()).respond(
       response()
-        .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
+        .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code()),
     )
   }
 
@@ -418,7 +460,7 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(roSHSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(roSHSummaryResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -428,7 +470,7 @@ abstract class IntegrationTestBase {
 
     oasysARNApi.`when`(roSHSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(roSHSummaryNoDataResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -436,7 +478,7 @@ abstract class IntegrationTestBase {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
-      response().withBody(roSH404NoOffenderFoundResponse(crn)).withStatusCode(404)
+      response().withBody(roSH404NoOffenderFoundResponse(crn)).withStatusCode(404),
     )
   }
 
@@ -444,7 +486,7 @@ abstract class IntegrationTestBase {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest, exactly(1)).respond(
-      response().withBody(roSH404LatestCompleteNotFoundResponse(crn)).withStatusCode(404)
+      response().withBody(roSH404LatestCompleteNotFoundResponse(crn)).withStatusCode(404),
     )
   }
 
@@ -452,17 +494,22 @@ abstract class IntegrationTestBase {
     val roSHSummaryRequest =
       request().withPath("/risks/crn/$crn/summary")
     oasysARNApi.`when`(roSHSummaryRequest).respond(
-      response().withBody(riskSummaryUnavailableResponse()).withStatusCode(500)
+      response().withBody(riskSummaryUnavailableResponse()).withStatusCode(500),
     )
   }
 
-  protected fun licenceConditionsResponse(crn: String, delaySeconds: Long = 0, releasedOnLicence: Boolean? = false, licenceStartDate: String? = "2020-06-25") {
+  protected fun licenceConditionsResponse(
+    crn: String,
+    delaySeconds: Long = 0,
+    releasedOnLicence: Boolean? = false,
+    licenceStartDate: String? = "2020-06-25",
+  ) {
     val licenceConditions =
       request().withPath("/case-summary/$crn/licence-conditions")
 
     deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse(releasedOnLicence, licenceStartDate))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -471,7 +518,7 @@ abstract class IntegrationTestBase {
       request().withPath("/user/$username")
     deliusIntegration.`when`(userResponse, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userResponseJson(username, email))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -481,7 +528,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(multipleLicenceResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -490,7 +537,7 @@ abstract class IntegrationTestBase {
       request().withPath("/case-summary/$crn/licence-conditions")
 
     deliusIntegration.`when`(licenceConditions).respond(
-      response().withContentType(APPLICATION_JSON).withBody(noActiveOrInactiveLicences())
+      response().withContentType(APPLICATION_JSON).withBody(noActiveOrInactiveLicences()),
     )
   }
 
@@ -500,7 +547,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(nonCustodialLicencesResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -510,7 +557,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponseMultipleConvictions())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -520,7 +567,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponseNoConvictions())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -528,7 +575,7 @@ abstract class IntegrationTestBase {
     val personalDetails =
       request().withPath("/case-summary/$crn/personal-details")
     deliusIntegration.`when`(personalDetails, exactly(1)).respond(
-      response().withStatusCode(404)
+      response().withStatusCode(404),
     )
   }
 
@@ -554,8 +601,8 @@ abstract class IntegrationTestBase {
       .withQueryStringParameter("size", pageSize.toString())
       .withBody(
         json(
-          "{\"crn\":\"$crn\"}"
-        )
+          "{\"crn\":\"$crn\"}",
+        ),
       )
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
@@ -568,10 +615,10 @@ abstract class IntegrationTestBase {
             dateOfBirth = dateOfBirth,
             pageNumber = pageNumber,
             pageSize = pageSize,
-            totalPages = totalPages
-          )
+            totalPages = totalPages,
+          ),
         )
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -593,8 +640,8 @@ abstract class IntegrationTestBase {
           "{" +
             "\"firstName\":\"$firstName\"," +
             "\"surname\":\"$surname\"" +
-            "}"
-        )
+            "}",
+        ),
       )
 
     offenderSearchApi.`when`(offenderSearchRequest).respond(
@@ -606,10 +653,10 @@ abstract class IntegrationTestBase {
             surname = surname,
             dateOfBirth = dateOfBirth,
             pageNumber = pageNumber,
-            pageSize = pageSize
-          )
+            pageSize = pageSize,
+          ),
         )
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -620,14 +667,14 @@ abstract class IntegrationTestBase {
         json(
           "{" +
             "\"crn\":\"$crn\"" +
-            "}"
-        )
+            "}",
+        ),
       )
 
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(limitedAccessOffenderSearchResponse(crn))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -638,7 +685,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(contactSummaryRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(body)
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -649,7 +696,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(userAccessRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -660,7 +707,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessAllowedResponse())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -671,7 +718,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessExcludedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200),
     )
   }
 
@@ -682,7 +729,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response()
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404),
     )
   }
 
@@ -693,7 +740,7 @@ abstract class IntegrationTestBase {
 
     deliusIntegration.`when`(userAccessRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userAccessRestrictedResponse())
-        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200)
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(200),
     )
   }
 
@@ -711,7 +758,7 @@ abstract class IntegrationTestBase {
         .withHeader(HttpHeaders.ETAG, "9514985635950")
         .withHeader(HttpHeaders.LAST_MODIFIED, "Wed, 03 Jul 2022 13:20:35 GMT")
         .withBody(ClassPathResource("myPdfTest.pdf").file.readBytes())
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -720,27 +767,41 @@ abstract class IntegrationTestBase {
       request().withPath("/document/$crn/$documentId")
 
     deliusIntegration.`when`(documentRequest, exactly(1)).respond(
-      response().withStatusCode(404)
+      response().withStatusCode(404),
     )
   }
 
-  protected fun cvlLicenceMatchResponse(nomisId: String, crn: String, delaySeconds: Long = 0, licenceStatus: String? = "IN_PROGRESS", licenceId: Int? = 123344) {
+  protected fun cvlLicenceMatchResponse(
+    nomisId: String,
+    crn: String,
+    delaySeconds: Long = 0,
+    licenceStatus: String? = "IN_PROGRESS",
+    licenceId: Int? = 123344,
+  ) {
     val licenceMatchRequest =
       request().withPath("/licence/match")
 
     cvlApi.`when`(licenceMatchRequest).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceMatchResponse(nomisId, crn, licenceStatus, licenceId))
-        .withDelay(Delay.seconds(delaySeconds))
+      response().withContentType(APPLICATION_JSON)
+        .withBody(licenceMatchResponse(nomisId, crn, licenceStatus, licenceId))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
-  protected fun cvlLicenceByIdResponse(licenceId: Int, nomisId: String, crn: String, delaySeconds: Long = 0, licenceStartDate: String? = "14/06/2022") {
+  protected fun cvlLicenceByIdResponse(
+    licenceId: Int,
+    nomisId: String,
+    crn: String,
+    delaySeconds: Long = 0,
+    licenceStartDate: String? = "14/06/2022",
+  ) {
     val licenceIdRequesst =
       request().withPath("/licence/id/$licenceId")
 
     cvlApi.`when`(licenceIdRequesst).respond(
-      response().withContentType(APPLICATION_JSON).withBody(licenceIdResponse(licenceId, nomisId, crn, licenceStartDate))
-        .withDelay(Delay.seconds(delaySeconds))
+      response().withContentType(APPLICATION_JSON)
+        .withBody(licenceIdResponse(licenceId, nomisId, crn, licenceStartDate))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 
@@ -749,7 +810,7 @@ abstract class IntegrationTestBase {
       request().withPath("/licence/id/$licenceId")
 
     cvlApi.`when`(licenceIdRequesst).respond(
-      response().withStatusCode(500)
+      response().withStatusCode(500),
     )
   }
 
@@ -759,7 +820,7 @@ abstract class IntegrationTestBase {
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer")))
+          .withBody(gson.toJson(mapOf("access_token" to "ABCDE", "token_type" to "bearer"))),
       )
   }
 
@@ -769,7 +830,7 @@ abstract class IntegrationTestBase {
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "OK")))
+          .withBody(gson.toJson(mapOf("status" to "OK"))),
       )
 
     deliusIntegration
@@ -777,7 +838,7 @@ abstract class IntegrationTestBase {
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "OK")))
+          .withBody(gson.toJson(mapOf("status" to "OK"))),
       )
 
     offenderSearchApi
@@ -785,7 +846,7 @@ abstract class IntegrationTestBase {
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "OK")))
+          .withBody(gson.toJson(mapOf("status" to "OK"))),
       )
 
     gotenbergMock
@@ -793,7 +854,7 @@ abstract class IntegrationTestBase {
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "up")))
+          .withBody(gson.toJson(mapOf("status" to "up"))),
       )
   }
 }
