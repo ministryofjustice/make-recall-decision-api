@@ -73,7 +73,8 @@ data class RecommendationResponse(
   val countersignAcoExposition: String? = null,
   val whoCompletedPartA: WhoCompletedPartA? = null,
   val practitionerForPartA: PractitionerForPartA? = null,
-  val revocationOrderRecipients: List<String>? = null
+  val revocationOrderRecipients: List<String>? = null,
+  val ppcsQueryEmails: List<String>? = null
 )
 
 data class UnderIntegratedOffenderManagement(
