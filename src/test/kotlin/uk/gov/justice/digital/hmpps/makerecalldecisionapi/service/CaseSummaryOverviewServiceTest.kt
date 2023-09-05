@@ -31,7 +31,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       deliusClient,
       riskService,
       userAccessValidator,
-      recommendationService
+      recommendationService,
     )
 
     given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(noAccessLimitations())

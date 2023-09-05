@@ -18,14 +18,14 @@ import java.util.Collections
 @Service
 internal class ManagementOversightService(
   val recommendationRepository: RecommendationRepository,
-  @Value("\${mrd.url}") private val mrdUrl: String? = null
+  @Value("\${mrd.url}") private val mrdUrl: String? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
   suspend fun getManagementOversightResponse(
-    crn: String
+    crn: String,
   ): ResponseEntity<ManagementOversightResponse> {
     val recommendations = recommendationRepository.findByCrn(crn) ?: throw NoRecommendationFoundException("No recommendation found for crn:$crn")
     Collections.sort(recommendations)

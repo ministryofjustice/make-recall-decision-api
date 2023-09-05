@@ -121,7 +121,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to risk fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())

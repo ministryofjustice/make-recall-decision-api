@@ -76,7 +76,7 @@ internal class RecommendationService(
   private val mrdEventsEmitter: MrdEventsEmitter?,
   @Value("\${mrd.url}") private val mrdUrl: String? = null,
   @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
-  val recommendationHistoryRepository: RecommendationHistoryRepository? = null
+  val recommendationHistoryRepository: RecommendationHistoryRepository? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -86,7 +86,7 @@ internal class RecommendationService(
     recommendationRequest: CreateRecommendationRequest,
     userId: String?,
     readableNameOfUser: String?,
-    featureFlags: FeatureFlags?
+    featureFlags: FeatureFlags?,
   ): RecommendationResponse? {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
@@ -128,7 +128,7 @@ internal class RecommendationService(
   fun buildRecallDecisionList(
     username: String?,
     readableUsername: String?,
-    recallConsideredDetail: String?
+    recallConsideredDetail: String?,
   ): List<RecallConsidered> {
     return listOf(
       RecallConsidered(
@@ -296,7 +296,7 @@ internal class RecommendationService(
     isPartADownloaded: Boolean,
     isDntrDownloaded: Boolean = false,
     pageRefreshIds: List<String>,
-    featureFlags: FeatureFlags?
+    featureFlags: FeatureFlags?,
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
@@ -342,7 +342,7 @@ internal class RecommendationService(
   private fun addSpoRationale(
     existingRecommendationEntity: RecommendationEntity,
     updatedRecommendation: RecommendationModel,
-    readableUserName: String?
+    readableUserName: String?,
   ): RecommendationModel {
     return existingRecommendationEntity.data.copy(
       managerRecallDecision = ManagerRecallDecision(
@@ -360,7 +360,7 @@ internal class RecommendationService(
   private fun sendManagementOversightDomainEvent(
     recommendationId: Long,
     existingRecommendationEntity: RecommendationEntity,
-    userId: String?
+    userId: String?,
   ) {
     log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made for recommendationId $recommendationId")
     try {
@@ -380,7 +380,7 @@ internal class RecommendationService(
   private suspend fun updateAndSaveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
-    readableUserName: String?
+    readableUserName: String?,
   ): RecommendationResponse {
     val userAccessResponse = existingRecommendationEntity.data.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
@@ -395,7 +395,7 @@ internal class RecommendationService(
   private fun auditUpdate(
     savedRecommendation: RecommendationEntity,
     userId: String?,
-    readableUserName: String?
+    readableUserName: String?,
   ) {
     val recommendationHistory = recommendationHistoryRepository?.save(
       RecommendationHistoryEntity(
@@ -410,7 +410,7 @@ internal class RecommendationService(
 
   private fun recommendationFromRequest(
     existingRecommendationEntity: RecommendationEntity,
-    jsonRequest: JsonNode?
+    jsonRequest: JsonNode?,
   ): RecommendationModel {
     val readerForUpdating: ObjectReader = CustomMapper.readerForUpdating(existingRecommendationEntity.data)
     return readerForUpdating.readValue(jsonRequest)
@@ -420,7 +420,7 @@ internal class RecommendationService(
   private fun saveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
-    readableUserName: String?
+    readableUserName: String?,
   ): RecommendationEntity {
     existingRecommendationEntity.data.lastModifiedDate = utcNowDateTimeString()
     existingRecommendationEntity.data.lastModifiedBy = userId
@@ -440,7 +440,7 @@ internal class RecommendationService(
   private fun updateDownloadLetterDataForRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     readableUserName: String?,
-    isPartADownloaded: Boolean
+    isPartADownloaded: Boolean,
   ) {
     if (isPartADownloaded) {
       existingRecommendationEntity.data.lastPartADownloadDateTime = localNowDateTime()
@@ -454,7 +454,7 @@ internal class RecommendationService(
     updateRecommendationRequest: RecommendationModel,
     existingRecommendation: RecommendationModel,
     username: String?,
-    readableUserName: String?
+    readableUserName: String?,
   ): List<RecallConsidered>? {
     if (updateRecommendationRequest.recallConsideredList != null && updateRecommendationRequest.recallConsideredList?.isNotEmpty() == true) {
       return buildRecallDecisionList(
@@ -520,7 +520,7 @@ internal class RecommendationService(
 
   private suspend fun RecommendationModel.refreshIndexOffenceDetails(
     crn: String,
-    deliusDetails: DeliusRecommendationModel
+    deliusDetails: DeliusRecommendationModel,
   ) {
     val assessmentInfo = riskService?.fetchAssessmentInfo(crn, deliusDetails.activeConvictions)
 
@@ -539,7 +539,7 @@ internal class RecommendationService(
 
   private fun updatePageReviewedValues(
     updateRecommendationRequest: RecommendationModel,
-    recommendationEntity: RecommendationEntity
+    recommendationEntity: RecommendationEntity,
   ): RecommendationEntity {
     val data = recommendationEntity.data
     var personOnProbation = data.personOnProbation
@@ -605,7 +605,7 @@ internal class RecommendationService(
     readableUsername: String?,
     documentRequestType: DocumentRequestType?,
     isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags?
+    featureFlags: FeatureFlags?,
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
@@ -655,7 +655,7 @@ internal class RecommendationService(
     recommendationEntity: RecommendationEntity,
     userId: String?,
     readableUsername: String?,
-    recommendationId: Long
+    recommendationId: Long,
   ): DocumentResponse {
 
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
@@ -700,7 +700,7 @@ internal class RecommendationService(
     userId: String?,
     readableUsername: String?,
     isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags? = null
+    featureFlags: FeatureFlags? = null,
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = buildRecommendationResponse(recommendationEntity)
@@ -718,7 +718,11 @@ internal class RecommendationService(
     }
   }
 
-  private fun getRecDocMetaData(userId: String?, recommendationId: Long, readableUsername: String?): RecommendationMetaData {
+  private fun getRecDocMetaData(
+    userId: String?,
+    recommendationId: Long,
+    readableUsername: String?,
+  ): RecommendationMetaData {
     val statuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
       .map { it.toRecommendationStatusResponse() }
     return RecommendationMetaData().fromFetchRecommendationsStatusResponse(statuses)
@@ -742,7 +746,7 @@ internal class RecommendationService(
     status: Status?,
     recallConsideredList: List<RecallConsidered>?,
     recommendationWrapper: StaticRecommendationDataWrapper?,
-    recommendationStartedDomainEventSent: Boolean?
+    recommendationStartedDomainEventSent: Boolean?,
   ): RecommendationEntity? {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
@@ -768,7 +772,7 @@ internal class RecommendationService(
   private fun buildRecommendationConvictionResponse(
     convictionResponse: List<ConvictionDetails>,
     hasBeenReviewed: Boolean? = false,
-    isExtendedSentenceInRecommendation: Boolean?
+    isExtendedSentenceInRecommendation: Boolean?,
   ): ConvictionDetail? {
     if (convictionResponse.size == 1) {
 
@@ -799,7 +803,7 @@ internal class RecommendationService(
 
   private fun extendedSentenceDetails(
     conviction: ConvictionDetails,
-    isExtendedSentenceInRecommendation: Boolean?
+    isExtendedSentenceInRecommendation: Boolean?,
   ): Pair<String?, String?> {
     return if ("Extended Determinate Sentence" == conviction.sentence.description ||
       "CJA - Extended Sentence" == conviction.sentence.description ||
@@ -828,7 +832,7 @@ internal class RecommendationService(
 
   private fun checkRecallTypesAreValid(
     selectedRecallType: String?,
-    jsonRequest: JsonNode?
+    jsonRequest: JsonNode?,
   ) {
     if (selectedRecallType != null) {
       val allOptions = jsonRequest?.get("recallType")?.get("allOptions")
@@ -885,11 +889,11 @@ data class RecommendationMetaData(
   var spoCounterSignEmail: String? = null,
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
-  var userPartACompletedByDateTime: LocalDateTime? = null
+  var userPartACompletedByDateTime: LocalDateTime? = null,
 )
 
 private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
-  fetchRecommendationStatusesResponse: List<RecommendationStatusResponse>
+  fetchRecommendationStatusesResponse: List<RecommendationStatusResponse>,
 ): RecommendationMetaData {
   fetchRecommendationStatusesResponse.forEach {
     if (it.name.equals("ACO_SIGNED")) {

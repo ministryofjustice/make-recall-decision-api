@@ -23,7 +23,7 @@ internal class RecommendationStatusService(
   val recommendationStatusRepository: RecommendationStatusRepository,
   val recommendationHistoryRepository: RecommendationHistoryRepository? = null,
   val recommendationRepository: RecommendationRepository? = null,
-  val deliusClient: DeliusClient? = null
+  val deliusClient: DeliusClient? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -33,7 +33,7 @@ internal class RecommendationStatusService(
     recommendationStatusRequest: RecommendationStatusRequest,
     userId: String?,
     readableNameOfUser: String?,
-    recommendationId: Long
+    recommendationId: Long,
   ): List<RecommendationStatusResponse> {
     deactivateOldStatus(recommendationId, recommendationStatusRequest, userId, readableNameOfUser)
     return activateNewStatus(
@@ -45,7 +45,7 @@ internal class RecommendationStatusService(
   }
 
   suspend fun fetchRecommendationStatuses(
-    recommendationId: Long
+    recommendationId: Long,
   ): List<RecommendationStatusResponse> {
     return recommendationStatusRepository.findByRecommendationId(recommendationId)
       .map { it.toRecommendationStatusResponse() }
@@ -55,7 +55,7 @@ internal class RecommendationStatusService(
     recommendationStatusRequest: RecommendationStatusRequest,
     recommendationId: Long,
     userId: String?,
-    readableNameOfUser: String?
+    readableNameOfUser: String?,
   ): List<RecommendationStatusEntity> {
     val statuses = recommendationStatusRequest.toActiveRecommendationStatusEntity(
       recommendationId = recommendationId,
@@ -69,7 +69,7 @@ internal class RecommendationStatusService(
 
   private fun fetchEmailAndPersistDetails(
     recommendationStatusRequest: RecommendationStatusRequest,
-    userId: String?
+    userId: String?,
   ): String? {
     val emailAddress =
       if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains("PO_RECALL_CONSULT_SPO")) {
@@ -96,7 +96,7 @@ internal class RecommendationStatusService(
     recommendationId: Long,
     recommendationStatusRequest: RecommendationStatusRequest,
     userId: String?,
-    readableNameOfUser: String?
+    readableNameOfUser: String?,
   ) {
     val statusesToDeactivate = recommendationStatusRequest.deActivate
       .flatMap {

@@ -43,7 +43,7 @@ internal class RiskService(
   private val deliusClient: DeliusClient,
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val recommendationService: RecommendationService?
+  @Lazy private val recommendationService: RecommendationService?,
 ) {
 
   suspend fun getRisk(crn: String): RiskResponse {
@@ -143,7 +143,7 @@ internal class RiskService(
 
   private fun getOffencesFromLatestCompleteAssessment(
     convictionsFromDelius: List<Conviction>,
-    latestAssessment: Assessment?
+    latestAssessment: Assessment?,
   ) = convictionsFromDelius
     .map { it.mainOffence }
     .filter { datesMatch(latestAssessment, it.date) }
@@ -160,7 +160,7 @@ internal class RiskService(
 
   private fun datesMatch(
     latestAssessment: Assessment?,
-    mainOffenceDate: LocalDate?
+    mainOffenceDate: LocalDate?,
   ) = latestAssessment?.offenceDetails?.any {
     it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate)
   } == true

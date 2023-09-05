@@ -30,7 +30,7 @@ class JwtAuthHelper {
   fun setAuthorisation(
     user: String = "make-recall-decision-client",
     roles: List<String> = listOf(),
-    scopes: List<String> = listOf()
+    scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit {
     val token = createJwt(
       subject = user,
