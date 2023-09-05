@@ -317,11 +317,11 @@ internal abstract class ServiceTestBase {
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
-        bookingNumber = "G12345",
+        bookingNumber = "G12345"
       ),
     ),
     mainAddress = address,
-    communityManager = manager,
+    communityManager = manager
   )
 
   protected fun nonCustodialConviction() = DeliusClient.Conviction(
@@ -329,14 +329,14 @@ internal abstract class ServiceTestBase {
     mainOffence = DeliusClient.Offence(
       code = "ABC123",
       description = "Robbery (other than armed robbery)",
-      date = LocalDate.of(2022, 8, 26),
+      date = LocalDate.of(2022, 8, 26)
     ),
     additionalOffences = listOf(
       DeliusClient.Offence(
         code = "ZYX789",
         description = "Arson",
-        date = LocalDate.of(2022, 8, 26),
-      ),
+        date = LocalDate.of(2022, 8, 26)
+      )
     ),
     sentence = DeliusClient.Sentence(
       description = "Sentence description",
@@ -345,7 +345,7 @@ internal abstract class ServiceTestBase {
       isCustodial = false,
       custodialStatusCode = null,
       licenceExpiryDate = null,
-      sentenceExpiryDate = null,
+      sentenceExpiryDate = null
     ),
   )
 
@@ -356,14 +356,14 @@ internal abstract class ServiceTestBase {
         mainOffence = DeliusClient.Offence(
           description = "Robbery (other than armed robbery)",
           code = "ABC123",
-          date = LocalDate.parse("2022-08-26"),
+          date = LocalDate.parse("2022-08-26")
         ),
         additionalOffences = listOf(
           DeliusClient.Offence(
             description = "Arson",
             code = "ZYX789",
-            date = LocalDate.parse("2022-08-26"),
-          ),
+            date = LocalDate.parse("2022-08-26")
+          )
         ),
         sentence = DeliusClient.Sentence(
           description = "CJA - Extended Sentence",
@@ -372,32 +372,27 @@ internal abstract class ServiceTestBase {
           length = 6,
           lengthUnits = "Days",
           sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
+          licenceExpiryDate = LocalDate.parse("2022-05-10")
         ),
         licenceConditions = licenceConditions,
-      ),
+      )
     )
   }
 
-  protected fun custodialConviction(
-    description: String = "CJA - Extended Sentence",
-    isCustodial: Boolean = true,
-    custodialStatusCode: String? = "ABC123",
-    licenceStartDate: LocalDate? = null,
-  ): DeliusClient.Conviction {
+  protected fun custodialConviction(description: String = "CJA - Extended Sentence", isCustodial: Boolean = true, custodialStatusCode: String? = "ABC123", licenceStartDate: LocalDate? = null): DeliusClient.Conviction {
     return DeliusClient.Conviction(
       number = "1",
       mainOffence = DeliusClient.Offence(
         code = "ABC123",
         description = "Robbery (other than armed robbery)",
-        date = LocalDate.of(2022, 8, 26),
+        date = LocalDate.of(2022, 8, 26)
       ),
       additionalOffences = listOf(
         DeliusClient.Offence(
           code = "ZYX789",
           description = "Arson",
-          date = LocalDate.of(2022, 8, 26),
-        ),
+          date = LocalDate.of(2022, 8, 26)
+        )
       ),
       sentence = DeliusClient.Sentence(
         description = description,
@@ -406,19 +401,18 @@ internal abstract class ServiceTestBase {
         isCustodial = isCustodial,
         custodialStatusCode = custodialStatusCode,
         licenceExpiryDate = LocalDate.of(2022, 5, 10),
-        sentenceExpiryDate = LocalDate.of(2022, 6, 10),
+        sentenceExpiryDate = LocalDate.of(2022, 6, 10)
       ),
     )
   }
 
-  protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) =
-    ConvictionWithLicenceConditions(
-      number = number,
-      mainOffence = mainOffence,
-      additionalOffences = additionalOffences,
-      sentence = sentence,
-      licenceConditions = licenceConditions,
-    )
+  protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
+    number = number,
+    mainOffence = mainOffence,
+    additionalOffences = additionalOffences,
+    sentence = sentence,
+    licenceConditions = licenceConditions
+  )
 
   protected fun deliusOverviewResponse(
     forename: String = "John",
@@ -427,7 +421,7 @@ internal abstract class ServiceTestBase {
     ethnicity: String? = "Ainu",
     primaryLanguage: String? = "English",
     registerFlags: List<String> = listOf("Victim contact"),
-    activeConvictions: List<DeliusClient.Conviction> = listOf(nonCustodialConviction()),
+    activeConvictions: List<DeliusClient.Conviction> = listOf(nonCustodialConviction())
   ) = Overview(
     personalDetails = DeliusClient.PersonalDetailsOverview(
       name = Name(forename, middleName, surname),
@@ -439,15 +433,15 @@ internal abstract class ServiceTestBase {
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
-        bookingNumber = "G12345",
+        bookingNumber = "G12345"
       ),
     ),
     registerFlags = registerFlags,
     activeConvictions = activeConvictions,
     lastRelease = Release(
       releaseDate = LocalDate.of(2017, 9, 15),
-      recallDate = LocalDate.of(2020, 10, 15),
-    ),
+      recallDate = LocalDate.of(2020, 10, 15)
+    )
   )
 
   protected fun deliusLicenceConditions(startDate: LocalDate): List<LicenceCondition> {
@@ -456,14 +450,14 @@ internal abstract class ServiceTestBase {
         licenceConditionNotes = "Licence condition notes",
         licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
           code = "NLC8",
-          description = "Freedom of movement",
+          description = "Freedom of movement"
         ),
         licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
           code = "NSTT8",
-          description = "To only attend places of worship which have been previously agreed with your supervising officer.",
+          description = "To only attend places of worship which have been previously agreed with your supervising officer."
         ),
-        startDate = startDate,
-      ),
+        startDate = startDate
+      )
     )
   }
 
@@ -472,22 +466,18 @@ internal abstract class ServiceTestBase {
       licenceConditionNotes = "Licence condition notes",
       licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
         code = "NLC8",
-        description = "Freedom of movement",
+        description = "Freedom of movement"
       ),
       licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
         code = "NSTT8",
-        description = "To only attend places of worship which have been previously agreed with your supervising officer.",
+        description = "To only attend places of worship which have been previously agreed with your supervising officer."
       ),
-      startDate = LocalDate.now(),
-    ),
+      startDate = LocalDate.now()
+    )
   )
 
   protected fun deliusLicenceConditionsResponse(
-    activeConvictions: List<ConvictionWithLicenceConditions> = listOf(
-      nonCustodialConviction().withLicenceConditions(
-        emptyList(),
-      ),
-    ),
+    activeConvictions: List<ConvictionWithLicenceConditions> = listOf(nonCustodialConviction().withLicenceConditions(emptyList())),
     forename: String = "John",
     middleName: String? = "Homer Bart",
     surname: String = "Smith",
@@ -504,7 +494,7 @@ internal abstract class ServiceTestBase {
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
-        bookingNumber = "G12345",
+        bookingNumber = "G12345"
       ),
     ),
     activeConvictions = activeConvictions,
@@ -512,9 +502,7 @@ internal abstract class ServiceTestBase {
 
   protected fun deliusMappaAndRoshHistoryResponse(
     mappa: DeliusClient.Mappa? = DeliusClient.Mappa(
-      category = 0,
-      level = 1,
-      startDate = LocalDate.parse("2021-02-10"),
+      category = 0, level = 1, startDate = LocalDate.parse("2021-02-10")
     ),
     roshHistory: List<MappaAndRoshHistory.Rosh> = listOf(
       MappaAndRoshHistory.Rosh(
@@ -522,8 +510,8 @@ internal abstract class ServiceTestBase {
         type = "ABC123",
         typeDescription = "Victim contact",
         notes = "Notes on case",
-        startDate = LocalDate.parse("2021-01-30"),
-      ),
+        startDate = LocalDate.parse("2021-01-30")
+      )
     ),
     forename: String = "John",
     middleName: String? = "Homer Bart",
@@ -541,17 +529,15 @@ internal abstract class ServiceTestBase {
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
-        bookingNumber = "G12345",
+        bookingNumber = "G12345"
       ),
     ),
     mappa = mappa,
-    roshHistory = roshHistory,
+    roshHistory = roshHistory
   )
 
-  protected fun expectedCvlLicenceConditionsResponse(
-    licenceStatus: String? = null,
-    licenceStartDate: LocalDate? = LocalDate.parse("2022-06-14"),
-  ): List<LicenceConditionResponse> {
+  protected fun expectedCvlLicenceConditionsResponse(licenceStatus: String? = null, licenceStartDate: LocalDate? = LocalDate.parse("2022-06-14")): List<LicenceConditionResponse> {
+
     return listOf(
       LicenceConditionResponse(
         licenceStatus = licenceStatus,
@@ -569,25 +555,21 @@ internal abstract class ServiceTestBase {
           LicenceConditionDetail(
             category = "Generic category",
             text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
+            expandedText = "Expanded additional licence condition"
+          )
         ),
         additionalPssConditions = listOf(
           LicenceConditionDetail(
             text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
+            expandedText = "Expanded additional PSS licence condition"
+          )
         ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
-      ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      )
     )
   }
 
-  protected fun expectedMultipleCvlLicenceConditionsResponse(
-    licenceStatus: String? = null,
-    licenceStartDate1: LocalDate? = LocalDate.parse("2022-06-14"),
-    licenceStartDate2: LocalDate? = LocalDate.parse("2022-06-14"),
-  ): List<LicenceConditionResponse> {
+  protected fun expectedMultipleCvlLicenceConditionsResponse(licenceStatus: String? = null, licenceStartDate1: LocalDate? = LocalDate.parse("2022-06-14"), licenceStartDate2: LocalDate? = LocalDate.parse("2022-06-14")): List<LicenceConditionResponse> {
     return listOf(
       LicenceConditionResponse(
         licenceStatus = licenceStatus,
@@ -605,16 +587,16 @@ internal abstract class ServiceTestBase {
           LicenceConditionDetail(
             category = "Generic category",
             text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
+            expandedText = "Expanded additional licence condition"
+          )
         ),
         additionalPssConditions = listOf(
           LicenceConditionDetail(
             text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
+            expandedText = "Expanded additional PSS licence condition"
+          )
         ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
       ),
       LicenceConditionResponse(
         licenceStatus = licenceStatus,
@@ -632,26 +614,24 @@ internal abstract class ServiceTestBase {
           LicenceConditionDetail(
             category = "Generic category",
             text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
+            expandedText = "Expanded additional licence condition"
+          )
         ),
         additionalPssConditions = listOf(
           LicenceConditionDetail(
             text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
+            expandedText = "Expanded additional PSS licence condition"
+          )
         ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
-      ),
+        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition"))
+      )
     )
   }
 
   protected fun deliusRecommendationModelResponse(
     activeConvictions: List<DeliusClient.Conviction> = listOf(custodialConviction(), nonCustodialConviction()),
     mappa: DeliusClient.Mappa? = DeliusClient.Mappa(
-      category = 0,
-      level = 1,
-      startDate = LocalDate.parse("2021-02-10"),
+      category = 0, level = 1, startDate = LocalDate.parse("2021-02-10")
     ),
     forename: String = "John",
     middleName: String? = "Homer Bart",
@@ -669,7 +649,7 @@ internal abstract class ServiceTestBase {
         pncNumber = "2004/0712343H",
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
-        bookingNumber = "G12345",
+        bookingNumber = "G12345"
       ),
     ),
     mainAddress = Address(
@@ -677,7 +657,7 @@ internal abstract class ServiceTestBase {
       district = "Line 2 address",
       town = "Town address",
       postcode = "TS1 1ST",
-      noFixedAbode = false,
+      noFixedAbode = false
     ),
     mappa = mappa,
     activeConvictions = activeConvictions,
@@ -696,19 +676,19 @@ internal abstract class ServiceTestBase {
               isCustodial = sentence.isCustodial,
               custodialStatusCode = sentence.custodialStatusCode,
               licenceExpiryDate = sentence.licenceExpiryDate,
-              sentenceExpiryDate = sentence.sentenceExpiryDate,
+              sentenceExpiryDate = sentence.sentenceExpiryDate
             )
           },
           mainOffence = it.mainOffence,
-          additionalOffences = it.additionalOffences,
+          additionalOffences = it.additionalOffences
         )
-      },
+      }
     ),
     lastReleasedFromInstitution = RecommendationModel.Institution("In the Community"),
     lastRelease = Release(
       releaseDate = LocalDate.of(2017, 9, 15),
-      recallDate = LocalDate.of(2020, 10, 15),
-    ),
+      recallDate = LocalDate.of(2020, 10, 15)
+    )
   )
 
   protected fun riskSummaryResponse(): RiskSummaryResponse {
@@ -723,25 +703,25 @@ internal abstract class ServiceTestBase {
         high = listOf(
           "Children",
           "Public",
-          "Known adult",
+          "Known adult"
         ),
         medium = listOf("Staff"),
-        low = listOf("Prisoners"),
+        low = listOf("Prisoners")
       ),
       riskInCustody = RiskScore(
         veryHigh = listOf(
           "Staff",
-          "Prisoners",
+          "Prisoners"
         ),
         high = listOf("Known adult"),
         medium = null,
         low = listOf(
           "Children",
-          "Public",
-        ),
+          "Public"
+        )
       ),
       assessedOn = "2022-10-09T08:26:31",
-      overallRiskLevel = "HIGH",
+      overallRiskLevel = "HIGH"
     )
   }
 
@@ -750,7 +730,7 @@ internal abstract class ServiceTestBase {
     userExcluded = excluded,
     userNotFound = userNotFound,
     exclusionMessage = "I am an exclusion message",
-    restrictionMessage = "I am a restriction message",
+    restrictionMessage = "I am a restriction message"
   )
 
   protected fun noAccessLimitations() = UserAccess(
@@ -770,20 +750,16 @@ internal abstract class ServiceTestBase {
     userRestricted = true,
     userExcluded = false,
     userNotFound = false,
-    restrictionMessage = "I am a restriction message",
+    restrictionMessage = "I am a restriction message"
   )
 
-  protected fun riskManagementResponse(
-    crn: String,
-    status: String,
-    dateCompleted: String? = "2022-10-01T14:20:27",
-  ): RiskManagementResponse {
+  protected fun riskManagementResponse(crn: String, status: String, dateCompleted: String? = "2022-10-01T14:20:27"): RiskManagementResponse {
     return RiskManagementResponse(
       crn = crn,
       limitedAccessOffender = true,
       riskManagementPlan = listOf(
         RiskManagementPlanResponse(
-          initiationDate = "2021-10-01T14:20:27",
+          initiationDate = "2021-10-01T14:20:27"
         ),
         RiskManagementPlanResponse(
           assessmentId = 0,
@@ -809,12 +785,12 @@ internal abstract class ServiceTestBase {
           laterPartCompSignedAssessmentExists = true,
           latestPartCompSignedDate = "2022-10-06T14:20:27",
           laterCompleteAssessmentExists = true,
-          latestCompleteDate = "2022-10-07T14:20:27",
+          latestCompleteDate = "2022-10-07T14:20:27"
         ),
         RiskManagementPlanResponse(
-          initiationDate = "2020-10-02T14:20:27",
+          initiationDate = "2020-10-02T14:20:27"
         ),
-      ),
+      )
     )
   }
 
@@ -825,7 +801,7 @@ internal abstract class ServiceTestBase {
         licenceType = "AP",
         licenceStatus = "IN_PROGRESS",
         crn = crn,
-      ),
+      )
     )
   }
 
@@ -841,20 +817,9 @@ internal abstract class ServiceTestBase {
       topupSupervisionExpiryDate = "17/06/2022",
       standardLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard licence condition")),
       standardPssConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard PSS licence condition")),
-      additionalLicenceConditions = listOf(
-        LicenceConditionCvlDetail(
-          text = "This is an additional licence condition",
-          expandedText = "Expanded additional licence condition",
-          category = "Generic category",
-        ),
-      ),
-      additionalPssConditions = listOf(
-        LicenceConditionCvlDetail(
-          text = "This is an additional PSS licence condition",
-          expandedText = "Expanded additional PSS licence condition",
-        ),
-      ),
-      bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition")),
+      additionalLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional licence condition", expandedText = "Expanded additional licence condition", category = "Generic category")),
+      additionalPssConditions = listOf(LicenceConditionCvlDetail(text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
+      bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition"))
     )
   }
 
@@ -876,7 +841,7 @@ internal abstract class ServiceTestBase {
       nomsNumber = "A1234CR",
       pncNumber = "2004/0712343H",
       primaryLanguage = "English",
-      fullName = "John Homer Bart Smith",
+      fullName = "John Homer Bart Smith"
     )
   }
 

@@ -262,6 +262,7 @@ internal class RecommendationService(
       whoCompletedPartA = recommendationEntity.data.whoCompletedPartA,
       practitionerForPartA = recommendationEntity.data.practitionerForPartA,
       revocationOrderRecipients = recommendationEntity.data.revocationOrderRecipients,
+      ppcsQueryEmails = recommendationEntity.data.ppcsQueryEmails,
     )
   }
 

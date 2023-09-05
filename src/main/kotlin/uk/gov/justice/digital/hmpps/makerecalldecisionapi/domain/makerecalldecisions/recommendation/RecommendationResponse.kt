@@ -74,6 +74,7 @@ data class RecommendationResponse(
   val whoCompletedPartA: WhoCompletedPartA? = null,
   val practitionerForPartA: PractitionerForPartA? = null,
   val revocationOrderRecipients: List<String>? = null,
+  val ppcsQueryEmails: List<String>? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
