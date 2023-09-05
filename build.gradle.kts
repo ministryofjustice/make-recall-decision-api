@@ -44,8 +44,10 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:9.15.2")
-  implementation("org.postgresql:postgresql:42.5.4")
+  // Going to flyway-core 9.20 needs SpringBoot version >3.1.0
+  // https://github.com/flyway/flyway/issues/3694
+  implementation("org.flywaydb:flyway-core:9.19.4")
+  implementation("org.postgresql:postgresql:42.6.0")
 
   implementation("io.sentry:sentry-spring-boot-starter:6.28.0")
   implementation("io.sentry:sentry-logback:6.28.0")
