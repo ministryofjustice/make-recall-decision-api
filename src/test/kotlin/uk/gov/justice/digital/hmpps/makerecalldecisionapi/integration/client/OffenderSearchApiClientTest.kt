@@ -34,11 +34,11 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = "Pontius",
           surname = "Pilate",
           dateOfBirth = LocalDate.parse("2000-11-09"),
-          otherIds = OtherIds(crn, null, null, null, null)
-        )
+          otherIds = OtherIds(crn, null, null, null, null),
+        ),
       ),
       pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
-      totalPages = 1
+      totalPages = 1,
     )
 
     // when
@@ -46,9 +46,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
       .block()
 
     // then
-    assertThat(
-      actual, equalTo(expected)
-    )
+    assertThat(actual, equalTo(expected))
   }
 
   @Test
@@ -65,7 +63,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
       surname = surname,
       dateOfBirth = dateOfBirth,
       pageNumber = page,
-      pageSize = pageSize
+      pageSize = pageSize,
     )
 
     // and
@@ -75,11 +73,11 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = firstName,
           surname = surname,
           dateOfBirth = LocalDate.parse(dateOfBirth),
-          otherIds = OtherIds(crn, null, null, null, null)
-        )
+          otherIds = OtherIds(crn, null, null, null, null),
+        ),
       ),
       pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
-      totalPages = 1
+      totalPages = 1,
     )
 
     // when
@@ -88,9 +86,7 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
         .block()
 
     // then
-    assertThat(
-      actual, equalTo(expected)
-    )
+    assertThat(actual, equalTo(expected))
   }
 
   @Test
@@ -108,14 +104,14 @@ class OffenderSearchApiClientTest : IntegrationTestBase() {
           firstName = null,
           surname = null,
           dateOfBirth = null,
-          otherIds = OtherIds(crn, null, null, null, null)
-        )
+          otherIds = OtherIds(crn, null, null, null, null),
+        ),
       ),
       pageable = PageableResponse(
         pageNumber = page,
-        pageSize = pageSize
+        pageSize = pageSize,
       ),
-      totalPages = 1
+      totalPages = 1,
     )
 
     // when

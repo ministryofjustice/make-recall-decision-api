@@ -42,7 +42,6 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   @Test
   fun `given a contact summary and release summary then return these details in the response`() {
     runTest {
-
       given(deliusClient.getContactHistory(crn))
         .willReturn(deliusContactHistoryResponse())
 
@@ -50,14 +49,23 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
 
       then(deliusClient).should().getContactHistory(crn)
 
-      assertThat(response, equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), expectedContactSummaryResponse(), expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn())))
+      assertThat(
+        response,
+        equalTo(
+          ContactHistoryResponse(
+            null,
+            expectedPersonDetailsResponse(),
+            expectedContactSummaryResponse(),
+            expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn(),
+          ),
+        ),
+      )
     }
   }
 
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = contactHistoryService.getContactHistory(crn)
@@ -68,9 +76,13 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         response,
         equalTo(
           ContactHistoryResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null, null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -78,7 +90,6 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
   @Test
   fun `given user not found for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Forbidden"))
 
       val response = contactHistoryService.getContactHistory(crn)
@@ -89,9 +100,13 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         response,
         equalTo(
           ContactHistoryResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null, null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -108,7 +123,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
 
       assertThat(
         response,
-        equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList()))
+        equalTo(ContactHistoryResponse(null, expectedPersonDetailsResponse(), emptyList(), emptyList())),
       )
     }
   }
@@ -129,9 +144,9 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             id = "f2943b31-2250-41ab-a04d-004e27a97add",
             documentName = "test doc.docx",
             lastModifiedAt = ZonedDateTime.parse("2022-06-21T20:27:23.407Z"),
-          )
+          ),
         ),
-        description = "This is a contact description"
+        description = "This is a contact description",
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
@@ -152,9 +167,9 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
             documentName = "conviction contact doc.pdf",
             lastModifiedAt = ZonedDateTime.parse("2022-06-23T20:29:17.324Z"),
-          )
+          ),
         ),
-        description = null
+        description = null,
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
@@ -166,7 +181,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         code = "COAP",
         sensitive = false,
         contactDocuments = emptyList(),
-        description = null
+        description = null,
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
@@ -178,7 +193,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         code = "CHVS",
         sensitive = false,
         contactDocuments = emptyList(),
-        description = null
+        description = null,
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -190,7 +205,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         code = "EASU",
         sensitive = false,
         contactDocuments = emptyList(),
-        description = null
+        description = null,
       ),
       ContactSummaryResponse(
         contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
@@ -202,8 +217,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         code = "EFGH",
         sensitive = false,
         contactDocuments = emptyList(),
-        description = null
-      )
+        description = null,
+      ),
     )
   }
 
@@ -212,23 +227,23 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
       ContactGroupResponse(
         groupId = "3",
         label = "Appointments",
-        contactTypeCodes = listOf("CHVS", "COAI", "COAP")
+        contactTypeCodes = listOf("CHVS", "COAI", "COAP"),
       ),
       ContactGroupResponse(
         groupId = "11",
         label = "Home visit",
-        contactTypeCodes = listOf("CHVS")
+        contactTypeCodes = listOf("CHVS"),
       ),
       ContactGroupResponse(
         groupId = "21",
         label = "Unpaid work",
-        contactTypeCodes = listOf("EASU")
+        contactTypeCodes = listOf("EASU"),
       ),
       ContactGroupResponse(
         groupId = "unknown",
         label = "Not categorised",
-        contactTypeCodes = listOf("EFGH")
-      )
+        contactTypeCodes = listOf("EFGH"),
+      ),
     )
   }
 
@@ -251,8 +266,8 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             id = "f2943b31-2250-41ab-a04d-004e27a97add",
             name = "test doc.docx",
             lastUpdated = ZonedDateTime.parse("2022-06-21T20:27:23.407Z"),
-          )
-        )
+          ),
+        ),
       ),
       Contact(
         startDateTime = ZonedDateTime.parse("2022-05-10T10:39Z"),
@@ -276,7 +291,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
             id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
             name = "conviction contact doc.pdf",
             lastUpdated = ZonedDateTime.parse("2022-06-23T20:29:17.324Z"),
-          )
+          ),
         ),
       ),
       Contact(
@@ -291,7 +306,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         sensitive = false,
         description = null,
-        documents = listOf()
+        documents = listOf(),
       ),
       Contact(
         startDateTime = ZonedDateTime.parse("2022-05-11T10:39Z"),
@@ -305,7 +320,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         sensitive = false,
         description = null,
-        documents = listOf()
+        documents = listOf(),
       ),
       Contact(
         startDateTime = ZonedDateTime.parse("2022-05-13T10:39Z"),
@@ -319,7 +334,7 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         sensitive = false,
         description = null,
-        documents = listOf()
+        documents = listOf(),
       ),
       Contact(
         startDateTime = ZonedDateTime.parse("2022-05-13T10:39Z"),
@@ -333,22 +348,26 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
         enforcementAction = null,
         sensitive = false,
         description = null,
-        documents = listOf()
-      )
+        documents = listOf(),
+      ),
     ),
   ) = ContactHistory(
     personalDetails = deliusPersonalDetailsResponse().personalDetails,
     summary = ContactSummary(
-      types = if (contacts.isNotEmpty()) listOf(
-        ContactTypeSummary(code = "CHVS", description = "Home visit", total = 1),
-        ContactTypeSummary(code = "COAI", description = "Initial appointment", total = 2),
-        ContactTypeSummary(code = "COAP", description = "Planned visit", total = 1),
-        ContactTypeSummary(code = "EASU", description = "Unpaid work", total = 1),
-        ContactTypeSummary(code = "EFGH", description = "Unknown", total = 1),
-      ) else emptyList(),
+      types = if (contacts.isNotEmpty()) {
+        listOf(
+          ContactTypeSummary(code = "CHVS", description = "Home visit", total = 1),
+          ContactTypeSummary(code = "COAI", description = "Initial appointment", total = 2),
+          ContactTypeSummary(code = "COAP", description = "Planned visit", total = 1),
+          ContactTypeSummary(code = "EASU", description = "Unpaid work", total = 1),
+          ContactTypeSummary(code = "EFGH", description = "Unknown", total = 1),
+        )
+      } else {
+        emptyList()
+      },
       hits = contacts.size,
-      total = contacts.size
+      total = contacts.size,
     ),
-    contacts = contacts
+    contacts = contacts,
   )
 }

@@ -2,5 +2,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 enum class AssessmentStatus {
   COMPLETE,
-  INCOMPLETE
+  INCOMPLETE,
 }

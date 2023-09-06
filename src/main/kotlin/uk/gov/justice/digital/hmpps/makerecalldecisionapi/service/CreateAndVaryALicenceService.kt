@@ -17,7 +17,6 @@ internal class CreateAndVaryALicenceService(
 ) {
 
   suspend fun buildLicenceConditions(crn: String, nomsId: String): List<LicenceConditionResponse> {
-
     val matchedLicences =
       getValueAndHandleWrappedException(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(listOf(nomsId))))
     return matchedLicences
@@ -36,11 +35,29 @@ internal class CreateAndVaryALicenceService(
             licenceExpiryDate = convertDateStringToIso8601Date(licence?.licenceExpiryDate),
             topupSupervisionStartDate = convertDateStringToIso8601Date(licence?.topupSupervisionStartDate),
             topupSupervisionExpiryDate = convertDateStringToIso8601Date(licence?.topupSupervisionExpiryDate),
-            standardLicenceConditions = licence?.standardLicenceConditions?.map { LicenceConditionDetail(it.code, it.text) },
+            standardLicenceConditions = licence?.standardLicenceConditions?.map {
+              LicenceConditionDetail(
+                it.code,
+                it.text,
+              )
+            },
             standardPssConditions = licence?.standardPssConditions?.map { LicenceConditionDetail(it.code, it.text) },
-            additionalLicenceConditions = licence?.additionalLicenceConditions?.map { LicenceConditionDetail(it.code, it.text, it.expandedText, it.category,) },
-            additionalPssConditions = licence?.additionalPssConditions?.map { LicenceConditionDetail(it.code, it.text, it.expandedText) },
-            bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.code, it.text) }
+            additionalLicenceConditions = licence?.additionalLicenceConditions?.map {
+              LicenceConditionDetail(
+                it.code,
+                it.text,
+                it.expandedText,
+                it.category,
+              )
+            },
+            additionalPssConditions = licence?.additionalPssConditions?.map {
+              LicenceConditionDetail(
+                it.code,
+                it.text,
+                it.expandedText,
+              )
+            },
+            bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.code, it.text) },
           )
         } catch (ex: NoCvlLicenceByIdException) {
           log.error(ex.message)

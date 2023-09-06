@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException
 class ArnApiClient(
   private val webClient: WebClient,
   @Value("\${oasys.arn.client.timeout}") private val arnClientTimeout: Long,
-  private val timeoutCounter: Counter
+  private val timeoutCounter: Counter,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -38,7 +38,7 @@ class ArnApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "risk summary"
+          endPoint = "risk summary",
         )
       }
     log.info(StringUtils.normalizeSpace("Returning risk summary for $crn"))
@@ -58,7 +58,7 @@ class ArnApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "assessments"
+          endPoint = "assessments",
         )
       }
     log.info(StringUtils.normalizeSpace("Returning assessments for $crn"))
@@ -78,7 +78,7 @@ class ArnApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "risk scores"
+          endPoint = "risk scores",
         )
       }
     log.info(StringUtils.normalizeSpace("Returning risk scores for $crn"))
@@ -98,7 +98,7 @@ class ArnApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "risk management plan"
+          endPoint = "risk management plan",
         )
       }
     log.info(StringUtils.normalizeSpace("Returning risk management plan for $crn"))
@@ -118,7 +118,7 @@ class ArnApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "risks"
+          endPoint = "risks",
         )
       }
     log.info(StringUtils.normalizeSpace("Returning all risks with full text for $crn"))
@@ -127,7 +127,7 @@ class ArnApiClient(
 
   private fun handleTimeoutException(
     exception: Throwable?,
-    endPoint: String
+    endPoint: String,
   ) {
     when (exception) {
       is TimeoutException -> {
@@ -135,7 +135,7 @@ class ArnApiClient(
 
         throw ClientTimeoutException(
           "ARN API Client - $endPoint endpoint",
-          "No response within $arnClientTimeout seconds"
+          "No response within $arnClientTimeout seconds",
         )
       }
     }

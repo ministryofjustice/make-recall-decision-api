@@ -7,5 +7,5 @@ data class Custody(
   val institution: Institution?,
   val status: CustodyStatus?,
   val keyDates: KeyDates?,
-  val sentenceStartDate: LocalDate?
+  val sentenceStartDate: LocalDate?,
 )

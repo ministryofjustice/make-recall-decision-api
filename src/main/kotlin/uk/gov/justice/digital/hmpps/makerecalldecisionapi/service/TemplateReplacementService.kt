@@ -45,11 +45,14 @@ import java.time.format.DateTimeFormatter
 @Service
 internal class TemplateReplacementService(
   val partADocumentMapper: PartADocumentMapper,
-  val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+  val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper,
 ) {
 
-  fun generateDocFromRecommendation(recommendation: RecommendationResponse, documentType: DocumentType, metaData: RecommendationMetaData): String {
-
+  fun generateDocFromRecommendation(
+    recommendation: RecommendationResponse,
+    documentType: DocumentType,
+    metaData: RecommendationMetaData,
+  ): String {
     val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
       partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
     } else {
@@ -57,14 +60,13 @@ internal class TemplateReplacementService(
     }
 
     val file = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream).render(
-      mappingsForTemplate(documentData)
+      mappingsForTemplate(documentData),
     )
 //    ).writeToFile("out_template.docx")
     return writeDataToFile(file)
   }
 
   fun generateLetterContentForPreviewFromRecommendation(recommendation: RecommendationResponse): LetterContent {
-
     val documentData = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
     return LetterContent(
@@ -75,7 +77,7 @@ internal class TemplateReplacementService(
       section1 = documentData.section1,
       section2 = documentData.section2,
       section3 = documentData.section3,
-      signedByParagraph = documentData.signedByParagraph
+      signedByParagraph = documentData.signedByParagraph,
     )
   }
 
@@ -97,7 +99,11 @@ internal class TemplateReplacementService(
       "has_contraband_risk" to documentData.hasContrabandRisk?.value,
       "has_contraband_risk_details" to documentData.hasContrabandRisk?.details,
       "additional_conditions_breached" to documentData.additionalConditionsBreached,
-      "is_under_integrated_offender_management" to documentData.isUnderIntegratedOffenderManagement?.let { YesNoNotApplicableOptions.valueOf(it).partADisplayValue },
+      "is_under_integrated_offender_management" to documentData.isUnderIntegratedOffenderManagement?.let {
+        YesNoNotApplicableOptions.valueOf(
+          it,
+        ).partADisplayValue
+      },
       "contact_name" to documentData.localPoliceContact?.contactName,
       "phone_number" to documentData.localPoliceContact?.phoneNumber,
       "fax_number" to documentData.localPoliceContact?.faxNumber,
@@ -170,7 +176,7 @@ internal class TemplateReplacementService(
       "countersign_aco_date" to (documentData.countersignAcoDate ?: EMPTY_STRING),
       "countersign_aco_time" to (documentData.countersignAcoTime ?: EMPTY_STRING),
       "countersign_aco_exposition" to (documentData.countersignAcoExposition ?: EMPTY_STRING),
-      "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING)
+      "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
@@ -192,7 +198,7 @@ internal class TemplateReplacementService(
       "referral_to_approved_premises_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name] ?: EMPTY_STRING),
       "referral_to_other_teams_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name] ?: EMPTY_STRING),
       "referral_to_partnership_agencies_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name] ?: EMPTY_STRING),
-      "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name] ?: EMPTY_STRING)
+      "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name] ?: EMPTY_STRING),
     )
   }
 
@@ -206,7 +212,7 @@ internal class TemplateReplacementService(
       "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) TICK_CHARACTER else EMPTY_STRING),
       "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING)
+      "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING),
     )
   }
 
@@ -228,17 +234,22 @@ internal class TemplateReplacementService(
       "bereavement_issues" to (getVulnerabilityDisplayText(BEREAVEMENT_ISSUES.name, vulnerabilities)),
       "learning_difficulties" to (getVulnerabilityDisplayText(LEARNING_DIFFICULTIES.name, vulnerabilities)),
       "physical_disabilities" to (getVulnerabilityDisplayText(PHYSICAL_DISABILITIES.name, vulnerabilities)),
-      "cultural_or_language_differences" to (getVulnerabilityDisplayText(CULTURAL_OR_LANGUAGE_DIFFERENCES.name, vulnerabilities))
+      "cultural_or_language_differences" to (getVulnerabilityDisplayText(CULTURAL_OR_LANGUAGE_DIFFERENCES.name, vulnerabilities)),
     )
   }
 
-  private fun getVulnerabilityDisplayText(vulnerability: String?, vulnerabilities: VulnerabilitiesRecommendation?): String {
+  private fun getVulnerabilityDisplayText(
+    vulnerability: String?,
+    vulnerabilities: VulnerabilitiesRecommendation?,
+  ): String {
     val selectedVulnerabilities = vulnerabilities?.selected?.map { it.value }
     val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
     val detailsMap = vulnerabilities?.selected?.associate {
       if (it.value == NOT_KNOWN.name || it.value == NONE.name) {
         it.value to EMPTY_STRING
-      } else it.value to it.details
+      } else {
+        it.value to it.details
+      }
     }
 
     return if (selectedVulnerabilities?.contains(vulnerability) == true) {
@@ -249,14 +260,22 @@ internal class TemplateReplacementService(
   }
 
   private fun formatMappaCategory(mappa: Mappa?): String {
-    return if (mappa == null) EMPTY_STRING
-    else if (mappa.category == null) MrdTextConstants.NOT_APPLICABLE
-    else "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
+    return if (mappa == null) {
+      EMPTY_STRING
+    } else if (mappa.category == null) {
+      MrdTextConstants.NOT_APPLICABLE
+    } else {
+      "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
+    }
   }
 
   private fun formatMappaLevel(mappa: Mappa?): String {
-    return if (mappa == null) EMPTY_STRING
-    else if (mappa.level == null) MrdTextConstants.NOT_APPLICABLE
-    else "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
+    return if (mappa == null) {
+      EMPTY_STRING
+    } else if (mappa.level == null) {
+      MrdTextConstants.NOT_APPLICABLE
+    } else {
+      "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
+    }
   }
 }

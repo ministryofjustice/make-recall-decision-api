@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RiskService
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class RiskController(
-  private val riskService: RiskService
+  private val riskService: RiskService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

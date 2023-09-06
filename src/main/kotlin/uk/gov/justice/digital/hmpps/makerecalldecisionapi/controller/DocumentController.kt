@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.DocumentServic
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class DocumentController(
-  private val documentService: DocumentService
+  private val documentService: DocumentService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -25,7 +25,10 @@ internal class DocumentController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/cases/{crn}/documents/{documentId}")
   @Operation(summary = "Returns the requested document")
-  suspend fun documentRequest(@PathVariable("crn") crn: String, @PathVariable("documentId") documentId: String): ResponseEntity<Resource>? {
+  suspend fun documentRequest(
+    @PathVariable("crn") crn: String,
+    @PathVariable("documentId") documentId: String,
+  ): ResponseEntity<Resource>? {
     log.info(normalizeSpace("Document endpoint hit for CRN: $crn and document ID: $documentId"))
     return documentService.getDocumentByCrnAndId(crn, documentId)
   }

@@ -93,14 +93,18 @@ internal class RecommendationService(
       return RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
       val status = if (featureFlags?.flagConsiderRecall == true) Status.RECALL_CONSIDERED else Status.DRAFT
-      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) listOf(
-        RecallConsidered(
-          userId = userId,
-          createdDate = utcNowDateTimeString(),
-          userName = readableNameOfUser,
-          recallConsideredDetail = recommendationRequest.recallConsideredDetail
+      val recallConsideredList = if (featureFlags?.flagConsiderRecall == true) {
+        listOf(
+          RecallConsidered(
+            userId = userId,
+            createdDate = utcNowDateTimeString(),
+            userName = readableNameOfUser,
+            recallConsideredDetail = recommendationRequest.recallConsideredDetail,
+          ),
         )
-      ) else null
+      } else {
+        null
+      }
       val sendRecommendationStartedDomainEvent =
         featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == false
       if (sendRecommendationStartedDomainEvent) {
@@ -118,9 +122,9 @@ internal class RecommendationService(
         StaticRecommendationDataWrapper(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
-          personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription
+          personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription,
         ),
-        sendRecommendationStartedDomainEvent
+        sendRecommendationStartedDomainEvent,
       )?.toRecommendationResponse()
     }
   }
@@ -135,17 +139,21 @@ internal class RecommendationService(
         userId = username,
         createdDate = utcNowDateTimeString(),
         userName = readableUsername,
-        recallConsideredDetail = recallConsideredDetail
-      )
+        recallConsideredDetail = recallConsideredDetail,
+      ),
     )
   }
 
   fun getRecommendation(recommendationId: Long): RecommendationResponse {
     val recommendationResponse = getRecommendationResponseById(recommendationId)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
-    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) RecommendationResponse(
-      userAccessResponse
-    ) else recommendationResponse
+    return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
+      RecommendationResponse(
+        userAccessResponse,
+      )
+    } else {
+      recommendationResponse
+    }
   }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -171,10 +179,10 @@ internal class RecommendationService(
             lastModifiedDate = it.data.lastModifiedDate,
             status = it.data.status,
             statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
-            recallType = it.data.recallType
-          )
+            recallType = it.data.recallType,
+          ),
         )
-      }
+      },
     )
   }
 
@@ -273,13 +281,12 @@ internal class RecommendationService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
-
       val updatedRecommendation: RecommendationModel =
         recommendationFromRequest(existingRecommendationEntity, jsonRequest)
       existingRecommendationEntity.data.managerRecallDecision = updatedRecommendation.managerRecallDecision
         ?.copy(
           createdDate = utcNowDateTimeString(),
-          createdBy = readableUserName
+          createdBy = readableUserName,
         )
       val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
       log.info("recommendation for ${result.crn} updated with manager recall decision for recommendationId $recommendationId")
@@ -316,7 +323,7 @@ internal class RecommendationService(
       updatedRecommendation,
       existingRecommendationEntity.data,
       userId,
-      readableUserName
+      readableUserName,
     )
     existingRecommendationEntity.data =
       updatePageReviewedValues(updatedRecommendation, existingRecommendationEntity).data
@@ -349,11 +356,11 @@ internal class RecommendationService(
         isSentToDelius = true,
         selected = ManagerRecallDecisionTypeSelectedValue(
           value = ManagerRecallDecisionTypeValue.valueOf(updatedRecommendation.spoRecallType!!),
-          details = updatedRecommendation.spoRecallRationale
+          details = updatedRecommendation.spoRecallRationale,
         ),
         createdBy = readableUserName,
-        createdDate = utcNowDateTimeString()
-      )
+        createdDate = utcNowDateTimeString(),
+      ),
     )
   }
 
@@ -367,7 +374,7 @@ internal class RecommendationService(
       sendManagerRecallDecisionMadeEvent(
         crn = existingRecommendationEntity.data.crn,
         contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.spoRecallType).toString(),
-        username = userId ?: MrdTextConstants.EMPTY_STRING
+        username = userId ?: MrdTextConstants.EMPTY_STRING,
       )
     } catch (ex: Exception) {
       log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
@@ -397,14 +404,14 @@ internal class RecommendationService(
     userId: String?,
     readableUserName: String?,
   ) {
-    val recommendationHistory = recommendationHistoryRepository?.save(
+    recommendationHistoryRepository?.save(
       RecommendationHistoryEntity(
         recommendationId = savedRecommendation.id,
         modifiedBy = userId,
         modifiedByUserFullName = readableUserName,
         modified = utcNowDateTimeString(),
-        recommendation = savedRecommendation.data
-      )
+        recommendation = savedRecommendation.data,
+      ),
     )
   }
 
@@ -430,7 +437,7 @@ internal class RecommendationService(
     } catch (ex: Exception) {
       throw RecommendationUpdateException(
         message = "Update failed for recommendation id:: ${existingRecommendationEntity.id}$ex.message",
-        error = RECOMMENDATION_UPDATE_FAILED.toString()
+        error = RECOMMENDATION_UPDATE_FAILED.toString(),
       )
     }
     log.info("recommendation for ${existingRecommendationEntity.data.crn} updated")
@@ -460,7 +467,7 @@ internal class RecommendationService(
       return buildRecallDecisionList(
         username,
         readableUserName,
-        updateRecommendationRequest.recallConsideredList!![0].recallConsideredDetail
+        updateRecommendationRequest.recallConsideredList!![0].recallConsideredDetail,
       )
     }
     return existingRecommendation.recallConsideredList
@@ -499,7 +506,7 @@ internal class RecommendationService(
   private fun RecommendationModel.refreshPersonOnProbation(deliusDetails: DeliusRecommendationModel) {
     personOnProbation = deliusDetails.toPersonOnProbation().copy(
       hasBeenReviewed = personOnProbation?.hasBeenReviewed,
-      mappa = personOnProbation?.mappa
+      mappa = personOnProbation?.mappa,
     )
   }
 
@@ -509,7 +516,7 @@ internal class RecommendationService(
         level = deliusDetails.mappa.level,
         lastUpdatedDate = deliusDetails.mappa.startDate,
         category = deliusDetails.mappa.category,
-        hasBeenReviewed = personOnProbation?.mappa?.hasBeenReviewed
+        hasBeenReviewed = personOnProbation?.mappa?.hasBeenReviewed,
       )
     }
   }
@@ -533,7 +540,7 @@ internal class RecommendationService(
     convictionDetail = buildRecommendationConvictionResponse(
       deliusDetails.activeCustodialConvictions,
       convictionDetail?.hasBeenReviewed,
-      isExtendedSentence
+      isExtendedSentence,
     )
   }
 
@@ -553,12 +560,12 @@ internal class RecommendationService(
     }
     if (updateRecommendationRequest.hasBeenReviewed?.personOnProbation == true) {
       personOnProbation = personOnProbation?.copy(
-        hasBeenReviewed = true
+        hasBeenReviewed = true,
       ) ?: PersonOnProbation(hasBeenReviewed = true)
     }
     if (updateRecommendationRequest.hasBeenReviewed?.convictionDetail == true) {
       convictionDetail = convictionDetail?.copy(
-        hasBeenReviewed = true
+        hasBeenReviewed = true,
       ) ?: ConvictionDetail(hasBeenReviewed = true)
     }
 
@@ -566,8 +573,8 @@ internal class RecommendationService(
       data = data.copy(
         personOnProbation = personOnProbation?.copy(mappa = mappa),
         convictionDetail = convictionDetail,
-        hasBeenReviewed = null
-      )
+        hasBeenReviewed = null,
+      ),
     )
   }
 
@@ -578,7 +585,8 @@ internal class RecommendationService(
 
     val legacyRecommendationOpen = recommendationEntity.size > 1
     val recommendationStatusOpen = recommendationEntity.isNotEmpty() &&
-      recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id).any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
+      recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id)
+        .any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
 
     if (legacyRecommendationOpen && recommendationStatusOpen) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
@@ -633,21 +641,21 @@ internal class RecommendationService(
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = contactOutcome,
         username = username,
-        detailUrl = "$mrdApiUrl/managementOversight/$crn"
-      )
+        detailUrl = "$mrdApiUrl/managementOversight/$crn",
+      ),
     )
   }
 
   private fun sendRecommendationStartedEvent(crn: String?) {
     sendMrdEventToEventsEmitter(
-      toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn)
+      toRecommendationStartedEventPayload("$mrdUrl/cases/$crn/overview", crn),
     )
   }
 
   private fun sendDntrDownloadEvent(recommendationId: Long) {
     val crn = recommendationRepository.findById(recommendationId).map { it.data.crn }.get()
     sendMrdEventToEventsEmitter(
-      toDntrDownloadedEventPayload(crn)
+      toDntrDownloadedEventPayload(crn),
     )
   }
 
@@ -657,7 +665,6 @@ internal class RecommendationService(
     readableUsername: String?,
     recommendationId: Long,
   ): DocumentResponse {
-
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
       updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, false)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
@@ -671,10 +678,14 @@ internal class RecommendationService(
     } else {
       val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.DNTR_DOCUMENT, metaData)
+        templateReplacementService.generateDocFromRecommendation(
+          recommendationResponse,
+          DocumentType.DNTR_DOCUMENT,
+          metaData,
+        )
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "No_Recall"),
-        fileContents = fileContents
+        fileContents = fileContents,
       )
     }
   }
@@ -689,7 +700,7 @@ internal class RecommendationService(
       val letterContent =
         templateReplacementService.generateLetterContentForPreviewFromRecommendation(recommendationResponse)
       DocumentResponse(
-        letterContent = letterContent
+        letterContent = letterContent,
       )
     }
   }
@@ -710,10 +721,14 @@ internal class RecommendationService(
     } else {
       val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
       val fileContents =
-        templateReplacementService.generateDocFromRecommendation(recommendationResponse, DocumentType.PART_A_DOCUMENT, metaData)
+        templateReplacementService.generateDocFromRecommendation(
+          recommendationResponse,
+          DocumentType.PART_A_DOCUMENT,
+          metaData,
+        )
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
-        fileContents = fileContents
+        fileContents = fileContents,
       )
     }
   }
@@ -733,7 +748,9 @@ internal class RecommendationService(
     val firstName =
       if (recommendation.personOnProbation?.firstName != null && recommendation.personOnProbation.firstName.isNotEmpty()) {
         recommendation.personOnProbation.firstName.subSequence(0, 1)
-      } else ""
+      } else {
+        ""
+      }
     val crn = recommendation.crn ?: ""
 
     return "${prefix}_${nowDate()}_${surname}_${firstName}_$crn.docx"
@@ -762,8 +779,8 @@ internal class RecommendationService(
         personOnProbation = recommendationWrapper?.personOnProbation,
         region = recommendationWrapper?.region,
         localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
-        recommendationStartedDomainEventSent = recommendationStartedDomainEventSent
-      )
+        recommendationStartedDomainEventSent = recommendationStartedDomainEventSent,
+      ),
     )
 
     return recommendationRepository.save(recommendationEntity)
@@ -775,11 +792,10 @@ internal class RecommendationService(
     isExtendedSentenceInRecommendation: Boolean?,
   ): ConvictionDetail? {
     if (convictionResponse.size == 1) {
-
       val mainOffence = convictionResponse[0].mainOffence
       val (custodialTerm, extendedTerm) = extendedSentenceDetails(
         convictionResponse[0],
-        isExtendedSentenceInRecommendation
+        isExtendedSentenceInRecommendation,
       )
 
       return ConvictionDetail(
@@ -795,7 +811,7 @@ internal class RecommendationService(
         convictionResponse[0].sentence.secondLengthUnits,
         custodialTerm,
         extendedTerm,
-        hasBeenReviewed
+        hasBeenReviewed,
       )
     }
     return null
@@ -815,7 +831,9 @@ internal class RecommendationService(
       val sentenceSecondLengthUnits = conviction.sentence.secondLengthUnits ?: MrdTextConstants.EMPTY_STRING
 
       Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
-    } else Pair(null, null)
+    } else {
+      Pair(null, null)
+    }
   }
 
   @Throws(InvalidRequestException::class)
@@ -851,12 +869,15 @@ internal class RecommendationService(
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
       val recommendationDetails = getRecommendationsInProgressForCrn(crn)
-      val recommendations = recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name))
+      val recommendations = recommendationRepository.findByCrnAndStatus(
+        crn,
+        listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name),
+      )
 
       return RecommendationsResponse(
         personalDetailsOverview = personalDetailsOverview,
         activeRecommendation = recommendationDetails,
-        recommendations = buildRecommendationsResponse(recommendations)
+        recommendations = buildRecommendationsResponse(recommendations),
       )
     }
   }
@@ -874,7 +895,7 @@ internal class RecommendationService(
           lastModifiedDate = it.data.lastModifiedDate,
           status = it.data.status,
           statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
-          recallType = it.data.recallType
+          recallType = it.data.recallType,
         )
       }
   }

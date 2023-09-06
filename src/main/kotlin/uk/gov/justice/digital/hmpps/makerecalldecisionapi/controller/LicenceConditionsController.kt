@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.LicenceConditi
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class LicenceConditionsController(
-  private val licenceConditionsService: LicenceConditionsService
+  private val licenceConditionsService: LicenceConditionsService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

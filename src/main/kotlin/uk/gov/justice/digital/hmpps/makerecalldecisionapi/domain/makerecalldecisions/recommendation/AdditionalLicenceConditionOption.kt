@@ -5,5 +5,5 @@ data class AdditionalLicenceConditionOption(
   val mainCatCode: String? = null,
   val title: String? = null,
   val details: String? = null,
-  val note: String? = null
+  val note: String? = null,
 )

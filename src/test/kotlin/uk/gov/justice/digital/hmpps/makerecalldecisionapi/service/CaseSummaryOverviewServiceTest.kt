@@ -41,10 +41,21 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary when convictions and offences available`() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
-      given(deliusClient.getOverview(anyString()))
-        .willReturn(deliusOverviewResponse(activeConvictions = listOf(custodialConviction())))
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(deliusClient.getOverview(anyString())).willReturn(
+        deliusOverviewResponse(
+          activeConvictions = listOf(
+            custodialConviction(),
+          ),
+        ),
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn,
+            "COMPLETE",
+          )
+        },
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -87,8 +98,14 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
       given(deliusClient.getOverview(anyString())).willReturn(deliusOverviewResponse())
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn,
+            "COMPLETE",
+          )
+        },
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -101,10 +118,20 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   fun `retrieves case summary when no convictions available`() {
     runTest {
       given(arnApiClient.getAssessments(anyString())).willReturn(Mono.fromCallable { assessmentResponse(crn) })
-      given(deliusClient.getOverview(anyString()))
-        .willReturn(deliusOverviewResponse(registerFlags = emptyList(), activeConvictions = emptyList()))
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(deliusClient.getOverview(anyString())).willReturn(
+        deliusOverviewResponse(
+          registerFlags = emptyList(),
+          activeConvictions = emptyList(),
+        ),
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn,
+            "COMPLETE",
+          )
+        },
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 
@@ -127,7 +154,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `given case user not found for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(anyString(), anyString())).willThrow(PersonNotFoundException("Not found"))
 
       val response = caseSummaryOverviewService.getOverview(crn)
@@ -138,9 +164,12 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         response,
         equalTo(
           CaseSummaryOverviewResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -148,7 +177,6 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = caseSummaryOverviewService.getOverview(crn)
@@ -159,9 +187,12 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
         response,
         equalTo(
           CaseSummaryOverviewResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -173,16 +204,23 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       given(arnApiClient.getAssessments(anyString())).willReturn(
         Mono.fromCallable {
           AssessmentsResponse(
-            crn = crn, limitedAccessOffender = null,
+            crn = crn,
+            limitedAccessOffender = null,
             assessments = listOf(
               Assessment(
                 offenceDetails = listOf(
                   AssessmentOffenceDetail(
-                    type = null, offenceCode = null, offenceSubCode = null, offenceDate = null
+                    type = null,
+                    offenceCode = null,
+                    offenceSubCode = null,
+                    offenceDate = null,
                   ),
                   AssessmentOffenceDetail(
-                    type = null, offenceCode = null, offenceSubCode = null, offenceDate = null
-                  )
+                    type = null,
+                    offenceCode = null,
+                    offenceSubCode = null,
+                    offenceDate = null,
+                  ),
                 ),
                 assessmentStatus = null,
                 superStatus = null,
@@ -200,18 +238,28 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
                 monitoringAndControl = null,
                 interventionsAndTreatment = null,
                 victimSafetyPlanning = null,
-                contingencyPlans = null
-              )
-            )
+                contingencyPlans = null,
+              ),
+            ),
           )
-        }
+        },
       )
 
-      given(deliusClient.getOverview(anyString()))
-        .willReturn(deliusOverviewResponse(registerFlags = emptyList(), activeConvictions = emptyList()))
+      given(deliusClient.getOverview(anyString())).willReturn(
+        deliusOverviewResponse(
+          registerFlags = emptyList(),
+          activeConvictions = emptyList(),
+        ),
+      )
 
-      given(arnApiClient.getRiskManagementPlan(anyString()))
-        .willReturn(Mono.fromCallable { riskManagementResponse(crn, "COMPLETE") })
+      given(arnApiClient.getRiskManagementPlan(anyString())).willReturn(
+        Mono.fromCallable {
+          riskManagementResponse(
+            crn,
+            "COMPLETE",
+          )
+        },
+      )
 
       val response = caseSummaryOverviewService.getOverview(crn)
 

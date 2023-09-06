@@ -32,7 +32,7 @@ typealias Rule<T> = (T) -> Boolean
 open class Validated<T : Comparable<T>>(
   val value: T,
   vararg rules: Rule<T>,
-  private val asString: String = value.toString()
+  private val asString: String = value.toString(),
 ) : Comparable<Validated<T>> {
   init {
     rules.find { !it(value) }?.apply {

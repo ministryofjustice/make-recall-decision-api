@@ -26,17 +26,28 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @BeforeEach
   fun setup() {
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, recommendationService)
-    licenceConditionsService = LicenceConditionsService(deliusClient, personDetailsService, userAccessValidator, createAndVaryALicenceService, recommendationService, LicenceConditionsCoordinator())
+    licenceConditionsService = LicenceConditionsService(
+      deliusClient,
+      personDetailsService,
+      userAccessValidator,
+      createAndVaryALicenceService,
+      recommendationService,
+      LicenceConditionsCoordinator(),
+    )
 
-    given(deliusClient.getUserAccess(anyString(), anyString()))
-      .willReturn(userAccessResponse(false, false, false))
+    given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(userAccessResponse(false, false, false))
   }
 
   @Test
   fun `given an active conviction and licence conditions then return these details in the response`() {
     runTest {
-      given(deliusClient.getLicenceConditions(anyString()))
-        .willReturn(deliusLicenceConditionsResponse(listOf(custodialConviction().withLicenceConditions(licenceConditions))))
+      given(deliusClient.getLicenceConditions(anyString())).willReturn(
+        deliusLicenceConditionsResponse(
+          listOf(
+            custodialConviction().withLicenceConditions(licenceConditions),
+          ),
+        ),
+      )
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -48,9 +59,9 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse(licenceConditions)
-          )
-        )
+            expectedOffenceWithLicenceConditionsResponse(licenceConditions),
+          ),
+        ),
       )
     }
   }
@@ -58,8 +69,15 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given an active non custodial conviction then set custodial flag to false`() {
     runTest {
-      given(deliusClient.getLicenceConditions(anyString()))
-        .willReturn(deliusLicenceConditionsResponse(listOf(nonCustodialConviction().withLicenceConditions(licenceConditions))))
+      given(deliusClient.getLicenceConditions(anyString())).willReturn(
+        deliusLicenceConditionsResponse(
+          listOf(
+            nonCustodialConviction().withLicenceConditions(
+              licenceConditions,
+            ),
+          ),
+        ),
+      )
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -71,7 +89,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = licenceConditionsService.getLicenceConditions(crn)
@@ -82,9 +99,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -92,7 +112,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given user is not found for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
@@ -103,9 +122,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -113,7 +135,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details V2`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = licenceConditionsService.getLicenceConditionsV2(crn)
@@ -124,9 +145,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -134,7 +158,6 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given user is not found for user then return user access response details V2`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = licenceConditionsService.getLicenceConditionsV2(crn)
@@ -145,9 +168,12 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
         response,
         equalTo(
           LicenceConditionsResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, emptyList(), null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            emptyList(),
+            null,
+          ),
+        ),
       )
     }
   }
@@ -155,8 +181,13 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no active licence conditions then still retrieve conviction details`() {
     runTest {
-      given(deliusClient.getLicenceConditions(anyString()))
-        .willReturn(deliusLicenceConditionsResponse(listOf(custodialConviction().withLicenceConditions(emptyList()))))
+      given(deliusClient.getLicenceConditions(anyString())).willReturn(
+        deliusLicenceConditionsResponse(
+          listOf(
+            custodialConviction().withLicenceConditions(emptyList()),
+          ),
+        ),
+      )
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -168,9 +199,9 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedOffenceWithLicenceConditionsResponse(emptyList())
-          )
-        )
+            expectedOffenceWithLicenceConditionsResponse(emptyList()),
+          ),
+        ),
       )
     }
   }
@@ -178,8 +209,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
   @Test
   fun `given no offender details then still retrieve personal details`() {
     runTest {
-      given(deliusClient.getLicenceConditions(anyString()))
-        .willReturn(deliusLicenceConditionsResponse(emptyList()))
+      given(deliusClient.getLicenceConditions(anyString())).willReturn(deliusLicenceConditionsResponse(emptyList()))
 
       val response = licenceConditionsService.getLicenceConditions(crn)
 
@@ -191,9 +221,9 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsResponse(
             null,
             expectedPersonDetailsResponse(),
-            emptyList()
-          )
-        )
+            emptyList(),
+          ),
+        ),
       )
     }
   }
@@ -203,12 +233,14 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
     runTest {
       val licenceId = 444333
       val nomsId = "A1234CR"
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId))))
-        .willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
-      given(cvlApiClient.getLicenceById(crn, licenceId))
-        .willReturn(Mono.fromCallable { licenceByIdResponse() })
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
+      given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { licenceByIdResponse() })
 
       val response = licenceConditionsService.getLicenceConditionsCvl(crn)
 
@@ -222,9 +254,9 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
           LicenceConditionsCvlResponse(
             null,
             expectedPersonDetailsResponse(),
-            expectedCvlLicenceConditionsResponse(licenceStatus = "IN_PROGRESS")
-          )
-        )
+            expectedCvlLicenceConditionsResponse(licenceStatus = "IN_PROGRESS"),
+          ),
+        ),
       )
     }
   }

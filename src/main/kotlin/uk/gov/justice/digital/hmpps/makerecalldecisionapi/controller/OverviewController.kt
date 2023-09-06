@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.CaseSummaryOve
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class OverviewController(
-  private val caseSummaryOverviewService: CaseSummaryOverviewService
+  private val caseSummaryOverviewService: CaseSummaryOverviewService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

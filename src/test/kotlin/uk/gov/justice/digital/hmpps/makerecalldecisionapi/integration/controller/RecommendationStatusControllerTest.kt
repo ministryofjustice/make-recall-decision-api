@@ -50,7 +50,12 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     // given
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
-    createOrUpdateRecommendationStatus(activate = "NEW_STATUS", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS") // 3 here
+    createOrUpdateRecommendationStatus(
+      activate = "NEW_STATUS",
+      anotherToActivate = "ANOTHER_NEW_STATUS",
+      deactivate = "OLD_STATUS",
+      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+    ) // 3 here
 
     // when
     val response = convertResponseToJSONArray(
@@ -58,7 +63,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
         .uri("/recommendations/$createdRecommendationId/statuses")
         .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
         .exchange()
-        .expectStatus().isOk
+        .expectStatus().isOk,
     )
 
     // then
@@ -119,7 +124,13 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     userResponse("pp_user", "pp@domain.com")
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
-    createOrUpdateRecommendationStatus(activate = "PO_RECALL_CONSULT_SPO", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS", subject = "pp_user") // 3 here
+    createOrUpdateRecommendationStatus(
+      activate = "PO_RECALL_CONSULT_SPO",
+      anotherToActivate = "ANOTHER_NEW_STATUS",
+      deactivate = "OLD_STATUS",
+      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      subject = "pp_user",
+    ) // 3 here
     // when
     val expectBody = webTestClient.get()
       .uri("/recommendations/$createdRecommendationId/statuses")
@@ -137,13 +148,20 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
       .jsonPath("$[2].emailAddress").doesNotExist()
       .jsonPath("$[3].emailAddress").doesNotExist()
   }
+
   @Test
   fun `update recommendation statuses adds email address on ACO_SIGNED`() {
     // given
     userResponse("aco_user", "aco@domain.com")
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
-    createOrUpdateRecommendationStatus(activate = "ACO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS", subject = "aco_user") // 3 here
+    createOrUpdateRecommendationStatus(
+      activate = "ACO_SIGNED",
+      anotherToActivate = "ANOTHER_NEW_STATUS",
+      deactivate = "OLD_STATUS",
+      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      subject = "aco_user",
+    ) // 3 here
     // when
     val expectBody = webTestClient.get()
       .uri("/recommendations/$createdRecommendationId/statuses")
@@ -168,7 +186,13 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     userResponse("spo_user", "spo@domain.com")
     createRecommendation()
     createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
-    createOrUpdateRecommendationStatus(activate = "SPO_SIGNED", anotherToActivate = "ANOTHER_NEW_STATUS", deactivate = "OLD_STATUS", anotherToDeactivate = "ANOTHER_OLD_STATUS", subject = "spo_user") // 3 here
+    createOrUpdateRecommendationStatus(
+      activate = "SPO_SIGNED",
+      anotherToActivate = "ANOTHER_NEW_STATUS",
+      deactivate = "OLD_STATUS",
+      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      subject = "spo_user",
+    ) // 3 here
 
     // when
     val expectBody = webTestClient.get()

@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class DocumentControllerTest(
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
 
   val documentId = "543456"
@@ -49,7 +49,8 @@ class DocumentControllerTest(
         .expectStatus()
         .isNotFound
         .expectBody()
-        .jsonPath("$.userMessage").isEqualTo("No personal details available: No details available for endpoint: /document/A12345/543456")
+        .jsonPath("$.userMessage")
+        .isEqualTo("No personal details available: No details available for endpoint: /document/A12345/543456")
     }
   }
 

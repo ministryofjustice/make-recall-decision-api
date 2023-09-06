@@ -9,5 +9,5 @@ data class RiskSummaryResponse(
   val riskInCommunity: RiskScore?,
   val riskInCustody: RiskScore?,
   val assessedOn: String?,
-  val overallRiskLevel: String?
+  val overallRiskLevel: String?,
 )

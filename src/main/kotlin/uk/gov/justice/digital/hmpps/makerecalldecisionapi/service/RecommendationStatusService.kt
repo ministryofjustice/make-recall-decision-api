@@ -40,7 +40,7 @@ internal class RecommendationStatusService(
       recommendationStatusRequest,
       recommendationId,
       userId,
-      readableNameOfUser
+      readableNameOfUser,
     ).map { it.toRecommendationStatusResponse() }
   }
 
@@ -62,7 +62,7 @@ internal class RecommendationStatusService(
       userId = userId,
       createdByUserName = readableNameOfUser,
       recommendationHistoryId = findRecHistoryId(recommendationId),
-      email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId)
+      email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId),
     )
     return saveAllRecommendationStatuses(statuses)
   }
@@ -72,7 +72,10 @@ internal class RecommendationStatusService(
     userId: String?,
   ): String? {
     val emailAddress =
-      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains("PO_RECALL_CONSULT_SPO")) {
+      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains(
+          "PO_RECALL_CONSULT_SPO",
+        )
+      ) {
         userId?.let { deliusClient?.getUserInfo(it) }?.email
       } else {
         null
@@ -88,7 +91,9 @@ internal class RecommendationStatusService(
     }
     val recommendationHistoryId = if (recommendationHistories?.isNotEmpty() == true) {
       recommendationHistories[0].id
-    } else null
+    } else {
+      null
+    }
     return recommendationHistoryId
   }
 
@@ -102,7 +107,7 @@ internal class RecommendationStatusService(
       .flatMap {
         recommendationStatusRepository.findByRecommendationIdAndName(
           recommendationId,
-          it
+          it,
         )
       }
     if (statusesToDeactivate.isNotEmpty()) {
@@ -127,7 +132,7 @@ internal class RecommendationStatusService(
     } catch (ex: Exception) {
       throw RecommendationUpdateException(
         message = "Update failed for recommendation id:: ${existingRecommendationStatusList.firstOrNull()?.id}$ex.message",
-        error = UpdateExceptionTypes.RECOMMENDATION_STATUS_UPDATE_FAILED.toString()
+        error = UpdateExceptionTypes.RECOMMENDATION_STATUS_UPDATE_FAILED.toString(),
       )
     }
   }

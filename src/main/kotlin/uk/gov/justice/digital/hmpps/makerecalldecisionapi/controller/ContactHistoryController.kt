@@ -18,7 +18,7 @@ import java.time.LocalDate
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class ContactHistoryController(
-  private val contactHistoryService: ContactHistoryService
+  private val contactHistoryService: ContactHistoryService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +43,7 @@ internal class ContactHistoryController(
     type: List<String> = listOf(),
     @Parameter(description = "Include (true) or exclude (false) any contact types that are system-generated")
     @RequestParam(defaultValue = "true")
-    includeSystemGenerated: Boolean = true
+    includeSystemGenerated: Boolean = true,
   ): ContactHistoryResponse {
     log.info(normalizeSpace("All contact history endpoint hit for CRN: $crn"))
     return contactHistoryService.getContactHistory(crn)

@@ -11,9 +11,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 class DecisionNotToRecallLetterDocumentMapper : LetterDocumentMapper() {
 
   fun mapRecommendationDataToDocumentData(
-    recommendation: RecommendationResponse
+    recommendation: RecommendationResponse,
   ): DocumentData {
-    return mapRecommendationDataToLetterDocumentData(recommendation, buildFirstBlockOfLetterContent(recommendation), buildNextAppointmentDetails(recommendation), buildClosingParagraphOfLetter(recommendation))
+    return mapRecommendationDataToLetterDocumentData(
+      recommendation,
+      buildFirstBlockOfLetterContent(recommendation),
+      buildNextAppointmentDetails(recommendation),
+      buildClosingParagraphOfLetter(recommendation),
+    )
   }
 
   private fun buildFirstBlockOfLetterContent(recommendation: RecommendationResponse): String? {

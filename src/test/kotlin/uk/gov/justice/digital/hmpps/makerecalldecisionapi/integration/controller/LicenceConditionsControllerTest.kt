@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 @ExperimentalCoroutinesApi
 class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long
+  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
 ) : IntegrationTestBase() {
 
   @Test
@@ -36,7 +36,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -68,7 +68,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -95,7 +95,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -124,7 +124,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -156,7 +156,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -188,7 +188,7 @@ class LicenceConditionsControllerTest(
           .uri("/cases/$crn/licence-conditions/v2")
           .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
           .exchange()
-          .expectStatus().isOk
+          .expectStatus().isOk,
       )
 
       // then
@@ -230,22 +230,26 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-28")
         .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
         .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description")
+        .isEqualTo("Freedom of movement")
         .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description")
+        .isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
         .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("some_user")
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -297,13 +301,17 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-28")
         .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
         .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description")
+        .isEqualTo("Freedom of movement")
         .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description")
+        .isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
         .jsonPath("$.activeConvictions[0].licenceConditions[1].mainCategory.code").isEqualTo("NLC9")
-        .jsonPath("$.activeConvictions[0].licenceConditions[1].mainCategory.description").isEqualTo("Another main condition")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].mainCategory.description")
+        .isEqualTo("Another main condition")
         .jsonPath("$.activeConvictions[0].licenceConditions[1].subCategory.code").isEqualTo("NSTT9")
-        .jsonPath("$.activeConvictions[0].licenceConditions[1].subCategory.description").isEqualTo("Do not attend Hull city center after 8pm")
+        .jsonPath("$.activeConvictions[0].licenceConditions[1].subCategory.description")
+        .isEqualTo("Do not attend Hull city center after 8pm")
     }
   }
 
@@ -337,16 +345,20 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeConvictions[0].sentence.sentenceExpiryDate").isEqualTo("2020-06-23")
         .jsonPath("$.activeConvictions[0].sentence.isCustodial").isEqualTo(true)
         .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].mainCategory.description")
+        .isEqualTo("Freedom of movement")
         .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
-        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[0].licenceConditions[0].subCategory.description")
+        .isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
         .jsonPath("$.activeConvictions[1].sentence.licenceExpiryDate").isEqualTo("2020-06-20")
         .jsonPath("$.activeConvictions[1].sentence.sentenceExpiryDate").isEqualTo("2020-06-23")
         .jsonPath("$.activeConvictions[1].sentence.isCustodial").isEqualTo(true)
         .jsonPath("$.activeConvictions[1].licenceConditions[0].mainCategory.code").isEqualTo("NLC8")
-        .jsonPath("$.activeConvictions[1].licenceConditions[0].mainCategory.description").isEqualTo("Freedom of movement")
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].mainCategory.description")
+        .isEqualTo("Freedom of movement")
         .jsonPath("$.activeConvictions[1].licenceConditions[0].subCategory.code").isEqualTo("NSTT8")
-        .jsonPath("$.activeConvictions[1].licenceConditions[0].subCategory.description").isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+        .jsonPath("$.activeConvictions[1].licenceConditions[0].subCategory.description")
+        .isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
     }
   }
 
@@ -428,15 +440,21 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.licenceConditions[0].topupSupervisionStartDate").isEqualTo("2022-06-16")
         .jsonPath("$.licenceConditions[0].topupSupervisionExpiryDate").isEqualTo("2022-06-17")
         .jsonPath("$.licenceConditions[0].standardLicenceConditions.length()").isEqualTo(1)
-        .jsonPath("$.licenceConditions[0].standardLicenceConditions[0].text").isEqualTo("This is a standard licence condition")
+        .jsonPath("$.licenceConditions[0].standardLicenceConditions[0].text")
+        .isEqualTo("This is a standard licence condition")
         .jsonPath("$.licenceConditions[0].standardPssConditions.length()").isEqualTo(1)
-        .jsonPath("$.licenceConditions[0].standardPssConditions[0].text").isEqualTo("This is a standard PSS licence condition")
+        .jsonPath("$.licenceConditions[0].standardPssConditions[0].text")
+        .isEqualTo("This is a standard PSS licence condition")
         .jsonPath("$.licenceConditions[0].additionalLicenceConditions.length()").isEqualTo(1)
-        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].text").isEqualTo("This is an additional licence condition")
-        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].expandedText").isEqualTo("Expanded additional licence condition")
+        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].text")
+        .isEqualTo("This is an additional licence condition")
+        .jsonPath("$.licenceConditions[0].additionalLicenceConditions[0].expandedText")
+        .isEqualTo("Expanded additional licence condition")
         .jsonPath("$.licenceConditions[0].additionalPssConditions.length()").isEqualTo(1)
-        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].text").isEqualTo("This is an additional PSS licence condition")
-        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].expandedText").isEqualTo("Expanded additional PSS licence condition")
+        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].text")
+        .isEqualTo("This is an additional PSS licence condition")
+        .jsonPath("$.licenceConditions[0].additionalPssConditions[0].expandedText")
+        .isEqualTo("Expanded additional PSS licence condition")
         .jsonPath("$.licenceConditions[0].bespokeConditions.length()").isEqualTo(1)
         .jsonPath("$.licenceConditions[0].bespokeConditions[0].text").isEqualTo("This is a bespoke condition")
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
@@ -448,10 +466,12 @@ class LicenceConditionsControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -475,7 +495,8 @@ class LicenceConditionsControllerTest(
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
     }
@@ -570,14 +591,34 @@ class LicenceConditionsControllerTest(
     assertThat(response.getJSONObject("cvlLicence").getString("licenceExpiryDate")).isEqualTo("2022-06-15")
     assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionStartDate")).isEqualTo("2022-06-16")
     assertThat(response.getJSONObject("cvlLicence").getString("topupSupervisionExpiryDate")).isEqualTo("2022-06-17")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee43")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is a standard licence condition")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee45")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("text")).isEqualTo("This is an additional licence condition")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("expandedText")).isEqualTo("Expanded additional licence condition")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0).getString("category")).isEqualTo("Freedom of movement")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("code")).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee47")
-    assertThat(response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("text")).isEqualTo("This is a bespoke condition")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("code"),
+    ).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee43")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("standardLicenceConditions").getJSONObject(0).getString("text"),
+    ).isEqualTo("This is a standard licence condition")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0)
+        .getString("code"),
+    ).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee45")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0)
+        .getString("text"),
+    ).isEqualTo("This is an additional licence condition")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0)
+        .getString("expandedText"),
+    ).isEqualTo("Expanded additional licence condition")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("additionalLicenceConditions").getJSONObject(0)
+        .getString("category"),
+    ).isEqualTo("Freedom of movement")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("code"),
+    ).isEqualTo("9ce9d594-e346-4785-9642-c87e764bee47")
+    assertThat(
+      response.getJSONObject("cvlLicence").getJSONArray("bespokeConditions").getJSONObject(0).getString("text"),
+    ).isEqualTo("This is a bespoke condition")
   }
 
   private fun assertPersonalDetailsOverview(response: JSONObject) {
@@ -589,40 +630,114 @@ class LicenceConditionsControllerTest(
   }
 
   private fun assertActiveRecommendation(response: JSONObject) {
-    assertThat(response.getJSONObject("activeRecommendation").getInt("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(response.getJSONObject("activeRecommendation").getInt("recommendationId")).isEqualTo(
+      createdRecommendationId,
+    )
     assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedDate")).isNotEmpty()
     assertThat(response.getJSONObject("activeRecommendation").getString("lastModifiedBy")).isEqualTo("SOME_USER")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("recallType").getJSONObject("selected").getString("value")).isEqualTo("FIXED_TERM")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("userName")).isEqualTo("some_user")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("createdDate")).isNotEmpty
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getInt("id")).isNotNull()
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("userId")).isEqualTo("SOME_USER")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getString("recallConsideredDetail")).isEqualTo("This is an updated recall considered detail")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("recallType").getJSONObject("selected")
+        .getString("value"),
+    ).isEqualTo("FIXED_TERM")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0)
+        .getString("userName"),
+    ).isEqualTo("some_user")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0)
+        .getString("createdDate"),
+    ).isNotEmpty
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0).getInt("id"),
+    ).isNotNull()
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0)
+        .getString("userId"),
+    ).isEqualTo("SOME_USER")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONArray("recallConsideredList").getJSONObject(0)
+        .getString("recallConsideredDetail"),
+    ).isEqualTo("This is an updated recall considered detail")
     assertThat(response.getJSONObject("activeRecommendation").getString("status")).isEqualTo("DRAFT")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected").getString("value")).isEqualTo("NO_RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected").getString("details")).isEqualTo("details of no recall selected")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(0).getString("value")).isEqualTo("RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(0).getString("text")).isEqualTo("Recall")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(1).getString("value")).isEqualTo("NO_RECALL")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions").getJSONObject(1).getString("text")).isEqualTo("Do not recall")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getBoolean("isSentToDelius")).isEqualTo(false)
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdBy")).isEqualTo("John Smith")
-    assertThat(response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdDate")).isEqualTo("2023-01-01T15:00:08.000Z")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected")
+        .getString("value"),
+    ).isEqualTo("NO_RECALL")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONObject("selected")
+        .getString("details"),
+    ).isEqualTo("details of no recall selected")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions")
+        .getJSONObject(0).getString("value"),
+    ).isEqualTo("RECALL")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions")
+        .getJSONObject(0).getString("text"),
+    ).isEqualTo("Recall")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions")
+        .getJSONObject(1).getString("value"),
+    ).isEqualTo("NO_RECALL")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getJSONArray("allOptions")
+        .getJSONObject(1).getString("text"),
+    ).isEqualTo("Do not recall")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision")
+        .getBoolean("isSentToDelius"),
+    ).isEqualTo(false)
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdBy"),
+    ).isEqualTo("John Smith")
+    assertThat(
+      response.getJSONObject("activeRecommendation").getJSONObject("managerRecallDecision").getString("createdDate"),
+    ).isEqualTo("2023-01-01T15:00:08.000Z")
   }
 
   private fun assertActiveConvictions(response: JSONObject) {
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("description")).isEqualTo("Robbery (other than armed robbery)")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("code")).isEqualTo("1234")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("description"),
+    ).isEqualTo("Robbery (other than armed robbery)")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("mainOffence").getString("code"),
+    ).isEqualTo("1234")
     assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("additionalOffences").isEmpty())
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("licenceExpiryDate")).isEqualTo("2020-06-25")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("sentenceExpiryDate")).isEqualTo("2020-06-28")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getBoolean("isCustodial")).isEqualTo(true)
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("description")).isEqualTo("Extended Determinate Sentence")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getInt("length")).isEqualTo(12)
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("lengthUnits")).isEqualTo("days")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("mainCategory").getString("code")).isEqualTo("NLC8")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("mainCategory").getString("description")).isEqualTo("Freedom of movement")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("subCategory").getString("code")).isEqualTo("NSTT8")
-    assertThat(response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0).getJSONObject("subCategory").getString("description")).isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence")
+        .getString("licenceExpiryDate"),
+    ).isEqualTo("2020-06-25")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence")
+        .getString("sentenceExpiryDate"),
+    ).isEqualTo("2020-06-28")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getBoolean("isCustodial"),
+    ).isEqualTo(true)
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("description"),
+    ).isEqualTo("Extended Determinate Sentence")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getInt("length"),
+    ).isEqualTo(12)
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONObject("sentence").getString("lengthUnits"),
+    ).isEqualTo("days")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0)
+        .getJSONObject("mainCategory").getString("code"),
+    ).isEqualTo("NLC8")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0)
+        .getJSONObject("mainCategory").getString("description"),
+    ).isEqualTo("Freedom of movement")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0)
+        .getJSONObject("subCategory").getString("code"),
+    ).isEqualTo("NSTT8")
+    assertThat(
+      response.getJSONArray("activeConvictions").getJSONObject(0).getJSONArray("licenceConditions").getJSONObject(0)
+        .getJSONObject("subCategory").getString("description"),
+    ).isEqualTo("To only attend places of worship which have been previously agreed with your supervising officer.")
   }
 }
