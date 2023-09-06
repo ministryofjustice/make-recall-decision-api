@@ -570,9 +570,9 @@ internal class RiskServiceTest : ServiceTestBase() {
           Mono.fromCallable {
             listOf(
               currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWithOptionalFields
+              historicalRiskScoreResponseWithOptionalFields,
             )
-          }
+          },
         )
       apiMocksWithAllFieldsEmpty()
 
@@ -614,9 +614,9 @@ internal class RiskServiceTest : ServiceTestBase() {
           AssessmentsResponse(
             crn = null,
             limitedAccessOffender = null,
-            assessments = emptyList()
+            assessments = emptyList(),
           )
-        }
+        },
       )
     given(arnApiClient.getRiskSummary(anyString()))
       .willReturn(
@@ -631,18 +631,18 @@ internal class RiskServiceTest : ServiceTestBase() {
               veryHigh = null,
               high = null,
               medium = null,
-              low = null
+              low = null,
             ),
             riskInCustody = RiskScore(
               veryHigh = null,
               high = null,
               medium = null,
-              low = null
+              low = null,
             ),
             assessedOn = ("2022-10-09T08:26:31"),
-            overallRiskLevel = null
+            overallRiskLevel = null,
           )
-        }
+        },
       )
 
     given(deliusClient.getMappaAndRoshHistory(anyString()))
@@ -652,7 +652,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
 
       val response = riskService.getRisk(crn)
@@ -663,9 +662,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RiskResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null, null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -673,7 +676,6 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `given user not found then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(anyString(), anyString())).willThrow(PersonNotFoundException("Not found"))
 
       val response = riskService.getRisk(crn)
@@ -684,9 +686,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RiskResponse(
-            userAccessResponse(false, false, true).copy(exclusionMessage = null, restrictionMessage = null), null, null, null, null
-          )
-        )
+            userAccessResponse(false, false, true).copy(exclusionMessage = null, restrictionMessage = null),
+            null,
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -694,19 +700,18 @@ internal class RiskServiceTest : ServiceTestBase() {
   @ParameterizedTest()
   @CsvSource(
     "COMPLETE, true",
-    "INCOMPLETE, false"
+    "INCOMPLETE, false",
   )
   fun `given multiple risk management plans then return latest with assessment status set`(
     status: String,
-    assessmentStatusComplete: Boolean
+    assessmentStatusComplete: Boolean,
   ) {
     runTest {
-
       given(arnApiClient.getRiskManagementPlan(anyString()))
         .willReturn(
           Mono.fromCallable {
             riskManagementResponse(crn, status)
-          }
+          },
         )
       val response = riskService.getLatestRiskManagementPlan(crn)
 
@@ -721,12 +726,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `given risk management plan completed date not set then use initiation date`() {
     runTest {
-
       given(arnApiClient.getRiskManagementPlan(anyString()))
         .willReturn(
           Mono.fromCallable {
             riskManagementResponse(crn, "COMPLETE", null)
-          }
+          },
         )
       val response = riskService.getLatestRiskManagementPlan(crn)
 
@@ -742,7 +746,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -757,7 +761,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk scores fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -769,14 +773,27 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest(name = "given call to fetch risk summary fails with {1} exception then set this in the error field response")
-  @CsvSource("404,Offender not found for CRN,NOT_FOUND", "404,'Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn X12345',NOT_FOUND_LATEST_COMPLETE", "503,This is a server error,SERVER_ERROR", "999,Random error,SERVER_ERROR")
+  @CsvSource(
+    "404,Offender not found for CRN,NOT_FOUND",
+    "404,'Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn X12345',NOT_FOUND_LATEST_COMPLETE",
+    "503,This is a server error,SERVER_ERROR",
+    "999,Random error,SERVER_ERROR",
+  )
   fun `given call to fetch risk summary fails with given exception then set this in the error field response`(
     code: Int,
     exceptionMessage: String,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
-      given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, exceptionMessage.toByteArray(Charsets.UTF_8), null))
+      given(arnApiClient.getRiskSummary(crn)).willThrow(
+        WebClientResponseException(
+          code,
+          null,
+          null,
+          exceptionMessage.toByteArray(Charsets.UTF_8),
+          null,
+        ),
+      )
 
       val response = riskService.getRoshSummary(crn)
 
@@ -788,7 +805,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to risk management plan fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String
+    expectedErrorCode: String,
   ) {
     runTest {
       given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -810,25 +827,25 @@ internal class RiskServiceTest : ServiceTestBase() {
       high = listOf(
         "Children",
         "Public",
-        "Known adult"
+        "Known adult",
       ),
       medium = listOf("Staff"),
-      low = null
+      low = null,
     ),
     riskInCustody = RiskScore(
       veryHigh = listOf(
         "Staff",
-        "Prisoners"
+        "Prisoners",
       ),
       high = listOf("Known adult"),
       medium = null,
       low = listOf(
         "Children",
-        "Public"
-      )
+        "Public",
+      ),
     ),
     assessedOn = "2022-10-09T08:26:31",
-    overallRiskLevel = "HIGH"
+    overallRiskLevel = "HIGH",
   )
 
   private val currentRiskScoreResponse = RiskScoreResponse(
@@ -839,14 +856,14 @@ internal class RiskServiceTest : ServiceTestBase() {
       ogpTotalWeightedScore = "1",
       ogpRisk = "LOW",
       ogp1Year = "0",
-      ogp2Year = "0"
+      ogp2Year = "0",
     ),
     riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "2", scoreLevel = "MEDIUM"),
     sexualPredictorScore = SexualPredictorScore(
       ospIndecentPercentageScore = "3",
       ospContactPercentageScore = "2",
       ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH"
+      ospContactScoreLevel = "HIGH",
     ),
     groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
     violencePredictorScore = ViolencePredictorScore(
@@ -855,8 +872,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       ovpTotalWeightedScore = "0",
       ovpRisk = "LOW",
       oneYear = "0",
-      twoYears = "0"
-    )
+      twoYears = "0",
+    ),
   )
 
   private val historicalRiskScoreResponse = RiskScoreResponse(
@@ -867,14 +884,14 @@ internal class RiskServiceTest : ServiceTestBase() {
       ogpTotalWeightedScore = "1",
       ogpRisk = "LOW",
       ogp1Year = "0",
-      ogp2Year = "0"
+      ogp2Year = "0",
     ),
     riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "1", scoreLevel = "LOW"),
     sexualPredictorScore = SexualPredictorScore(
       ospIndecentPercentageScore = "3",
       ospContactPercentageScore = "2",
       ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH"
+      ospContactScoreLevel = "HIGH",
     ),
     groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
     violencePredictorScore = ViolencePredictorScore(
@@ -883,8 +900,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       ovpTotalWeightedScore = "0",
       ovpRisk = "LOW",
       oneYear = "0",
-      twoYears = "0"
-    )
+      twoYears = "0",
+    ),
   )
 
   private val historicalRiskScoreResponseWhereValuesNull = RiskScoreResponse(
@@ -895,14 +912,14 @@ internal class RiskServiceTest : ServiceTestBase() {
       ogpTotalWeightedScore = null,
       ogpRisk = null,
       ogp1Year = null,
-      ogp2Year = null
+      ogp2Year = null,
     ),
     riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = null, scoreLevel = null),
     sexualPredictorScore = SexualPredictorScore(
       ospIndecentPercentageScore = null,
       ospContactPercentageScore = null,
       ospIndecentScoreLevel = null,
-      ospContactScoreLevel = null
+      ospContactScoreLevel = null,
     ),
     groupReconvictionScore = GroupReconvictionScore(oneYear = null, twoYears = null, scoreLevel = null),
     violencePredictorScore = ViolencePredictorScore(
@@ -911,8 +928,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       ovpTotalWeightedScore = null,
       ovpRisk = null,
       oneYear = null,
-      twoYears = null
-    )
+      twoYears = null,
+    ),
   )
 
   private val currentRiskScoreResponseWithOptionalFields = RiskScoreResponse(
@@ -921,7 +938,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     riskOfSeriousRecidivismScore = null,
     sexualPredictorScore = null,
     groupReconvictionScore = null,
-    violencePredictorScore = null
+    violencePredictorScore = null,
   )
 
   private val historicalRiskScoreResponseWithOptionalFields = RiskScoreResponse(
@@ -930,7 +947,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     riskOfSeriousRecidivismScore = null,
     sexualPredictorScore = null,
     groupReconvictionScore = null,
-    violencePredictorScore = null
+    violencePredictorScore = null,
   )
 
   private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
@@ -941,7 +958,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       isCustodial = true,
       custodialStatusCode = "ABC123",
       licenceExpiryDate = LocalDate.parse("2022-05-10"),
-      sentenceExpiryDate = LocalDate.parse("2022-06-10")
+      sentenceExpiryDate = LocalDate.parse("2022-06-10"),
     ),
     mainOffence = DeliusClient.Offence(
       date = LocalDate.parse("2022-08-26"),
@@ -952,8 +969,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       DeliusClient.Offence(
         date = LocalDate.parse("2022-08-26"),
         code = "ZYX789",
-        description = "Arson"
-      )
-    )
+        description = "Arson",
+      ),
+    ),
   )
 }
