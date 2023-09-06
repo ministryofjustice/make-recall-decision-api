@@ -5,11 +5,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 data class CustodyStatus(
   val selected: CustodyStatusValue? = null,
   val details: String? = null,
-  val allOptions: List<TextValueOption>? = null
+  val allOptions: List<TextValueOption>? = null,
 )
 
 enum class CustodyStatusValue(val partADisplayValue: String) {
   YES_POLICE("Police Custody"),
   YES_PRISON("Prison Custody"),
-  NO("No")
+  NO("No"),
 }

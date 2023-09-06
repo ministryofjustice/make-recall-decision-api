@@ -30,15 +30,27 @@ import java.time.LocalDate
 @Component
 class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(recommendation: RecommendationResponse, metadata: RecommendationMetaData): DocumentData {
+  fun mapRecommendationDataToDocumentData(
+    recommendation: RecommendationResponse,
+    metadata: RecommendationMetaData,
+  ): DocumentData {
     val firstName = recommendation.personOnProbation?.firstName
     val middleNames = recommendation.personOnProbation?.middleNames
     val lastName = recommendation.personOnProbation?.surname
     val (lastRecordedAddress, noFixedAbode) = getAddressDetails(recommendation.personOnProbation?.addresses)
     val (lastDownloadDate, lastDownloadTime) = splitDateTime(metadata.userPartACompletedByDateTime)
-    val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name)
-    val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name)
-    val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(recommendation.indeterminateOrExtendedSentenceDetails, OUT_OF_TOUCH.name)
+    val (behaviourSimilarToIndexOffencePresent, behaviourSimilarToIndexOffence) = getIndeterminateOrExtendedSentenceDetails(
+      recommendation.indeterminateOrExtendedSentenceDetails,
+      BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name,
+    )
+    val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(
+      recommendation.indeterminateOrExtendedSentenceDetails,
+      BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
+    )
+    val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(
+      recommendation.indeterminateOrExtendedSentenceDetails,
+      OUT_OF_TOUCH.name,
+    )
     val (countersignSpoDate, countersignSpoTime) = splitDateTime(metadata.countersignSpoDateTime)
     val (countersignAcoDate, countersignAcoTime) = splitDateTime(metadata.countersignAcoDateTime)
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
@@ -48,12 +60,12 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     return DocumentData(
       custodyStatus = ValueWithDetails(
         recommendation.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
-        recommendation.custodyStatus?.details
+        recommendation.custodyStatus?.details,
       ),
       recallType = findRecallTypeToDisplay(
         recommendation.recallType,
         recommendation.isIndeterminateSentence,
-        recommendation.isExtendedSentence
+        recommendation.isExtendedSentence,
       ),
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
@@ -67,15 +79,15 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       selectedAlternatives = recommendation.alternativesToRecallTried?.selected,
       hasArrestIssues = ValueWithDetails(
         convertBooleanToYesNo(recommendation.hasArrestIssues?.selected),
-        recommendation.hasArrestIssues?.details
+        recommendation.hasArrestIssues?.details,
       ),
       hasContrabandRisk = ValueWithDetails(
         convertBooleanToYesNo(recommendation.hasContrabandRisk?.selected),
-        recommendation.hasContrabandRisk?.details
+        recommendation.hasContrabandRisk?.details,
       ),
       selectedStandardConditionsBreached = buildStandardLicenceCodes(
         recommendation.licenceConditionsBreached?.standardLicenceConditions?.selected,
-        recommendation.cvlLicenceConditionsBreached?.standardLicenceConditions?.selected
+        recommendation.cvlLicenceConditionsBreached?.standardLicenceConditions?.selected,
       ),
       additionalConditionsBreached = buildAlternativeConditionsBreachedText(
         recommendation.licenceConditionsBreached?.additionalLicenceConditions,
@@ -142,7 +154,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       countersignSpoTelephone = recommendation.countersignSpoTelephone,
       countersignSpoExposition = recommendation.countersignSpoExposition,
       countersignAcoTelephone = recommendation.countersignAcoTelephone,
-      countersignAcoExposition = recommendation.countersignAcoExposition
+      countersignAcoExposition = recommendation.countersignAcoExposition,
     )
   }
 
@@ -161,7 +173,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   private fun findRecallTypeToDisplay(
     recallType: RecallType?,
     isIndeterminateSentence: Boolean?,
-    isExtendedSentence: Boolean?
+    isExtendedSentence: Boolean?,
   ): ValueWithDetails {
     return if (isIndeterminateSentence == true || isExtendedSentence == true) {
       val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
@@ -181,7 +193,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     return buildNotApplicableMessage(
       recommendation.isIndeterminateSentence,
       recommendation.isExtendedSentence,
-      isStandardRecall
+      isStandardRecall,
     )
       ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions.details else EMPTY_STRING
   }
@@ -189,7 +201,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   private fun buildNotApplicableMessage(
     isIndeterminateSentence: Boolean?,
     isExtendedSentence: Boolean?,
-    isStandardRecall: Boolean?
+    isStandardRecall: Boolean?,
   ): String? {
     return if (isIndeterminateSentence == true) {
       "$NOT_APPLICABLE (not a determinate recall)"
@@ -197,7 +209,9 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       "$NOT_APPLICABLE (extended sentence recall)"
     } else if (isStandardRecall == true) {
       "$NOT_APPLICABLE (standard recall)"
-    } else null
+    } else {
+      null
+    }
   }
 
   private fun convertBooleanToYesNo(value: Boolean?): String {
@@ -222,9 +236,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     cvlAdditionalLicenceConditions: LicenceConditionSection?,
     cvlBespokeLicenceConditions: LicenceConditionSection?,
   ): String {
-
     if (additionalLicenceConditions != null) {
-
       val selectedOptions = if (additionalLicenceConditions?.selectedOptions != null) {
         additionalLicenceConditions.allOptions?.filter { sel ->
           additionalLicenceConditions.selectedOptions.any {
@@ -281,9 +293,11 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   }
 
   private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {
-    return if (null != dateToConvert)
+    return if (null != dateToConvert) {
       convertLocalDateToDateWithSlashes(dateToConvert)
-    else EMPTY_STRING
+    } else {
+      EMPTY_STRING
+    }
   }
 
   private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {
@@ -298,7 +312,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     } else if (mainAddresses?.isEmpty() == true && noFixedAbodeAddresses?.isNotEmpty() == true) {
       Pair(
         "",
-        "No fixed abode"
+        "No fixed abode",
       )
     } else {
       Pair("", "")
@@ -314,7 +328,10 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     }
   }
 
-  private fun getIndeterminateOrExtendedSentenceDetails(indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails?, field: String): Pair<String, String?> {
+  private fun getIndeterminateOrExtendedSentenceDetails(
+    indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails?,
+    field: String,
+  ): Pair<String, String?> {
     return if (indeterminateOrExtendedSentenceDetails != null) {
       if (indeterminateOrExtendedSentenceDetails.selected?.any { it.value == field } == true) {
         Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)

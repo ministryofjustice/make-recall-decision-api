@@ -7,7 +7,7 @@ fun offenderSearchDeliusResponse(
   dateOfBirth: String? = "2000-11-09",
   pageSize: Int = 1,
   pageNumber: Int = 1,
-  totalPages: Int = 1
+  totalPages: Int = 1,
 ) = """
 {
   "content": [

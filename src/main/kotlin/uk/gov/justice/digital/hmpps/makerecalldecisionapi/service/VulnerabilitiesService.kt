@@ -30,7 +30,7 @@ internal class VulnerabilitiesService(
       return VulnerabilitiesResponse(
         personalDetailsOverview = personalDetailsOverview,
         vulnerabilities = vulnerabilities,
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
       )
     }
   }
@@ -58,7 +58,7 @@ internal class VulnerabilitiesService(
       vulnerabilityResponse?.previous,
       vulnerabilityResponse?.previousConcernsText,
       vulnerabilityResponse?.current,
-      vulnerabilityResponse?.currentConcernsText
+      vulnerabilityResponse?.currentConcernsText,
     )
   }
 }

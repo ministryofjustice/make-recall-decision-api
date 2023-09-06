@@ -36,8 +36,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -56,8 +56,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = BAD_GATEWAY,
           userMessage = "A system on which we depend has failed: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -70,8 +70,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No management oversight available: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -84,8 +84,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No recommendation available: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -98,8 +98,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NO_CONTENT,
           userMessage = "No completed recommendation available: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -112,8 +112,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Invalid request:: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -126,8 +126,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "No personal details available: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -140,8 +140,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -154,8 +154,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = GATEWAY_TIMEOUT,
           userMessage = "Client timeout: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -168,8 +168,8 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
-          developerMessage = e.message
-        )
+          developerMessage = e.message,
+        ),
       )
   }
 
@@ -183,8 +183,8 @@ class MakeRecallDecisionApiExceptionHandler {
           status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
           developerMessage = e.message,
-          error = e.error
-        )
+          error = e.error,
+        ),
       )
   }
 
@@ -198,8 +198,8 @@ class MakeRecallDecisionApiExceptionHandler {
           status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
           developerMessage = e.message,
-          error = e.error
-        )
+          error = e.error,
+        ),
       )
   }
 
@@ -214,7 +214,7 @@ data class ErrorResponse(
   val userMessage: String? = null,
   val developerMessage: String? = null,
   val moreInfo: String? = null,
-  val error: String? = null
+  val error: String? = null,
 ) {
   constructor(
     status: HttpStatus,
@@ -222,12 +222,13 @@ data class ErrorResponse(
     userMessage: String? = null,
     developerMessage: String? = null,
     moreInfo: String? = null,
-    error: String? = null
+    error: String? = null,
   ) :
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo, error)
 }
 
-open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
+open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) :
+  Exception(message, cause) {
   override fun toString(): String {
     return if (this.message == null) {
       this.javaClass.simpleName

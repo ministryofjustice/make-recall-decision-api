@@ -9,5 +9,5 @@ data class Address(
   val postcode: String? = null,
   val addressNumber: String? = null,
   val buildingName: String? = null,
-  val noFixedAbode: Boolean? = null
+  val noFixedAbode: Boolean? = null,
 )

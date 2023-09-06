@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException
 class OffenderSearchApiClient(
   private val webClient: WebClient,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  private val timeoutCounter: Counter
+  private val timeoutCounter: Counter,
 ) {
 
   fun searchPeople(
@@ -24,7 +24,7 @@ class OffenderSearchApiClient(
     firstName: String? = null,
     surname: String? = null,
     page: Int,
-    pageSize: Int
+    pageSize: Int,
   ): Mono<OffenderSearchPagedResults> {
     val request = OffenderSearchPeopleRequest(crn = crn, firstName = firstName, surname = surname)
     val responseType = object : ParameterizedTypeReference<OffenderSearchPagedResults>() {}
@@ -43,13 +43,13 @@ class OffenderSearchApiClient(
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { ex ->
         handleTimeoutException(
-          exception = ex
+          exception = ex,
         )
       }
   }
 
   private fun handleTimeoutException(
-    exception: Throwable?
+    exception: Throwable?,
   ) {
     when (exception) {
       is TimeoutException -> {
@@ -57,7 +57,7 @@ class OffenderSearchApiClient(
 
         throw ClientTimeoutException(
           "Offender Search API Client - search by phrase endpoint",
-          "No response within $nDeliusTimeout seconds"
+          "No response within $nDeliusTimeout seconds",
         )
       }
     }

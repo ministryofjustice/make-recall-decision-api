@@ -3,5 +3,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 data class ContactGroupResponse(
   val groupId: String,
   val label: String,
-  val contactTypeCodes: List<String?>
+  val contactTypeCodes: List<String?>,
 )

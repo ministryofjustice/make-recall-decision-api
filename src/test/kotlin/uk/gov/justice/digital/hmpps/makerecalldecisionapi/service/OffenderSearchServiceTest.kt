@@ -69,15 +69,15 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           firstName = nonExistentFirstName,
           surname = nonExistentSurname,
           page = page,
-          pageSize = pageSize
-        )
+          pageSize = pageSize,
+        ),
       ).willReturn(Mono.fromCallable { searchPeopleEmptyResultClientResponse })
 
       val response = offenderSearch.search(
         firstName = nonExistentFirstName,
         lastName = nonExistentSurname,
         page = page,
-        pageSize = pageSize
+        pageSize = pageSize,
       )
 
       assertThat(response.results).isEmpty()
@@ -85,7 +85,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         firstName = nonExistentFirstName,
         surname = nonExistentSurname,
         page = page,
-        pageSize = pageSize
+        pageSize = pageSize,
       )
     }
   }
@@ -118,8 +118,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           firstName = firstName,
           surname = lastName,
           page = page,
-          pageSize = pageSize
-        )
+          pageSize = pageSize,
+        ),
       ).willReturn(Mono.fromCallable { buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize) })
 
       val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
@@ -134,7 +134,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         firstName = firstName,
         surname = lastName,
         page = page,
-        pageSize = pageSize
+        pageSize = pageSize,
       )
     }
   }
@@ -149,9 +149,9 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
             buildSearchPeople1ResultClientResponse(
               page = page,
               pageSize = pageSize,
-              totalPages = totalPages
+              totalPages = totalPages,
             )
-          }
+          },
         )
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
@@ -254,18 +254,18 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           firstName = "John",
           surname = "Blair",
           dateOfBirth = LocalDate.parse("1982-10-24"),
-          otherIds = OtherIds(crn = crn, null, null, null, null)
-        )
+          otherIds = OtherIds(crn = crn, null, null, null, null),
+        ),
       ),
       pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
-      totalPages = totalPages
+      totalPages = totalPages,
     )
 
   private val searchPeopleEmptyResultClientResponse =
     OffenderSearchPagedResults(
       content = emptyList(),
       pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
-      totalPages = 0
+      totalPages = 0,
     )
 
   private val searchPeopleOmittedDetailsResponse =
@@ -275,10 +275,10 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           firstName = null,
           surname = null,
           dateOfBirth = null,
-          otherIds = OtherIds(crn = crn, null, null, null, null)
-        )
+          otherIds = OtherIds(crn = crn, null, null, null, null),
+        ),
       ),
       pageable = PageableResponse(pageNumber = page, pageSize = pageSize),
-      totalPages = 1
+      totalPages = 1,
     )
 }

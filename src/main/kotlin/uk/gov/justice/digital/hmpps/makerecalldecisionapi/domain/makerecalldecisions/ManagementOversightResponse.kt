@@ -2,5 +2,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class ManagementOversightResponse(
   val notes: String?,
-  val sensitive: Boolean? = false
+  val sensitive: Boolean? = false,
 )

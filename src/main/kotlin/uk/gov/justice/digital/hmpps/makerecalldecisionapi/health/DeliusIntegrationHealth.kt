@@ -8,5 +8,5 @@ import org.springframework.web.reactive.function.client.WebClient
 class DeliusIntegrationHealth(
   webClientNoAuthNoMetrics: WebClient,
   @Value("deliusIntegration") componentName: String,
-  @Value("\${delius.integration.endpoint.url}") endpointUrl: String
+  @Value("\${delius.integration.endpoint.url}") endpointUrl: String,
 ) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, "$endpointUrl/health")

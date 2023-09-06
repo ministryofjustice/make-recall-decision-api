@@ -4,7 +4,7 @@ data class RiskResponse(
   val riskToSelf: RiskToSelfResponse?,
   val otherRisks: OtherRisksResponse?,
   val summary: RiskSummaryRiskResponse?,
-  val assessedOn: String?
+  val assessedOn: String?,
 )
 
 data class RiskToSelfResponse(
@@ -12,7 +12,7 @@ data class RiskToSelfResponse(
   val selfHarm: RiskVulnerabilityTypeResponse? = null,
   val custody: RiskVulnerabilityTypeResponse? = null,
   val hostelSetting: RiskVulnerabilityTypeResponse? = null,
-  val vulnerability: RiskVulnerabilityTypeResponse? = null
+  val vulnerability: RiskVulnerabilityTypeResponse? = null,
 )
 
 data class RiskVulnerabilityTypeResponse(
@@ -20,7 +20,7 @@ data class RiskVulnerabilityTypeResponse(
   val previous: String? = null,
   val previousConcernsText: String? = null,
   val current: String? = null,
-  val currentConcernsText: String? = null
+  val currentConcernsText: String? = null,
 )
 
 data class OtherRisksResponse(
@@ -38,5 +38,5 @@ data class RiskSummaryRiskResponse(
   val riskMitigationFactors: String?,
   val riskInCommunity: RiskScore?,
   val riskInCustody: RiskScore?,
-  val overallRiskLevel: String?
+  val overallRiskLevel: String?,
 )

@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 internal data class DocumentRequestQuery(
-  val format: String
+  val format: String,
 )
 
 enum class DocumentRequestType(val type: String) {

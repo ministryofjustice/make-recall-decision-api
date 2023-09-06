@@ -7,6 +7,8 @@ fun setFeatureFlags(featureFlags: String?): FeatureFlags? {
   val mapper = jacksonObjectMapper()
   val flags: FeatureFlags? = if (featureFlags != null) {
     mapper.readValue(featureFlags)
-  } else null
+  } else {
+    null
+  }
   return flags
 }

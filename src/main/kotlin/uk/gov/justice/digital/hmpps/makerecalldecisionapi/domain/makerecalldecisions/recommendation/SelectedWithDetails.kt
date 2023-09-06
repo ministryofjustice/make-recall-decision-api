@@ -2,5 +2,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class SelectedWithDetails(
   val selected: Boolean? = null,
-  val details: String? = null
+  val details: String? = null,
 )

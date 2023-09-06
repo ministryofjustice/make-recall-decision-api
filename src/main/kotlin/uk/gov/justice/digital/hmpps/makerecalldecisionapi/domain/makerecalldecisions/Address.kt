@@ -5,11 +5,10 @@ data class Address(
   val line2: String?,
   val town: String?,
   val postcode: String?,
-  val noFixedAbode: Boolean
+  val noFixedAbode: Boolean,
 ) {
 
   fun separatorFormattedAddress(separator: String, includeName: Boolean = false, name: String? = null): String {
-
     val addressLines: MutableList<String> = ArrayList()
 
     if (includeName && !name.isNullOrEmpty()) {

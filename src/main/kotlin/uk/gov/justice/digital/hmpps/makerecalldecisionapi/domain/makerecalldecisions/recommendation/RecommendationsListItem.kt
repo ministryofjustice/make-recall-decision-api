@@ -10,5 +10,5 @@ data class RecommendationsListItem(
   val lastModifiedDate: String? = null,
   val status: Status? = null,
   val statuses: List<RecommendationStatusEntity>? = emptyList(),
-  val recallType: RecallType? = null
+  val recallType: RecallType? = null,
 )

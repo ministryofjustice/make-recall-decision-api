@@ -27,18 +27,39 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
 
   @ParameterizedTest
   @MethodSource("recommendationTabTestData")
-  internal fun `given a recommendation in recall considered state then return these details in the recommendation tab response`(testData: RecommendationTabTestData) {
+  internal fun `given a recommendation in recall considered state then return these details in the recommendation tab response`(
+    testData: RecommendationTabTestData,
+  ) {
     runTest {
-
       val lastModifiedDate1 = "2022-07-02T15:22:24.567Z"
       val lastModifiedDate2 = "2022-07-01T15:22:24.567Z"
       val lastModifiedDate3 = "2022-07-03T15:22:24.567Z"
 
-      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate1)
-      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate2)
-      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(crn, status = testData.recommendationStatus, recallTypeValue = testData.recallTypeValue, lastModifiedDate = lastModifiedDate3)
+      val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(
+        crn,
+        status = testData.recommendationStatus,
+        recallTypeValue = testData.recallTypeValue,
+        lastModifiedDate = lastModifiedDate1,
+      )
+      val recommendation2 = MrdTestDataBuilder.recommendationDataEntityData(
+        crn,
+        status = testData.recommendationStatus,
+        recallTypeValue = testData.recallTypeValue,
+        lastModifiedDate = lastModifiedDate2,
+      )
+      val recommendation3 = MrdTestDataBuilder.recommendationDataEntityData(
+        crn,
+        status = testData.recommendationStatus,
+        recallTypeValue = testData.recallTypeValue,
+        lastModifiedDate = lastModifiedDate3,
+      )
 
-      given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name)))
+      given(
+        recommendationRepository.findByCrnAndStatus(
+          crn,
+          listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name),
+        ),
+      )
         .willReturn(listOf(recommendation1, recommendation2, recommendation3))
 
       given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
@@ -54,10 +75,14 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           RecommendationsResponse(
             null,
             null,
-            listOf(expectedRecommendationListItemResponse(recommendation3), expectedRecommendationListItemResponse(recommendation1), expectedRecommendationListItemResponse(recommendation2)),
-            expectedActiveRecommendationResponse(testData.recommendationStatus, recommendation3)
-          )
-        )
+            listOf(
+              expectedRecommendationListItemResponse(recommendation3),
+              expectedRecommendationListItemResponse(recommendation1),
+              expectedRecommendationListItemResponse(recommendation2),
+            ),
+            expectedActiveRecommendationResponse(testData.recommendationStatus, recommendation3),
+          ),
+        ),
       )
     }
   }
@@ -69,12 +94,14 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       createdDate = "2022-07-01T15:22:24.567Z",
       lastModifiedDate = recommendation.data.lastModifiedDate,
       status = recommendation.data.status,
-      recallType = recommendation.data.recallType
+      recallType = recommendation.data.recallType,
     )
   }
 
-  private fun expectedActiveRecommendationResponse(status: Status, recommendation: RecommendationEntity): ActiveRecommendation {
-
+  private fun expectedActiveRecommendationResponse(
+    status: Status,
+    recommendation: RecommendationEntity,
+  ): ActiveRecommendation {
     return ActiveRecommendation(
       recommendationId = 1,
       lastModifiedDate = recommendation.data.lastModifiedDate,
@@ -87,8 +114,8 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           userId = "bill",
           createdDate = "2022-07-26T09:48:27.443Z",
           userName = "Bill",
-          recallConsideredDetail = "I have concerns about their behaviour"
-        )
+          recallConsideredDetail = "I have concerns about their behaviour",
+        ),
       ),
       status = status,
     )
@@ -104,7 +131,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
         RecommendationTabTestData(Status.DRAFT, null),
         RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.NO_RECALL),
         RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.FIXED_TERM),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, null)
+        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, null),
       )
   }
 

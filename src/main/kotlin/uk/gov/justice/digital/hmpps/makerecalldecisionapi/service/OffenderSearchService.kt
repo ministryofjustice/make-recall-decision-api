@@ -28,8 +28,8 @@ internal class OffenderSearchService(
         firstName = firstName,
         surname = lastName,
         page = page,
-        pageSize = pageSize
-      )
+        pageSize = pageSize,
+      ),
     )
 
     return if (apiResponse == null) {
@@ -43,8 +43,8 @@ internal class OffenderSearchService(
         paging = Paging(
           page = apiResponse.pageable.pageNumber,
           pageSize = apiResponse.pageable.pageSize,
-          totalNumberOfPages = apiResponse.totalPages
-        )
+          totalNumberOfPages = apiResponse.totalPages,
+        ),
       )
     }
   }
@@ -57,7 +57,7 @@ internal class OffenderSearchService(
       val userAccessResponse = userAccessValidator.checkUserAccess(offenderDetails.otherIds.crn)
       AccessRestrictions(
         userExcluded = userAccessResponse.userExcluded,
-        userRestricted = userAccessResponse.userRestricted
+        userRestricted = userAccessResponse.userRestricted,
       )
     } else {
       AccessRestrictions(userExcluded = false, userRestricted = false)
@@ -79,7 +79,7 @@ internal class OffenderSearchService(
       crn = this.otherIds.crn,
       dateOfBirth = this.dateOfBirth,
       userExcluded = userExcluded,
-      userRestricted = userRestricted
+      userRestricted = userRestricted,
     )
   }
 }

@@ -84,10 +84,10 @@ data class DocumentData(
   val countersignAcoTelephone: String? = null,
   val countersignAcoDate: String? = null,
   val countersignAcoTime: String? = null,
-  val countersignAcoExposition: String? = null
+  val countersignAcoExposition: String? = null,
 )
 
 data class ValueWithDetails(
   val value: String? = null,
-  val details: String? = null
+  val details: String? = null,
 )

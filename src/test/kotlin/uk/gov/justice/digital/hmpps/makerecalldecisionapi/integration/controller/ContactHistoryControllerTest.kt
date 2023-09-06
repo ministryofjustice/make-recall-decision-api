@@ -14,13 +14,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class ContactHistoryControllerTest(
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
 
   @Test
   fun `retrieves all contact history details`() {
     runTest {
-
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
       deliusContactHistoryResponse(crn, deliusContactHistoryResponse())
@@ -32,7 +31,7 @@ class ContactHistoryControllerTest(
         .headers {
           (
             listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
             )
             )
         }
@@ -79,14 +78,16 @@ class ContactHistoryControllerTest(
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.recallType.selected.value").isEqualTo("FIXED_TERM")
         .jsonPath("$.activeRecommendation.recallConsideredList.length()").isEqualTo(1)
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userName").isEqualTo("some_user")
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -132,7 +133,8 @@ class ContactHistoryControllerTest(
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.contactSummary").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty

@@ -12,12 +12,12 @@ data class MappaResponse(
   val team: Team?,
   val officer: Officer?,
   val probationArea: ProbationArea?,
-  val notes: String?
+  val notes: String?,
 )
 
 data class Officer(
   val code: String?,
   val forenames: String?,
   val surname: String?,
-  val unallocated: Boolean?
+  val unallocated: Boolean?,
 )

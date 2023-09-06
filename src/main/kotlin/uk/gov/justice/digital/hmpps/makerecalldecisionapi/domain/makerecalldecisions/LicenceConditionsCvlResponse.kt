@@ -11,5 +11,5 @@ data class LicenceConditionsCvlResponse(
   val activeRecommendation: ActiveRecommendation? = null,
   val activeConvictions: List<DeliusClient.LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
   val source: String? = null,
-  val hasAllConvictionsReleasedOnLicence: Boolean? = null
+  val hasAllConvictionsReleasedOnLicence: Boolean? = null,
 ) : SelectedLicenceConditionsResponse

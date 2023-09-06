@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PersonDetailsS
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class PersonDetailsController(
-  private val personDetailsService: PersonDetailsService
+  private val personDetailsService: PersonDetailsService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

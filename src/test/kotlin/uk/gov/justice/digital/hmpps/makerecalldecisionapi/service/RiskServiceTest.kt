@@ -49,7 +49,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       userAccessValidator,
       null,
       deliusClient,
-      null
+      null,
     )
     riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
   }
@@ -67,12 +67,20 @@ internal class RiskServiceTest : ServiceTestBase() {
             listOf(
               currentRiskScoreResponse,
               historicalRiskScoreResponse,
-              historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000")
+              historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000"),
             )
-          }
+          },
         )
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment(), assessment().copy(dateCompleted = null))) })
+        .willReturn(
+          Mono.fromCallable {
+            AssessmentsResponse(
+              crn,
+              false,
+              listOf(assessment(), assessment().copy(dateCompleted = null)),
+            )
+          },
+        )
 
       val response = riskService.getRisk(crn)
 
@@ -220,7 +228,15 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false))) })
+        .willReturn(
+          Mono.fromCallable {
+            AssessmentsResponse(
+              crn,
+              false,
+              listOf(assessment().copy(laterCompleteAssessmentExists = false)),
+            )
+          },
+        )
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
@@ -241,7 +257,15 @@ internal class RiskServiceTest : ServiceTestBase() {
     runTest {
       // given
       given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { AssessmentsResponse(crn, false, listOf(assessment().copy(laterCompleteAssessmentExists = false, offence = null))) })
+        .willReturn(
+          Mono.fromCallable {
+            AssessmentsResponse(
+              crn,
+              false,
+              listOf(assessment().copy(laterCompleteAssessmentExists = false, offence = null)),
+            )
+          },
+        )
       val convictions = List(2) { nonCustodialConviction() }
 
       // when
@@ -295,18 +319,18 @@ internal class RiskServiceTest : ServiceTestBase() {
                       type = "CURRENT",
                       offenceCode = "ABC123",
                       offenceSubCode = "",
-                      offenceDate = thisDateDoesNotMatchDateInDelius
-                    )
-                  )
+                      offenceDate = thisDateDoesNotMatchDateInDelius,
+                    ),
+                  ),
                 ),
                 assessment().copy(
                   laterCompleteAssessmentExists = true,
                   dateCompleted = "2022-08-26T15:00:08",
-                  superStatus = "OPEN"
-                )
-              )
+                  superStatus = "OPEN",
+                ),
+              ),
             )
-          }
+          },
         )
       val convictions = List(2) { nonCustodialConviction() }
 
@@ -341,18 +365,18 @@ internal class RiskServiceTest : ServiceTestBase() {
                       type = "CURRENT",
                       offenceCode = "NO_MATCH",
                       offenceSubCode = "",
-                      offenceDate = thisDateDoesNotMatchDateInDelius
-                    )
-                  )
+                      offenceDate = thisDateDoesNotMatchDateInDelius,
+                    ),
+                  ),
                 ),
                 assessment().copy(
                   laterCompleteAssessmentExists = true,
                   dateCompleted = "2022-08-26T15:00:08",
-                  superStatus = "OPEN"
-                )
-              )
+                  superStatus = "OPEN",
+                ),
+              ),
             )
-          }
+          },
         )
       val convictions = List(2) { nonCustodialConviction() }
 
@@ -387,18 +411,18 @@ internal class RiskServiceTest : ServiceTestBase() {
                       type = "CURRENT",
                       offenceCode = "ABC123",
                       offenceSubCode = "",
-                      offenceDate = nullDateShouldBeHandledAsMismatch
-                    )
-                  )
+                      offenceDate = nullDateShouldBeHandledAsMismatch,
+                    ),
+                  ),
                 ),
                 assessment().copy(
                   laterCompleteAssessmentExists = true,
                   dateCompleted = "2022-08-26T15:00:08",
-                  superStatus = "OPEN"
-                )
-              )
+                  superStatus = "OPEN",
+                ),
+              ),
             )
-          }
+          },
         )
       val convictions = List(2) { nonCustodialConviction() }
 
@@ -423,9 +447,9 @@ internal class RiskServiceTest : ServiceTestBase() {
           Mono.fromCallable {
             listOf(
               currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWhereValuesNull
+              historicalRiskScoreResponseWhereValuesNull,
             )
-          }
+          },
         )
       apiMocksWithAllFieldsEmpty()
 
@@ -459,17 +483,17 @@ internal class RiskServiceTest : ServiceTestBase() {
               currentRiskScoreResponseWithOptionalFields.copy(
                 riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
                   "10",
-                  "MEDIUM"
-                )
+                  "MEDIUM",
+                ),
               ),
               historicalRiskScoreResponseWhereValuesNull.copy(
                 riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
                   "10",
-                  "MEDIUM"
-                )
-              )
+                  "MEDIUM",
+                ),
+              ),
             )
-          }
+          },
         )
       apiMocksWithAllFieldsEmpty()
 
@@ -511,11 +535,11 @@ internal class RiskServiceTest : ServiceTestBase() {
                   ospIndecentPercentageScore = "0",
                   ospContactPercentageScore = "0",
                   ospIndecentScoreLevel = SCORE_NOT_APPLICABLE,
-                  ospContactScoreLevel = SCORE_NOT_APPLICABLE
-                )
-              )
+                  ospContactScoreLevel = SCORE_NOT_APPLICABLE,
+                ),
+              ),
             )
-          }
+          },
         )
       apiMocksWithAllFieldsEmpty()
 
@@ -674,7 +698,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   )
   fun `given multiple risk management plans then return latest with assessment status set`(
     status: String,
-    assessmentStatusComplete: Boolean,
+    assessmentStatusComplete: Boolean
   ) {
     runTest {
 
@@ -718,7 +742,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String,
+    expectedErrorCode: String
   ) {
     runTest {
       given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -733,7 +757,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk scores fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String,
+    expectedErrorCode: String
   ) {
     runTest {
       given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
@@ -749,7 +773,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   fun `given call to fetch risk summary fails with given exception then set this in the error field response`(
     code: Int,
     exceptionMessage: String,
-    expectedErrorCode: String,
+    expectedErrorCode: String
   ) {
     runTest {
       given(arnApiClient.getRiskSummary(crn)).willThrow(WebClientResponseException(code, null, null, exceptionMessage.toByteArray(Charsets.UTF_8), null))
@@ -764,7 +788,7 @@ internal class RiskServiceTest : ServiceTestBase() {
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to risk management plan fails with given exception then set this in the error field response`(
     code: Int,
-    expectedErrorCode: String,
+    expectedErrorCode: String
   ) {
     runTest {
       given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))

@@ -31,7 +31,7 @@ class WebClientConfiguration(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry
+  @Autowired private val meterRegistry: MeterRegistry,
 ) {
 
   @Bean
@@ -42,12 +42,12 @@ class WebClientConfiguration(
   @Bean
   fun authorizedClientManagerAppScope(
     clientRegistrationRepository: ClientRegistrationRepository,
-    oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
+    oAuth2AuthorizedClientService: OAuth2AuthorizedClientService,
   ): OAuth2AuthorizedClientManager {
     val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build()
     val authorizedClientManager = AuthorizedClientServiceOAuth2AuthorizedClientManager(
       clientRegistrationRepository,
-      oAuth2AuthorizedClientService
+      oAuth2AuthorizedClientService,
     )
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
     return authorizedClientManager
@@ -56,7 +56,7 @@ class WebClientConfiguration(
   @Bean
   fun offenderSearchWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
     return getOAuthWebClient(authorizedClientManager, builder, offenderSearchApiRootUri, "offender-search-api")
   }
@@ -72,7 +72,7 @@ class WebClientConfiguration(
   @Bean
   fun deliusWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
     return getOAuthWebClient(authorizedClientManager, builder, deliusIntegrationRootUri, "delius")
   }
@@ -88,7 +88,7 @@ class WebClientConfiguration(
   @Bean
   fun arnWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
     return getOAuthWebClient(authorizedClientManager, builder, arnApiRootUri, "arn-api")
   }
@@ -104,7 +104,7 @@ class WebClientConfiguration(
   @Bean
   fun cvlWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
     return getOAuthWebClient(authorizedClientManager, builder, cvlApiRootUri, "cvl-api")
   }
@@ -129,7 +129,7 @@ class WebClientConfiguration(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
     rootUri: String,
-    registrationId: String
+    registrationId: String,
   ): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(registrationId)

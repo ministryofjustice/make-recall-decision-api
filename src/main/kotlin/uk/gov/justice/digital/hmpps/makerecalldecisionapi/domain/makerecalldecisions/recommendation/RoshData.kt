@@ -5,7 +5,7 @@ data class RoshData(
   val riskToPublic: RoshDataScore? = null,
   val riskToKnownAdult: RoshDataScore? = null,
   val riskToStaff: RoshDataScore? = null,
-  val riskToPrisoners: RoshDataScore? = null
+  val riskToPrisoners: RoshDataScore? = null,
 )
 
 enum class RoshDataScore(val partADisplayValue: String) {
@@ -13,5 +13,5 @@ enum class RoshDataScore(val partADisplayValue: String) {
   HIGH("High"),
   MEDIUM("Medium"),
   LOW("Low"),
-  NOT_APPLICABLE("N/A")
+  NOT_APPLICABLE("N/A"),
 }

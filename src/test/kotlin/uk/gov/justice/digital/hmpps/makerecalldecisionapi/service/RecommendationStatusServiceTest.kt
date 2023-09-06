@@ -37,7 +37,7 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
         createdByUserFullName = "Bill",
         created = "2022-07-26T09:48:27.443Z",
         active = true,
-        name = "NEW_STATUS"
+        name = "NEW_STATUS",
       )
 
       // and
@@ -47,11 +47,11 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
       val response = recommendationStatusService.updateRecommendationStatus(
         RecommendationStatusRequest(
           activate = listOf("NEW_STATUS"),
-          deActivate = emptyList()
+          deActivate = emptyList(),
         ),
         recommendationId = 1L,
         readableNameOfUser = "Bill",
-        userId = "BILL"
+        userId = "BILL",
       )
 
       // then
@@ -91,33 +91,52 @@ internal class RecommendationStatusServiceTest : ServiceTestBase() {
         createdByUserFullName = "Bill",
         created = "2022-07-26T09:48:27.443Z",
         active = true,
-        name = "NEW_STATUS"
+        name = "NEW_STATUS",
       )
 
       // and
       given(recommendationStatusRepository.findByRecommendationIdAndName(anyLong(), anyString()))
         .willReturn(
-          listOf(recommendationStatusToSave.copy(name = "SOME_OTHER_STATUS"))
+          listOf(recommendationStatusToSave.copy(name = "SOME_OTHER_STATUS")),
         )
 
       // and
       given(recommendationStatusRepository.findByRecommendationId(anyLong()))
         .willReturn(
-          listOf(recommendationStatusToSave, recommendationStatusToSave.copy(name = "SOME_OTHER_STATUS", active = false, modified = "2022-07-26T09:48:27.443Z", modifiedBy = "BILL", modifiedByUserFullName = "Bill"))
+          listOf(
+            recommendationStatusToSave,
+            recommendationStatusToSave.copy(
+              name = "SOME_OTHER_STATUS",
+              active = false,
+              modified = "2022-07-26T09:48:27.443Z",
+              modifiedBy = "BILL",
+              modifiedByUserFullName = "Bill",
+            ),
+          ),
         )
 
       // and
-      given(recommendationStatusRepository.saveAll(anyList())).willReturn(listOf(recommendationStatusToSave.copy(name = "SOME_OTHER_STATUS", active = false, modified = "2022-07-26T09:48:27.443Z", modifiedBy = "BILL", modifiedByUserFullName = "Bill")))
+      given(recommendationStatusRepository.saveAll(anyList())).willReturn(
+        listOf(
+          recommendationStatusToSave.copy(
+            name = "SOME_OTHER_STATUS",
+            active = false,
+            modified = "2022-07-26T09:48:27.443Z",
+            modifiedBy = "BILL",
+            modifiedByUserFullName = "Bill",
+          ),
+        ),
+      )
 
       // and
       recommendationStatusService.updateRecommendationStatus(
         RecommendationStatusRequest(
           activate = listOf("NEW_STATUS"),
-          deActivate = listOf("SOME_OTHER_STATUS")
+          deActivate = listOf("SOME_OTHER_STATUS"),
         ),
         recommendationId = 1L,
         readableNameOfUser = "Bill",
-        userId = "BILL"
+        userId = "BILL",
       )
 
       // when

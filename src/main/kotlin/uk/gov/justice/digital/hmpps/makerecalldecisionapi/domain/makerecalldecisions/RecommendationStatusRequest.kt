@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 
 data class RecommendationStatusRequest(
   val activate: List<String>,
-  val deActivate: List<String>
+  val deActivate: List<String>,
 )
 
 fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
@@ -14,7 +14,7 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
   userId: String?,
   createdByUserName: String?,
   recommendationHistoryId: Long? = null,
-  email: String? = null
+  email: String? = null,
 ): List<RecommendationStatusEntity> {
   return activate
     .map {
@@ -26,7 +26,7 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
         name = it,
         active = true,
         recommendationHistoryId = recommendationHistoryId,
-        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED" || it == "PO_RECALL_CONSULT_SPO") email else null
+        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED" || it == "PO_RECALL_CONSULT_SPO") email else null,
       )
     }
 }
@@ -42,7 +42,7 @@ data class RecommendationStatusResponse(
   val createdByUserFullName: String?,
   val modifiedByUserFullName: String?,
   val recommendationHistoryId: Long?,
-  val emailAddress: String? = null
+  val emailAddress: String? = null,
 ) {
   companion object {
     fun fromRecommendationModel(model: RecommendationModel?, recommendationId: Long): RecommendationStatusResponse {
@@ -56,7 +56,7 @@ data class RecommendationStatusResponse(
         modified = null,
         modifiedBy = null,
         modifiedByUserFullName = null,
-        recommendationHistoryId = null
+        recommendationHistoryId = null,
       )
     }
   }

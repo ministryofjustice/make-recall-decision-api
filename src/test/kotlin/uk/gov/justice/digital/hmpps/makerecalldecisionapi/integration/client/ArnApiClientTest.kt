@@ -41,7 +41,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     val expected = AssessmentsResponse(
       crn = crn,
       limitedAccessOffender = true,
-      assessments = assessments()
+      assessments = assessments(),
     )
 
     // when
@@ -58,14 +58,14 @@ class ArnApiClientTest : IntegrationTestBase() {
           type = "NOT_CURRENT",
           offenceCode = "88",
           offenceSubCode = "88",
-          offenceDate = "2022-04-24T20:39:47"
+          offenceDate = "2022-04-24T20:39:47",
         ),
         AssessmentOffenceDetail(
           type = "CURRENT",
           offenceCode = "12",
           offenceSubCode = "34",
-          offenceDate = "2022-04-24T20:39:47"
-        )
+          offenceDate = "2022-04-24T20:39:47",
+        ),
       ),
       assessmentStatus = "COMPLETE",
       superStatus = "COMPLETE",
@@ -83,7 +83,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       monitoringAndControl = null,
       interventionsAndTreatment = null,
       victimSafetyPlanning = null,
-      contingencyPlans = null
+      contingencyPlans = null,
     ),
     Assessment(
       offenceDetails = listOf(
@@ -91,8 +91,8 @@ class ArnApiClientTest : IntegrationTestBase() {
           type = "NOT_CURRENT",
           offenceCode = "78",
           offenceSubCode = "90",
-          offenceDate = "2022-04-24T20:39:47"
-        )
+          offenceDate = "2022-04-24T20:39:47",
+        ),
       ),
       assessmentStatus = "COMPLETE",
       superStatus = "COMPLETE",
@@ -110,8 +110,8 @@ class ArnApiClientTest : IntegrationTestBase() {
       monitoringAndControl = null,
       interventionsAndTreatment = null,
       victimSafetyPlanning = null,
-      contingencyPlans = null
-    )
+      contingencyPlans = null,
+    ),
   )
 
   @Test
@@ -124,20 +124,58 @@ class ArnApiClientTest : IntegrationTestBase() {
     val expected = listOf<RiskScoreResponse>(
       RiskScoreResponse(
         completedDate = "2021-06-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "0", ogpRisk = "HIGH", ogp1Year = "0", ogp2Year = "0"),
+        generalPredictorScore = GeneralPredictorScore(
+          ogpStaticWeightedScore = "0",
+          ogpDynamicWeightedScore = "0",
+          ogpTotalWeightedScore = "0",
+          ogpRisk = "HIGH",
+          ogp1Year = "0",
+          ogp2Year = "0",
+        ),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "0", scoreLevel = "HIGH"),
-        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "0", ospContactPercentageScore = "0", ospIndecentScoreLevel = "HIGH", ospContactScoreLevel = "HIGH"),
+        sexualPredictorScore = SexualPredictorScore(
+          ospIndecentPercentageScore = "0",
+          ospContactPercentageScore = "0",
+          ospIndecentScoreLevel = "HIGH",
+          ospContactScoreLevel = "HIGH",
+        ),
         groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
-        violencePredictorScore = ViolencePredictorScore(ovpStaticWeightedScore = "0", ovpDynamicWeightedScore = "0", ovpTotalWeightedScore = "0", ovpRisk = "HIGH", oneYear = "0", twoYears = "0")
+        violencePredictorScore = ViolencePredictorScore(
+          ovpStaticWeightedScore = "0",
+          ovpDynamicWeightedScore = "0",
+          ovpTotalWeightedScore = "0",
+          ovpRisk = "HIGH",
+          oneYear = "0",
+          twoYears = "0",
+        ),
       ),
       RiskScoreResponse(
         completedDate = "2022-04-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(ogpStaticWeightedScore = "0", ogpDynamicWeightedScore = "0", ogpTotalWeightedScore = "12", ogpRisk = "LOW", ogp1Year = "0", ogp2Year = "0"),
+        generalPredictorScore = GeneralPredictorScore(
+          ogpStaticWeightedScore = "0",
+          ogpDynamicWeightedScore = "0",
+          ogpTotalWeightedScore = "12",
+          ogpRisk = "LOW",
+          ogp1Year = "0",
+          ogp2Year = "0",
+        ),
         riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "23", scoreLevel = "HIGH"),
-        sexualPredictorScore = SexualPredictorScore(ospIndecentPercentageScore = "5", ospContactPercentageScore = "3.45", ospIndecentScoreLevel = "MEDIUM", ospContactScoreLevel = "LOW"),
+        sexualPredictorScore = SexualPredictorScore(
+          ospIndecentPercentageScore = "5",
+          ospContactPercentageScore = "3.45",
+          ospIndecentScoreLevel = "MEDIUM",
+          ospContactScoreLevel = "LOW",
+        ),
         groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "LOW"),
-        violencePredictorScore = ViolencePredictorScore(ovpStaticWeightedScore = "0", ovpDynamicWeightedScore = "0", ovpTotalWeightedScore = "0", ovpRisk = "LOW", oneYear = "0", twoYears = "0")
-      )
+        violencePredictorScore = ViolencePredictorScore(
+          ovpStaticWeightedScore = "0",
+          ovpDynamicWeightedScore = "0",
+          ovpTotalWeightedScore = "0",
+          ovpRisk = "LOW",
+          oneYear = "0",
+          twoYears = "0",
+        ),
+      ),
     )
 
     // when
@@ -165,25 +203,25 @@ class ArnApiClientTest : IntegrationTestBase() {
         high = listOf(
           "Children",
           "Public",
-          "Known adult"
+          "Known adult",
         ),
         medium = listOf("Staff"),
-        low = null
+        low = null,
       ),
       riskInCustody = RiskScore(
         veryHigh = listOf(
           "Staff",
-          "Prisoners"
+          "Prisoners",
         ),
         high = listOf("Known adult"),
         medium = null,
         low = listOf(
           "Children",
-          "Public"
-        )
+          "Public",
+        ),
       ),
       assessedOn = "2022-05-19T08:26:31",
-      overallRiskLevel = "HIGH"
+      overallRiskLevel = "HIGH",
     )
 
     // when
@@ -228,9 +266,9 @@ class ArnApiClientTest : IntegrationTestBase() {
           laterPartCompSignedAssessmentExists = true,
           latestPartCompSignedDate = "2022-10-06T14:20:27",
           laterCompleteAssessmentExists = true,
-          latestCompleteDate = "2022-10-07T14:20:27"
-        )
-      )
+          latestCompleteDate = "2022-10-07T14:20:27",
+        ),
+      ),
     )
 
     // when
@@ -253,42 +291,42 @@ class ArnApiClientTest : IntegrationTestBase() {
           previous = "Yes",
           previousConcernsText = "Previous risk of suicide concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of suicide concerns due to ..."
+          currentConcernsText = "Risk of suicide concerns due to ...",
         ),
         selfHarm = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of self harm concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of self harm concerns due to ..."
+          currentConcernsText = "Risk of self harm concerns due to ...",
         ),
         custody = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of custody concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of custody concerns due to ..."
+          currentConcernsText = "Risk of custody concerns due to ...",
         ),
         hostelSetting = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of hostel setting concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of hostel setting concerns due to ..."
+          currentConcernsText = "Risk of hostel setting concerns due to ...",
         ),
         vulnerability = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of vulnerability concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of vulnerability concerns due to ..."
+          currentConcernsText = "Risk of vulnerability concerns due to ...",
         ),
       ),
       otherRisks = OtherRisksResponse(
         escapeOrAbscond = "YES",
         controlIssuesDisruptiveBehaviour = "YES",
         breachOfTrust = "YES",
-        riskToOtherPrisoners = "YES"
+        riskToOtherPrisoners = "YES",
       ),
       summary = RiskSummaryRiskResponse(
         whoIsAtRisk = "X, Y and Z are at risk",
@@ -301,26 +339,26 @@ class ArnApiClientTest : IntegrationTestBase() {
           high = listOf(
             "Children",
             "Public",
-            "Known adult"
+            "Known adult",
           ),
           medium = listOf("Staff"),
-          low = listOf("Prisoners")
+          low = listOf("Prisoners"),
         ),
         riskInCustody = RiskScore(
           veryHigh = listOf(
             "Staff",
-            "Prisoners"
+            "Prisoners",
           ),
           high = listOf("Known adult"),
           medium = null,
           low = listOf(
             "Children",
-            "Public"
-          )
+            "Public",
+          ),
         ),
-        overallRiskLevel = "HIGH"
+        overallRiskLevel = "HIGH",
       ),
-      assessedOn = "2022-11-23T00:01:50"
+      assessedOn = "2022-11-23T00:01:50",
     )
 
     // when

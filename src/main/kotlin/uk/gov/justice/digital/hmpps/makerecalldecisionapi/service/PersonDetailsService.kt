@@ -36,13 +36,14 @@ internal class PersonDetailsService(
           probationTeam = ProbationTeam(
             code = manager?.team?.code ?: "",
             label = manager?.team?.name ?: "",
-            localDeliveryUnitDescription = manager?.team?.localAdminUnit
-          )
+            localDeliveryUnitDescription = manager?.team?.localAdminUnit,
+          ),
         ),
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
       )
     }
   }
 
-  fun buildPersonalDetailsOverviewResponse(crn: String) = deliusClient.getPersonalDetails(crn).personalDetails.toOverview(crn)
+  fun buildPersonalDetailsOverviewResponse(crn: String) =
+    deliusClient.getPersonalDetails(crn).personalDetails.toOverview(crn)
 }

@@ -8,5 +8,5 @@ import org.springframework.web.reactive.function.client.WebClient
 class GotenbergHealth(
   webClientNoAuthNoMetrics: WebClient,
   @Value("gotenberg") componentName: String,
-  @Value("\${gotenberg.endpoint.url}") endpointUrl: String
+  @Value("\${gotenberg.endpoint.url}") endpointUrl: String,
 ) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, "$endpointUrl/health")

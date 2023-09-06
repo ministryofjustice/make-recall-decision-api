@@ -27,7 +27,8 @@ internal class ManagementOversightService(
   suspend fun getManagementOversightResponse(
     crn: String,
   ): ResponseEntity<ManagementOversightResponse> {
-    val recommendations = recommendationRepository.findByCrn(crn) ?: throw NoRecommendationFoundException("No recommendation found for crn:$crn")
+    val recommendations = recommendationRepository.findByCrn(crn)
+      ?: throw NoRecommendationFoundException("No recommendation found for crn:$crn")
     Collections.sort(recommendations)
     val managerRecallDecision = recommendations[0].data.managerRecallDecision
       ?: throw NoManagementOversightException("No management oversight available for crn:$crn")
@@ -38,9 +39,9 @@ internal class ManagementOversightService(
         sensitive = recommendations[0].data.sensitive ?: false,
         notes = "$readableNameOfUser said:\n" +
           "${managerRecallDecision.selected?.details}\n" +
-          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview"
+          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
       ),
-      HttpStatus.OK
+      HttpStatus.OK,
     )
   }
 }

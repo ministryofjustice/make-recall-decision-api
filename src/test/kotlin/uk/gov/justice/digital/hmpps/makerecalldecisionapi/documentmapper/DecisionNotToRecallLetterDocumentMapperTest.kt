@@ -44,16 +44,22 @@ class DecisionNotToRecallLetterDocumentMapperTest {
               town = "Address line town",
               postcode = "TS1 1ST",
               noFixedAbode = false,
-            )
-          )
+            ),
+          ),
         ).toPersonOnProbationDto(),
         whyConsideredRecall = WhyConsideredRecall(
           selected = WhyConsideredRecallValue.RISK_INCREASED,
           allOptions = listOf(
             TextValueOption(value = "RISK_INCREASED", text = "Your risk is assessed as increased"),
-            TextValueOption(value = "CONTACT_STOPPED", text = "Contact with your probation practitioner has broken down"),
-            TextValueOption(value = "RISK_INCREASED_AND_CONTACT_STOPPED", text = "Your risk is assessed as increased and contact with your probation practitioner has broken down")
-          )
+            TextValueOption(
+              value = "CONTACT_STOPPED",
+              text = "Contact with your probation practitioner has broken down",
+            ),
+            TextValueOption(
+              value = "RISK_INCREASED_AND_CONTACT_STOPPED",
+              text = "Your risk is assessed as increased and contact with your probation practitioner has broken down",
+            ),
+          ),
         ),
         nextAppointment = NextAppointment(
           HowWillAppointmentHappen(
@@ -62,20 +68,20 @@ class DecisionNotToRecallLetterDocumentMapperTest {
               TextValueOption(text = "Telephone", value = "TELEPHONE"),
               TextValueOption(text = "Video call", value = "VIDEO_CALL"),
               TextValueOption(text = "Office visit", value = "OFFICE_VISIT"),
-              TextValueOption(text = "Home visit", value = "HOME_VISIT")
-            )
+              TextValueOption(text = "Home visit", value = "HOME_VISIT"),
+            ),
           ),
           dateTimeOfAppointment = "2023-02-24T13:00:00.000Z",
-          probationPhoneNumber = "01238282838"
+          probationPhoneNumber = "01238282838",
         ),
         reasonsForNoRecall = ReasonsForNoRecall(
           licenceBreach = "Reason for breaching licence",
           noRecallRationale = "Rationale for no recall",
           popProgressMade = "Progress made so far detail",
           popThoughts = "Thoughts on bad behaviour",
-          futureExpectations = "Future expectations detail"
+          futureExpectations = "Future expectations detail",
         ),
-        lastDntrLetterDownloadDateTime = LocalDateTime.parse("2022-12-26T20:39:47.778")
+        lastDntrLetterDownloadDateTime = LocalDateTime.parse("2022-12-26T20:39:47.778"),
       )
 
       val result = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
@@ -94,7 +100,7 @@ class DecisionNotToRecallLetterDocumentMapperTest {
           "Thoughts on bad behaviour\n\n" +
           "Future expectations detail\n\n" +
           "I hope our conversation and/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\n" +
-          "Your next appointment is by telephone on:"
+          "Your next appointment is by telephone on:",
       )
 
       assertThat(result.section2).isEqualTo("Friday 24th February 2023 at 1:00pm\n")

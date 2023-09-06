@@ -10,5 +10,5 @@ data class Content(
   val notes: String? = null,
   val enforcement: EnforcementAction? = null,
   val sensitive: Boolean?,
-  val description: String?
+  val description: String?,
 )

@@ -30,15 +30,13 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   @Test
   fun `throws exception when no person details available`() {
     val nonExistentCrn = "this person doesn't exist"
-    given(deliusClient.getPersonalDetails(anyString()))
-      .willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
+    given(deliusClient.getPersonalDetails(anyString())).willThrow(PersonNotFoundException("No details available for crn: $nonExistentCrn"))
 
     assertThatThrownBy {
       runTest {
         personDetailsService.getPersonDetails(nonExistentCrn)
       }
-    }.isInstanceOf(PersonNotFoundException::class.java)
-      .hasMessage("No details available for crn: $nonExistentCrn")
+    }.isInstanceOf(PersonNotFoundException::class.java).hasMessage("No details available for crn: $nonExistentCrn")
 
     then(deliusClient).should().getPersonalDetails(nonExistentCrn)
   }
@@ -46,7 +44,6 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val response = personDetailsService.getPersonDetails(crn)
@@ -57,9 +54,12 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         response,
         equalTo(
           PersonDetailsResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null), null, null, null
-          )
-        )
+            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -67,7 +67,6 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   @Test
   fun `given user not found for user then return user access response details`() {
     runTest {
-
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val response = personDetailsService.getPersonDetails(crn)
@@ -78,9 +77,12 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
         response,
         equalTo(
           PersonDetailsResponse(
-            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null), null, null, null
-          )
-        )
+            userAccessResponse(false, false, true).copy(restrictionMessage = null, exclusionMessage = null),
+            null,
+            null,
+            null,
+          ),
+        ),
       )
     }
   }
@@ -89,10 +91,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when no registration available`() {
     runTest {
       val crn = "12345"
-      given(deliusClient.getUserAccess(anyString(), anyString()))
-        .willReturn(userAccessResponse(false, false, false))
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(userAccessResponse(false, false, false))
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
 
       val response = personDetailsService.getPersonDetails(crn)
 
@@ -128,10 +128,8 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when no addresses available`() {
     runTest {
       val crn = "12345"
-      given(deliusClient.getUserAccess(anyString(), anyString()))
-        .willReturn(userAccessResponse(false, false, false))
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse(address = null))
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(userAccessResponse(false, false, false))
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse(address = null))
 
       val response = personDetailsService.getPersonDetails(crn)
 
@@ -164,10 +162,14 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
     runTest {
       // given
       val crn = "12345"
-      given(deliusClient.getUserAccess(anyString(), anyString()))
-        .willReturn(userAccessResponse(false, false, false))
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse(address = Address(postcode = "Nf1 1nf")))
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(userAccessResponse(false, false, false))
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(
+        deliusPersonalDetailsResponse(
+          address = Address(
+            postcode = "Nf1 1nf",
+          ),
+        ),
+      )
 
       // when
       val response = personDetailsService.getPersonDetails(crn)
@@ -184,8 +186,7 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   fun `retrieves person details when optional fields are missing`() {
     runTest {
       val crn = "12345"
-      given(deliusClient.getUserAccess(anyString(), anyString()))
-        .willReturn(userAccessResponse(false, false, false))
+      given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(userAccessResponse(false, false, false))
       given(deliusClient.getPersonalDetails(anyString())).willReturn(
         deliusPersonalDetailsResponse(
           middleName = null,
@@ -200,9 +201,9 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
             town = null,
             county = null,
             streetName = null,
-            noFixedAbode = null
-          )
-        )
+            noFixedAbode = null,
+          ),
+        ),
       )
 
       val response = personDetailsService.getPersonDetails(crn)
@@ -236,11 +237,9 @@ internal class PersonalDetailServiceTest : ServiceTestBase() {
   @Test
   fun `retrieve summary of person details`() {
     runTest {
-
       val crn = "12345"
 
-      given(deliusClient.getPersonalDetails(anyString()))
-        .willReturn(deliusPersonalDetailsResponse())
+      given(deliusClient.getPersonalDetails(anyString())).willReturn(deliusPersonalDetailsResponse())
 
       val response = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
 

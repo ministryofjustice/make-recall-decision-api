@@ -57,6 +57,7 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
       assertThat(userAccessResponse.userRestricted).isEqualTo(false)
     }
   }
+
   @Test
   fun `checks user access unhappy path when restricted`() {
     runTest {
@@ -78,8 +79,8 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
         userAccessResponse(
           excluded = false,
           restricted = true,
-          userNotFound = false
-        )
+          userNotFound = false,
+        ),
       )
       assertThat(userRestrictedExcludedOrNotFound).isTrue()
     }
@@ -92,8 +93,8 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
         userAccessResponse(
           excluded = false,
           restricted = false,
-          userNotFound = true
-        )
+          userNotFound = true,
+        ),
       )
       assertThat(userRestrictedExcludedOrNotFound).isTrue()
     }
@@ -106,8 +107,8 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
         userAccessResponse(
           excluded = true,
           restricted = false,
-          userNotFound = false
-        )
+          userNotFound = false,
+        ),
       )
       assertThat(userRestrictedExcludedOrNotFound).isTrue()
     }
@@ -120,8 +121,8 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
         userAccessResponse(
           excluded = false,
           restricted = false,
-          userNotFound = false
-        )
+          userNotFound = false,
+        ),
       )
       assertThat(userRestrictedExcludedOrNotFound).isFalse()
     }

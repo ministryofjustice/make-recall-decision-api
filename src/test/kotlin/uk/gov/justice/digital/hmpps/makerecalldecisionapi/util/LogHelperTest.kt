@@ -21,7 +21,7 @@ class LogHelperTest {
     "ba, b*",
     "Ba, B*",
     "asd, a**",
-    "TextToRedact, T***********"
+    "TextToRedact, T***********",
   )
   fun `given string value when redact is invoked then first letter followed by asterisks is returned`(
     value: String,

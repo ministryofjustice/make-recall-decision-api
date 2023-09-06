@@ -77,7 +77,7 @@ class WebClientUserEnhancementConfiguration(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry
+  @Autowired private val meterRegistry: MeterRegistry,
 ) {
 
   @Bean
@@ -105,9 +105,14 @@ class WebClientUserEnhancementConfiguration(
   @RequestScope
   fun cvlWebClientUserEnhancedAppScope(
     clientRegistrationRepository: ClientRegistrationRepository,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
-    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, cvlApiRootUri, "cvl-api")
+    return getOAuthWebClient(
+      authorizedClientManagerUserEnhanced(clientRegistrationRepository),
+      builder,
+      cvlApiRootUri,
+      "cvl-api",
+    )
   }
 
   @Bean
@@ -122,9 +127,14 @@ class WebClientUserEnhancementConfiguration(
   @RequestScope
   fun offenderSearchWebClientUserEnhancedAppScope(
     clientRegistrationRepository: ClientRegistrationRepository,
-    builder: WebClient.Builder
+    builder: WebClient.Builder,
   ): WebClient {
-    return getOAuthWebClient(authorizedClientManagerUserEnhanced(clientRegistrationRepository), builder, offenderSearchApiRootUri, "offender-search-api")
+    return getOAuthWebClient(
+      authorizedClientManagerUserEnhanced(clientRegistrationRepository),
+      builder,
+      offenderSearchApiRootUri,
+      "offender-search-api",
+    )
   }
 
   @Bean
@@ -162,7 +172,7 @@ class WebClientUserEnhancementConfiguration(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
     rootUri: String,
-    registrationId: String
+    registrationId: String,
   ): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(registrationId)

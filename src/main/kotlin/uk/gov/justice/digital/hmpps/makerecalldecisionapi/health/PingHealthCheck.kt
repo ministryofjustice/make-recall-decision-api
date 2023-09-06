@@ -27,7 +27,6 @@ abstract class PingHealthCheck(
   private val gaugeVal: AtomicInteger = AtomicInteger(0)
 
   override fun health(): Health? {
-
     val result =
       try {
         webClient.get()

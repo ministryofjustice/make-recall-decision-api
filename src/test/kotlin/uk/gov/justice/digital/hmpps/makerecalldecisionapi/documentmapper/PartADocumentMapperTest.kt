@@ -67,7 +67,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null)
+        custodyStatus = CustodyStatus(selected = custodyValue, details = "Details", allOptions = null),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -84,7 +84,7 @@ class PartADocumentMapperTest {
     "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,Fixed,Fixed details,''",
     "STANDARD,Standard details,false,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
     "STANDARD,Standard details,false,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)"
+    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
   )
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
@@ -103,11 +103,14 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         recallType = RecallType(
           selected = RecallTypeSelectedValue(value = recallValue, details = recallTypeDetails),
-          allOptions = null
+          allOptions = null,
         ),
         isIndeterminateSentence = isIndeterminateSentence,
         isExtendedSentence = isExtendedSentence,
-        fixedTermAdditionalLicenceConditions = SelectedWithDetails(fixedTermAdditionalLicenceConditionsSelected, fixedTermAdditionalLicenceConditionsValue),
+        fixedTermAdditionalLicenceConditions = SelectedWithDetails(
+          fixedTermAdditionalLicenceConditionsSelected,
+          fixedTermAdditionalLicenceConditionsValue,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -128,7 +131,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        isThisAnEmergencyRecall = isThisAnEmergencyRecall
+        isThisAnEmergencyRecall = isThisAnEmergencyRecall,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -147,7 +150,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        isExtendedSentence = isExtendedSentence
+        isExtendedSentence = isExtendedSentence,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -166,7 +169,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme)
+        hasVictimsInContactScheme = VictimsInContactScheme(selected = victimsInContactScheme),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -181,7 +184,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        dateVloInformed = LocalDate.parse("2022-09-01")
+        dateVloInformed = LocalDate.parse("2022-09-01"),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -195,7 +198,8 @@ class PartADocumentMapperTest {
     runTest {
       val recommendation = RecommendationResponse(
         id = 1,
-        crn = "ABC123", dateVloInformed = null
+        crn = "ABC123",
+        dateVloInformed = null,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -214,7 +218,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType)
+        indeterminateSentenceType = IndeterminateSentenceType(selected = indeterminateSentenceType),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -229,7 +233,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details")
+        hasArrestIssues = SelectedWithDetails(selected = true, details = "Arrest details"),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -244,7 +248,8 @@ class PartADocumentMapperTest {
     runTest {
       val recommendation = RecommendationResponse(
         id = 1,
-        crn = "ABC123", hasArrestIssues = SelectedWithDetails(selected = null)
+        crn = "ABC123",
+        hasArrestIssues = SelectedWithDetails(selected = null),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -259,7 +264,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details")
+        hasContrabandRisk = SelectedWithDetails(selected = true, details = "Contraband risk details"),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -282,12 +287,14 @@ class PartADocumentMapperTest {
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
                 mainCatCode = "NLC5",
-                title = "I am a title", details = "details1", note = "note1"
-              )
-            )
+                title = "I am a title",
+                details = "details1",
+                note = "note1",
+              ),
+            ),
           ),
-          standardLicenceConditions = null
-        )
+          standardLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -311,12 +318,14 @@ class PartADocumentMapperTest {
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
                 mainCatCode = "NLC5",
-                title = "I am a title", details = "details1", note = "note1"
-              )
-            )
+                title = "I am a title",
+                details = "details1",
+                note = "note1",
+              ),
+            ),
           ),
-          standardLicenceConditions = null
-        )
+          standardLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -338,13 +347,17 @@ class PartADocumentMapperTest {
           standardLicenceConditions = null,
           additionalLicenceConditions = LicenceConditionSection(
             selected = listOf("1", "2"),
-            allOptions = listOf(LicenceConditionOption("1", "one"), LicenceConditionOption("3", "three"), LicenceConditionOption("2", "two"))
+            allOptions = listOf(
+              LicenceConditionOption("1", "one"),
+              LicenceConditionOption("3", "three"),
+              LicenceConditionOption("2", "two"),
+            ),
           ),
           bespokeLicenceConditions = LicenceConditionSection(
             selected = listOf("5", "6"),
-            allOptions = listOf(LicenceConditionOption("5", "five"), LicenceConditionOption("6", "six"))
-          )
-        )
+            allOptions = listOf(LicenceConditionOption("5", "five"), LicenceConditionOption("6", "six")),
+          ),
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -361,27 +374,36 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         licenceConditionsBreached = LicenceConditionsBreached(
           additionalLicenceConditions = AdditionalLicenceConditions(
-            selectedOptions = listOf(SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"), SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ")),
+            selectedOptions = listOf(
+              SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"),
+              SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ"),
+            ),
             allOptions = listOf(
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
                 mainCatCode = "NLC5",
-                title = "I am a title", details = "details1", note = "note1"
+                title = "I am a title",
+                details = "details1",
+                note = "note1",
               ),
               AdditionalLicenceConditionOption(
                 subCatCode = "XYZ",
                 mainCatCode = "ABC",
-                title = "I am another title", details = "details2", note = "note2"
+                title = "I am another title",
+                details = "details2",
+                note = "note2",
               ),
               AdditionalLicenceConditionOption(
                 subCatCode = "XYZ",
                 mainCatCode = "DIFFERENT",
-                title = "I am different title", details = "details3", note = "note3"
-              )
-            )
+                title = "I am different title",
+                details = "details3",
+                note = "note3",
+              ),
+            ),
           ),
-          standardLicenceConditions = null
-        )
+          standardLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -404,22 +426,27 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         licenceConditionsBreached = LicenceConditionsBreached(
           additionalLicenceConditions = AdditionalLicenceConditions(
-            selectedOptions = listOf(SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"), SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ")),
+            selectedOptions = listOf(
+              SelectedOption(mainCatCode = "NLC5", subCatCode = "NST14"),
+              SelectedOption(mainCatCode = "ABC", subCatCode = "XYZ"),
+            ),
             allOptions = listOf(
               AdditionalLicenceConditionOption(
                 subCatCode = "NST14",
                 mainCatCode = "NLC5",
-                title = "I am a title", details = "details1"
+                title = "I am a title",
+                details = "details1",
               ),
               AdditionalLicenceConditionOption(
                 subCatCode = "XYZ",
                 mainCatCode = "ABC",
-                title = "I am another title", details = "details2"
-              )
-            )
+                title = "I am another title",
+                details = "details2",
+              ),
+            ),
           ),
-          standardLicenceConditions = null
-        )
+          standardLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -443,9 +470,9 @@ class PartADocumentMapperTest {
           allOptions = listOf(
             TextValueOption(value = "YES", text = "Yes"),
             TextValueOption(value = "NO", text = "No"),
-            TextValueOption(value = "NOT_APPLICABLE", text = "N/A")
-          )
-        )
+            TextValueOption(value = "NOT_APPLICABLE", text = "N/A"),
+          ),
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -461,8 +488,9 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         licenceConditionsBreached = LicenceConditionsBreached(
-          additionalLicenceConditions = null, standardLicenceConditions = null
-        )
+          additionalLicenceConditions = null,
+          standardLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -480,9 +508,9 @@ class PartADocumentMapperTest {
         licenceConditionsBreached = LicenceConditionsBreached(
           additionalLicenceConditions = null,
           standardLicenceConditions = StandardLicenceConditions(
-            selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name)
-          )
-        )
+            selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name),
+          ),
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -500,11 +528,14 @@ class PartADocumentMapperTest {
         licenceConditionsBreached = null,
         cvlLicenceConditionsBreached = CvlLicenceConditionsBreached(
           standardLicenceConditions = LicenceConditionSection(
-            selected = listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode, SelectedStandardLicenceConditions.ADDRESS_APPROVED.cvlCode)
+            selected = listOf(
+              SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode,
+              SelectedStandardLicenceConditions.ADDRESS_APPROVED.cvlCode,
+            ),
           ),
           additionalLicenceConditions = null,
-          bespokeLicenceConditions = null
-        )
+          bespokeLicenceConditions = null,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -531,8 +562,8 @@ class PartADocumentMapperTest {
           sentenceSecondLength = 20,
           sentenceSecondLengthUnits = "days",
           custodialTerm = "6 days",
-          extendedTerm = "20 days"
-        )
+          extendedTerm = "20 days",
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -566,8 +597,8 @@ class PartADocumentMapperTest {
           sentenceSecondLength = null,
           sentenceSecondLengthUnits = null,
           custodialTerm = WHITE_SPACE,
-          extendedTerm = WHITE_SPACE
-        )
+          extendedTerm = WHITE_SPACE,
+        ),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -589,7 +620,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        convictionDetail = null
+        convictionDetail = null,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -618,10 +649,10 @@ class PartADocumentMapperTest {
               line2 = "Line 2 address",
               town = "Address town",
               postcode = "TS1 1ST",
-              noFixedAbode = false
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = false,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -643,10 +674,10 @@ class PartADocumentMapperTest {
               line2 = "Line 2 address",
               town = "Address town",
               postcode = "TS1 1ST",
-              noFixedAbode = true
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = true,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -668,17 +699,17 @@ class PartADocumentMapperTest {
               line2 = "Line 2 address",
               town = "Address town",
               postcode = "TS1 1ST",
-              noFixedAbode = false
+              noFixedAbode = false,
             ),
             Address(
               line1 = "Line 1 second address",
               line2 = "Line 2 second address",
               town = "Address second town",
               postcode = "TS1 2ST",
-              noFixedAbode = false
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = false,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -700,17 +731,17 @@ class PartADocumentMapperTest {
               line2 = "Line 2 address",
               town = "Address town",
               postcode = "TS1 1ST",
-              noFixedAbode = true
+              noFixedAbode = true,
             ),
             Address(
               line1 = "Line 1 second address",
               line2 = "Line 2 second address",
               town = "Address second town",
               postcode = "TS1 2ST",
-              noFixedAbode = false
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = false,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -725,7 +756,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        personOnProbation = PersonOnProbation().toPersonOnProbationDto()
+        personOnProbation = PersonOnProbation().toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -747,10 +778,10 @@ class PartADocumentMapperTest {
               line2 = "",
               town = "",
               postcode = "",
-              noFixedAbode = false
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = false,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -772,10 +803,10 @@ class PartADocumentMapperTest {
               line2 = "",
               town = "Address town",
               postcode = "TS1 1ST",
-              noFixedAbode = false
-            )
-          )
-        ).toPersonOnProbationDto()
+              noFixedAbode = false,
+            ),
+          ),
+        ).toPersonOnProbationDto(),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -792,8 +823,8 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         mainAddressWherePersonCanBeFound = SelectedWithDetails(
           selected = false,
-          details = "123 Acacia Avenue, Birmingham, B23 1AV"
-        )
+          details = "123 Acacia Avenue, Birmingham, B23 1AV",
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -839,8 +870,8 @@ class PartADocumentMapperTest {
         previousReleases = PreviousReleases(
           lastReleaseDate = LocalDate.parse("2022-09-05"),
           lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
-          previousReleaseDates = listOf(LocalDate.parse("2022-05-09"), LocalDate.parse("2020-02-01"))
-        )
+          previousReleaseDates = listOf(LocalDate.parse("2022-05-09"), LocalDate.parse("2020-02-01")),
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -858,8 +889,8 @@ class PartADocumentMapperTest {
         previousReleases = PreviousReleases(
           lastReleaseDate = LocalDate.parse("2022-09-05"),
           lastReleasingPrisonOrCustodialEstablishment = "HMP Holloway",
-          previousReleaseDates = null
-        )
+          previousReleaseDates = null,
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -877,8 +908,8 @@ class PartADocumentMapperTest {
         previousRecalls = PreviousRecalls(
           lastRecallDate = LocalDate.parse("2022-09-05"),
           hasBeenRecalledPreviously = true,
-          previousRecallDates = listOf(LocalDate.parse("2020-02-01"), LocalDate.parse("2018-06-21"))
-        )
+          previousRecallDates = listOf(LocalDate.parse("2020-02-01"), LocalDate.parse("2018-06-21")),
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -895,8 +926,8 @@ class PartADocumentMapperTest {
         previousRecalls = PreviousRecalls(
           lastRecallDate = LocalDate.parse("2022-09-05"),
           hasBeenRecalledPreviously = true,
-          previousRecallDates = null
-        )
+          previousRecallDates = null,
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -915,8 +946,8 @@ class PartADocumentMapperTest {
           riskToPublic = RoshDataScore.HIGH,
           riskToKnownAdult = RoshDataScore.MEDIUM,
           riskToStaff = RoshDataScore.LOW,
-          riskToPrisoners = RoshDataScore.NOT_APPLICABLE
-        )
+          riskToPrisoners = RoshDataScore.NOT_APPLICABLE,
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -938,32 +969,32 @@ class PartADocumentMapperTest {
           selected = listOf(
             ValueWithDetails(
               value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
-              details = "Some behaviour similar to index offence"
+              details = "Some behaviour similar to index offence",
             ),
             ValueWithDetails(
               value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
-              details = "Behaviour leading to sexual or violent behaviour"
+              details = "Behaviour leading to sexual or violent behaviour",
             ),
             ValueWithDetails(
               value = "OUT_OF_TOUCH",
-              details = "Out of touch"
-            )
+              details = "Out of touch",
+            ),
           ),
           allOptions = listOf(
             TextValueOption(
               text = "Some behaviour similar to index offence",
-              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
             ),
             TextValueOption(
               text = "Behaviour leading to sexual or violent behaviour",
-              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -987,18 +1018,18 @@ class PartADocumentMapperTest {
           allOptions = listOf(
             TextValueOption(
               text = "Some behaviour similar to index offence",
-              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+              value = "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
             ),
             TextValueOption(
               text = "Behaviour leading to sexual or violent behaviour",
-              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+              value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
-            )
-          )
-        )
+            ),
+          ),
+        ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -1017,7 +1048,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        indeterminateOrExtendedSentenceDetails = null
+        indeterminateOrExtendedSentenceDetails = null,
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
@@ -1036,7 +1067,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
-        dateVloInformed = LocalDate.parse("2022-09-01")
+        dateVloInformed = LocalDate.parse("2022-09-01"),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -1062,11 +1093,11 @@ class PartADocumentMapperTest {
     userNamePartACompletedBy = "Henry Richarlison",
     userEmailPartACompletedBy = "Henry.Richarlison@test.com",
     countersignAcoDateTime = DateTimeHelper.dateTimeWithDaylightSavingFromString(
-      LocalDateTime.now(ZoneId.of("UTC")).toString()
+      LocalDateTime.now(ZoneId.of("UTC")).toString(),
     ),
     countersignSpoDateTime = DateTimeHelper.dateTimeWithDaylightSavingFromString(
-      LocalDateTime.now(ZoneId.of("UTC")).toString()
+      LocalDateTime.now(ZoneId.of("UTC")).toString(),
     ),
-    userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
+    userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London")),
   )
 }

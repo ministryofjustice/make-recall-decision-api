@@ -47,7 +47,7 @@ internal class ContactHistoryService(
             notes = it.notes,
             sensitive = it.sensitive,
             systemGenerated = it.type.systemGenerated,
-            contactDocuments = it.documents.map { doc -> CaseDocument(doc.id, doc.name, doc.lastUpdated) }
+            contactDocuments = it.documents.map { doc -> CaseDocument(doc.id, doc.name, doc.lastUpdated) },
           )
         },
         contactTypeGroups = contactTypeGroups,
@@ -64,10 +64,11 @@ internal class ContactHistoryService(
     val contactGroups = contactGroupToUse.groupBy(ContactGroup::groupId)
       .entries.mapNotNull { (id, contactGroups) ->
         val contacts = contactGroups.map { it.code }.filter { i -> allRelevantContacts.any { it.code == i } }
-        if (contacts.isNotEmpty())
+        if (contacts.isNotEmpty()) {
           ContactGroupResponse(id, contactGroups.first().groupName, contacts)
-        else
+        } else {
           null
+        }
       }
 
     return addUnknownContactGroupToList(allRelevantContacts, contactGroups)
@@ -84,9 +85,10 @@ internal class ContactHistoryService(
     }
     val codes = unknownContacts.map { it.code }
 
-    return if (codes.isNotEmpty())
+    return if (codes.isNotEmpty()) {
       existingContacts + ContactGroupResponse("unknown", "Not categorised", codes)
-    else
+    } else {
       existingContacts
+    }
   }
 }

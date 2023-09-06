@@ -38,7 +38,7 @@ import java.security.Principal
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class RecommendationController(
   private val recommendationService: RecommendationService,
-  private val authenticationFacade: AuthenticationFacade
+  private val authenticationFacade: AuthenticationFacade,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -50,14 +50,22 @@ internal class RecommendationController(
   suspend fun recommendation(
     @RequestBody recommendationRequest: CreateRecommendationRequest,
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
-    userLogin: Principal
+    userLogin: Principal,
   ): ResponseEntity<RecommendationResponse?> {
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
     val responseEntity = try {
-      ResponseEntity(recommendationService.createRecommendation(recommendationRequest, username, readableUserName, flags), CREATED)
+      ResponseEntity(
+        recommendationService.createRecommendation(
+          recommendationRequest,
+          username,
+          readableUserName,
+          flags,
+        ),
+        CREATED,
+      )
     } catch (e: UserAccessException) {
       ResponseEntity(RecommendationResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
@@ -95,12 +103,17 @@ internal class RecommendationController(
   suspend fun updateRecommendationWithManagerRecallDecision(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody updateRecommendationJson: JsonNode,
-    userLogin: Principal
+    userLogin: Principal,
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation with manager recall decision endpoint for recommendation id: $recommendationId"))
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
-    return recommendationService.updateRecommendationWithManagerRecallDecision(updateRecommendationJson, recommendationId, username, readableUserName)
+    return recommendationService.updateRecommendationWithManagerRecallDecision(
+      updateRecommendationJson,
+      recommendationId,
+      username,
+      readableUserName,
+    )
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
@@ -111,13 +124,23 @@ internal class RecommendationController(
     @RequestBody updateRecommendationJson: JsonNode,
     userLogin: Principal,
     @RequestParam("refreshProperty", defaultValue = "") refreshProperty: List<String>,
-    @RequestHeader("X-Feature-Flags") featureFlags: String?
+    @RequestHeader("X-Feature-Flags") featureFlags: String?,
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
-    return recommendationService.updateRecommendation(updateRecommendationJson, recommendationId, username, readableUserName, null, false, false, refreshProperty, flags)
+    return recommendationService.updateRecommendation(
+      updateRecommendationJson,
+      recommendationId,
+      username,
+      readableUserName,
+      null,
+      false,
+      false,
+      refreshProperty,
+      flags,
+    )
   }
 
   @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
@@ -127,12 +150,21 @@ internal class RecommendationController(
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody createPartARequest: CreatePartARequest,
-    userLogin: Principal
+    userLogin: Principal,
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val responseEntity = try {
-      ResponseEntity(recommendationService.generatePartA(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, authenticationFacade.isSpoOrAco, flags), OK)
+      ResponseEntity(
+        recommendationService.generatePartA(
+          recommendationId,
+          userLogin.name,
+          authenticationFacade.currentNameOfUser,
+          authenticationFacade.isSpoOrAco,
+          flags,
+        ),
+        OK,
+      )
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }
@@ -144,18 +176,28 @@ internal class RecommendationController(
   @Operation(
     summary = "Generates a Decision not to Recall document",
     description = "This endpoint will either generate a preview of the Decision not to Recall letter or provide the letter ready for download. " +
-      "To preview, set the 'format' field to 'preview'. To download, set the 'format' field to 'download-docx'"
+      "To preview, set the 'format' field to 'preview'. To download, set the 'format' field to 'download-docx'",
   )
   suspend fun generateDntrDocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody documentRequestQuery: DocumentRequestQuery,
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
-    userLogin: Principal
+    userLogin: Principal,
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
     val flags: FeatureFlags? = setFeatureFlags(featureFlags)
     val responseEntity = try {
-      ResponseEntity(recommendationService.generateDntr(recommendationId, userLogin.name, authenticationFacade.currentNameOfUser, fromString(documentRequestQuery.format), authenticationFacade.isSpoOrAco, flags), OK)
+      ResponseEntity(
+        recommendationService.generateDntr(
+          recommendationId,
+          userLogin.name,
+          authenticationFacade.currentNameOfUser,
+          fromString(documentRequestQuery.format),
+          authenticationFacade.isSpoOrAco,
+          flags,
+        ),
+        OK,
+      )
     } catch (e: UserAccessException) {
       ResponseEntity(DocumentResponse(Gson().fromJson(e.message, UserAccess::class.java)), FORBIDDEN)
     }

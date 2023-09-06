@@ -105,10 +105,20 @@ internal abstract class ServiceTestBase {
     partADocumentMapper = PartADocumentMapper()
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(deliusClient)
-    templateReplacementService = TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
+    templateReplacementService =
+      TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
     documentService = DocumentService(deliusClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
-    recommendationService = RecommendationService(recommendationRepository, recommendationStatusRepository, mockPersonDetailService, templateReplacementService, userAccessValidator, RiskService(deliusClient, arnApiClient, userAccessValidator, null), deliusClient, null)
+    recommendationService = RecommendationService(
+      recommendationRepository,
+      recommendationStatusRepository,
+      mockPersonDetailService,
+      templateReplacementService,
+      userAccessValidator,
+      RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+      deliusClient,
+      null,
+    )
     recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, null)
     riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
@@ -134,8 +144,8 @@ internal abstract class ServiceTestBase {
         type = "CURRENT",
         offenceCode = "ABC123",
         offenceSubCode = "",
-        offenceDate = "2022-08-26T12:00:00.000"
-      )
+        offenceDate = "2022-08-26T12:00:00.000",
+      ),
     ),
     offence = "Juicy offence details.",
     laterCompleteAssessmentExists = false,
@@ -143,7 +153,7 @@ internal abstract class ServiceTestBase {
     laterPartCompUnsignedAssessmentExists = false,
     laterSignLockAssessmentExists = false,
     laterWIPAssessmentExists = false,
-    superStatus = "COMPLETE"
+    superStatus = "COMPLETE",
   )
 
   fun riskResponse(): RiskResponse {
@@ -154,42 +164,42 @@ internal abstract class ServiceTestBase {
           previous = "Yes",
           previousConcernsText = "Previous risk of suicide concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of suicide concerns due to ..."
+          currentConcernsText = "Risk of suicide concerns due to ...",
         ),
         selfHarm = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of self harm concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of self harm concerns due to ..."
+          currentConcernsText = "Risk of self harm concerns due to ...",
         ),
         custody = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of custody concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of custody concerns due to ..."
+          currentConcernsText = "Risk of custody concerns due to ...",
         ),
         hostelSetting = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of hostel setting concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of hostel setting concerns due to ..."
+          currentConcernsText = "Risk of hostel setting concerns due to ...",
         ),
         vulnerability = RiskVulnerabilityTypeResponse(
           risk = "Yes",
           previous = "Yes",
           previousConcernsText = "Previous risk of vulnerability concerns due to ...",
           current = "Yes",
-          currentConcernsText = "Risk of vulnerability concerns due to ..."
+          currentConcernsText = "Risk of vulnerability concerns due to ...",
         ),
       ),
       otherRisks = OtherRisksResponse(
         escapeOrAbscond = "YES",
         controlIssuesDisruptiveBehaviour = "YES",
         breachOfTrust = "YES",
-        riskToOtherPrisoners = "YES"
+        riskToOtherPrisoners = "YES",
       ),
       summary = RiskSummaryRiskResponse(
         whoIsAtRisk = "X, Y and Z are at risk",
@@ -202,26 +212,26 @@ internal abstract class ServiceTestBase {
           high = listOf(
             "Children",
             "Public",
-            "Known adult"
+            "Known adult",
           ),
           medium = listOf("Staff"),
-          low = listOf("Prisoners")
+          low = listOf("Prisoners"),
         ),
         riskInCustody = RiskScore(
           veryHigh = listOf(
             "Staff",
-            "Prisoners"
+            "Prisoners",
           ),
           high = listOf("Known adult"),
           medium = null,
           low = listOf(
             "Children",
-            "Public"
-          )
+            "Public",
+          ),
         ),
-        overallRiskLevel = "HIGH"
+        overallRiskLevel = "HIGH",
       ),
-      assessedOn = "2022-11-23T00:01:50"
+      assessedOn = "2022-11-23T00:01:50",
     )
   }
 
@@ -241,7 +251,7 @@ internal abstract class ServiceTestBase {
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
       nomsNumber = "A1234CR",
-      primaryLanguage = "English"
+      primaryLanguage = "English",
     ),
     addresses = listOf(
       uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
@@ -249,16 +259,16 @@ internal abstract class ServiceTestBase {
         line2 = "Line 2 address",
         town = "Town address",
         postcode = "TS1 1ST",
-        noFixedAbode = false
-      )
+        noFixedAbode = false,
+      ),
     ),
     offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(
       name = "John Smith",
       phoneNumber = "01234567654",
       email = "tester@test.com",
       probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"),
-      probationAreaDescription = "Probation area description"
-    )
+      probationAreaDescription = "Probation area description",
+    ),
   )
 
   protected fun deliusPersonalDetailsResponse(
@@ -275,7 +285,7 @@ internal abstract class ServiceTestBase {
       town = "Sheffield",
       county = "South Yorkshire",
       streetName = "Jump Street",
-      noFixedAbode = null
+      noFixedAbode = null,
     ),
     manager: Manager? = Manager(
       team = Manager.Team(
@@ -283,18 +293,18 @@ internal abstract class ServiceTestBase {
         email = "first.last@digital.justice.gov.uk",
         code = "C01T04",
         name = "OMU A",
-        localAdminUnit = "Local admin unit description"
+        localAdminUnit = "Local admin unit description",
       ),
       staffCode = "C01T123",
       name = Name(
         forename = "Sheila",
         middleName = "Linda",
-        surname = "Hancock"
+        surname = "Hancock",
       ),
       provider = Manager.Provider(
         code = "N01",
-        name = "NPS North West"
-      )
+        name = "NPS North West",
+      ),
     ),
   ) = PersonalDetails(
     personalDetails = DeliusClient.PersonalDetailsOverview(

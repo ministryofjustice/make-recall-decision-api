@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException
 class CvlApiClient(
   private val webClient: WebClient,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
-  private val timeoutCounter: Counter
+  private val timeoutCounter: Counter,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -42,7 +42,7 @@ class CvlApiClient(
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "licence match"
+          endPoint = "licence match",
         )
       }
     log.info(normalizeSpace("Returning licence match from CVL for $crn with nomis number ${licenceConditionSearch.nomsId}"))
@@ -59,14 +59,14 @@ class CvlApiClient(
       .retrieve()
       .onStatus(
         { httpStatus -> HttpStatus.NOT_FOUND == httpStatus },
-        { throw NoCvlLicenceByIdException("No licence for licence id $licenceId found in CVL for crn: $crn") }
+        { throw NoCvlLicenceByIdException("No licence for licence id $licenceId found in CVL for crn: $crn") },
       )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(cvlTimeout))
       .doOnError { ex ->
         handleTimeoutException(
           exception = ex,
-          endPoint = "licence by id"
+          endPoint = "licence by id",
         )
       }
     log.info(normalizeSpace("Returning licences from CVL for $crn and licence id $licenceId"))
@@ -75,7 +75,7 @@ class CvlApiClient(
 
   private fun handleTimeoutException(
     exception: Throwable?,
-    endPoint: String
+    endPoint: String,
   ) {
     when (exception) {
       is TimeoutException -> {
@@ -83,7 +83,7 @@ class CvlApiClient(
 
         throw ClientTimeoutException(
           "CVL API Client - $endPoint endpoint",
-          "No response within $cvlTimeout seconds"
+          "No response within $cvlTimeout seconds",
         )
       }
     }

@@ -6,7 +6,7 @@ data class Risk(
   val flags: List<String?>?,
   val riskManagementPlan: RiskManagementPlan?,
   @JsonProperty("assessments")
-  val assessmentInfo: AssessmentInfo? = null
+  val assessmentInfo: AssessmentInfo? = null,
 )
 
 data class RiskManagementPlan(
@@ -15,5 +15,5 @@ data class RiskManagementPlan(
   val latestDateCompleted: String? = null,
   val initiationDate: String? = null,
   val contingencyPlans: String? = null,
-  val error: String? = null
+  val error: String? = null,
 )

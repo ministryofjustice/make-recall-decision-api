@@ -17,7 +17,7 @@ internal class UserAccessValidator(private val deliusClient: DeliusClient) {
     UserAccess(
       userNotFound = true,
       userRestricted = false,
-      userExcluded = false
+      userExcluded = false,
     )
   }
 

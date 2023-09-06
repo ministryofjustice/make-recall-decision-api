@@ -14,7 +14,7 @@ import kotlin.random.Random
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class OffenderSearchControllerTest(
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long
+  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
 
   @Test

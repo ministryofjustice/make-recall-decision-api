@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException
 class DeliusClient(
   private val webClient: WebClient,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  private val timeoutCounter: Counter
+  private val timeoutCounter: Counter,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -48,7 +48,7 @@ class DeliusClient(
     from: LocalDate? = null,
     to: LocalDate? = null,
     typeCodes: List<String> = emptyList(),
-    includeSystemGenerated: Boolean = true
+    includeSystemGenerated: Boolean = true,
   ): ContactHistory = getBody(
     endpoint = "/case-summary/$crn/contact-history",
     parameters = mapOf(
@@ -57,7 +57,7 @@ class DeliusClient(
       "to" to listOfNotNull(to),
       "type" to typeCodes,
       "includeSystemGenerated" to listOfNotNull(includeSystemGenerated),
-    )
+    ),
   )
 
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
@@ -67,7 +67,10 @@ class DeliusClient(
   private inline fun <reified T : Any> getBody(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()) =
     get<T>(endpoint, parameters).body!!
 
-  private inline fun <reified T : Any> get(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()): ResponseEntity<T> {
+  private inline fun <reified T : Any> get(
+    endpoint: String,
+    parameters: Map<String, List<Any>> = emptyMap(),
+  ): ResponseEntity<T> {
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
@@ -76,7 +79,7 @@ class DeliusClient(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw PersonNotFoundException("No details available for endpoint: $endpoint") }
+        { throw PersonNotFoundException("No details available for endpoint: $endpoint") },
       )
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
@@ -91,7 +94,7 @@ class DeliusClient(
         timeoutCounter.increment()
         throw ClientTimeoutException(
           "Delius integration client - $endPoint endpoint",
-          "No response within $nDeliusTimeout seconds"
+          "No response within $nDeliusTimeout seconds",
         )
       }
     }
@@ -100,13 +103,15 @@ class DeliusClient(
   data class Name(
     val forename: String,
     val middleName: String?,
-    val surname: String
+    val surname: String,
   )
+
   data class Offence(
     val date: LocalDate?,
     val code: String,
-    val description: String
+    val description: String,
   )
+
   data class Sentence(
     val description: String,
     val length: Int?,
@@ -114,7 +119,7 @@ class DeliusClient(
     val isCustodial: Boolean,
     val custodialStatusCode: String?,
     val licenceExpiryDate: LocalDate?,
-    val sentenceExpiryDate: LocalDate?
+    val sentenceExpiryDate: LocalDate?,
   )
 
   data class PersonalDetailsOverview(
@@ -130,7 +135,7 @@ class DeliusClient(
       val pncNumber: String?,
       val croNumber: String?,
       val nomsNumber: String?,
-      val bookingNumber: String?
+      val bookingNumber: String?,
     )
   }
 
@@ -146,7 +151,7 @@ class DeliusClient(
   )
 
   data class UserInfo(
-    val email: String? = null
+    val email: String? = null,
   )
 
   data class PersonalDetails(
@@ -158,76 +163,77 @@ class DeliusClient(
       val staffCode: String,
       val name: Name,
       val provider: Provider,
-      val team: Team
+      val team: Team,
     ) {
       data class Provider(
         val code: String,
-        val name: String
+        val name: String,
       )
+
       data class Team(
         val code: String,
         val name: String,
         val localAdminUnit: String,
         val telephone: String?,
-        val email: String?
+        val email: String?,
       )
     }
   }
 
   data class Release(
     val releaseDate: LocalDate,
-    val recallDate: LocalDate?
+    val recallDate: LocalDate?,
   )
 
   data class Conviction(
     val number: String? = null,
     val sentence: Sentence?,
     val mainOffence: Offence,
-    val additionalOffences: List<Offence>
+    val additionalOffences: List<Offence>,
   )
 
   data class Overview(
     val personalDetails: PersonalDetailsOverview,
     val registerFlags: List<String>,
     val lastRelease: Release?,
-    val activeConvictions: List<Conviction>
+    val activeConvictions: List<Conviction>,
   )
 
   data class LicenceConditions(
     val personalDetails: PersonalDetailsOverview,
-    val activeConvictions: List<ConvictionWithLicenceConditions>
+    val activeConvictions: List<ConvictionWithLicenceConditions>,
   ) {
     data class ConvictionWithLicenceConditions(
       val number: String? = null,
       val sentence: Sentence?,
       val mainOffence: Offence,
       val additionalOffences: List<Offence>,
-      val licenceConditions: List<LicenceCondition>
+      val licenceConditions: List<LicenceCondition>,
     )
 
     data class LicenceConditionCategory(
       val code: String,
-      val description: String
+      val description: String,
     )
   }
 
   data class Mappa(
     val category: Int?,
     val level: Int?,
-    val startDate: LocalDate
+    val startDate: LocalDate,
   )
 
   data class MappaAndRoshHistory(
     val personalDetails: PersonalDetailsOverview,
     val mappa: Mappa?,
-    val roshHistory: List<Rosh>
+    val roshHistory: List<Rosh>,
   ) {
     data class Rosh(
       val active: Boolean,
       val type: String,
       val typeDescription: String,
       val notes: String?,
-      val startDate: LocalDate
+      val startDate: LocalDate,
     )
   }
 
@@ -238,17 +244,19 @@ class DeliusClient(
     val lastReleasedFromInstitution: Institution?,
     val mappa: Mappa?,
     val activeConvictions: List<Conviction>,
-    val activeCustodialConvictions: List<ConvictionDetails>
+    val activeCustodialConvictions: List<ConvictionDetails>,
   ) {
     data class Institution(
       val name: String,
     )
+
     data class ConvictionDetails(
       val number: String? = null,
       val sentence: ExtendedSentence,
       val mainOffence: Offence,
-      val additionalOffences: List<Offence>
+      val additionalOffences: List<Offence>,
     )
+
     data class ExtendedSentence(
       val description: String,
       val length: Int?,
@@ -259,14 +267,14 @@ class DeliusClient(
       val custodialStatusCode: String?,
       val startDate: LocalDate?,
       val licenceExpiryDate: LocalDate?,
-      val sentenceExpiryDate: LocalDate?
+      val sentenceExpiryDate: LocalDate?,
     )
   }
 
   data class ContactHistory(
     val personalDetails: PersonalDetailsOverview,
     val contacts: List<Contact>,
-    val summary: ContactSummary
+    val summary: ContactSummary,
   ) {
     data class Contact(
       val description: String?,
@@ -276,17 +284,19 @@ class DeliusClient(
       val outcome: String?,
       val sensitive: Boolean?,
       val startDateTime: ZonedDateTime,
-      val type: Type
+      val type: Type,
     ) {
       data class Type(val code: String, val description: String, val systemGenerated: Boolean)
       data class DocumentReference(val id: String, val name: String, val lastUpdated: ZonedDateTime)
     }
+
     data class ContactSummary(
       val types: List<ContactTypeSummary>,
       val hits: Int,
-      val total: Int = types.sumOf { it.total }
+      val total: Int = types.sumOf { it.total },
     )
   }
+
   data class ContactTypeSummary(val code: String, val description: String, val total: Int)
 
   data class UserAccess(
@@ -321,9 +331,9 @@ fun DeliusClient.Address?.toAddresses() = listOfNotNull(
       line2 = district ?: "",
       town = town ?: "",
       postcode = postcode ?: "",
-      noFixedAbode = isNoFixedAbode(it)
+      noFixedAbode = isNoFixedAbode(it),
     )
-  }
+  },
 )
 
 private fun isNoFixedAbode(it: DeliusClient.Address): Boolean {

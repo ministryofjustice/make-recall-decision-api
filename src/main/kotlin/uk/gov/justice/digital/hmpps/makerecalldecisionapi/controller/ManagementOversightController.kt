@@ -16,13 +16,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ManagementOver
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class ManagementOversightController(
   private val managementOversightService: ManagementOversightService,
-  private val authenticationFacade: AuthenticationFacade
+  private val authenticationFacade: AuthenticationFacade,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-//  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
+  //  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
   @GetMapping("/managementOversight/{crn}")
   @Operation(summary = "Provides notes on case for Delius")
   suspend fun getRecommendationStatus(
@@ -30,7 +30,7 @@ internal class ManagementOversightController(
   ): ResponseEntity<ManagementOversightResponse> {
     log.info(normalizeSpace("Management oversight endpoint hit for crn: $crn"))
     return managementOversightService.getManagementOversightResponse(
-      crn = crn
+      crn = crn,
     )
   }
 }

@@ -4,7 +4,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 
 data class AlternativesToRecallTried(
   val selected: List<ValueWithDetails>?,
-  val allOptions: List<TextValueOption>? = null
+  val allOptions: List<TextValueOption>? = null,
 )
 
 enum class SelectedAlternativeOptions {
@@ -16,5 +16,5 @@ enum class SelectedAlternativeOptions {
   REFERRAL_TO_OTHER_TEAMS,
   REFERRAL_TO_PARTNERSHIP_AGENCIES,
   ALTERNATIVE_TO_RECALL_OTHER,
-  NONE
+  NONE,
 }

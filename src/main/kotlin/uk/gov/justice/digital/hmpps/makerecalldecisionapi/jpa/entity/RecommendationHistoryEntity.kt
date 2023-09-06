@@ -22,9 +22,10 @@ data class RecommendationHistoryEntity(
   var modified: String? = null,
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
-  var recommendation: RecommendationModel
+  var recommendation: RecommendationModel,
 ) : Comparable<RecommendationHistoryEntity> {
   override fun compareTo(other: RecommendationHistoryEntity) = compareValuesBy(
-    other, this
+    other,
+    this,
   ) { it.recommendation.lastModifiedDate }
 }

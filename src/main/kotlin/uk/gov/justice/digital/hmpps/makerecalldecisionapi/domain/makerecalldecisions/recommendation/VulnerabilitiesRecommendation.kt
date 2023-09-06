@@ -4,7 +4,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 
 data class VulnerabilitiesRecommendation(
   val selected: List<ValueWithDetails>?,
-  val allOptions: List<TextValueOption>? = null
+  val allOptions: List<TextValueOption>? = null,
 )
 
 enum class VulnerabilityOptions {
@@ -24,5 +24,5 @@ enum class VulnerabilityOptions {
   BEREAVEMENT_ISSUES,
   LEARNING_DIFFICULTIES,
   PHYSICAL_DISABILITIES,
-  CULTURAL_OR_LANGUAGE_DIFFERENCES
+  CULTURAL_OR_LANGUAGE_DIFFERENCES,
 }

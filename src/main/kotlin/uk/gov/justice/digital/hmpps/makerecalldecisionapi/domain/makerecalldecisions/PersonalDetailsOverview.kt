@@ -40,5 +40,5 @@ fun DeliusClient.PersonalDetailsOverview.toOverview(crn: String) = PersonalDetai
   croNumber = identifiers.croNumber ?: "",
   pncNumber = identifiers.pncNumber ?: "",
   nomsNumber = identifiers.nomsNumber ?: "",
-  mostRecentPrisonerNumber = identifiers.bookingNumber ?: ""
+  mostRecentPrisonerNumber = identifiers.bookingNumber ?: "",
 )

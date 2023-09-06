@@ -6,18 +6,19 @@ data class RiskScoreResponse(
   val riskOfSeriousRecidivismScore: RiskOfSeriousRecidivismScore?,
   val sexualPredictorScore: SexualPredictorScore?,
   val groupReconvictionScore: GroupReconvictionScore?,
-  val violencePredictorScore: ViolencePredictorScore?
+  val violencePredictorScore: ViolencePredictorScore?,
 )
+
 data class SexualPredictorScore(
   val ospIndecentPercentageScore: String?,
   val ospContactPercentageScore: String?,
   val ospIndecentScoreLevel: String?,
-  val ospContactScoreLevel: String?
+  val ospContactScoreLevel: String?,
 )
 
 data class RiskOfSeriousRecidivismScore(
   val percentageScore: String?,
-  val scoreLevel: String?
+  val scoreLevel: String?,
 )
 
 data class GeneralPredictorScore(
@@ -26,7 +27,7 @@ data class GeneralPredictorScore(
   val ogpTotalWeightedScore: String?,
   val ogpRisk: String?,
   val ogp1Year: String?,
-  val ogp2Year: String?
+  val ogp2Year: String?,
 )
 
 data class ViolencePredictorScore(
@@ -35,10 +36,11 @@ data class ViolencePredictorScore(
   val ovpTotalWeightedScore: String?,
   val oneYear: String?,
   val twoYears: String?,
-  val ovpRisk: String?
+  val ovpRisk: String?,
 )
+
 data class GroupReconvictionScore(
   val oneYear: String?,
   val twoYears: String?,
-  val scoreLevel: String?
+  val scoreLevel: String?,
 )

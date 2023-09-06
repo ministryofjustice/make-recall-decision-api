@@ -30,8 +30,8 @@ class CvlApiClientTest : IntegrationTestBase() {
         licenceId = 123344,
         licenceType = "AP",
         licenceStatus = "IN_PROGRESS",
-        crn = crn
-      )
+        crn = crn,
+      ),
     )
 
     // when
@@ -60,11 +60,40 @@ class CvlApiClientTest : IntegrationTestBase() {
         licenceExpiryDate = "15/06/2022",
         topupSupervisionStartDate = "16/06/2022",
         topupSupervisionExpiryDate = "17/06/2022",
-        standardLicenceConditions = listOf(LicenceConditionCvlDetail(code = "9ce9d594-e346-4785-9642-c87e764bee43", text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionCvlDetail(code = "9ce9d594-e346-4785-9642-c87e764bee44", text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(LicenceConditionCvlDetail(code = "9ce9d594-e346-4785-9642-c87e764bee45", category = "Freedom of movement", text = "This is an additional licence condition", expandedText = "Expanded additional licence condition")),
-        additionalPssConditions = listOf(LicenceConditionCvlDetail(code = "9ce9d594-e346-4785-9642-c87e764bee46", category = "Freedom of movement", text = "This is an additional PSS licence condition", expandedText = "Expanded additional PSS licence condition")),
-        bespokeConditions = listOf(LicenceConditionCvlDetail(code = "9ce9d594-e346-4785-9642-c87e764bee47", text = "This is a bespoke condition"))
+        standardLicenceConditions = listOf(
+          LicenceConditionCvlDetail(
+            code = "9ce9d594-e346-4785-9642-c87e764bee43",
+            text = "This is a standard licence condition",
+          ),
+        ),
+        standardPssConditions = listOf(
+          LicenceConditionCvlDetail(
+            code = "9ce9d594-e346-4785-9642-c87e764bee44",
+            text = "This is a standard PSS licence condition",
+          ),
+        ),
+        additionalLicenceConditions = listOf(
+          LicenceConditionCvlDetail(
+            code = "9ce9d594-e346-4785-9642-c87e764bee45",
+            category = "Freedom of movement",
+            text = "This is an additional licence condition",
+            expandedText = "Expanded additional licence condition",
+          ),
+        ),
+        additionalPssConditions = listOf(
+          LicenceConditionCvlDetail(
+            code = "9ce9d594-e346-4785-9642-c87e764bee46",
+            category = "Freedom of movement",
+            text = "This is an additional PSS licence condition",
+            expandedText = "Expanded additional PSS licence condition",
+          ),
+        ),
+        bespokeConditions = listOf(
+          LicenceConditionCvlDetail(
+            code = "9ce9d594-e346-4785-9642-c87e764bee47",
+            text = "This is a bespoke condition",
+          ),
+        ),
       )
 
     // when

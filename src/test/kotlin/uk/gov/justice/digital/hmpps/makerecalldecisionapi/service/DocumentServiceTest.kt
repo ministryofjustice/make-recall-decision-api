@@ -77,7 +77,6 @@ internal class DocumentServiceTest : ServiceTestBase() {
   @Test
   fun `given a get document request then return the requested document`() {
     runTest {
-
       given(deliusClient.getDocument(anyString(), anyString()))
         .willReturn(responseEntity)
 
@@ -92,7 +91,6 @@ internal class DocumentServiceTest : ServiceTestBase() {
   @Test
   fun `given no document in request then return empty result`() {
     runTest {
-
       given(deliusClient.getDocument(anyString(), anyString()))
         .willReturn(null)
 

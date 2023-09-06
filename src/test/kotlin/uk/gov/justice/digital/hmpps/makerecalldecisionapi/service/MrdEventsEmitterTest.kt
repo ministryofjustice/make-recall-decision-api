@@ -68,7 +68,7 @@ class MrdEventsEmitterTest {
     verify(customTelemetryClient).trackEvent(
       ArgumentMatchers.eq("DNTR_LETTER_DOWNLOADED"),
       telemetryAttributesCaptor.capture(),
-      ArgumentMatchers.isNull()
+      ArgumentMatchers.isNull(),
     )
     assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(
       java.util.Map.of(
@@ -87,8 +87,8 @@ class MrdEventsEmitterTest {
         "TimeStamp",
         "2022-04-26T20:39:47.778",
         "MessageId",
-        "6584074d-6c22-426b-a1cf-cbc472080d99"
-      )
+        "6584074d-6c22-426b-a1cf-cbc472080d99",
+      ),
     )
   }
 
@@ -102,14 +102,18 @@ class MrdEventsEmitterTest {
         description = "Recommendation started (recall or no recall)",
         occurredAt = "2022-12-1T14:25:40.117Z",
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
-        additionalInformation = AdditionalInformation(recommendationUrl = "someurl/cases/crn/overview", bookedBy = null, contactOutcome = null)
+        additionalInformation = AdditionalInformation(
+          recommendationUrl = "someurl/cases/crn/overview",
+          bookedBy = null,
+          contactOutcome = null,
+        ),
       ),
       messageAttributes = MessageAttributes(
         eventType = TypeValue(
           type = "String",
-          value = "prison-recall.recommendation.started"
-        )
-      )
+          value = "prison-recall.recommendation.started",
+        ),
+      ),
     )
   }
 
@@ -132,8 +136,8 @@ class MrdEventsEmitterTest {
         occurredAt = "2022-04-26T20:39:47.778",
         personReference = PersonReference(listOf(IdentifierTypeValue(type = "some type", value = "some value"))),
         additionalInformation = AdditionalInformation(referralId = null, contactOutcome = null, bookedBy = null),
-        detailUrl = "http://someurl"
-      )
+        detailUrl = "http://someurl",
+      ),
     )
   }
 }

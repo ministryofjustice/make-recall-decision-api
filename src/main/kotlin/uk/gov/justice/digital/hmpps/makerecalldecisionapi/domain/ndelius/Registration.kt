@@ -10,10 +10,10 @@ data class Registration(
   val type: CodeDescriptionItem?,
   @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val startDate: LocalDate? = null,
-  val notes: String? = null
+  val notes: String? = null,
 )
 
 data class CodeDescriptionItem(
   val code: String?,
-  val description: String?
+  val description: String?,
 )

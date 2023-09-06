@@ -20,7 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.LogHelper.Helper.
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class OffenderSearchController(
-  private val offenderSearchService: OffenderSearchService
+  private val offenderSearchService: OffenderSearchService,
 ) {
 
   companion object {
@@ -40,7 +40,7 @@ internal class OffenderSearchController(
         userRestricted = it.userRestricted,
         name = it.name,
         crn = it.crn,
-        dateOfBirth = it.dateOfBirth
+        dateOfBirth = it.dateOfBirth,
       )
     }
   }
@@ -51,13 +51,13 @@ internal class OffenderSearchController(
   suspend fun pagedSearch(
     @RequestParam(required = true) page: Int,
     @RequestParam(required = true) pageSize: Int,
-    @RequestBody body: OffenderSearchRequest
+    @RequestBody body: OffenderSearchRequest,
   ): OffenderSearchResponse {
     log.info(
       normalizeSpace(
         "Offender paged search endpoint hit for " +
-          "CRN: '$body.crn', FirstName: '${redact(body.firstName)}', LastName: '${redact(body.lastName)}'}"
-      )
+          "CRN: '$body.crn', FirstName: '${redact(body.firstName)}', LastName: '${redact(body.lastName)}'}",
+      ),
     )
     return offenderSearchService.search(body.crn, body.firstName, body.lastName, page = page, pageSize = pageSize)
   }

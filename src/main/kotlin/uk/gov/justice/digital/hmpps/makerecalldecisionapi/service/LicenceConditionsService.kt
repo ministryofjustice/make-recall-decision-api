@@ -37,13 +37,14 @@ internal class LicenceConditionsService(
       LicenceConditionsCvlResponse(userAccessResponse = userAccessResponse)
     } else {
       val personalDetailsOverview = personDetailsService.buildPersonalDetailsOverviewResponse(crn)
-      val licenceConditions = personalDetailsOverview.nomsNumber.let { createAndVaryALicenceService.buildLicenceConditions(crn, it!!) }
+      val licenceConditions =
+        personalDetailsOverview.nomsNumber.let { createAndVaryALicenceService.buildLicenceConditions(crn, it!!) }
       val recommendationDetails = recommendationService.getRecommendationsInProgressForCrn(crn)
 
       LicenceConditionsCvlResponse(
         personalDetailsOverview = personalDetailsOverview,
         licenceConditions = licenceConditions,
-        activeRecommendation = recommendationDetails
+        activeRecommendation = recommendationDetails,
       )
     }
   }

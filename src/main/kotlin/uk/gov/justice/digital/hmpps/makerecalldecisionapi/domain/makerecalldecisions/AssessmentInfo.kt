@@ -5,5 +5,5 @@ data class AssessmentInfo(
   val lastUpdatedDate: String? = null,
   val offenceDataFromLatestCompleteAssessment: Boolean? = null,
   val offencesMatch: Boolean? = null,
-  val offenceDescription: String? = null
+  val offenceDescription: String? = null,
 )

@@ -22,7 +22,7 @@ import java.security.Principal
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class RecommendationStatusController(
   private val recommendationStatusService: RecommendationStatusService,
-  private val authenticationFacade: AuthenticationFacade
+  private val authenticationFacade: AuthenticationFacade,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -42,7 +42,7 @@ internal class RecommendationStatusController(
   suspend fun createOrUpdateRecommendationStatus(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody request: RecommendationStatusRequest,
-    userLogin: Principal
+    userLogin: Principal,
   ): ResponseEntity<List<RecommendationStatusResponse>> {
     log.info(normalizeSpace("Create or update a recommendation status endpoint for recommendation id: $recommendationId"))
     val userId = userLogin.name
@@ -52,9 +52,9 @@ internal class RecommendationStatusController(
         recommendationStatusRequest = request,
         userId = userId,
         readableNameOfUser = readableUserName,
-        recommendationId = recommendationId
+        recommendationId = recommendationId,
       ),
-      OK
+      OK,
     )
   }
 }

@@ -24,7 +24,12 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val licenceId = 444333
       val nomsId = "67876"
 
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
       given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { licenceByIdResponse() })
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
@@ -56,7 +61,12 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
     runTest {
       val nomsId = "67876"
 
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { emptyList() })
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { emptyList() })
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
@@ -72,7 +82,12 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val licenceId = 444333
       val nomsId = "67876"
 
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
       given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { LicenceConditionCvlResponse() })
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
@@ -90,7 +105,12 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val licenceId = 444333
       val nomsId = "67876"
 
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, "RandomCRN") })
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, "RandomCRN") })
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
@@ -104,10 +124,15 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val licenceId = 444333
       val nomsId = "67876"
 
-      given(cvlApiClient.getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
+      given(
+        cvlApiClient.getLicenceMatch(
+          crn,
+          LicenceConditionSearch(nomsId = listOf(nomsId)),
+        ),
+      ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
 
       given(cvlApiClient.getLicenceById(crn, licenceId)).willThrow(
-        NoCvlLicenceByIdException("No licence id found for licence id: $licenceId")
+        NoCvlLicenceByIdException("No licence id found for licence id: $licenceId"),
       )
 
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)

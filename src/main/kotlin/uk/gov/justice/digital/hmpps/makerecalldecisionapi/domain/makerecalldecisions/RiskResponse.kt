@@ -16,13 +16,13 @@ data class RiskResponse(
   val mappa: Mappa? = null,
   val predictorScores: PredictorScores? = null,
   val activeRecommendation: ActiveRecommendation? = null,
-  val assessmentStatus: String? = null
+  val assessmentStatus: String? = null,
 )
 
 data class RiskOfSeriousHarm(
   val overallRisk: String?,
   val riskInCustody: RiskTo?,
-  val riskInCommunity: RiskTo?
+  val riskInCommunity: RiskTo?,
 )
 
 data class RiskTo(
@@ -39,18 +39,18 @@ data class Mappa(
   val lastUpdatedDate: LocalDate? = null,
   val category: Int? = null,
   val error: String? = null,
-  val hasBeenReviewed: Boolean? = false
+  val hasBeenReviewed: Boolean? = false,
 )
 
 data class PredictorScores(
   val error: String? = EMPTY_STRING,
   val current: PredictorScore?,
-  val historical: List<PredictorScore?>?
+  val historical: List<PredictorScore?>?,
 )
 
 data class PredictorScore(
   val date: String?,
-  val scores: Scores?
+  val scores: Scores?,
 )
 
 data class Scores(
@@ -65,20 +65,20 @@ data class Scores(
   @JsonProperty("OGP")
   val ogp: LevelWithTwoYearScores?,
   @JsonProperty("OVP")
-  val ovp: LevelWithTwoYearScores?
+  val ovp: LevelWithTwoYearScores?,
 )
 
 data class LevelWithScore(
   val level: String?,
   val type: String?,
-  val score: String?
+  val score: String?,
 )
 
 data class LevelWithTwoYearScores(
   val level: String?,
   val type: String?,
   val oneYear: String?,
-  val twoYears: String?
+  val twoYears: String?,
 )
 
 data class RoshSummary(
@@ -89,5 +89,5 @@ data class RoshSummary(
   val riskImminence: String? = null,
   val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
   val lastUpdatedDate: String? = null,
-  val error: String? = null
+  val error: String? = null,
 )

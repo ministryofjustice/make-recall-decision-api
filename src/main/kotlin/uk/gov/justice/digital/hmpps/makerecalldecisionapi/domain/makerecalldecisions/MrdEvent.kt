@@ -28,8 +28,9 @@ data class MrdEvent(
   @get:JsonProperty("SigningCertURL")
   val signingCertURL: String? = null,
   @get:JsonProperty("MessageAttributes")
-  val messageAttributes: MessageAttributes? = null
+  val messageAttributes: MessageAttributes? = null,
 )
+
 fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
@@ -39,12 +40,18 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
       description = "DNTR letter downloaded",
       occurredAt = utcNowDateTimeString(),
       detailUrl = "",
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn)))
-    )
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+    ),
   )
 }
 
-fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: String?, contactOutcome: String?, username: String, detailUrl: String): MrdEvent {
+fun toManagerRecallDecisionMadeEventPayload(
+  recommendationUrl: String?,
+  crn: String?,
+  contactOutcome: String?,
+  username: String,
+  detailUrl: String,
+): MrdEvent {
   return MrdEvent(
     timeStamp = utcNowDateTimeString(),
     message = MrdEventMessageBody(
@@ -57,10 +64,15 @@ fun toManagerRecallDecisionMadeEventPayload(recommendationUrl: String?, crn: Str
       additionalInformation = AdditionalInformation(
         contactOutcome = contactOutcome,
         recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(username)
-      )
+        bookedBy = BookedBy(username),
+      ),
     ),
-    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.management-oversight"))
+    messageAttributes = MessageAttributes(
+      eventType = TypeValue(
+        type = "String",
+        value = "prison-recall.recommendation.management-oversight",
+      ),
+    ),
   )
 }
 
@@ -74,9 +86,18 @@ fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?)
       occurredAt = utcNowDateTimeString(),
       detailUrl = "",
       personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(recommendationUrl = recommendationUrl, bookedBy = null, contactOutcome = null)
+      additionalInformation = AdditionalInformation(
+        recommendationUrl = recommendationUrl,
+        bookedBy = null,
+        contactOutcome = null,
+      ),
     ),
-    messageAttributes = MessageAttributes(eventType = TypeValue(type = "String", value = "prison-recall.recommendation.started"))
+    messageAttributes = MessageAttributes(
+      eventType = TypeValue(
+        type = "String",
+        value = "prison-recall.recommendation.started",
+      ),
+    ),
   )
 }
 
@@ -91,32 +112,32 @@ data class MrdEventMessageBody(
   val detailUrl: String? = null,
   val occurredAt: String? = utcNowDateTimeString(),
   val additionalInformation: AdditionalInformation? = null,
-  val personReference: PersonReference? = null
+  val personReference: PersonReference? = null,
 )
 
 data class PersonReference(
-  val identifiers: List<IdentifierTypeValue>? = null
+  val identifiers: List<IdentifierTypeValue>? = null,
 )
 
 data class AdditionalInformation(
   val referralId: String? = null,
   val recommendationUrl: String? = null,
   val contactOutcome: String?,
-  val bookedBy: BookedBy?
+  val bookedBy: BookedBy?,
 )
 
 data class BookedBy(
-  val username: String
+  val username: String,
 )
 
 data class TypeValue(
   @get:JsonProperty("Type")
   val type: String? = null,
   @get:JsonProperty("Value")
-  val value: String? = null
+  val value: String? = null,
 )
 
 data class IdentifierTypeValue(
   val type: String? = null,
-  val value: String? = null
+  val value: String? = null,
 )

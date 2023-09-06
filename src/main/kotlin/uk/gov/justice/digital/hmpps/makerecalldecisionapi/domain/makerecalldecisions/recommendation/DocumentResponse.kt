@@ -6,5 +6,5 @@ data class DocumentResponse(
   val userAccessResponse: UserAccess? = null,
   val fileName: String? = null,
   val fileContents: String? = null,
-  val letterContent: LetterContent? = null
+  val letterContent: LetterContent? = null,
 )
