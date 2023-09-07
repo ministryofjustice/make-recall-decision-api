@@ -82,7 +82,7 @@ dependencies {
   implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.80")
   implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.80")
   implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.80")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.80")
+  implementation("org.apache.tomcat:tomcat-annotations-api:10.1.13")
 }
 
 java {
