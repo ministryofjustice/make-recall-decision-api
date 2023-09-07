@@ -46,11 +46,11 @@ dependencies {
 
   // Going to flyway-core 9.20 needs SpringBoot version >3.1.0
   // https://github.com/flyway/flyway/issues/3694
-  implementation("org.flywaydb:flyway-core:9.19.4")
+  implementation("org.flywaydb:flyway-core:9.22.0")
   implementation("org.postgresql:postgresql:42.6.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.28.0")
-  implementation("io.sentry:sentry-logback:6.28.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.29.0")
+  implementation("io.sentry:sentry-logback:6.29.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
