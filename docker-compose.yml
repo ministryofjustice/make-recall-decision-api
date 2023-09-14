@@ -1,31 +1,31 @@
 version: '3.9'
 services:
-  make-recall-decision-api:
-    build:
-      context: .
-    networks:
-      - hmpps
-    container_name: make-recall-decision-api
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health/ping"]
-    environment:
-      - SERVER_PORT=8080
-      - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
-      - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
-      - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
-      - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
-      - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
-      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
-      - SYSTEM_CLIENT_ID=make-recall-decision-api
-      - SYSTEM_CLIENT_SECRET=clientsecret
-      - POSTGRES_HOST=postgres:5432
-      - POSTGRES_DBNAME=make_recall_decision
-      - POSTGRES_USERNAME=mrd_user
-      - POSTGRES_PASSWORD=secret
-      - SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE
+#  make-recall-decision-api:
+#    build:
+#      context: .
+#    networks:
+#      - hmpps
+#    container_name: make-recall-decision-api
+#    ports:
+#      - "8080:8080"
+#      - "8081:8081"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8081/health/ping"]
+#    environment:
+#      - SERVER_PORT=8080
+#      - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
+#      - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
+#      - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
+#      - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
+#      - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
+#      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
+#      - SYSTEM_CLIENT_ID=make-recall-decision-api
+#      - SYSTEM_CLIENT_SECRET=clientsecret
+#      - POSTGRES_HOST=postgres:5432
+#      - POSTGRES_DBNAME=make_recall_decision
+#      - POSTGRES_USERNAME=mrd_user
+#      - POSTGRES_PASSWORD=secret
+#      - SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE
 
   gotenberg:
     image: gotenberg/gotenberg:7.6.0
@@ -104,6 +104,49 @@ services:
     command: --verbose --local-response-templating
     volumes:
       - ./fake-cvl-api:/home/wiremock
+
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack:2.2.0
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=s3
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./aws:/etc/localstack/init/ready.d
+    networks:
+      - hmpps
+
+  redis:
+    image: 'bitnami/redis:5.0'
+    networks:
+      - hmpps
+    container_name: redis
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  hmpps-auth:
+    image: quay.io/hmpps/hmpps-auth:latest
+    networks:
+      - hmpps
+    container_name: hmpps-auth
+    ports:
+      - "9090:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health/ping"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+
 
 networks:
   hmpps:

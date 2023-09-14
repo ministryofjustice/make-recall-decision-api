@@ -71,6 +71,19 @@ spring:
       test:
         - "stdout"
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+s3:
+  bucketName: consider-a-recall-s3
+  multipartBufferSizeInMb: 5
+  local:
+    endpoint: http://localhost:4566
+    region: eu-west-2
+
+
 server:
   port: 8080
   servlet:

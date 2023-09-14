@@ -63,6 +63,11 @@ dependencies {
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.0")
   implementation("org.json:json:20230618")
+  // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.545")
+  // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+  implementation("org.apache.httpcomponents:httpclient:4.5.14")
+
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
