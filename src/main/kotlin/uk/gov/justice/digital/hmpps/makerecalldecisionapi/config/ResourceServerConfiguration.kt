@@ -19,6 +19,10 @@ class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
       sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
       authorizeRequests {
         authorize("/health/**", permitAll)
+        //The following is validated because the submitting form must submit a token when uploading.
+        authorize("/recommendations/*/file-upload/**", permitAll)
+        //The following is validated because the request url must contain a valid token.
+        authorize("/recommendations/*/file/**", permitAll)
         authorize("/info", permitAll)
         authorize("/prometheus", permitAll)
         authorize("/v3/api-docs/**", permitAll)
