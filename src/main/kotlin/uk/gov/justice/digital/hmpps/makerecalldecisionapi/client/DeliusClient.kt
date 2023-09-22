@@ -247,7 +247,7 @@ class DeliusClient(
     val activeCustodialConvictions: List<ConvictionDetails>,
   ) {
     data class Institution(
-      val name: String,
+      val name: String?,
     )
 
     data class ConvictionDetails(
