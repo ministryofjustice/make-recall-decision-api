@@ -53,7 +53,7 @@ internal class TemplateReplacementService(
     documentType: DocumentType,
     metaData: RecommendationMetaData,
   ): String {
-    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
+    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT || documentType == DocumentType.PREVIEW_PART_A_DOCUMENT) {
       partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
     } else {
       decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)

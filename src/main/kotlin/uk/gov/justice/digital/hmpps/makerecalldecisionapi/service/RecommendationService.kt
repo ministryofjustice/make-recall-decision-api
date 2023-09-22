@@ -710,6 +710,7 @@ internal class RecommendationService(
     recommendationId: Long,
     userId: String?,
     readableUsername: String?,
+    preview: Boolean = false,
     isUserSpoOrAco: Boolean? = false,
     featureFlags: FeatureFlags? = null,
   ): DocumentResponse {
@@ -723,11 +724,11 @@ internal class RecommendationService(
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(
           recommendationResponse,
-          DocumentType.PART_A_DOCUMENT,
+          if (preview) DocumentType.PREVIEW_PART_A_DOCUMENT else DocumentType.PART_A_DOCUMENT,
           metaData,
         )
       DocumentResponse(
-        fileName = generateDocumentFileName(recommendationResponse, "NAT_Recall_Part_A"),
+        fileName = generateDocumentFileName(recommendationResponse, if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A"),
         fileContents = fileContents,
       )
     }
