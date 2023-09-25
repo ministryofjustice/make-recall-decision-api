@@ -148,9 +148,6 @@ jobs:
           path: make-recall-decision-e2e-tests/e2e_tests/screenshots
           destination: screenshots
       - store_artifacts:
-          path: make-recall-decision-e2e-tests/e2e_tests/videos
-          destination: videos
-      - store_artifacts:
           path: make-recall-decision-e2e-tests/e2e_tests/logs
           destination: test-logs
       - store_artifacts:
@@ -159,8 +156,6 @@ jobs:
       - store_artifacts:
           path: make-recall-decision-e2e-tests/e2e_tests/junit
           destination: junit
-      - store_test_results:
-          path: make-recall-decision-e2e-tests/e2e_tests/junit
 
 # E2E tests using the dev and pre-prod environments have been commented out.
 # They were actingas a 'gate' to prevent a broken production deployment, this has been superceded by a 'manual' gate step.
