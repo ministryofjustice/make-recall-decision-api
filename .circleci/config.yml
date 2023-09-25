@@ -185,6 +185,10 @@ workflows:
           <<: *slack-fail-post-step
 
       - e2e_local_test:
+          filters:
+            branches:
+              only:
+                - main
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
