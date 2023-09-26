@@ -153,6 +153,7 @@ internal class TemplateReplacementService(
       "region" to documentData.region,
       "local_delivery_unit" to documentData.localDeliveryUnit,
       "ppcs_query_emails" to documentData.ppcsQueryEmails.joinToString("; "),
+      "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
       "date_of_decision" to documentData.dateOfDecision,
       "time_of_decision" to documentData.timeOfDecision,
       "index_offence_details" to (documentData.offenceAnalysis ?: EMPTY_STRING),

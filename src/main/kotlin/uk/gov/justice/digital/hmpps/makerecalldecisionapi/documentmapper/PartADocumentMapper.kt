@@ -120,6 +120,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       region = recommendation.region,
       localDeliveryUnit = recommendation.localDeliveryUnit,
       ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
+      revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
       offenceAnalysis = recommendation.offenceAnalysis,
@@ -273,7 +274,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
     cvlAdditionalLicenceConditions?.selected
       ?.map { code -> cvlAdditionalLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.foldIndexed(builder) { index, buffer, text ->
+      ?.fold(builder) { buffer, text ->
         buffer.append(text)
         builder.append(System.lineSeparator())
         builder.append(System.lineSeparator())
@@ -282,7 +283,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
     cvlBespokeLicenceConditions?.selected
       ?.map { code -> cvlBespokeLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.foldIndexed(builder) { index, buffer, text ->
+      ?.fold(builder) { buffer, text ->
         buffer.append(text)
         builder.append(System.lineSeparator())
         builder.append(System.lineSeparator())

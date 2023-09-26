@@ -1067,11 +1067,24 @@ class PartADocumentMapperTest {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
       val recommendation = RecommendationResponse(
-        ppcsQueryEmails = emails
+        ppcsQueryEmails = emails,
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
       assertThat(result.ppcsQueryEmails).hasSameElementsAs(emails)
+    }
+  }
+
+  @Test
+  fun `given revocation recipients then show in the Part A`() {
+    runTest {
+      val emails = listOf("test1@example.com", "test2@example.com")
+      val recommendation = RecommendationResponse(
+        revocationOrderRecipients = emails,
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.revocationOrderRecipients).hasSameElementsAs(emails)
     }
   }
 
