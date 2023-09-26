@@ -53,18 +53,35 @@ internal class TemplateReplacementService(
     documentType: DocumentType,
     metaData: RecommendationMetaData,
   ): String {
-    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT) {
+    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT || documentType == DocumentType.PREVIEW_PART_A_DOCUMENT) {
       partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
     } else {
       decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
     }
 
-    val file = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream).render(
+    val template = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream)
+
+//    template.xwpfDocument.headerFooterPolicy.createWatermark("PREVIEW")
+//    styleWatermark(template.xwpfDocument.headerFooterPolicy.getHeader(XWPFHeaderFooterPolicy.DEFAULT))
+
+    val file = template.render(
       mappingsForTemplate(documentData),
     )
 //    ).writeToFile("out_template.docx")
     return writeDataToFile(file)
   }
+
+//  private fun styleWatermark(header: XWPFHeader) {
+//    val paragraph = header.getParagraphArray(0)
+//    val xmlobjects: Array<XmlObject> =
+//      paragraph.getCTP().getRArray(0).getPictArray(0).selectChildren(QName("urn:schemas-microsoft-com:vml", "shape"))
+//
+//    if (xmlobjects.size > 0) {
+//      val ctshape = xmlobjects[0] as CTShape
+//      ctshape.fillcolor = "#d8d8d8"
+//      ctshape.style = ctshape.style + ";rotation:315"
+//    }
+//  }
 
   fun generateLetterContentForPreviewFromRecommendation(recommendation: RecommendationResponse): LetterContent {
     val documentData = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
