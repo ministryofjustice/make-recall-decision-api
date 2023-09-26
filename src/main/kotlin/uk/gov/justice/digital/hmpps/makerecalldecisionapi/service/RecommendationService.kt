@@ -727,6 +727,7 @@ internal class RecommendationService(
           if (preview) DocumentType.PREVIEW_PART_A_DOCUMENT else DocumentType.PART_A_DOCUMENT,
           metaData,
         )
+      log.info("responding with file: " + if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A")
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A"),
         fileContents = fileContents,
