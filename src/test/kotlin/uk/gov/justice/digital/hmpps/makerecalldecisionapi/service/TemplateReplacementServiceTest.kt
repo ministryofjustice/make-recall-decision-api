@@ -93,6 +93,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @ParameterizedTest()
   @CsvSource(
     "PART_A_DOCUMENT",
+    "PREVIEW_PART_A_DOCUMENT",
 //    "DNTR_DOCUMENT"
   )
   fun `given recommendation data then build the document`(documentType: DocumentType) {

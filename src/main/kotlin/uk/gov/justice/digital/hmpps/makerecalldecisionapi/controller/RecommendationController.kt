@@ -149,6 +149,7 @@ internal class RecommendationController(
   suspend fun generatePartADocument(
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
     @PathVariable("recommendationId") recommendationId: Long,
+    @RequestParam("preview") preview: Boolean?,
     @RequestBody createPartARequest: CreatePartARequest,
     userLogin: Principal,
   ): ResponseEntity<DocumentResponse> {
@@ -160,6 +161,7 @@ internal class RecommendationController(
           recommendationId,
           userLogin.name,
           authenticationFacade.currentNameOfUser,
+          preview != null && preview,
           authenticationFacade.isSpoOrAco,
           flags,
         ),

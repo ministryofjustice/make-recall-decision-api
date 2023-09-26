@@ -654,6 +654,46 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `generate a Part A Preview from recommendation data`() {
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    userResponse("some_user", "test@digital.justice.gov.uk")
+    personalDetailsResponseOneTimeOnly(crn)
+    licenceConditionsResponse(crn, 2500614567)
+    personalDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation()
+    personalDetailsResponseOneTimeOnly(crn)
+    updateRecommendation(updateRecommendationRequest())
+
+    val response = convertResponseToJSONObject(
+      webTestClient.post()
+        .uri("/recommendations/$createdRecommendationId/part-a?preview=true")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(createPartARequest()),
+        )
+        .headers {
+          (
+            listOf(
+              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+            )
+            )
+        }
+        .exchange()
+        .expectStatus().isOk,
+    )
+
+    assertThat(response.get("fileName")).isEqualTo("Preview_NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
+    assertNotNull(response.get("fileContents"))
+
+    val result = repository.findByCrn(crn)
+    assertNull(result[0].data.userNamePartACompletedBy)
+    assertNull(result[0].data.userEmailPartACompletedBy)
+    assertNull(result[0].data.lastPartADownloadDateTime)
+    assertThat(result[0].data.status, equalTo(Status.DRAFT))
+  }
+
+  @Test
   fun `handles scenario where no recommendation exists for given id on update`() {
     webTestClient.patch()
       .uri("/recommendations/999")

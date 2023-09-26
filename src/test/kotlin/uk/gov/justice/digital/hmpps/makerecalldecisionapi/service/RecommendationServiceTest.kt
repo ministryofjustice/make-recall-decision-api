@@ -28,6 +28,7 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.willReturn
 import reactor.core.publisher.Mono
@@ -40,6 +41,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
@@ -1739,10 +1741,64 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationResponseCaptor = argumentCaptor<RecommendationResponse>()
       val metaDataCaptor = argumentCaptor<RecommendationMetaData>()
       then(templateReplacementServiceMocked).should(times(1))
-        .generateDocFromRecommendation(recommendationResponseCaptor.capture(), anyObject(), metaDataCaptor.capture())
+        .generateDocFromRecommendation(recommendationResponseCaptor.capture(), eq(DocumentType.PART_A_DOCUMENT), metaDataCaptor.capture())
       assertThat(metaDataCaptor.firstValue.countersignAcoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.countersignSpoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.userPartACompletedByDateTime).isNotNull
+    }
+  }
+
+  @Test
+  fun `generate Preview Part A document from recommendation data`() {
+    runTest {
+      val status = RecommendationStatusEntity(
+        createdByUserFullName = "John Smith",
+        active = true,
+        created = "2023-08-08T08:20:05.047Z",
+        createdBy = null,
+        name = "DRAFT",
+        recommendationId = 1L,
+      )
+      val acoSignedStatus = status.copy(name = "ACO_SIGNED")
+      val spoSignedStatus = status.copy(name = "SPO_SIGNED")
+      val poRecallConsultSpoStatus = status.copy(name = "PO_RECALL_CONSULT_SPO")
+
+      given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
+        listOf(
+          status,
+          acoSignedStatus,
+          spoSignedStatus,
+          poRecallConsultSpoStatus,
+        ),
+      )
+      initialiseWithMockedTemplateReplacementService()
+      then(recommendationRepository).should(times(0)).save(any())
+
+      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+        .copy(
+          data = RecommendationModel(
+            crn = crn,
+            personOnProbation = PersonOnProbation(
+              name = "John Smith",
+              firstName = "John",
+              surname = "Smith",
+            ),
+          ),
+        )
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
+        .willReturn("Contents")
+
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      // when
+      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", true)
+
+      assertThat(result.fileName).isEqualTo("Preview_NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
+      assertThat(result.fileContents).isNotNull
+
+      then(templateReplacementServiceMocked).should(times(1))
+        .generateDocFromRecommendation(anyObject(), eq(DocumentType.PREVIEW_PART_A_DOCUMENT), anyObject())
     }
   }
 
