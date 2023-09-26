@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
@@ -79,6 +80,7 @@ import java.time.LocalDate.now
 import java.time.LocalDate.parse
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.stream.Stream
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -94,7 +96,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @CsvSource(
     "PART_A_DOCUMENT",
     "PREVIEW_PART_A_DOCUMENT",
-//    "DNTR_DOCUMENT"
+    "DNTR_DOCUMENT"
   )
   fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
@@ -270,6 +272,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         ),
         region = "NPS London",
         localDeliveryUnit = "All NPS London",
+        ppcsQueryEmails = listOf("test1@example.com", "test2@example.com"),
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(
           selected = true,
           "This is an additional licence condition",
@@ -423,7 +426,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(123)
+      assertThat(result.size).isEqualTo(124)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -489,6 +492,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["pp_email"]).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result["region"]).isEqualTo("NPS London")
       assertThat(result["local_delivery_unit"]).isEqualTo("All NPS London")
+      assertThat(result["ppcs_query_emails"]).isEqualTo("test1@example.com; test2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
@@ -543,6 +547,20 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
       // then
       assertThat(result["ethnicity"]).isEqualTo("Not specified")
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("ppcsQueryEmailsTestData")
+  fun `ppcs query emails are presented as a semi-colon separated list`(data: PpcsQueryEmailsTestData) {
+    runTest {
+      val partA = DocumentData(
+        ppcsQueryEmails = data.emails,
+      )
+
+      val result = templateReplacementService.mappingsForTemplate(partA)
+
+      assertThat(result["ppcs_query_emails"]).isEqualTo(data.displayText)
     }
   }
 
@@ -730,6 +748,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       probationPractitionerEmail = "Henry.Richarlison@test.com",
       region = "NPS London",
       localDeliveryUnit = "All NPS London",
+      ppcsQueryEmails = listOf("test1@example.com", "test2@example.com"),
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
       fixedTermAdditionalLicenceConditions = "This is an additional licence condition",
@@ -763,4 +782,23 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignAcoEmail = "jane-the-aco@bla.com",
     )
   }
+
+  companion object {
+    @JvmStatic
+    private fun ppcsQueryEmailsTestData(): Stream<PpcsQueryEmailsTestData> =
+      Stream.of(
+        PpcsQueryEmailsTestData(emptyList(), ""),
+        PpcsQueryEmailsTestData(listOf("1@example.com"), "1@example.com"),
+        PpcsQueryEmailsTestData(listOf("1@example.com", "2@example.com"), "1@example.com; 2@example.com"),
+        PpcsQueryEmailsTestData(
+          listOf("1@example.com", "2@example.com", "3@example.com"),
+          "1@example.com; 2@example.com; 3@example.com",
+        ),
+      )
+  }
+
+  data class PpcsQueryEmailsTestData(
+    val emails: List<String>,
+    val displayText: String,
+  )
 }

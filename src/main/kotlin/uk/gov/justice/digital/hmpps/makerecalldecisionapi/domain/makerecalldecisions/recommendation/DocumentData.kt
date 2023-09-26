@@ -52,6 +52,7 @@ data class DocumentData(
   val probationPractitionerEmail: String? = null,
   val region: String? = null,
   val localDeliveryUnit: String? = null,
+  val ppcsQueryEmails: List<String> = emptyList(),
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
   val offenceAnalysis: String? = null,
