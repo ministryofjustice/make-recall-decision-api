@@ -53,11 +53,12 @@ internal class TemplateReplacementService(
     documentType: DocumentType,
     metaData: RecommendationMetaData,
   ): String {
-    val documentData = if (documentType == DocumentType.PART_A_DOCUMENT || documentType == DocumentType.PREVIEW_PART_A_DOCUMENT) {
-      partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
-    } else {
-      decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
-    }
+    val documentData =
+      if (documentType == DocumentType.PART_A_DOCUMENT || documentType == DocumentType.PREVIEW_PART_A_DOCUMENT) {
+        partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
+      } else {
+        decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
+      }
 
     val template = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream)
 
@@ -67,7 +68,7 @@ internal class TemplateReplacementService(
     val file = template.render(
       mappingsForTemplate(documentData),
     )
-//    ).writeToFile("out_template.docx")
+//    file.writeToFile("out_template_${documentType}.docx")
     return writeDataToFile(file)
   }
 
@@ -148,10 +149,10 @@ internal class TemplateReplacementService(
       "extended_term" to documentData.extendedTerm,
       "mappa_level" to formatMappaLevel(documentData.mappa),
       "mappa_category" to formatMappaCategory(documentData.mappa),
-      "pp_name" to documentData.probationPractitionerName,
-      "pp_email" to documentData.probationPractitionerEmail,
-      "region" to documentData.region,
-      "local_delivery_unit" to documentData.localDeliveryUnit,
+      "completing_name" to documentData.probationPractitionerName,
+      "completing_email" to documentData.probationPractitionerEmail,
+      "completing_region" to documentData.region,
+      "completing_local_delivery_unit" to documentData.localDeliveryUnit,
       "ppcs_query_emails" to documentData.ppcsQueryEmails.joinToString("; "),
       "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
       "date_of_decision" to documentData.dateOfDecision,
@@ -210,14 +211,21 @@ internal class TemplateReplacementService(
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
     return hashMapOf(
-      "warning_letter_details" to (selectedAlternativesMap[SelectedAlternativeOptions.WARNINGS_LETTER.name] ?: EMPTY_STRING),
+      "warning_letter_details" to (selectedAlternativesMap[SelectedAlternativeOptions.WARNINGS_LETTER.name]
+        ?: EMPTY_STRING),
       "drug_testing_details" to (selectedAlternativesMap[SelectedAlternativeOptions.DRUG_TESTING.name] ?: EMPTY_STRING),
-      "increased_frequency_details" to (selectedAlternativesMap[SelectedAlternativeOptions.INCREASED_FREQUENCY.name] ?: EMPTY_STRING),
-      "extra_licence_conditions_details" to (selectedAlternativesMap[SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name] ?: EMPTY_STRING),
-      "referral_to_approved_premises_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name] ?: EMPTY_STRING),
-      "referral_to_other_teams_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name] ?: EMPTY_STRING),
-      "referral_to_partnership_agencies_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name] ?: EMPTY_STRING),
-      "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name] ?: EMPTY_STRING),
+      "increased_frequency_details" to (selectedAlternativesMap[SelectedAlternativeOptions.INCREASED_FREQUENCY.name]
+        ?: EMPTY_STRING),
+      "extra_licence_conditions_details" to (selectedAlternativesMap[SelectedAlternativeOptions.EXTRA_LICENCE_CONDITIONS.name]
+        ?: EMPTY_STRING),
+      "referral_to_approved_premises_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_APPROVED_PREMISES.name]
+        ?: EMPTY_STRING),
+      "referral_to_other_teams_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_OTHER_TEAMS.name]
+        ?: EMPTY_STRING),
+      "referral_to_partnership_agencies_details" to (selectedAlternativesMap[SelectedAlternativeOptions.REFERRAL_TO_PARTNERSHIP_AGENCIES.name]
+        ?: EMPTY_STRING),
+      "alternative_to_recall_other_details" to (selectedAlternativesMap[SelectedAlternativeOptions.ALTERNATIVE_TO_RECALL_OTHER.name]
+        ?: EMPTY_STRING),
     )
   }
 
@@ -237,7 +245,10 @@ internal class TemplateReplacementService(
 
   private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> {
     return mapOf(
-      "risk_of_suicide_or_self_harm" to (getVulnerabilityDisplayText(RISK_OF_SUICIDE_OR_SELF_HARM.name, vulnerabilities)),
+      "risk_of_suicide_or_self_harm" to (getVulnerabilityDisplayText(
+        RISK_OF_SUICIDE_OR_SELF_HARM.name,
+        vulnerabilities,
+      )),
       "relationship_breakdown" to (getVulnerabilityDisplayText(RELATIONSHIP_BREAKDOWN.name, vulnerabilities)),
       "not_known" to (getVulnerabilityDisplayText(NOT_KNOWN.name, vulnerabilities)),
       "none" to (getVulnerabilityDisplayText(NONE.name, vulnerabilities)),
@@ -245,15 +256,27 @@ internal class TemplateReplacementService(
       "drug_or_alcohol_use" to (getVulnerabilityDisplayText(DRUG_OR_ALCOHOL_USE.name, vulnerabilities)),
       "bullying_others" to (getVulnerabilityDisplayText(BULLYING_OTHERS.name, vulnerabilities)),
       "being_bullied_by_others" to (getVulnerabilityDisplayText(BEING_BULLIED_BY_OTHERS.name, vulnerabilities)),
-      "being_at_risk_of_serious_harm_from_others" to (getVulnerabilityDisplayText(BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name, vulnerabilities)),
-      "adult_or_child_safeguarding_concerns" to (getVulnerabilityDisplayText(ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, vulnerabilities)),
+      "being_at_risk_of_serious_harm_from_others" to (getVulnerabilityDisplayText(
+        BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
+        vulnerabilities,
+      )),
+      "adult_or_child_safeguarding_concerns" to (getVulnerabilityDisplayText(
+        ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name,
+        vulnerabilities,
+      )),
       "mental_health_concerns" to (getVulnerabilityDisplayText(MENTAL_HEALTH_CONCERNS.name, vulnerabilities)),
       "physical_health_concerns" to (getVulnerabilityDisplayText(PHYSICAL_HEALTH_CONCERNS.name, vulnerabilities)),
-      "medication_taken_including_compliance_with_medication" to (getVulnerabilityDisplayText(MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, vulnerabilities)),
+      "medication_taken_including_compliance_with_medication" to (getVulnerabilityDisplayText(
+        MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name,
+        vulnerabilities,
+      )),
       "bereavement_issues" to (getVulnerabilityDisplayText(BEREAVEMENT_ISSUES.name, vulnerabilities)),
       "learning_difficulties" to (getVulnerabilityDisplayText(LEARNING_DIFFICULTIES.name, vulnerabilities)),
       "physical_disabilities" to (getVulnerabilityDisplayText(PHYSICAL_DISABILITIES.name, vulnerabilities)),
-      "cultural_or_language_differences" to (getVulnerabilityDisplayText(CULTURAL_OR_LANGUAGE_DIFFERENCES.name, vulnerabilities)),
+      "cultural_or_language_differences" to (getVulnerabilityDisplayText(
+        CULTURAL_OR_LANGUAGE_DIFFERENCES.name,
+        vulnerabilities,
+      )),
     )
   }
 
