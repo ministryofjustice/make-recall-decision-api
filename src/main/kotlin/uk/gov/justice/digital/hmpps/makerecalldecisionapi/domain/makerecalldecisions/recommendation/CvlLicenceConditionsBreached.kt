@@ -12,6 +12,6 @@ data class LicenceConditionSection(
 )
 
 data class LicenceConditionOption(
-  val code: String,
-  val text: String,
+  val code: String?,
+  val text: String?,
 )
