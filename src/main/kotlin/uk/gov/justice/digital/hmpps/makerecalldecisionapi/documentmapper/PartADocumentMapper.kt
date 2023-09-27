@@ -119,6 +119,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
       region = recommendation.region,
       localDeliveryUnit = recommendation.localDeliveryUnit,
+      ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
+      revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
       offenceAnalysis = recommendation.offenceAnalysis,
@@ -158,11 +160,11 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     )
   }
 
-  private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate>? {
+  private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> {
     return previousReleases?.previousReleaseDates ?: emptyList()
   }
 
-  private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate>? {
+  private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate> {
     var dates: List<LocalDate> = previousRecalls?.previousRecallDates ?: emptyList()
     if (previousRecalls?.lastRecallDate != null) {
       dates = listOf(previousRecalls.lastRecallDate) + dates
@@ -224,9 +226,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     }
     if (cvlStandardCodes !== null) {
       return cvlStandardCodes
-        .map { code -> SelectedStandardLicenceConditions.values().find { it.isCodeForCvl(code) } }
-        .filter { it != null }
-        .map { it?.name as String }
+        .mapNotNull { code -> SelectedStandardLicenceConditions.entries.find { it.isCodeForCvl(code) } }
+        .map { it.name }
     }
     return null
   }
@@ -237,7 +238,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     cvlBespokeLicenceConditions: LicenceConditionSection?,
   ): String {
     if (additionalLicenceConditions != null) {
-      val selectedOptions = if (additionalLicenceConditions?.selectedOptions != null) {
+      val selectedOptions = if (additionalLicenceConditions.selectedOptions != null) {
         additionalLicenceConditions.allOptions?.filter { sel ->
           additionalLicenceConditions.selectedOptions.any {
             it.subCatCode == sel.subCatCode && it.mainCatCode == sel.mainCatCode
@@ -245,7 +246,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
         }
       } else {
         // Left this line in to make the code backwards compatible after the issue described in MRD-1056 was fixed
-        additionalLicenceConditions?.allOptions
+        additionalLicenceConditions.allOptions
           ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
       }
 
@@ -273,7 +274,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
     cvlAdditionalLicenceConditions?.selected
       ?.map { code -> cvlAdditionalLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.foldIndexed(builder) { index, buffer, text ->
+      ?.fold(builder) { buffer, text ->
         buffer.append(text)
         builder.append(System.lineSeparator())
         builder.append(System.lineSeparator())
@@ -282,7 +283,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
 
     cvlBespokeLicenceConditions?.selected
       ?.map { code -> cvlBespokeLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.foldIndexed(builder) { index, buffer, text ->
+      ?.fold(builder) { buffer, text ->
         buffer.append(text)
         builder.append(System.lineSeparator())
         builder.append(System.lineSeparator())
@@ -308,7 +309,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       val addressConcat = mainAddresses.map {
         it.separatorFormattedAddress(", ")
       }
-      Pair(addressConcat.joinToString("\n") { "$it" }, "")
+      Pair(addressConcat.joinToString("\n") { it }, "")
     } else if (mainAddresses?.isEmpty() == true && noFixedAbodeAddresses?.isNotEmpty() == true) {
       Pair(
         "",
@@ -344,7 +345,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   }
 
   private fun formatAddressWherePersonCanBeFound(details: String?): String? {
-    return if (details?.isNullOrBlank() == false) "Police can find this person at: $details" else null
+    return if (details?.isBlank() == false) "Police can find this person at: $details" else null
   }
 
   private fun formatMultipleDates(dates: List<LocalDate>?): String {

@@ -847,6 +847,7 @@ class PartADocumentMapperTest {
     }
   }
 
+  @Test
   fun `given offence analysis details then show in the Part A`() {
     runTest {
       val recommendation = RecommendationResponse(
@@ -1058,6 +1059,32 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
       assertThat(result.outOfTouchPresent).isEqualTo("")
       assertThat(result.outOfTouch).isEqualTo("")
+    }
+  }
+
+  @Test
+  fun `given ppcs query emails then show in the Part A`() {
+    runTest {
+      val emails = listOf("test1@example.com", "test2@example.com")
+      val recommendation = RecommendationResponse(
+        ppcsQueryEmails = emails,
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.ppcsQueryEmails).hasSameElementsAs(emails)
+    }
+  }
+
+  @Test
+  fun `given revocation recipients then show in the Part A`() {
+    runTest {
+      val emails = listOf("test1@example.com", "test2@example.com")
+      val recommendation = RecommendationResponse(
+        revocationOrderRecipients = emails,
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.revocationOrderRecipients).hasSameElementsAs(emails)
     }
   }
 
