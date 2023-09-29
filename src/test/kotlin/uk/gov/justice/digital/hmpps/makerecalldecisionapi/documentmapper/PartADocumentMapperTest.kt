@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
@@ -1063,6 +1064,54 @@ class PartADocumentMapperTest {
   }
 
   @Test
+  fun `given practitioner details and probationAdmin flag is disabled then Q25 mappings include PP details`() {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = false)
+      val recommendation = RecommendationResponse(
+        region = "NPS London",
+        localDeliveryUnit = "All NPS London",
+      )
+      val metadata = RecommendationMetaData(
+        userNamePartACompletedBy = "Peter Parker",
+        userEmailPartACompletedBy = "pp@example.com",
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      // then
+      assertThat(result.completedByName).isEqualTo("Peter Parker")
+      assertThat(result.completedByTelephone).isEqualTo(EMPTY_STRING)
+      assertThat(result.completedByEmail).isEqualTo("pp@example.com")
+      assertThat(result.completedByRegion).isEqualTo("NPS London")
+      assertThat(result.completedByLocalDeliveryUnit).isEqualTo("All NPS London")
+    }
+  }
+
+  @Test
+  fun `given probationAdmin flag is disabled then Q26 mappings are empty`() {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = false)
+      val recommendation = RecommendationResponse(
+        region = "NPS London",
+        localDeliveryUnit = "All NPS London",
+      )
+      val metadata = RecommendationMetaData(
+        userNamePartACompletedBy = "Peter Parker",
+        userEmailPartACompletedBy = "pp@example.com",
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      // then
+      assertThat(result.supervisingName).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingTelephone).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingEmail).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingRegion).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingLocalDeliveryUnit).isEqualTo(EMPTY_STRING)
+    }
+  }
+
+  @Test
   fun `given ppcs query emails then show in the Part A`() {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
@@ -1103,8 +1152,8 @@ class PartADocumentMapperTest {
       assertThat(result.countersignAcoEmail).isEqualTo("jane-the-aco@bla.com")
       assertThat(result.countersignSpoName).isEqualTo("Spo Name")
       assertThat(result.countersignAcoName).isEqualTo("Aco Name")
-      assertThat(result.probationPractitionerName).isEqualTo("Henry Richarlison")
-      assertThat(result.probationPractitionerEmail).isEqualTo("Henry.Richarlison@test.com")
+      assertThat(result.completedByName).isEqualTo("Henry Richarlison")
+      assertThat(result.completedByEmail).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result.countersignAcoDate).isNotBlank
       assertThat(result.countersignAcoTime).isNotBlank
       assertThat(result.countersignSpoDate).isNotBlank

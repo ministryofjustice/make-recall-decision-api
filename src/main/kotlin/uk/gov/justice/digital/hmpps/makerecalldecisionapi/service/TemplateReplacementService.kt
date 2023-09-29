@@ -5,6 +5,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
@@ -52,10 +53,11 @@ internal class TemplateReplacementService(
     recommendation: RecommendationResponse,
     documentType: DocumentType,
     metaData: RecommendationMetaData,
+    featureFlags: FeatureFlags = FeatureFlags(),
   ): String {
     val documentData =
       if (documentType == DocumentType.PART_A_DOCUMENT || documentType == DocumentType.PREVIEW_PART_A_DOCUMENT) {
-        partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData)
+        partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metaData, featureFlags)
       } else {
         decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
       }
@@ -149,10 +151,16 @@ internal class TemplateReplacementService(
       "extended_term" to documentData.extendedTerm,
       "mappa_level" to formatMappaLevel(documentData.mappa),
       "mappa_category" to formatMappaCategory(documentData.mappa),
-      "completing_name" to documentData.probationPractitionerName,
-      "completing_email" to documentData.probationPractitionerEmail,
-      "completing_region" to documentData.region,
-      "completing_local_delivery_unit" to documentData.localDeliveryUnit,
+      "completed_by_name" to documentData.completedByName,
+      "completed_by_telephone" to documentData.completedByTelephone,
+      "completed_by_email" to documentData.completedByEmail,
+      "completed_by_region" to documentData.completedByRegion,
+      "completed_by_local_delivery_unit" to documentData.completedByLocalDeliveryUnit,
+      "supervising_name" to documentData.supervisingName,
+      "supervising_telephone" to documentData.supervisingTelephone,
+      "supervising_email" to documentData.supervisingEmail,
+      "supervising_region" to documentData.supervisingRegion,
+      "supervising_local_delivery_unit" to documentData.supervisingLocalDeliveryUnit,
       "ppcs_query_emails" to documentData.ppcsQueryEmails.joinToString("; "),
       "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
       "date_of_decision" to documentData.dateOfDecision,

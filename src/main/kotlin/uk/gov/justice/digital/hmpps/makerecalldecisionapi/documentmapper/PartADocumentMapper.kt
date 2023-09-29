@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -33,6 +34,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   fun mapRecommendationDataToDocumentData(
     recommendation: RecommendationResponse,
     metadata: RecommendationMetaData,
+    flags: FeatureFlags = FeatureFlags(),
   ): DocumentData {
     val firstName = recommendation.personOnProbation?.firstName
     val middleNames = recommendation.personOnProbation?.middleNames
@@ -117,8 +119,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
 
-      region = recommendation.region,
-      localDeliveryUnit = recommendation.localDeliveryUnit,
+      completedByRegion = recommendation.region,
+      completedByLocalDeliveryUnit = recommendation.localDeliveryUnit,
       ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = lastDownloadDate,
@@ -147,8 +149,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       counterSignSpoEmail = metadata.spoCounterSignEmail,
       countersignSpoName = metadata.countersignSpoName,
       countersignAcoName = metadata.countersignAcoName,
-      probationPractitionerName = metadata.userNamePartACompletedBy,
-      probationPractitionerEmail = metadata.userEmailPartACompletedBy,
+      completedByName = metadata.userNamePartACompletedBy,
+      completedByEmail = metadata.userEmailPartACompletedBy,
       countersignSpoDate = countersignSpoDate,
       countersignSpoTime = countersignSpoTime,
       countersignAcoDate = countersignAcoDate,

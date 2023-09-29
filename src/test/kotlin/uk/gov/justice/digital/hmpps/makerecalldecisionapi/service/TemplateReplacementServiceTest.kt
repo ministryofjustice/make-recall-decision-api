@@ -427,7 +427,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(125)
+      assertThat(result.size).isEqualTo(131)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -489,10 +489,14 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
       assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
       assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["completing_name"]).isEqualTo("Henry Richarlison")
-      assertThat(result["completing_email"]).isEqualTo("Henry.Richarlison@test.com")
-      assertThat(result["completing_region"]).isEqualTo("NPS London")
-      assertThat(result["completing_local_delivery_unit"]).isEqualTo("All NPS London")
+      assertThat(result["completed_by_name"]).isEqualTo("Henry Richarlison")
+      assertThat(result["completed_by_email"]).isEqualTo("Henry.Richarlison@test.com")
+      assertThat(result["completed_by_region"]).isEqualTo("NPS London")
+      assertThat(result["completed_by_local_delivery_unit"]).isEqualTo("All NPS London")
+      assertThat(result["supervising_name"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_email"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_region"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_local_delivery_unit"]).isEqualTo(EMPTY_STRING)
       assertThat(result["ppcs_query_emails"]).isEqualTo("query1@example.com; query2@example.com")
       assertThat(result["revocation_order_recipients"]).isEqualTo("revocation1@example.com; revocation2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
@@ -760,10 +764,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
       letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
       noFixedAbode = "",
-      probationPractitionerName = "Henry Richarlison",
-      probationPractitionerEmail = "Henry.Richarlison@test.com",
-      region = "NPS London",
-      localDeliveryUnit = "All NPS London",
+      completedByName = "Henry Richarlison",
+      completedByEmail = "Henry.Richarlison@test.com",
+      completedByRegion = "NPS London",
+      completedByLocalDeliveryUnit = "All NPS London",
       ppcsQueryEmails = listOf("query1@example.com", "query2@example.com"),
       revocationOrderRecipients = listOf("revocation1@example.com", "revocation2@example.com"),
       dateOfDecision = "13/09/2022",
