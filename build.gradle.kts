@@ -4,7 +4,7 @@ plugins {
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.9.10"
-  id("org.sonarqube") version "4.3.1.3277"
+  id("org.sonarqube") version "4.4.0.3356"
   kotlin("plugin.spring") version "1.9.10"
 }
 
@@ -47,8 +47,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core:9.22.2")
   implementation("org.postgresql:postgresql:42.6.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.29.0")
-  implementation("io.sentry:sentry-logback:6.29.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.30.0")
+  implementation("io.sentry:sentry-logback:6.30.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
