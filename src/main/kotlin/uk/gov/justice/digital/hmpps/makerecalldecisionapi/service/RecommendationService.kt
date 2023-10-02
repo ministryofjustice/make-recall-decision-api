@@ -67,7 +67,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 @Service
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
-  val recommmendationStatusRepository: RecommendationStatusRepository,
+  val recommendationStatusRepository: RecommendationStatusRepository,
   @Lazy val personDetailsService: PersonDetailsService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
@@ -178,7 +178,7 @@ internal class RecommendationService(
             createdDate = it.data.createdDate,
             lastModifiedDate = it.data.lastModifiedDate,
             status = it.data.status,
-            statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
+            statuses = recommendationStatusRepository.findByRecommendationId(it.id),
             recallType = it.data.recallType,
           ),
         )
@@ -189,7 +189,7 @@ internal class RecommendationService(
   private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? {
     return recommendationRepository.findByCrn(crn)
       .filter {
-        recommmendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" }
+        recommendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "COMPLETED" }
       }.minOrNull()
   }
 
@@ -307,13 +307,13 @@ internal class RecommendationService(
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
-    var updatedRecommendation: RecommendationModel =
+    val updatedRecommendation: RecommendationModel =
       recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
     val requestJson = JSONObject(jsonRequest.toString())
     val sendToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
     log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))
-    log.info("send to delius value::" + sendToDelius)
+    log.info("send to delius value::$sendToDelius")
     if (sendToDelius) {
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
@@ -585,7 +585,7 @@ internal class RecommendationService(
 
     val legacyRecommendationOpen = recommendationEntity.size > 1
     val recommendationStatusOpen = recommendationEntity.isNotEmpty() &&
-      recommmendationStatusRepository.findByRecommendationId(recommendationEntity[0].id)
+      recommendationStatusRepository.findByRecommendationId(recommendationEntity[0].id)
         .any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
 
     if (legacyRecommendationOpen && recommendationStatusOpen) {
@@ -613,13 +613,14 @@ internal class RecommendationService(
     readableUsername: String?,
     documentRequestType: DocumentRequestType?,
     isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags?,
+    featureFlags: FeatureFlags = FeatureFlags(),
   ): DocumentResponse {
     return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
       val recommendationEntity = getRecommendationEntityById(recommendationId)
       val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
-      val documentResponse = generateDntrDownload(recommendationEntity, userId, readableUsername, recommendationId)
-      if (featureFlags?.flagSendDomainEvent == true && isFirstDntrDownload) {
+      val documentResponse =
+        generateDntrDownload(recommendationEntity, userId, readableUsername, recommendationId, featureFlags)
+      if (featureFlags.flagSendDomainEvent && isFirstDntrDownload) {
         log.info("Sent domain event for DNTR download asynchronously")
         sendDntrDownloadEvent(recommendationId)
         log.info("Sent domain event for DNTR download asynchronously")
@@ -664,6 +665,7 @@ internal class RecommendationService(
     userId: String?,
     readableUsername: String?,
     recommendationId: Long,
+    flags: FeatureFlags,
   ): DocumentResponse {
     val recommendationResponse = if (recommendationEntity.data.userNameDntrLetterCompletedBy == null) {
       updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, false)
@@ -676,12 +678,13 @@ internal class RecommendationService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       DocumentResponse(userAccessResponse)
     } else {
-      val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
+      val metaData = getRecDocMetaData(recommendationId)
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(
           recommendationResponse,
           DocumentType.DNTR_DOCUMENT,
           metaData,
+          flags,
         )
       DocumentResponse(
         fileName = generateDocumentFileName(recommendationResponse, "No_Recall"),
@@ -712,7 +715,7 @@ internal class RecommendationService(
     readableUsername: String?,
     preview: Boolean = false,
     isUserSpoOrAco: Boolean? = false,
-    featureFlags: FeatureFlags? = null,
+    featureFlags: FeatureFlags = FeatureFlags(),
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     val recommendationResponse = buildRecommendationResponse(recommendationEntity)
@@ -720,27 +723,29 @@ internal class RecommendationService(
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       DocumentResponse(userAccessResponse)
     } else {
-      val metaData = getRecDocMetaData(userId, recommendationId, readableUsername)
+      val metaData = getRecDocMetaData(recommendationId)
       val fileContents =
         templateReplacementService.generateDocFromRecommendation(
           recommendationResponse,
           if (preview) DocumentType.PREVIEW_PART_A_DOCUMENT else DocumentType.PART_A_DOCUMENT,
           metaData,
+          featureFlags,
         )
       log.info("responding with file: " + if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A")
       DocumentResponse(
-        fileName = generateDocumentFileName(recommendationResponse, if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A"),
+        fileName = generateDocumentFileName(
+          recommendationResponse,
+          if (preview) "Preview_NAT_Recall_Part_A" else "NAT_Recall_Part_A",
+        ),
         fileContents = fileContents,
       )
     }
   }
 
   private fun getRecDocMetaData(
-    userId: String?,
     recommendationId: Long,
-    readableUsername: String?,
   ): RecommendationMetaData {
-    val statuses = recommmendationStatusRepository.findByRecommendationId(recommendationId)
+    val statuses = recommendationStatusRepository.findByRecommendationId(recommendationId)
       .map { it.toRecommendationStatusResponse() }
     return RecommendationMetaData().fromFetchRecommendationsStatusResponse(statuses)
   }
@@ -896,7 +901,7 @@ internal class RecommendationService(
           createdDate = it.data.createdDate,
           lastModifiedDate = it.data.lastModifiedDate,
           status = it.data.status,
-          statuses = recommmendationStatusRepository.findByRecommendationId(it.id),
+          statuses = recommendationStatusRepository.findByRecommendationId(it.id),
           recallType = it.data.recallType,
         )
       }

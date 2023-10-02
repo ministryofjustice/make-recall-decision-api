@@ -213,21 +213,25 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
       assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
 
-      if (featureFlag == "RECALL_CONSIDERED") {
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
-        assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
-        then(mrdEmitterMocked).shouldHaveNoInteractions()
-      } else if (featureFlag == "RECOMMENDATION_STARTED") {
-        then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
-      } else {
-        assertThat(recommendationEntity.data.recallConsideredList).isNull()
-        assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
-        then(mrdEmitterMocked).shouldHaveNoInteractions()
+      when (featureFlag) {
+        "RECALL_CONSIDERED" -> {
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+        "RECOMMENDATION_STARTED" -> {
+          then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
+        }
+        else -> {
+          assertThat(recommendationEntity.data.recallConsideredList).isNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
       }
     }
   }
@@ -310,7 +314,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         updateRecommendationRequest.copy(recommendationStartedDomainEventSent = existingRecommendation.data.recommendationStartedDomainEventSent)
 
       // and
-      var recommendationToSave =
+      val recommendationToSave =
         existingRecommendation.copy(
           id = existingRecommendation.id,
           data = RecommendationModel(
@@ -434,7 +438,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `updates a recommendation to the database when mappa is null`() {
     runTest {
       // given
-      var existingRecommendation = RecommendationEntity(
+      val existingRecommendation = RecommendationEntity(
         id = 1,
         data = RecommendationModel(
           crn = crn,
@@ -447,7 +451,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null))
 
       // and
-      var recommendationToSave =
+      val recommendationToSave =
         existingRecommendation.copy(
           id = existingRecommendation.id,
           data = RecommendationModel(
@@ -609,7 +613,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      var recommendationToSave =
+      val recommendationToSave =
         existingRecommendation.copy(
           id = existingRecommendation.id,
           data = RecommendationModel(
@@ -1530,7 +1534,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1541,7 +1545,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         "john.smith",
         "John Smith",
         DocumentRequestType.DOWNLOAD_DOC_X,
-        null,
         null,
       )
 
@@ -1560,7 +1563,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         val captor = argumentCaptor<RecommendationResponse>()
         then(templateReplacementServiceMocked).should(times(1))
-          .generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
+          .generateDocFromRecommendation(captor.capture(), anyObject(), anyObject(), anyObject())
         val recommendationResponseResult = captor.firstValue
 
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
@@ -1615,7 +1618,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1646,7 +1649,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         val captor = argumentCaptor<RecommendationResponse>()
         then(templateReplacementServiceMocked).should(times(1))
-          .generateDocFromRecommendation(captor.capture(), anyObject(), anyObject())
+          .generateDocFromRecommendation(captor.capture(), anyObject(), anyObject(), anyObject())
         val recommendationResponseResult = captor.firstValue
 
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
@@ -1676,7 +1679,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(Optional.of(existingRecommendation))
 
       val result =
-        recommendationService.generateDntr(1L, "john.smith", "John Smith", DocumentRequestType.PREVIEW, null, null)
+        recommendationService.generateDntr(
+          1L,
+          "john.smith",
+          "John Smith",
+          DocumentRequestType.PREVIEW,
+          null,
+          FeatureFlags(),
+        )
 
       assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
       assertThat(result.letterContent?.letterAddress).isEqualTo(
@@ -1726,7 +1736,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
         )
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1741,7 +1751,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationResponseCaptor = argumentCaptor<RecommendationResponse>()
       val metaDataCaptor = argumentCaptor<RecommendationMetaData>()
       then(templateReplacementServiceMocked).should(times(1))
-        .generateDocFromRecommendation(recommendationResponseCaptor.capture(), eq(DocumentType.PART_A_DOCUMENT), metaDataCaptor.capture())
+        .generateDocFromRecommendation(
+          recommendationResponseCaptor.capture(),
+          eq(DocumentType.PART_A_DOCUMENT),
+          metaDataCaptor.capture(),
+          anyObject(),
+        )
       assertThat(metaDataCaptor.firstValue.countersignAcoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.countersignSpoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.userPartACompletedByDateTime).isNotNull
@@ -1785,7 +1800,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
         )
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject()))
+      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1798,7 +1813,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
 
       then(templateReplacementServiceMocked).should(times(1))
-        .generateDocFromRecommendation(anyObject(), eq(DocumentType.PREVIEW_PART_A_DOCUMENT), anyObject())
+        .generateDocFromRecommendation(anyObject(), eq(DocumentType.PREVIEW_PART_A_DOCUMENT), anyObject(), anyObject())
     }
   }
 
@@ -1818,7 +1833,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         ),
       )
 
-      var existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn, "", "")
+      val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn, "", "")
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))

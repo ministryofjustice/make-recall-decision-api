@@ -48,10 +48,8 @@ data class DocumentData(
   val lastRecordedAddress: String? = null,
   val letterAddress: String? = null,
   val noFixedAbode: String? = null,
-  val probationPractitionerName: String? = null,
-  val probationPractitionerEmail: String? = null,
-  val region: String? = null,
-  val localDeliveryUnit: String? = null,
+  val completedBy: PractitionerDetails = PractitionerDetails(),
+  val supervisingPractitioner: PractitionerDetails = PractitionerDetails(),
   val ppcsQueryEmails: List<String> = emptyList(),
   val revocationOrderRecipients: List<String> = emptyList(),
   var dateOfDecision: String? = null,
@@ -92,4 +90,12 @@ data class DocumentData(
 data class ValueWithDetails(
   val value: String? = null,
   val details: String? = null,
+)
+
+data class PractitionerDetails(
+  val name: String = "",
+  val telephone: String = "",
+  val email: String = "",
+  val region: String = "",
+  val localDeliveryUnit: String = "",
 )

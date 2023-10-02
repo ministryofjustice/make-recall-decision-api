@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper
 
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -10,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -33,6 +35,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
   fun mapRecommendationDataToDocumentData(
     recommendation: RecommendationResponse,
     metadata: RecommendationMetaData,
+    flags: FeatureFlags = FeatureFlags(),
   ): DocumentData {
     val firstName = recommendation.personOnProbation?.firstName
     val middleNames = recommendation.personOnProbation?.middleNames
@@ -116,9 +119,8 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       mappa = recommendation.personOnProbation?.mappa,
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
-
-      region = recommendation.region,
-      localDeliveryUnit = recommendation.localDeliveryUnit,
+      completedBy = determineCompletedBy(recommendation, metadata, flags),
+      supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
       ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = lastDownloadDate,
@@ -147,8 +149,6 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       counterSignSpoEmail = metadata.spoCounterSignEmail,
       countersignSpoName = metadata.countersignSpoName,
       countersignAcoName = metadata.countersignAcoName,
-      probationPractitionerName = metadata.userNamePartACompletedBy,
-      probationPractitionerEmail = metadata.userEmailPartACompletedBy,
       countersignSpoDate = countersignSpoDate,
       countersignSpoTime = countersignSpoTime,
       countersignAcoDate = countersignAcoDate,
@@ -158,6 +158,47 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       countersignAcoTelephone = recommendation.countersignAcoTelephone,
       countersignAcoExposition = recommendation.countersignAcoExposition,
     )
+  }
+
+  private fun determineCompletedBy(
+    recommendation: RecommendationResponse,
+    metadata: RecommendationMetaData,
+    flags: FeatureFlags,
+  ): PractitionerDetails {
+    if (flags.flagProbationAdmin) {
+      return PractitionerDetails(
+        name = recommendation.whoCompletedPartA?.name ?: "",
+        telephone = recommendation.whoCompletedPartA?.telephone ?: "",
+        email = recommendation.whoCompletedPartA?.email ?: "",
+        region = recommendation.whoCompletedPartA?.region ?: "",
+        localDeliveryUnit = recommendation.whoCompletedPartA?.localDeliveryUnit ?: "",
+      )
+    } else {
+      return PractitionerDetails(
+        name = metadata.userNamePartACompletedBy ?: "",
+        telephone = "",
+        email = metadata.userEmailPartACompletedBy ?: "",
+        region = recommendation.region ?: "",
+        localDeliveryUnit = recommendation.localDeliveryUnit ?: "",
+      )
+    }
+  }
+
+  private fun determineSupervisingPractitioner(
+    recommendation: RecommendationResponse,
+    flags: FeatureFlags,
+  ): PractitionerDetails {
+    return if (flags.flagProbationAdmin) {
+      PractitionerDetails(
+        name = recommendation.practitionerForPartA?.name ?: "",
+        telephone = recommendation.practitionerForPartA?.telephone ?: "",
+        email = recommendation.practitionerForPartA?.email ?: "",
+        region = recommendation.practitionerForPartA?.region ?: "",
+        localDeliveryUnit = recommendation.practitionerForPartA?.localDeliveryUnit ?: "",
+      )
+    } else {
+      PractitionerDetails()
+    }
   }
 
   private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> {
