@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -37,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
@@ -1078,12 +1080,11 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
-      // then
-      assertThat(result.completedByName).isEqualTo("Peter Parker")
-      assertThat(result.completedByTelephone).isEqualTo(EMPTY_STRING)
-      assertThat(result.completedByEmail).isEqualTo("pp@example.com")
-      assertThat(result.completedByRegion).isEqualTo("NPS London")
-      assertThat(result.completedByLocalDeliveryUnit).isEqualTo("All NPS London")
+      assertThat(result.completedBy.name).isEqualTo("Peter Parker")
+      assertThat(result.completedBy.telephone).isEqualTo(EMPTY_STRING)
+      assertThat(result.completedBy.email).isEqualTo("pp@example.com")
+      assertThat(result.completedBy.region).isEqualTo("NPS London")
+      assertThat(result.completedBy.localDeliveryUnit).isEqualTo("All NPS London")
     }
   }
 
@@ -1102,12 +1103,65 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
-      // then
-      assertThat(result.supervisingName).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingTelephone).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingEmail).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingRegion).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingLocalDeliveryUnit).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.name).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.telephone).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo(EMPTY_STRING)
+    }
+  }
+
+  @Test
+  fun `given probationAdmin flag is enabled then Q25 mappings include who completed Part A details`() {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        region = "Incorrect regions",
+        localDeliveryUnit = "Incorrect LDU",
+        whoCompletedPartA = WhoCompletedPartA(
+          name = "Bruce Wayne",
+          telephone = "0123456789",
+          email = "bw@example.com",
+          region = "Region 1",
+          localDeliveryUnit = "Delivery Unit 1",
+        ),
+      )
+      val metadata = RecommendationMetaData(
+        userNamePartACompletedBy = "Incorrect Practitioner",
+        userEmailPartACompletedBy = "incorrect@example.com",
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.completedBy.name).isEqualTo("Bruce Wayne")
+      assertThat(result.completedBy.telephone).isEqualTo("0123456789")
+      assertThat(result.completedBy.email).isEqualTo("bw@example.com")
+      assertThat(result.completedBy.region).isEqualTo("Region 1")
+      assertThat(result.completedBy.localDeliveryUnit).isEqualTo("Delivery Unit 1")
+    }
+  }
+
+  @Test
+  fun `given probationAdmin flag is enabled then Q26 mappings contain supervising practitioner details`() {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        practitionerForPartA = PractitionerForPartA(
+          name = "Clark Kent",
+          telephone = "0123456789",
+          email = "ck@example.com",
+          region = "Region 2",
+          localDeliveryUnit = "Delivery Unit 2",
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.supervisingPractitioner.name).isEqualTo("Clark Kent")
+      assertThat(result.supervisingPractitioner.telephone).isEqualTo("0123456789")
+      assertThat(result.supervisingPractitioner.email).isEqualTo("ck@example.com")
+      assertThat(result.supervisingPractitioner.region).isEqualTo("Region 2")
+      assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo("Delivery Unit 2")
     }
   }
 
@@ -1152,8 +1206,8 @@ class PartADocumentMapperTest {
       assertThat(result.countersignAcoEmail).isEqualTo("jane-the-aco@bla.com")
       assertThat(result.countersignSpoName).isEqualTo("Spo Name")
       assertThat(result.countersignAcoName).isEqualTo("Aco Name")
-      assertThat(result.completedByName).isEqualTo("Henry Richarlison")
-      assertThat(result.completedByEmail).isEqualTo("Henry.Richarlison@test.com")
+      assertThat(result.completedBy.name).isEqualTo("Henry Richarlison")
+      assertThat(result.completedBy.email).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result.countersignAcoDate).isNotBlank
       assertThat(result.countersignAcoTime).isNotBlank
       assertThat(result.countersignSpoDate).isNotBlank

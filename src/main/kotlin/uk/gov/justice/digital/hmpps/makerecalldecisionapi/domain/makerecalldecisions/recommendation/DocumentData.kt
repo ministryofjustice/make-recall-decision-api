@@ -48,16 +48,8 @@ data class DocumentData(
   val lastRecordedAddress: String? = null,
   val letterAddress: String? = null,
   val noFixedAbode: String? = null,
-  val completedByName: String? = null,
-  val completedByTelephone: String = "",
-  val completedByEmail: String? = null,
-  val completedByRegion: String? = null,
-  val completedByLocalDeliveryUnit: String? = null,
-  val supervisingName: String = "",
-  val supervisingTelephone: String = "",
-  val supervisingEmail: String = "",
-  val supervisingRegion: String = "",
-  val supervisingLocalDeliveryUnit: String = "",
+  val completedBy: PractitionerDetails = PractitionerDetails(),
+  val supervisingPractitioner: PractitionerDetails = PractitionerDetails(),
   val ppcsQueryEmails: List<String> = emptyList(),
   val revocationOrderRecipients: List<String> = emptyList(),
   var dateOfDecision: String? = null,
@@ -98,4 +90,12 @@ data class DocumentData(
 data class ValueWithDetails(
   val value: String? = null,
   val details: String? = null,
+)
+
+data class PractitionerDetails(
+  val name: String = "",
+  val telephone: String = "",
+  val email: String = "",
+  val region: String = "",
+  val localDeliveryUnit: String = "",
 )
