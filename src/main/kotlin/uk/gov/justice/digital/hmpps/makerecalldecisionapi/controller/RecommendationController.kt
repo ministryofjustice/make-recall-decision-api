@@ -53,7 +53,7 @@ internal class RecommendationController(
     userLogin: Principal,
   ): ResponseEntity<RecommendationResponse?> {
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+    val flags: FeatureFlags = setFeatureFlags(featureFlags)
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
     val responseEntity = try {
@@ -127,7 +127,7 @@ internal class RecommendationController(
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
   ): RecommendationResponse {
     log.info(normalizeSpace("Update recommendation details endpoint for recommendation id: $recommendationId"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+    val flags: FeatureFlags = setFeatureFlags(featureFlags)
     val username = userLogin.name
     val readableUserName = authenticationFacade.currentNameOfUser
     return recommendationService.updateRecommendation(
@@ -154,7 +154,7 @@ internal class RecommendationController(
     userLogin: Principal,
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate Part A document endpoint for recommendation id: $recommendationId"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+    val flags: FeatureFlags = setFeatureFlags(featureFlags)
     val responseEntity = try {
       ResponseEntity(
         recommendationService.generatePartA(
@@ -187,7 +187,7 @@ internal class RecommendationController(
     userLogin: Principal,
   ): ResponseEntity<DocumentResponse> {
     log.info(normalizeSpace("Generate DNTR document endpoint for recommendation id: $recommendationId"))
-    val flags: FeatureFlags? = setFeatureFlags(featureFlags)
+    val flags: FeatureFlags = setFeatureFlags(featureFlags)
     val responseEntity = try {
       ResponseEntity(
         recommendationService.generateDntr(
