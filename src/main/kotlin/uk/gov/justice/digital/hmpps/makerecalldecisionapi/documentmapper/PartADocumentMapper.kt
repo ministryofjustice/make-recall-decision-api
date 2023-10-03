@@ -166,13 +166,16 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     flags: FeatureFlags,
   ): PractitionerDetails {
     if (flags.flagProbationAdmin) {
-      return PractitionerDetails(
-        name = recommendation.whoCompletedPartA?.name ?: "",
-        telephone = recommendation.whoCompletedPartA?.telephone ?: "",
-        email = recommendation.whoCompletedPartA?.email ?: "",
-        region = recommendation.whoCompletedPartA?.region ?: "",
-        localDeliveryUnit = recommendation.whoCompletedPartA?.localDeliveryUnit ?: "",
-      )
+      with(recommendation.whoCompletedPartA) {
+        val regionCode = this?.region ?: ""
+        return PractitionerDetails(
+          name = this?.name ?: "",
+          telephone = this?.telephone ?: "",
+          email = this?.email ?: "",
+          region = Regions.regionMap.getOrDefault(regionCode, regionCode),
+          localDeliveryUnit = this?.localDeliveryUnit ?: "",
+        )
+      }
     } else {
       return PractitionerDetails(
         name = metadata.userNamePartACompletedBy ?: "",
@@ -189,13 +192,16 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     flags: FeatureFlags,
   ): PractitionerDetails {
     return if (flags.flagProbationAdmin) {
-      PractitionerDetails(
-        name = recommendation.practitionerForPartA?.name ?: "",
-        telephone = recommendation.practitionerForPartA?.telephone ?: "",
-        email = recommendation.practitionerForPartA?.email ?: "",
-        region = recommendation.practitionerForPartA?.region ?: "",
-        localDeliveryUnit = recommendation.practitionerForPartA?.localDeliveryUnit ?: "",
-      )
+      with(recommendation.practitionerForPartA) {
+        val regionCode = this?.region ?: ""
+        PractitionerDetails(
+          name = this?.name ?: "",
+          telephone = this?.telephone ?: "",
+          email = this?.email ?: "",
+          region = Regions.regionMap.getOrDefault(regionCode, regionCode),
+          localDeliveryUnit = this?.localDeliveryUnit ?: "",
+        )
+      }
     } else {
       PractitionerDetails()
     }

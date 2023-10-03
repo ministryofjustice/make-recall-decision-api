@@ -104,7 +104,7 @@ data class WhoCompletedPartA(
   val name: String? = null,
   val email: String? = null,
   val telephone: String? = null,
-  val region: String? = null,
+  val region: String? = null, // This is the region code
   val localDeliveryUnit: String? = null,
   val isPersonProbationPractitionerForOffender: Boolean? = null,
 )
@@ -113,7 +113,7 @@ data class PractitionerForPartA(
   val name: String? = null,
   val email: String? = null,
   val telephone: String? = null,
-  val region: String? = null,
+  val region: String? = null, // This is the region code
   val localDeliveryUnit: String? = null,
 )
 
