@@ -1,10 +1,10 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.11.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.12.0"
   kotlin("jvm") version "1.9.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.9.10"
-  id("org.sonarqube") version "4.4.0.3356"
+  id("org.sonarqube") version "4.4.1.3373"
   kotlin("plugin.spring") version "1.9.10"
 }
 
@@ -69,7 +69,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
 
-  testImplementation("io.jsonwebtoken:jjwt:0.9.1")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:9.5.0")
 
