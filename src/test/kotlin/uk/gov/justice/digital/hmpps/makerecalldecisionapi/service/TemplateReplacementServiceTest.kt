@@ -681,7 +681,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           name = "Colin Completed",
           telephone = "1111111111",
           email = "completed@example.com",
-          region = "Completed Region",
+          region = "N53",
           localDeliveryUnit = "Completed LDU",
         )
       } else {
@@ -692,7 +692,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           name = "Sally Supervising",
           telephone = "2222222222",
           email = "supervising@example.com",
-          region = "Supervising Region",
+          region = "N50",
           localDeliveryUnit = "Supervising LDU",
         )
       } else {

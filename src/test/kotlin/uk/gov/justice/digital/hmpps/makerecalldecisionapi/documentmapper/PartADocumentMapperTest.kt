@@ -1122,7 +1122,7 @@ class PartADocumentMapperTest {
           name = "Bruce Wayne",
           telephone = "0123456789",
           email = "bw@example.com",
-          region = "Region 1",
+          region = "N54",
           localDeliveryUnit = "Delivery Unit 1",
         ),
       )
@@ -1136,8 +1136,33 @@ class PartADocumentMapperTest {
       assertThat(result.completedBy.name).isEqualTo("Bruce Wayne")
       assertThat(result.completedBy.telephone).isEqualTo("0123456789")
       assertThat(result.completedBy.email).isEqualTo("bw@example.com")
-      assertThat(result.completedBy.region).isEqualTo("Region 1")
+      assertThat(result.completedBy.region).isEqualTo("North East")
       assertThat(result.completedBy.localDeliveryUnit).isEqualTo("Delivery Unit 1")
+    }
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+    "UnrecognisedCode,UnrecognisedCode",
+    "N50,Greater Manchester",
+    ",''",
+    "'',''",
+  )
+  fun `given probationAdmin flag is enabled then Q25 mappings map region for who completed Part A`(
+    region: String?,
+    expectedRegion: String,
+  ) {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          region = region,
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.completedBy.region).isEqualTo(expectedRegion)
     }
   }
 
@@ -1150,7 +1175,7 @@ class PartADocumentMapperTest {
           name = "Clark Kent",
           telephone = "0123456789",
           email = "ck@example.com",
-          region = "Region 2",
+          region = "N55",
           localDeliveryUnit = "Delivery Unit 2",
         ),
       )
@@ -1160,8 +1185,33 @@ class PartADocumentMapperTest {
       assertThat(result.supervisingPractitioner.name).isEqualTo("Clark Kent")
       assertThat(result.supervisingPractitioner.telephone).isEqualTo("0123456789")
       assertThat(result.supervisingPractitioner.email).isEqualTo("ck@example.com")
-      assertThat(result.supervisingPractitioner.region).isEqualTo("Region 2")
+      assertThat(result.supervisingPractitioner.region).isEqualTo("Yorkshire and the Humber")
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo("Delivery Unit 2")
+    }
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+    "UnrecognisedCode,UnrecognisedCode",
+    "N53,East Midlands",
+    ",''",
+    "'',''",
+  )
+  fun `given probationAdmin flag is enabled then Q26 mappings map region for supervising practitioner`(
+    region: String?,
+    expectedRegion: String,
+  ) {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        practitionerForPartA = PractitionerForPartA(
+          region = region,
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.supervisingPractitioner.region).isEqualTo(expectedRegion)
     }
   }
 
