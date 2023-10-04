@@ -1167,10 +1167,13 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given probationAdmin flag is enabled then Q26 mappings contain supervising practitioner details`() {
+  fun `given probationAdmin flag is enabled and person who completed is not supervising practitioner then Q26 mappings contain supervising practitioner details`() {
     runTest {
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
       val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          isPersonProbationPractitionerForOffender = false,
+        ),
         practitionerForPartA = PractitionerForPartA(
           name = "Clark Kent",
           telephone = "0123456789",
@@ -1187,6 +1190,33 @@ class PartADocumentMapperTest {
       assertThat(result.supervisingPractitioner.email).isEqualTo("ck@example.com")
       assertThat(result.supervisingPractitioner.region).isEqualTo("Yorkshire and the Humber")
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo("Delivery Unit 2")
+    }
+  }
+
+  @Test
+  fun `given probationAdmin flag is enabled and person who completed is the supervising practitioner then Q26 mappings are empty`() {
+    runTest {
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          isPersonProbationPractitionerForOffender = true,
+        ),
+        practitionerForPartA = PractitionerForPartA(
+          name = "Clark Kent",
+          telephone = "0123456789",
+          email = "ck@example.com",
+          region = "N55",
+          localDeliveryUnit = "Delivery Unit 2",
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.supervisingPractitioner.name).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.telephone).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo(EMPTY_STRING)
     }
   }
 
