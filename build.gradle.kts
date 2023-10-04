@@ -1,10 +1,10 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.11.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.12.0"
   kotlin("jvm") version "1.9.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.9.10"
-  id("org.sonarqube") version "4.4.0.3356"
+  id("org.sonarqube") version "4.4.1.3373"
   kotlin("plugin.spring") version "1.9.10"
 }
 
