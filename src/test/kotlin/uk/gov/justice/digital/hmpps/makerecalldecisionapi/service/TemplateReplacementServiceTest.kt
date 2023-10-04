@@ -169,7 +169,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(131)
+      assertThat(result.size).isEqualTo(132)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -236,12 +236,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["completed_by_email"]).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result["completed_by_region"]).isEqualTo("NPS London")
       assertThat(result["completed_by_local_delivery_unit"]).isEqualTo("All NPS London")
+      assertThat(result["completed_by_ppcs_query_emails"]).isEqualTo("query1@example.com; query2@example.com")
       assertThat(result["supervising_practitioner_name"]).isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_telephone"]).isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_email"]).isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_region"]).isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_local_delivery_unit"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["ppcs_query_emails"]).isEqualTo("query1@example.com; query2@example.com")
+      assertThat(result["supervising_practitioner_ppcs_query_emails"]).isEqualTo(EMPTY_STRING)
       assertThat(result["revocation_order_recipients"]).isEqualTo("revocation1@example.com; revocation2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
@@ -305,12 +306,18 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   fun `ppcs query emails are presented as a semi-colon separated list`(data: MultipleEmailsTestData) {
     runTest {
       val partA = DocumentData(
-        ppcsQueryEmails = data.emails,
+        completedBy = PractitionerDetails(
+          ppcsQueryEmails = data.emails,
+        ),
+        supervisingPractitioner = PractitionerDetails(
+          ppcsQueryEmails = data.emails,
+        ),
       )
 
       val result = templateReplacementService.mappingsForTemplate(partA)
 
-      assertThat(result["ppcs_query_emails"]).isEqualTo(data.displayText)
+      assertThat(result["completed_by_ppcs_query_emails"]).isEqualTo(data.displayText)
+      assertThat(result["supervising_practitioner_ppcs_query_emails"]).isEqualTo(data.displayText)
     }
   }
 
@@ -683,6 +690,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           email = "completed@example.com",
           region = "N53",
           localDeliveryUnit = "Completed LDU",
+          isPersonProbationPractitionerForOffender = false,
         )
       } else {
         null
@@ -821,8 +829,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         email = "Henry.Richarlison@test.com",
         region = "NPS London",
         localDeliveryUnit = "All NPS London",
+        ppcsQueryEmails = listOf("query1@example.com", "query2@example.com"),
       ),
-      ppcsQueryEmails = listOf("query1@example.com", "query2@example.com"),
       revocationOrderRecipients = listOf("revocation1@example.com", "revocation2@example.com"),
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
