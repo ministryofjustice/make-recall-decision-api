@@ -50,7 +50,6 @@ data class DocumentData(
   val noFixedAbode: String? = null,
   val completedBy: PractitionerDetails = PractitionerDetails(),
   val supervisingPractitioner: PractitionerDetails = PractitionerDetails(),
-  val ppcsQueryEmails: List<String> = emptyList(),
   val revocationOrderRecipients: List<String> = emptyList(),
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
@@ -98,4 +97,5 @@ data class PractitionerDetails(
   val email: String = "",
   val region: String = "",
   val localDeliveryUnit: String = "",
+  val ppcsQueryEmails: List<String> = emptyList(),
 )
