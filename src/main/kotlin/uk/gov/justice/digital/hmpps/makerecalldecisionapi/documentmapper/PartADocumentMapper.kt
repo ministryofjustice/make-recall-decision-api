@@ -191,7 +191,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     recommendation: RecommendationResponse,
     flags: FeatureFlags,
   ): PractitionerDetails {
-    return if (flags.flagProbationAdmin) {
+    return if (flags.flagProbationAdmin && recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
       with(recommendation.practitionerForPartA) {
         val regionCode = this?.region ?: ""
         PractitionerDetails(
