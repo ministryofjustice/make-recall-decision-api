@@ -1245,16 +1245,63 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given ppcs query emails then show in the Part A`() {
+  @ParameterizedTest
+  @CsvSource(
+    "null",
+    "true",
+    "false",
+    nullValues = ["null"],
+  )
+  fun `given ppcs query emails and probationAdminFlag disabled then do not show emails in Q25`(isPersonProbationPractitionerForOffender: Boolean?) {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
+      val featureFlags = FeatureFlags(flagProbationAdmin = false)
       val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          isPersonProbationPractitionerForOffender = isPersonProbationPractitionerForOffender,
+        ),
         ppcsQueryEmails = emails,
       )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
-      assertThat(result.ppcsQueryEmails).hasSameElementsAs(emails)
+      assertThat(result.completedBy.ppcsQueryEmails).isEmpty()
+      assertThat(result.supervisingPractitioner.ppcsQueryEmails).isEmpty()
+    }
+  }
+
+  @Test
+  fun `given ppcs query emails and probationAdminFlag enabled and supervising practitioner completed the part A then show emails in Q25`() {
+    runTest {
+      val emails = listOf("test1@example.com", "test2@example.com")
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          isPersonProbationPractitionerForOffender = true,
+        ),
+        ppcsQueryEmails = emails,
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.completedBy.ppcsQueryEmails).hasSameElementsAs(emails)
+      assertThat(result.supervisingPractitioner.ppcsQueryEmails).isEmpty()
+    }
+  }
+
+  @Test
+  fun `given ppcs query emails and probationAdminFlag enabled and supervising practitioner did not complete the part A then show emails in Q26`() {
+    runTest {
+      val emails = listOf("test1@example.com", "test2@example.com")
+      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          isPersonProbationPractitionerForOffender = false,
+        ),
+        ppcsQueryEmails = emails,
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.completedBy.ppcsQueryEmails).isEmpty()
+      assertThat(result.supervisingPractitioner.ppcsQueryEmails).hasSameElementsAs(emails)
     }
   }
 

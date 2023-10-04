@@ -121,7 +121,6 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
       noFixedAbode = noFixedAbode,
       completedBy = determineCompletedBy(recommendation, metadata, flags),
       supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
-      ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = lastDownloadDate,
       timeOfDecision = lastDownloadTime,
@@ -174,6 +173,11 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
           email = this?.email ?: "",
           region = Regions.regionMap.getOrDefault(regionCode, regionCode),
           localDeliveryUnit = this?.localDeliveryUnit ?: "",
+          ppcsQueryEmails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender == true) {
+            recommendation.ppcsQueryEmails ?: emptyList()
+          } else {
+            emptyList()
+          },
         )
       }
     } else {
@@ -200,6 +204,7 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
           email = this?.email ?: "",
           region = Regions.regionMap.getOrDefault(regionCode, regionCode),
           localDeliveryUnit = this?.localDeliveryUnit ?: "",
+          ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
         )
       }
     } else {
