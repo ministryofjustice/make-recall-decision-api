@@ -19,21 +19,23 @@ class LicenceConditionsCoordinator {
       isCvlLicenceMoreOrAsRecent(nDeliusLicenceConditions, cvlLicenceConditions, hasAllConvictionsReleasedOnLicence)
     return SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence,
-      ndeliusLicenceConditions = nDeliusLicenceConditions,
+      ndeliusActiveConvictions = nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true },
       cvlLicenceCondition = if (onLicenceCvlWithLaterOrSameStartDate) cvlLicenceConditions.firstOrNull() else null,
     )
   }
 
   private fun hasAllConvictionsReleasedOnLicence(nDeliusLicenceConditions: LicenceConditions): Boolean {
-    log.info("LC Issue Logging::" + " number of active custodial convictions::" + nDeliusLicenceConditions.activeConvictions.size)
+    log.info("LC Issue Logging::" + " number of active convictions::" + nDeliusLicenceConditions.activeConvictions.size)
     nDeliusLicenceConditions.activeConvictions.forEach {
       log.info("LC Issue Logging::" + " active conviction number::" + nDeliusLicenceConditions.activeConvictions.indexOf(it))
       log.info("LC Issue Logging::" + " custodialStatusCode::" + it.sentence?.custodialStatusCode)
       log.info("LC Issue Logging::" + " isCustodial::" + it.sentence?.isCustodial)
     }
-    val hasAllConvictionsReleasedOnLicence = nDeliusLicenceConditions.activeConvictions.isNotEmpty() && nDeliusLicenceConditions.activeConvictions.all {
-      it.sentence?.isCustodial == true && it.sentence.custodialStatusCode == "B"
-    }
+    val hasAllConvictionsReleasedOnLicence = nDeliusLicenceConditions.activeConvictions.isNotEmpty() &&
+      nDeliusLicenceConditions.activeConvictions.any { it.sentence?.isCustodial == true } &&
+      nDeliusLicenceConditions.activeConvictions
+        .filter { it.sentence?.isCustodial == true }
+        .all { it.sentence?.custodialStatusCode == "B" }
     log.info("LC Issue Logging::" + " hasAllConvictionsReleasedOnLicence::" + hasAllConvictionsReleasedOnLicence)
     return hasAllConvictionsReleasedOnLicence
   }
@@ -57,6 +59,6 @@ class LicenceConditionsCoordinator {
 
 data class SelectedLicenceConditions(
   val hasAllConvictionsReleasedOnLicence: Boolean,
-  val ndeliusLicenceConditions: LicenceConditions,
+  val ndeliusActiveConvictions: List<LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
   val cvlLicenceCondition: LicenceConditionResponse? = null,
 )

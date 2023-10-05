@@ -31,7 +31,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
-      ndeliusLicenceConditions = noDeliusActiveLicenceConditions,
+      ndeliusActiveConvictions = listOf(singleActiveCustodialConvictionNotOnLicence),
       cvlLicenceCondition = null,
     )
 
@@ -54,7 +54,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
-      ndeliusLicenceConditions = noDeliusActiveLicenceConditions,
+      ndeliusActiveConvictions = emptyList(),
       cvlLicenceCondition = null,
     )
 
@@ -91,7 +91,12 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = listOf(
+        custodialConviction(
+          isCustodial = true,
+          custodialStatusCode = onLicenceStatusCode,
+        ).withLicenceConditions(licenceConditions),
+      ),
     )
 
     // when
@@ -115,24 +120,61 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2022-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2020-06-14"))),
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = notOnLicenceStatusCode,
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("3020-06-14"))),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2020-06-14"))),
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = notOnLicenceStatusCode,
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("3020-06-14"))),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
+    )
+
+    // when
+    val actual = licenceConditionsCoordinator.selectLicenceConditions(
+      nDeliusLicenceConditions = deliusLicenceConditions,
+      cvlLicenceConditions = cvlActiveLicenceConditions,
+    )
+
+    // then
+    assertThat(actual, equalTo(expected))
+  }
+
+  @Test
+  fun `ND licences with both 'custodial' and 'non-custodial' convictions present`() {
+    // given
+    val onLicenceStatusCode = "B"
+
+    // and
+    val cvlActiveLicenceConditions = expectedCvlLicenceConditionsResponse(
+      licenceStatus = "ACTIVE",
+      licenceStartDate = LocalDate.parse("2022-06-14"),
+    )
+    val custodialActiveConviction = custodialConviction(
+      isCustodial = true,
+      custodialStatusCode = onLicenceStatusCode,
+    ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("3020-06-14")))
+    val nonCustodialActiveConviction = custodialConviction(
+      isCustodial = false,
+      custodialStatusCode = onLicenceStatusCode,
+    ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2020-06-14")))
+    val activeConvictions = listOf(nonCustodialActiveConviction, custodialActiveConviction)
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
+
+    // and
+    val expected = SelectedLicenceConditions(
+      hasAllConvictionsReleasedOnLicence = true,
+      cvlLicenceCondition = null,
+      ndeliusActiveConvictions = listOf(custodialActiveConviction),
     )
 
     // when
@@ -155,20 +197,19 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2022-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(licenceConditions),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(licenceConditions),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -212,7 +253,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions.copy(activeConvictions = activeConvictionsWithMissingSentenceData),
+      ndeliusActiveConvictions = emptyList(),
     )
 
     // when
@@ -235,21 +276,20 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2022-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = false,
-          custodialStatusCode = onLicenceStatusCode,
-          licenceStartDate = LocalDate.parse("2020-06-14"),
-        ).withLicenceConditions(licenceConditions),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = false,
+        custodialStatusCode = onLicenceStatusCode,
+        licenceStartDate = LocalDate.parse("2020-06-14"),
+      ).withLicenceConditions(licenceConditions),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = emptyList(),
     )
 
     // when
@@ -272,21 +312,20 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2020-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-          licenceStartDate = LocalDate.parse("2022-06-14"),
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2022-06-14"))),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+        licenceStartDate = LocalDate.parse("2022-06-14"),
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2022-06-14"))),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -309,21 +348,20 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "NOT_ACTIVE",
       licenceStartDate = LocalDate.parse("2020-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-          licenceStartDate = LocalDate.parse("2022-06-14"),
-        ).withLicenceConditions(licenceConditions),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+        licenceStartDate = LocalDate.parse("2022-06-14"),
+      ).withLicenceConditions(licenceConditions),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -346,20 +384,19 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2022-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2022-06-14"))),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2022-06-14"))),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -382,20 +419,19 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStatus = "ACTIVE",
       licenceStartDate = LocalDate.parse("2028-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2026-06-14"))),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2026-06-14"))),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -414,20 +450,19 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val onLicenceStatusCode = "B"
 
     // and
-    val deliusResponseWithoutLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(emptyList()),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(emptyList()),
     )
+    val deliusResponseWithoutLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
-      ndeliusLicenceConditions = deliusResponseWithoutLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
@@ -451,20 +486,19 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
       licenceStartDate1 = LocalDate.parse("2028-06-14"),
       licenceStartDate2 = LocalDate.parse("1980-06-14"),
     )
-    val deliusLicenceConditions = deliusLicenceConditionsResponse(
-      listOf(
-        custodialConviction(
-          isCustodial = true,
-          custodialStatusCode = onLicenceStatusCode,
-        ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2026-06-14"))),
-      ),
+    val activeConvictions = listOf(
+      custodialConviction(
+        isCustodial = true,
+        custodialStatusCode = onLicenceStatusCode,
+      ).withLicenceConditions(deliusLicenceConditions(LocalDate.parse("2026-06-14"))),
     )
+    val deliusLicenceConditions = deliusLicenceConditionsResponse(activeConvictions)
 
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
-      ndeliusLicenceConditions = deliusLicenceConditions,
+      ndeliusActiveConvictions = activeConvictions,
     )
 
     // when
