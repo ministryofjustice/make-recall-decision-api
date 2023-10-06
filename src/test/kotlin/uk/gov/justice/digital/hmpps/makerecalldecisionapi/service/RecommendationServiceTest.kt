@@ -915,7 +915,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           },
         )
       given(deliusClient.getRecommendationModel(anyString()))
-        .willReturn(deliusRecommendationModelResponse(activeConvictions = listOf(custodialConviction("Extended Determinate Sentence"))))
+        .willReturn(deliusRecommendationModelResponse(activeConvictions = listOf(activeConviction("Extended Determinate Sentence"))))
 
       val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
 

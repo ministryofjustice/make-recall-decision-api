@@ -64,7 +64,7 @@ internal class LicenceConditionsService(
       LicenceConditionsResponse(
         hasAllConvictionsReleasedOnLicence = selectedLicenceConditions.hasAllConvictionsReleasedOnLicence,
         personalDetailsOverview = deliusLicenceConditions.personalDetails.toOverview(crn),
-        activeConvictions = deliusLicenceConditions.activeConvictions,
+        activeConvictions = selectedLicenceConditions.ndeliusActiveConvictions,
         activeRecommendation = recommendationDetails,
         cvlLicence = selectedLicenceConditions.cvlLicenceCondition,
       )

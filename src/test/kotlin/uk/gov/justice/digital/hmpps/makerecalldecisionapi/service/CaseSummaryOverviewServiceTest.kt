@@ -44,7 +44,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       given(deliusClient.getOverview(anyString())).willReturn(
         deliusOverviewResponse(
           activeConvictions = listOf(
-            custodialConviction(),
+            activeConviction(),
           ),
         ),
       )
@@ -266,7 +266,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val personalDetails = response.personalDetailsOverview!!
       val convictions = response.activeConvictions
       val dateOfBirth = LocalDate.parse("1982-10-24")
-      val age = dateOfBirth?.until(LocalDate.now())?.years
+      val age = dateOfBirth.until(LocalDate.now()).years
       val riskFlags = response.risk!!.flags
       val assessments = response.risk?.assessmentInfo
 
