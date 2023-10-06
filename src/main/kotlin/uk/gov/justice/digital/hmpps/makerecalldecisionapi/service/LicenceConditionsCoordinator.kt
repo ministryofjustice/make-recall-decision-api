@@ -14,7 +14,7 @@ class LicenceConditionsCoordinator {
     nDeliusLicenceConditions: LicenceConditions,
     cvlLicenceConditions: List<LicenceConditionResponse>,
   ): SelectedLicenceConditions {
-    val hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence(nDeliusLicenceConditions)
+    val hasAllConvictionsReleasedOnLicence = hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusLicenceConditions)
     val onLicenceCvlWithLaterOrSameStartDate =
       isCvlLicenceMoreOrAsRecent(nDeliusLicenceConditions, cvlLicenceConditions, hasAllConvictionsReleasedOnLicence)
     return SelectedLicenceConditions(
@@ -24,20 +24,12 @@ class LicenceConditionsCoordinator {
     )
   }
 
-  private fun hasAllConvictionsReleasedOnLicence(nDeliusLicenceConditions: LicenceConditions): Boolean {
-    log.info("LC Issue Logging::" + " number of active convictions::" + nDeliusLicenceConditions.activeConvictions.size)
-    nDeliusLicenceConditions.activeConvictions.forEach {
-      log.info("LC Issue Logging::" + " active conviction number::" + nDeliusLicenceConditions.activeConvictions.indexOf(it))
-      log.info("LC Issue Logging::" + " custodialStatusCode::" + it.sentence?.custodialStatusCode)
-      log.info("LC Issue Logging::" + " isCustodial::" + it.sentence?.isCustodial)
-    }
-    val hasAllConvictionsReleasedOnLicence = nDeliusLicenceConditions.activeConvictions.isNotEmpty() &&
-      nDeliusLicenceConditions.activeConvictions.any { it.sentence?.isCustodial == true } &&
+  private fun hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusLicenceConditions: LicenceConditions): Boolean {
+    val hasAtLeastOneActiveCustodialConviction = nDeliusLicenceConditions.activeConvictions.isNotEmpty() && nDeliusLicenceConditions.activeConvictions.any { it.sentence?.isCustodial == true }
+    return hasAtLeastOneActiveCustodialConviction &&
       nDeliusLicenceConditions.activeConvictions
-        .filter { it.sentence?.isCustodial == true }
-        .all { it.sentence?.custodialStatusCode == "B" }
-    log.info("LC Issue Logging::" + " hasAllConvictionsReleasedOnLicence::" + hasAllConvictionsReleasedOnLicence)
-    return hasAllConvictionsReleasedOnLicence
+        .filter { activeConvictions -> activeConvictions.sentence?.isCustodial == true }
+        .all { activeCustodialConvictions -> activeCustodialConvictions.sentence?.custodialStatusCode == "B" }
   }
 
   private fun isCvlLicenceMoreOrAsRecent(
