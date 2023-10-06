@@ -379,11 +379,10 @@ internal abstract class ServiceTestBase {
     )
   }
 
-  protected fun custodialConviction(
+  protected fun activeConviction(
     description: String = "CJA - Extended Sentence",
     isCustodial: Boolean = true,
     custodialStatusCode: String? = "ABC123",
-    licenceStartDate: LocalDate? = null,
   ): DeliusClient.Conviction {
     return DeliusClient.Conviction(
       number = "1",
@@ -647,7 +646,7 @@ internal abstract class ServiceTestBase {
   }
 
   protected fun deliusRecommendationModelResponse(
-    activeConvictions: List<DeliusClient.Conviction> = listOf(custodialConviction(), nonCustodialConviction()),
+    activeConvictions: List<DeliusClient.Conviction> = listOf(activeConviction(), nonCustodialConviction()),
     mappa: DeliusClient.Mappa? = DeliusClient.Mappa(
       category = 0,
       level = 1,
@@ -682,7 +681,7 @@ internal abstract class ServiceTestBase {
     mappa = mappa,
     activeConvictions = activeConvictions,
     activeCustodialConvictions = listOf(
-      custodialConviction().let {
+      activeConviction().let {
         RecommendationModel.ConvictionDetails(
           number = it.number,
           sentence = it.sentence!!.let { sentence ->
@@ -866,7 +865,7 @@ internal abstract class ServiceTestBase {
       firstName = "John",
       surname = "Smith",
       dateOfBirth = dateOfBirth,
-      age = dateOfBirth?.until(LocalDate.now())?.years,
+      age = dateOfBirth.until(LocalDate.now()).years,
       gender = "Male",
       crn = "12345",
       ethnicity = "Ainu",
