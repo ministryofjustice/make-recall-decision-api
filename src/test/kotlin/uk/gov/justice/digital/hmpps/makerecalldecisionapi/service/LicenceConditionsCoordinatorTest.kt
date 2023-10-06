@@ -31,6 +31,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
+      ndeliusActiveCustodialConvictions = listOf(singleActiveCustodialConvictionNotOnLicence),
       ndeliusActiveConvictions = listOf(singleActiveCustodialConvictionNotOnLicence),
       cvlLicenceCondition = null,
     )
@@ -54,6 +55,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     // and
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
+      ndeliusActiveCustodialConvictions = emptyList(),
       ndeliusActiveConvictions = emptyList(),
       cvlLicenceCondition = null,
     )
@@ -91,6 +93,12 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = listOf(
+        custodialConviction(
+          isCustodial = true,
+          custodialStatusCode = onLicenceStatusCode,
+        ).withLicenceConditions(licenceConditions),
+      ),
       ndeliusActiveConvictions = listOf(
         custodialConviction(
           isCustodial = true,
@@ -136,6 +144,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -174,6 +183,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = listOf(custodialActiveConviction),
       ndeliusActiveConvictions = listOf(custodialActiveConviction),
     )
 
@@ -213,6 +223,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = listOf(custodialActiveConviction),
       ndeliusActiveConvictions = listOf(custodialActiveConviction),
     )
 
@@ -252,6 +263,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = listOf(custodialActiveConviction),
       ndeliusActiveConvictions = listOf(custodialActiveConviction),
     )
 
@@ -291,6 +303,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = listOf(custodialActiveConviction),
       ndeliusActiveConvictions = listOf(custodialActiveConviction),
     )
 
@@ -326,6 +339,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -370,6 +384,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = emptyList(),
       ndeliusActiveConvictions = emptyList(),
     )
 
@@ -406,6 +421,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = false,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = emptyList(),
       ndeliusActiveConvictions = emptyList(),
     )
 
@@ -442,6 +458,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -478,6 +495,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -513,6 +531,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -548,6 +567,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -579,6 +599,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = null,
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 
@@ -615,6 +636,7 @@ internal class LicenceConditionsCoordinatorTest : ServiceTestBase() {
     val expected = SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = true,
       cvlLicenceCondition = cvlActiveLicenceConditions.first(),
+      ndeliusActiveCustodialConvictions = activeConvictions,
       ndeliusActiveConvictions = activeConvictions,
     )
 

@@ -11,31 +11,38 @@ class LicenceConditionsCoordinator {
     nDeliusLicenceConditions: LicenceConditions,
     cvlLicenceConditions: List<LicenceConditionResponse>,
   ): SelectedLicenceConditions {
-    val hasAllConvictionsReleasedOnLicence = hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusLicenceConditions)
+    val nDeliusActiveCustodialConvictions =
+      nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true }
+    val hasAllConvictionsReleasedOnLicence =
+      hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusActiveCustodialConvictions)
     val onLicenceCvlWithLaterOrSameStartDate =
-      isCvlLicenceMoreOrAsRecent(nDeliusLicenceConditions, cvlLicenceConditions, hasAllConvictionsReleasedOnLicence)
+      isCvlLicenceMoreOrAsRecent(
+        cvlLicenceConditions,
+        nDeliusActiveCustodialConvictions,
+        hasAllConvictionsReleasedOnLicence,
+      )
     return SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence,
-      ndeliusActiveConvictions = nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true },
+      ndeliusActiveConvictions = nDeliusActiveCustodialConvictions,
+      ndeliusActiveCustodialConvictions = nDeliusActiveCustodialConvictions,
       cvlLicenceCondition = if (onLicenceCvlWithLaterOrSameStartDate) cvlLicenceConditions.firstOrNull() else null,
     )
   }
 
-  private fun hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusLicenceConditions: LicenceConditions): Boolean {
-    val activeCustodial = nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true }
-    return activeCustodial.isNotEmpty() &&
-      activeCustodial.all { it.sentence?.custodialStatusCode == "B" }
+  private fun hasAllActiveCustodialConvictionsReleasedOnLicence(activeCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions>): Boolean {
+    return activeCustodialConvictions.isNotEmpty() &&
+      activeCustodialConvictions.all { it.sentence?.custodialStatusCode == "B" }
   }
 
   private fun isCvlLicenceMoreOrAsRecent(
-    nDeliusLicenceConditions: LicenceConditions,
     cvlLicenceConditions: List<LicenceConditionResponse>,
+    activeCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions>,
     onLicence: Boolean,
   ): Boolean {
     val cvlLicenceStartDates =
       cvlLicenceConditions.filter { it.licenceStatus == "ACTIVE" }.mapNotNull { it.licenceStartDate }.sortedDescending()
 
-    val cvlLicenceMoreRecent = nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true }
+    val cvlLicenceMoreRecent = activeCustodialConvictions
       .flatMap { it.licenceConditions }.map { it.startDate }.all {
         cvlLicenceStartDates.isNotEmpty() &&
           (it.isBefore(cvlLicenceStartDates[0]) || it.isEqual(cvlLicenceStartDates[0]))
@@ -46,6 +53,8 @@ class LicenceConditionsCoordinator {
 
 data class SelectedLicenceConditions(
   val hasAllConvictionsReleasedOnLicence: Boolean,
+  val ndeliusActiveCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
+  @Deprecated("This contains active custodial convictions and is replaced by ndeliusActiveCustodialConvictions")
   val ndeliusActiveConvictions: List<LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
   val cvlLicenceCondition: LicenceConditionResponse? = null,
 )
