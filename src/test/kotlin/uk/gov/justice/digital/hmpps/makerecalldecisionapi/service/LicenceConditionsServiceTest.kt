@@ -44,7 +44,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       given(deliusClient.getLicenceConditions(anyString())).willReturn(
         deliusLicenceConditionsResponse(
           listOf(
-            custodialConviction().withLicenceConditions(licenceConditions),
+            activeConviction().withLicenceConditions(licenceConditions),
           ),
         ),
       )
@@ -184,7 +184,7 @@ internal class LicenceConditionsServiceTest : ServiceTestBase() {
       given(deliusClient.getLicenceConditions(anyString())).willReturn(
         deliusLicenceConditionsResponse(
           listOf(
-            custodialConviction().withLicenceConditions(emptyList()),
+            activeConviction().withLicenceConditions(emptyList()),
           ),
         ),
       )
