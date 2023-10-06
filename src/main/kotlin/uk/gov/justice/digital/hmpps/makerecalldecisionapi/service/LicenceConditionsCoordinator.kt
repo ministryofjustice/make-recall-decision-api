@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.LicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LicenceConditionResponse
 
 @Service
 class LicenceConditionsCoordinator {
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
+
   internal fun selectLicenceConditions(
     nDeliusLicenceConditions: LicenceConditions,
     cvlLicenceConditions: List<LicenceConditionResponse>,
@@ -25,11 +22,9 @@ class LicenceConditionsCoordinator {
   }
 
   private fun hasAllActiveCustodialConvictionsReleasedOnLicence(nDeliusLicenceConditions: LicenceConditions): Boolean {
-    val hasAtLeastOneActiveCustodialConviction = nDeliusLicenceConditions.activeConvictions.isNotEmpty() && nDeliusLicenceConditions.activeConvictions.any { it.sentence?.isCustodial == true }
-    return hasAtLeastOneActiveCustodialConviction &&
-      nDeliusLicenceConditions.activeConvictions
-        .filter { activeConvictions -> activeConvictions.sentence?.isCustodial == true }
-        .all { activeCustodialConvictions -> activeCustodialConvictions.sentence?.custodialStatusCode == "B" }
+    val activeCustodial = nDeliusLicenceConditions.activeConvictions.filter { it.sentence?.isCustodial == true }
+    return activeCustodial.isNotEmpty() &&
+      activeCustodial.all { it.sentence?.custodialStatusCode == "B" }
   }
 
   private fun isCvlLicenceMoreOrAsRecent(
