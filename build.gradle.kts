@@ -33,7 +33,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.1.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.11.4")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.11.5")
   implementation("io.opentelemetry:opentelemetry-api:1.31.0")
   implementation("joda-time:joda-time:2.12.5")
   implementation("com.deepoove:poi-tl:1.12.1") {
@@ -79,10 +79,10 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.80")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.80")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.80")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.80")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.81")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.81")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.81")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.81")
 }
 
 java {
