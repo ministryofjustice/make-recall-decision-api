@@ -23,7 +23,6 @@ class LicenceConditionsCoordinator {
       )
     return SelectedLicenceConditions(
       hasAllConvictionsReleasedOnLicence = hasAllConvictionsReleasedOnLicence,
-      ndeliusActiveConvictions = nDeliusActiveCustodialConvictions,
       ndeliusActiveCustodialConvictions = nDeliusActiveCustodialConvictions,
       cvlLicenceCondition = if (onLicenceCvlWithLaterOrSameStartDate) cvlLicenceConditions.firstOrNull() else null,
     )
@@ -54,7 +53,5 @@ class LicenceConditionsCoordinator {
 data class SelectedLicenceConditions(
   val hasAllConvictionsReleasedOnLicence: Boolean,
   val ndeliusActiveCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
-  @Deprecated("This contains active custodial convictions and is replaced by ndeliusActiveCustodialConvictions")
-  val ndeliusActiveConvictions: List<LicenceConditions.ConvictionWithLicenceConditions> = emptyList(),
   val cvlLicenceCondition: LicenceConditionResponse? = null,
 )
