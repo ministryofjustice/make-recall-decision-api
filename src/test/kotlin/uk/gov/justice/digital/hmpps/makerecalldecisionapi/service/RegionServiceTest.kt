@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.BDDMockito.given
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RegionNotFoundException
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -55,7 +55,7 @@ internal class RegionServiceTest : ServiceTestBase() {
     runTest {
       val regionCode = "Unrecognised"
       given(deliusClient.getProvider(regionCode))
-        .willThrow(PersonNotFoundException("Intentional Test exception"))
+        .willThrow(RegionNotFoundException("Intentional Test exception"))
 
       val response = regionService.getRegionName(regionCode)
 

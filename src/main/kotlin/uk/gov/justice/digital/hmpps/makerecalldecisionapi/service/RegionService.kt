@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RegionNotFoundException
 
 @Service
 internal class RegionService(
@@ -22,7 +22,7 @@ internal class RegionService(
     return try {
       // Regions are called Providers in Delius
       deliusClient.getProvider(regionCode).name
-    } catch (ex: PersonNotFoundException) {
+    } catch (ex: RegionNotFoundException) {
       log.warn("Unrecognised region code '$regionCode'")
       regionCode
     }

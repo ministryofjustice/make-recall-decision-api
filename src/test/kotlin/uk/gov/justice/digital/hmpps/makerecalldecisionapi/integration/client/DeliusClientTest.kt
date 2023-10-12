@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RegionNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
@@ -49,5 +50,15 @@ class DeliusClientTest : IntegrationTestBase() {
     val provider = deliusClient.getProvider(code)
     assertThat(provider.code).isEqualTo(code)
     assertThat(provider.name).isEqualTo(name)
+  }
+
+  @Test
+  fun `given unrecognised region code when getProvider is called then RegionNotFoundException is thrown`() {
+    val code = "Unrecognised"
+    providerNotFoundResponse(code)
+    assertThatThrownBy {
+      deliusClient.getProvider(code)
+    }.isInstanceOf(RegionNotFoundException::class.java)
+      .hasMessage("No details available for endpoint: /provider/Unrecognised")
   }
 }
