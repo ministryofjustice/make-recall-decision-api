@@ -59,6 +59,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.providerResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
@@ -518,6 +519,15 @@ abstract class IntegrationTestBase {
       request().withPath("/user/$username")
     deliusIntegration.`when`(userResponse, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON).withBody(userResponseJson(username, email))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun providerByCodeResponse(code: String, name: String, delaySeconds: Long = 0) {
+    val request =
+      request().withPath("/provider/$code")
+    deliusIntegration.`when`(request, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(providerResponse(code, name))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

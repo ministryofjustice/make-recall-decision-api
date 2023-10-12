@@ -40,4 +40,14 @@ class DeliusClientTest : IntegrationTestBase() {
     val userDetails = deliusClient.getUserInfo("fred")
     assertThat(userDetails.email).isEqualTo("test@digital.justice.gov.uk")
   }
+
+  @Test
+  fun `fetch provider details`() {
+    val code = "A11"
+    val name = "Provider Name"
+    providerByCodeResponse(code, name)
+    val provider = deliusClient.getProvider(code)
+    assertThat(provider.code).isEqualTo(code)
+    assertThat(provider.name).isEqualTo(name)
+  }
 }
