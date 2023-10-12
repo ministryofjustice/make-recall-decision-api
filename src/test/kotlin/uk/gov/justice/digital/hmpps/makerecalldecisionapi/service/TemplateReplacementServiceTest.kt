@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.BDDMockito
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
@@ -118,6 +118,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   )
   fun `given recommendation data and probationAdmin flag is enabled then build the document`(documentType: DocumentType) {
     runTest {
+      given(mockRegionService.getRegionName("RegionCode1"))
+        .willReturn("Region Name 1")
+      given(mockRegionService.getRegionName("RegionCode2"))
+        .willReturn("Region Name 2")
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
@@ -140,7 +144,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         signedByParagraph = "Signed by",
       )
 
-      BDDMockito.given(decisionNotToRecallLetterDocumentMapperMocked.mapRecommendationDataToDocumentData(recommendation))
+      given(decisionNotToRecallLetterDocumentMapperMocked.mapRecommendationDataToDocumentData(recommendation))
         .willReturn(documentData)
 
       val letterContent = TemplateReplacementService(
@@ -688,7 +692,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           name = "Colin Completed",
           telephone = "1111111111",
           email = "completed@example.com",
-          region = "N53",
+          region = "RegionCode1",
           localDeliveryUnit = "Completed LDU",
           isPersonProbationPractitionerForOffender = false,
         )
@@ -700,7 +704,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           name = "Sally Supervising",
           telephone = "2222222222",
           email = "supervising@example.com",
-          region = "N50",
+          region = "RegionCode2",
           localDeliveryUnit = "Supervising LDU",
         )
       } else {
@@ -710,7 +714,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   }
 
   private fun createRecommendationMetaData(): RecommendationMetaData {
-    val metadata = RecommendationMetaData(
+    return RecommendationMetaData(
       acoCounterSignEmail = "jane-the-aco@bla.com",
       spoCounterSignEmail = "john-the-spo@bla.com",
       countersignSpoName = "Spo Name",
@@ -721,7 +725,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignSpoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
       userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London")),
     )
-    return metadata
   }
 
   private fun documentData(): DocumentData {
