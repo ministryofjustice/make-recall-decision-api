@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/provider/N07"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "provider-london.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
