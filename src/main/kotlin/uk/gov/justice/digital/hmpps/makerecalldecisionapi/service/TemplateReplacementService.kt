@@ -49,7 +49,7 @@ internal class TemplateReplacementService(
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper,
 ) {
 
-  fun generateDocFromRecommendation(
+  suspend fun generateDocFromRecommendation(
     recommendation: RecommendationResponse,
     documentType: DocumentType,
     metaData: RecommendationMetaData,

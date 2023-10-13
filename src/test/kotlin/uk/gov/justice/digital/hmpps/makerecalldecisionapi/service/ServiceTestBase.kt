@@ -72,6 +72,9 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var mockPersonDetailService: PersonDetailsService
 
+  @Mock
+  protected lateinit var mockRegionService: RegionService
+
   protected lateinit var personDetailsService: PersonDetailsService
 
   protected lateinit var createAndVaryALicenceService: CreateAndVaryALicenceService
@@ -90,9 +93,9 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var templateReplacementService: TemplateReplacementService
 
-  protected lateinit var partADocumentMapper: PartADocumentMapper
+  private lateinit var partADocumentMapper: PartADocumentMapper
 
-  protected lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+  private lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 
   protected val crn = "12345"
 
@@ -102,7 +105,7 @@ internal abstract class ServiceTestBase {
   fun userValidatorSetup() {
     SecurityContextHolder.setContext(SecurityContextImpl(TestingAuthenticationToken(username, "password")))
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(personDetailsResponse())
-    partADocumentMapper = PartADocumentMapper()
+    partADocumentMapper = PartADocumentMapper(mockRegionService)
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(deliusClient)
     templateReplacementService =

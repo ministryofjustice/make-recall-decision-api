@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceCondition
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RegionNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
 import java.time.Duration
 import java.time.LocalDate
@@ -33,6 +34,8 @@ class DeliusClient(
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
   fun getUserInfo(name: String): UserInfo = getBody("/user/$name")
+
+  fun getProvider(code: String): Provider = getBody("/provider/$code") { RegionNotFoundException(it) }
 
   fun getOverview(crn: String): Overview = getBody("/case-summary/$crn/overview")
 
@@ -62,14 +65,20 @@ class DeliusClient(
 
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
-  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id")
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> =
+    get("/document/$crn/$id") { PersonNotFoundException(it) }
 
-  private inline fun <reified T : Any> getBody(endpoint: String, parameters: Map<String, List<Any>> = emptyMap()) =
-    get<T>(endpoint, parameters).body!!
+  private inline fun <reified T : Any> getBody(
+    endpoint: String,
+    parameters: Map<String, List<Any>> = emptyMap(),
+    crossinline notFoundExceptionFunction: (String) -> Throwable = { PersonNotFoundException(it) },
+  ) =
+    get<T>(endpoint, parameters, notFoundExceptionFunction).body!!
 
   private inline fun <reified T : Any> get(
     endpoint: String,
     parameters: Map<String, List<Any>> = emptyMap(),
+    crossinline notFoundExceptionFunction: (String) -> Throwable,
   ): ResponseEntity<T> {
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
@@ -79,7 +88,7 @@ class DeliusClient(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw PersonNotFoundException("No details available for endpoint: $endpoint") },
+        { throw notFoundExceptionFunction("No details available for endpoint: $endpoint") },
       )
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
@@ -154,6 +163,11 @@ class DeliusClient(
     val email: String? = null,
   )
 
+  data class Provider(
+    val code: String = "",
+    val name: String = "",
+  )
+
   data class PersonalDetails(
     val personalDetails: PersonalDetailsOverview,
     val mainAddress: Address?,
@@ -209,11 +223,6 @@ class DeliusClient(
       val mainOffence: Offence,
       val additionalOffences: List<Offence>,
       val licenceConditions: List<LicenceCondition>,
-    )
-
-    data class LicenceConditionCategory(
-      val code: String,
-      val description: String,
     )
   }
 

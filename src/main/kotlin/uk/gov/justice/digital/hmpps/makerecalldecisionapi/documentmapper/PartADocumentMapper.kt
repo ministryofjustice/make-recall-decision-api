@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationMetaData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
@@ -30,9 +31,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import java.time.LocalDate
 
 @Component
-class PartADocumentMapper : RecommendationDataToDocumentMapper() {
+internal class PartADocumentMapper(
+  private val regionService: RegionService,
+) : RecommendationDataToDocumentMapper() {
 
-  fun mapRecommendationDataToDocumentData(
+  suspend fun mapRecommendationDataToDocumentData(
     recommendation: RecommendationResponse,
     metadata: RecommendationMetaData,
     flags: FeatureFlags = FeatureFlags(),
@@ -159,19 +162,18 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     )
   }
 
-  private fun determineCompletedBy(
+  private suspend fun determineCompletedBy(
     recommendation: RecommendationResponse,
     metadata: RecommendationMetaData,
     flags: FeatureFlags,
   ): PractitionerDetails {
     if (flags.flagProbationAdmin) {
       with(recommendation.whoCompletedPartA) {
-        val regionCode = this?.region ?: ""
         return PractitionerDetails(
           name = this?.name ?: "",
           telephone = this?.telephone ?: "",
           email = this?.email ?: "",
-          region = Regions.regionMap.getOrDefault(regionCode, regionCode),
+          region = regionService.getRegionName(this?.region),
           localDeliveryUnit = this?.localDeliveryUnit ?: "",
           ppcsQueryEmails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender == true) {
             recommendation.ppcsQueryEmails ?: emptyList()
@@ -191,18 +193,17 @@ class PartADocumentMapper : RecommendationDataToDocumentMapper() {
     }
   }
 
-  private fun determineSupervisingPractitioner(
+  private suspend fun determineSupervisingPractitioner(
     recommendation: RecommendationResponse,
     flags: FeatureFlags,
   ): PractitionerDetails {
     return if (flags.flagProbationAdmin && recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
       with(recommendation.practitionerForPartA) {
-        val regionCode = this?.region ?: ""
         PractitionerDetails(
           name = this?.name ?: "",
           telephone = this?.telephone ?: "",
           email = this?.email ?: "",
-          region = Regions.regionMap.getOrDefault(regionCode, regionCode),
+          region = regionService.getRegionName(this?.region),
           localDeliveryUnit = this?.localDeliveryUnit ?: "",
           ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
         )
