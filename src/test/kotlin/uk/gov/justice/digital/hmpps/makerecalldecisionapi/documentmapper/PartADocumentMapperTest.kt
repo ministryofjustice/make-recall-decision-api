@@ -5,8 +5,13 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.given
+import org.mockito.Mock
+import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
@@ -43,6 +48,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationMetaData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.WHITE_SPACE
@@ -51,13 +57,17 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 @ExperimentalCoroutinesApi
+@ExtendWith(MockitoExtension::class)
 class PartADocumentMapperTest {
 
   private lateinit var partADocumentMapper: PartADocumentMapper
 
+  @Mock
+  private lateinit var regionService: RegionService
+
   @BeforeEach
   fun setup() {
-    partADocumentMapper = PartADocumentMapper()
+    partADocumentMapper = PartADocumentMapper(regionService)
   }
 
   @ParameterizedTest(name = "given custody status {0} in recommendation data should map to the part A text {1}")
@@ -1115,14 +1125,18 @@ class PartADocumentMapperTest {
   fun `given probationAdmin flag is enabled then Q25 mappings include who completed Part A details`() {
     runTest {
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      given(regionService.getRegionName("RegionCode"))
+        .willReturn("Region Name")
       val recommendation = RecommendationResponse(
-        region = "Incorrect regions",
+        region = "Incorrect region",
         localDeliveryUnit = "Incorrect LDU",
         whoCompletedPartA = WhoCompletedPartA(
           name = "Bruce Wayne",
           telephone = "0123456789",
           email = "bw@example.com",
-          region = "N54",
+          region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 1",
         ),
       )
@@ -1136,33 +1150,8 @@ class PartADocumentMapperTest {
       assertThat(result.completedBy.name).isEqualTo("Bruce Wayne")
       assertThat(result.completedBy.telephone).isEqualTo("0123456789")
       assertThat(result.completedBy.email).isEqualTo("bw@example.com")
-      assertThat(result.completedBy.region).isEqualTo("North East")
+      assertThat(result.completedBy.region).isEqualTo("Region Name")
       assertThat(result.completedBy.localDeliveryUnit).isEqualTo("Delivery Unit 1")
-    }
-  }
-
-  @ParameterizedTest
-  @CsvSource(
-    "UnrecognisedCode,UnrecognisedCode",
-    "N50,Greater Manchester",
-    ",''",
-    "'',''",
-  )
-  fun `given probationAdmin flag is enabled then Q25 mappings map region for who completed Part A`(
-    region: String?,
-    expectedRegion: String,
-  ) {
-    runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
-      val recommendation = RecommendationResponse(
-        whoCompletedPartA = WhoCompletedPartA(
-          region = region,
-        ),
-      )
-
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
-
-      assertThat(result.completedBy.region).isEqualTo(expectedRegion)
     }
   }
 
@@ -1170,6 +1159,10 @@ class PartADocumentMapperTest {
   fun `given probationAdmin flag is enabled and person who completed is not supervising practitioner then Q26 mappings contain supervising practitioner details`() {
     runTest {
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      given(regionService.getRegionName("RegionCode"))
+        .willReturn("Region Name")
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
           isPersonProbationPractitionerForOffender = false,
@@ -1178,7 +1171,7 @@ class PartADocumentMapperTest {
           name = "Clark Kent",
           telephone = "0123456789",
           email = "ck@example.com",
-          region = "N55",
+          region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 2",
         ),
       )
@@ -1188,7 +1181,7 @@ class PartADocumentMapperTest {
       assertThat(result.supervisingPractitioner.name).isEqualTo("Clark Kent")
       assertThat(result.supervisingPractitioner.telephone).isEqualTo("0123456789")
       assertThat(result.supervisingPractitioner.email).isEqualTo("ck@example.com")
-      assertThat(result.supervisingPractitioner.region).isEqualTo("Yorkshire and the Humber")
+      assertThat(result.supervisingPractitioner.region).isEqualTo("Region Name")
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo("Delivery Unit 2")
     }
   }
@@ -1197,6 +1190,8 @@ class PartADocumentMapperTest {
   fun `given probationAdmin flag is enabled and person who completed is the supervising practitioner then Q26 mappings are empty`() {
     runTest {
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
           isPersonProbationPractitionerForOffender = true,
@@ -1205,7 +1200,7 @@ class PartADocumentMapperTest {
           name = "Clark Kent",
           telephone = "0123456789",
           email = "ck@example.com",
-          region = "N55",
+          region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 2",
         ),
       )
@@ -1222,37 +1217,14 @@ class PartADocumentMapperTest {
 
   @ParameterizedTest
   @CsvSource(
-    "UnrecognisedCode,UnrecognisedCode",
-    "N53,East Midlands",
-    ",''",
-    "'',''",
-  )
-  fun `given probationAdmin flag is enabled then Q26 mappings map region for supervising practitioner`(
-    region: String?,
-    expectedRegion: String,
-  ) {
-    runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
-      val recommendation = RecommendationResponse(
-        practitionerForPartA = PractitionerForPartA(
-          region = region,
-        ),
-      )
-
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
-
-      assertThat(result.supervisingPractitioner.region).isEqualTo(expectedRegion)
-    }
-  }
-
-  @ParameterizedTest
-  @CsvSource(
     "null",
     "true",
     "false",
     nullValues = ["null"],
   )
-  fun `given ppcs query emails and probationAdminFlag disabled then do not show emails in Q25`(isPersonProbationPractitionerForOffender: Boolean?) {
+  fun `given ppcs query emails and probationAdminFlag disabled then do not show emails in Q25`(
+    isPersonProbationPractitionerForOffender: Boolean?,
+  ) {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
       val featureFlags = FeatureFlags(flagProbationAdmin = false)
@@ -1273,6 +1245,8 @@ class PartADocumentMapperTest {
   fun `given ppcs query emails and probationAdminFlag enabled and supervising practitioner completed the part A then show emails in Q25`() {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
+      given(regionService.getRegionName(any()))
+        .willReturn("")
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
@@ -1292,6 +1266,8 @@ class PartADocumentMapperTest {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
       val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      given(regionService.getRegionName(any()))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
           isPersonProbationPractitionerForOffender = false,

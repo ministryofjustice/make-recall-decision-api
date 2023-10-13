@@ -59,6 +59,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.personalDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.providerResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
@@ -76,7 +77,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
 
-  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   lateinit var webTestClient: WebTestClient
 
@@ -522,6 +522,22 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun providerByCodeResponse(code: String, name: String, delaySeconds: Long = 0) {
+    val request = request().withPath("/provider/$code")
+    deliusIntegration.`when`(request, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON).withBody(providerResponse(code, name))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  @Suppress("SameParameterValue")
+  protected fun providerNotFoundResponse(code: String) {
+    val request = request().withPath("/provider/$code")
+    deliusIntegration.`when`(request, exactly(1)).respond(
+      response().withStatusCode(404),
+    )
+  }
+
   protected fun multipleLicenceConditionsResponse(crn: String, delaySeconds: Long = 0) {
     val licenceConditions =
       request().withPath("/case-summary/$crn/licence-conditions")
@@ -579,6 +595,7 @@ abstract class IntegrationTestBase {
     )
   }
 
+  @Suppress("SameParameterValue")
   protected fun personalDetailsError(crn: String) {
     val personalDetails =
       request().withPath("/case-summary/$crn/personal-details")
@@ -805,6 +822,7 @@ abstract class IntegrationTestBase {
     )
   }
 
+  @Suppress("SameParameterValue")
   protected fun cvlLicenceByIdResponseThrowsException(licenceId: Int) {
     val licenceIdRequesst =
       request().withPath("/licence/id/$licenceId")
