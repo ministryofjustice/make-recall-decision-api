@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/provider/.*"
+    "urlPathPattern": "/provider/N58"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "provider.json",
+    "bodyFileName": "provider-south-west.json",
     "headers": {
       "Content-Type": "application/json"
     }

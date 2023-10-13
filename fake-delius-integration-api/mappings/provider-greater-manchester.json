@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/provider/N50"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "provider-greater-manchester.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

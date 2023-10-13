@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/provider/N03"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "provider-wales.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
