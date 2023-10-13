@@ -47,8 +47,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core:9.22.3")
   implementation("org.postgresql:postgresql:42.6.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:6.30.0")
-  implementation("io.sentry:sentry-logback:6.30.0")
+  implementation("io.sentry:sentry-spring-boot-starter:6.31.0")
+  implementation("io.sentry:sentry-logback:6.31.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
@@ -79,10 +79,10 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.81")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.81")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.81")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.81")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.82")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.82")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.82")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.82")
 }
 
 java {
