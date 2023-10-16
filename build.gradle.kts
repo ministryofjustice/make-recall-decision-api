@@ -69,7 +69,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
 
-  testImplementation("io.jsonwebtoken:jjwt:0.12.2")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.3")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:9.5.0")
 
