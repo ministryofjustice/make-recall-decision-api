@@ -16,6 +16,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -744,6 +745,27 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.initiationDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.lastUpdatedDate).isEqualTo("2022-10-02T14:20:27.000Z")
       assertThat(response.assessmentStatusComplete).isEqualTo(true)
+    }
+  }
+
+  @Test
+  fun `given a null sequence of Risk Management Plans when getting the latest then empty plan is returned`() {
+    runTest {
+      val riskManagementResponse = RiskManagementResponse(
+        crn = crn,
+        limitedAccessOffender = true,
+        riskManagementPlan = null,
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse
+          },
+        )
+
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response).isEqualTo(RiskManagementPlan(assessmentStatusComplete = false))
     }
   }
 
