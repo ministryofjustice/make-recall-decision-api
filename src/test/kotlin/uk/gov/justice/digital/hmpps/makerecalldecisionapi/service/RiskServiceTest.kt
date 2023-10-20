@@ -16,12 +16,14 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
@@ -430,7 +432,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.fetchAssessmentInfo(crn, convictions)
 
       // then
-      val shouldBeFalseBecauseLaterCompleteAssessmentExists = response?.offenceDataFromLatestCompleteAssessment
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(false)
@@ -584,7 +585,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       val currentScores = response.predictorScores?.current
 
       val dateOfBirth = LocalDate.parse("1982-10-24")
-      val age = dateOfBirth?.until(LocalDate.now())?.years
+      val age = dateOfBirth.until(LocalDate.now()).years
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)
       assertThat(personalDetails.gender).isEqualTo("Male")
@@ -662,7 +663,11 @@ internal class RiskServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RiskResponse(
-            userAccessResponse(true, false, false).copy(restrictionMessage = null),
+            userAccessResponse(
+              excluded = true,
+              restricted = false,
+              userNotFound = false,
+            ).copy(restrictionMessage = null),
             null,
             null,
             null,
@@ -686,7 +691,8 @@ internal class RiskServiceTest : ServiceTestBase() {
         response,
         equalTo(
           RiskResponse(
-            userAccessResponse(false, false, true).copy(exclusionMessage = null, restrictionMessage = null),
+            userAccessResponse(excluded = false, restricted = false, userNotFound = true)
+              .copy(exclusionMessage = null, restrictionMessage = null),
             null,
             null,
             null,
@@ -697,7 +703,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
-  @ParameterizedTest()
+  @ParameterizedTest
   @CsvSource(
     "COMPLETE, true",
     "INCOMPLETE, false",
@@ -742,6 +748,92 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  @Test
+  fun `given a null sequence of Risk Management Plans when getting the latest then empty plan is returned`() {
+    runTest {
+      val riskManagementResponse = RiskManagementResponse(
+        crn = crn,
+        limitedAccessOffender = true,
+        riskManagementPlan = null,
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse
+          },
+        )
+
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response).isEqualTo(RiskManagementPlan(assessmentStatusComplete = false))
+    }
+  }
+
+  @Test
+  fun `given a single plan with null initiationDate when getting risk management plan then plan is retrieved`() {
+    runTest {
+      val riskManagementResponse = RiskManagementResponse(
+        crn = crn,
+        limitedAccessOffender = true,
+        riskManagementPlan = listOf(
+          RiskManagementPlanResponse(
+            initiationDate = null,
+            contingencyPlans = "I am the contingency plan text",
+          ),
+        ),
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse
+          },
+        )
+
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response.contingencyPlans).isEqualTo("I am the contingency plan text")
+      assertThat(response.initiationDate).isNull()
+    }
+  }
+
+  @Test
+  fun `given multiple plans and at least one with null initiationDate when getting risk management plan then null plans are considered older`() {
+    runTest {
+      val riskManagementResponse = RiskManagementResponse(
+        crn = crn,
+        limitedAccessOffender = true,
+        riskManagementPlan = listOf(
+          RiskManagementPlanResponse(
+            initiationDate = null,
+            contingencyPlans = "I am a null contingency plan text",
+          ),
+          RiskManagementPlanResponse(
+            initiationDate = "2023-10-02T14:00:00",
+            contingencyPlans = "I am the latest contingency plan text",
+          ),
+          RiskManagementPlanResponse(
+            initiationDate = "2020-10-02T14:00:00",
+            contingencyPlans = "I am the middle contingency plan text",
+          ),
+          RiskManagementPlanResponse(
+            initiationDate = null,
+            contingencyPlans = "I am another null contingency plan text",
+          ),
+        ),
+      )
+      given(arnApiClient.getRiskManagementPlan(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            riskManagementResponse
+          },
+        )
+
+      val response = riskService.getLatestRiskManagementPlan(crn)
+
+      assertThat(response.contingencyPlans).isEqualTo("I am the latest contingency plan text")
+    }
+  }
+
   @ParameterizedTest(name = "given call to fetch risk assessments fails with {1} exception then set this in the error field response")
   @CsvSource("404,NOT_FOUND", "503,SERVER_ERROR", "999, SERVER_ERROR")
   fun `given call to fetch risk assessments fails on call to arn api with given exception then set this in the error field response`(
@@ -749,7 +841,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     expectedErrorCode: String,
   ) {
     runTest {
-      given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+      given(arnApiClient.getAssessments(crn)).willThrow(WebClientResponseException(code, "", null, null, null))
 
       val response = riskService.fetchAssessmentInfo(crn, emptyList())
 
@@ -764,7 +856,7 @@ internal class RiskServiceTest : ServiceTestBase() {
     expectedErrorCode: String,
   ) {
     runTest {
-      given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+      given(arnApiClient.getRiskScores(crn)).willThrow(WebClientResponseException(code, "", null, null, null))
 
       val response = riskService.fetchPredictorScores(crn)
 
@@ -788,7 +880,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskSummary(crn)).willThrow(
         WebClientResponseException(
           code,
-          null,
+          "",
           null,
           exceptionMessage.toByteArray(Charsets.UTF_8),
           null,
@@ -808,7 +900,10 @@ internal class RiskServiceTest : ServiceTestBase() {
     expectedErrorCode: String,
   ) {
     runTest {
-      given(arnApiClient.getRiskManagementPlan(crn)).willThrow(WebClientResponseException(code, null, null, null, null))
+      given(arnApiClient.getRiskManagementPlan(crn))
+        .willThrow(
+          WebClientResponseException(code, "", null, null, null),
+        )
 
       val response = riskService.getLatestRiskManagementPlan(crn)
 
@@ -948,29 +1043,5 @@ internal class RiskServiceTest : ServiceTestBase() {
     sexualPredictorScore = null,
     groupReconvictionScore = null,
     violencePredictorScore = null,
-  )
-
-  private fun convictionResponse(sentenceDescription: String = "CJA - Extended Sentence") = DeliusClient.Conviction(
-    sentence = DeliusClient.Sentence(
-      description = sentenceDescription,
-      length = 6,
-      lengthUnits = "Days",
-      isCustodial = true,
-      custodialStatusCode = "ABC123",
-      licenceExpiryDate = LocalDate.parse("2022-05-10"),
-      sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-    ),
-    mainOffence = DeliusClient.Offence(
-      date = LocalDate.parse("2022-08-26"),
-      code = "ABC123",
-      description = "Robbery (other than armed robbery)",
-    ),
-    additionalOffences = listOf(
-      DeliusClient.Offence(
-        date = LocalDate.parse("2022-08-26"),
-        code = "ZYX789",
-        description = "Arson",
-      ),
-    ),
   )
 }

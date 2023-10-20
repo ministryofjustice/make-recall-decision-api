@@ -151,7 +151,7 @@ internal class RiskService(
 
   private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
     assessmentsResponse.assessments
-      ?.filter { it.dateCompleted != null && it.dateCompleted.isNotEmpty() }
+      ?.filter { !it.dateCompleted.isNullOrEmpty() }
       ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
       ?.reversed()
       ?.firstOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
@@ -237,7 +237,7 @@ internal class RiskService(
       null
     } else {
       PredictorScore(
-        date = LocalDateTime.parse(riskScoreResponse?.completedDate).toLocalDate().toString(),
+        date = LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString(),
         scores = scores,
       )
     }
@@ -378,7 +378,7 @@ internal class RiskService(
     }
 
     val latestPlan =
-      riskManagementResponse.riskManagementPlan?.sortedBy { LocalDateTime.parse(it.initiationDate).toLocalDate() }
+      riskManagementResponse.riskManagementPlan?.sortedBy { it.initiationDate }
         ?.reversed()
         ?.get(0)
     val assessmentStatusComplete = getStatusFromSuperStatus(latestPlan?.superStatus) == COMPLETE.name
