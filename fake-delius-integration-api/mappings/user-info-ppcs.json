@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/user/MARD_PPCS_USER"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "user-info-ppcs.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
