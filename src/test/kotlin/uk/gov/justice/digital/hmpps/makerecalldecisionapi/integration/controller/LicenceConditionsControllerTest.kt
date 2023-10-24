@@ -624,7 +624,7 @@ class LicenceConditionsControllerTest(
   private fun assertPersonalDetailsOverview(response: JSONObject) {
     assertThat(response.getJSONObject("personalDetailsOverview").getString("name")).isEqualTo("John Smith")
     assertThat(response.getJSONObject("personalDetailsOverview").getString("dateOfBirth")).isEqualTo("1982-10-24")
-    assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(40)
+    assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(41)
     assertThat(response.getJSONObject("personalDetailsOverview").getString("gender")).isEqualTo("Male")
     assertThat(response.getJSONObject("personalDetailsOverview").getString("crn")).isEqualTo(crn)
   }
