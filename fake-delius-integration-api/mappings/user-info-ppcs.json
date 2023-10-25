@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/user/MARD_PPCS_USER"
+    "urlPathPattern": "/user/MAKE_RECALL_DECISION_PPCS_USER"
   },
   "response": {
     "status": 200,
