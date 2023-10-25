@@ -55,7 +55,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
       .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
       .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-      .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
+      .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
       .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
       .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
       .jsonPath("$.recommendations.length()").isEqualTo(1)
@@ -743,7 +743,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("40")
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.recommendations[0].recommendationId").isNotEmpty
