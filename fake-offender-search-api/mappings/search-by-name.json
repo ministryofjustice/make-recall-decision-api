@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/search/people",
+    "bodyPatterns" : [ {
+      "contains" : "name"
+     }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
