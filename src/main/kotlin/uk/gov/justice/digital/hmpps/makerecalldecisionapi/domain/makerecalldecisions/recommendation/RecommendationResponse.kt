@@ -14,6 +14,8 @@ import java.time.LocalDateTime
 data class RecommendationResponse(
   val userAccessResponse: UserAccess? = null,
   val id: Long? = null,
+  val createdBy: String? = null,
+  val createdDate: String? = null,
   val status: Status? = null,
   val custodyStatus: CustodyStatus? = null,
   val localPoliceContact: LocalPoliceContact? = null,
