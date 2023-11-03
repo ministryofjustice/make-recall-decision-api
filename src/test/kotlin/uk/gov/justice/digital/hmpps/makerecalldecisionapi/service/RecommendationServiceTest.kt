@@ -223,10 +223,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
           then(mrdEmitterMocked).shouldHaveNoInteractions()
         }
+
         "RECOMMENDATION_STARTED" -> {
           then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
           assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
         }
+
         else -> {
           assertThat(recommendationEntity.data.recallConsideredList).isNull()
           assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
@@ -1060,6 +1062,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val recommendationResponse = recommendationService.getRecommendation(456L)
 
     assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
+    assertThat(recommendationResponse.createdBy).isEqualTo(recommendation.get().data.createdBy)
+    assertThat(recommendationResponse.createdDate).isEqualTo(recommendation.get().data.createdDate)
     assertThat(recommendationResponse.recallConsideredList?.get(0)?.id).isNotNull
     assertThat(recommendationResponse.recallConsideredList?.get(0)?.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
     assertThat(recommendationResponse.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
@@ -1534,7 +1538,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
+      given(
+        templateReplacementServiceMocked.generateDocFromRecommendation(
+          anyObject(),
+          anyObject(),
+          anyObject(),
+          anyObject(),
+        ),
+      )
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1618,7 +1629,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
 
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
+      given(
+        templateReplacementServiceMocked.generateDocFromRecommendation(
+          anyObject(),
+          anyObject(),
+          anyObject(),
+          anyObject(),
+        ),
+      )
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1736,7 +1754,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
         )
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
+      given(
+        templateReplacementServiceMocked.generateDocFromRecommendation(
+          anyObject(),
+          anyObject(),
+          anyObject(),
+          anyObject(),
+        ),
+      )
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
@@ -1800,7 +1825,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
         )
-      given(templateReplacementServiceMocked.generateDocFromRecommendation(anyObject(), anyObject(), anyObject(), anyObject()))
+      given(
+        templateReplacementServiceMocked.generateDocFromRecommendation(
+          anyObject(),
+          anyObject(),
+          anyObject(),
+          anyObject(),
+        ),
+      )
         .willReturn("Contents")
 
       given(recommendationRepository.findById(any()))
