@@ -202,6 +202,7 @@ internal class RecommendationService(
   private fun buildRecommendationResponse(recommendationEntity: RecommendationEntity): RecommendationResponse {
     return RecommendationResponse(
       id = recommendationEntity.id,
+      createdByUserFullName = recommendationEntity.data.createdByUserFullName,
       createdBy = recommendationEntity.data.createdBy,
       createdDate = recommendationEntity.data.createdDate,
       crn = recommendationEntity.data.crn,
