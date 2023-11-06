@@ -208,6 +208,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
       assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
       assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdByUserFullName).isEqualTo("Bill")
       assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
       assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
       assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()

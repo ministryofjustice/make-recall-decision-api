@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 
@@ -43,21 +42,4 @@ data class RecommendationStatusResponse(
   val modifiedByUserFullName: String?,
   val recommendationHistoryId: Long?,
   val emailAddress: String? = null,
-) {
-  companion object {
-    fun fromRecommendationModel(model: RecommendationModel?, recommendationId: Long): RecommendationStatusResponse {
-      return RecommendationStatusResponse(
-        name = model?.status?.name,
-        recommendationId = recommendationId,
-        active = true,
-        created = model?.createdDate,
-        createdBy = model?.createdBy,
-        createdByUserFullName = model?.createdByUserFullName,
-        modified = null,
-        modifiedBy = null,
-        modifiedByUserFullName = null,
-        recommendationHistoryId = null,
-      )
-    }
-  }
-}
+)
