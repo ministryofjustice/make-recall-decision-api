@@ -52,7 +52,7 @@ data class RecommendationStatusResponse(
         active = true,
         created = model?.createdDate,
         createdBy = model?.createdBy,
-        createdByUserFullName = null,
+        createdByUserFullName = model?.createdByUserFullName,
         modified = null,
         modifiedBy = null,
         modifiedByUserFullName = null,
