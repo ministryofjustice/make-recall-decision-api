@@ -106,6 +106,7 @@ data class RecommendationModel(
   var lastModifiedByUserName: String? = null,
   var lastModifiedDate: String? = null,
   val createdBy: String? = null,
+  val createdByUserFullName: String? = null,
   val createdDate: String? = null,
   var personOnProbation: PersonOnProbation? = null,
   var convictionDetail: ConvictionDetail? = null,
