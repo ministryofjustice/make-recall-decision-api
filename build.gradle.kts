@@ -125,7 +125,7 @@ sourceSets {
 
 task<Test>("functional-test-light") {
   description = "Runs the functional test, will require start-local-development.sh " +
-    "and docker-compose-postgres.yml to be started manually"
+    "and docker compose-postgres.yml to be started manually"
   group = "verification"
   testClassesDirs = sourceSets["functional-test"].output.classesDirs
   classpath = sourceSets["functional-test"].runtimeClasspath

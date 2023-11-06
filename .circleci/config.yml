@@ -138,12 +138,12 @@ jobs:
           when: on_fail
           name: make-recall-decision-api - docker logs
           working_directory: make-recall-decision-api
-          command: docker-compose logs
+          command: docker compose logs
       - run:
           when: on_fail
           name: make-recall-decision-ui - docker logs
           working_directory: make-recall-decision-ui
-          command: docker-compose logs
+          command: docker compose logs
       - store_artifacts:
           path: make-recall-decision-e2e-tests/e2e_tests/screenshots
           destination: screenshots

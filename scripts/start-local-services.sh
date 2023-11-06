@@ -9,7 +9,7 @@ instructions() {
   echo "Usage: $0 <opts>" >&2
   echo " -h --> show usage" >&2
   echo " -a --> build hmpps-auth - needed for M1 macs (default=${BUILD_HMPPS_AUTH})" >&2
-  echo " -p --> run docker-compose pull (default=${RUN_DOCKER_COMPOSE_PULL})" >&2
+  echo " -p --> run docker compose pull (default=${RUN_DOCKER_COMPOSE_PULL})" >&2
 }
 
 while getopts ":h:ap" option; do
@@ -53,8 +53,8 @@ pkill node || true
 
 if [[ "${RUN_DOCKER_COMPOSE_PULL}" == "true" ]]; then
   printf "\n\nRunning 'docker compose pull' on all services...\n\n"
-  docker-compose -f "${UI_DIR}/docker-compose.yml" pull
-  docker-compose -f "${API_DIR}/docker-compose.yml" pull
+  docker compose -f "${UI_DIR}/docker-compose.yml" pull
+  docker compose -f "${API_DIR}/docker-compose.yml" pull
 fi
 
 if [[ "${BUILD_HMPPS_AUTH}" == "true" ]]; then
@@ -67,13 +67,13 @@ fi
 
 pushd "${API_DIR}"
 printf "\n\nBuilding/starting API components...\n\n"
-docker-compose up -d --scale=${API_NAME}=0
+docker compose up -d --scale=${API_NAME}=0
 ./gradlew bootRun >>"${API_LOGFILE}" 2>&1 &
 popd
 
 pushd "${UI_DIR}"
 printf "\n\nBuilding/starting UI components...\n\n"
-docker-compose up -d --scale=${UI_NAME}=0
+docker compose up -d --scale=${UI_NAME}=0
 npm install
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
