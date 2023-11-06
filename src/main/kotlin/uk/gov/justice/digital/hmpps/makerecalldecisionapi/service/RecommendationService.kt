@@ -786,6 +786,7 @@ internal class RecommendationService(
         lastModifiedDate = now,
         createdBy = userId,
         createdDate = now,
+        createdByUserFullName = readableNameOfUser,
         personOnProbation = recommendationWrapper?.personOnProbation,
         region = recommendationWrapper?.region,
         localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,

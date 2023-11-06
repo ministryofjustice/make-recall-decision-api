@@ -54,7 +54,7 @@ The first time the service is started on your machine may result in a database e
 To fix this there are a couple of things that can be tried:
 
 Automatic:
-1. ```docker-compose -f docker-compose-postgres.yml up```
+1. ```docker compose -f docker-compose-postgres.yml up```
 
 2. Start the database locally with ```./scripts/start-local-development.sh``` which should create the database automatically.
 
