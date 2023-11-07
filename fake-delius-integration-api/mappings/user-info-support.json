@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/user/MAKE_RECALL_DECISION_SUPPORT_USER"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "user-info-admin.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
