@@ -9,13 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.fail
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Mock
 import org.mockito.Mockito.lenient
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
@@ -29,9 +27,6 @@ import kotlin.random.Random
 internal class OffenderSearchServiceTest : ServiceTestBase() {
 
   private lateinit var offenderSearch: OffenderSearchService
-
-  @Mock
-  private lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
   private var page = 0
 

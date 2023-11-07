@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import java.net.URI
 
 @Configuration
@@ -28,9 +29,11 @@ class WebClientConfiguration(
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
+  @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+  @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry,
 ) {
 
@@ -137,6 +140,23 @@ class WebClientConfiguration(
       .apply(oauth2Client.oauth2Configuration())
       .build()
   }
+
+  @Bean
+  fun ppudAutomationWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder,
+  ): WebClient {
+//    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "ppud-automation-api")
+    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "cvl-api")
+  }
+
+  @Bean
+  fun ppudAutomationClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient): PpudAutomationApiClient {
+    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationClientTimeoutCounter())
+  }
+
+  @Bean
+  fun ppudAutomationClientTimeoutCounter(): Counter = timeoutCounter(ppudAutomationRootUri)
 
   private fun getPlainWebClient(
     builder: WebClient.Builder,
