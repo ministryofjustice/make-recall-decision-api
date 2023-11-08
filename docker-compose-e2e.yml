@@ -105,6 +105,20 @@ services:
     volumes:
       - ./fake-cvl-api:/home/wiremock
 
+  fake-ppud-automation-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-ppud-automation-api
+    ports:
+      - "9270:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-ppud-automation-api:/home/wiremock
+
+
 networks:
   hmpps:
     name: hmpps

@@ -18,6 +18,11 @@ cvl:
     endpoint:
       url: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
 
+ppud-automation:
+  api:
+    endpoint:
+      url: https://ppud-automation-api-dev.hmpps.service.justice.gov.uk
+
 hmpps:
   auth:
     url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
