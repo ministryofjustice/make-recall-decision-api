@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpcsService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.LogHelper.Helper.redact
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 internal class OffenderSearchController(
   private val offenderSearchService: OffenderSearchService,
+  private val ppcsService: PpcsService,
 ) {
 
   companion object {
@@ -60,5 +63,14 @@ internal class OffenderSearchController(
       ),
     )
     return offenderSearchService.search(body.crn, body.firstName, body.lastName, page = page, pageSize = pageSize)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("/ppcs-search")
+  @Operation(summary = "Returns a list of recommendation docs that are appropriate for ppcs to process.")
+  suspend fun ppcsSearch(
+    @RequestBody crn: String,
+  ): PpcsSearchResponse {
+    return ppcsService.search(crn)
   }
 }

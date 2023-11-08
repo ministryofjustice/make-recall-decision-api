@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Pe
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -62,6 +64,12 @@ internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var cvlApiClient: CvlApiClient
+
+  @Mock
+  protected lateinit var ppudAutomationApiClient: PpudAutomationApiClient
+
+  @Mock
+  protected lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
   @Mock
   protected lateinit var recommendationRepository: RecommendationRepository
