@@ -1,0 +1,7 @@
+{
+  "status": 404,
+  "errorCode": 20002,
+  "userMessage": "Entity Not Found",
+  "developerMessage": "Serious error in the system",
+  "moreInfo": "Check out this FAQ for more information"
+}

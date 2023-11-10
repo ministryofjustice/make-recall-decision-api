@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import java.net.URI
 
 @Configuration
@@ -30,10 +31,12 @@ class WebClientConfiguration(
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
   @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationRootUri: String,
+  @Value("\${prison.api.endpoint.url}") private val prisonRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
   @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
+  @Value("\${prison.client.timeout}") private val prisonTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry,
 ) {
 
@@ -146,8 +149,7 @@ class WebClientConfiguration(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
   ): WebClient {
-//    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "ppud-automation-api")
-    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "cvl-api")
+    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "ppud-automation-api")
   }
 
   @Bean
@@ -157,6 +159,22 @@ class WebClientConfiguration(
 
   @Bean
   fun ppudAutomationClientTimeoutCounter(): Counter = timeoutCounter(ppudAutomationRootUri)
+
+  @Bean
+  fun prisonWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder,
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManager, builder, prisonRootUri, "prison-api")
+  }
+
+  @Bean
+  fun prisonApiClient(@Qualifier("prisonWebClientAppScope") webClient: WebClient): PrisonApiClient {
+    return PrisonApiClient(webClient, prisonTimeout, prisonClientTimeoutCounter())
+  }
+
+  @Bean
+  fun prisonClientTimeoutCounter(): Counter = timeoutCounter(prisonRootUri)
 
   private fun getPlainWebClient(
     builder: WebClient.Builder,

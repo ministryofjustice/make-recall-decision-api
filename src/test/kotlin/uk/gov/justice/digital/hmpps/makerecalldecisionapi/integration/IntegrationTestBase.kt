@@ -41,6 +41,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404NoOffenderFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
@@ -63,6 +64,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessAllowedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessExcludedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
@@ -92,6 +94,8 @@ abstract class IntegrationTestBase {
   var cvlApi: ClientAndServer = startClientAndServer(8096)
   var deliusIntegration: ClientAndServer = startClientAndServer(8097)
   var oauthMock: ClientAndServer = startClientAndServer(9090)
+  var prisonApi: ClientAndServer = startClientAndServer(8098)
+  var ppudAutomationApi: ClientAndServer = startClientAndServer(8099)
 
   private val gson: Gson = Gson()
 
@@ -147,6 +151,8 @@ abstract class IntegrationTestBase {
     gotenbergMock.reset()
     oasysARNApi.reset()
     offenderSearchApi.reset()
+    prisonApi.reset()
+    ppudAutomationApi.reset()
     setupOauth()
     setupHealthChecks()
   }
@@ -159,6 +165,8 @@ abstract class IntegrationTestBase {
     oasysARNApi.stop()
     oauthMock.stop()
     offenderSearchApi.stop()
+    prisonApi.stop()
+    ppudAutomationApi.stop()
   }
 
   fun deleteAndCreateRecommendation(featureFlagString: String? = null) {
@@ -801,6 +809,34 @@ abstract class IntegrationTestBase {
     cvlApi.`when`(licenceMatchRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(licenceMatchResponse(nomisId, crn, licenceStatus, licenceId))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun prisonApiMatchResponse(
+    nomsId: String,
+    description: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/api/offenders/" + nomsId)
+
+    prisonApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(prisonResponse(description))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun ppudAutomationApiMatchResponse(
+    nomsId: String,
+    croNumber: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/offender/search")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(ppudAutomationResponse(nomsId, croNumber))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

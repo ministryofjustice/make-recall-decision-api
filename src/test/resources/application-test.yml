@@ -40,6 +40,16 @@ gotenberg:
   endpoint:
     url: http://localhost:8094
 
+ppud-automation:
+  api:
+    endpoint:
+      url: http://localhost:8099
+
+prison:
+  api:
+    endpoint:
+      url: http://localhost:8098
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth

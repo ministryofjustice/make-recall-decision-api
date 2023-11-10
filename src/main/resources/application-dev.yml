@@ -23,6 +23,11 @@ ppud-automation:
     endpoint:
       url: https://ppud-automation-api-dev.hmpps.service.justice.gov.uk
 
+prison:
+  api:
+    endpoint:
+      url: https://prison-api-dev.hmpps.service.justice.gov.uk
+
 hmpps:
   auth:
     url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
