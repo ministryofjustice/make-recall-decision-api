@@ -46,7 +46,12 @@ spring:
             client-id: ${system.client.id:make-recall-decision-api}
             client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
-          ppud-automation:
+          ppud-automation-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
+          prison-api:
             provider: hmpps-auth
             client-id: ${system.client.id:make-recall-decision-api}
             client-secret: ${system.client.secret:clientsecret}
@@ -156,6 +161,13 @@ oasys:
       timeout: 30
 
 ppud-automation:
+  client:
+    timeout: 30
+  api:
+    endpoint:
+      url: http://localhost:9370
+
+prison:
   client:
     timeout: 30
   api:

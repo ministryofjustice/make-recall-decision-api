@@ -17,6 +17,8 @@ services:
       - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
       - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
+      - PPUD_AUTOMATION_API_ENDPOINT_URL=http://fake-ppud-automation-api:8080
+      - PRISON_API_ENDPOINT_URL=http://fake-prison-api:8080
       - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - SYSTEM_CLIENT_ID=make-recall-decision-api
@@ -111,13 +113,25 @@ services:
       - hmpps
     container_name: fake-ppud-automation-api
     ports:
-      - "9270:8080"
+      - "9370:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
     command: --verbose --local-response-templating
     volumes:
       - ./fake-ppud-automation-api:/home/wiremock
 
+  fake-prison-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-prison-api
+    ports:
+      - "9270:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-prison-api:/home/wiremock
 
 networks:
   hmpps:
