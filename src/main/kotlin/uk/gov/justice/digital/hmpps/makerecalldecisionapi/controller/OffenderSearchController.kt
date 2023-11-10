@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SearchByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.OffenderSearchService
@@ -69,8 +70,8 @@ internal class OffenderSearchController(
   @PostMapping("/ppcs-search")
   @Operation(summary = "Returns a list of recommendation docs that are appropriate for ppcs to process.")
   suspend fun ppcsSearch(
-    @RequestBody crn: String,
+    @RequestBody body: PpcsSearchRequest,
   ): PpcsSearchResponse {
-    return ppcsService.search(crn)
+    return ppcsService.search(body.crn)
   }
 }
