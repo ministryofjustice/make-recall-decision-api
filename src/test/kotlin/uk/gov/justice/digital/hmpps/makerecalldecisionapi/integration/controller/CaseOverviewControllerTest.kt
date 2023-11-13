@@ -2,7 +2,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
@@ -15,6 +18,32 @@ class CaseOverviewControllerTest(
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
+
+  @ParameterizedTest
+  @CsvSource("BOOK_TO_PPUD,false", "DNTR_DOWNLOADED,false", "SOME_OPEN_STATUS,true")
+  fun `no active recommendation available when available when BOOK_TO_PPUD or DNTR_DOWNLOADED status active`(status: String, expected: Boolean) {
+    runTest {
+      val featureFlagString = "{\"flagConsiderRecall\": true }"
+      userAccessAllowed(crn)
+      personalDetailsResponse(crn)
+      overviewResponse(crn)
+      oasysAssessmentsResponse(crn)
+      deleteAndCreateRecommendation(featureFlagString)
+      createOrUpdateRecommendationStatus(activate = status, anotherToActivate = "ANOTHER_STATUS")
+      riskManagementPlanResponse(crn)
+
+      val response = convertResponseToJSONObject(
+        webTestClient.get()
+          .uri("/cases/$crn/overview")
+          .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+          .exchange()
+          .expectStatus().isOk,
+      )
+      val activeRecommendationPresent = response.get("activeRecommendation").toString() != "null"
+
+      assertThat(activeRecommendationPresent).isEqualTo(expected)
+    }
+  }
 
   @Test
   fun `retrieves case summary details`() {
