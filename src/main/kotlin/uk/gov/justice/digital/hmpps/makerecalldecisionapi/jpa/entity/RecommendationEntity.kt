@@ -141,6 +141,7 @@ data class RecommendationModel(
   var practitionerForPartA: PractitionerForPartA? = null,
   var revocationOrderRecipients: List<String>? = null,
   var ppcsQueryEmails: List<String>? = null,
+  var prisonApiLocationDescription: String? = null,
 
   var userNamePartACompletedBy: String? = null, // deprecated
   var userEmailPartACompletedBy: String? = null, // deprecated

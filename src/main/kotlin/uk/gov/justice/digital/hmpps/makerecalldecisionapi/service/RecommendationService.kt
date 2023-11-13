@@ -266,6 +266,7 @@ internal class RecommendationService(
       practitionerForPartA = recommendationEntity.data.practitionerForPartA,
       revocationOrderRecipients = recommendationEntity.data.revocationOrderRecipients,
       ppcsQueryEmails = recommendationEntity.data.ppcsQueryEmails,
+      prisonApiLocationDescription = recommendationEntity.data.prisonApiLocationDescription,
     )
   }
 
