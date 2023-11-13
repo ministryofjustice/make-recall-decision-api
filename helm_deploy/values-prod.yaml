@@ -12,6 +12,7 @@ generic-service:
     DELIUS_INTEGRATION_ENDPOINT_URL: https://make-recall-decisions-and-delius.hmpps.service.justice.gov.uk
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs.hmpps.service.justice.gov.uk
     CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api.hmpps.service.justice.gov.uk
+    PPUD_AUTOMATION_API_ENDPOINT_URL: https://hmpps-ppud-automation-api.hmpps.service.justice.gov.uk
     MRD_URL: https://make-recall-decision.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api.hmpps.service.justice.gov.uk
 
