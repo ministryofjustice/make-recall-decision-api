@@ -146,6 +146,7 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun startUpServer() {
+    oauthMock.reset()
     cvlApi.reset()
     deliusIntegration.reset()
     gotenbergMock.reset()
@@ -909,6 +910,14 @@ abstract class IntegrationTestBase {
         response()
           .withContentType(APPLICATION_JSON)
           .withBody(gson.toJson(mapOf("status" to "up"))),
+      )
+
+    ppudAutomationApi
+      .`when`(request().withPath("/health/ping"))
+      .respond(
+        response()
+          .withContentType(APPLICATION_JSON)
+          .withBody(gson.toJson(mapOf("status" to "UP"))),
       )
   }
 }

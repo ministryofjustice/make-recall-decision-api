@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/ping"
+    "url": "/health/ping"
   },
   "response": {
     "status": 200,
