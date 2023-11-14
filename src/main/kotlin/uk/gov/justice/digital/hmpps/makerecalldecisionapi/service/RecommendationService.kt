@@ -59,7 +59,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.Collections
 import kotlin.jvm.optionals.getOrNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel as DeliusRecommendationModel
 
@@ -585,14 +584,15 @@ internal class RecommendationService(
   fun getRecommendationsInProgressForCrn(crn: String): ActiveRecommendation? {
     val recommendationEntity =
       recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name))
-    Collections.sort(recommendationEntity)
+        .sorted()
+        .filter { isStatusOpen(it) }
 
     val legacyRecommendationOpen = recommendationEntity.size > 1
-    val recommendationStatusOpen = recommendationEntity.isNotEmpty() &&
+    val legacyStatusOpen = recommendationEntity.isNotEmpty() &&
       recommendationStatusRepository.findByRecommendationId(recommendationEntity[0].id)
         .any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
 
-    if (legacyRecommendationOpen && recommendationStatusOpen) {
+    if (legacyRecommendationOpen && legacyStatusOpen) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
     }
     return if (recommendationEntity.isNotEmpty()) {
@@ -911,6 +911,10 @@ internal class RecommendationService(
         )
       }
   }
+  private fun isStatusOpen(it: RecommendationEntity) =
+    recommendationStatusRepository.findByRecommendationId(it.id)
+      .any { it.active && (it.name == "BOOK_TO_PPUD" || it.name == "DNTR_DOWNLOADED") }
+      .not()
 }
 
 data class RecommendationMetaData(
