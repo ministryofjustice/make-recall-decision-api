@@ -19,7 +19,10 @@ abstract class PingHealthCheck(
   private val componentName: String,
   private val healthUrl: String,
   private val timeout: Duration = Duration.ofSeconds(1),
+  private val isOptionalComponent: Boolean = false,
 ) : HealthIndicator {
+
+  private val optionalDownStatus: Status = Status("DOWN_BUT_OPTIONAL")
 
   @Autowired
   private val meterRegistry: MeterRegistry? = null
@@ -62,11 +65,16 @@ abstract class PingHealthCheck(
     gaugeVal.set(0)
   }
 
-  private fun downWithException(it: Exception) =
-    Health.down(it).build()
+  private fun downWithException(it: Exception): Health {
+    val status = if (isOptionalComponent) optionalDownStatus else Status.DOWN
+    return Health.status(status).withException(it).build()
+  }
 
-  private fun downWithResponseBody(it: WebClientResponseException) =
-    Health.down(it).withBody(it.responseBodyAsString).withHttpStatus(it.statusCode).build()
+  private fun downWithResponseBody(it: WebClientResponseException): Health {
+    val status = if (isOptionalComponent) optionalDownStatus else Status.DOWN
+    return Health.status(status).withException(it).withBody(it.responseBodyAsString).withHttpStatus(it.statusCode)
+      .build()
+  }
 
   private fun upWithStatus(it: ResponseEntity<String>): Mono<Health> =
     Mono.just(Health.up().withHttpStatus(it.statusCode).build())

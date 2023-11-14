@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
+import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.HttpStatusCode
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -70,6 +72,7 @@ class HealthCheckTest : IntegrationTestBase() {
       "components.deliusIntegration.status" to "UP",
       "components.offenderSearchApi.status" to "UP",
       "components.gotenberg.status" to "UP",
+      "components.ppudAutomationApi.status" to "UP",
     )
   }
 
@@ -87,6 +90,9 @@ class HealthCheckTest : IntegrationTestBase() {
     gotenbergMock.clear(request().withPath("/health"))
     gotenbergMock.`when`(request().withPath("/health")).error(HttpError.error())
 
+    ppudAutomationApi.clear(request().withPath("/health/ping"))
+    ppudAutomationApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
+
     healthCheckIsUpWith(
       "/health",
       HttpStatus.SERVICE_UNAVAILABLE,
@@ -94,6 +100,25 @@ class HealthCheckTest : IntegrationTestBase() {
       "components.deliusIntegration.status" to "DOWN",
       "components.offenderSearchApi.status" to "DOWN",
       "components.gotenberg.status" to "DOWN",
+      "components.ppudAutomationApi.status" to "DOWN_BUT_OPTIONAL",
+    )
+  }
+
+  @Test
+  fun `Health page reports OK if PPUD Automation is the only component failing`() {
+    ppudAutomationApi.clear(request().withPath("/health/ping"))
+    ppudAutomationApi.`when`(request().withPath("/health/ping"))
+      .respond(response().withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code()))
+
+    healthCheckIsUpWith(
+      "/health",
+      HttpStatus.OK,
+      "status" to "UP",
+      "components.hmppsAuth.status" to "UP",
+      "components.deliusIntegration.status" to "UP",
+      "components.offenderSearchApi.status" to "UP",
+      "components.gotenberg.status" to "UP",
+      "components.ppudAutomationApi.status" to "DOWN_BUT_OPTIONAL",
     )
   }
 
