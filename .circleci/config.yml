@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@6
+  hmpps: ministryofjustice/hmpps@7
   slack: circleci/slack@4.10.1
 
 parameters:
@@ -116,7 +116,7 @@ jobs:
           command: |
             npm ci --no-audit
             shopt -s globstar
-            
+
             SPECS=$(circleci tests glob "e2e_tests/features/**/*.feature" | circleci tests split --split-by=timings --show-counts)
             echo "Running feature file(s): $SPECS"
 
@@ -223,15 +223,15 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-#      - e2e_test:
-#          name: e2e_test_dev
-#          environment: dev
-#          context:
-#            - make-recall-decision-circleci-auth
-#            - hmpps-common-vars
-#          requires:
-#            - deploy_dev
-#          <<: *slack-fail-post-step
+      #      - e2e_test:
+      #          name: e2e_test_dev
+      #          environment: dev
+      #          context:
+      #            - make-recall-decision-circleci-auth
+      #            - hmpps-common-vars
+      #          requires:
+      #            - deploy_dev
+      #          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_preprod
@@ -241,7 +241,7 @@ workflows:
             - make-recall-decision-api-preprod
           requires:
             - deploy_dev
-#           - e2e_test_dev
+          #           - e2e_test_dev
           <<: *slack-fail-post-step
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
@@ -253,21 +253,21 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-#      - e2e_test:
-#          name: e2e_test_preprod
-#          environment: preprod
-#          context:
-#            - make-recall-decision-circleci-auth
-#            - hmpps-common-vars
-#          requires:
-#            - deploy_preprod
-#          <<: *slack-fail-post-step
-          
+      #      - e2e_test:
+      #          name: e2e_test_preprod
+      #          environment: preprod
+      #          context:
+      #            - make-recall-decision-circleci-auth
+      #            - hmpps-common-vars
+      #          requires:
+      #            - deploy_preprod
+      #          <<: *slack-fail-post-step
+
       - request-prod-approval:
           type: approval
           requires:
             - deploy_preprod
- #           - e2e_test_preprod
+      #           - e2e_test_preprod
       - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
@@ -289,7 +289,7 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-          
+
   security:
     triggers:
       - schedule:
