@@ -142,7 +142,9 @@ data class RecommendationModel(
   var revocationOrderRecipients: List<String>? = null,
   var ppcsQueryEmails: List<String>? = null,
   var prisonApiLocationDescription: String? = null,
-
+  val releaseUnderECSL: Boolean? = null,
+  val dateOfRelease: String? = null,
+  val conditionalReleaseDate: String? = null,
   var userNamePartACompletedBy: String? = null, // deprecated
   var userEmailPartACompletedBy: String? = null, // deprecated
   var lastPartADownloadDateTime: LocalDateTime? = null, // deprecated
