@@ -133,7 +133,7 @@ jobs:
             node scripts/fix-junit-reports.js
 
             set -e
-            #exit $E2E_RESULT
+            exit $E2E_RESULT
       - run:
           when: on_fail
           name: make-recall-decision-api - docker logs
