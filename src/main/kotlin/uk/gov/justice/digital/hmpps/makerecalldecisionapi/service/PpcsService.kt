@@ -20,7 +20,6 @@ internal class PpcsService(
   }
 
   fun search(crn: String): PpcsSearchResponse {
-
     log.info("ppcs searching for crn: " + crn)
 
     val apiResponse = getValueAndHandleWrappedException(
