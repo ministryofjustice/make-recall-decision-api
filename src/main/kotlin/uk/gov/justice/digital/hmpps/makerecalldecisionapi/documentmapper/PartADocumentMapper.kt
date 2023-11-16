@@ -147,6 +147,10 @@ internal class PartADocumentMapper(
       riskToStaff = recommendation.currentRoshForPartA?.riskToStaff?.partADisplayValue,
       riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue,
 
+      releaseUnderECSL = recommendation.releaseUnderECSL,
+      dateOfRelease = recommendation.dateOfRelease,
+      conditionalReleaseDate = recommendation.conditionalReleaseDate,
+
       countersignAcoEmail = metadata.acoCounterSignEmail,
       counterSignSpoEmail = metadata.spoCounterSignEmail,
       countersignSpoName = metadata.countersignSpoName,

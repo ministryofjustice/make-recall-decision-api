@@ -173,7 +173,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(132)
+      assertThat(result.size).isEqualTo(135)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -288,6 +288,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["countersign_aco_date"]).isEqualTo("12/05/2023")
       assertThat(result["countersign_aco_time"]).isEqualTo("12:03")
       assertThat(result["countersign_aco_exposition"]).isEqualTo("Aco comments on case")
+      assertThat(result["release_under_ecsl"]).isEqualTo("Yes")
+      assertThat(result["date_of_release"]).isEqualTo("2013-01-01")
+      assertThat(result["conditional_release_date"]).isEqualTo("2014-02-02")
     }
   }
 
@@ -866,6 +869,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignAcoExposition = "Aco comments on case",
       counterSignSpoEmail = "john-the-spo@bla.com",
       countersignAcoEmail = "jane-the-aco@bla.com",
+      releaseUnderECSL = true,
+      dateOfRelease = "2013-01-01",
+      conditionalReleaseDate = "2014-02-02",
     )
   }
 

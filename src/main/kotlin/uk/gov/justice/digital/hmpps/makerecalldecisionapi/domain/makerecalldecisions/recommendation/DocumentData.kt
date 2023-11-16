@@ -84,6 +84,9 @@ data class DocumentData(
   val countersignAcoDate: String? = null,
   val countersignAcoTime: String? = null,
   val countersignAcoExposition: String? = null,
+  val releaseUnderECSL: Boolean? = null,
+  val dateOfRelease: String? = null,
+  val conditionalReleaseDate: String? = null,
 )
 
 data class ValueWithDetails(
