@@ -25,7 +25,7 @@ internal class PpcsService(
     val apiResponse = getValueAndHandleWrappedException(
       offenderSearchApiClient.searchPeople(
         crn = crn,
-        page = 1,
+        page = 0,
         pageSize = 20,
       ),
     )
