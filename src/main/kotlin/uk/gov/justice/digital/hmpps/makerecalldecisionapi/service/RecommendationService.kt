@@ -266,6 +266,10 @@ internal class RecommendationService(
       revocationOrderRecipients = recommendationEntity.data.revocationOrderRecipients,
       ppcsQueryEmails = recommendationEntity.data.ppcsQueryEmails,
       prisonApiLocationDescription = recommendationEntity.data.prisonApiLocationDescription,
+
+      releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
+      dateOfRelease = recommendationEntity.data.dateOfRelease,
+      conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
     )
   }
 
@@ -911,6 +915,7 @@ internal class RecommendationService(
         )
       }
   }
+
   private fun isStatusOpen(it: RecommendationEntity) =
     recommendationStatusRepository.findByRecommendationId(it.id)
       .any { it.active && (it.name == "BOOK_TO_PPUD" || it.name == "DNTR_DOWNLOADED") }

@@ -79,6 +79,9 @@ data class RecommendationResponse(
   val revocationOrderRecipients: List<String>? = null,
   val ppcsQueryEmails: List<String>? = null,
   val prisonApiLocationDescription: String? = null,
+  val releaseUnderECSL: Boolean? = null,
+  val dateOfRelease: String? = null,
+  val conditionalReleaseDate: String? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

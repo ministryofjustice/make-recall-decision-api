@@ -206,6 +206,11 @@ internal class TemplateReplacementService(
       "countersign_aco_time" to (documentData.countersignAcoTime ?: EMPTY_STRING),
       "countersign_aco_exposition" to (documentData.countersignAcoExposition ?: EMPTY_STRING),
       "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
+
+      "release_under_ecsl" to if (documentData.releaseUnderECSL == true) YES else NO,
+      "date_of_release" to (documentData.dateOfRelease ?: EMPTY_STRING),
+      "conditional_release_date" to (documentData.conditionalReleaseDate ?: EMPTY_STRING),
+
     )
     mappings.putAll(convertToSelectedAlternativesMap(documentData.selectedAlternatives))
     mappings.putAll(convertToSelectedStandardConditionsBreachedMap(documentData.selectedStandardConditionsBreached))
