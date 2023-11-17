@@ -148,8 +148,8 @@ internal class PartADocumentMapper(
       riskToPrisoners = recommendation.currentRoshForPartA?.riskToPrisoners?.partADisplayValue,
 
       releaseUnderECSL = recommendation.releaseUnderECSL,
-      dateOfRelease = recommendation.dateOfRelease,
-      conditionalReleaseDate = recommendation.conditionalReleaseDate,
+      dateOfRelease = buildFormattedLocalDate(recommendation.dateOfRelease),
+      conditionalReleaseDate = buildFormattedLocalDate(recommendation.conditionalReleaseDate),
 
       countersignAcoEmail = metadata.acoCounterSignEmail,
       counterSignSpoEmail = metadata.spoCounterSignEmail,
