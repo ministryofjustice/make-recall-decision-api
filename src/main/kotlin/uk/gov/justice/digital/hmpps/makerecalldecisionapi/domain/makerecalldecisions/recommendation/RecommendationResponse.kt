@@ -80,8 +80,8 @@ data class RecommendationResponse(
   val ppcsQueryEmails: List<String>? = null,
   val prisonApiLocationDescription: String? = null,
   val releaseUnderECSL: Boolean? = null,
-  val dateOfRelease: String? = null,
-  val conditionalReleaseDate: String? = null,
+  val dateOfRelease: LocalDate? = null,
+  val conditionalReleaseDate: LocalDate? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
