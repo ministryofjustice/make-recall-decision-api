@@ -597,7 +597,8 @@ internal class RecommendationService(
     val legacyRecommendationOpen = recommendationEntity.size > 1
     val legacyStatusOpen = recommendationEntity.isNotEmpty() &&
       recommendationStatusRepository.findByRecommendationId(recommendationEntity[0].id)
-        .any { it.active && (it.name != "CLOSED" && it.name != "DELETED") }
+        .filter { it.active }
+        .none { it.name == "CLOSED" || it.name == "DELETED" }
 
     if (legacyRecommendationOpen && legacyStatusOpen) {
       log.error("More than one recommendation found for CRN. Returning the latest.")
@@ -921,8 +922,8 @@ internal class RecommendationService(
 
   private fun isStatusOpen(it: RecommendationEntity) =
     recommendationStatusRepository.findByRecommendationId(it.id)
-      .any { it.active && (it.name == "BOOK_TO_PPUD" || it.name == "DNTR_DOWNLOADED") }
-      .not()
+      .filter { it.active }
+      .none { (it.name == "BOOK_TO_PPUD" || it.name == "DNTR_DOWNLOADED") }
 }
 
 data class RecommendationMetaData(
