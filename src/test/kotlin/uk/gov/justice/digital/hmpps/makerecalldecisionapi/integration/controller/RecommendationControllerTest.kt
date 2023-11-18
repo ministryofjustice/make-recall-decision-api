@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.managerRecallDecisionRequestWithIsSentToDeliusOnly
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.softDeleteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
@@ -222,6 +223,34 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectStatus().isCreated,
     )
     assertThat(response.get("indexOffenceDetails")).isEqualTo(null)
+  }
+
+  @Test
+  fun `update with DELETED status activates both deleted field on rec doc and legacy DELETED status`() {
+    userAccessAllowed(crn)
+    personalDetailsResponseOneTimeOnly(crn)
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    deleteAndCreateRecommendation()
+
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(softDeleteRequest()),
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/recommendations/$createdRecommendationId")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.status").isEqualTo("DELETED")
+      .jsonPath("$.deleted").isEqualTo(true)
   }
 
   @Test
