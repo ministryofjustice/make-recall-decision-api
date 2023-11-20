@@ -154,7 +154,7 @@ data class RecommendationModel(
   var spoCounterSignEmail: String? = null, // deprecated
   var countersignAcoName: String? = null, // deprecated
   var countersignAcoDateTime: LocalDateTime? = null, // deprecated
-  var deleted: Boolean? = false,
+  var deleted: Boolean = false,
 ) : Serializable
 
 enum class Status {
