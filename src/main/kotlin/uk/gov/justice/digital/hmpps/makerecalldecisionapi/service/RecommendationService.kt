@@ -179,6 +179,7 @@ internal class RecommendationService(
             status = it.data.status,
             statuses = recommendationStatusRepository.findByRecommendationId(it.id),
             recallType = it.data.recallType,
+            deleted = it.data.deleted,
           ),
         )
       },
@@ -270,6 +271,7 @@ internal class RecommendationService(
       releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
       dateOfRelease = recommendationEntity.data.dateOfRelease,
       conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
+      deleted = recommendationEntity.data.deleted,
     )
   }
 
@@ -326,6 +328,7 @@ internal class RecommendationService(
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
+    existingRecommendationEntity.data.deleted = requestJson.has("status") && requestJson.getString("status") == "DELETED"
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,
       existingRecommendationEntity.data,

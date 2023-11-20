@@ -11,4 +11,5 @@ data class RecommendationsListItem(
   val status: Status? = null,
   val statuses: List<RecommendationStatusEntity>? = emptyList(),
   val recallType: RecallType? = null,
+  val deleted: Boolean = false,
 )
