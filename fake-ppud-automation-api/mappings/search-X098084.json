@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/offender/search",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "nomsId",
+        "contains": "ABCDEF123"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-X098084.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
