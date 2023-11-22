@@ -53,6 +53,7 @@ data class RecommendationEntity(
   @Type(type = "jsonb")
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel,
+  var deleted: Boolean = false,
 ) : Comparable<RecommendationEntity> {
   override fun compareTo(other: RecommendationEntity) = compareValuesBy(
     other,
@@ -154,7 +155,7 @@ data class RecommendationModel(
   var spoCounterSignEmail: String? = null, // deprecated
   var countersignAcoName: String? = null, // deprecated
   var countersignAcoDateTime: LocalDateTime? = null, // deprecated
-  var deleted: Boolean = false,
+  var deleted: Boolean = false, // deprecated
 ) : Serializable
 
 enum class Status {
