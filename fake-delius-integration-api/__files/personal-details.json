@@ -34,6 +34,12 @@
     }
   },
   "mainAddress": {
-    "noFixedAbode": false
+    "noFixedAbode": false,
+    "buildingName": null,
+    "addressNumber": "3764",
+    "streetName": "Elvis Presley Boulevard",
+    "district": "Memphis",
+    "town": "Tennessee",
+    "postcode": "12345"
   }
 }
