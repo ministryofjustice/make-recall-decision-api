@@ -3,8 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import java.time.LocalDate
 
 data class PpudSearchRequest(
-  val croNumber: String,
-  val nomsId: String,
+  val croNumber: String?,
+  val nomsId: String?,
   val familyName: String,
   val dateOfBirth: LocalDate,
 )
