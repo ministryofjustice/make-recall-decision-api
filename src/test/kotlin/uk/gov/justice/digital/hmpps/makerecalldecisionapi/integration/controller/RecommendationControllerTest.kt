@@ -69,6 +69,39 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `get latest complete recommendation should not return a deleted record`() {
+    // given
+    createSingleCompletedRecommendation()
+    webTestClient.get()
+      .uri("/cases/$crn/last-completed")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recommendations").isNotEmpty
+
+    // when
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(softDeleteRequest()),
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+
+    // then
+    webTestClient.get()
+      .uri("/cases/$crn/last-completed")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recommendations").isEmpty
+  }
+
+  @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
@@ -226,7 +259,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
-  fun `update with DELETED status activates both deleted field on rec doc and legacy DELETED status`() {
+  fun `should not fetch deleted recommendations`() {
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
     licenceConditionsResponse(crn, 2500614567)
@@ -247,10 +280,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations/$createdRecommendationId")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.status").isEqualTo("DELETED")
-      .jsonPath("$.deleted").isEqualTo(true)
+      .expectStatus().isNotFound
   }
 
   @Test
@@ -957,6 +987,16 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     createRecommendationsWithStatus("INCOMPLETE", null)
     createRecommendationsWithStatus("COMPLETED", null)
     Thread.sleep(3000)
+    createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
+  }
+
+  private fun createSingleCompletedRecommendation() {
+    repository.deleteAll()
+    statusRepository.deleteAll()
+    licenceConditionsResponse(crn, 2500614567)
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    personalDetailsResponse(crn)
     createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
   }
 
