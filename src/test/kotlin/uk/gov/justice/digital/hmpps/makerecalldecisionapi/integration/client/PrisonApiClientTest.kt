@@ -43,6 +43,6 @@ class PrisonApiClientTest : IntegrationTestBase() {
     Assertions.assertThatThrownBy {
       prisonApiClient.retrieveOffender(nomsId).block()
     }.isInstanceOf(NotFoundException::class.java)
-      .hasMessage("Offender search endpoint returned offender not found")
+      .hasMessage("Prison api returned offender not found for nomis id A1234CR")
   }
 }
