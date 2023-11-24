@@ -17,6 +17,7 @@ import org.mockserver.model.HttpResponse.response
 import org.mockserver.model.HttpStatusCode
 import org.mockserver.model.JsonBody.json
 import org.mockserver.model.MediaType.APPLICATION_JSON
+import org.mockserver.model.MediaType.JPEG
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -814,16 +815,31 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun prisonApiMatchResponse(
+  protected fun prisonApiOffenderMatchResponse(
     nomsId: String,
     description: String,
+    facialImageId: String,
     delaySeconds: Long = 0,
   ) {
     val request = request().withPath("/api/offenders/" + nomsId)
 
     prisonApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(prisonResponse(description))
+        .withBody(prisonResponse(description, facialImageId))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun prisonApiImageResponse(
+    facialImageId: String,
+    data: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/api/images/" + facialImageId + "/data")
+
+    prisonApi.`when`(request).respond(
+      response().withContentType(JPEG)
+        .withBody(data.toByteArray())
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

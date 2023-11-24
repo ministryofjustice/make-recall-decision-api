@@ -38,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -546,7 +547,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
           ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
           ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
-          ValueWithDetails(value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name, details = "Insulin"),
+          ValueWithDetails(
+            value = MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name,
+            details = "Insulin",
+          ),
           ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
           ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
           ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
@@ -578,7 +582,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           TextValueOption(value = BEREAVEMENT_ISSUES.name, text = "Bereavement issues"),
           TextValueOption(value = LEARNING_DIFFICULTIES.name, text = "Learning difficulties"),
           TextValueOption(value = PHYSICAL_DISABILITIES.name, text = "Physical disabilities"),
-          TextValueOption(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, text = "Cultural or language differences"),
+          TextValueOption(
+            value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name,
+            text = "Cultural or language differences",
+          ),
         ),
       ),
       convictionDetail = ConvictionDetail(
@@ -713,6 +720,20 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       } else {
         null
       },
+      prisonOffender = PrisonOffender(
+        locationDescription = "location",
+        bookingNo = "1244",
+        facialImageId = "1234",
+        firstName = "time",
+        middleName = "thyme",
+        lastName = "tyme",
+        dateOfBirth = null,
+        status = "INACTIVE IN",
+        gender = "Male",
+        ethnicity = "caucasian",
+        CRO = "123X",
+        PNC = "4545",
+      ),
     )
   }
 
