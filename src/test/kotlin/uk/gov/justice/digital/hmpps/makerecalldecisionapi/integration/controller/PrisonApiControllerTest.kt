@@ -18,7 +18,8 @@ class PrisonApiControllerTest : IntegrationTestBase() {
   fun `retrieves offender details`() {
     runTest {
       val nomsId = "A123456"
-      prisonApiMatchResponse(nomsId, "Leeds, clearly Leeds")
+      prisonApiOffenderMatchResponse(nomsId, "Leeds, clearly Leeds", "1234")
+      prisonApiImageResponse("1234", "data")
 
       val response = convertResponseToJSONObject(
         webTestClient.post()

@@ -5,9 +5,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.given
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
 
@@ -27,8 +32,20 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
+    val headers = HttpHeaders()
+    headers.put("Content-Type", listOf("image/jpeg"))
+
+    given(prisonApiClient.retrieveImageData(any()))
+      .willReturn(
+        Mono.fromCallable {
+          ResponseEntity(ByteArrayResource("data".toByteArray()), headers, HttpStatus.OK)
+        },
+      )
+
     val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
+
+    verify(result).image = "data:image/jpeg;base64,ZGF0YQ=="
   }
 }
