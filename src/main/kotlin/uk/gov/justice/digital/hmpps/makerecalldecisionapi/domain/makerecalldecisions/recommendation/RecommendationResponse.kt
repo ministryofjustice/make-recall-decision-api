@@ -78,7 +78,7 @@ data class RecommendationResponse(
   val practitionerForPartA: PractitionerForPartA? = null,
   val revocationOrderRecipients: List<String>? = null,
   val ppcsQueryEmails: List<String>? = null,
-  val prisonApiLocationDescription: String? = null,
+  val prisonOffender: PrisonOffender? = null,
   val releaseUnderECSL: Boolean? = null,
   val dateOfRelease: LocalDate? = null,
   val conditionalReleaseDate: LocalDate? = null,
@@ -123,6 +123,21 @@ data class PractitionerForPartA(
   val telephone: String? = null,
   val region: String? = null, // This is the region code
   val localDeliveryUnit: String? = null,
+)
+
+data class PrisonOffender(
+  var locationDescription: String? = null,
+  var bookingNo: String? = null,
+  var facialImageId: String? = null,
+  var firstName: String? = null,
+  var middleName: String? = null,
+  var lastName: String? = null,
+  var dateOfBirth: LocalDate? = null,
+  var status: String? = null,
+  var gender: String? = null,
+  var ethnicity: String? = null,
+  var CRO: String? = null,
+  var PNC: String? = null,
 )
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {

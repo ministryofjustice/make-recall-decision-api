@@ -2,7 +2,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.mockserver.model.HttpRequest
+import org.mockserver.model.HttpResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
@@ -10,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Offende
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import kotlin.random.Random
@@ -18,6 +22,21 @@ import kotlin.random.Random
 class OffenderSearchApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var offenderSearchApiClient: OffenderSearchApiClient
+
+  @Test
+  fun `offender not found`() {
+    val offenderSearchRequest = HttpRequest.request()
+      .withPath("/search/people")
+
+    offenderSearchApi.`when`(offenderSearchRequest).respond(
+      HttpResponse.response().withStatusCode(404),
+    )
+
+    assertThatThrownBy {
+      offenderSearchApiClient.searchPeople(crn = crn, page = 0, pageSize = 20).block()
+    }.isInstanceOf(NotFoundException::class.java)
+      .hasMessage("Offender search endpoint returned offender not found")
+  }
 
   @Test
   fun `retrieves offender details by crn`() {

@@ -4,8 +4,8 @@
     "urlPath": "/api/offenders/ABCDEF123"
   },
   "response": {
-    "status": 200,
-    "bodyFileName": "search.json",
+    "status": 404,
+    "bodyFileName": "search-X098084.json",
     "headers": {
       "Content-Type": "application/json"
     }
