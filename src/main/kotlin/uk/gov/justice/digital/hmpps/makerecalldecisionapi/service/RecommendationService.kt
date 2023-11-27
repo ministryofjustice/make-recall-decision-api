@@ -144,7 +144,11 @@ internal class RecommendationService(
   }
 
   fun getRecommendation(recommendationId: Long): RecommendationResponse {
-    val recommendationResponse = getRecommendationResponseById(recommendationId)
+    val recommendationEntity = getRecommendationEntityById(recommendationId)
+    if (recommendationEntity.deleted) {
+      throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
+    }
+    val recommendationResponse = buildRecommendationResponse(recommendationEntity)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RecommendationResponse(
@@ -158,7 +162,6 @@ internal class RecommendationService(
   @OptIn(ExperimentalStdlibApi::class)
   private fun getRecommendationResponseById(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
-
     return buildRecommendationResponse(recommendationEntity)
   }
 
@@ -179,7 +182,6 @@ internal class RecommendationService(
             status = it.data.status,
             statuses = recommendationStatusRepository.findByRecommendationId(it.id),
             recallType = it.data.recallType,
-            deleted = it.data.deleted,
           ),
         )
       },
@@ -271,7 +273,6 @@ internal class RecommendationService(
       releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
       dateOfRelease = recommendationEntity.data.dateOfRelease,
       conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
-      deleted = recommendationEntity.deleted,
     )
   }
 
