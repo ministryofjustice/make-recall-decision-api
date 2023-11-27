@@ -102,6 +102,39 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `get recommendations should not return a deleted record`() {
+    // given
+    createSingleCompletedRecommendation()
+    webTestClient.get()
+      .uri("/cases/$crn/recommendations")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recommendations").isNotEmpty
+
+    // when
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(softDeleteRequest()),
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+
+    // then
+    webTestClient.get()
+      .uri("/cases/$crn/recommendations")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recommendations").isEmpty
+  }
+
+  @Test
   fun `create recommendation`() {
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
