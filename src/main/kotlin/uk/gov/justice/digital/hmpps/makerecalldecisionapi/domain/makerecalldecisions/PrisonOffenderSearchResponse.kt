@@ -7,7 +7,7 @@ data class PrisonOffenderSearchResponse(
   val bookingNo: String,
   val facialImageId: Long,
   val firstName: String,
-  val middleName: String,
+  val middleName: String? = "",
   val lastName: String,
   val dateOfBirth: LocalDate,
   val status: String,
