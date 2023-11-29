@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import java.time.LocalDate
 import java.util.*
 
 @Service
@@ -25,5 +27,15 @@ internal class PrisonerApiService(
     }
 
     return response!!
+  }
+
+  fun retrieveOffences(nomsId: String): List<Sentence> {
+    return getValueAndHandleWrappedException(
+      prisonApiClient.retrievePrisonTimelines(nomsId),
+    )!!.prisonPeriod
+      .flatMap { prisonApiClient.retrieveSentencesAndOffences(it.bookingId).block()!! }
+      .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
+      .sortedBy { it.courtDescription }
+      .sortedByDescending { it.sentenceDate }
   }
 }
