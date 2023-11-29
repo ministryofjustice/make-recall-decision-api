@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
 
 @RestController
@@ -19,10 +21,19 @@ internal class PrisonApiController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/prison-offender-search")
-  @Operation(summary = "Returns a list of recommendation docs that are appropriate for ppcs to process.")
+  @Operation(summary = "Returns a list of prison offenders.")
   suspend fun prisonOffenderSearch(
     @RequestBody request: PrisonOffenderSearchRequest,
   ): PrisonOffenderSearchResponse {
     return prisonerApiService.searchPrisonApi(request.nomsId)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("/prison-sentences")
+  @Operation(summary = "Returns a list of prison sentences.")
+  suspend fun retrieveSentences(
+    @RequestBody request: PrisonSentencesRequest,
+  ): List<Sentence> {
+    return prisonerApiService.retrieveOffences(request.nomsId)
   }
 }

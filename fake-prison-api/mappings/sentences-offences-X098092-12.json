@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/offender-sentences/booking/12/sentences-and-offences"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "sentences-offences-X098092-12.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
