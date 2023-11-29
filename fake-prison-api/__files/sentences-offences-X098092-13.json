@@ -1,0 +1,173 @@
+[
+  {
+    "bookingId": 13,
+    "sentenceSequence": 1,
+    "lineSequence": 1,
+    "caseSequence": 1,
+    "courtDescription": "Durham Crown Court",
+    "sentenceStatus": "A",
+    "sentenceCategory": "2003",
+    "sentenceCalculationType": "EPP",
+    "sentenceTypeDescription": "Extended Sent Public Protection CJA 03",
+    "sentenceDate": "2023-11-13",
+    "sentenceStartDate": "2023-11-13",
+    "sentenceEndDate": "2029-11-12",
+    "terms": [
+      {
+        "years": 4,
+        "months": 0,
+        "weeks": 0,
+        "days": 0,
+        "code": "IMP"
+      },
+      {
+        "years": 2,
+        "months": 0,
+        "weeks": 0,
+        "days": 0,
+        "code": "LIC"
+      }
+    ],
+    "offences": [
+      {
+        "offenderChargeId": 3934359,
+        "offenceStartDate": "2020-06-12",
+        "offenceStatute": "TN51",
+        "offenceCode": "TN51010",
+        "offenceDescription": "Give aid and comfort to the Sovereign's enemies outside his / her realm",
+        "indicators": [
+          "99"
+        ]
+      }
+    ]
+  },
+  {
+    "bookingId": 13,
+    "sentenceSequence": 2,
+    "consecutiveToSequence": 1,
+    "lineSequence": 2,
+    "caseSequence": 1,
+    "courtDescription": "Durham Crown Court",
+    "sentenceStatus": "A",
+    "sentenceCategory": "2003",
+    "sentenceCalculationType": "ADIMP_ORA",
+    "sentenceTypeDescription": "ORA CJA03 Standard Determinate Sentence",
+    "sentenceDate": "2023-11-13",
+    "sentenceStartDate": "2025-11-13",
+    "sentenceEndDate": "2030-11-12",
+    "terms": [
+      {
+        "years": 5,
+        "months": 0,
+        "weeks": 0,
+        "days": 0,
+        "code": "IMP"
+      }
+    ],
+    "offences": [
+      {
+        "offenderChargeId": 3934360,
+        "offenceStartDate": "2020-06-12",
+        "offenceStatute": "CS06",
+        "offenceCode": "CS06128",
+        "offenceDescription": "Fail to have ready for delivery certificate of shares / debentures / debenture stock within 2 months of allotment",
+        "indicators": []
+      },
+      {
+        "offenderChargeId": 3934361,
+        "offenceStartDate": "2018-02-10",
+        "offenceStatute": "TH68",
+        "offenceCode": "TH68047C",
+        "offenceDescription": "Conspire to commit aggravated burglary with intent - dwelling",
+        "indicators": [
+          "SCH15/CJIB/L",
+          "PCSC/SDS+",
+          "S15/CJIB"
+        ]
+      },
+      {
+        "offenderChargeId": 3934362,
+        "offenceStartDate": "2019-10-24",
+        "offenceStatute": "FI68",
+        "offenceCode": "FI68080",
+        "offenceDescription": "Have a firearm with intent to resist arrest",
+        "indicators": [
+          "99",
+          "ERS",
+          "V",
+          "PCSC/SDS+",
+          "S15/CJIB",
+          "13",
+          "SCH17A2",
+          "SCH15/CJIB/L"
+        ]
+      }
+    ]
+  },
+  {
+    "bookingId": 13,
+    "sentenceSequence": 3,
+    "lineSequence": 3,
+    "caseSequence": 2,
+    "courtDescription": "Blackburn County Court",
+    "sentenceStatus": "A",
+    "sentenceCategory": "2003",
+    "sentenceCalculationType": "IPP",
+    "sentenceTypeDescription": "Indeterminate Sentence for the Public Protection",
+    "sentenceDate": "2023-11-16",
+    "sentenceStartDate": "2023-11-16",
+    "sentenceEndDate": "2035-11-15",
+    "terms": [
+      {
+        "years": 12,
+        "months": 0,
+        "weeks": 0,
+        "days": 0,
+        "code": "IMP"
+      }
+    ],
+    "offences": [
+      {
+        "offenderChargeId": 3934368,
+        "offenceStartDate": "2000-01-01",
+        "offenceStatute": "GM00",
+        "offenceCode": "GM00030",
+        "offenceDescription": "Permit an animal to be taken into / upon a Greater Manchester Metrolink vehicle / station without authority",
+        "indicators": []
+      }
+    ]
+  },
+  {
+    "bookingId": 13,
+    "sentenceSequence": 4,
+    "lineSequence": 4,
+    "caseSequence": 2,
+    "courtDescription": "Blackburn County Court",
+    "sentenceStatus": "A",
+    "sentenceCategory": "2003",
+    "sentenceCalculationType": "MLP",
+    "sentenceTypeDescription": "Adult Mandatory Life",
+    "sentenceDate": "2023-11-16",
+    "sentenceStartDate": "2023-11-16",
+    "sentenceEndDate": "3022-11-15",
+    "terms": [
+      {
+        "years": 999,
+        "months": 0,
+        "weeks": 0,
+        "days": 0,
+        "code": "IMP"
+      }
+    ],
+    "offences": [
+      {
+        "offenderChargeId": 3934369,
+        "offenceStartDate": "1899-01-01",
+        "offenceStatute": "SA96",
+        "offenceCode": "SA96036",
+        "offenceDescription": "Sing / shout / play a musical instrument / operate a portable music machine cause annoyance at Stansted Airport London",
+        "indicators": []
+      }
+    ]
+  }
+]
