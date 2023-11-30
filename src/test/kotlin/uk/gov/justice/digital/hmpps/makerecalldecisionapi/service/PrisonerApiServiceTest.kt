@@ -5,7 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.given
@@ -36,6 +38,8 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
+    given(response.facialImageId).willReturn(1)
+
     val headers = HttpHeaders()
     headers.put("Content-Type", listOf("image/jpeg"))
 
@@ -51,6 +55,31 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     assertThat(result).isEqualTo(response)
 
     verify(result).image = "data:image/jpeg;base64,ZGF0YQ=="
+  }
+
+  @Test
+  fun `call retrieve offender with no image`() {
+    val nomsId = "AB234A"
+
+    val response = mock(PrisonOffenderSearchResponse::class.java)
+
+    given(prisonApiClient.retrieveOffender(any())).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+
+    assertThat(result).isEqualTo(response)
+
+    verify(prisonApiClient).retrieveOffender(nomsId)
+
+    verify(result, times(2)).facialImageId
+
+    verifyNoMoreInteractions(result)
+
+    verifyNoMoreInteractions(prisonApiClient)
   }
 
   @Test
