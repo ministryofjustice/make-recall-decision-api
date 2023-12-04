@@ -208,6 +208,7 @@ internal class RecommendationService(
       createdBy = recommendationEntity.data.createdBy,
       createdDate = recommendationEntity.data.createdDate,
       crn = recommendationEntity.data.crn,
+      ppudRecordPresent = recommendationEntity.data.ppudRecordPresent,
       sensitive = recommendationEntity.data.sensitive,
       reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
       spoRecallType = recommendationEntity.data.spoRecallType,

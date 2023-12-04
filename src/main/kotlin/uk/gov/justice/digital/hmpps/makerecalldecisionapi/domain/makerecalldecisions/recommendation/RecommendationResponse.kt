@@ -22,6 +22,7 @@ data class RecommendationResponse(
   val localPoliceContact: LocalPoliceContact? = null,
   val crn: String? = null,
   var sensitive: Boolean? = null,
+  var ppudRecordPresent: Boolean? = null,
   var reviewPractitionersConcerns: Boolean? = null,
   var reviewOffenderProfile: Boolean? = null,
   var explainTheDecision: Boolean? = null,
