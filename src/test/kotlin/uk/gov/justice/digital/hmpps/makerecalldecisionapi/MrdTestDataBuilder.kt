@@ -153,17 +153,19 @@ class MrdTestDataBuilder {
           ),
           nomisIndexOffence = NomisIndexOffence(
             selected = 123,
-            allOptions = listOf(OfferedOffence(
-              offenderChargeId = 123,
-              offenceCode = "A123X",
-              offenceStatute = "A123",
-              offenceDescription = "",
-              sentenceDate = LocalDate.now(),
-              sentenceStartDate =  LocalDate.now(),
-              sentenceEndDate =  LocalDate.now(),
-              bookingId = 123
-            ))
-          )
+            allOptions = listOf(
+              OfferedOffence(
+                offenderChargeId = 123,
+                offenceCode = "A123X",
+                offenceStatute = "A123",
+                offenceDescription = "",
+                sentenceDate = LocalDate.now(),
+                sentenceStartDate = LocalDate.now(),
+                sentenceEndDate = LocalDate.now(),
+                bookingId = 123,
+              ),
+            ),
+          ),
         ),
       )
     }
