@@ -82,6 +82,7 @@ data class RecommendationResponse(
   val releaseUnderECSL: Boolean? = null,
   val dateOfRelease: LocalDate? = null,
   val conditionalReleaseDate: LocalDate? = null,
+  val nomisIndexOffence: NomisIndexOffence? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

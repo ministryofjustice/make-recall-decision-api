@@ -273,6 +273,7 @@ internal class RecommendationService(
       releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
       dateOfRelease = recommendationEntity.data.dateOfRelease,
       conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
+      nomisIndexOffence = recommendationEntity.data.nomisIndexOffence,
     )
   }
 
