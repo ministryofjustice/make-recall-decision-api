@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointmentValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NomisIndexOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.OfferedOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
@@ -149,6 +151,19 @@ class MrdTestDataBuilder {
             region = "London2",
             localDeliveryUnit = "A1234",
           ),
+          nomisIndexOffence = NomisIndexOffence(
+            selected = 123,
+            allOptions = listOf(OfferedOffence(
+              offenderChargeId = 123,
+              offenceCode = "A123X",
+              offenceStatute = "A123",
+              offenceDescription = "",
+              sentenceDate = LocalDate.now(),
+              sentenceStartDate =  LocalDate.now(),
+              sentenceEndDate =  LocalDate.now(),
+              bookingId = 123
+            ))
+          )
         ),
       )
     }
