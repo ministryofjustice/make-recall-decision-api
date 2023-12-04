@@ -150,15 +150,7 @@
     "sentenceDate": "2023-11-16",
     "sentenceStartDate": "2023-11-16",
     "sentenceEndDate": "3022-11-15",
-    "terms": [
-      {
-        "years": 999,
-        "months": 0,
-        "weeks": 0,
-        "days": 0,
-        "code": "IMP"
-      }
-    ],
+    "terms": [],
     "offences": [
       {
         "offenderChargeId": 3934369,
