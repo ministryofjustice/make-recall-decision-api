@@ -37,6 +37,7 @@ internal class PrisonerApiService(
     )!!.prisonPeriod
       .flatMap { prisonApiClient.retrieveSentencesAndOffences(it.bookingId).block()!! }
       .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
+      .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
       .sortedBy { it.courtDescription }
       .sortedByDescending { it.sentenceDate }
   }

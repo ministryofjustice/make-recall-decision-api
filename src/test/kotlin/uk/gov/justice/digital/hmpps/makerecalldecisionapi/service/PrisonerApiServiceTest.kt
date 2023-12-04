@@ -133,26 +133,35 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
             sentenceDate = LocalDate.now().minusMonths(3).plusDays(5),
             sentenceEndDate = LocalDate.now().plusDays(1),
           ),
+          Sentence(
+            bookingId = 123,
+            courtDescription = "ABC",
+            sentenceDate = LocalDate.now().minusMonths(3).plusDays(5),
+            sentenceEndDate = null,
+          ),
         )
       },
     )
 
     val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
 
-    assertThat(result.size).isEqualTo(4)
+    assertThat(result.size).isEqualTo(5)
+
+    assertThat(result[0].courtDescription).isEqualTo("ABC")
+    assertThat(result[0].sentenceEndDate).isNull()
 
     // expect results to be ordered by sentence end date and then court description.
-    assertThat(result[0].bookingId).isEqualTo(123)
-    assertThat(result[0].courtDescription).isEqualTo("ABC")
-    assertThat(result[0].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(5))
-
+    assertThat(result[1].bookingId).isEqualTo(123)
     assertThat(result[1].courtDescription).isEqualTo("ABC")
-    assertThat(result[1].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+    assertThat(result[1].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(5))
 
-    assertThat(result[2].courtDescription).isEqualTo("DEF")
+    assertThat(result[2].courtDescription).isEqualTo("ABC")
     assertThat(result[2].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
 
-    assertThat(result[3].courtDescription).isEqualTo("ABC")
-    assertThat(result[3].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
+    assertThat(result[3].courtDescription).isEqualTo("DEF")
+    assertThat(result[3].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+
+    assertThat(result[4].courtDescription).isEqualTo("ABC")
+    assertThat(result[4].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
   }
 }
