@@ -4,6 +4,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
 fun updateRecommendationRequest(status: Status = Status.DRAFT, recallConsideredDetail: String? = "This is an updated recall considered detail") = """
 {
+  "ppudRecordPresent": true,
   "custodyStatus": {
     "selected": "YES_PRISON",
     "details": "Bromsgrove Police Station\r\nLondon",

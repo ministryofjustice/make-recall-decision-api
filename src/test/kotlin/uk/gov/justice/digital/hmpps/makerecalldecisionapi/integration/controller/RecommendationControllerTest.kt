@@ -164,6 +164,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     assertThat(response.get("id")).isEqualTo(idOfRecommendationJustCreated)
     assertThat(response.get("status")).isEqualTo("DRAFT")
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
+
+    assertThat(response.get("ppudRecordPresent")).isEqualTo(null)
     assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
     assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
@@ -556,6 +558,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectBody()
+      .jsonPath("$.ppudRecordPresent").isEqualTo(true)
       .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren").isEqualTo("LOW")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic").isEqualTo("LOW")
