@@ -924,7 +924,7 @@ internal class RecommendationService(
 
   private fun isStatusOpen(it: RecommendationEntity) =
     recommendationStatusRepository.findByRecommendationId(it.id)
-      .any { it.active && (it.name == "BOOK_TO_PPUD" || it.name == "DNTR_DOWNLOADED") }
+      .any { it.active && (it.name == "REC_CLOSED") }
       .not()
 }
 
