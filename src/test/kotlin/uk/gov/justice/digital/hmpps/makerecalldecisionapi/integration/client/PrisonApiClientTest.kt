@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.agencyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonSentencesAndOffences
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonTimelineResponse
 
@@ -99,7 +100,7 @@ class PrisonApiClientTest : IntegrationTestBase() {
 
   @Test
   fun `sentence and offences not found`() {
-    val request = HttpRequest.request().withPath("/api/offender-sentences/booking/" + 12 + "/sentences-and-offences")
+    val request = HttpRequest.request().withPath("/api/offender-sentences/booking/12/sentences-and-offences")
 
     prisonApi.`when`(request).respond(
       HttpResponse.response().withStatusCode(404),
@@ -109,5 +110,33 @@ class PrisonApiClientTest : IntegrationTestBase() {
       prisonApiClient.retrieveSentencesAndOffences(12).block()
     }.isInstanceOf(NotFoundException::class.java)
       .hasMessage("Prison api returned sentences and offences not found for booking id 12")
+  }
+
+  @Test
+  fun `retrieve agency`() {
+    val request = HttpRequest.request().withPath("/api/agencies/prison/MDI")
+
+    prisonApi.`when`(request).respond(
+      HttpResponse.response().withContentType(MediaType.APPLICATION_JSON)
+        .withBody(agencyResponse("MDI")),
+    )
+
+    val agency = prisonApiClient.retrieveAgency("MDI").block()
+
+    assertThat(agency?.agencyId, equalTo("MDI"))
+  }
+
+  @Test
+  fun `agency not found`() {
+    val request = HttpRequest.request().withPath("/api/agencies/prison/MDI")
+
+    prisonApi.`when`(request).respond(
+      HttpResponse.response().withStatusCode(404),
+    )
+
+    Assertions.assertThatThrownBy {
+      prisonApiClient.retrieveAgency("MDI").block()
+    }.isInstanceOf(NotFoundException::class.java)
+      .hasMessage("Prison api returned agency not found for agency id MDI")
   }
 }

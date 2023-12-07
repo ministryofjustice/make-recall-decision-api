@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/api/offenders/JG123POF"
+    "urlPath": "/api/offenders/JG123POE"
   },
   "response": {
-    "status": 404,
-    "bodyFileName": "search-not-found.json",
+    "status": 200,
+    "bodyFileName": "get-offender.json",
     "headers": {
       "Content-Type": "application/json"
     }

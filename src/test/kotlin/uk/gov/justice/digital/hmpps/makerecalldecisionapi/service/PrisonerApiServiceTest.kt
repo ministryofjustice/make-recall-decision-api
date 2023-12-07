@@ -16,11 +16,16 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Movement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PhysicalAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonPeriod
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -30,7 +35,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
   fun `call retrieve offender`() {
     val nomsId = "AB234A"
 
-    val response = mock(PrisonOffenderSearchResponse::class.java)
+    val response = mock(Offender::class.java)
 
     given(prisonApiClient.retrieveOffender(any())).willReturn(
       Mono.fromCallable {
@@ -61,7 +66,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
   fun `call retrieve offender with no image`() {
     val nomsId = "AB234A"
 
-    val response = mock(PrisonOffenderSearchResponse::class.java)
+    val response = mock(Offender::class.java)
 
     given(prisonApiClient.retrieveOffender(any())).willReturn(
       Mono.fromCallable {
@@ -83,7 +88,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `call retrieve sentences`() {
+  fun `call retrieve sentences and confirm ordering`() {
     val nomsId = "AB234A"
 
     val response = mock(PrisonTimelineResponse::class.java)
@@ -143,6 +148,14 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
+    val offenderResponse = mock(Offender::class.java)
+
+    given(prisonApiClient.retrieveOffender(any())).willReturn(
+      Mono.fromCallable {
+        offenderResponse
+      },
+    )
+
     val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
 
     assertThat(result.size).isEqualTo(5)
@@ -163,5 +176,85 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
 
     assertThat(result[4].courtDescription).isEqualTo("ABC")
     assertThat(result[4].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
+  }
+
+  @Test
+  fun `call retrieve sentences with additional details`() {
+    val nomsId = "AB234A"
+    val referenceDate = LocalDateTime.now()
+
+    val response = mock(PrisonTimelineResponse::class.java)
+
+    given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    given(response.prisonPeriod).willReturn(
+      listOf(
+        PrisonPeriod(
+          bookingId = 123,
+          movementDates = listOf(
+            Movement(
+              dateOutOfPrison = referenceDate.minusDays(5),
+              releaseFromPrisonId = "B1234",
+            ),
+            Movement(
+              dateOutOfPrison = referenceDate.minusDays(4),
+              releaseFromPrisonId = "A1234",
+            ),
+          ),
+        ),
+      ),
+    )
+
+    given(prisonApiClient.retrieveSentencesAndOffences(123)).willReturn(
+      Mono.fromCallable {
+        listOf(
+          Sentence(
+            bookingId = 123,
+            courtDescription = "DEF",
+            sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
+            sentenceEndDate = LocalDate.now(),
+          ),
+        )
+      },
+    )
+
+    given(prisonApiClient.retrieveAgency("A1234")).willReturn(
+      Mono.fromCallable {
+        Agency(
+          formattedDescription = "Hogwarts",
+        )
+      },
+    )
+
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
+      Mono.fromCallable {
+        Offender(
+          locationDescription = "",
+          bookingNo = "",
+          facialImageId = 0,
+          firstName = "Robert",
+          middleName = "A",
+          lastName = "Buchanan",
+          dateOfBirth = LocalDate.now().minusYears(45),
+          status = "",
+          physicalAttributes = PhysicalAttributes(gender = "M", ethnicity = "Caucasian"),
+          identifiers = listOf(),
+          sentenceDetail = SentenceDetail(licenceExpiryDate = LocalDate.now()),
+        )
+      },
+    )
+
+    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+
+    assertThat(result.size).isEqualTo(1)
+
+    assertThat(result[0].courtDescription).isEqualTo("DEF")
+    assertThat(result[0].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+    assertThat(result[0].releasingPrison).isEqualTo("Hogwarts")
+    assertThat(result[0].licenceExpiryDate).isEqualTo(LocalDate.now())
   }
 }

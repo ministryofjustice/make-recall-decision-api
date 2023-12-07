@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
@@ -24,7 +24,7 @@ internal class PrisonApiController(
   @Operation(summary = "Returns a list of prison offenders.")
   suspend fun prisonOffenderSearch(
     @RequestBody request: PrisonOffenderSearchRequest,
-  ): PrisonOffenderSearchResponse {
+  ): Offender {
     return prisonerApiService.searchPrisonApi(request.nomsId)
   }
 

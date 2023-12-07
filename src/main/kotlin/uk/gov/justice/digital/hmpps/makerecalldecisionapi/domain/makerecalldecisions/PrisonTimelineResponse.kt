@@ -17,12 +17,12 @@ data class PrisonPeriod(
 )
 
 data class Movement(
-  val reasonInToPrison: String?,
-  val dateInToPrison: LocalDateTime?,
-  val inwardType: String?,
-  val reasonOutOfPrison: String?,
-  val dateOutOfPrison: LocalDateTime?,
-  val outwardType: String?,
-  val admittedIntoPrisonId: String?,
-  val releaseFromPrisonId: String?,
+  val reasonInToPrison: String? = null,
+  val dateInToPrison: LocalDateTime? = null,
+  val inwardType: String? = null,
+  val reasonOutOfPrison: String? = null,
+  val dateOutOfPrison: LocalDateTime? = null,
+  val outwardType: String? = null,
+  val admittedIntoPrisonId: String? = null,
+  val releaseFromPrisonId: String? = null,
 )
