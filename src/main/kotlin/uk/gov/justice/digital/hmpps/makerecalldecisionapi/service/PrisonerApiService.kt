@@ -37,9 +37,9 @@ internal class PrisonerApiService(
     )!!.prisonPeriod
       .flatMap { t ->
         prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map {
-          val maxDateOutOfPrison =
-            t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.reverseOrder())
-          val movement = t.movementDates.find { it.dateOutOfPrison === maxDateOutOfPrison }
+          val lastDateOutOfPrison =
+            t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
+          val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
           val prisonDescription =
             movement?.releaseFromPrisonId?.let { prisonApiClient.retrieveAgency(it).block()?.formattedDescription }
 

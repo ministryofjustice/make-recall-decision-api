@@ -197,6 +197,10 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
           bookingId = 123,
           movementDates = listOf(
             Movement(
+              dateOutOfPrison = referenceDate.minusDays(5),
+              releaseFromPrisonId = "B1234",
+            ),
+            Movement(
               dateOutOfPrison = referenceDate.minusDays(4),
               releaseFromPrisonId = "A1234",
             ),
