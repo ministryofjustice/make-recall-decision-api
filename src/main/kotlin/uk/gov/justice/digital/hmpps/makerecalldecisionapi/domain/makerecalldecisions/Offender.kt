@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import java.time.LocalDate
 
-data class PrisonOffenderSearchResponse(
+data class Offender(
   val locationDescription: String,
   val bookingNo: String,
   val facialImageId: Long,
@@ -14,6 +14,7 @@ data class PrisonOffenderSearchResponse(
   val physicalAttributes: PhysicalAttributes,
   val identifiers: List<Identifier>,
   var image: String? = null,
+  val sentenceDetail: SentenceDetail,
 )
 
 data class PhysicalAttributes(
@@ -24,4 +25,8 @@ data class PhysicalAttributes(
 data class Identifier(
   val type: String,
   val value: String,
+)
+
+data class SentenceDetail(
+  val licenceExpiryDate: LocalDate,
 )

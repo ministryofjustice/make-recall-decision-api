@@ -23,6 +23,9 @@ fun prisonResponse(description: String, facialImageId: String) = """
       "type": "PNC",
       "value": "76767675"
     }
-  ]
+  ],
+  "sentenceDetail": {
+    "licenceExpiryDate": "2020-02-03"
+  }
 }
 """.trimIndent()

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/api/offenders/ABCDEF123"
+    "urlPath": "/api/agencies/prison/MDI"
   },
   "response": {
-    "status": 404,
-    "bodyFileName": "search-X098084.json",
+    "status": 200,
+    "bodyFileName": "get-agency-MDI.json",
     "headers": {
       "Content-Type": "application/json"
     }
