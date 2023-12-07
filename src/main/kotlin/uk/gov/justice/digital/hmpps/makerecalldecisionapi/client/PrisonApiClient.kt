@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -24,8 +25,8 @@ class PrisonApiClient(
 
   fun retrieveOffender(
     nomsId: String,
-  ): Mono<PrisonOffenderSearchResponse> {
-    val responseType = object : ParameterizedTypeReference<PrisonOffenderSearchResponse>() {}
+  ): Mono<Offender> {
+    val responseType = object : ParameterizedTypeReference<Offender>() {}
     return webClient
       .get()
       .uri { builder -> builder.path("/api/offenders/" + nomsId).build() }
@@ -102,5 +103,24 @@ class PrisonApiClient(
         throw ClientTimeoutException("Prison API Client", "No response within $prisonTimeout seconds")
       }
     }
+  }
+
+  fun retrieveAgency(agencyId: String): Mono<Agency> {
+    val responseType = object : ParameterizedTypeReference<Agency>() {}
+    return webClient
+      .get()
+      .uri { builder ->
+        builder.path("/api/agencies/prison/" + agencyId).build()
+      }
+      .retrieve()
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw NotFoundException("Prison api returned agency not found for agency id " + agencyId) },
+      )
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(prisonTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(exception = ex)
+      }
   }
 }

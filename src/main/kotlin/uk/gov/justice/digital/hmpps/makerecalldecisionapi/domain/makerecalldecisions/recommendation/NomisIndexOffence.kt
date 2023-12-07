@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class NomisIndexOffence(
   val selected: Int? = null,
@@ -17,4 +18,17 @@ data class OfferedOffence(
   val sentenceStartDate: LocalDate? = null,
   val sentenceEndDate: LocalDate? = null,
   val bookingId: Int? = null,
+  val terms: List<Term>? = null,
+  val sentenceTypeDescription: String? = null,
+  val releaseDate: LocalDateTime? = null,
+  val releasingPrison: String? = null,
+  val licenceExpiryDate: LocalDate? = null,
+)
+
+data class Term(
+  val years: Int? = null,
+  val months: Int? = null,
+  val weeks: Int? = null,
+  val days: Int? = null,
+  val code: String? = null,
 )

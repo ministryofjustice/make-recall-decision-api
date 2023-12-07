@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import java.time.LocalDate
 import java.util.*
@@ -11,7 +11,7 @@ import java.util.*
 internal class PrisonerApiService(
   private val prisonApiClient: PrisonApiClient,
 ) {
-  fun searchPrisonApi(nomsId: String): PrisonOffenderSearchResponse {
+  fun searchPrisonApi(nomsId: String): Offender {
     val response = getValueAndHandleWrappedException(
       prisonApiClient.retrieveOffender(nomsId),
     )
@@ -35,7 +35,22 @@ internal class PrisonerApiService(
     return getValueAndHandleWrappedException(
       prisonApiClient.retrievePrisonTimelines(nomsId),
     )!!.prisonPeriod
-      .flatMap { prisonApiClient.retrieveSentencesAndOffences(it.bookingId).block()!! }
+      .flatMap { t ->
+        prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map {
+          val maxDateOutOfPrison =
+            t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.reverseOrder())
+          val movement = t.movementDates.find { it.dateOutOfPrison === maxDateOutOfPrison }
+          val prisonDescription =
+            movement?.releaseFromPrisonId?.let { prisonApiClient.retrieveAgency(it).block()?.formattedDescription }
+
+          val offender = prisonApiClient.retrieveOffender(nomsId).block()
+          it.copy(
+            releaseDate = movement?.dateOutOfPrison,
+            releasingPrison = prisonDescription,
+            licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
+          )
+        }
+      }
       .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
       .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
       .sortedBy { it.courtDescription }

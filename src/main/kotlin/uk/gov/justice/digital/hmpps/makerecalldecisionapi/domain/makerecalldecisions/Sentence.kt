@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class Sentence(
   val bookingId: Int,
@@ -17,6 +18,9 @@ data class Sentence(
   val sentenceEndDate: LocalDate? = null,
   val terms: List<Term> = listOf(),
   val offences: List<SentenceOffence> = listOf(),
+  val releaseDate: LocalDateTime? = null,
+  val releasingPrison: String? = null,
+  val licenceExpiryDate: LocalDate? = null,
 )
 
 data class Term(

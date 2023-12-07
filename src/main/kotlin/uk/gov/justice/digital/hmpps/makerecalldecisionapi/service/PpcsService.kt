@@ -34,7 +34,7 @@ internal class PpcsService(
 
     val results = mutableListOf<PpcsSearchResult>()
 
-    for (offender in apiResponse!!.content) {
+    for (offender in apiResponse.content) {
       if (!offender.isNameNullOrBlank) {
         log.info("looking for recommendation doc")
         val doc = recommendationRepository.findByCrn(offender.otherIds.crn)
