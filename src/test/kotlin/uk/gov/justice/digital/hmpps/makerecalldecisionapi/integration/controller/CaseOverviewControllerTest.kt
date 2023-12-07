@@ -20,7 +20,7 @@ class CaseOverviewControllerTest(
 ) : IntegrationTestBase() {
 
   @ParameterizedTest
-  @CsvSource("BOOK_TO_PPUD,false", "DNTR_DOWNLOADED,false", "SOME_OPEN_STATUS,true")
+  @CsvSource("REC_CLOSED,false", "SOME_OPEN_STATUS,true")
   fun `no active recommendation available when available when BOOK_TO_PPUD or DNTR_DOWNLOADED status active`(status: String, expected: Boolean) {
     runTest {
       val featureFlagString = "{\"flagConsiderRecall\": true }"
