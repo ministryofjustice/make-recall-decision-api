@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison
 
-
 fun agencyResponse(id: String) = """
 {
   "agencyId": "$id",
