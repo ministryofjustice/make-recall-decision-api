@@ -1021,7 +1021,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
     createRecommendationsWithStatus("INCOMPLETE", null)
-    createRecommendationsWithStatus("COMPLETED", null)
+    createRecommendationsWithStatus("REC_CLOSED", null)
     Thread.sleep(3000)
     createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
   }
