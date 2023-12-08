@@ -14,7 +14,7 @@ data class Offender(
   val physicalAttributes: PhysicalAttributes,
   val identifiers: List<Identifier>,
   var image: String? = null,
-  val sentenceDetail: SentenceDetail,
+  val sentenceDetail: SentenceDetail? = null,
 )
 
 data class PhysicalAttributes(
@@ -28,5 +28,5 @@ data class Identifier(
 )
 
 data class SentenceDetail(
-  val licenceExpiryDate: LocalDate,
+  val licenceExpiryDate: LocalDate? = null,
 )
