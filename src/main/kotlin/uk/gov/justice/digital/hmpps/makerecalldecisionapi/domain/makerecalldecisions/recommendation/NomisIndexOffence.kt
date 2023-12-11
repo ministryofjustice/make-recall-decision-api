@@ -13,6 +13,7 @@ data class OfferedOffence(
   val offenceCode: String? = null,
   val offenceStatute: String? = null,
   val offenceDescription: String? = null,
+  val offenceDate: LocalDate? = null,
   val sentenceDate: LocalDate? = null,
   val courtDescription: String? = null,
   val sentenceStartDate: LocalDate? = null,
