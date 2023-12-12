@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/offender/.*/recall"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "book-recall.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

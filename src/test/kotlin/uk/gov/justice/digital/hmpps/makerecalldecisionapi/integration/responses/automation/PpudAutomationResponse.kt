@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation
 
-fun ppudAutomationResponse(nomsId: String, croNumber: String) = """
+fun ppudAutomationSearchResponse(nomsId: String, croNumber: String) = """
 {
   "results": [
     {

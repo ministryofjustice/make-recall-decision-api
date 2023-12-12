@@ -275,6 +275,7 @@ internal class RecommendationService(
       dateOfRelease = recommendationEntity.data.dateOfRelease,
       conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
       nomisIndexOffence = recommendationEntity.data.nomisIndexOffence,
+      bookRecallToPpud = recommendationEntity.data.bookRecallToPpud,
     )
   }
 

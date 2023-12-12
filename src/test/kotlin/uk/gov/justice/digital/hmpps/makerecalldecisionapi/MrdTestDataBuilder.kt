@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookRecallToPpud
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -56,6 +57,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MrdTestDataBuilder {
   companion object Helper {
@@ -167,6 +169,19 @@ class MrdTestDataBuilder {
                 terms = listOf(Term(4, 4, 4, 4)),
               ),
             ),
+          ),
+          bookRecallToPpud = BookRecallToPpud(
+            decisionDateTime = LocalDateTime.now(),
+            isInCustody = true,
+            mappaLevel = "Level 1",
+            policeForce = "Kent Police",
+            probationArea = "Kent",
+            recommendedToOwner = "ok fine",
+            receivedDateTime = LocalDateTime.now(),
+            releaseDate = LocalDate.now(),
+            riskOfContrabandDetails = "Smuggling cigarettes",
+            riskOfSeriousHarmLevel = "High",
+            sentenceDate = LocalDate.now(),
           ),
         ),
       )
