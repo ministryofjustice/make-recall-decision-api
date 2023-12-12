@@ -4,7 +4,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class Sentence(
-  val bookingId: Int,
+  val bookingId: Int? = null,
   val sentenceSequence: Int? = null,
   val lineSequence: Int? = null,
   val caseSequence: Int? = null,
@@ -13,7 +13,7 @@ data class Sentence(
   val sentenceCategory: String? = null,
   val sentenceCalculationType: String? = null,
   val sentenceTypeDescription: String? = null,
-  val sentenceDate: LocalDate,
+  val sentenceDate: LocalDate? = null,
   val sentenceStartDate: LocalDate? = null,
   val sentenceEndDate: LocalDate? = null,
   val terms: List<Term> = listOf(),
@@ -24,18 +24,18 @@ data class Sentence(
 )
 
 data class Term(
-  val years: Int,
-  val months: Int,
-  val weeks: Int,
-  val days: Int,
-  val code: String,
+  val years: Int? = null,
+  val months: Int? = null,
+  val weeks: Int? = null,
+  val days: Int? = null,
+  val code: String? = null,
 )
 
 data class SentenceOffence(
-  val offenderChargeId: Int,
-  val offenceStartDate: LocalDate,
-  val offenceStatute: String,
-  val offenceCode: String,
-  val offenceDescription: String,
-  val indicators: List<String>,
+  val offenderChargeId: Int? = null,
+  val offenceStartDate: LocalDate? = null,
+  val offenceStatute: String? = null,
+  val offenceCode: String? = null,
+  val offenceDescription: String? = null,
+  val indicators: List<String>? = null,
 )

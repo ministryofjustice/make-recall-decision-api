@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -176,6 +177,56 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
 
     assertThat(result[4].courtDescription).isEqualTo("ABC")
     assertThat(result[4].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
+  }
+
+  @Test
+  fun `offences should be sorted`() {
+    val nomsId = "AB234A"
+
+    val response = mock(PrisonTimelineResponse::class.java)
+
+    given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    given(response.prisonPeriod).willReturn(listOf(PrisonPeriod(bookingId = 123)))
+
+    given(prisonApiClient.retrieveSentencesAndOffences(123)).willReturn(
+      Mono.fromCallable {
+        listOf(
+          Sentence(
+            bookingId = 123,
+            courtDescription = "DEF",
+            sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
+            sentenceEndDate = LocalDate.now(),
+            offences = listOf(
+              SentenceOffence(offenceDescription = "DEF"),
+              SentenceOffence(offenceDescription = "ABC"),
+              SentenceOffence(offenceDescription = "NMO"),
+              SentenceOffence(offenceDescription = "GHI"),
+            ),
+          ),
+        )
+      },
+    )
+
+    val offenderResponse = mock(Offender::class.java)
+
+    given(prisonApiClient.retrieveOffender(any())).willReturn(
+      Mono.fromCallable {
+        offenderResponse
+      },
+    )
+
+    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+
+    val offences = result.get(0).offences
+    assertThat(offences[0].offenceDescription).isEqualTo("ABC")
+    assertThat(offences[1].offenceDescription).isEqualTo("DEF")
+    assertThat(offences[2].offenceDescription).isEqualTo("GHI")
+    assertThat(offences[3].offenceDescription).isEqualTo("NMO")
   }
 
   @Test
