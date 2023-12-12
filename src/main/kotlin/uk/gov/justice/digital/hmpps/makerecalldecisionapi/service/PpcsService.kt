@@ -43,7 +43,7 @@ internal class PpcsService(
             val statuses = recommendationStatusRepository.findByRecommendationId(it.id)
               .filter { it.active }
             log.info("statuses: " + statuses.map { it.name }.joinToString(","))
-            statuses.any { it.name == "PP_DOCUMENT_CREATED" } && statuses.none { it.name == "REC_CLOSED" }
+            statuses.any { it.name == "SENT_TO_PPCS" } && statuses.none { it.name == "REC_CLOSED" }
           }
           .firstOrNull()
 
