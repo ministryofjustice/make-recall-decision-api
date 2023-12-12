@@ -182,7 +182,7 @@ class MrdTestDataBuilder {
             riskOfContrabandDetails = "Smuggling cigarettes",
             riskOfSeriousHarmLevel = "High",
             sentenceDate = LocalDate.now(),
-          )
+          ),
         ),
       )
     }
