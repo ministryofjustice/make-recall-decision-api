@@ -79,10 +79,10 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.83")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.83")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.83")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.83")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.84")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.84")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.84")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.84")
 }
 
 java {
