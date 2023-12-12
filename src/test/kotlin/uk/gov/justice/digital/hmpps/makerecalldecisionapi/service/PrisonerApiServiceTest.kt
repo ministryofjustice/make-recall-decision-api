@@ -197,16 +197,16 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       Mono.fromCallable {
         listOf(
           Sentence(
-              bookingId = 123,
-              courtDescription = "DEF",
-              sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
-              sentenceEndDate = LocalDate.now(),
-              offences = listOf(
-                  SentenceOffence(offenceDescription = "DEF"),
-                  SentenceOffence(offenceDescription = "ABC"),
-                  SentenceOffence(offenceDescription = "NMO"),
-                  SentenceOffence(offenceDescription = "GHI"),
-              ),
+            bookingId = 123,
+            courtDescription = "DEF",
+            sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
+            sentenceEndDate = LocalDate.now(),
+            offences = listOf(
+              SentenceOffence(offenceDescription = "DEF"),
+              SentenceOffence(offenceDescription = "ABC"),
+              SentenceOffence(offenceDescription = "NMO"),
+              SentenceOffence(offenceDescription = "GHI"),
+            ),
           ),
         )
       },
