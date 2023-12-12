@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Movement
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PhysicalAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonPeriod
@@ -198,16 +197,16 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       Mono.fromCallable {
         listOf(
           Sentence(
-            bookingId = 123,
-            courtDescription = "DEF",
-            sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
-            sentenceEndDate = LocalDate.now(),
-            offences = listOf(
-              SentenceOffence(offenceDescription = "DEF"),
-              SentenceOffence(offenceDescription = "ABC"),
-              SentenceOffence(offenceDescription = "NMO"),
-              SentenceOffence(offenceDescription = "GHI"),
-            )
+              bookingId = 123,
+              courtDescription = "DEF",
+              sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
+              sentenceEndDate = LocalDate.now(),
+              offences = listOf(
+                  SentenceOffence(offenceDescription = "DEF"),
+                  SentenceOffence(offenceDescription = "ABC"),
+                  SentenceOffence(offenceDescription = "NMO"),
+                  SentenceOffence(offenceDescription = "GHI"),
+              ),
           ),
         )
       },
@@ -224,10 +223,10 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
 
     val offences = result.get(0).offences
-    assertThat(offences[0].offenceDescription ).isEqualTo("ABC")
-    assertThat(offences[1].offenceDescription ).isEqualTo("DEF")
-    assertThat(offences[2].offenceDescription ).isEqualTo("GHI")
-    assertThat(offences[3].offenceDescription ).isEqualTo("NMO")
+    assertThat(offences[0].offenceDescription).isEqualTo("ABC")
+    assertThat(offences[1].offenceDescription).isEqualTo("DEF")
+    assertThat(offences[2].offenceDescription).isEqualTo("GHI")
+    assertThat(offences[3].offenceDescription).isEqualTo("NMO")
   }
 
   @Test
