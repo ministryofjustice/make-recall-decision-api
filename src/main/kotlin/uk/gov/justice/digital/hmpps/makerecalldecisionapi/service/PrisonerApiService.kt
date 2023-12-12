@@ -48,7 +48,7 @@ internal class PrisonerApiService(
             releaseDate = movement?.dateOutOfPrison,
             releasingPrison = prisonDescription,
             licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
-            offences = it.offences.sortedBy { it.offenceDescription }
+            offences = it.offences.sortedBy { it.offenceDescription },
           )
         }
       }
