@@ -4,15 +4,15 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class BookRecallToPpud(
-  val decisionDateTime: LocalDateTime,
-  val isInCustody: Boolean,
-  val mappaLevel: String,
-  val policeForce: String,
-  val probationArea: String,
-  val recommendedToOwner: String,
-  val receivedDateTime: String,
-  val releaseDate: LocalDate,
-  val riskOfContrabandDetails: String,
-  val riskOfSeriousHarmLevel: String,
-  val sentenceDate: LocalDate,
+  val decisionDateTime: LocalDateTime? = null,
+  val isInCustody: Boolean? = null,
+  val mappaLevel: String? = null,
+  val policeForce: String? = null,
+  val probationArea: String? = null,
+  val recommendedToOwner: String? = null,
+  val receivedDateTime: LocalDateTime? = null,
+  val releaseDate: LocalDate? = null,
+  val riskOfContrabandDetails: String? = null,
+  val riskOfSeriousHarmLevel: String? = null,
+  val sentenceDate: LocalDate? = null,
 )
