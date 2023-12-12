@@ -88,7 +88,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
       listOf(
-        status("PP_DOCUMENT_CREATED", true, 123L),
+        status("SENT_TO_PPCS", true, 123L),
       ),
     )
 
@@ -135,7 +135,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
     given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
       listOf(
         status("ANOTHER_STATUS", true, 123L),
-        status("PP_DOCUMENT_CREATED", true, 123L),
+        status("SENT_TO_PPCS", true, 123L),
         status("REC_CLOSED", true, 123L),
       ),
     )
@@ -182,7 +182,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
       listOf(
-        status("PP_DOCUMENT_CREATED", false, 123L),
+        status("SENT_TO_PPCS", false, 123L),
       ),
     )
 
