@@ -134,6 +134,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
       listOf(
+        status("ANOTHER_STATUS", true, 123L),
         status("PP_DOCUMENT_CREATED", true, 123L),
         status("REC_CLOSED", true, 123L),
       ),
