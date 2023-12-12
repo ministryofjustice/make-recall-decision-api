@@ -42,7 +42,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404NoOffenderFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
@@ -844,7 +845,7 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun ppudAutomationApiMatchResponse(
+  protected fun ppudAutomationSearchApiMatchResponse(
     nomsId: String,
     croNumber: String,
     delaySeconds: Long = 0,
@@ -853,7 +854,21 @@ abstract class IntegrationTestBase {
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationResponse(nomsId, croNumber))
+        .withBody(ppudAutomationSearchResponse(nomsId, croNumber))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun ppudAutomationBookRecallApiMatchResponse(
+    nomsId: String,
+    id: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/offender/$nomsId/recall")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(ppudAutomationBookRecallResponse(id))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }
