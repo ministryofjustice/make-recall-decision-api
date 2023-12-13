@@ -191,7 +191,7 @@ internal class RecommendationService(
   private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? {
     return recommendationRepository.findByCrn(crn)
       .filter {
-        recommendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "REC_CLOSED" || it.name == "COMPLETED" }
+        recommendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
       }.minOrNull()
   }
 
