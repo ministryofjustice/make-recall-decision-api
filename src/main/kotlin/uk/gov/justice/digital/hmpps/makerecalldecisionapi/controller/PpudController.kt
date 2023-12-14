@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudService
@@ -42,5 +43,14 @@ internal class PpudController(
     @RequestBody request: PpudBookRecall,
   ): PpudBookRecallResponse {
     return ppudService.bookToPpud(nomisId, request)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("/ppud/reference/{name}")
+  @Operation(summary = "Calls PPUD Automation service to retrieve reference list.")
+  suspend fun retrieveList(
+    @PathVariable("name") name: String,
+  ): PpudReferenceListResponse {
+    return ppudService.retrieveList(name)
   }
 }

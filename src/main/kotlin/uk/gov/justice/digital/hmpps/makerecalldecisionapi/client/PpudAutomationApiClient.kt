@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -51,6 +52,22 @@ class PpudAutomationApiClient(
       .uri { builder -> builder.path("/offender/" + nomisId + "/recall").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+        )
+      }
+  }
+
+  fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
+    val responseType = object : ParameterizedTypeReference<PpudReferenceListResponse>() {}
+
+    return webClient
+      .get()
+      .uri { builder -> builder.path("/reference/" + name).build() }
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
