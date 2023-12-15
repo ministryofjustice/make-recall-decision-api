@@ -68,4 +68,16 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // then
     assertThat(actual.recall.id, equalTo("12345678"))
   }
+
+  @Test
+  fun `reference list`() {
+    // given
+    ppudAutomationReferenceListApiMatchResponse("custody-types")
+
+    // when
+    val actual = ppudAutomationApiClient.retrieveList("custody-types").block()
+
+    // then
+    assertThat(actual.values, equalTo(listOf("one", "two")))
+  }
 }
