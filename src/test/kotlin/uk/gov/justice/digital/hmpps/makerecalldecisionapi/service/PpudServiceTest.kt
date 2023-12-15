@@ -11,6 +11,7 @@ import org.mockito.kotlin.given
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 
@@ -48,6 +49,21 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result = PpudService(ppudAutomationApiClient).bookToPpud("123", request)
+
+    assertThat(result).isEqualTo(response)
+  }
+
+  @Test
+  fun `reference list`() {
+    val response = mock(PpudReferenceListResponse::class.java)
+
+    given(ppudAutomationApiClient.retrieveList("custody-type")).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    val result = PpudService(ppudAutomationApiClient).retrieveList("custody-type")
 
     assertThat(result).isEqualTo(response)
   }

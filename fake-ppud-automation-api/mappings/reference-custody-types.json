@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/reference/custody-types"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "reference-custody-types.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

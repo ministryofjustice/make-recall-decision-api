@@ -873,6 +873,19 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun ppudAutomationReferenceListApiMatchResponse(
+    name: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/reference/$name")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody("{ \"values\": [\"one\",\"two\"] }")
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun cvlLicenceByIdResponse(
     licenceId: Int,
     nomisId: String,

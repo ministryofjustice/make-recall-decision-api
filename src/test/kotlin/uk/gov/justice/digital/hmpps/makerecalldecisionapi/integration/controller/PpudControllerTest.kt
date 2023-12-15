@@ -87,4 +87,18 @@ class PpudControllerTest : IntegrationTestBase() {
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
+
+  @Test
+  fun `reference list`() {
+    ppudAutomationReferenceListApiMatchResponse("custody-type")
+    runTest {
+      referenceList("custody-type").expectStatus().isOk
+    }
+  }
+
+  private fun referenceList(name: String): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri("/ppud/reference/$name")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
 }
