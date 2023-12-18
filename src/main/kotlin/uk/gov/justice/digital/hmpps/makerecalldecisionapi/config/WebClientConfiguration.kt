@@ -30,7 +30,7 @@ class WebClientConfiguration(
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
-  @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationRootUri: String,
+  @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationApiRootUri: String,
   @Value("\${prison.api.endpoint.url}") private val prisonRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
@@ -149,16 +149,16 @@ class WebClientConfiguration(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
   ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationRootUri, "ppud-automation-api")
+    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationApiRootUri, "ppud-automation-api")
   }
 
   @Bean
-  fun ppudAutomationClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient): PpudAutomationApiClient {
-    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationClientTimeoutCounter())
+  fun ppudAutomationApiClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient): PpudAutomationApiClient {
+    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationApiClientTimeoutCounter())
   }
 
   @Bean
-  fun ppudAutomationClientTimeoutCounter(): Counter = timeoutCounter(ppudAutomationRootUri)
+  fun ppudAutomationApiClientTimeoutCounter(): Counter = timeoutCounter(ppudAutomationApiRootUri)
 
   @Bean
   fun prisonWebClientAppScope(
