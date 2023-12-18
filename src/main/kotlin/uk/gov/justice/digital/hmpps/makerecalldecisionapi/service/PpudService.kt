@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 
 @Service
 internal class PpudService(
-  @Qualifier("ppudAutomationClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
+  @Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
 ) {
   fun search(request: PpudSearchRequest): PpudSearchResponse {
     val response = getValueAndHandleWrappedException(
