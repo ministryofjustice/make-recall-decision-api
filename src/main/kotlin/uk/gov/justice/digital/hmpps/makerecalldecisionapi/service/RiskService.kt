@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -86,8 +87,9 @@ internal class RiskService(
   suspend fun getAssessmentStatus(crn: String): String {
     val assessmentsResponse = fetchAssessments(crn)
     val latestAssessment =
-      assessmentsResponse.assessments?.sortedBy { LocalDateTime.parse(it.initiationDate).toLocalDate() }?.reversed()
-        ?.firstOrNull()
+      assessmentsResponse.assessments
+        ?.sortedBy { it.initiationDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
+        ?.lastOrNull()
     return getStatusFromSuperStatus(latestAssessment?.superStatus)
   }
 
@@ -151,10 +153,8 @@ internal class RiskService(
 
   private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
     assessmentsResponse.assessments
-      ?.filter { !it.dateCompleted.isNullOrEmpty() }
-      ?.sortedBy { LocalDateTime.parse(it.dateCompleted).toLocalDate() }
-      ?.reversed()
-      ?.firstOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
+      ?.sortedBy { it.dateCompleted ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
+      ?.lastOrNull() { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
 
   private fun isLatestAssessment(it: Assessment?) =
     (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
@@ -162,9 +162,12 @@ internal class RiskService(
   private fun datesMatch(
     latestAssessment: Assessment?,
     mainOffenceDate: LocalDate?,
-  ) = latestAssessment?.offenceDetails?.any {
-    it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate)
-  } == true
+  ) = latestAssessment
+    ?.offenceDetails
+    ?.map { it.copy(offenceDate = it.offenceDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE) }
+    ?.any {
+      LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate
+    } == true
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
     it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.code) && (it.type == "CURRENT") } == true
@@ -192,11 +195,12 @@ internal class RiskService(
         historical = null,
       )
     }
-    val latestScores = riskScoresResponse.sortedBy { LocalDateTime.parse(it.completedDate) }.reversed().firstOrNull()
-    val historicalScores = riskScoresResponse.sortedBy { it.completedDate }.reversed()
-
+    val historicalScores = riskScoresResponse
+      .sortedBy { it.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
+      .reversed()
+    val latestScore = historicalScores.firstOrNull()
     return PredictorScores(
-      current = latestScores?.let { createTimelineDataPoint(it) },
+      current = latestScore?.let { createTimelineDataPoint(it) },
       historical = historicalScores.mapNotNull { createTimelineDataPoint(it) },
     )
   }
@@ -237,7 +241,7 @@ internal class RiskService(
       null
     } else {
       PredictorScore(
-        date = LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString(),
+        date = LocalDateTime.parse(riskScoreResponse.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE).toLocalDate().toString(),
         scores = scores,
       )
     }
