@@ -68,7 +68,7 @@ class MrdTestDataBuilder {
       surname: String = "Long",
       status: Status = Status.DRAFT,
       recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM,
-      lastModifiedDate: String = "2022-07-01T15:22:24.567Z",
+      lastModifiedDate: String? = "2022-07-01T15:22:24.567Z",
     ): RecommendationEntity {
       return RecommendationEntity(
         id = 1,
@@ -536,7 +536,7 @@ class MrdTestDataBuilder {
       )
     }
 
-    private fun roshDataForPartA(): RoshData? {
+    private fun roshDataForPartA(): RoshData {
       return RoshData(
         riskToChildren = RoshDataScore.VERY_HIGH,
         riskToPublic = RoshDataScore.HIGH,
