@@ -57,7 +57,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
 import java.time.ZoneId
 import kotlin.jvm.optionals.getOrNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel as DeliusRecommendationModel
@@ -907,7 +906,7 @@ internal class RecommendationService(
 
   private fun buildRecommendationsResponse(recommendationEntityList: List<RecommendationEntity>?): List<RecommendationsListItem>? {
     val sorted = recommendationEntityList?.sortedBy {
-      OffsetDateTime.parse(it.data.lastModifiedDate).toLocalDateTime()
+      it.data.lastModifiedDate
     }?.reversed()
     return sorted
       ?.map {

@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ManagementOversightResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoManagementOversightException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localDateTimeFromString
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import java.util.Collections
 
 @Transactional
@@ -28,11 +25,9 @@ internal class ManagementOversightService(
     crn: String,
   ): ResponseEntity<ManagementOversightResponse> {
     val recommendations = recommendationRepository.findByCrn(crn)
-      ?: throw NoRecommendationFoundException("No recommendation found for crn:$crn")
     Collections.sort(recommendations)
     val managerRecallDecision = recommendations[0].data.managerRecallDecision
       ?: throw NoManagementOversightException("No management oversight available for crn:$crn")
-    val dateTime = splitDateTime(localDateTimeFromString(managerRecallDecision.createdDate))
     val readableNameOfUser = managerRecallDecision.createdBy
     return ResponseEntity(
       ManagementOversightResponse(

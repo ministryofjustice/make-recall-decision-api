@@ -5,7 +5,6 @@ import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -27,8 +26,15 @@ class DateTimeHelper {
     }
 
     fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime {
-      val utcZonedDateTime = ZonedDateTime.of(LocalDateTime.parse(utcDateTimeString?.replace("Z", MrdTextConstants.EMPTY_STRING)), ZoneId.of("UTC"))
-      return utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
+      return if (utcDateTimeString.isNullOrBlank()) {
+        LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+      } else {
+        val utcZonedDateTime = ZonedDateTime.of(
+          LocalDateTime.parse(utcDateTimeString.replace("Z", MrdTextConstants.EMPTY_STRING)),
+          ZoneId.of("UTC"),
+        )
+        utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
+      }
     }
 
     fun localNowDateTime(): LocalDateTime {
@@ -60,22 +66,18 @@ class DateTimeHelper {
     }
 
     fun convertUtcDateTimeStringToIso8601Date(input: String?): String? {
-      val offsetDateTime: OffsetDateTime = LocalDateTime.parse(input).atOffset(ZoneOffset.UTC)
+      val localDateTime = if (input.isNullOrBlank()) {
+        LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+      } else {
+        LocalDateTime.parse(input)
+      }
       val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH)
-      return offsetDateTime.format(formatter)
+      return localDateTime.atOffset(ZoneOffset.UTC).format(formatter)
     }
 
     fun convertDateStringToIso8601Date(input: String?): LocalDate? {
       val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
       return input?.let { LocalDate.parse(it, formatter) }
     }
-
-    fun localDateTimeFromString(localDateTimeString: String?): LocalDateTime =
-      LocalDateTime.parse(
-        localDateTimeString?.replace(
-          "Z",
-          MrdTextConstants.EMPTY_STRING,
-        ),
-      )
   }
 }
