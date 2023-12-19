@@ -34,6 +34,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       val lastModifiedDate1 = "2022-07-02T15:22:24.567Z"
       val lastModifiedDate2 = "2022-07-01T15:22:24.567Z"
       val lastModifiedDate3 = "2022-07-03T15:22:24.567Z"
+      val lastModifiedDate4: String? = null
 
       val recommendation1 = MrdTestDataBuilder.recommendationDataEntityData(
         crn,
@@ -53,6 +54,12 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
         recallTypeValue = testData.recallTypeValue,
         lastModifiedDate = lastModifiedDate3,
       )
+      val recommendation4 = MrdTestDataBuilder.recommendationDataEntityData(
+        crn,
+        status = testData.recommendationStatus,
+        recallTypeValue = testData.recallTypeValue,
+        lastModifiedDate = lastModifiedDate4,
+      )
 
       given(
         recommendationRepository.findByCrnAndStatus(
@@ -60,7 +67,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
           listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name, Status.DOCUMENT_DOWNLOADED.name),
         ),
       )
-        .willReturn(listOf(recommendation1, recommendation2, recommendation3))
+        .willReturn(listOf(recommendation1, recommendation2, recommendation3, recommendation4))
 
       given(recommendationRepository.findByCrnAndStatus(crn, listOf(Status.DRAFT.name, Status.RECALL_CONSIDERED.name)))
         .willReturn(listOf(recommendation3))
@@ -79,6 +86,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
               expectedRecommendationListItemResponse(recommendation3),
               expectedRecommendationListItemResponse(recommendation1),
               expectedRecommendationListItemResponse(recommendation2),
+              expectedRecommendationListItemResponse(recommendation4),
             ),
             expectedActiveRecommendationResponse(testData.recommendationStatus, recommendation3),
           ),
