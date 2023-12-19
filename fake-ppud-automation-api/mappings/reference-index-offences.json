@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/reference/index-offences"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "reference-index-offences.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
