@@ -12,5 +12,6 @@ class MrdTextConstants {
     const val SCORE_NOT_APPLICABLE = "NOT_APPLICABLE"
     const val TICK_CHARACTER = 0x2713.toChar().toString()
     const val NO_NAME_AVAILABLE = "No name available"
+    const val DEFAULT_DATE_TIME_FOR_NULL_VALUE = "1970-01-01T00:00:00.000"
   }
 }

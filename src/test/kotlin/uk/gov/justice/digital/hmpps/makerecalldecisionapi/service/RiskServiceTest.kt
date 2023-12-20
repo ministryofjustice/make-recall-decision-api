@@ -68,7 +68,9 @@ internal class RiskServiceTest : ServiceTestBase() {
           Mono.fromCallable {
             listOf(
               currentRiskScoreResponse,
+              currentRiskScoreResponse.copy(completedDate = null),
               historicalRiskScoreResponse,
+              historicalRiskScoreResponse.copy(completedDate = null),
               historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000"),
             )
           },
@@ -79,7 +81,14 @@ internal class RiskServiceTest : ServiceTestBase() {
             AssessmentsResponse(
               crn,
               false,
-              listOf(assessment(), assessment().copy(dateCompleted = null)),
+              listOf(
+                assessment(),
+                assessment().copy(dateCompleted = null),
+                assessment().copy(
+                  dateCompleted = null,
+                  initiationDate = null,
+                ),
+              ),
             )
           },
         )
@@ -179,6 +188,8 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(historicalScores?.get(2)?.scores?.ogrs?.type).isEqualTo("OGRS")
       assertThat(historicalScores?.get(2)?.scores?.ogrs?.oneYear).isEqualTo("0")
       assertThat(historicalScores?.get(2)?.scores?.ogrs?.twoYears).isEqualTo("0")
+      assertThat(historicalScores?.get(3)?.date).isEqualTo(null)
+      assertThat(historicalScores?.get(4)?.date).isEqualTo(null)
       assertThat(currentScores?.date).isEqualTo("2018-09-12")
       assertThat(currentScores?.scores?.rsr?.level).isEqualTo("MEDIUM")
       assertThat(currentScores?.scores?.rsr?.score).isEqualTo("2")
