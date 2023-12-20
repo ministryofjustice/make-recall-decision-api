@@ -241,7 +241,7 @@ internal class RiskService(
       null
     } else {
       PredictorScore(
-        date = LocalDateTime.parse(riskScoreResponse.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE).toLocalDate().toString(),
+        date = if (riskScoreResponse.completedDate == null) null else { LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString() },
         scores = scores,
       )
     }
