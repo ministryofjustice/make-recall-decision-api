@@ -162,12 +162,9 @@ internal class RiskService(
   private fun datesMatch(
     latestAssessment: Assessment?,
     mainOffenceDate: LocalDate?,
-  ) = latestAssessment
-    ?.offenceDetails
-    ?.map { it.copy(offenceDate = it.offenceDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE) }
-    ?.any {
-      LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate
-    } == true
+  ) = latestAssessment?.offenceDetails?.any {
+    it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate)
+  } == true
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
     it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.code) && (it.type == "CURRENT") } == true
