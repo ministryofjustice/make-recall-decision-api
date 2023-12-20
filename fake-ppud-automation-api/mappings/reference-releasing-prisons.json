@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/reference/releasing-prisons"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "reference-releasing-prisons.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
