@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/reference/releasing-prisons"
+    "url": "/reference/mappa-levels"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "reference-releasing-prisons.json",
+    "bodyFileName": "reference-mappa-levels.json",
     "headers": {
       "Content-Type": "application/json"
     }
