@@ -1,11 +1,11 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.13.0"
-  kotlin("jvm") version "1.9.21"
+  kotlin("jvm") version "1.9.22"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "1.9.21"
+  kotlin("plugin.jpa") version "1.9.22"
   id("org.sonarqube") version "4.4.1.3373"
-  kotlin("plugin.spring") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.22"
 }
 
 jacoco.toolVersion = "0.8.8"
@@ -32,7 +32,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.12.1")
   implementation("io.opentelemetry:opentelemetry-api:1.33.0")
   implementation("joda-time:joda-time:2.12.5")
