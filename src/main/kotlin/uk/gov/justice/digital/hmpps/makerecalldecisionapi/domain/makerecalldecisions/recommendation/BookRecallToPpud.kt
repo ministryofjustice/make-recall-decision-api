@@ -18,4 +18,10 @@ data class BookRecallToPpud(
   val riskOfContrabandDetails: String? = null,
   val riskOfSeriousHarmLevel: String? = null,
   val sentenceDate: LocalDate? = null,
+  val gender: String? = null,
+  val ethnicity: String? = null,
+  val firstName: String? = null,
+  val secondName: String? = null,
+  val lastName: String? = null,
+  val dateOfBirth: LocalDate? = null,
 )
