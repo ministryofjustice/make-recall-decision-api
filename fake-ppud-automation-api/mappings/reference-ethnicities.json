@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/reference/ethnicities"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "reference-ethnicities.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
