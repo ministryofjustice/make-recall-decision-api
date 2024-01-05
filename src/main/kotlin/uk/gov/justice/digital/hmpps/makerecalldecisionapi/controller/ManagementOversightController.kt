@@ -23,6 +23,7 @@ internal class ManagementOversightController(
   }
 
   //  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION', 'ROLE_MAKE_RECALL_DECISION_SPO')")
+  @PublicEndpoint
   @GetMapping("/managementOversight/{crn}")
   @Operation(summary = "Provides notes on case for Delius")
   suspend fun getRecommendationStatus(
