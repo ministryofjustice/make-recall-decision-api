@@ -130,7 +130,7 @@ data class PractitionerForPartA(
 data class PrisonOffender(
   var locationDescription: String? = null,
   var bookingNo: String? = null,
-  var facialImageId: String? = null,
+  var facialImageId: Long? = null,
   var firstName: String? = null,
   var middleName: String? = null,
   var lastName: String? = null,
@@ -140,6 +140,7 @@ data class PrisonOffender(
   var ethnicity: String? = null,
   var CRO: String? = null,
   var PNC: String? = null,
+  var image: String? = null,
 )
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
