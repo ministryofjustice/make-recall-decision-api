@@ -48,6 +48,19 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `given details request`() {
+    ppudAutomationDetailsMatchResponse("12345678")
+
+    runTest {
+      webTestClient.post()
+        .uri("/ppud/details/12345678")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToSearch(requestBody: String): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/search")
