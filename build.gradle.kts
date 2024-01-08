@@ -34,8 +34,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.1")
   implementation("io.micrometer:micrometer-registry-prometheus:1.12.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.33.0")
-  implementation("joda-time:joda-time:2.12.5")
+  implementation("io.opentelemetry:opentelemetry-api:1.34.0")
+  implementation("joda-time:joda-time:2.12.6")
   implementation("com.deepoove:poi-tl:1.12.1") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
