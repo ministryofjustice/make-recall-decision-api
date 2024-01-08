@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/xyz/recommendation-model"
+    "urlPathPattern": "/case-summary/X476202/recommendation-model"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "recommendation-model.json",
+    "bodyFileName": "recommendation-model-X476202.json",
     "headers": {
       "Content-Type": "application/json"
     }
