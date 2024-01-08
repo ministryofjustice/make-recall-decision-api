@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
@@ -30,19 +29,10 @@ internal class PpudController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/search")
   @Operation(summary = "Calls PPUD Automation service for a search.")
-  suspend fun ppudSearch(
+  suspend fun ppcsSearch(
     @RequestBody request: PpudSearchRequest,
   ): PpudSearchResponse {
     return ppudService.search(request)
-  }
-
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PostMapping("/ppud/details/{id}")
-  @Operation(summary = "Calls PPUD Automation service for a search.")
-  suspend fun ppcsDetails(
-    @PathVariable("id") id: String,
-  ): PpudDetailsResponse {
-    return ppudService.details(id)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")

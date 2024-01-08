@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
@@ -17,13 +16,6 @@ internal class PpudService(
   fun search(request: PpudSearchRequest): PpudSearchResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.search(request),
-    )
-    return response!!
-  }
-
-  fun details(id: String): PpudDetailsResponse {
-    val response = getValueAndHandleWrappedException(
-      ppudAutomationApiClient.details(id),
     )
     return response!!
   }
