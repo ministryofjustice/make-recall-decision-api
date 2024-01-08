@@ -22,7 +22,7 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
     val response = convertResponseToJSONObject(
       webTestClient.get()
         .uri("/managementOversight/$crn")
-        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
         .exchange()
         .expectStatus().isOk,
     )
@@ -42,7 +42,7 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
     updateRecommendation(recommendationRequest = updateRecommendationForNoRecallRequest())
     webTestClient.get()
       .uri("/managementOversight/$crn")
-      .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO")))) }
+      .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
       .exchange()
       .expectStatus().isNotFound
       .expectBody()
