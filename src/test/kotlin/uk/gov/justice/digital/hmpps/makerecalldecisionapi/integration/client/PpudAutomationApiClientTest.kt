@@ -40,6 +40,20 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `retrieve details`() {
+    // given
+    val id = "12345678"
+
+    ppudAutomationDetailsMatchResponse(id)
+
+    // when
+    val actual = ppudAutomationApiClient.details(id).block()
+
+    // then
+    assertThat(actual.offender.id, equalTo(id))
+  }
+
+  @Test
   fun `book recall to ppud`() {
     // given
     val id = "12345678"
