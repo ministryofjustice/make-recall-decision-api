@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NextAppointment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NomisIndexOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
@@ -153,6 +154,7 @@ data class RecommendationModel(
   val conditionalReleaseDate: LocalDate? = null,
   val nomisIndexOffence: NomisIndexOffence? = null,
   val bookRecallToPpud: BookRecallToPpud? = null,
+  val ppudOffender: PpudOffender? = null,
   var userNamePartACompletedBy: String? = null, // deprecated
   var userEmailPartACompletedBy: String? = null, // deprecated
   var lastPartADownloadDateTime: LocalDateTime? = null, // deprecated

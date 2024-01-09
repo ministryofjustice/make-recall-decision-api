@@ -20,7 +20,10 @@ data class BookRecallToPpud(
   val sentenceDate: LocalDate? = null,
   val gender: String? = null,
   val ethnicity: String? = null,
+  val firstNames: String? = null,
+  // deprecated - keep for now to prevent dev from breaking.
   val firstName: String? = null,
+  // deprecated - keep for now to prevent dev from breaking.
   val secondName: String? = null,
   val lastName: String? = null,
   val dateOfBirth: LocalDate? = null,
