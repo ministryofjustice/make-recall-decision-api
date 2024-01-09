@@ -723,7 +723,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       prisonOffender = PrisonOffender(
         locationDescription = "location",
         bookingNo = "1244",
-        facialImageId = "1234",
+        facialImageId = 1234,
         firstName = "time",
         middleName = "thyme",
         lastName = "tyme",
