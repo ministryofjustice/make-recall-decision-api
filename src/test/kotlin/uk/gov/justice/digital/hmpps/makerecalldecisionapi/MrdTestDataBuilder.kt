@@ -28,6 +28,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NomisIndexOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.OfferedOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
@@ -182,6 +184,28 @@ class MrdTestDataBuilder {
             riskOfContrabandDetails = "Smuggling cigarettes",
             riskOfSeriousHarmLevel = "High",
             sentenceDate = LocalDate.now(),
+          ),
+          ppudOffender = PpudOffender(
+            id = "12345678",
+            croOtherNumber = "1234",
+            dateOfBirth = "1990-09-14",
+            familyName = "",
+            firstNames = "",
+            gender = "Male",
+            immigrationStatus = "Naturalized",
+            nomsId = "",
+            prisonerCategory = "Incarcerated",
+            prisonNumber = "1234",
+            sentences = listOf(
+              PpudSentence(
+                dateOfSentence = "2006-01-01",
+                custodyType = "Extended",
+                mappaLevel = "Level 1",
+              ),
+            ),
+            status = "Active",
+            youngOffender = "No",
+            ethnicity = "Caucasian",
           ),
         ),
       )

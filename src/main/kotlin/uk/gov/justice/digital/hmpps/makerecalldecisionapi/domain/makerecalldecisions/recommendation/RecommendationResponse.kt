@@ -85,6 +85,7 @@ data class RecommendationResponse(
   val conditionalReleaseDate: LocalDate? = null,
   val nomisIndexOffence: NomisIndexOffence? = null,
   val bookRecallToPpud: BookRecallToPpud? = null,
+  val ppudOffender: PpudOffender? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
