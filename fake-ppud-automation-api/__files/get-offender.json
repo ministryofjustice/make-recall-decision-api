@@ -2,23 +2,23 @@
   "offender": {
     "id": "string",
     "croOtherNumber": "string",
-    "dateOfBirth": "2024-01-05",
-    "ethnicity": "string",
-    "familyName": "string",
-    "firstNames": "string",
-    "gender": "string",
-    "immigrationStatus": "string",
-    "nomsId": "string",
-    "prisonerCategory": "string",
-    "prisonNumber": "string",
+    "dateOfBirth": "2000-01-01",
+    "ethnicity": "Caucasian",
+    "familyName": "Teal",
+    "firstNames": "John",
+    "gender": "Male",
+    "immigrationStatus": "British",
+    "nomsId": "JG123POE",
+    "prisonerCategory": "Incarcerated",
+    "prisonNumber": "1234567A",
     "sentences": [
       {
         "dateOfSentence": "2024-01-05",
-        "custodyType": "string",
-        "mappaLevel": "string"
+        "custodyType": "Standard",
+        "mappaLevel": "Level 5"
       }
     ],
-    "status": "string",
-    "youngOffender": "string"
+    "status": "ACTIVE",
+    "youngOffender": "NO"
   }
 }
