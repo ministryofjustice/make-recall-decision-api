@@ -187,20 +187,22 @@ class MrdTestDataBuilder {
           ),
           ppudOffender = PpudOffender(
             id = "12345678",
-          croOtherNumber = "1234",
+            croOtherNumber = "1234",
             dateOfBirth = "14 09 1990",
             familyName = "",
             firstNames = "",
-            gender="Male",
+            gender = "Male",
             immigrationStatus = "Naturalized",
             nomsId = "",
             prisonerCategory = "Incarcerated",
             prisonNumber = "1234",
-            sentences = listOf(PpudSentence(
-              dateOfSentence= "01 01 2006",
-              custodyType = "Extended",
-              mappaLevel = "Level 1"
-            )),
+            sentences = listOf(
+              PpudSentence(
+                dateOfSentence = "01 01 2006",
+                custodyType = "Extended",
+                mappaLevel = "Level 1"
+              )
+            ),
             status = "Active",
             youngOffender = "No",
             ethnicity = "Caucasian"
