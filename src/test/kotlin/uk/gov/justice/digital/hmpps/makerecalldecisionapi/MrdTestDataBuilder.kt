@@ -200,13 +200,13 @@ class MrdTestDataBuilder {
               PpudSentence(
                 dateOfSentence = "01 01 2006",
                 custodyType = "Extended",
-                mappaLevel = "Level 1"
-              )
+                mappaLevel = "Level 1",
+              ),
             ),
             status = "Active",
             youngOffender = "No",
-            ethnicity = "Caucasian"
-          )
+            ethnicity = "Caucasian",
+          ),
         ),
       )
     }
