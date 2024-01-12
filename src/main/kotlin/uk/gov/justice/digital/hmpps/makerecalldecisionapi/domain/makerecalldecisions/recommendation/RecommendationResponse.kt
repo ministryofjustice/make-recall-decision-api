@@ -139,8 +139,8 @@ data class PrisonOffender(
   var status: String? = null,
   var gender: String? = null,
   var ethnicity: String? = null,
-  var CRO: String? = null,
-  var PNC: String? = null,
+  var cro: String? = null,
+  var pnc: String? = null,
   var image: String? = null,
 )
 
