@@ -106,6 +106,7 @@ data class RecommendationModel(
   var reviewPractitionersConcerns: Boolean? = null,
   var spoRecallType: String? = null,
   var spoRecallRationale: String? = null,
+  var spoCancelRecommendationRationale: String? = null,
   var reviewOffenderProfile: Boolean? = null,
   var explainTheDecision: Boolean? = null,
   var lastModifiedBy: String? = null,
