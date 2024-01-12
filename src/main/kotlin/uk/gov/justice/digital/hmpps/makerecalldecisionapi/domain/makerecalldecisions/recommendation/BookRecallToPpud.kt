@@ -27,4 +27,5 @@ data class BookRecallToPpud(
   val secondName: String? = null,
   val lastName: String? = null,
   val dateOfBirth: LocalDate? = null,
+  val cro: String? = null,
 )
