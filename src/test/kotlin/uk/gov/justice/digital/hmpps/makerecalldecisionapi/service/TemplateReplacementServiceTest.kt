@@ -731,8 +731,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         status = "INACTIVE IN",
         gender = "Male",
         ethnicity = "caucasian",
-        CRO = "123X",
-        PNC = "4545",
+        cro = "123X",
+        pnc = "4545",
       ),
     )
   }
