@@ -212,7 +212,7 @@ internal class RecommendationService(
       reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
       spoRecallType = recommendationEntity.data.spoRecallType,
       spoRecallRationale = recommendationEntity.data.spoRecallRationale,
-      spoCancelRecommendationRationale = recommendationEntity.data.spoCancelRecommendationRationale,
+      spoDeleteRecommendationRationale = recommendationEntity.data.spoDeleteRecommendationRationale,
       reviewOffenderProfile = recommendationEntity.data.reviewOffenderProfile,
       explainTheDecision = recommendationEntity.data.explainTheDecision,
       lastModifiedBy = recommendationEntity.data.lastModifiedBy,

@@ -106,7 +106,9 @@ data class RecommendationModel(
   var reviewPractitionersConcerns: Boolean? = null,
   var spoRecallType: String? = null,
   var spoRecallRationale: String? = null,
-  var spoCancelRecommendationRationale: String? = null,
+  var spoDeleteRecommendationRationale: String? = null,
+  var sendSpoDeleteRationaleToDelius: Boolean? = null,
+  var spoCancelRecommendationRationale: String? = null, // deprecated
   var reviewOffenderProfile: Boolean? = null,
   var explainTheDecision: Boolean? = null,
   var lastModifiedBy: String? = null,
