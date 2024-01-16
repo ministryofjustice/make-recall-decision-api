@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/reference/released-unders"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "reference-released-unders.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
