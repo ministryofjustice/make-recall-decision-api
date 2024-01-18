@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
@@ -12,6 +13,7 @@ internal class PrisonerApiService(
   private val prisonApiClient: PrisonApiClient,
 ) {
   fun searchPrisonApi(nomsId: String): Offender {
+    log.info("searching for offender using nomis id : $nomsId")
     val response = getValueAndHandleWrappedException(
       prisonApiClient.retrieveOffender(nomsId),
     )
@@ -56,5 +58,8 @@ internal class PrisonerApiService(
       .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
       .sortedBy { it.courtDescription }
       .sortedByDescending { it.sentenceDate }
+  }
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }
