@@ -28,5 +28,6 @@ data class BookRecallToPpud(
   val lastName: String? = null,
   val dateOfBirth: LocalDate? = null,
   val cro: String? = null,
+  val prisonNumber: String? = null,
   val legislationReleasedUnder: String? = null,
 )
