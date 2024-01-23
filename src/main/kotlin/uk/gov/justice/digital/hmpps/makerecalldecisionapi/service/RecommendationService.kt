@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toDeliusContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDeleteRecommendationRationaleDomainEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
@@ -325,14 +326,25 @@ internal class RecommendationService(
       recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
     val requestJson = JSONObject(jsonRequest.toString())
-    val sendToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
+    val sendSpoRationaleToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
     log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))
-    log.info("send to delius value::$sendToDelius")
-    if (sendToDelius) {
+    log.info("send spo rationale to delius::$sendSpoRationaleToDelius")
+    if (sendSpoRationaleToDelius) {
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
+    val sendSpoDeleteRationaleToDelius = requestJson.has("sendSpoDeleteRationaleToDelius") && requestJson.getBoolean("sendSpoDeleteRationaleToDelius")
+    log.info("sendSpoDeleteRationaleToDelius present::" + requestJson.has("sendSpoDeleteRationaleToDelius"))
+    log.info("send spo delete recommendation rationale to delius::$sendSpoDeleteRationaleToDelius")
+    if (sendSpoDeleteRationaleToDelius) {
+      existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
+        spoDeleteRecommendationRationale = updatedRecommendation.spoDeleteRecommendationRationale,
+        sendSpoDeleteRationaleToDelius = updatedRecommendation.sendSpoDeleteRationaleToDelius,
+      )
+      sendDeleteRecommendationDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
+
     existingRecommendationEntity.deleted = requestJson.has("status") && requestJson.getString("status") == "DELETED"
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,
@@ -387,6 +399,25 @@ internal class RecommendationService(
     log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made for recommendationId $recommendationId")
     try {
       sendManagerRecallDecisionMadeEvent(
+        crn = existingRecommendationEntity.data.crn,
+        contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.spoRecallType).toString(),
+        username = userId ?: MrdTextConstants.EMPTY_STRING,
+      )
+    } catch (ex: Exception) {
+      log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
+      throw ex
+    }
+    log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
+  }
+
+  private fun sendDeleteRecommendationDomainEvent(
+    recommendationId: Long,
+    existingRecommendationEntity: RecommendationEntity,
+    userId: String?,
+  ) {
+    log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on delete a recommendation for recommendationId $recommendationId")
+    try {
+      sendSpoDeleteRecommendationEvent(
         crn = existingRecommendationEntity.data.crn,
         contactOutcome = toDeliusContactOutcome(existingRecommendationEntity.data.spoRecallType).toString(),
         username = userId ?: MrdTextConstants.EMPTY_STRING,
@@ -659,6 +690,18 @@ internal class RecommendationService(
         contactOutcome = contactOutcome,
         username = username,
         detailUrl = "$mrdApiUrl/managementOversight/$crn",
+      ),
+    )
+  }
+
+  private fun sendSpoDeleteRecommendationEvent(crn: String?, contactOutcome: String?, username: String) {
+    sendMrdEventToEventsEmitter(
+      toDeleteRecommendationRationaleDomainEventPayload(
+        crn = crn,
+        recommendationUrl = "$mrdUrl/cases/$crn/overview",
+        contactOutcome = contactOutcome,
+        username = username,
+        detailUrl = "$mrdApiUrl/delete-recommendation-rationale/$crn",
       ),
     )
   }

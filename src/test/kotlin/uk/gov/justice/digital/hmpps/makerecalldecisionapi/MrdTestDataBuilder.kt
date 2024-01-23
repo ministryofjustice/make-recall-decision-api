@@ -236,6 +236,22 @@ class MrdTestDataBuilder {
       )
     }
 
+    fun updateRecommendationWithDeleteRecallDecisionRequestData(
+      existingRecommendation: RecommendationEntity,
+      sendSpoDeleteRationaleToDelius: String,
+    ): RecommendationModel {
+      return RecommendationModel(
+        spoRecallType = "RECALL",
+        spoRecallRationale = "Recall",
+        sendSpoDeleteRationaleToDelius = sendSpoDeleteRationaleToDelius != "false",
+        crn = existingRecommendation.data.crn,
+        createdBy = existingRecommendation.data.createdBy,
+        createdDate = existingRecommendation.data.createdDate,
+        status = Status.DRAFT,
+        spoDeleteRecommendationRationale = "Deleted due to error in Part A",
+      )
+    }
+
     fun updateRecommendationRequestData(existingRecommendation: RecommendationEntity): RecommendationModel {
       return RecommendationModel(
         crn = existingRecommendation.data.crn,
