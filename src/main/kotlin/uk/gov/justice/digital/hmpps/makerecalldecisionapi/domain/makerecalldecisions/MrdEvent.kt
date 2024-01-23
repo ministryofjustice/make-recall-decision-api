@@ -45,6 +45,37 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
   )
 }
 
+fun toDeleteRecommendationRationaleDomainEventPayload(
+  recommendationUrl: String?,
+  crn: String?,
+  contactOutcome: String?,
+  username: String,
+  detailUrl: String,
+): MrdEvent {
+  return MrdEvent(
+    timeStamp = utcNowDateTimeString(),
+    message = MrdEventMessageBody(
+      eventType = "prison-recall.recommendation.deleted",
+      version = 1,
+      description = "Deleted recommendation in 'Consider a recall'",
+      occurredAt = utcNowDateTimeString(),
+      detailUrl = detailUrl,
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+      additionalInformation = AdditionalInformation(
+        contactOutcome = contactOutcome,
+        recommendationUrl = recommendationUrl,
+        bookedBy = BookedBy(username),
+      ),
+    ),
+    messageAttributes = MessageAttributes(
+      eventType = TypeValue(
+        type = "String",
+        value = "prison-recall.recommendation.deleted",
+      ),
+    ),
+  )
+}
+
 fun toManagerRecallDecisionMadeEventPayload(
   recommendationUrl: String?,
   crn: String?,

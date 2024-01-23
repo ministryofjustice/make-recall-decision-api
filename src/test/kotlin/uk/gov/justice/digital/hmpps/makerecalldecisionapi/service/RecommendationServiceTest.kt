@@ -585,6 +585,124 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @ParameterizedTest()
   @CsvSource("true", "false")
+  fun `updates a recommendation with delete recommendation rationale to the database`(sendSpoDeleteRationaleToDelius: String) {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          recallConsideredList = listOf(
+            RecallConsidered(
+              createdDate = "2022-11-01T15:22:24.567Z",
+              userName = "Harry",
+              userId = "harry",
+              recallConsideredDetail = "Recall considered",
+            ),
+          ),
+          status = Status.RECALL_CONSIDERED,
+          personOnProbation = PersonOnProbation(name = "John Smith"),
+          lastModifiedBy = "Jack",
+          lastModifiedDate = "2022-07-01T15:22:24.567Z",
+          createdBy = "Jack",
+          createdDate = "2022-07-01T15:22:24.567Z",
+        ),
+      )
+
+      // and
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationWithDeleteRecallDecisionRequestData(
+        existingRecommendation,
+        sendSpoDeleteRationaleToDelius,
+      )
+
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            sensitive = null,
+            recallConsideredList = null,
+            recallType = null,
+            spoRecallType = "RECALL",
+            spoRecallRationale = "Recall",
+            sendSpoDeleteRationaleToDelius = sendSpoDeleteRationaleToDelius.toBoolean(),
+            spoDeleteRecommendationRationale = updateRecommendationRequest.spoDeleteRecommendationRationale,
+            status = Status.DRAFT,
+            createdBy = existingRecommendation.data.createdBy,
+            createdDate = existingRecommendation.data.createdDate,
+            lastModifiedByUserName = "Bill",
+            lastModifiedBy = "bill",
+            lastModifiedDate = "2022-07-26T09:48:27.443Z",
+          ),
+        )
+
+      // and
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+        deliusClient,
+        mrdEmitterMocked,
+      )
+
+      // when
+      recommendationService.updateRecommendation(
+        jsonRequest = recommendationJsonNode,
+        recommendationId = 1L,
+        userId = "bill",
+        readableUserName = "Bill",
+        featureFlags = null,
+        isDntrDownloaded = false,
+        isPartADownloaded = false,
+        userEmail = null,
+        pageRefreshIds = emptyList(),
+      )
+
+      // then
+      then(recommendationRepository).should().save(recommendationToSave)
+      then(recommendationRepository).should().findById(1)
+      if (sendSpoDeleteRationaleToDelius == "true") {
+        val captor = argumentCaptor<MrdEvent>()
+        then(mrdEmitterMocked).should().sendEvent(captor.capture())
+        val mrdEvent = captor.firstValue
+        assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
+        assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("DECISION_TO_RECALL")
+        assertThat(mrdEvent.message?.additionalInformation?.recommendationUrl).isNotNull
+        assertThat(mrdEvent.type).isEqualTo("Notification")
+        assertThat(mrdEvent.messageId).isNotNull
+        assertThat(mrdEvent.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:hmpps-domain")
+        assertThat(mrdEvent.message?.eventType).isEqualTo("prison-recall.recommendation.deleted")
+        assertThat(mrdEvent.message?.version).isEqualTo(1)
+        assertThat(mrdEvent.message?.description).isEqualTo("Deleted recommendation in 'Consider a recall'")
+        assertThat(mrdEvent.message?.occurredAt).isNotNull
+        assertThat(mrdEvent.timeStamp).isNotNull
+        assertThat(mrdEvent.signingCertURL).isEqualTo(null) // handled by receiver
+        assertThat(mrdEvent.subscribeUrl).isEqualTo(null) // handled by receiver
+        assertThat(mrdEvent.messageAttributes?.eventType?.type).isEqualTo("String")
+        assertThat(mrdEvent.messageAttributes?.eventType?.value).isEqualTo("prison-recall.recommendation.deleted")
+      } else {
+        then(mrdEmitterMocked).shouldHaveNoInteractions()
+      }
+    }
+  }
+
+  @ParameterizedTest()
+  @CsvSource("true", "false")
   fun `updates a recommendation with manager recall decision to the database`(sentToDelius: String) {
     runTest {
       // given

@@ -43,6 +43,7 @@ fun updateRecommendationRequest(status: Status = Status.DRAFT, recallConsideredD
       }
     ]
   },
+  "spoDeleteRecommendationRationale": "My wonderful rationale for deleting the recommendation",
   "responseToProbation": "They have not responded well",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,

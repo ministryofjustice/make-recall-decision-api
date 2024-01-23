@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoDeletedRecommendationRationaleException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoManagementOversightException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
@@ -57,6 +58,20 @@ class MakeRecallDecisionApiExceptionHandler {
         ErrorResponse(
           status = BAD_GATEWAY,
           userMessage = "A system on which we depend has failed: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(NoDeletedRecommendationRationaleException::class)
+  fun handleNoDeletedRecommendationRationaleException(e: NoDeletedRecommendationRationaleException): ResponseEntity<ErrorResponse> {
+    log.info("Deleted recommendation rationale not found exception: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "No deleted recommendation rationale available: ${e.message}",
           developerMessage = e.message,
         ),
       )
