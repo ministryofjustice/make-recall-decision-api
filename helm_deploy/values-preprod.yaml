@@ -14,6 +14,7 @@ generic-service:
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-preprod.hmpps.service.justice.gov.uk
     CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api-preprod.hmpps.service.justice.gov.uk
     PPUD_AUTOMATION_API_ENDPOINT_URL: https://hmpps-ppud-automation-api-preprod.hmpps.service.justice.gov.uk
+    PRISON_API_ENDPOINT_URL: https://prison-api-preprod.prison.service.justice.gov.uk
     MRD_URL: https://make-recall-decision-preprod.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api-preprod.hmpps.service.justice.gov.uk
 
