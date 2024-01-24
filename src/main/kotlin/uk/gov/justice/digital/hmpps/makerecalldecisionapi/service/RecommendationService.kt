@@ -423,10 +423,10 @@ internal class RecommendationService(
         username = userId ?: MrdTextConstants.EMPTY_STRING,
       )
     } catch (ex: Exception) {
-      log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on manager recall decision for recommendationId $recommendationId reverting isSentToDelius to false")
+      log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on delete a recommendation for recommendationId $recommendationId")
       throw ex
     }
-    log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
+    log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on delete a recommendation made asynchronously for recommendationId $recommendationId")
   }
 
   @OptIn(ExperimentalStdlibApi::class)
