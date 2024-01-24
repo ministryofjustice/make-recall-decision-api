@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoDeletedRecommendationRationaleException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
-import java.util.Collections
 
 @Transactional
 @Service
@@ -26,8 +25,7 @@ internal class DeleteRecommendationService(
   suspend fun getDeleteRecommendationResponse(
     crn: String,
   ): ResponseEntity<DeleteRecommendationResponse> {
-    val recommendations = recommendationRepository.findByCrn(crn)
-    Collections.sort(recommendations)
+    val recommendations = recommendationRepository.findByCrn(crn).sorted()
     val spoDeleteRecommendationRationale = recommendations[0].data.spoDeleteRecommendationRationale
       ?: throw NoDeletedRecommendationRationaleException("No deleted recommendation rationale available for crn:$crn")
     val readableNameOfUser = recommendationStatusRepository.findByRecommendationIdAndName(recommendations[0].id, "REC_DELETED").firstOrNull() { it.active }?.createdByUserFullName
