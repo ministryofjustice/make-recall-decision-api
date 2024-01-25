@@ -28,8 +28,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.NomisIndexOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.OfferedOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
@@ -198,9 +201,28 @@ class MrdTestDataBuilder {
             prisonNumber = "1234",
             sentences = listOf(
               PpudSentence(
+                id = "1234123412341234",
+                offenceDescription = "some description",
                 dateOfSentence = "2006-01-01",
+                sentenceExpiryDate = "2006-08-13",
                 custodyType = "Extended",
                 mappaLevel = "Level 1",
+                licenceExpiryDate = "2006-08-14",
+                offence = PpudOffence(
+                  indexOffence = "123",
+                  dateOfIndexOffence = "2007-08-14",
+                ),
+                releases = listOf(
+                  PpudRelease(
+                    category = "cat",
+                    dateOfRelease = "2007-08-14",
+                    releasedFrom = "Kent",
+                    releasedUnder = "abc",
+                    releaseType = "def",
+                  ),
+                ),
+                sentenceLength = PpudSentenceLength(1, 1, 1),
+                sentencingCourt = "Richmond",
               ),
             ),
             status = "Active",
