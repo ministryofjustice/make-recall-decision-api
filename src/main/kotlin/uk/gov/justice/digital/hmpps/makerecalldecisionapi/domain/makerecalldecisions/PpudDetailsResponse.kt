@@ -32,15 +32,15 @@ data class SentenceDetails(
   val offence: OffenceDetails,
   val releases: List<ReleaseDetails>,
   val sentenceLength: SentenceLength,
-  val sentencingCourt: String
+  val sentencingCourt: String,
 )
 
 data class OffenceDetails(
-  val  indexOffence: String,
-  val dateOfIndexOffence: String
+  val indexOffence: String,
+  val dateOfIndexOffence: String,
 )
 
-data class ReleaseDetails (
+data class ReleaseDetails(
   val category: String,
   val dateOfRelease: String,
   val releasedFrom: String,
@@ -48,7 +48,7 @@ data class ReleaseDetails (
   val releaseType: String,
 )
 
-data class SentenceLength (
+data class SentenceLength(
   val partYears: Int,
   val partMonths: Int,
   val partDays: Int,
