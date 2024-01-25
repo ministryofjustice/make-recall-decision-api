@@ -22,34 +22,34 @@ data class OffenderDetails(
 )
 
 data class SentenceDetails(
-  val id: String,
-  val offenceDescription: String,
-  val sentenceExpiryDate: String,
-  val dateOfSentence: String,
-  val custodyType: String,
-  val mappaLevel: String,
-  val licenceExpiryDate: String,
-  val offence: OffenceDetails,
-  val releases: List<ReleaseDetails>,
-  val sentenceLength: SentenceLength,
-  val sentencingCourt: String,
+  val id: String?,
+  val offenceDescription: String?,
+  val sentenceExpiryDate: String?,
+  val dateOfSentence: String?,
+  val custodyType: String?,
+  val mappaLevel: String?,
+  val licenceExpiryDate: String?,
+  val offence: OffenceDetails?,
+  val releases: List<ReleaseDetails>?,
+  val sentenceLength: SentenceLength?,
+  val sentencingCourt: String?,
 )
 
 data class OffenceDetails(
-  val indexOffence: String,
-  val dateOfIndexOffence: String,
+  val indexOffence: String?,
+  val dateOfIndexOffence: String?,
 )
 
 data class ReleaseDetails(
-  val category: String,
-  val dateOfRelease: String,
-  val releasedFrom: String,
-  val releasedUnder: String,
-  val releaseType: String,
+  val category: String?,
+  val dateOfRelease: String?,
+  val releasedFrom: String?,
+  val releasedUnder: String?,
+  val releaseType: String?,
 )
 
 data class SentenceLength(
-  val partYears: Int,
-  val partMonths: Int,
-  val partDays: Int,
+  val partYears: Int?,
+  val partMonths: Int?,
+  val partDays: Int?,
 )
