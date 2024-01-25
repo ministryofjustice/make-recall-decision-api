@@ -16,9 +16,34 @@ fun ppudAutomationDetailsResponse(id: String) = """
     "prisonNumber": "string",
     "sentences": [
       {
+        "id": "string",      
         "dateOfSentence": "2024-01-05",
         "custodyType": "string",
-        "mappaLevel": "string"
+        "mappaLevel": "string",
+        "sentenceType": "string",
+        "offenceDescription": "string",
+        "sentenceExpiryDate": "2024-06-09",
+        "dateOfSentence": "2024-01-05",                
+        "licenceExpiryDate": "2024-01-05",
+        "offence": {
+          "indexOffence": "string",
+          "dateOfIndexOffence": "2024-01-05"
+        },
+        "releases": [
+          {
+            "category": "string",
+            "dateOfRelease": "2024-01-05",
+            "releasedFrom": "string",
+            "releasedUnder": "string",
+            "releaseType": "string"
+          }
+        ],
+        "sentenceLength": {
+          "partYears": 1,
+          "partMonths": 2,
+          "partDays": 3
+        },
+        "sentencingCourt": "string"
       }
     ],
     "status": "string",
