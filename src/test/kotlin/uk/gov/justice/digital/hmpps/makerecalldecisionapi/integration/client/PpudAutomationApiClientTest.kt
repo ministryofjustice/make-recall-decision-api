@@ -94,23 +94,23 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = ppudAutomationApiClient.createOffender(
-        PpudCreateOffender(
-            croNumber = "A/2342",
-            nomsId = "A897",
-            prisonNumber = "123",
-            firstNames = "Spuddy",
-            familyName = "Spiffens",
-            indexOffence = "bad language",
-            ethnicity = "W",
-            gender = "M",
-            mappaLevel = "",
-            custodyType = "Determinate",
-            isInCustody = true,
-            dateOfBirth = LocalDate.of(2004, 1, 1),
-            dateOfSentence = LocalDate.of(2004, 1, 2),
-            additionalAddresses = listOf(),
-            address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
-        ),
+      PpudCreateOffender(
+        croNumber = "A/2342",
+        nomsId = "A897",
+        prisonNumber = "123",
+        firstNames = "Spuddy",
+        familyName = "Spiffens",
+        indexOffence = "bad language",
+        ethnicity = "W",
+        gender = "M",
+        mappaLevel = "",
+        custodyType = "Determinate",
+        isInCustody = true,
+        dateOfBirth = LocalDate.of(2004, 1, 1),
+        dateOfSentence = LocalDate.of(2004, 1, 2),
+        additionalAddresses = listOf(),
+        address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+      ),
     ).block()
 
     // thenp
