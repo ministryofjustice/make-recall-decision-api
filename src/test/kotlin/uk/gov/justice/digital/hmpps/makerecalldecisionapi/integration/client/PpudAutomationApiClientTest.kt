@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -81,6 +83,38 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // then
     assertThat(actual.recall.id, equalTo("12345678"))
+  }
+
+  @Test
+  fun `create offender to ppud`() {
+    // given
+    val id = "12345678"
+
+    ppudAutomationCreateOffenderApiMatchResponse( id)
+
+    // when
+    val actual = ppudAutomationApiClient.createOffender(
+      PpudCreateOffender(
+        croNumber = "A/2342",
+        nomsId = "A897",
+        prisonNumber = "123",
+        firstNames = "Spuddy",
+        familyName = "Spiffens",
+        indexOffence = "bad language",
+        ethnicity = "W",
+        gender = "M",
+        mappaLevel = "",
+        custodyType = "Determinate",
+        isInCustody = true,
+        dateOfBirth = LocalDate.of(2004, 1, 1),
+        dateOfSentence = LocalDate.of(2004, 1, 2),
+        additionalAddresses = listOf(),
+        address = PpudAddress(premises = "",  line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = "")
+      )
+    ).block()
+
+    // then
+    assertThat(actual.offender.id, equalTo(id))
   }
 
   @Test

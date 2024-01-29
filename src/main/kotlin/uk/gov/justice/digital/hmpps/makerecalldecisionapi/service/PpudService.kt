@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
@@ -38,6 +40,13 @@ internal class PpudService(
   fun retrieveList(name: String): PpudReferenceListResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.retrieveList(name),
+    )
+    return response!!
+  }
+
+  fun createOffender(request: PpudCreateOffender): PpudCreateOffenderResponse {
+    val response = getValueAndHandleWrappedException(
+      ppudAutomationApiClient.createOffender(request),
     )
     return response!!
   }
