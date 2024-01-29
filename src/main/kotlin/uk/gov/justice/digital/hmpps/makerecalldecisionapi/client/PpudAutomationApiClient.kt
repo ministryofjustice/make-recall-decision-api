@@ -1,19 +1,25 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -21,6 +27,7 @@ class PpudAutomationApiClient(
   private val webClient: WebClient,
   @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
   private val timeoutCounter: Counter,
+  private val objectMapper: ObjectMapper,
 ) {
 
   fun search(
@@ -74,6 +81,27 @@ class PpudAutomationApiClient(
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+        )
+      }
+  }
+
+  fun createOffender(request: PpudCreateOffender): Mono<PpudCreateOffenderResponse> {
+    val responseType = object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {}
+
+    return webClient
+      .put()
+      .uri { builder -> builder.path("/offender").build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
         handleTimeoutException(
           exception = ex,
         )

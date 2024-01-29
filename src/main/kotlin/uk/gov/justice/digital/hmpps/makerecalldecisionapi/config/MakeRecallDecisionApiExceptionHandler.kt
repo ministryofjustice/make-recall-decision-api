@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
@@ -60,6 +61,16 @@ class MakeRecallDecisionApiExceptionHandler {
           userMessage = "A system on which we depend has failed: ${e.message}",
           developerMessage = e.message,
         ),
+      )
+  }
+
+  @ExceptionHandler(PpudValidationException::class)
+  fun handlePpudValidationException(e: PpudValidationException): ResponseEntity<ErrorResponse> {
+    log.info("Ppud validation exception: {}", e.message)
+    return ResponseEntity
+      .status(BAD_REQUEST)
+      .body(
+        e.errorResponse,
       )
   }
 
