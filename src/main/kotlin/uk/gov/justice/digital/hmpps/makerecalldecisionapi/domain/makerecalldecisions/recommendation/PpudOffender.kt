@@ -19,7 +19,7 @@ data class PpudOffender(
 
 data class PpudSentence(
   val id: String?,
-  //deprecated
+  // deprecated
   val offenceDescription: String?,
   val sentenceExpiryDate: String?,
   val dateOfSentence: String,

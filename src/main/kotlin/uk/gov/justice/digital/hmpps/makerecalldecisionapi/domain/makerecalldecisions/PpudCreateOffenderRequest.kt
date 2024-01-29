@@ -20,7 +20,7 @@ data class PpudCreateOffender(
   val prisonNumber: String,
 )
 
-data class PpudAddress (
+data class PpudAddress(
   val premises: String = "",
   val line1: String = "",
   val line2: String = "",

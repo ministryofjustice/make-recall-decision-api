@@ -70,7 +70,7 @@ class MakeRecallDecisionApiExceptionHandler {
     return ResponseEntity
       .status(BAD_REQUEST)
       .body(
-          e.errorResponse,
+        e.errorResponse,
       )
   }
 
