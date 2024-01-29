@@ -1,0 +1,5 @@
+{
+  "status": 400,
+  "userMessage": "Validation failure: Some odd reason.",
+  "developerMessage": "Some odd reason"
+}

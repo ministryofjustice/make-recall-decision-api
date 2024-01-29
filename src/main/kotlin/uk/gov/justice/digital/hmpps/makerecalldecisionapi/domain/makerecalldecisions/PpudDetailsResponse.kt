@@ -23,7 +23,6 @@ data class OffenderDetails(
 
 data class SentenceDetails(
   val id: String?,
-  val offenceDescription: String?,
   val sentenceExpiryDate: String?,
   val dateOfSentence: String?,
   val custodyType: String?,

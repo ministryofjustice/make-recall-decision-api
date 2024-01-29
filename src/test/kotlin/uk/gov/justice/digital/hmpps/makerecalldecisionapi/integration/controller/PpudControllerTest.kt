@@ -7,7 +7,9 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -93,9 +95,50 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud create offender`() {
+    ppudAutomationCreateOffenderApiMatchResponse("12345678")
+    runTest {
+      putToCreateOffender(
+        PpudCreateOffender(
+          croNumber = "A/2342",
+          nomsId = "A897",
+          prisonNumber = "123",
+          firstNames = "Spuddy",
+          familyName = "Spiffens",
+          indexOffence = "bad language",
+          ethnicity = "W",
+          gender = "M",
+          mappaLevel = "",
+          custodyType = "Determinate",
+          isInCustody = true,
+          dateOfBirth = LocalDate.of(2004, 1, 1),
+          dateOfSentence = LocalDate.of(2004, 1, 2),
+          additionalAddresses = listOf(),
+          address = PpudAddress(
+            premises = "",
+            line1 = "No Fixed Abode",
+            line2 = "",
+            postcode = "",
+            phoneNumber = "",
+          ),
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToCreateOffender(requestBody: PpudCreateOffender): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/offender")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

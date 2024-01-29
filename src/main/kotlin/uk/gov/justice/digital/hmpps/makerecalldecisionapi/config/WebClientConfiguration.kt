@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
@@ -153,8 +154,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun ppudAutomationApiClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient): PpudAutomationApiClient {
-    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationApiClientTimeoutCounter())
+  fun ppudAutomationApiClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient, objectMapper: ObjectMapper): PpudAutomationApiClient {
+    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationApiClientTimeoutCounter(), objectMapper)
   }
 
   @Bean
