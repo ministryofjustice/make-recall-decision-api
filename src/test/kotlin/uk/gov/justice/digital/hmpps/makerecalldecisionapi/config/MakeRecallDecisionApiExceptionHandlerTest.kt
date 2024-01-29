@@ -22,14 +22,14 @@ class MakeRecallDecisionApiExceptionHandlerTest {
   fun handlePpudValidationException() {
     val responseEntity =
       MakeRecallDecisionApiExceptionHandler().handlePpudValidationException(
-          PpudValidationException(
-              ErrorResponse(
-                  HttpStatus.BAD_REQUEST,
-                  errorCode = 234,
-                  userMessage = "some error",
-                  developerMessage = "even better error",
-              ),
+        PpudValidationException(
+          ErrorResponse(
+            HttpStatus.BAD_REQUEST,
+            errorCode = 234,
+            userMessage = "some error",
+            developerMessage = "even better error",
           ),
+        ),
       )
 
     assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
