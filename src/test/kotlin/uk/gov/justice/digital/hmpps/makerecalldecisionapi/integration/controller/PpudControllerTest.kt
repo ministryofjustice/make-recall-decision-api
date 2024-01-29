@@ -120,9 +120,9 @@ class PpudControllerTest : IntegrationTestBase() {
             line1 = "No Fixed Abode",
             line2 = "",
             postcode = "",
-            phoneNumber = ""
-            ),
-       ),
+            phoneNumber = "",
+          ),
+        ),
       )
         .expectStatus().isOk
     }
