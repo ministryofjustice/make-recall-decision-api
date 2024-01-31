@@ -1,0 +1,1 @@
+CREATE INDEX idxcrnb ON recommendations USING btree ((data ->> 'crn'));
