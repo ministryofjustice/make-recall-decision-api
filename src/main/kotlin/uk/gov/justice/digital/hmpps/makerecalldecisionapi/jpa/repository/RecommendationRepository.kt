@@ -11,7 +11,7 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
 
   @Query(
     value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE t.data ->> 'crn' = :crn " +
-      "AND t.data ->> 'status' IN (:statuses) AND t.deleted=false",
+      "AND t.data -> 'status' IN (:statuses) AND t.deleted=false",
     nativeQuery = true,
   )
   fun findByCrnAndStatus(
@@ -20,7 +20,7 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   ): List<RecommendationEntity>
 
   @Query(
-    value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE t.data ->> 'crn' = :crn AND t.deleted = false",
+    value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE t.data -> 'crn' = :crn AND t.deleted = false",
     nativeQuery = true,
   )
   fun findByCrn(@Param("crn") crn: String): List<RecommendationEntity>
