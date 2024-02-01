@@ -99,7 +99,7 @@ class PpudControllerTest : IntegrationTestBase() {
   fun `ppud create offender`() {
     ppudAutomationCreateOffenderApiMatchResponse("12345678")
     runTest {
-      putToCreateOffender(
+      postToCreateOffender(
         PpudCreateOffender(
           croNumber = "A/2342",
           nomsId = "A897",
@@ -136,8 +136,8 @@ class PpudControllerTest : IntegrationTestBase() {
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
 
-  private fun putToCreateOffender(requestBody: PpudCreateOffender): WebTestClient.ResponseSpec =
-    webTestClient.put()
+  private fun postToCreateOffender(requestBody: PpudCreateOffender): WebTestClient.ResponseSpec =
+    webTestClient.post()
       .uri("/ppud/offender")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
