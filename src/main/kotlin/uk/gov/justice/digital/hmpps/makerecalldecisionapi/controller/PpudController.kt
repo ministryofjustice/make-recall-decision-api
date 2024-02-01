@@ -68,7 +68,7 @@ internal class PpudController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PutMapping("/ppud/offender")
+  @PostMapping("/ppud/offender")
   @Operation(summary = "Calls PPUD Automation service to book offender.")
   suspend fun bookToPpud(
     @RequestBody request: PpudCreateOffender,

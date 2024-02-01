@@ -91,7 +91,7 @@ class PpudAutomationApiClient(
     val responseType = object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {}
 
     return webClient
-      .put()
+      .post()
       .uri { builder -> builder.path("/offender").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
