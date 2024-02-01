@@ -6,7 +6,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -68,7 +67,7 @@ internal class PpudController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PutMapping("/ppud/offender")
+  @PostMapping("/ppud/offender")
   @Operation(summary = "Calls PPUD Automation service to book offender.")
   suspend fun bookToPpud(
     @RequestBody request: PpudCreateOffender,
