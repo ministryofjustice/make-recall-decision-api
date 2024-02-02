@@ -50,7 +50,7 @@ internal class PpudController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/book-recall/{nomisId}")
   @Operation(summary = "Calls PPUD Automation service to book recall.")
-  suspend fun bookToPpud(
+  suspend fun createOffender(
     @PathVariable("nomisId") nomisId: String,
     @RequestBody request: PpudBookRecall,
   ): PpudBookRecallResponse {
@@ -69,7 +69,7 @@ internal class PpudController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/offender")
   @Operation(summary = "Calls PPUD Automation service to book offender.")
-  suspend fun bookToPpud(
+  suspend fun createOffender(
     @RequestBody request: PpudCreateOffender,
   ): PpudCreateOffenderResponse {
     return ppudService.createOffender(request)

@@ -21,9 +21,9 @@ data class PpudCreateOffender(
 )
 
 data class PpudAddress(
-  val premises: String = "",
-  val line1: String = "",
-  val line2: String = "",
-  val postcode: String = "",
-  val phoneNumber: String = "",
+  val premises: String? = "",
+  val line1: String? = "",
+  val line2: String? = "",
+  val postcode: String? = "",
+  val phoneNumber: String? = "",
 )
