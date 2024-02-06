@@ -10,6 +10,9 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -128,6 +131,29 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud update sentence`() {
+    ppudAutomationUpdateSentenceApiMatchResponse("123", "456", "12345678")
+    runTest {
+      putToUpdateSentence(
+        "123",
+        "456",
+        PpudUpdateSentence(
+            custodyType = "Determinate",
+            dateOfSentence = LocalDate.of(2004, 1, 2),
+            licenceExpiryDate = LocalDate.of(2004, 1, 3),
+            mappaLevel = "1",
+            releaseDate = LocalDate.of(2004, 1, 4),
+            sentenceLength = SentenceLength(1, 1, 1),
+            sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+            sentencingCourt = "sentencing court",
+            espExtendedPeriod = PpudYearMonth(1, 1),
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -139,6 +165,18 @@ class PpudControllerTest : IntegrationTestBase() {
   private fun postToCreateOffender(requestBody: PpudCreateOffender): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/offender")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToUpdateSentence(
+    offenderId: String,
+    sentenceId: String,
+    requestBody: PpudUpdateSentence,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId)
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

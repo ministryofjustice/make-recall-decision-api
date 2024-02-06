@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
@@ -97,6 +99,26 @@ class PpudAutomationApiClient(
       .body(BodyInserters.fromValue(request))
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
+        handleTimeoutException(
+          exception = ex,
+        )
+      }
+  }
+
+  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence): Mono<ResponseEntity<Void>> {
+    println("UPDATE SENTENCE")
+    return webClient
+      .put()
+      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId).build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .toBodilessEntity()
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
         if (ex is BadRequest) {
