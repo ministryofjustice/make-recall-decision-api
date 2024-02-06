@@ -6,7 +6,7 @@ data class PpudCreateOffenderResponse(
 
 data class PpudCreatedOffender(
   val id: String? = null,
-  val sentence: PpudCreatedSentence? = null,
+  val sentence: PpudCreatedSentence? = PpudCreatedSentence(),
 )
 
 data class PpudCreatedSentence(
