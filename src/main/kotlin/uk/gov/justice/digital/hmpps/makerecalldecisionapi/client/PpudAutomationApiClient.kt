@@ -45,9 +45,7 @@ class PpudAutomationApiClient(
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
@@ -62,9 +60,7 @@ class PpudAutomationApiClient(
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
@@ -83,9 +79,7 @@ class PpudAutomationApiClient(
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
@@ -104,9 +98,7 @@ class PpudAutomationApiClient(
         if (ex is BadRequest) {
           throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
         }
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
@@ -124,9 +116,7 @@ class PpudAutomationApiClient(
         if (ex is BadRequest) {
           throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
         }
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
@@ -140,9 +130,7 @@ class PpudAutomationApiClient(
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-        )
+        handleTimeoutException(ex)
       }
   }
 
