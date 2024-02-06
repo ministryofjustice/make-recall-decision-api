@@ -10,6 +10,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -115,6 +117,35 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // thenp
     assertThat(actual.offender.id, equalTo(id))
+  }
+
+  @Test
+  fun `update sentence to ppud`() {
+    // given
+    val offenderId = "123"
+    val sentenceId = "456"
+    val id = "12345678"
+
+    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, id)
+
+    // when
+    ppudAutomationApiClient.updateSentence(
+      offenderId,
+      sentenceId,
+      PpudUpdateSentence(
+        custodyType = "Determinate",
+        dateOfSentence = LocalDate.of(2004, 1, 2),
+        licenceExpiryDate = LocalDate.of(2004, 1, 3),
+        mappaLevel = "1",
+        releaseDate = LocalDate.of(2004, 1, 4),
+        sentenceLength = SentenceLength(1, 1, 1),
+        sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+        sentencingCourt = "sentencing court",
+      ),
+    ).block()
+
+    //then
+    //no exception
   }
 
   @Test
