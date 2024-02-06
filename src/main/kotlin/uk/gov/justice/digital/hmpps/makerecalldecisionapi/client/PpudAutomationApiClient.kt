@@ -134,7 +134,7 @@ class PpudAutomationApiClient(
       }
   }
 
-  private fun handleTimeoutException(
+  fun handleTimeoutException(
     exception: Throwable?,
   ) {
     when (exception) {
