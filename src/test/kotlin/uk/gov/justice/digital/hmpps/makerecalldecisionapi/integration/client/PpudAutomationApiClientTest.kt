@@ -144,8 +144,8 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       ),
     ).block()
 
-    //then
-    //no exception
+    // then
+    // no exception
   }
 
   @Test
