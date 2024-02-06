@@ -14,17 +14,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationA
 class PpudExceptionTest {
   @Test
   fun `test timeout exception`() {
-
     val counter = mock(Counter::class.java)
     try {
-
       PpudAutomationApiClient(
         mock(WebClient::class.java),
         0,
         counter,
         ObjectMapper(),
       ).handleTimeoutException(java.util.concurrent.TimeoutException())
-
 
       fail("expected failed exception")
     } catch (e: Throwable) {
