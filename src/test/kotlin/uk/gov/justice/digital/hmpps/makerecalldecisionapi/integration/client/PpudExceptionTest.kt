@@ -11,7 +11,7 @@ import org.mockito.Mockito.verify
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 
-class PpudBasicTest {
+class PpudExceptionTest {
   @Test
   fun `test timeout exception`() {
 
