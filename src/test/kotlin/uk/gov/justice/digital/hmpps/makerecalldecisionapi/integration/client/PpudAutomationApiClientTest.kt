@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -141,6 +142,29 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         sentenceLength = SentenceLength(1, 1, 1),
         sentenceExpiryDate = LocalDate.of(2004, 1, 5),
         sentencingCourt = "sentencing court",
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `update offence in ppud`() {
+    // given
+    val offenderId = "123"
+    val sentenceId = "456"
+    val id = "12345678"
+
+    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId, id)
+
+    // when
+    ppudAutomationApiClient.updateOffence(
+      offenderId,
+      sentenceId,
+      PpudUpdateOffence(
+        indexOffence = "some dastardly deed",
+        dateOfIndexOffence = LocalDate.of(2016, 1, 1),
       ),
     ).block()
 
