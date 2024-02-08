@@ -915,6 +915,20 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun ppudAutomationUpdateOffenceApiMatchResponse(
+    offenderId: String,
+    sentenceId: String,
+    id: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun ppudAutomationReferenceListApiMatchResponse(
     name: String,
     delaySeconds: Long = 0,
