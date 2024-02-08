@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import java.time.LocalDate
 
-data class PpudUpdateOffence (
+data class PpudUpdateOffence(
   val indexOffence: String,
   val dateOfIndexOffence: LocalDate?,
 )
