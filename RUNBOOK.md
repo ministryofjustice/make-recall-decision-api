@@ -90,7 +90,7 @@ The contents of the `make-recall-decision-api` secret are handled in the followi
 
 - `API_CLIENT_ID` - managed externally via tooling in the `hmpps-auth` project.
 - `API_CLIENT_SECRET` - managed externally via tooling in the `hmpps-auth` project.
-- `APPINSIGHTS_INSTRUMENTATIONKEY` - managed externally via the [dps-project-bootstrap](https://github.com/ministryofjustice/dps-project-bootstrap) tooling.
+- `APPINSIGHTS_INSTRUMENTATIONKEY` - managed externally via the [hmpps-project-bootstrap](https://github.com/ministryofjustice/hmpps-project-bootstrap) tooling.
 
 ## System backup and restore
 
