@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
@@ -154,6 +155,22 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud update offence`() {
+    ppudAutomationUpdateOffenceApiMatchResponse("123", "456", "12345678")
+    runTest {
+      putToUpdateOffence(
+        "123",
+        "456",
+        PpudUpdateOffence(
+          indexOffence = "some dastardly deed",
+          dateOfIndexOffence = LocalDate.of(2016, 1, 1),
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -177,6 +194,18 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId)
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToUpdateOffence(
+    offenderId: String,
+    sentenceId: String,
+    requestBody: PpudUpdateOffence,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
