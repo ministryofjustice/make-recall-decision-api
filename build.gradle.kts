@@ -59,7 +59,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.1")
@@ -70,7 +70,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
 
-  testImplementation("io.jsonwebtoken:jjwt:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.5")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
@@ -80,10 +80,10 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.84")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.84")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.84")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.84")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.85")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.85")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.85")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.85")
 
   implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378
   implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378
