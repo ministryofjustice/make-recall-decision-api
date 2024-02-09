@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
@@ -181,7 +182,7 @@ class MrdTestDataBuilder {
             mappaLevel = "Level 1",
             policeForce = "Kent Police",
             probationArea = "Kent",
-            recommendedToOwner = "ok fine",
+            recommendedTo = PpudUser("Joe Bloggs", "Recall Team"),
             receivedDateTime = LocalDateTime.now(),
             releaseDate = LocalDate.now(),
             riskOfContrabandDetails = "Smuggling cigarettes",
