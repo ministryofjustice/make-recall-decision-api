@@ -8,12 +8,16 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdatePostRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -117,7 +121,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       ),
     ).block()
 
-    // thenp
+    // then
     assertThat(actual.offender.id, equalTo(id))
   }
 
@@ -170,6 +174,45 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // then
     // no exception
+  }
+
+  @Test
+  fun `update release to ppud`() {
+    // given
+    val offenderId = "123"
+    val sentenceId = "456"
+    val id = "12345678"
+
+    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, id)
+
+    // when
+    val actual = ppudAutomationApiClient.createOrUpdateRelease(
+      offenderId, sentenceId,
+      PpudCreateOrUpdateRelease(
+        dateOfRelease = LocalDate.of(2016, 1, 1),
+        postRelease = UpdatePostRelease(
+          assistantChiefOfficer = PpudContact(
+            name = "Mr A",
+            faxEmail = "1234",
+          ),
+          offenderManager = PpudContactWithTelephone(
+            name = "Mr B",
+            faxEmail = "567",
+            telephone = "1234",
+          ),
+          probationService = "Argyl",
+          spoc = PpudContact(
+            name = "Mr C",
+            faxEmail = "123",
+          ),
+        ),
+        releasedFrom = "Hull",
+        releasedUnder = "Duress",
+      ),
+    ).block()
+
+    // then
+    assertThat(actual.release.id, equalTo(id))
   }
 
   @Test

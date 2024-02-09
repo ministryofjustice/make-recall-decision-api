@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
@@ -98,5 +100,16 @@ internal class PpudController(
     @RequestBody request: PpudUpdateOffence,
   ) {
     ppudService.updateOffence(offenderId, sentenceId, request)
+  }
+
+  @PostMapping("/ppud/offender/{offenderId}/sentence/{sentenceId}/release")
+  @Operation(summary = "Calls PPUD Automation service to update a release.")
+  suspend fun createOrUpdateRelease(
+    @PathVariable(required = true) offenderId: String,
+    @PathVariable(required = true) sentenceId: String,
+    @RequestBody(required = true)
+    createOrUpdateReleaseRequest: PpudCreateOrUpdateRelease,
+  ): PpudCreateOrUpdateReleaseResponse {
+    return ppudService.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest)
   }
 }
