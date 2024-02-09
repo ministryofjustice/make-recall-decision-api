@@ -918,7 +918,6 @@ abstract class IntegrationTestBase {
   protected fun ppudAutomationUpdateOffenceApiMatchResponse(
     offenderId: String,
     sentenceId: String,
-    id: String,
     delaySeconds: Long = 0,
   ) {
     val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")

@@ -157,7 +157,7 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud update offence`() {
-    ppudAutomationUpdateOffenceApiMatchResponse("123", "456", "12345678")
+    ppudAutomationUpdateOffenceApiMatchResponse("123", "456")
     runTest {
       putToUpdateOffence(
         "123",

@@ -154,9 +154,8 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val offenderId = "123"
     val sentenceId = "456"
-    val id = "12345678"
 
-    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId, id)
+    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
 
     // when
     ppudAutomationApiClient.updateOffence(
