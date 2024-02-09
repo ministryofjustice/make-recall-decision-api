@@ -32,11 +32,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.12.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.34.0")
-  implementation("joda-time:joda-time:2.12.6")
-  implementation("com.deepoove:poi-tl:1.12.1") {
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.2")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.12.2")
+  implementation("io.opentelemetry:opentelemetry-api:1.34.1")
+  implementation("joda-time:joda-time:2.12.7")
+  implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
@@ -44,11 +44,11 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.6.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
+  implementation("org.flywaydb:flyway-core:10.7.2")
+  implementation("org.flywaydb:flyway-database-postgresql:10.7.2")
   implementation("org.postgresql:postgresql:42.7.1")
 
-  implementation("io.sentry:sentry-spring-boot-starter:7.1.0")
+  implementation("io.sentry:sentry-spring-boot-starter:7.3.0")
   implementation("io.sentry:sentry-logback:7.1.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
@@ -59,7 +59,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.1")
@@ -70,7 +70,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
 
-  testImplementation("io.jsonwebtoken:jjwt:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.5")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
@@ -80,10 +80,10 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.84")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.84")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.84")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.84")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.85")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.85")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.85")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.85")
 
   implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378
   implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378
