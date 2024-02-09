@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -75,7 +76,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         mappaLevel = "Level 3 – MAPPP",
         policeForce = "Kent Police",
         probationArea = "Merseyside",
-        recommendedToOwner = "Consider a Recall Test(Recall 1)",
+        recommendedTo = PpudUser("Consider a Recall Test", "Recall 1"),
         receivedDateTime = LocalDateTime.of(2023, 11, 20, 11, 30),
         releaseDate = LocalDate.of(2023, 11, 5),
         riskOfContrabandDetails = "Smuggling in cigarettes",
