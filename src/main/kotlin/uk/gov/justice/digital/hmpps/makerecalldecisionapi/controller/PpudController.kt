@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudService
 
@@ -86,5 +87,16 @@ internal class PpudController(
     @RequestBody request: PpudUpdateSentence,
   ) {
     ppudService.updateSentence(offenderId, sentenceId, request)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PutMapping("/ppud/offender/{offenderId}/sentence/{sentenceId}/offence")
+  @Operation(summary = "Calls PPUD Automation service to update an offence.")
+  suspend fun updateOffence(
+    @PathVariable(required = true) offenderId: String,
+    @PathVariable(required = true) sentenceId: String,
+    @RequestBody request: PpudUpdateOffence,
+  ) {
+    ppudService.updateOffence(offenderId, sentenceId, request)
   }
 }
