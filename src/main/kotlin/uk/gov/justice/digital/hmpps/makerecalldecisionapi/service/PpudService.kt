@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 
 @Service
@@ -56,6 +57,11 @@ internal class PpudService(
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.updateSentence(offenderId, sentenceId, request),
     )
-    println("DONE")
+  }
+
+  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence) {
+    getValueAndHandleWrappedException(
+      ppudAutomationApiClient.updateOffence(offenderId, sentenceId, request),
+    )
   }
 }
