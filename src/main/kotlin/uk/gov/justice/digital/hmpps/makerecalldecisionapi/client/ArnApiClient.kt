@@ -61,6 +61,7 @@ class ArnApiClient(
           endPoint = "assessments",
         )
       }
+      .retry(2)
     log.info(StringUtils.normalizeSpace("Returning assessments for $crn"))
     return result
   }
@@ -81,6 +82,7 @@ class ArnApiClient(
           endPoint = "risk scores",
         )
       }
+      .retry(2)
     log.info(StringUtils.normalizeSpace("Returning risk scores for $crn"))
     return result
   }
@@ -101,6 +103,7 @@ class ArnApiClient(
           endPoint = "risk management plan",
         )
       }
+      .retry(2)
     log.info(StringUtils.normalizeSpace("Returning risk management plan for $crn"))
     return result
   }
@@ -121,6 +124,7 @@ class ArnApiClient(
           endPoint = "risks",
         )
       }
+      .retry(2)
     log.info(StringUtils.normalizeSpace("Returning all risks with full text for $crn"))
     return result
   }

@@ -59,5 +59,6 @@ class OffenderSearchApiClient(
           }
         }
       }
+      .retry(2)
   }
 }

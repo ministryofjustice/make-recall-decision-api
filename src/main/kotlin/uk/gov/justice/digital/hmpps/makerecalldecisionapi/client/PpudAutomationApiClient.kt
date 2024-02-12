@@ -48,6 +48,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun details(
@@ -63,6 +64,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun bookToPpud(
@@ -82,6 +84,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun createOffender(request: PpudCreateOffender): Mono<PpudCreateOffenderResponse> {
@@ -101,6 +104,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence): Mono<ResponseEntity<Void>> {
@@ -118,6 +122,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence): Mono<ResponseEntity<Void>> {
@@ -135,6 +140,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
@@ -149,6 +155,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .retry(2)
   }
 
   fun handleTimeoutException(

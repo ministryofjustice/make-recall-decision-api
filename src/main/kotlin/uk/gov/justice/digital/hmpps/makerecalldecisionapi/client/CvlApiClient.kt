@@ -45,6 +45,7 @@ class CvlApiClient(
           endPoint = "licence match",
         )
       }
+      .retry(2)
     log.info(normalizeSpace("Returning licence match from CVL for $crn with nomis number ${licenceConditionSearch.nomsId}"))
     return result
   }
@@ -69,6 +70,7 @@ class CvlApiClient(
           endPoint = "licence by id",
         )
       }
+      .retry(2)
     log.info(normalizeSpace("Returning licences from CVL for $crn and licence id $licenceId"))
     return result
   }

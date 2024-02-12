@@ -615,6 +615,15 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(personalDetails).respond(response().withStatusCode(500))
   }
 
+  @Suppress("SameParameterValue")
+  protected fun personalDetailsSuccessAfterRetry(crn: String) {
+    val personalDetails =
+      request().withPath("/case-summary/$crn/personal-details")
+    deliusIntegration.`when`(personalDetails, exactly(1)).respond(response().withStatusCode(500))
+    deliusIntegration.`when`(personalDetails).respond(
+      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse()))
+  }
+
   protected fun offenderSearchByCrnResponse(
     crn: String = "X123456",
     firstName: String = "Pontius",

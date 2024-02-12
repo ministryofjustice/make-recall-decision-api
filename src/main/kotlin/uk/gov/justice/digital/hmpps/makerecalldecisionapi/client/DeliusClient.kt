@@ -93,6 +93,7 @@ class DeliusClient(
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
+      .retry(2)
     log.info(normalizeSpace("Returning $endpoint details"))
     return getValueAndHandleWrappedException(result)!!
   }

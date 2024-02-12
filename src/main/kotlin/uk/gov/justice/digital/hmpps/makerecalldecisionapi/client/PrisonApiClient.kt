@@ -40,6 +40,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
+      .retry(2)
   }
 
   fun retrieveImageData(
@@ -56,6 +57,7 @@ class PrisonApiClient(
           exception = ex,
         )
       }
+      .retry(2)
   }
 
   fun retrievePrisonTimelines(
@@ -75,6 +77,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
+      .retry(2)
   }
 
   fun retrieveSentencesAndOffences(bookingId: Int): Mono<List<Sentence>> {
@@ -94,6 +97,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
+      .retry(2)
   }
 
   private fun handleTimeoutException(exception: Throwable?) {
@@ -122,5 +126,6 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
+      .retry(2)
   }
 }
