@@ -14,6 +14,8 @@ data class BookRecallToPpud(
   val mappaLevel: String? = null,
   val policeForce: String? = null,
   val probationArea: String? = null,
+  @Deprecated("Replaced by recommendedTo")
+  val recommendedToOwner: String? = null,
   val recommendedTo: PpudUser? = null,
   val receivedDateTime: LocalDateTime? = null,
   val releaseDate: LocalDate? = null,
