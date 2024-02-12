@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class BookRecallToPpud(
   val decisionDateTime: LocalDateTime? = null,
   val isInCustody: Boolean? = null,
@@ -14,8 +16,6 @@ data class BookRecallToPpud(
   val mappaLevel: String? = null,
   val policeForce: String? = null,
   val probationArea: String? = null,
-  @Deprecated("Replaced by recommendedTo")
-  val recommendedToOwner: String? = null,
   val recommendedTo: PpudUser? = null,
   val receivedDateTime: LocalDateTime? = null,
   val releaseDate: LocalDate? = null,
