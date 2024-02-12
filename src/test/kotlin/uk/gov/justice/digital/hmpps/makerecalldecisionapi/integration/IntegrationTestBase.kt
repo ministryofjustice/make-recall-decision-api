@@ -621,7 +621,8 @@ abstract class IntegrationTestBase {
       request().withPath("/case-summary/$crn/personal-details")
     deliusIntegration.`when`(personalDetails, exactly(1)).respond(response().withStatusCode(500))
     deliusIntegration.`when`(personalDetails).respond(
-      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse()))
+      response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse()),
+    )
   }
 
   protected fun offenderSearchByCrnResponse(
