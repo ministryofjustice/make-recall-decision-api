@@ -46,6 +46,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
@@ -924,6 +925,21 @@ abstract class IntegrationTestBase {
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun ppudAutomationUpdateReleaseApiMatchResponse(
+    offenderId: String,
+    sentenceId: String,
+    id: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/release")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(ppudAutomationUpdateReleaseResponse(id))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

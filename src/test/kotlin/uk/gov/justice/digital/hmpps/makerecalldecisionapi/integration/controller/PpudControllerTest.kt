@@ -9,8 +9,12 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
@@ -172,6 +176,39 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud update release`() {
+    ppudAutomationUpdateReleaseApiMatchResponse("123", "456", "12345678")
+    runTest {
+      postToUpdateRelease(
+        "123",
+        "456",
+        PpudCreateOrUpdateRelease(
+          dateOfRelease = LocalDate.of(2016, 1, 1),
+          postRelease = PpudUpdatePostRelease(
+            assistantChiefOfficer = PpudContact(
+              name = "Mr A",
+              faxEmail = "1234",
+            ),
+            offenderManager = PpudContactWithTelephone(
+              name = "Mr B",
+              faxEmail = "567",
+              telephone = "1234",
+            ),
+            probationService = "Argyl",
+            spoc = PpudContact(
+              name = "Mr C",
+              faxEmail = "123",
+            ),
+          ),
+          releasedFrom = "Hull",
+          releasedUnder = "Duress",
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -207,6 +244,18 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun postToUpdateRelease(
+    offenderId: String,
+    sentenceId: String,
+    requestBody: PpudCreateOrUpdateRelease,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/release")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
