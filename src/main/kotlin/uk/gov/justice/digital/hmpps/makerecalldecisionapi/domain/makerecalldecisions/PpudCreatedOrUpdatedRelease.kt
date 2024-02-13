@@ -1,5 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
-data class PpudCreatedOrUpdatedRelease (
+data class PpudCreatedOrUpdatedRelease(
   val id: String,
 )
