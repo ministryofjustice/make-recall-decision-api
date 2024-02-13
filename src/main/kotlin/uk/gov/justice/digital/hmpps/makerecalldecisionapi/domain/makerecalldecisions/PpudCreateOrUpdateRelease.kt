@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class PpudCreateOrUpdateRelease(
   val dateOfRelease: LocalDate,
-  val postRelease: UpdatePostRelease = UpdatePostRelease(),
+  val postRelease: PpudUpdatePostRelease = PpudUpdatePostRelease(),
   val releasedFrom: String,
   val releasedUnder: String,
 )

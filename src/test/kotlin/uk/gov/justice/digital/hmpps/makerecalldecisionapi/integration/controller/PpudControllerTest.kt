@@ -18,7 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UpdatePostRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -185,7 +185,7 @@ class PpudControllerTest : IntegrationTestBase() {
         "456",
         PpudCreateOrUpdateRelease(
           dateOfRelease = LocalDate.of(2016, 1, 1),
-          postRelease = UpdatePostRelease(
+          postRelease = PpudUpdatePostRelease(
             assistantChiefOfficer = PpudContact(
               name = "Mr A",
               faxEmail = "1234",
