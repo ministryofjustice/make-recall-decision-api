@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
@@ -93,7 +94,7 @@ class DeliusClient(
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
-      .retry(2)
+      .withRetry()
     log.info(normalizeSpace("Returning $endpoint details"))
     return getValueAndHandleWrappedException(result)!!
   }

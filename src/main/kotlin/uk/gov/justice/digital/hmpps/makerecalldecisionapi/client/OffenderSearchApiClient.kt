@@ -8,6 +8,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPeopleRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -59,6 +60,6 @@ class OffenderSearchApiClient(
           }
         }
       }
-      .retry(2)
+      .withRetry()
   }
 }

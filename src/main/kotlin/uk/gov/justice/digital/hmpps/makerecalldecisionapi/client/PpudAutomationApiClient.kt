@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
@@ -48,7 +49,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun details(
@@ -64,7 +65,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun bookToPpud(
@@ -84,7 +85,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun createOffender(request: PpudCreateOffender): Mono<PpudCreateOffenderResponse> {
@@ -104,7 +105,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence): Mono<ResponseEntity<Void>> {
@@ -122,7 +123,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence): Mono<ResponseEntity<Void>> {
@@ -140,7 +141,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
@@ -155,7 +156,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun handleTimeoutException(

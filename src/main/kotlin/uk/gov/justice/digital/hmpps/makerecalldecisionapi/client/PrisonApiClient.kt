@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
@@ -40,7 +41,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun retrieveImageData(
@@ -57,7 +58,7 @@ class PrisonApiClient(
           exception = ex,
         )
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun retrievePrisonTimelines(
@@ -77,7 +78,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   fun retrieveSentencesAndOffences(bookingId: Int): Mono<List<Sentence>> {
@@ -97,7 +98,7 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
-      .retry(2)
+      .withRetry()
   }
 
   private fun handleTimeoutException(exception: Throwable?) {
@@ -126,6 +127,6 @@ class PrisonApiClient(
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
       }
-      .retry(2)
+      .withRetry()
   }
 }

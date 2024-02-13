@@ -282,7 +282,7 @@ abstract class IntegrationTestBase {
   protected fun riskManagementPlanResponse(crn: String, delaySeconds: Long = 0) {
     val riskManagementPlanRequest =
       request().withPath("/risks/crn/$crn/risk-management-plan")
-    oasysARNApi.`when`(riskManagementPlanRequest, exactly(1)).respond(
+    oasysARNApi.`when`(riskManagementPlanRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(riskManagementResponse(crn))
         .withDelay(Delay.seconds(delaySeconds)),
     )
@@ -291,7 +291,7 @@ abstract class IntegrationTestBase {
   protected fun risksWithFullTextResponse(crn: String, delaySeconds: Long = 0) {
     val risksRequest =
       request().withPath("/risks/crn/$crn/fulltext")
-    oasysARNApi.`when`(risksRequest, exactly(1)).respond(
+    oasysARNApi.`when`(risksRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(risksDataResponse())
         .withDelay(Delay.seconds(delaySeconds)),
     )
@@ -520,7 +520,7 @@ abstract class IntegrationTestBase {
     val licenceConditions =
       request().withPath("/case-summary/$crn/licence-conditions")
 
-    deliusIntegration.`when`(licenceConditions, exactly(1)).respond(
+    deliusIntegration.`when`(licenceConditions).respond(
       response().withContentType(APPLICATION_JSON).withBody(licenceResponse(releasedOnLicence, licenceStartDate))
         .withDelay(Delay.seconds(delaySeconds)),
     )
@@ -723,7 +723,7 @@ abstract class IntegrationTestBase {
     val contactSummaryRequest = request()
       .withPath(contactSummaryUrl)
 
-    deliusIntegration.`when`(contactSummaryRequest, exactly(1)).respond(
+    deliusIntegration.`when`(contactSummaryRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(body)
         .withDelay(Delay.seconds(delaySeconds)),
     )
