@@ -102,6 +102,7 @@ internal class PpudController(
     ppudService.updateOffence(offenderId, sentenceId, request)
   }
 
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/offender/{offenderId}/sentence/{sentenceId}/release")
   @Operation(summary = "Calls PPUD Automation service to update a release.")
   suspend fun createOrUpdateRelease(
