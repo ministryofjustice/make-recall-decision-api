@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/offender/.*/sentence/.*/release"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "post-release.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
