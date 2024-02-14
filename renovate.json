@@ -1,9 +1,9 @@
 {
-  "extends": ["github>ministryofjustice/arn-renovate-config"],
-  "minor": {
-    "ignoreDeps": [
-      "logback-core",
-      "logback-classic"
-    ]
-  }
+  "extends": [
+    "github>ministryofjustice/arn-renovate-config"
+  ],
+  "ignoreDeps": [
+    "logback-core",
+    "logback-classic"
+  ]
 }
