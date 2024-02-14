@@ -620,7 +620,8 @@ abstract class IntegrationTestBase {
   protected fun personalDetailsSuccessAfterRetry(crn: String) {
     val personalDetails =
       request().withPath("/case-summary/$crn/personal-details")
-    deliusIntegration.`when`(personalDetails, exactly(1)).respond(response().withStatusCode(500))
+    deliusIntegration.`when`(personalDetails, exactly(1))
+      .respond(response().withStatusCode(HttpStatusCode.GATEWAY_TIMEOUT_504.code()))
     deliusIntegration.`when`(personalDetails).respond(
       response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse()),
     )
