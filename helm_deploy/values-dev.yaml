@@ -12,7 +12,7 @@ generic-service:
     SENTRY_ENVIRONMENT: DEV
     HMPPS_AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     OFFENDER_SEARCH_ENDPOINT_URL: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
-    DELIUS_INTEGRATION_ENDPOINT_URL: http://make-recall-decisions-and-delius.hmpps-probation-integration-services-dev.svc.cluster.local
+    DELIUS_INTEGRATION_ENDPOINT_URL: https://make-recall-decisions-and-delius-dev.hmpps.service.justice.gov.uk
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
     CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
     PPUD_AUTOMATION_API_ENDPOINT_URL: https://hmpps-ppud-automation-api-dev.hmpps.service.justice.gov.uk
