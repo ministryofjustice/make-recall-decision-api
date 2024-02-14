@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
@@ -27,8 +28,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.net.URI
 import java.time.Duration
+import java.util.concurrent.TimeoutException
 
 @Configuration
 class WebClientConfiguration(
@@ -54,7 +57,7 @@ class WebClientConfiguration(
       return this
         .retryWhen(
           Retry.backoff(2, Duration.ofMillis(500))
-            .filter { it !is WebClientResponseException || !it.statusCode.is4xxClientError }
+            .filter(::shouldBeRetried)
             .doBeforeRetry(::logRetrySignal)
             .onRetryExhaustedThrow { _, retrySignal ->
               retrySignal.failure()
@@ -68,6 +71,19 @@ class WebClientConfiguration(
         "Exception occurred but operation will be retried. Total retries: ${retrySignal.totalRetries()}",
         exception,
       )
+    }
+
+    private val transientStatusCodes = setOf(
+      HttpStatus.REQUEST_TIMEOUT,
+      HttpStatus.BAD_GATEWAY,
+      HttpStatus.SERVICE_UNAVAILABLE,
+      HttpStatus.GATEWAY_TIMEOUT,
+    )
+
+    private fun shouldBeRetried(ex: Throwable): Boolean {
+      return ex is ClientTimeoutException ||
+        ex is TimeoutException ||
+        (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode))
     }
   }
 
