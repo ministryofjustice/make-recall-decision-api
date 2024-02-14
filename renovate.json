@@ -3,7 +3,7 @@
     "github>ministryofjustice/arn-renovate-config"
   ],
   "ignoreDeps": [
-    "logback-core",
-    "logback-classic"
+    "ch.qos.logback:logback-core",
+    "ch.qos.logback:logback-classic"
   ]
 }
