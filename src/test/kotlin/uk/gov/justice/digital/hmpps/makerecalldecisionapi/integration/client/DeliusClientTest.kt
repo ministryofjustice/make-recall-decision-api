@@ -36,6 +36,13 @@ class DeliusClientTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `retries on http error`() {
+    personalDetailsSuccessAfterRetry("X123456")
+    val personalDetails = deliusClient.getPersonalDetails("X123456")
+    assertThat(personalDetails.personalDetails.name.surname).isEqualTo("Smith")
+  }
+
+  @Test
   fun `fetch user details`() {
     userResponse("fred", "test@digital.justice.gov.uk")
     val userDetails = deliusClient.getUserInfo("fred")

@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.isNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
@@ -113,7 +114,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.risk.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
         .jsonPath("$.risk.assessments.offencesMatch").isEqualTo(true)
         .jsonPath("$.risk.assessments.offenceDescription").isEqualTo("Juicy offence details.")
-        .jsonPath("$.risk.assessments.error").isEqualTo(null)
+        .jsonPath("$.risk.assessments.error").value(isNull())
     }
   }
 
@@ -141,7 +142,7 @@ class CaseOverviewControllerTest(
       userAccessAllowed(crn)
       overviewResponseNoConvictions(crn)
 
-      val result = webTestClient.get()
+      webTestClient.get()
         .uri("/cases/$crn/overview")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

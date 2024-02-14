@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
@@ -41,6 +42,7 @@ class ArnApiClient(
           endPoint = "risk summary",
         )
       }
+      .withRetry()
     log.info(StringUtils.normalizeSpace("Returning risk summary for $crn"))
     return result
   }
@@ -61,6 +63,7 @@ class ArnApiClient(
           endPoint = "assessments",
         )
       }
+      .withRetry()
     log.info(StringUtils.normalizeSpace("Returning assessments for $crn"))
     return result
   }
@@ -81,6 +84,7 @@ class ArnApiClient(
           endPoint = "risk scores",
         )
       }
+      .withRetry()
     log.info(StringUtils.normalizeSpace("Returning risk scores for $crn"))
     return result
   }
@@ -101,6 +105,7 @@ class ArnApiClient(
           endPoint = "risk management plan",
         )
       }
+      .withRetry()
     log.info(StringUtils.normalizeSpace("Returning risk management plan for $crn"))
     return result
   }
@@ -121,6 +126,7 @@ class ArnApiClient(
           endPoint = "risks",
         )
       }
+      .withRetry()
     log.info(StringUtils.normalizeSpace("Returning all risks with full text for $crn"))
     return result
   }

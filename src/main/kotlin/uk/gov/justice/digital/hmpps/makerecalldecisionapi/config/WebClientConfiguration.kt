@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -16,6 +18,9 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
+import reactor.core.publisher.Mono
+import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
@@ -23,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import java.net.URI
+import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
@@ -40,6 +46,30 @@ class WebClientConfiguration(
   @Value("\${prison.client.timeout}") private val prisonTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry,
 ) {
+
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+    fun <T> Mono<T>.withRetry(): Mono<T> {
+      return this
+        .retryWhen(
+          Retry.backoff(2, Duration.ofMillis(500))
+            .filter { it !is WebClientResponseException || !it.statusCode.is4xxClientError }
+            .doBeforeRetry(::logRetrySignal)
+            .onRetryExhaustedThrow { _, retrySignal ->
+              retrySignal.failure()
+            },
+        )
+    }
+
+    private fun logRetrySignal(retrySignal: Retry.RetrySignal) {
+      val exception = retrySignal.failure()?.cause ?: retrySignal.failure()
+      log.error(
+        "Exception occurred but operation will be retried. Total retries: ${retrySignal.totalRetries()}",
+        exception,
+      )
+    }
+  }
 
   @Bean
   fun webClientNoAuthNoMetrics(): WebClient {
@@ -154,8 +184,16 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun ppudAutomationApiClient(@Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient, objectMapper: ObjectMapper): PpudAutomationApiClient {
-    return PpudAutomationApiClient(webClient, ppudAutomationTimeout, ppudAutomationApiClientTimeoutCounter(), objectMapper)
+  fun ppudAutomationApiClient(
+    @Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient,
+    objectMapper: ObjectMapper,
+  ): PpudAutomationApiClient {
+    return PpudAutomationApiClient(
+      webClient,
+      ppudAutomationTimeout,
+      ppudAutomationApiClientTimeoutCounter(),
+      objectMapper,
+    )
   }
 
   @Bean

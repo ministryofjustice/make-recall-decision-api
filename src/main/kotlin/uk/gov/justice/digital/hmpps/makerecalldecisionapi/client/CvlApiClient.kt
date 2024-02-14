@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionSearch
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceMatchResponse
@@ -45,6 +46,7 @@ class CvlApiClient(
           endPoint = "licence match",
         )
       }
+      .withRetry()
     log.info(normalizeSpace("Returning licence match from CVL for $crn with nomis number ${licenceConditionSearch.nomsId}"))
     return result
   }
@@ -69,6 +71,7 @@ class CvlApiClient(
           endPoint = "licence by id",
         )
       }
+      .withRetry()
     log.info(normalizeSpace("Returning licences from CVL for $crn and licence id $licenceId"))
     return result
   }
