@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
@@ -50,6 +51,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun details(
@@ -65,6 +67,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun bookToPpud(
@@ -84,6 +87,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun createOffender(request: PpudCreateOffender): Mono<PpudCreateOffenderResponse> {
@@ -103,6 +107,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence): Mono<ResponseEntity<Void>> {
@@ -120,6 +125,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence): Mono<ResponseEntity<Void>> {
@@ -137,6 +143,7 @@ class PpudAutomationApiClient(
         }
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun createOrUpdateRelease(
@@ -173,6 +180,7 @@ class PpudAutomationApiClient(
       .doOnError { ex ->
         handleTimeoutException(ex)
       }
+      .withRetry()
   }
 
   fun handleTimeoutException(

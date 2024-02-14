@@ -153,12 +153,12 @@ gotenberg:
 
 ndelius:
   client:
-    timeout: 30
+    timeout: 10
 
 oasys:
   arn:
     client:
-      timeout: 30
+      timeout: 15
 
 ppud-automation:
   client:
