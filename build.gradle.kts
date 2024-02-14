@@ -85,8 +85,8 @@ dependencies {
   implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.85")
   implementation("org.apache.tomcat:tomcat-annotations-api:9.0.85")
 
-  implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378
-  implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378
+  implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades
+  implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades
 }
 
 java {
