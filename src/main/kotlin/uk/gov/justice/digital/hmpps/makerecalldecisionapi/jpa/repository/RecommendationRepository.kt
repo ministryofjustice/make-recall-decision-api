@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -24,4 +25,8 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
     nativeQuery = true,
   )
   fun findByCrn(@Param("crn") crn: String): List<RecommendationEntity>
+
+  @Modifying
+  @Query(value = "UPDATE recommendations SET deleted=true WHERE id IN :ids", nativeQuery = true)
+  fun softDeleteByIds(@Param("ids") ids: List<Long>)
 }
