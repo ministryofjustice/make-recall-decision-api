@@ -5,5 +5,5 @@ replicaCount: 2
 
 image:
   repository: gotenberg/gotenberg
-  tag: 8.0.3
+  tag: 8.1.0
   port: 3000
