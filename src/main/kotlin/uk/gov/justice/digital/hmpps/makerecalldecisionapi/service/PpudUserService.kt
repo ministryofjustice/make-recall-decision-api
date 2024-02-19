@@ -17,7 +17,7 @@ internal class PpudUserService(
 
   suspend fun fetchPpudUser(
     userName: String,
-  ): PpudUserEntity {
+  ): PpudUserEntity? {
     return ppudUserRepository.findByUserName(userName)
   }
 }

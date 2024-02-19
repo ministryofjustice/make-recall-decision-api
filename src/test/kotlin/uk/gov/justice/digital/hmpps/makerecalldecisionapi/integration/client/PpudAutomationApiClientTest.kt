@@ -12,11 +12,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -214,6 +216,37 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // then
     assertThat(actual.release.id, equalTo(id))
+  }
+
+  @Test
+  fun `create recall to ppud`() {
+    // given
+    val offenderId = "123"
+    val releaseId = "456"
+    val id = "12345678"
+
+    ppudAutomationCreateRecallApiMatchResponse(offenderId, releaseId, id)
+
+    // when
+    val actual = ppudAutomationApiClient.createRecall(
+      offenderId,
+      releaseId,
+      PpudCreateRecallRequest(
+        decisionDateTime = LocalDateTime.of(2024, 1, 1, 12, 0),
+        isExtendedSentence = false,
+        isInCustody = true,
+        mappaLevel = "Level 1",
+        policeForce = "police force",
+        probationArea = "probation area",
+        receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+        recommendedTo = PpudUser("", ""),
+        riskOfContrabandDetails = "some details",
+        riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
+      ),
+    ).block()
+
+    // then
+    assertThat(actual.recall.id, equalTo(id))
   }
 
   @Test

@@ -18,6 +18,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
@@ -155,6 +157,28 @@ class PpudAutomationApiClient(
     return webClient
       .post()
       .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/release").build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
+        handleTimeoutException(ex)
+      }
+  }
+
+  fun createRecall(
+    offenderId: String,
+    releaseId: String,
+    request: PpudCreateRecallRequest,
+  ): Mono<PpudCreateRecallResponse> {
+    val responseType = object : ParameterizedTypeReference<PpudCreateRecallResponse>() {}
+    return webClient
+      .post()
+      .uri { builder -> builder.path("/offender/" + offenderId + "/release/" + releaseId + "/recall").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
