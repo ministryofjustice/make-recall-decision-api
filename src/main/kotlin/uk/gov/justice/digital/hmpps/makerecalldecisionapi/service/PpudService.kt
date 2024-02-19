@@ -3,22 +3,28 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 
 @Service
 internal class PpudService(
   @Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
+  private val ppudUserRepository: PpudUserRepository,
 ) {
   fun search(request: PpudSearchRequest): PpudSearchResponse {
     val response = getValueAndHandleWrappedException(
@@ -74,6 +80,36 @@ internal class PpudService(
   ): PpudCreateOrUpdateReleaseResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest),
+    )
+    return response!!
+  }
+
+  fun createRecall(
+    offenderId: String,
+    releaseId: String,
+    createRecallRequest: CreateRecallRequest,
+    username: String,
+  ): PpudCreateRecallResponse {
+    val ppudUser = ppudUserRepository.findByUserName(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+      ?: PpudUser("", "")
+
+    val response = getValueAndHandleWrappedException(
+      ppudAutomationApiClient.createRecall(
+        offenderId,
+        releaseId,
+        PpudCreateRecallRequest(
+          decisionDateTime = createRecallRequest.decisionDateTime,
+          isExtendedSentence = createRecallRequest.isExtendedSentence,
+          isInCustody = createRecallRequest.isInCustody,
+          mappaLevel = createRecallRequest.mappaLevel,
+          policeForce = createRecallRequest.policeForce,
+          probationArea = createRecallRequest.probationArea,
+          receivedDateTime = createRecallRequest.receivedDateTime,
+          recommendedTo = ppudUser,
+          riskOfContrabandDetails = createRecallRequest.riskOfContrabandDetails,
+          riskOfSeriousHarmLevel = createRecallRequest.riskOfSeriousHarmLevel,
+        ),
+      ),
     )
     return response!!
   }

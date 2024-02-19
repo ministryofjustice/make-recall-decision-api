@@ -7,6 +7,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -209,6 +211,29 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud create recall`() {
+    ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
+    runTest {
+      postToCreateRecall(
+        "123",
+        "456",
+        CreateRecallRequest(
+          decisionDateTime = LocalDateTime.of(2024, 1, 1, 12, 0),
+          isExtendedSentence = false,
+          isInCustody = true,
+          mappaLevel = "Level 1",
+          policeForce = "police force",
+          probationArea = "probation area",
+          receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+          riskOfContrabandDetails = "some details",
+          riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -256,6 +281,18 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/release")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun postToCreateRecall(
+    offenderId: String,
+    releaseId: String,
+    requestBody: CreateRecallRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri("/ppud/offender/" + offenderId + "/release/" + releaseId + "/recall")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

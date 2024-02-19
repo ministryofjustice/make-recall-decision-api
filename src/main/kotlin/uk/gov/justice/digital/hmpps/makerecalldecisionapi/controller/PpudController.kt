@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
@@ -23,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudService
+import java.security.Principal
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -112,5 +115,18 @@ internal class PpudController(
     createOrUpdateReleaseRequest: PpudCreateOrUpdateRelease,
   ): PpudCreateOrUpdateReleaseResponse {
     return ppudService.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("ppud/offender/{offenderId}/release/{releaseId}/recall")
+  @Operation(summary = "Calls PPUD Automation service to create a recall.")
+  suspend fun createRecall(
+    @PathVariable(required = true) offenderId: String,
+    @PathVariable(required = true) releaseId: String,
+    @RequestBody(required = true)
+    createRecallRequest: CreateRecallRequest,
+    userLogin: Principal,
+  ): PpudCreateRecallResponse {
+    return ppudService.createRecall(offenderId, releaseId, createRecallRequest, userLogin.name)
   }
 }
