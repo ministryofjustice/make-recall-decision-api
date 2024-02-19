@@ -7,7 +7,7 @@ import javax.persistence.Table
 import kotlin.math.abs
 
 @Entity
-@Table(name = "ppud_user")
+@Table(name = "ppud_users")
 data class PpudUserEntity(
   @Id
   open var id: Long = abs(SecureRandom().nextInt().toLong()),
