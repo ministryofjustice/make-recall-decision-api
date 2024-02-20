@@ -339,12 +339,20 @@ class PartADocumentMapperTest {
           ),
           standardLicenceConditions = null,
         ),
+        additionalLicenceConditionsText = "Send me a kiss by wire, Honey my hearts on fire",
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      val expectedResult = StringBuilder().append("I am a title").append(System.lineSeparator()).append("details1")
-        .append(System.lineSeparator()).append("Note: note1")
+      val expectedResult = StringBuilder()
+        .append("I am a title")
+        .append(System.lineSeparator())
+        .append("details1")
+        .append(System.lineSeparator())
+        .append("Note: note1")
+        .append(System.lineSeparator())
+        .append(System.lineSeparator())
+        .append("Send me a kiss by wire, Honey my hearts on fire")
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
     }
   }
@@ -371,11 +379,12 @@ class PartADocumentMapperTest {
             allOptions = listOf(LicenceConditionOption("5", "five"), LicenceConditionOption("6", "six")),
           ),
         ),
+        additionalLicenceConditionsText = "Hello my honey, hello my sweetheart, hello my ragtime gal",
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.additionalConditionsBreached).isEqualTo("one\n\ntwo\n\nfive\n\nsix")
+      assertThat(result.additionalConditionsBreached).isEqualTo("one\n\ntwo\n\nfive\n\nsix\n\nHello my honey, hello my sweetheart, hello my ragtime gal")
     }
   }
 

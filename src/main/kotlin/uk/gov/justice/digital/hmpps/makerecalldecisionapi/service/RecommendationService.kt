@@ -239,6 +239,7 @@ internal class RecommendationService(
       alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
       licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
       cvlLicenceConditionsBreached = recommendationEntity.data.cvlLicenceConditionsBreached,
+      additionalLicenceConditionsText = recommendationEntity.data.additionalLicenceConditionsText,
       underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
       localPoliceContact = recommendationEntity.data.localPoliceContact,
       vulnerabilities = recommendationEntity.data.vulnerabilities,
@@ -326,7 +327,8 @@ internal class RecommendationService(
       recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
     val requestJson = JSONObject(jsonRequest.toString())
-    val sendSpoRationaleToDelius = requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
+    val sendSpoRationaleToDelius =
+      requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
     log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))
     log.info("send spo rationale to delius::$sendSpoRationaleToDelius")
     if (sendSpoRationaleToDelius) {
@@ -334,7 +336,8 @@ internal class RecommendationService(
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
-    val sendSpoDeleteRationaleToDelius = requestJson.has("sendSpoDeleteRationaleToDelius") && requestJson.getBoolean("sendSpoDeleteRationaleToDelius")
+    val sendSpoDeleteRationaleToDelius =
+      requestJson.has("sendSpoDeleteRationaleToDelius") && requestJson.getBoolean("sendSpoDeleteRationaleToDelius")
     log.info("sendSpoDeleteRationaleToDelius present::" + requestJson.has("sendSpoDeleteRationaleToDelius"))
     log.info("send spo delete recommendation rationale to delius::$sendSpoDeleteRationaleToDelius")
     if (sendSpoDeleteRationaleToDelius) {
