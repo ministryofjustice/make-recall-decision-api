@@ -29,7 +29,7 @@ class RecommendationsCleanupTaskTest {
   private lateinit var recommendationStatusRepository: RecommendationStatusRepository
 
   @Mock
-  private lateinit var mrdEventsEmitter: MrdEventsEmitter
+  private lateinit var recommendationService: RecommendationService
 
   @Mock
   private lateinit var environment: Environment
@@ -47,7 +47,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
-      mrdEventsEmitter,
+      recommendationService,
       mrdUrl,
       mrdApiUrl,
       environment,
@@ -83,9 +83,9 @@ class RecommendationsCleanupTaskTest {
     )
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
     if (activeProfile == "default") {
-      Mockito.verify(mrdEventsEmitter).sendEvent(any())
+      Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any())
     } else {
-      Mockito.verify(mrdEventsEmitter, never()).sendEvent(any())
+      Mockito.verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any())
     }
   }
 }

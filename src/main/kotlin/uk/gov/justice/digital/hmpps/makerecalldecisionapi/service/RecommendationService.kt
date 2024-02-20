@@ -722,6 +722,18 @@ internal class RecommendationService(
     )
   }
 
+  fun sendSystemDeleteRecommendationEvent(crn: String?) {
+    mrdEventsEmitter?.sendEvent(
+      toDeleteRecommendationRationaleDomainEventPayload(
+        crn = crn,
+        recommendationUrl = "$mrdUrl/cases/$crn/overview",
+        contactOutcome = "",
+        username = "System",
+        detailUrl = "$mrdApiUrl/system-delete-recommendation/$crn",
+      ),
+    )
+  }
+
   private suspend fun generateDntrDownload(
     recommendationEntity: RecommendationEntity,
     userId: String?,
