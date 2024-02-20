@@ -122,6 +122,7 @@ data class RecommendationModel(
   var alternativesToRecallTried: AlternativesToRecallTried? = null,
   var licenceConditionsBreached: LicenceConditionsBreached? = null,
   var cvlLicenceConditionsBreached: CvlLicenceConditionsBreached? = null,
+  val additionalLicenceConditionsText: String? = null,
   var vulnerabilities: VulnerabilitiesRecommendation? = null,
   @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
