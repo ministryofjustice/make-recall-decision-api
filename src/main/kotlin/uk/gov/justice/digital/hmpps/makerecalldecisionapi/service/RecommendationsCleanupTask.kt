@@ -19,7 +19,8 @@ class RecommendationsCleanupTask(
   @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
   private val environment: Environment? = null,
 ) {
-  @Scheduled(initialDelay = 0, fixedDelay = 1814400000) // Initial delay: 0 milliseconds, Fixed delay: 21 days
+  @Scheduled(initialDelay = 0, fixedRate = 1814400000) // Initial delay: 0 milliseconds, Fixed rate: 21 days
+  @Scheduled(cron = "0 30 19 1/21 * ?") // The second schedule will run at 7:30 PM every 21 days starting from the first day of the month
   @Transactional
   fun softDeleteOldRecommendations() {
     val thresholdDate = LocalDateTime.now().minusDays(21)
