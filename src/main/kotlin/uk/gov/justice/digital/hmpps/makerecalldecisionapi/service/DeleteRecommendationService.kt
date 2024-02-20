@@ -46,9 +46,9 @@ internal class DeleteRecommendationService(
     val recommendations = recommendationRepository.findByCrn(crn).sorted()
     return ResponseEntity(
       DeleteRecommendationResponse(
-        sensitive = recommendations[0].data.sensitive ?: false,
+        sensitive = recommendations.firstOrNull()?.data?.sensitive ?: false,
         notes = "Recommendation expired, deleted by system\n" +
-          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
+          "View the case summary for ${recommendations.firstOrNull()?.data?.personOnProbation?.name}: $mrdUrl/cases/${recommendations.firstOrNull()?.data?.crn}/overview",
       ),
       HttpStatus.OK,
     )
