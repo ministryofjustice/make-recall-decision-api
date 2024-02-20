@@ -13,6 +13,30 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
 
   @Test
+  fun `get expired recommendation deletion info`() {
+    // given
+    createRecommendation()
+    updateRecommendation()
+    createOrUpdateRecommendationStatus(activate = "REC_DELETED", anotherToActivate = "ANOTHER_STATUS", subject = "prince herbert")
+
+    // when
+    val response = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/system-delete-recommendation/$crn")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
+        .exchange()
+        .expectStatus().isOk,
+    )
+
+    // then
+    assertThat(response.get("notes")).isEqualTo(
+      "Recommendation expired, deleted by system\n" +
+        "View the case summary for John Smith: environment-host/cases/A12345/overview",
+    )
+    assertThat(response.get("sensitive")).isEqualTo(false)
+  }
+
+  @Test
   fun `get delete recommendation rationale`() {
     // given
     createRecommendation()

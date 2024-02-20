@@ -33,4 +33,16 @@ internal class DeleteRecommendationRationaleController(
       crn = crn,
     )
   }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/system-delete-recommendation/{crn}")
+  @Operation(summary = "Provides notes on deleting expired recommendation for Delius")
+  suspend fun systemDeleteRecommendations(
+    @PathVariable("crn") crn: String,
+  ): ResponseEntity<DeleteRecommendationResponse> {
+    log.info(normalizeSpace("System delete expired recommendation endpoint hit for crn: $crn"))
+    return deleteRecommendationService.getSystemDeleteRecommendationResponse(
+      crn = crn,
+    )
+  }
 }
