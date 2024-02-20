@@ -95,10 +95,11 @@ internal class PartADocumentMapper(
         recommendation.licenceConditionsBreached?.standardLicenceConditions?.selected,
         recommendation.cvlLicenceConditionsBreached?.standardLicenceConditions?.selected,
       ),
-      additionalConditionsBreached = buildAlternativeConditionsBreachedText(
+      additionalConditionsBreached = buildAdditionalConditionsBreachedText(
         recommendation.licenceConditionsBreached?.additionalLicenceConditions,
         recommendation.cvlLicenceConditionsBreached?.additionalLicenceConditions,
         recommendation.cvlLicenceConditionsBreached?.bespokeLicenceConditions,
+        recommendation.additionalLicenceConditionsText,
       ),
       isUnderIntegratedOffenderManagement = recommendation.underIntegratedOffenderManagement?.selected,
       localPoliceContact = recommendation.localPoliceContact,
@@ -289,11 +290,14 @@ internal class PartADocumentMapper(
     return null
   }
 
-  private fun buildAlternativeConditionsBreachedText(
+  private fun buildAdditionalConditionsBreachedText(
     additionalLicenceConditions: AdditionalLicenceConditions?,
     cvlAdditionalLicenceConditions: LicenceConditionSection?,
     cvlBespokeLicenceConditions: LicenceConditionSection?,
+    additionalText: String?,
   ): String {
+    val result = StringBuilder()
+
     if (additionalLicenceConditions != null) {
       val selectedOptions = if (additionalLicenceConditions.selectedOptions != null) {
         additionalLicenceConditions.allOptions?.filter { sel ->
@@ -307,7 +311,7 @@ internal class PartADocumentMapper(
           ?.filter { additionalLicenceConditions.selected?.contains(it.subCatCode) == true }
       }
 
-      return selectedOptions?.foldIndexed(StringBuilder()) { index, builder, licenceCondition ->
+      selectedOptions?.foldIndexed(result) { index, builder, licenceCondition ->
 
         builder.append(licenceCondition.title)
         builder.append(System.lineSeparator())
@@ -318,36 +322,37 @@ internal class PartADocumentMapper(
           builder.append("Note: " + licenceCondition.note)
         }
 
-        if (selectedOptions.size - 1 != index) {
-          builder.append(System.lineSeparator())
-          builder.append(System.lineSeparator())
-        }
+        builder.append(System.lineSeparator())
+        builder.append(System.lineSeparator())
         builder
-      }?.toString()
-        ?: EMPTY_STRING
+      }
+    } else {
+      cvlAdditionalLicenceConditions?.selected
+        ?.map { code -> cvlAdditionalLicenceConditions.allOptions?.find { it.code == code }?.text }
+        ?.fold(result) { buffer, text ->
+          buffer.append(text)
+          result.append(System.lineSeparator())
+          result.append(System.lineSeparator())
+          buffer
+        }
+
+      cvlBespokeLicenceConditions?.selected
+        ?.map { code -> cvlBespokeLicenceConditions.allOptions?.find { it.code == code }?.text }
+        ?.fold(result) { buffer, text ->
+          buffer.append(text)
+          result.append(System.lineSeparator())
+          result.append(System.lineSeparator())
+          buffer
+        }
     }
 
-    val builder = StringBuilder()
+    if (additionalText != null) {
+      result.append(additionalText)
+      result.append(System.lineSeparator())
+      result.append(System.lineSeparator())
+    }
 
-    cvlAdditionalLicenceConditions?.selected
-      ?.map { code -> cvlAdditionalLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.fold(builder) { buffer, text ->
-        buffer.append(text)
-        builder.append(System.lineSeparator())
-        builder.append(System.lineSeparator())
-        buffer
-      }
-
-    cvlBespokeLicenceConditions?.selected
-      ?.map { code -> cvlBespokeLicenceConditions.allOptions?.find { it.code == code }?.text }
-      ?.fold(builder) { buffer, text ->
-        buffer.append(text)
-        builder.append(System.lineSeparator())
-        builder.append(System.lineSeparator())
-        buffer
-      }
-
-    return builder.toString().trim()
+    return result.toString().trim()
   }
 
   private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {
