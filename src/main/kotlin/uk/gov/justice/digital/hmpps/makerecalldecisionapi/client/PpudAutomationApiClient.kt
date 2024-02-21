@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
@@ -37,6 +38,10 @@ class PpudAutomationApiClient(
   private val timeoutCounter: Counter,
   private val objectMapper: ObjectMapper,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   fun search(
     request: PpudSearchRequest,
@@ -176,6 +181,9 @@ class PpudAutomationApiClient(
     request: PpudCreateRecallRequest,
   ): Mono<PpudCreateRecallResponse> {
     val responseType = object : ParameterizedTypeReference<PpudCreateRecallResponse>() {}
+
+    log.info("About to send create recall request to PPUD Automation. Request body: '${request}'")
+
     return webClient
       .post()
       .uri { builder -> builder.path("/offender/" + offenderId + "/release/" + releaseId + "/recall").build() }
