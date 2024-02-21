@@ -182,7 +182,7 @@ class PpudAutomationApiClient(
   ): Mono<PpudCreateRecallResponse> {
     val responseType = object : ParameterizedTypeReference<PpudCreateRecallResponse>() {}
 
-    log.info("About to send create recall request to PPUD Automation. Request body: '${request}'")
+    log.info("About to send create recall request to PPUD Automation. Request body: '$request'")
 
     return webClient
       .post()
