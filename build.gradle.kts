@@ -48,8 +48,8 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.8.1")
   implementation("org.postgresql:postgresql:42.7.2")
 
-  implementation("io.sentry:sentry-spring-boot-starter:7.3.0")
-  implementation("io.sentry:sentry-logback:7.3.0")
+  implementation("io.sentry:sentry-spring-boot-starter:7.4.0")
+  implementation("io.sentry:sentry-logback:7.4.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
