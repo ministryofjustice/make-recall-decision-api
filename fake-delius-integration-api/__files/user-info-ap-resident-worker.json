@@ -1,0 +1,10 @@
+{
+  "username": "Major Tom",
+  "email": "xyz@123.com",
+  "staffCode": "TEST01",
+  "name": {
+    "forename": "John",
+    "middleName": null,
+    "surname": "Smith"
+  }
+}
