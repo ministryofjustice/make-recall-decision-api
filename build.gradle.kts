@@ -14,6 +14,10 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
+dependencyCheck {
+  suppressionFiles.add("suppressions.xml")
+}
+
 testSets {
   "testSmoke"()
 }
@@ -40,6 +44,7 @@ dependencies {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
+    implementation("org.apache.commons:commons-compress:1.26.0") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
