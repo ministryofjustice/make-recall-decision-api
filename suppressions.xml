@@ -36,4 +36,12 @@
         <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
         <cpe>cpe:/a:json-java_project:json-java</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        We don't process Ion data
+        file name: ion-java-1.0.2.jar
+    ]]></notes>
+        <packageUrl regex="true">^pkg:maven/software\.amazon\.ion/ion\-java@.*$</packageUrl>
+        <cve>CVE-2024-21634</cve>
+    </suppress>
 </suppressions>
