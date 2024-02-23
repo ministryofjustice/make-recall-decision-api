@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/user/MARD_DUTY_MANAGER_USER"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "user-info-ap-duty-manager.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
