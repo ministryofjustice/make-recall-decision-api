@@ -30,7 +30,7 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
 
     // then
     assertThat(response.get("notes")).isEqualTo(
-      "Recommendation expired, deleted by system\n" +
+      "Recall Recommendation has been deleted due to Recommendation has expired\n" +
         "View the case summary for John Smith: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)

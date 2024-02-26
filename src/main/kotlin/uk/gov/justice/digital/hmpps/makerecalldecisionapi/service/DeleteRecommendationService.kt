@@ -47,7 +47,7 @@ internal class DeleteRecommendationService(
     return ResponseEntity(
       DeleteRecommendationResponse(
         sensitive = recommendations[0].data.sensitive ?: false,
-        notes = "Recommendation expired, deleted by system\n" +
+        notes = "Recall Recommendation has been deleted due to Recommendation has expired\n" +
           "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
       ),
       HttpStatus.OK,

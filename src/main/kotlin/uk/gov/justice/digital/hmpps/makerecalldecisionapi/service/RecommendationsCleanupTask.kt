@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
 
 @Service
@@ -29,7 +30,7 @@ internal class RecommendationsCleanupTask(
       if (environment?.activeProfiles?.contains("dev") == false) {
         val openRecommendation = recommendationRepository.findById(it)
         openRecommendation.ifPresent { rec ->
-          recommendationService.sendSystemDeleteRecommendationEvent(rec.data.crn)
+          recommendationService.sendSystemDeleteRecommendationEvent(rec.data.crn, rec.data.createdByUserFullName ?: MrdTextConstants.EMPTY_STRING)
         }
       }
     }
