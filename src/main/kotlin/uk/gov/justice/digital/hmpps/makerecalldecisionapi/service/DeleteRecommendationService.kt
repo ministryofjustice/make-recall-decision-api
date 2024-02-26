@@ -47,7 +47,7 @@ internal class DeleteRecommendationService(
     return ResponseEntity(
       DeleteRecommendationResponse(
         sensitive = recommendations[0].data.sensitive ?: false,
-        notes = "Recommendation automatically deleted by Consider a recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
+        notes = "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
           "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
       ),
       HttpStatus.OK,
