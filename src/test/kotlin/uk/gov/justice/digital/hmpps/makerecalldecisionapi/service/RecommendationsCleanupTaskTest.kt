@@ -83,9 +83,9 @@ class RecommendationsCleanupTaskTest {
     )
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
     if (activeProfile == "default") {
-      Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any())
+      Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
     } else {
-      Mockito.verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any())
+      Mockito.verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
     }
   }
 }

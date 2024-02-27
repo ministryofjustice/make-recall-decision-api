@@ -722,13 +722,13 @@ internal class RecommendationService(
     )
   }
 
-  fun sendSystemDeleteRecommendationEvent(crn: String?) {
+  fun sendSystemDeleteRecommendationEvent(crn: String?, username: String) {
     mrdEventsEmitter?.sendEvent(
       toDeleteRecommendationRationaleDomainEventPayload(
         crn = crn,
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
         contactOutcome = "",
-        username = "System",
+        username = username,
         detailUrl = "$mrdApiUrl/system-delete-recommendation/$crn",
       ),
     )
