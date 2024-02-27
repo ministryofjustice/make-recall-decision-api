@@ -73,17 +73,19 @@ class WebClientConfiguration(
       )
     }
 
-    private val transientStatusCodes = setOf(
-      HttpStatus.REQUEST_TIMEOUT,
-      HttpStatus.BAD_GATEWAY,
-      HttpStatus.SERVICE_UNAVAILABLE,
-      HttpStatus.GATEWAY_TIMEOUT,
+    private val transientStatusCodes: Set<Int> = setOf(
+      0, // Client disconnect as reported by App Insights
+      HttpStatus.REQUEST_TIMEOUT.value(),
+      HttpStatus.BAD_GATEWAY.value(),
+      HttpStatus.SERVICE_UNAVAILABLE.value(),
+      HttpStatus.GATEWAY_TIMEOUT.value(),
+      499, // Client disconnect as reported by Kibana
     )
 
     private fun shouldBeRetried(ex: Throwable): Boolean {
       return ex is ClientTimeoutException ||
         ex is TimeoutException ||
-        (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode))
+        (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode.value()))
     }
   }
 
