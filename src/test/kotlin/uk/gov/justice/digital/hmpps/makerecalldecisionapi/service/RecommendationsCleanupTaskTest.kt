@@ -70,6 +70,7 @@ class RecommendationsCleanupTaskTest {
       `when`(recommendationRepository.findById(1L)).thenReturn(
         Optional.of(RecommendationEntity(data = RecommendationModel(crn = crn))),
       )
+      `when`(recommendationRepository.softDeleteById(1L)).thenReturn(1)
     }
 
     // when
@@ -81,7 +82,7 @@ class RecommendationsCleanupTaskTest {
         argument.toLocalDate().equals(thresholdDate.toLocalDate())
       },
     )
-    verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
+    verify(recommendationRepository).softDeleteById(openRecommendationIds[0])
     if (activeProfile == "default") {
       Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
     } else {

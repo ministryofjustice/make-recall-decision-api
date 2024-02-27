@@ -28,6 +28,6 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   fun findByCrn(@Param("crn") crn: String, @Param("includeDeleted") includeDeleted: Boolean = false): List<RecommendationEntity>
 
   @Modifying
-  @Query(value = "UPDATE recommendations SET deleted=true WHERE id IN :ids", nativeQuery = true)
-  fun softDeleteByIds(@Param("ids") ids: List<Long>)
+  @Query(value = "UPDATE recommendations SET deleted=true WHERE id = :id AND deleted = false", nativeQuery = true)
+  fun softDeleteById(@Param("id") id: Long): Int
 }
