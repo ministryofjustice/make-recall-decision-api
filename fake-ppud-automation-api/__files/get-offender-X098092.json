@@ -26,11 +26,11 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1380",
         "dateOfSentence": "2003-06-12",
         "custodyType": "Determinate",
-        "licenceExpiryDate": null,
+        "licenceExpiryDate": "2005-06-12",
         "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
-          "indexOffence": "some offence",
-          "dateOfIndexOffence": null
+          "indexOffence": "Blasphemy against coca cola",
+          "dateOfIndexOffence": "2008-06-12"
         },
         "releases": [
           {
@@ -45,11 +45,11 @@
             "releaseType": "On Licence"
           }
         ],
-        "sentenceExpiryDate": null,
+        "sentenceExpiryDate": "2005-06-15",
         "sentenceLength": {
-          "partYears": 0,
-          "partMonths": 0,
-          "partDays": 0
+          "partYears": 2,
+          "partMonths": 3,
+          "partDays": 4
         },
         "espCustodialPeriod": {
           "years": 0,
@@ -59,24 +59,24 @@
           "years": 0,
           "months": 0
         },
-        "sentencingCourt": ""
+        "sentencingCourt": "Bannockburn"
       },
       {
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313238393334G1375H1387",
         "dateOfSentence": "2010-09-01",
         "custodyType": "Indeterminate (life)",
-        "licenceExpiryDate": null,
+        "licenceExpiryDate": "2005-06-13",
         "mappaLevel": "",
         "offence": {
-          "indexOffence": "",
-          "dateOfIndexOffence": null
+          "indexOffence": "Some offence to wit you are being punished.",
+          "dateOfIndexOffence": "2007-06-13"
         },
         "releases": [],
-        "sentenceExpiryDate": null,
+        "sentenceExpiryDate": "2005-06-14",
         "sentenceLength": {
-          "partYears": 0,
-          "partMonths": 0,
-          "partDays": 0
+          "partYears": 1,
+          "partMonths": 2,
+          "partDays": 3
         },
         "espCustodialPeriod": {
           "years": 0,
@@ -86,7 +86,7 @@
           "years": 0,
           "months": 0
         },
-        "sentencingCourt": ""
+        "sentencingCourt": "Clydesdale"
       }
     ],
     "status": "Recalled [*]",
