@@ -21,7 +21,8 @@ interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEnt
       "  AND rs2.active = true\n" +
       "  AND rs2.name IN ('SENT_TO_PPCS', 'REC_CLOSED')\n" +
       "WHERE rs.created < :thresholdDate\n" +
-      "  AND rs2.recommendation_id IS NULL",
+      "  AND rs2.recommendation_id IS NULL\n" +
+      "LIMIT 10",
     nativeQuery = true,
   )
   fun findStaleRecommendations(@Param("thresholdDate") thresholdDate: LocalDateTime): List<Long>
