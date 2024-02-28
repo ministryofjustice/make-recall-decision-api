@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
@@ -85,6 +86,7 @@ class WebClientConfiguration(
     private fun shouldBeRetried(ex: Throwable): Boolean {
       return ex is ClientTimeoutException ||
         ex is TimeoutException ||
+        ex is WebClientRequestException ||
         (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode.value()))
     }
   }
