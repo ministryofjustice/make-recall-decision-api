@@ -1,20 +1,3 @@
 {
-  "results": [
-    {
-      "id": "4F6666656E64657269643D313731383138G725H664",
-      "croNumber": "123456/12A",
-      "nomsId": "ABCDEF123",
-      "firstNames": "John",
-      "familyName": "Teal",
-      "dateOfBirth": "2000-01-01"
-    },
-    {
-      "id": "4F6666656E64657269643D313731383138G725H665",
-      "croNumber": "123456/12B",
-      "nomsId": "ABCDEF123",
-      "firstNames": "Johnathan",
-      "familyName": "Teal",
-      "dateOfBirth": "2000-01-01"
-    }
-  ]
+  "results": []
 }
