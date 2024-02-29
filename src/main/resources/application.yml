@@ -96,6 +96,9 @@ server:
   error:
     include-message: always
 
+housekeeping:
+  sendDomainEvents: false
+
 management:
   server:
     port: 8081
