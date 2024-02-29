@@ -65,12 +65,7 @@ class RecommendationsCleanupTaskTest {
         },
       ),
     ).thenReturn(openRecommendationIds)
-    `when`(recommendationRepository.lockRecordsForUpdate(any())).thenReturn(listOf(1L))
-    if (activeProfile == "default") {
-      `when`(recommendationRepository.findById(1L)).thenReturn(
-        Optional.of(RecommendationEntity(data = RecommendationModel(crn = crn))),
-      )
-    }
+    `when`(recommendationRepository.lockRecordsForUpdate(any())).thenReturn(listOf(RecommendationEntity(1L, RecommendationModel(crn = "mycrn", createdByUserFullName = "Bob"), deleted = false)))
 
     // when
     recommendationsCleanupTask.softDeleteOldRecommendations()

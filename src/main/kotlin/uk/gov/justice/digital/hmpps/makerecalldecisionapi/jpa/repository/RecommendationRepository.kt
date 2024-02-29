@@ -26,7 +26,10 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
       "AND (:includeDeleted = true OR t.deleted = false)",
     nativeQuery = true,
   )
-  fun findByCrn(@Param("crn") crn: String, @Param("includeDeleted") includeDeleted: Boolean = false): List<RecommendationEntity>
+  fun findByCrn(
+    @Param("crn") crn: String,
+    @Param("includeDeleted") includeDeleted: Boolean = false,
+  ): List<RecommendationEntity>
 
   @Transactional
   @Modifying
@@ -34,6 +37,6 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   fun softDeleteByIds(@Param("ids") ids: List<Long>)
 
   @Transactional
-  @Query(value = "SELECT id FROM recommendations WHERE id IN (:ids) AND deleted=false FOR UPDATE", nativeQuery = true)
-  fun lockRecordsForUpdate(@Param("ids") ids: List<Long>): List<Long>
+  @Query(value = "SELECT * FROM recommendations WHERE id IN (:ids) FOR UPDATE", nativeQuery = true)
+  fun lockRecordsForUpdate(@Param("ids") ids: List<Long>): List<RecommendationEntity>
 }
