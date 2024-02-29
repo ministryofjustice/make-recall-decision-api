@@ -89,8 +89,10 @@ dependencies {
   implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.86")
   implementation("org.apache.tomcat:tomcat-annotations-api:9.0.86")
 
-  implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades
-  implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades
+  implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
+  implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
+
+  implementation("org.springframework:spring-web:5.3.32") // Address CVE-2024-22243. Until we go to Spring Boot 3
 }
 
 java {
