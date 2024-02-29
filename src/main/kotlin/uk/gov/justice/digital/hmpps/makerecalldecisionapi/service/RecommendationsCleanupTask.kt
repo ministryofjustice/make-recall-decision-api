@@ -42,7 +42,7 @@ internal class RecommendationsCleanupTask(
           {
             recommendationService.sendSystemDeleteRecommendationEvent(
               it.data.crn,
-              it.data.createdByUserFullName ?: MrdTextConstants.EMPTY_STRING,
+              it.data.createdBy ?: MrdTextConstants.EMPTY_STRING,
             )
           },
           {
