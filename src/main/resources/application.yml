@@ -145,7 +145,7 @@ arn:
 
 cvl:
   client:
-    timeout: 30
+    timeout: 20
   api:
     endpoint:
       url: http://localhost:9070
