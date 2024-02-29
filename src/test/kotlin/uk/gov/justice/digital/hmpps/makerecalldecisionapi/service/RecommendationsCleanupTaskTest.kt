@@ -2,23 +2,18 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.never
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argThat
 import org.mockito.kotlin.verify
-import org.springframework.core.env.Environment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -47,7 +42,7 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(1L)
 
     // and
-    `when`(recommendationStatusRepository.findStaleRecommendations(any()),).thenReturn(openRecommendationIds)
+    `when`(recommendationStatusRepository.findStaleRecommendations(any())).thenReturn(openRecommendationIds)
     `when`(
       recommendationRepository.findById(any()),
     ).thenReturn(Optional.of(RecommendationEntity(1L, RecommendationModel(crn = "mycrn", createdByUserFullName = "Bob"), deleted = false)))

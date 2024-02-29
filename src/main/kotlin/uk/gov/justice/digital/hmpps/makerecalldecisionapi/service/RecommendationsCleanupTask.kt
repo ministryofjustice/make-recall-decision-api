@@ -26,7 +26,7 @@ internal class RecommendationsCleanupTask(
   }
 
   @Scheduled(
-    timeUnit = TimeUnit.SECONDS,
+    timeUnit = TimeUnit.MINUTES,
     initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
     fixedRateString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
   )
