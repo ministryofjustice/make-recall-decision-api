@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Repository
 interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEntity, Long> {
@@ -30,5 +30,5 @@ interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEnt
         """,
     nativeQuery = true,
   )
-  fun findStaleRecommendations(@Param("thresholdDate") thresholdDate: LocalDateTime): List<Long>
+  fun findStaleRecommendations(@Param("thresholdDate") thresholdDate: LocalDate): List<Long>
 }

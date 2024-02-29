@@ -35,8 +35,4 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   @Modifying
   @Query(value = "UPDATE recommendations SET deleted=true WHERE id IN (:ids)", nativeQuery = true)
   fun softDeleteByIds(@Param("ids") ids: List<Long>)
-
-  @Transactional
-  @Query(value = "SELECT * FROM recommendations WHERE id IN (:ids) FOR UPDATE", nativeQuery = true)
-  fun lockRecordsForUpdate(@Param("ids") ids: List<Long>): List<RecommendationEntity>
 }
