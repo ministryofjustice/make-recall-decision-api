@@ -92,7 +92,7 @@ dependencies {
   implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
   implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
 
-  implementation("org.springframework:spring-web:5.3.32") // Address CVE-2024-22243. Until we go to Spring Boot 3
+  implementation("org.springframework:spring-web:6.1.4") // Address CVE-2024-22243. Until we go to Spring Boot 3
 }
 
 java {
