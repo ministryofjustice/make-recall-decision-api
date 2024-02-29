@@ -16,6 +16,7 @@ generic-service:
     PRISON_API_ENDPOINT_URL: https://prison-api.prison.service.justice.gov.uk
     MRD_URL: https://make-recall-decision.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api.hmpps.service.justice.gov.uk
+    HOUSEKEEPING_SENDDOMAINEVENTS: true
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-prod

@@ -17,6 +17,7 @@ generic-service:
     PRISON_API_ENDPOINT_URL: https://prison-api-preprod.prison.service.justice.gov.uk
     MRD_URL: https://make-recall-decision-preprod.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api-preprod.hmpps.service.justice.gov.uk
+    HOUSEKEEPING_SENDDOMAINEVENTS: true
 
   scheduledDowntime:
     enabled: true
