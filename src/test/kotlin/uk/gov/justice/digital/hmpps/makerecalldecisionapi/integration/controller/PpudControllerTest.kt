@@ -12,11 +12,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
@@ -111,7 +112,7 @@ class PpudControllerTest : IntegrationTestBase() {
     ppudAutomationCreateOffenderApiMatchResponse("12345678")
     runTest {
       postToCreateOffender(
-        PpudCreateOffender(
+        PpudCreateOffenderRequest(
           croNumber = "A/2342",
           nomsId = "A897",
           prisonNumber = "123",
@@ -140,13 +141,43 @@ class PpudControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `ppud update offender`() {
+    ppudAutomationUpdateOffenderApiMatchResponse("12345678")
+    runTest {
+      putToUpdateOffender(
+        "12345678",
+        PpudUpdateOffenderRequest(
+          croNumber = "A/2342",
+          nomsId = "A897",
+          prisonNumber = "123",
+          firstNames = "Spuddy",
+          familyName = "Spiffens",
+          ethnicity = "W",
+          gender = "M",
+          isInCustody = true,
+          dateOfBirth = LocalDate.of(2004, 1, 1),
+          additionalAddresses = listOf(),
+          address = PpudAddress(
+            premises = "",
+            line1 = "No Fixed Abode",
+            line2 = "",
+            postcode = "",
+            phoneNumber = "",
+          ),
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
+  @Test
   fun `ppud update sentence`() {
     ppudAutomationUpdateSentenceApiMatchResponse("123", "456", "12345678")
     runTest {
       putToUpdateSentence(
         "123",
         "456",
-        PpudUpdateSentence(
+        PpudUpdateSentenceRequest(
           custodyType = "Determinate",
           dateOfSentence = LocalDate.of(2004, 1, 2),
           licenceExpiryDate = LocalDate.of(2004, 1, 3),
@@ -169,7 +200,7 @@ class PpudControllerTest : IntegrationTestBase() {
       putToUpdateOffence(
         "123",
         "456",
-        PpudUpdateOffence(
+        PpudUpdateOffenceRequest(
           indexOffence = "some dastardly deed",
           dateOfIndexOffence = LocalDate.of(2016, 1, 1),
         ),
@@ -185,7 +216,7 @@ class PpudControllerTest : IntegrationTestBase() {
       postToUpdateRelease(
         "123",
         "456",
-        PpudCreateOrUpdateRelease(
+        PpudCreateOrUpdateReleaseRequest(
           dateOfRelease = LocalDate.of(2016, 1, 1),
           postRelease = PpudUpdatePostRelease(
             assistantChiefOfficer = PpudContact(
@@ -242,9 +273,20 @@ class PpudControllerTest : IntegrationTestBase() {
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
 
-  private fun postToCreateOffender(requestBody: PpudCreateOffender): WebTestClient.ResponseSpec =
+  private fun postToCreateOffender(requestBody: PpudCreateOffenderRequest): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/offender")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToUpdateOffender(
+    offenderId: String,
+    requestBody: PpudUpdateOffenderRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/offender/$offenderId")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
@@ -253,7 +295,7 @@ class PpudControllerTest : IntegrationTestBase() {
   private fun putToUpdateSentence(
     offenderId: String,
     sentenceId: String,
-    requestBody: PpudUpdateSentence,
+    requestBody: PpudUpdateSentenceRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId)
@@ -265,7 +307,7 @@ class PpudControllerTest : IntegrationTestBase() {
   private fun putToUpdateOffence(
     offenderId: String,
     sentenceId: String,
-    requestBody: PpudUpdateOffence,
+    requestBody: PpudUpdateOffenceRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
@@ -277,7 +319,7 @@ class PpudControllerTest : IntegrationTestBase() {
   private fun postToUpdateRelease(
     offenderId: String,
     sentenceId: String,
-    requestBody: PpudCreateOrUpdateRelease,
+    requestBody: PpudCreateOrUpdateReleaseRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/release")

@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import java.time.LocalDate
 
-data class PpudCreateOrUpdateRelease(
+data class PpudCreateOrUpdateReleaseRequest(
   val dateOfRelease: LocalDate,
   val postRelease: PpudUpdatePostRelease = PpudUpdatePostRelease(),
   val releasedFrom: String,
