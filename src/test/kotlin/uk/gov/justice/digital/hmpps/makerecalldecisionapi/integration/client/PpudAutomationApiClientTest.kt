@@ -10,13 +10,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
@@ -104,7 +105,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // when
     val actual = ppudAutomationApiClient.createOffender(
-      PpudCreateOffender(
+      PpudCreateOffenderRequest(
         croNumber = "A/2342",
         nomsId = "A897",
         prisonNumber = "123",
@@ -128,6 +129,35 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `update offender to ppud`() {
+    // given
+    val offenderId = "123"
+
+    ppudAutomationUpdateOffenderApiMatchResponse(offenderId)
+
+    // when
+    ppudAutomationApiClient.updateOffender(
+      offenderId,
+      PpudUpdateOffenderRequest(
+        croNumber = "A/2342",
+        nomsId = "A897",
+        prisonNumber = "123",
+        firstNames = "Spuddy",
+        familyName = "Spiffens",
+        ethnicity = "W",
+        gender = "M",
+        isInCustody = true,
+        dateOfBirth = LocalDate.of(2004, 1, 1),
+        additionalAddresses = listOf(),
+        address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
   fun `update sentence to ppud`() {
     // given
     val offenderId = "123"
@@ -140,7 +170,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ppudAutomationApiClient.updateSentence(
       offenderId,
       sentenceId,
-      PpudUpdateSentence(
+      PpudUpdateSentenceRequest(
         custodyType = "Determinate",
         dateOfSentence = LocalDate.of(2004, 1, 2),
         licenceExpiryDate = LocalDate.of(2004, 1, 3),
@@ -168,7 +198,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ppudAutomationApiClient.updateOffence(
       offenderId,
       sentenceId,
-      PpudUpdateOffence(
+      PpudUpdateOffenceRequest(
         indexOffence = "some dastardly deed",
         dateOfIndexOffence = LocalDate.of(2016, 1, 1),
       ),
@@ -191,7 +221,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val actual = ppudAutomationApiClient.createOrUpdateRelease(
       offenderId,
       sentenceId,
-      PpudCreateOrUpdateRelease(
+      PpudCreateOrUpdateReleaseRequest(
         dateOfRelease = LocalDate.of(2016, 1, 1),
         postRelease = PpudUpdatePostRelease(
           assistantChiefOfficer = PpudContact(

@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import java.time.LocalDate
 
-data class PpudUpdateSentence(
+data class PpudUpdateSentenceRequest(
   val custodyType: String,
   val dateOfSentence: LocalDate,
   val licenceExpiryDate: LocalDate?,

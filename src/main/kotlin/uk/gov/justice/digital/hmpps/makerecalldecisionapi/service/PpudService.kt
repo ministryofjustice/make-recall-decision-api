@@ -6,9 +6,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
@@ -16,8 +16,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 
@@ -54,20 +55,20 @@ internal class PpudService(
     return response!!
   }
 
-  fun createOffender(request: PpudCreateOffender): PpudCreateOffenderResponse {
+  fun createOffender(request: PpudCreateOffenderRequest): PpudCreateOffenderResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createOffender(request),
     )
     return response!!
   }
 
-  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence) {
+  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentenceRequest) {
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.updateSentence(offenderId, sentenceId, request),
     )
   }
 
-  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence) {
+  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffenceRequest) {
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.updateOffence(offenderId, sentenceId, request),
     )
@@ -76,7 +77,7 @@ internal class PpudService(
   fun createOrUpdateRelease(
     offenderId: String,
     sentenceId: String,
-    createOrUpdateReleaseRequest: PpudCreateOrUpdateRelease,
+    createOrUpdateReleaseRequest: PpudCreateOrUpdateReleaseRequest,
   ): PpudCreateOrUpdateReleaseResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest),
@@ -112,5 +113,11 @@ internal class PpudService(
       ),
     )
     return response!!
+  }
+
+  fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest) {
+    getValueAndHandleWrappedException(
+      ppudAutomationApiClient.updateOffender(offenderId, request),
+    )
   }
 }
