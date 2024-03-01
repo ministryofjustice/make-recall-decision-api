@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import java.time.LocalDate
 
-data class PpudCreateOffender(
+data class PpudCreateOffenderRequest(
   val address: PpudAddress = PpudAddress(),
   val additionalAddresses: List<PpudAddress> = emptyList(),
   val croNumber: String?,

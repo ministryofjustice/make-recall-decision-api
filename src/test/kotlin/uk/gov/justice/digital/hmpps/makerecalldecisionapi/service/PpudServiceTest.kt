@@ -16,9 +16,9 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
@@ -26,8 +26,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 import java.time.LocalDateTime
@@ -105,7 +106,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
   @Test
   fun `call create offender`() {
-    val request = mock(PpudCreateOffender::class.java)
+    val request = mock(PpudCreateOffenderRequest::class.java)
 
     val response = mock(PpudCreateOffenderResponse::class.java)
 
@@ -121,8 +122,19 @@ internal class PpudServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `call update offender`() {
+    val request = mock(PpudUpdateOffenderRequest::class.java)
+
+    given(ppudAutomationApiClient.updateOffender("123", request)).willReturn(Mono.empty())
+
+    PpudService(ppudAutomationApiClient, ppudUserRepository).updateOffender("123", request)
+
+    verify(ppudAutomationApiClient).updateOffender("123", request)
+  }
+
+  @Test
   fun `call create sentence`() {
-    val request = mock(PpudUpdateSentence::class.java)
+    val request = mock(PpudUpdateSentenceRequest::class.java)
 
     given(ppudAutomationApiClient.updateSentence("123", "456", request)).willReturn(Mono.empty())
 
@@ -133,7 +145,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
   @Test
   fun `call update offence`() {
-    val request = mock(PpudUpdateOffence::class.java)
+    val request = mock(PpudUpdateOffenceRequest::class.java)
 
     given(ppudAutomationApiClient.updateOffence("123", "456", request)).willReturn(Mono.empty())
 
@@ -144,7 +156,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
   @Test
   fun `call create or update release`() {
-    val request = mock(PpudCreateOrUpdateRelease::class.java)
+    val request = mock(PpudCreateOrUpdateReleaseRequest::class.java)
 
     val response = mock(PpudCreateOrUpdateReleaseResponse::class.java)
 

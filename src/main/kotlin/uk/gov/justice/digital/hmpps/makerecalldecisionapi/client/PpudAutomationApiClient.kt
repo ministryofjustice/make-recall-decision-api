@@ -14,9 +14,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
@@ -24,8 +24,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
@@ -92,7 +93,7 @@ class PpudAutomationApiClient(
       .withRetry()
   }
 
-  fun createOffender(request: PpudCreateOffender): Mono<PpudCreateOffenderResponse> {
+  fun createOffender(request: PpudCreateOffenderRequest): Mono<PpudCreateOffenderResponse> {
     val responseType = object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {}
 
     return webClient
@@ -112,7 +113,25 @@ class PpudAutomationApiClient(
       .withRetry()
   }
 
-  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentence): Mono<ResponseEntity<Void>> {
+  fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest): Mono<ResponseEntity<Void>> {
+    return webClient
+      .put()
+      .uri { builder -> builder.path("/offender/" + offenderId).build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .toBodilessEntity()
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
+        handleTimeoutException(ex)
+      }
+      .withRetry()
+  }
+
+  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentenceRequest): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
       .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId).build() }
@@ -130,7 +149,7 @@ class PpudAutomationApiClient(
       .withRetry()
   }
 
-  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffence): Mono<ResponseEntity<Void>> {
+  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffenceRequest): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
       .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence").build() }
@@ -151,7 +170,7 @@ class PpudAutomationApiClient(
   fun createOrUpdateRelease(
     offenderId: String,
     sentenceId: String,
-    request: PpudCreateOrUpdateRelease,
+    request: PpudCreateOrUpdateReleaseRequest,
   ): Mono<PpudCreateOrUpdateReleaseResponse> {
     val responseType = object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {}
     return webClient
