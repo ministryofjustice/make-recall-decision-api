@@ -44,6 +44,7 @@ internal class RecommendationsCleanupTask(
               it.data.crn,
               it.data.createdBy ?: MrdTextConstants.EMPTY_STRING,
             )
+            log.info("System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}")
           },
           {
             val message = "Recommendation not found for id $openRecommendationId"
