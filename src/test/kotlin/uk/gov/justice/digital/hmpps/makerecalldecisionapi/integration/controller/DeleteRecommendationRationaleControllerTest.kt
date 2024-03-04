@@ -18,6 +18,7 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     createRecommendation()
     updateRecommendation()
     createOrUpdateRecommendationStatus(activate = "REC_DELETED", anotherToActivate = "ANOTHER_STATUS", subject = "prince herbert")
+    softDeleteRecommendation()
 
     // when
     val response = convertResponseToJSONObject(
@@ -34,6 +35,12 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
         "View the case summary for John Smith: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
+  }
+
+  private fun softDeleteRecommendation() {
+    var recommendationEntity = repository.findById(createdRecommendationId.toLong())
+    recommendationEntity.get().deleted = true
+    repository.save(recommendationEntity.get())
   }
 
   @Test

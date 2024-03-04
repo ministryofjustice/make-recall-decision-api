@@ -43,12 +43,12 @@ internal class DeleteRecommendationService(
   suspend fun getSystemDeleteRecommendationResponse(
     crn: String,
   ): ResponseEntity<DeleteRecommendationResponse> {
-    val recommendations = recommendationRepository.findByCrn(includeDeleted = true, crn = crn).sorted()
+    val recommendations = recommendationRepository.findByCrn(deleted = true, crn = crn).sorted()
     return ResponseEntity(
       DeleteRecommendationResponse(
-        sensitive = recommendations[0].data.sensitive ?: false,
+        sensitive = recommendations.getOrNull(0)?.data?.sensitive ?: false,
         notes = "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
-          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
+          "View the case summary for ${recommendations.getOrNull(0)?.data?.personOnProbation?.name}: $mrdUrl/cases/${recommendations.getOrNull(0)?.data?.crn}/overview",
       ),
       HttpStatus.OK,
     )

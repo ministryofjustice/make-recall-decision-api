@@ -22,13 +22,13 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   ): List<RecommendationEntity>
 
   @Query(
-    value = "SELECT t.* FROM make_recall_decision.public.recommendations t WHERE t.data ->> 'crn' = :crn " +
-      "AND (:includeDeleted = true OR t.deleted = false)",
+    value = "SELECT t.* FROM make_recall_decision.public.recommendations t " +
+      "WHERE t.data ->> 'crn' = :crn AND (:deleted = true AND t.deleted = true OR :deleted = false AND t.deleted = false)",
     nativeQuery = true,
   )
   fun findByCrn(
     @Param("crn") crn: String,
-    @Param("includeDeleted") includeDeleted: Boolean = false,
+    @Param("deleted") deleted: Boolean = false,
   ): List<RecommendationEntity>
 
   @Transactional
