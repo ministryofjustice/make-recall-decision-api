@@ -67,7 +67,7 @@ dependencies {
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
   implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.1")
-  implementation("org.json:json:20240205")
+  implementation("org.json:json:20240303")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
