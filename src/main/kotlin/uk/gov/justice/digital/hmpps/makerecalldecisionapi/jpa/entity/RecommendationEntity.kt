@@ -104,6 +104,7 @@ data class RecommendationModel(
   var userNameDntrLetterCompletedBy: String? = null,
   var lastDntrLetterADownloadDateTime: LocalDateTime? = null,
   var reviewPractitionersConcerns: Boolean? = null,
+  var odmName: String? = null
   var spoRecallType: String? = null,
   var spoRecallRationale: String? = null,
   var spoDeleteRecommendationRationale: String? = null,
