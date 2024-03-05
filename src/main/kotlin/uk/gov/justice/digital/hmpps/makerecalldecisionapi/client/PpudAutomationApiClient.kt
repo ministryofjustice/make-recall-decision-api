@@ -42,6 +42,9 @@ class PpudAutomationApiClient(
   fun search(
     request: PpudSearchRequest,
   ): Mono<PpudSearchResponse> {
+    println("===========================================================================")
+    println(request)
+    println("===========================================================================")
     val responseType = object : ParameterizedTypeReference<PpudSearchResponse>() {}
     return webClient
       .post()
@@ -131,7 +134,11 @@ class PpudAutomationApiClient(
       .withRetry()
   }
 
-  fun updateSentence(offenderId: String, sentenceId: String, request: PpudUpdateSentenceRequest): Mono<ResponseEntity<Void>> {
+  fun updateSentence(
+    offenderId: String,
+    sentenceId: String,
+    request: PpudUpdateSentenceRequest,
+  ): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
       .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId).build() }
@@ -149,7 +156,11 @@ class PpudAutomationApiClient(
       .withRetry()
   }
 
-  fun updateOffence(offenderId: String, sentenceId: String, request: PpudUpdateOffenceRequest): Mono<ResponseEntity<Void>> {
+  fun updateOffence(
+    offenderId: String,
+    sentenceId: String,
+    request: PpudUpdateOffenceRequest,
+  ): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
       .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence").build() }

@@ -1,0 +1,95 @@
+{
+  "offender": {
+    "id": "4F6666656E64657269643D313731383138G725H774",
+    "address": {
+      "premises": "Premises",
+      "line1": "Line1",
+      "line2": "Line2",
+      "postcode": "RH7 9ED",
+      "phoneNumber": "01234567890"
+    },
+    "comments": "",
+    "caseworker": "Helen",
+    "croOtherNumber": "other",
+    "dateOfBirth": "1969-03-02",
+    "ethnicity": "White – Irish",
+    "familyName": "Mitchell",
+    "firstNames": "Mandy Car Test",
+    "gender": "M",
+    "immigrationStatus": "Not Applicable",
+    "isInCustody": true,
+    "nomsId": "NOMS-01",
+    "prisonerCategory": "B",
+    "prisonNumber": "XX4321",
+    "sentences": [
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1380",
+        "dateOfSentence": "2003-06-12",
+        "custodyType": "Determinate",
+        "licenceExpiryDate": "2005-06-12",
+        "mappaLevel": "Level 2 – Local Inter-Agency Management",
+        "offence": {
+          "indexOffence": "Blasphemy against coca cola",
+          "dateOfIndexOffence": "2008-06-12"
+        },
+        "releases": [
+          {
+            "category": "Not Applicable",
+            "dateOfRelease": "2013-02-02",
+            "postRelease": {
+              "licenceType": "Standard",
+              "probationService": "Merseyside"
+            },
+            "releasedFrom": "HMP Wakefield",
+            "releasedUnder": "CJA 2008",
+            "releaseType": "On Licence"
+          }
+        ],
+        "sentenceExpiryDate": "2005-06-15",
+        "sentenceLength": {
+          "partYears": 2,
+          "partMonths": 3,
+          "partDays": 4
+        },
+        "espCustodialPeriod": {
+          "years": 0,
+          "months": 0
+        },
+        "espExtendedPeriod": {
+          "years": 0,
+          "months": 0
+        },
+        "sentencingCourt": "Bannockburn"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313238393334G1375H1387",
+        "dateOfSentence": "2010-09-01",
+        "custodyType": "Indeterminate (life)",
+        "licenceExpiryDate": "2005-06-13",
+        "mappaLevel": "",
+        "offence": {
+          "indexOffence": "Some offence to wit you are being punished.",
+          "dateOfIndexOffence": "2007-06-13"
+        },
+        "releases": [],
+        "sentenceExpiryDate": "2005-06-14",
+        "sentenceLength": {
+          "partYears": 1,
+          "partMonths": 2,
+          "partDays": 3
+        },
+        "espCustodialPeriod": {
+          "years": 0,
+          "months": 0
+        },
+        "espExtendedPeriod": {
+          "years": 0,
+          "months": 0
+        },
+        "sentencingCourt": "Clydesdale"
+      }
+    ],
+    "status": "Recalled [*]",
+    "youngOffender": "No"
+  }
+}
