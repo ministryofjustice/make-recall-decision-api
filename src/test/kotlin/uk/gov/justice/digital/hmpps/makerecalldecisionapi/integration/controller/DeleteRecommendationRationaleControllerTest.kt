@@ -32,7 +32,7 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     // then
     assertThat(response.get("notes")).isEqualTo(
       "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
-        "View the case summary for John Smith: environment-host/cases/A12345/overview",
+        "View the case summary: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
   }
