@@ -279,7 +279,7 @@ internal class RecommendationService(
       nomisIndexOffence = recommendationEntity.data.nomisIndexOffence,
       bookRecallToPpud = recommendationEntity.data.bookRecallToPpud,
       ppudOffender = recommendationEntity.data.ppudOffender,
-      bookingMomento = recommendationEntity.data.bookingMomento,
+      bookingMemento = recommendationEntity.data.bookingMemento,
     )
   }
 

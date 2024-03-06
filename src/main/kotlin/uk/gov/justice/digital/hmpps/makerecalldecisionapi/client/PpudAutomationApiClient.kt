@@ -42,9 +42,6 @@ class PpudAutomationApiClient(
   fun search(
     request: PpudSearchRequest,
   ): Mono<PpudSearchResponse> {
-    println("===========================================================================")
-    println(request)
-    println("===========================================================================")
     val responseType = object : ParameterizedTypeReference<PpudSearchResponse>() {}
     return webClient
       .post()
