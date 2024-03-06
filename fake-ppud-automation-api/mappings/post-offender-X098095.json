@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/offender",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "nomsId",
+        "contains": "JG777POE"
+      }
+    } ]
+  },
+  "response": {
+    "status": 400,
+    "bodyFileName": "post-offender-X098095.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
@@ -178,15 +177,10 @@ class MrdTestDataBuilder {
           ),
           bookRecallToPpud = BookRecallToPpud(
             decisionDateTime = LocalDateTime.now(),
-            isInCustody = true,
             mappaLevel = "Level 1",
             policeForce = "Kent Police",
             probationArea = "Kent",
-            recommendedTo = PpudUser("Joe Bloggs", "Recall Team"),
             receivedDateTime = LocalDateTime.now(),
-            releaseDate = LocalDate.now(),
-            riskOfContrabandDetails = "Smuggling cigarettes",
-            riskOfSeriousHarmLevel = "High",
             sentenceDate = LocalDate.now(),
           ),
           ppudOffender = PpudOffender(

@@ -1,0 +1,27 @@
+{
+  "locationDescription": "Outside - released from Leeds",
+  "bookingNo": "7878783",
+  "facialImageId": 1234,
+  "firstName": "Johnny",
+  "middleName": "JD",
+  "lastName": "Blue",
+  "dateOfBirth": "1970-03-15",
+  "status": "ACTIVE IN",
+  "physicalAttributes": {
+    "gender": "Male",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British"
+  },
+  "identifiers": [
+    {
+      "type": "CRO",
+      "value": "123776/12A"
+    },
+    {
+      "type": "PNC",
+      "value": "76767678"
+    }
+  ],
+  "sentenceDetail": {
+    "licenceExpiryDate": "2020-02-03"
+  }
+}
