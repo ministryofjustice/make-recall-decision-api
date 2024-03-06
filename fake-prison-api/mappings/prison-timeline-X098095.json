@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/offenders/JG777POE/prison-timeline"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "prison-timeline-X098095.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
