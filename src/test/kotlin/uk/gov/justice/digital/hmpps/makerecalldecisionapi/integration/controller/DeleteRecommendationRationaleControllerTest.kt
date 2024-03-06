@@ -18,6 +18,7 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     createRecommendation()
     updateRecommendation()
     createOrUpdateRecommendationStatus(activate = "REC_DELETED", anotherToActivate = "ANOTHER_STATUS", subject = "prince herbert")
+    softDeleteRecommendation()
 
     // when
     val response = convertResponseToJSONObject(
@@ -31,9 +32,15 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     // then
     assertThat(response.get("notes")).isEqualTo(
       "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
-        "View the case summary for John Smith: environment-host/cases/A12345/overview",
+        "View the case summary: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
+  }
+
+  private fun softDeleteRecommendation() {
+    var recommendationEntity = repository.findById(createdRecommendationId.toLong())
+    recommendationEntity.get().deleted = true
+    repository.save(recommendationEntity.get())
   }
 
   @Test
