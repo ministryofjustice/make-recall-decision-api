@@ -279,6 +279,7 @@ internal class RecommendationService(
       nomisIndexOffence = recommendationEntity.data.nomisIndexOffence,
       bookRecallToPpud = recommendationEntity.data.bookRecallToPpud,
       ppudOffender = recommendationEntity.data.ppudOffender,
+      odmName = recommendationEntity.data.odmName,
     )
   }
 
