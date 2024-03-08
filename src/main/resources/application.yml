@@ -165,7 +165,7 @@ oasys:
 
 ppud-automation:
   client:
-    timeout: 60
+    timeout: 90
   api:
     endpoint:
       url: http://localhost:9370
