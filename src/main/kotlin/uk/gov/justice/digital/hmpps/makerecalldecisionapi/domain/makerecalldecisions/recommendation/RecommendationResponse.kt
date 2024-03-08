@@ -33,6 +33,7 @@ data class RecommendationResponse(
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
   val triggerLeadingToRecall: String? = null,
+  val odmName: String? = null,
   val spoRecallType: String? = null,
   val spoRecallRationale: String? = null,
   val spoDeleteRecommendationRationale: String? = null,

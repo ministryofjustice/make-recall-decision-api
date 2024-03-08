@@ -211,6 +211,7 @@ internal class RecommendationService(
       ppudRecordPresent = recommendationEntity.data.ppudRecordPresent,
       sensitive = recommendationEntity.data.sensitive,
       reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
+      odmName = recommendationEntity.data.odmName,
       spoRecallType = recommendationEntity.data.spoRecallType,
       spoRecallRationale = recommendationEntity.data.spoRecallRationale,
       spoDeleteRecommendationRationale = recommendationEntity.data.spoDeleteRecommendationRationale,
