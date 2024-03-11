@@ -38,13 +38,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.3")
   implementation("io.micrometer:micrometer-registry-prometheus:1.12.3")
-  implementation("io.opentelemetry:opentelemetry-api:1.35.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.36.0")
   implementation("joda-time:joda-time:2.12.7")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.26.0") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.commons:commons-compress:1.26.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -53,8 +53,8 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.9.1")
   implementation("org.postgresql:postgresql:42.7.2")
 
-  implementation("io.sentry:sentry-spring-boot-starter:7.5.0")
-  implementation("io.sentry:sentry-logback:7.5.0")
+  implementation("io.sentry:sentry-spring-boot-starter:7.6.0")
+  implementation("io.sentry:sentry-logback:7.6.0")
 
   implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
   implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
