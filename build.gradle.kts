@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.3")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.12.3")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.12.4")
   implementation("io.opentelemetry:opentelemetry-api:1.36.0")
   implementation("joda-time:joda-time:2.12.7")
   implementation("com.deepoove:poi-tl:1.12.2") {
