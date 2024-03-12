@@ -27,7 +27,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       given(
         cvlApiClient.getLicenceMatch(
           crn,
-          LicenceConditionSearch(nomsId = listOf(nomsId)),
+          LicenceConditionSearch(nomsId = listOf(nomsId), status = listOf("ACTIVE")),
         ),
       ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
       given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { licenceByIdResponse() })
@@ -35,21 +35,21 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
       assertThat(response.size).isEqualTo(1)
-      assertThat(response[0]?.conditionalReleaseDate).isEqualTo(LocalDate.parse("2022-06-10"))
-      assertThat(response[0]?.actualReleaseDate).isEqualTo(LocalDate.parse("2022-06-11"))
-      assertThat(response[0]?.sentenceStartDate).isEqualTo(LocalDate.parse("2022-06-12"))
-      assertThat(response[0]?.sentenceEndDate).isEqualTo(LocalDate.parse("2022-06-13"))
-      assertThat(response[0]?.licenceStartDate).isEqualTo(LocalDate.parse("2022-06-14"))
-      assertThat(response[0]?.licenceExpiryDate).isEqualTo(LocalDate.parse("2022-06-15"))
-      assertThat(response[0]?.topupSupervisionStartDate).isEqualTo(LocalDate.parse("2022-06-16"))
-      assertThat(response[0]?.topupSupervisionExpiryDate).isEqualTo(LocalDate.parse("2022-06-17"))
-      assertThat(response[0]?.standardLicenceConditions!![0].text).isEqualTo("This is a standard licence condition")
-      assertThat(response[0]?.standardPssConditions!![0].text).isEqualTo("This is a standard PSS licence condition")
-      assertThat(response[0]?.additionalLicenceConditions!![0].text).isEqualTo("This is an additional licence condition")
-      assertThat(response[0]?.additionalLicenceConditions!![0].expandedText).isEqualTo("Expanded additional licence condition")
-      assertThat(response[0]?.additionalPssConditions!![0].text).isEqualTo("This is an additional PSS licence condition")
-      assertThat(response[0]?.additionalPssConditions!![0].expandedText).isEqualTo("Expanded additional PSS licence condition")
-      assertThat(response[0]?.bespokeConditions!![0].text).isEqualTo("This is a bespoke condition")
+      assertThat(response[0].conditionalReleaseDate).isEqualTo(LocalDate.parse("2022-06-10"))
+      assertThat(response[0].actualReleaseDate).isEqualTo(LocalDate.parse("2022-06-11"))
+      assertThat(response[0].sentenceStartDate).isEqualTo(LocalDate.parse("2022-06-12"))
+      assertThat(response[0].sentenceEndDate).isEqualTo(LocalDate.parse("2022-06-13"))
+      assertThat(response[0].licenceStartDate).isEqualTo(LocalDate.parse("2022-06-14"))
+      assertThat(response[0].licenceExpiryDate).isEqualTo(LocalDate.parse("2022-06-15"))
+      assertThat(response[0].topupSupervisionStartDate).isEqualTo(LocalDate.parse("2022-06-16"))
+      assertThat(response[0].topupSupervisionExpiryDate).isEqualTo(LocalDate.parse("2022-06-17"))
+      assertThat(response[0].standardLicenceConditions!![0].text).isEqualTo("This is a standard licence condition")
+      assertThat(response[0].standardPssConditions!![0].text).isEqualTo("This is a standard PSS licence condition")
+      assertThat(response[0].additionalLicenceConditions!![0].text).isEqualTo("This is an additional licence condition")
+      assertThat(response[0].additionalLicenceConditions!![0].expandedText).isEqualTo("Expanded additional licence condition")
+      assertThat(response[0].additionalPssConditions!![0].text).isEqualTo("This is an additional PSS licence condition")
+      assertThat(response[0].additionalPssConditions!![0].expandedText).isEqualTo("Expanded additional PSS licence condition")
+      assertThat(response[0].bespokeConditions!![0].text).isEqualTo("This is a bespoke condition")
 
       then(cvlApiClient).should().getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))
       then(cvlApiClient).should().getLicenceById(crn, licenceId)
@@ -64,7 +64,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       given(
         cvlApiClient.getLicenceMatch(
           crn,
-          LicenceConditionSearch(nomsId = listOf(nomsId)),
+          LicenceConditionSearch(nomsId = listOf(nomsId), status = listOf("ACTIVE")),
         ),
       ).willReturn(Mono.fromCallable { emptyList() })
 
@@ -85,7 +85,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       given(
         cvlApiClient.getLicenceMatch(
           crn,
-          LicenceConditionSearch(nomsId = listOf(nomsId)),
+          LicenceConditionSearch(nomsId = listOf(nomsId), status = listOf("ACTIVE")),
         ),
       ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
       given(cvlApiClient.getLicenceById(crn, licenceId)).willReturn(Mono.fromCallable { LicenceConditionCvlResponse() })
@@ -93,7 +93,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
       assertThat(response.size).isEqualTo(1)
-      assertThat(response[0]?.actualReleaseDate).isNull()
+      assertThat(response[0].actualReleaseDate).isNull()
 
       then(cvlApiClient).should().getLicenceMatch(crn, LicenceConditionSearch(nomsId = listOf(nomsId)))
     }
@@ -108,7 +108,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       given(
         cvlApiClient.getLicenceMatch(
           crn,
-          LicenceConditionSearch(nomsId = listOf(nomsId)),
+          LicenceConditionSearch(nomsId = listOf(nomsId), status = listOf("ACTIVE")),
         ),
       ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, "RandomCRN") })
 
@@ -127,7 +127,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       given(
         cvlApiClient.getLicenceMatch(
           crn,
-          LicenceConditionSearch(nomsId = listOf(nomsId)),
+          LicenceConditionSearch(nomsId = listOf(nomsId), status = listOf("ACTIVE")),
         ),
       ).willReturn(Mono.fromCallable { licenceMatchedResponse(licenceId, crn) })
 
@@ -138,7 +138,7 @@ internal class CreateAndVaryALicenceServiceTest : ServiceTestBase() {
       val response = createAndVaryALicenceService.buildLicenceConditions(crn, nomsId)
 
       assertThat(response.size).isEqualTo(1)
-      assertThat(response[0]?.actualReleaseDate).isNull()
+      assertThat(response[0].actualReleaseDate).isNull()
     }
   }
 }
