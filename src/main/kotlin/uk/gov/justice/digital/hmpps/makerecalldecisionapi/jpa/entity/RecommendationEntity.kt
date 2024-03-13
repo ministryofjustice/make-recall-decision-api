@@ -152,6 +152,7 @@ data class RecommendationModel(
   var whoCompletedPartA: WhoCompletedPartA? = null,
   var practitionerForPartA: PractitionerForPartA? = null,
   var revocationOrderRecipients: List<String>? = null,
+  var decisionDateTime: LocalDateTime? = null,
   var ppcsQueryEmails: List<String>? = null,
   var prisonOffender: PrisonOffender? = null,
   var prisonApiLocationDescription: String? = null,
