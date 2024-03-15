@@ -1220,6 +1220,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
     assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
     assertThat(recommendationResponse.hasContrabandRisk?.selected).isEqualTo(true)
+    assertThat(recommendationResponse.decisionDateTime).isNotNull()
     assertThat(recommendationResponse.hasContrabandRisk?.details).isEqualTo("Contraband risk details")
     assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.selected!![0]).isEqualTo(
       SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
