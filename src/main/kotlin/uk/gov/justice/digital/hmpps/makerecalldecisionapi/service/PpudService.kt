@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 
 @Service
@@ -91,8 +92,8 @@ internal class PpudService(
     createRecallRequest: CreateRecallRequest,
     username: String,
   ): PpudCreateRecallResponse {
-    val ppudUser = ppudUserRepository.findByUserName(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
-      ?: PpudUser("", "")
+    val ppudUser = ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+      ?: throw NotFoundException("PPUD user not found for username '$username'")
 
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createRecall(
