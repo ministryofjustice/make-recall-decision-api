@@ -197,7 +197,6 @@ internal class TemplateReplacementService(
       "countersign_spo_telephone" to (documentData.countersignSpoTelephone ?: EMPTY_STRING),
       "countersign_spo_date" to (documentData.countersignSpoDate ?: EMPTY_STRING),
       "countersign_spo_time" to (documentData.countersignSpoTime ?: EMPTY_STRING),
-
       "countersign_spo_exposition" to (documentData.countersignSpoExposition ?: EMPTY_STRING),
       "spo_countersign_complete" to (if (!documentData.countersignSpoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
       "countersign_spo_email" to (documentData.counterSignSpoEmail ?: EMPTY_STRING),

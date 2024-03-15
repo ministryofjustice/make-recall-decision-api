@@ -90,7 +90,6 @@ data class RecommendationResponse(
   val bookRecallToPpud: BookRecallToPpud? = null,
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
-  val decisionDateTime: LocalDateTime? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

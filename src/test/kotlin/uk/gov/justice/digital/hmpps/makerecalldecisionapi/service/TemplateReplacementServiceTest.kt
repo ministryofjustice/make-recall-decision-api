@@ -427,7 +427,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     return RecommendationResponse(
       id = 1,
       crn = crn,
-      decisionDateTime = LocalDateTime.now(),
       indexOffenceDetails = "Juicy details!",
       custodyStatus = CustodyStatus(
         selected = CustodyStatusValue.YES_POLICE,
