@@ -49,9 +49,9 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.9.1")
-  implementation("org.flywaydb:flyway-database-postgresql:10.9.1")
-  implementation("org.postgresql:postgresql:42.7.2")
+  implementation("org.flywaydb:flyway-core:10.10.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.10.0")
+  implementation("org.postgresql:postgresql:42.7.3")
 
   implementation("io.sentry:sentry-spring-boot-starter:7.6.0")
   implementation("io.sentry:sentry-logback:7.6.0")
@@ -84,15 +84,15 @@ dependencies {
 
   // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
   // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.86")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.86")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.86")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.86")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.87")
+  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.87")
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.87")
+  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.87")
 
   implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
   implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
 
-  implementation("org.springframework:spring-web:5.3.32") // Address CVE-2024-22243. Until we go to Spring Boot 3
+  implementation("org.springframework:spring-web:5.3.33") // Address CVE-2024-22243. Until we go to Spring Boot 3
   implementation("com.jayway.jsonpath:json-path:2.9.0") // Address CVE-2023-51074 present in 2.7.0 and 2.8.0
 }
 
