@@ -7,5 +7,5 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEnt
 
 @Repository
 interface PpudUserRepository : JpaRepository<PpudUserEntity, Long> {
-  fun findByUserName(@Param("userName") userName: String): PpudUserEntity?
+  fun findByUserNameIgnoreCase(@Param("userName") userName: String): PpudUserEntity?
 }

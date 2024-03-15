@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -23,12 +24,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class PpudControllerTest : IntegrationTestBase() {
+
+  @Autowired
+  private lateinit var ppudUserRepository: PpudUserRepository
 
   @Test
   fun `given request including null CRO Number when search is called then any matching results are returned`() {
@@ -244,6 +250,8 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create recall`() {
+    ppudUserRepository.deleteAll()
+    ppudUserRepository.save(PpudUserEntity(userName = "SOME_USER", ppudUserFullName = "User Name", ppudTeamName = "Team 1"))
     ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
     runTest {
       postToCreateRecall(
@@ -298,7 +306,7 @@ class PpudControllerTest : IntegrationTestBase() {
     requestBody: PpudUpdateSentenceRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
-      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId)
+      .uri("/ppud/offender/$offenderId/sentence/$sentenceId")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
@@ -310,7 +318,7 @@ class PpudControllerTest : IntegrationTestBase() {
     requestBody: PpudUpdateOffenceRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
-      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
+      .uri("/ppud/offender/$offenderId/sentence/$sentenceId/offence")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
@@ -322,7 +330,7 @@ class PpudControllerTest : IntegrationTestBase() {
     requestBody: PpudCreateOrUpdateReleaseRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.post()
-      .uri("/ppud/offender/" + offenderId + "/sentence/" + sentenceId + "/release")
+      .uri("/ppud/offender/$offenderId/sentence/$sentenceId/release")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
@@ -334,7 +342,7 @@ class PpudControllerTest : IntegrationTestBase() {
     requestBody: CreateRecallRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.post()
-      .uri("/ppud/offender/" + offenderId + "/release/" + releaseId + "/recall")
+      .uri("/ppud/offender/$offenderId/release/$releaseId/recall")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
