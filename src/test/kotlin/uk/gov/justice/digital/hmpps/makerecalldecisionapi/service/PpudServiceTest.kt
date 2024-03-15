@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.mock
@@ -30,6 +31,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 import java.time.LocalDateTime
 
@@ -38,7 +41,7 @@ import java.time.LocalDateTime
 internal class PpudServiceTest : ServiceTestBase() {
 
   @Mock
-  protected lateinit var ppudUserRepository: PpudUserRepository
+  private lateinit var ppudUserRepository: PpudUserRepository
 
   @Test
   fun `call search`() {
@@ -189,6 +192,8 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val captor = argumentCaptor<PpudCreateRecallRequest>()
 
+    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
     given(ppudAutomationApiClient.createRecall(eq("123"), eq("456"), captor.capture())).willReturn(
       Mono.fromCallable {
         response
@@ -210,5 +215,26 @@ internal class PpudServiceTest : ServiceTestBase() {
     assertThat(ppudCreateRecallRequest.receivedDateTime).isEqualTo(LocalDateTime.of(2024, 1, 1, 14, 0))
     assertThat(ppudCreateRecallRequest.riskOfContrabandDetails).isEqualTo("some details")
     assertThat(ppudCreateRecallRequest.riskOfSeriousHarmLevel).isEqualTo(RiskOfSeriousHarmLevel.High)
+  }
+
+  @Test
+  fun `create recall throws exception when ppud user not found`() {
+    val request = CreateRecallRequest(
+      decisionDateTime = LocalDateTime.now(),
+      isExtendedSentence = false,
+      isInCustody = true,
+      mappaLevel = "Level 1",
+      policeForce = "police force",
+      probationArea = "probation area",
+      receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+      riskOfContrabandDetails = "some details",
+      riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
+    )
+
+    val service = PpudService(ppudAutomationApiClient, ppudUserRepository)
+    val ex = assertThrows<NotFoundException> {
+      service.createRecall("123", "456", request, "userId")
+    }
+    assertThat(ex.message).isEqualTo("PPUD user not found for username 'userId'")
   }
 }
