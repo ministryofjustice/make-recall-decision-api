@@ -59,8 +59,6 @@ internal class PartADocumentMapper(
     )
     val (countersignSpoDate, countersignSpoTime) = splitDateTime(metadata.countersignSpoDateTime)
     val (countersignAcoDate, countersignAcoTime) = splitDateTime(metadata.countersignAcoDateTime)
-    val (decisionDate, decisionTime) = splitDateTime(recommendation.decisionDateTime)
-
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
     val previousRecallsList = buildPreviousRecallsList(recommendation.previousRecalls)
@@ -128,8 +126,8 @@ internal class PartADocumentMapper(
       completedBy = determineCompletedBy(recommendation, metadata, flags),
       supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
-      dateOfDecision = decisionDate,
-      timeOfDecision = decisionTime,
+      dateOfDecision = lastDownloadDate,
+      timeOfDecision = lastDownloadTime,
       offenceAnalysis = recommendation.offenceAnalysis,
       fixedTermAdditionalLicenceConditions = additionalLicenceConditionsTextToDisplay(recommendation),
       behaviourSimilarToIndexOffence = behaviourSimilarToIndexOffence,

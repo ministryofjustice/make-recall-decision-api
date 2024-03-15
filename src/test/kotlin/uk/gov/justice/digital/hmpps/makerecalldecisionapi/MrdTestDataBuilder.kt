@@ -96,7 +96,6 @@ class MrdTestDataBuilder {
           hasArrestIssues = arrestIssues(),
           hasContrabandRisk = contrabandRisk(),
           lastModifiedBy = "Jack",
-          decisionDateTime = LocalDateTime.now(),
           lastModifiedByUserName = "jack",
           lastModifiedDate = lastModifiedDate,
           createdBy = "Jack",
