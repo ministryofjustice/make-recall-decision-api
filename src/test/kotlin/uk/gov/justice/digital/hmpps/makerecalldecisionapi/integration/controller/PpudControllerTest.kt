@@ -15,10 +15,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
@@ -177,13 +177,35 @@ class PpudControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `ppud create sentence`() {
+    ppudAutomationCreateSentenceApiMatchResponse("123", "12345678")
+    runTest {
+      postToCreateSentence(
+        "123",
+        PpudCreateOrUpdateSentenceRequest(
+          custodyType = "Determinate",
+          dateOfSentence = LocalDate.of(2004, 1, 2),
+          licenceExpiryDate = LocalDate.of(2004, 1, 3),
+          mappaLevel = "1",
+          releaseDate = LocalDate.of(2004, 1, 4),
+          sentenceLength = SentenceLength(1, 1, 1),
+          sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+          sentencingCourt = "sentencing court",
+          espExtendedPeriod = PpudYearMonth(1, 1),
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
+  @Test
   fun `ppud update sentence`() {
     ppudAutomationUpdateSentenceApiMatchResponse("123", "456", "12345678")
     runTest {
       putToUpdateSentence(
         "123",
         "456",
-        PpudUpdateSentenceRequest(
+        PpudCreateOrUpdateSentenceRequest(
           custodyType = "Determinate",
           dateOfSentence = LocalDate.of(2004, 1, 2),
           licenceExpiryDate = LocalDate.of(2004, 1, 3),
@@ -300,10 +322,21 @@ class PpudControllerTest : IntegrationTestBase() {
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
 
+  private fun postToCreateSentence(
+    offenderId: String,
+    requestBody: PpudCreateOrUpdateSentenceRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri("/ppud/offender/$offenderId/sentence")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
   private fun putToUpdateSentence(
     offenderId: String,
     sentenceId: String,
-    requestBody: PpudUpdateSentenceRequest,
+    requestBody: PpudCreateOrUpdateSentenceRequest,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/$offenderId/sentence/$sentenceId")
