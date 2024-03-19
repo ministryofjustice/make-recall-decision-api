@@ -12,12 +12,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
@@ -158,6 +158,34 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `create sentence to ppud`() {
+    // given
+    val offenderId = "123"
+    val sentenceId = "456"
+    val id = "12345678"
+
+    ppudAutomationCreateSentenceApiMatchResponse(offenderId, id)
+
+    // when
+    val actual = ppudAutomationApiClient.createSentence(
+      offenderId,
+      PpudCreateOrUpdateSentenceRequest(
+        custodyType = "Determinate",
+        dateOfSentence = LocalDate.of(2004, 1, 2),
+        licenceExpiryDate = LocalDate.of(2004, 1, 3),
+        mappaLevel = "1",
+        releaseDate = LocalDate.of(2004, 1, 4),
+        sentenceLength = SentenceLength(1, 1, 1),
+        sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+        sentencingCourt = "sentencing court",
+      ),
+    ).block()
+
+    // then
+    assertThat(actual.sentence.id, equalTo("12345678"))
+  }
+
+  @Test
   fun `update sentence to ppud`() {
     // given
     val offenderId = "123"
@@ -170,7 +198,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ppudAutomationApiClient.updateSentence(
       offenderId,
       sentenceId,
-      PpudUpdateSentenceRequest(
+      PpudCreateOrUpdateSentenceRequest(
         custodyType = "Determinate",
         dateOfSentence = LocalDate.of(2004, 1, 2),
         licenceExpiryDate = LocalDate.of(2004, 1, 3),
