@@ -17,14 +17,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateSentenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateSentenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudService
 import java.security.Principal
 
@@ -95,12 +96,22 @@ internal class PpudController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PostMapping("/ppud/offender/{offenderId}/sentence")
+  @Operation(summary = "Calls PPUD Automation service to update a sentence.")
+  suspend fun createSentence(
+    @PathVariable(required = true) offenderId: String,
+    @RequestBody request: PpudCreateOrUpdateSentenceRequest,
+  ): PpudCreateSentenceResponse {
+    return ppudService.createSentence(offenderId, request)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PutMapping("/ppud/offender/{offenderId}/sentence/{sentenceId}")
   @Operation(summary = "Calls PPUD Automation service to update a sentence.")
   suspend fun updateSentence(
     @PathVariable(required = true) offenderId: String,
     @PathVariable(required = true) sentenceId: String,
-    @RequestBody request: PpudUpdateSentenceRequest,
+    @RequestBody request: PpudCreateOrUpdateSentenceRequest,
   ) {
     ppudService.updateSentence(offenderId, sentenceId, request)
   }
