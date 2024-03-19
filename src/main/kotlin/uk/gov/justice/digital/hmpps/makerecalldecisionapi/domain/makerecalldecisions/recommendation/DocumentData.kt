@@ -87,6 +87,8 @@ data class DocumentData(
   val releaseUnderECSL: Boolean? = null,
   val dateOfRelease: String? = null,
   val conditionalReleaseDate: String? = null,
+  val decisionDate: String? = null,
+  val decisionTime: String? = null,
 )
 
 data class ValueWithDetails(

@@ -281,6 +281,7 @@ internal class RecommendationService(
       bookRecallToPpud = recommendationEntity.data.bookRecallToPpud,
       ppudOffender = recommendationEntity.data.ppudOffender,
       bookingMemento = recommendationEntity.data.bookingMemento,
+      decisionDateTime = recommendationEntity.data.decisionDateTime,
     )
   }
 
