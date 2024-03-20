@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.Recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToReadableDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
@@ -59,7 +60,9 @@ internal class PartADocumentMapper(
     )
     val (countersignSpoDate, countersignSpoTime) = splitDateTime(metadata.countersignSpoDateTime)
     val (countersignAcoDate, countersignAcoTime) = splitDateTime(metadata.countersignAcoDateTime)
-    val (decisionDate, decisionTime) = splitDateTime(recommendation.decisionDateTime)
+
+    val decisionDateTimeWithDaylightSaving = recommendation.decisionDateTime?.let { dateTimeWithDaylightSavingFromString(utcDateTimeString = it.toString()) }
+    val (decisionDate, decisionTime) = splitDateTime(decisionDateTimeWithDaylightSaving)
 
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
     val previousReleasesList = buildPreviousReleasesList(recommendation.previousReleases)
