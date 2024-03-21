@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType.Companion.fromString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
@@ -86,6 +87,14 @@ internal class RecommendationController(
   suspend fun getLatestRecommendationForOverview(@PathVariable("crn") crn: String): RecommendationsResponse {
     log.info(normalizeSpace("Gets latest complete recommendation overview for crn: $crn"))
     return recommendationService.getLatestCompleteRecommendationOverview(crn)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/cases/{crn}/active")
+  @Operation(summary = "Gets latest active recommendation for case")
+  suspend fun getActiveRecommendationForCrn(@PathVariable("crn") crn: String): ActiveRecommendation? {
+    log.info(normalizeSpace("Gets latest active recommendation for crn: $crn"))
+    return recommendationService.getRecommendationsInProgressForCrn(crn)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
