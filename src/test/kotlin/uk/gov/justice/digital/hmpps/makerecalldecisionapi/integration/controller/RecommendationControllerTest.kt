@@ -132,6 +132,33 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   }
 
   @Test
+  fun `get active recommendation`() {
+    // given
+    userAccessAllowedOnce(crn)
+    personalDetailsResponse(crn)
+    userAccessAllowedOnce(crn)
+    deleteAndCreateRecommendation()
+
+    // when
+    val response = webTestClient.get()
+      .uri("/cases/$crn/active")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+
+    // then
+    response
+      .expectBody()
+      .jsonPath("$.recommendationId").isNotEmpty
+      .jsonPath("$.lastModifiedDate").isNotEmpty
+      .jsonPath("$.lastModifiedBy").isEqualTo("SOME_USER")
+      .jsonPath("$.lastModifiedByName").isEqualTo("some_user")
+      .jsonPath("$.recallType").isEmpty
+      .jsonPath("$.recallConsideredList").isEqualTo(null)
+      .jsonPath("$.status").isEqualTo("DRAFT")
+      .jsonPath("$.managerRecallDecision").isEqualTo(null)
+  }
+
+  @Test
   fun `get recommendations should not return a deleted record`() {
     // given
     createSingleCompletedRecommendation()
