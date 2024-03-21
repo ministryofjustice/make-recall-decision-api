@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUse
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Suppress("SameParameterValue")
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class PpudControllerTest : IntegrationTestBase() {
@@ -147,6 +148,38 @@ class PpudControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `ppud create offender accepts null CRO Number and NOMIS ID`() {
+    ppudAutomationCreateOffenderApiMatchResponse("12345678")
+    val requestBody = """
+      {
+        "croNumber": null,
+        "nomsId": null,
+        "prisonNumber": "123",
+        "firstNames": "Peter",
+        "familyName": "Parker",
+        "ethnicity": "W",
+        "gender": "M",
+        "isInCustody": true,
+        "mappaLevel": "",
+        "custodyType": "Determinate",
+        "dateOfBirth": "2004-01-01",
+        "additionalAddresses": [],
+        "address": {
+          "premises": "",
+          "line1": "No Fixed Abode",
+          "line2": "",
+          "postcode": "",
+          "phoneNumber": ""
+         }
+      }
+    """.trimIndent()
+    runTest {
+      postToCreateOffender(requestBody)
+        .expectStatus().isOk
+    }
+  }
+
+  @Test
   fun `ppud update offender`() {
     ppudAutomationUpdateOffenderApiMatchResponse("12345678")
     runTest {
@@ -172,6 +205,36 @@ class PpudControllerTest : IntegrationTestBase() {
           ),
         ),
       )
+        .expectStatus().isOk
+    }
+  }
+
+  @Test
+  fun `ppud update offender accepts null CRO Number and NOMS ID`() {
+    ppudAutomationUpdateOffenderApiMatchResponse("12345678")
+    val requestBody = """
+      {
+        "croNumber": null,
+        "nomsId": null,
+        "prisonNumber": "123",
+        "firstNames": "Peter",
+        "familyName": "Parker",
+        "ethnicity": "W",
+        "gender": "M",
+        "isInCustody": true,
+        "dateOfBirth": "2004-01-01",
+        "additionalAddresses": [],
+        "address": {
+          "premises": "",
+          "line1": "No Fixed Abode",
+          "line2": "",
+          "postcode": "",
+          "phoneNumber": ""
+        }
+      }
+    """.trimIndent()
+    runTest {
+      putToUpdateOffender("12345678", requestBody)
         .expectStatus().isOk
     }
   }
@@ -273,7 +336,13 @@ class PpudControllerTest : IntegrationTestBase() {
   @Test
   fun `ppud create recall`() {
     ppudUserRepository.deleteAll()
-    ppudUserRepository.save(PpudUserEntity(userName = "SOME_USER", ppudUserFullName = "User Name", ppudTeamName = "Team 1"))
+    ppudUserRepository.save(
+      PpudUserEntity(
+        userName = "SOME_USER",
+        ppudUserFullName = "User Name",
+        ppudTeamName = "Team 1",
+      ),
+    )
     ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
     runTest {
       postToCreateRecall(
@@ -303,7 +372,7 @@ class PpudControllerTest : IntegrationTestBase() {
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
 
-  private fun postToCreateOffender(requestBody: PpudCreateOffenderRequest): WebTestClient.ResponseSpec =
+  private fun <T> postToCreateOffender(requestBody: T & Any): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/offender")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -311,9 +380,9 @@ class PpudControllerTest : IntegrationTestBase() {
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
 
-  private fun putToUpdateOffender(
+  private fun <T> putToUpdateOffender(
     offenderId: String,
-    requestBody: PpudUpdateOffenderRequest,
+    requestBody: T & Any,
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/$offenderId")
