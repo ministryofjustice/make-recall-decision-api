@@ -1,6 +1,14 @@
 {
-  "extends": [
-    "github>ministryofjustice/arn-renovate-config"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>ministryofjustice/hmpps-renovate-config:jvm"],
+  "prBodyTemplate": "{{{table}}}{{{notes}}}{{{warnings}}}{{{controls}}}",
+  "packageRules": [
+    {
+      "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non major Gradle dependencies",
+      "groupSlug": "all-gradle-minor-patch"
+    }
   ],
   "ignoreDeps": [
     "ch.qos.logback:logback-core",
