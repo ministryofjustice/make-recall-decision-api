@@ -91,6 +91,10 @@ data class RecommendationResponse(
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
   val decisionDateTime: LocalDateTime? = null,
+  var isOver18: Boolean? = null,
+  var isMappaLevelAbove1: Boolean? = null,
+  var isSentenceUnder12Months: Boolean? = null,
+  var hasBeenConvictedOfSeriousOffence: Boolean? = null,
 )
 
 data class UnderIntegratedOffenderManagement(

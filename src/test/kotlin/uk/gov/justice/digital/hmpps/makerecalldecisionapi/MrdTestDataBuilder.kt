@@ -316,6 +316,10 @@ class MrdTestDataBuilder {
         previousRecalls = previousRecalls(),
         recallConsideredList = recallConsideredData(),
         currentRoshForPartA = roshDataForPartA(),
+        isOver18 = false,
+        isMappaLevelAbove1 = false,
+        isSentenceUnder12Months = false,
+        hasBeenConvictedOfSeriousOffence = false,
       )
     }
 
