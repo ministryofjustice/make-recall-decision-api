@@ -191,7 +191,8 @@ internal class RecommendationService(
   private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? {
     return recommendationRepository.findByCrn(crn)
       .filter {
-        recommendationStatusRepository.findByRecommendationId(it.id).stream().anyMatch() { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
+        recommendationStatusRepository.findByRecommendationId(it.id).stream()
+          .anyMatch() { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
       }.minOrNull()
   }
 
@@ -273,7 +274,6 @@ internal class RecommendationService(
       revocationOrderRecipients = recommendationEntity.data.revocationOrderRecipients,
       ppcsQueryEmails = recommendationEntity.data.ppcsQueryEmails,
       prisonOffender = recommendationEntity.data.prisonOffender,
-
       releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
       dateOfRelease = recommendationEntity.data.dateOfRelease,
       conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
@@ -282,6 +282,10 @@ internal class RecommendationService(
       ppudOffender = recommendationEntity.data.ppudOffender,
       bookingMemento = recommendationEntity.data.bookingMemento,
       decisionDateTime = recommendationEntity.data.decisionDateTime,
+      isOver18 = recommendationEntity.data.isOver18,
+      isMappaLevelAbove1 = recommendationEntity.data.isMappaLevelAbove1,
+      isSentenceUnder12Months = recommendationEntity.data.isSentenceUnder12Months,
+      hasBeenConvictedOfSeriousOffence = recommendationEntity.data.hasBeenConvictedOfSeriousOffence,
     )
   }
 
