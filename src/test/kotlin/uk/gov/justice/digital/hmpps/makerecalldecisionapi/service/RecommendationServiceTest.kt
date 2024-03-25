@@ -73,7 +73,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -362,6 +362,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             previousRecalls = updateRecommendationRequest.previousRecalls,
             recallConsideredList = updateRecommendationRequest.recallConsideredList,
             currentRoshForPartA = updateRecommendationRequest.currentRoshForPartA,
+            isOver18 = updateRecommendationRequest.isOver18,
+            isMappaLevelAbove1 = updateRecommendationRequest.isMappaLevelAbove1,
+            isSentenceUnder12Months = updateRecommendationRequest.isSentenceUnder12Months,
+            hasBeenConvictedOfSeriousOffence = updateRecommendationRequest.hasBeenConvictedOfSeriousOffence,
           ),
         )
 
