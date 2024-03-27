@@ -81,6 +81,12 @@ internal class PartADocumentMapper(
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
+
+      isUnder18 = generateFixedTermRecallAnswer(recommendation.isOver18, recommendation),
+      isSentenceUnder12Months = convertBooleanToYesNo(recommendation.isSentenceUnder12Months),
+      isMappaAboveLevel1 = convertBooleanToYesNo(recommendation.isMappaLevelAbove1),
+      isChargedWithSeriousOffence = convertBooleanToYesNo(recommendation.hasBeenConvictedOfSeriousOffence),
+
       isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
@@ -281,6 +287,20 @@ internal class PartADocumentMapper(
 
   private fun convertBooleanToYesNo(value: Boolean?): String {
     return if (value == true) YES else if (value == false) NO else EMPTY_STRING
+  }
+
+  private fun generateFixedTermRecallAnswer(value: Boolean?, recommendation: RecommendationResponse): String {
+    val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
+    val isFixedTermRecall = recommendation.recallType?.selected?.value.toString() == RecallTypeValue.FIXED_TERM.toString()
+    val isIndeteriminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
+    val isNotIndeterminateAndNotExtendedAndStandardRecall = !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
+    val fixedTermEmergencyRecall = recommendation.isThisAnEmergencyRecall == true && isFixedTermRecall
+
+    return when {
+      isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall for each one of these questions"
+      fixedTermEmergencyRecall -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
+      else -> EMPTY_STRING
+    }
   }
 
   private fun buildStandardLicenceCodes(standardCodes: List<String>?, cvlStandardCodes: List<String>?): List<String>? {
