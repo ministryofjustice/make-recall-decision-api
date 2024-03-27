@@ -4,7 +4,7 @@ plugins {
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "1.9.23"
-  id("org.sonarqube") version "4.4.1.3373"
+  id("org.sonarqube") version "5.0.0.4638"
   kotlin("plugin.spring") version "1.9.23"
 }
 
