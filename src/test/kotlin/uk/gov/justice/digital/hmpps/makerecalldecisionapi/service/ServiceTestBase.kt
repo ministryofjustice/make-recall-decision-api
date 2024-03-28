@@ -577,10 +577,21 @@ internal abstract class ServiceTestBase {
         licenceExpiryDate = LocalDate.parse("2022-06-15"),
         topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
         topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+        standardLicenceConditions = listOf(
+          LicenceConditionDetail(
+            code = "1",
+            text = "This is a standard licence condition",
+          ),
+        ),
+        standardPssConditions = listOf(
+          LicenceConditionDetail(
+            code = "2",
+            text = "This is a standard PSS licence condition",
+          ),
+        ),
         additionalLicenceConditions = listOf(
           LicenceConditionDetail(
+            code = "3",
             category = "Generic category",
             text = "This is an additional licence condition",
             expandedText = "Expanded additional licence condition",
@@ -588,11 +599,12 @@ internal abstract class ServiceTestBase {
         ),
         additionalPssConditions = listOf(
           LicenceConditionDetail(
+            code = "4",
             text = "This is an additional PSS licence condition",
             expandedText = "Expanded additional PSS licence condition",
           ),
         ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
+        bespokeConditions = listOf(LicenceConditionDetail(code = "5", text = "This is a bespoke condition")),
       ),
     )
   }
@@ -853,10 +865,33 @@ internal abstract class ServiceTestBase {
       licenceExpiryDate = "15/06/2022",
       topupSupervisionStartDate = "16/06/2022",
       topupSupervisionExpiryDate = "17/06/2022",
-      standardLicenceConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard licence condition")),
-      standardPssConditions = listOf(LicenceConditionCvlDetail(text = "This is a standard PSS licence condition")),
+      standardLicenceConditions = listOf(
+        LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
+          code = "1",
+          text = "This is a standard licence condition",
+        ),
+      ),
+      standardPssConditions = listOf(
+        LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
+          code = "2",
+          text = "This is a standard PSS licence condition",
+        ),
+      ),
       additionalLicenceConditions = listOf(
         LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
+          code = "3",
           text = "This is an additional licence condition",
           expandedText = "Expanded additional licence condition",
           category = "Generic category",
@@ -864,11 +899,22 @@ internal abstract class ServiceTestBase {
       ),
       additionalPssConditions = listOf(
         LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
+          code = "4",
           text = "This is an additional PSS licence condition",
           expandedText = "Expanded additional PSS licence condition",
         ),
       ),
-      bespokeConditions = listOf(LicenceConditionCvlDetail(text = "This is a bespoke condition")),
+      bespokeConditions = listOf(
+        LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
+      ),
     )
   }
 
