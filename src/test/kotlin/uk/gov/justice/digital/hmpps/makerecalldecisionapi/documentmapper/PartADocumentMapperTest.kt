@@ -219,6 +219,8 @@ class PartADocumentMapperTest {
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
     }
   }
 
@@ -235,6 +237,8 @@ class PartADocumentMapperTest {
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
     }
   }
 
@@ -252,6 +256,8 @@ class PartADocumentMapperTest {
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
     }
   }
 
@@ -265,10 +271,14 @@ class PartADocumentMapperTest {
         isIndeterminateSentence = false,
         isExtendedSentence = false,
         isOver18 = false,
+        isMappaLevelAbove1 = true,
+        isSentenceUnder12Months = true,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("Yes")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("Yes")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
     }
   }
 
