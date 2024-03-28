@@ -867,17 +867,29 @@ internal abstract class ServiceTestBase {
       topupSupervisionExpiryDate = "17/06/2022",
       standardLicenceConditions = listOf(
         LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
           code = "1",
           text = "This is a standard licence condition",
         ),
       ),
       standardPssConditions = listOf(
         LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
           code = "2",
           text = "This is a standard PSS licence condition",
         ),
       ),
       additionalLicenceConditions = listOf(
+        LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
         LicenceConditionCvlDetail(
           code = "3",
           text = "This is an additional licence condition",
@@ -887,12 +899,22 @@ internal abstract class ServiceTestBase {
       ),
       additionalPssConditions = listOf(
         LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(
           code = "4",
           text = "This is an additional PSS licence condition",
           expandedText = "Expanded additional PSS licence condition",
         ),
       ),
-      bespokeConditions = listOf(LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition")),
+      bespokeConditions = listOf(
+          LicenceConditionCvlDetail(
+              code = null,
+              text = "",
+          ),
+          LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
+      ),
     )
   }
 
