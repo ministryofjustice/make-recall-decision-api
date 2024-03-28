@@ -282,7 +282,7 @@ internal class RecommendationService(
       ppudOffender = recommendationEntity.data.ppudOffender,
       bookingMemento = recommendationEntity.data.bookingMemento,
       decisionDateTime = recommendationEntity.data.decisionDateTime,
-      isOver18 = recommendationEntity.data.isUnder18, // inverted in the front end
+      isOver18 = recommendationEntity.data.isOver18,
       isMappaLevelAbove1 = recommendationEntity.data.isMappaLevelAbove1,
       isSentenceUnder12Months = recommendationEntity.data.isSentenceUnder12Months,
       hasBeenConvictedOfSeriousOffence = recommendationEntity.data.hasBeenConvictedOfSeriousOffence,
@@ -329,11 +329,11 @@ internal class RecommendationService(
     featureFlags: FeatureFlags?,
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
+    val requestJson = JSONObject(jsonRequest.toString())
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
     val updatedRecommendation: RecommendationModel =
       recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
-    val requestJson = JSONObject(jsonRequest.toString())
     val sendSpoRationaleToDelius =
       requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
     log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))

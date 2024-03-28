@@ -163,8 +163,7 @@ data class RecommendationModel(
   val bookRecallToPpud: BookRecallToPpud? = null,
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
-  var isUnder18: Boolean? = null,
-  var isOver18: Boolean? = null, // deprecated
+  var isOver18: Boolean? = null,
   var isMappaLevelAbove1: Boolean? = null,
   var isSentenceUnder12Months: Boolean? = null,
   var hasBeenConvictedOfSeriousOffence: Boolean? = null,
