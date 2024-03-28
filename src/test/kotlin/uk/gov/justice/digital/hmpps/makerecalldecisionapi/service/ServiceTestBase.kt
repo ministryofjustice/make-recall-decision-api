@@ -909,11 +909,11 @@ internal abstract class ServiceTestBase {
         ),
       ),
       bespokeConditions = listOf(
-          LicenceConditionCvlDetail(
-              code = null,
-              text = "",
-          ),
-          LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
+        LicenceConditionCvlDetail(
+          code = null,
+          text = "",
+        ),
+        LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
       ),
     )
   }
