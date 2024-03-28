@@ -35,29 +35,34 @@ internal class CreateAndVaryALicenceService(
             licenceExpiryDate = convertDateStringToIso8601Date(licence?.licenceExpiryDate),
             topupSupervisionStartDate = convertDateStringToIso8601Date(licence?.topupSupervisionStartDate),
             topupSupervisionExpiryDate = convertDateStringToIso8601Date(licence?.topupSupervisionExpiryDate),
-            standardLicenceConditions = licence?.standardLicenceConditions?.map {
-              LicenceConditionDetail(
-                it.code,
-                it.text,
-              )
-            },
-            standardPssConditions = licence?.standardPssConditions?.map { LicenceConditionDetail(it.code, it.text) },
-            additionalLicenceConditions = licence?.additionalLicenceConditions?.map {
-              LicenceConditionDetail(
-                it.code,
-                it.text,
-                it.expandedText,
-                it.category,
-              )
-            },
-            additionalPssConditions = licence?.additionalPssConditions?.map {
-              LicenceConditionDetail(
-                it.code,
-                it.text,
-                it.expandedText,
-              )
-            },
-            bespokeConditions = licence?.bespokeConditions?.map { LicenceConditionDetail(it.code, it.text) },
+            standardLicenceConditions = licence?.standardLicenceConditions?.filter { it.code != null && it.text != null }
+              ?.map {
+                LicenceConditionDetail(
+                  it.code,
+                  it.text,
+                )
+              },
+            standardPssConditions = licence?.standardPssConditions?.filter { it.code != null && it.text != null }
+              ?.map { LicenceConditionDetail(it.code, it.text) },
+            additionalLicenceConditions = licence?.additionalLicenceConditions?.filter { it.code != null && it.text != null }
+              ?.map {
+                LicenceConditionDetail(
+                  it.code,
+                  it.text,
+                  it.expandedText,
+                  it.category,
+                )
+              },
+            additionalPssConditions = licence?.additionalPssConditions?.filter { it.code != null && it.text != null }
+              ?.map {
+                LicenceConditionDetail(
+                  it.code,
+                  it.text,
+                  it.expandedText,
+                )
+              },
+            bespokeConditions = licence?.bespokeConditions?.filter { it.code != null && it.text != null }
+              ?.map { LicenceConditionDetail(it.code, it.text) },
           )
         } catch (ex: NoCvlLicenceByIdException) {
           log.error(ex.message)
