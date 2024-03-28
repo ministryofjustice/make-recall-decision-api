@@ -215,7 +215,6 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isExtendedSentence = true,
         isOver18 = true, // means if under 18 - inverted in front end
-        isThisAnEmergencyRecall = true,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -232,7 +231,6 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isIndeterminateSentence = true,
         isOver18 = true, // means if under 18 - inverted in front end
-        isThisAnEmergencyRecall = true,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -250,7 +248,6 @@ class PartADocumentMapperTest {
         isIndeterminateSentence = false,
         isExtendedSentence = false,
         isOver18 = true, // means if under 18 - inverted in front end
-        isThisAnEmergencyRecall = true,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -259,7 +256,7 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given emergency recall and fixed term recall used in part A text`() {
+  fun `given fixed term recall used in part A text`() {
     runTest {
       val recommendation = RecommendationResponse(
         id = 1,
@@ -268,7 +265,6 @@ class PartADocumentMapperTest {
         isIndeterminateSentence = false,
         isExtendedSentence = false,
         isOver18 = true, // means if under 18 - inverted in front end
-        isThisAnEmergencyRecall = true,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)

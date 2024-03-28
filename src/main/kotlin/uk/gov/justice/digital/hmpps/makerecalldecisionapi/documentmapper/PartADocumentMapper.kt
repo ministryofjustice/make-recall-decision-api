@@ -294,11 +294,10 @@ internal class PartADocumentMapper(
     val isFixedTermRecall = recommendation.recallType?.selected?.value.toString() == RecallTypeValue.FIXED_TERM.toString()
     val isIndeteriminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
     val isNotIndeterminateAndNotExtendedAndStandardRecall = !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
-    val fixedTermEmergencyRecall = recommendation.isThisAnEmergencyRecall == true && isFixedTermRecall
 
     return when {
       isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall for each one of these questions"
-      fixedTermEmergencyRecall -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
+      isFixedTermRecall -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
       else -> EMPTY_STRING
     }
   }
