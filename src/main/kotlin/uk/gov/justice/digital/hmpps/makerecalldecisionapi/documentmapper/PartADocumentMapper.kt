@@ -83,7 +83,7 @@ internal class PartADocumentMapper(
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
 
       isUnder18 = generateFixedTermRecallAnswer(recommendation.isOver18?.not(), recommendation),
-      isSentenceUnder12Months = convertBooleanToYesNo(recommendation.isSentenceUnder12Months),
+      isSentence12MonthsOrOver = convertBooleanToYesNo(recommendation.isSentenceUnder12Months?.not()),
       isMappaAboveLevel1 = convertBooleanToYesNo(recommendation.isMappaLevelAbove1),
       isChargedWithSeriousOffence = convertBooleanToYesNo(recommendation.hasBeenConvictedOfSeriousOffence),
 

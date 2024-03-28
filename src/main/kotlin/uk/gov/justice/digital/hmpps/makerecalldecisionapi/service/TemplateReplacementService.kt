@@ -111,7 +111,7 @@ internal class TemplateReplacementService(
       "what_led_to_recall" to documentData.whatLedToRecall,
       "is_this_an_emergency_recall" to documentData.isThisAnEmergencyRecall,
       "is_under_18" to documentData.isUnder18,
-      "is_sentence_under_12_months" to documentData.isSentenceUnder12Months,
+      "is_sentence_12_months_or_over" to documentData.isSentence12MonthsOrOver,
       "is_mappa_above_level_1" to documentData.isMappaAboveLevel1,
       "is_charged_with_serious_offence" to documentData.isChargedWithSeriousOffence,
       "has_victims_in_contact_scheme" to documentData.hasVictimsInContactScheme,
