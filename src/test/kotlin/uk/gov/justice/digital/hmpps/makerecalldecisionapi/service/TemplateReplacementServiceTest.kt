@@ -175,7 +175,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
       // then
       assertThat(result.size).isEqualTo(139)
-      assertThat(result["is_sentence_under_12_months"]).isEqualTo("No")
+      assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
       assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
       assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
       assertThat(result["is_under_18"]).isEqualTo("No")
@@ -790,7 +790,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ),
     )
     return DocumentData(
-      isSentenceUnder12Months = "No",
+      isSentence12MonthsOrOver = "No",
       isUnder18 = "No",
       isMappaAboveLevel1 = "Yes",
       isChargedWithSeriousOffence = "No",
