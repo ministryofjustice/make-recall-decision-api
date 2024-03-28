@@ -18,7 +18,7 @@ data class DocumentData(
   val isThisAnEmergencyRecall: String? = null,
 
   val isUnder18: String? = null,
-  val isSentenceUnder12Months: String? = null,
+  val isSentence12MonthsOrOver: String? = null,
   val isMappaAboveLevel1: String? = null,
   val isChargedWithSeriousOffence: String? = null,
   val isExtendedSentence: String? = null,
