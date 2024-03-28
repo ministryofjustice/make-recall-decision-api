@@ -164,6 +164,7 @@ data class RecommendationModel(
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
   var isOver18: Boolean? = null,
+  var isUnder18: Boolean? = null, // deprecated
   var isMappaLevelAbove1: Boolean? = null,
   var isSentenceUnder12Months: Boolean? = null,
   var hasBeenConvictedOfSeriousOffence: Boolean? = null,
