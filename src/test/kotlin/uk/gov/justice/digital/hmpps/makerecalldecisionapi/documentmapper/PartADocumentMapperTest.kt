@@ -218,9 +218,9 @@ class PartADocumentMapperTest {
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
-      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall")
     }
   }
 
@@ -236,9 +236,9 @@ class PartADocumentMapperTest {
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
-      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall")
     }
   }
 
@@ -255,9 +255,9 @@ class PartADocumentMapperTest {
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
-      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall for each one of these questions")
-      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall for each one of these questions")
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall")
+      assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - standard recall")
+      assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - standard recall")
     }
   }
 

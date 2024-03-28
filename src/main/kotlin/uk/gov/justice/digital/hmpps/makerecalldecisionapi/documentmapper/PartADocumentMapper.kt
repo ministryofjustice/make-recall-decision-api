@@ -296,7 +296,7 @@ internal class PartADocumentMapper(
     val isNotIndeterminateAndNotExtendedAndStandardRecall = !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
 
     return when {
-      isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall for each one of these questions"
+      isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall"
       isFixedTermRecall -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
       else -> EMPTY_STRING
     }
