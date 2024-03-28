@@ -91,7 +91,7 @@ data class RecommendationResponse(
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
   val decisionDateTime: LocalDateTime? = null,
-  var isOver18: Boolean? = null,
+  var isOver18: Boolean? = null, // this has now been inverted in front end to mean under 18
   var isMappaLevelAbove1: Boolean? = null,
   var isSentenceUnder12Months: Boolean? = null,
   var hasBeenConvictedOfSeriousOffence: Boolean? = null,

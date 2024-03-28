@@ -207,6 +207,76 @@ class PartADocumentMapperTest {
   }
 
   @Test
+  fun `given extended sentence used in part A text`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        dateVloInformed = LocalDate.parse("2022-09-01"),
+        isExtendedSentence = true,
+        isOver18 = true, // means if under 18 - inverted in front end
+        isThisAnEmergencyRecall = true,
+        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+    }
+  }
+
+  @Test
+  fun `given indeterminate sentence used in part A text`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        dateVloInformed = LocalDate.parse("2022-09-01"),
+        isIndeterminateSentence = true,
+        isOver18 = true, // means if under 18 - inverted in front end
+        isThisAnEmergencyRecall = true,
+        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+    }
+  }
+
+  @Test
+  fun `given not indeterminate and not extended sentence and standard recall used in part A text`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        dateVloInformed = LocalDate.parse("2022-09-01"),
+        isIndeterminateSentence = false,
+        isExtendedSentence = false,
+        isOver18 = true, // means if under 18 - inverted in front end
+        isThisAnEmergencyRecall = true,
+        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+      assertThat(result.isUnder18).isEqualTo("N/A - standard recall for each one of these questions")
+    }
+  }
+
+  @Test
+  fun `given emergency recall and fixed term recall used in part A text`() {
+    runTest {
+      val recommendation = RecommendationResponse(
+        id = 1,
+        crn = "ABC123",
+        dateVloInformed = LocalDate.parse("2022-09-01"),
+        isIndeterminateSentence = false,
+        isExtendedSentence = false,
+        isOver18 = true, // means if under 18 - inverted in front end
+        isThisAnEmergencyRecall = true,
+        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
+      )
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+      assertThat(result.isUnder18).isEqualTo("Yes")
+    }
+  }
+
+  @Test
   fun `given null date vlo informed then should map to empty string in part A text`() {
     runTest {
       val recommendation = RecommendationResponse(

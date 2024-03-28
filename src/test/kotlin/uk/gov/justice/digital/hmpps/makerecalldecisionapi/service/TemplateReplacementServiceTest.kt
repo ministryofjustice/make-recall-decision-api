@@ -174,7 +174,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(135)
+      assertThat(result.size).isEqualTo(139)
+      assertThat(result["is_sentence_under_12_months"]).isEqualTo("No")
+      assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
+      assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
+      assertThat(result["is_under_18"]).isEqualTo("No")
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -429,6 +433,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       crn = crn,
       decisionDateTime = LocalDateTime.now(),
       indexOffenceDetails = "Juicy details!",
+      isOver18 = false,
       custodyStatus = CustodyStatus(
         selected = CustodyStatusValue.YES_POLICE,
         details = "Bromsgrove Police Station\r\nLondon",
@@ -444,7 +449,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       responseToProbation = "They did not respond well",
       whatLedToRecall = "Increasingly violent behaviour",
       isThisAnEmergencyRecall = true,
-      isIndeterminateSentence = false,
+      isIndeterminateSentence = true,
+      isSentenceUnder12Months = false,
+      isMappaLevelAbove1 = true,
+      hasBeenConvictedOfSeriousOffence = true,
       isExtendedSentence = false,
       personOnProbation = PersonOnProbation(
         gender = "Male",
@@ -782,6 +790,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ),
     )
     return DocumentData(
+      isSentenceUnder12Months = "No",
+      isUnder18 = "No",
+      isMappaAboveLevel1 = "Yes",
+      isChargedWithSeriousOffence = "No",
       salutation = "Dear Duncan Edwards",
       letterTitle = "DECISION NOT TO RECALL",
       letterDate = "27/09/2022",
