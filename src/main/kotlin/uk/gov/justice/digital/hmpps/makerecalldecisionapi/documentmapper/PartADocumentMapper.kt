@@ -83,9 +83,9 @@ internal class PartADocumentMapper(
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
 
       isUnder18 = generateFixedTermRecallAnswer(recommendation.isOver18?.not(), recommendation),
-      isSentence12MonthsOrOver = convertBooleanToYesNo(recommendation.isSentenceUnder12Months?.not()),
-      isMappaAboveLevel1 = convertBooleanToYesNo(recommendation.isMappaLevelAbove1),
-      isChargedWithSeriousOffence = convertBooleanToYesNo(recommendation.hasBeenConvictedOfSeriousOffence),
+      isSentence12MonthsOrOver = generateFixedTermRecallAnswer(recommendation.isSentenceUnder12Months?.not(), recommendation),
+      isMappaAboveLevel1 = generateFixedTermRecallAnswer(recommendation.isMappaLevelAbove1, recommendation),
+      isChargedWithSeriousOffence = generateFixedTermRecallAnswer(recommendation.hasBeenConvictedOfSeriousOffence, recommendation),
 
       isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
