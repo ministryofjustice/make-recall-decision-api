@@ -97,6 +97,7 @@ dependencies {
   implementation("org.springframework:spring-web:5.3.33") // Address CVE-2024-22243. Until we go to Spring Boot 3
   implementation("org.springframework.security:spring-security-core:5.8.11") // Address CVE-2024-22257. Until we go to Spring Boot 3
   implementation("com.jayway.jsonpath:json-path:2.9.0") // Address CVE-2023-51074 present in 2.7.0 and 2.8.0
+  implementation("io.netty:netty-codec-http:4.1.108.Final") // Address CVE-2024-29025. Until we go to Spring Boot 3
 }
 
 java {
