@@ -8,7 +8,7 @@ plugins {
   kotlin("plugin.spring") version "1.9.23"
 }
 
-jacoco.toolVersion = "0.8.8"
+jacoco.toolVersion = "0.8.11"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
@@ -77,6 +77,8 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.12.5")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
+  testImplementation("net.bytebuddy:byte-buddy:1.14.13") // Needed for Java 21 support until we go to Spring Boot 3
+  testImplementation("net.bytebuddy:byte-buddy-agent:1.14.13") // Needed for Java 21 support until we go to Spring Boot 3
 
   implementation("io.rest-assured:rest-assured")
   implementation("io.rest-assured:json-path")
@@ -99,14 +101,14 @@ dependencies {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(18))
+    languageVersion.set(JavaLanguageVersion.of(21))
   }
 }
 
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "18"
+      jvmTarget = "21"
     }
   }
 }
