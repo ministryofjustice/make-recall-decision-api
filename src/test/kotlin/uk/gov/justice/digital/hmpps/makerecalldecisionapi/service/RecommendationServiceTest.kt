@@ -362,9 +362,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             previousRecalls = updateRecommendationRequest.previousRecalls,
             recallConsideredList = updateRecommendationRequest.recallConsideredList,
             currentRoshForPartA = updateRecommendationRequest.currentRoshForPartA,
-            isOver18 = updateRecommendationRequest.isOver18,
+            isUnder18 = updateRecommendationRequest.isUnder18,
             isMappaLevelAbove1 = updateRecommendationRequest.isMappaLevelAbove1,
-            isSentenceUnder12Months = updateRecommendationRequest.isSentenceUnder12Months,
+            isSentence12MonthsOrOver = updateRecommendationRequest.isSentence12MonthsOrOver,
             hasBeenConvictedOfSeriousOffence = updateRecommendationRequest.hasBeenConvictedOfSeriousOffence,
           ),
         )
