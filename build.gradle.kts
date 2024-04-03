@@ -73,6 +73,10 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.12.5")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
+
+  testImplementation("io.rest-assured:rest-assured")
+  testImplementation("io.rest-assured:json-path")
+  testImplementation("io.rest-assured:xml-path")
 }
 
 java {
