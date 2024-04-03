@@ -95,6 +95,7 @@ tasks {
 }
 
 tasks.test {
+  jvmArgs("-XX:+EnableDynamicAgentLoading")
   finalizedBy(tasks.jacocoTestReport)
 }
 
