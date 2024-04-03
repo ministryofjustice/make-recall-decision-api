@@ -28,7 +28,7 @@ internal class DeleteRecommendationService(
     val recommendations = recommendationRepository.findByCrn(crn).sorted()
     val spoDeleteRecommendationRationale = recommendations[0].data.spoDeleteRecommendationRationale
       ?: throw NoDeletedRecommendationRationaleException("No deleted recommendation rationale available for crn:$crn")
-    val readableNameOfUser = recommendationStatusRepository.findByRecommendationIdAndName(recommendations[0].id, "REC_DELETED").firstOrNull() { it.active }?.createdByUserFullName
+    val readableNameOfUser = recommendationStatusRepository.findByRecommendationIdAndName(recommendations[0].id, "REC_DELETED").firstOrNull { it.active }?.createdByUserFullName
     return ResponseEntity(
       DeleteRecommendationResponse(
         sensitive = recommendations[0].data.sensitive ?: false,

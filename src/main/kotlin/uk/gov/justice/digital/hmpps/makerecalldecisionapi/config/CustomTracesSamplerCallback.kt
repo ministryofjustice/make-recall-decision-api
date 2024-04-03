@@ -2,11 +2,11 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
 import io.sentry.SamplingContext
 import io.sentry.SentryOptions.TracesSamplerCallback
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Component
-import javax.servlet.http.HttpServletRequest
 
-const val defaultSampleRate = 0.05
-const val noSampleRate = 0.0
+const val DEFAULT_SAMPLE_RATE = 0.05
+const val NO_SAMPLE_RATE = 0.0
 
 @Component
 class CustomTracesSamplerCallback : TracesSamplerCallback {
@@ -15,9 +15,9 @@ class CustomTracesSamplerCallback : TracesSamplerCallback {
       val request = customSamplingContext["request"] as HttpServletRequest
       when (request.requestURI) {
         // The health check endpoints are just noise - drop all transactions
-        "/health/liveness" -> noSampleRate
-        "/health/readiness" -> noSampleRate
-        else -> defaultSampleRate
+        "/health/liveness" -> NO_SAMPLE_RATE
+        "/health/readiness" -> NO_SAMPLE_RATE
+        else -> DEFAULT_SAMPLE_RATE
       }
-    } ?: defaultSampleRate
+    } ?: DEFAULT_SAMPLE_RATE
 }

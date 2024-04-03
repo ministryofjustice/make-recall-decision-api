@@ -19,7 +19,5 @@ class HealthController {
       "version" to version(),
     )
 
-  private
-
-  fun version(): String = System.getenv("BUILD_NUMBER") ?: "app_version"
+  private fun version(): String = System.getenv("BUILD_NUMBER") ?: "app_version"
 }

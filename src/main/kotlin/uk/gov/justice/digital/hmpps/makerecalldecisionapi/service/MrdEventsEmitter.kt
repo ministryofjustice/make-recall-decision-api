@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import com.amazonaws.services.sns.AmazonSNSAsync
-import com.amazonaws.services.sns.model.MessageAttributeValue
-import com.amazonaws.services.sns.model.PublishRequest
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
@@ -10,6 +7,9 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.sns.SnsAsyncClient
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue
+import software.amazon.awssdk.services.sns.model.PublishRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
@@ -23,21 +23,24 @@ class MrdEventsEmitter(
   objectMapper: ObjectMapper,
   customTelemetryClient: TelemetryClient,
 ) {
-  private val domainEventTopicSnsClient: AmazonSNSAsync
-  private val topicArn: String
-  private val objectMapper: ObjectMapper
-  private val telemetryClient: TelemetryClient
+  private lateinit var domainEventTopicSnsClient: SnsAsyncClient
+  private lateinit var topicArn: String
+  private lateinit var objectMapper: ObjectMapper
+  private lateinit var telemetryClient: TelemetryClient
 
   init {
     val domainEventTopic: HmppsTopic? = hmppsQueueService.findByTopicId("hmpps-domain-events")
     topicArn = domainEventTopic!!.arn
-    domainEventTopicSnsClient = domainEventTopic.snsClient as AmazonSNSAsync
+    domainEventTopicSnsClient = domainEventTopic.snsClient
     this.objectMapper = objectMapper
     this.telemetryClient = customTelemetryClient
   }
 
   private fun MessageAttributes.forSns(): Map<String, MessageAttributeValue> {
-    val eventType = MessageAttributeValue().withDataType("String").withStringValue(eventType?.value)
+    val eventType = MessageAttributeValue.builder()
+      .dataType("String")
+      .stringValue(eventType?.value)
+      .build()
     return mapOf("eventType" to eventType)
   }
 
@@ -45,8 +48,12 @@ class MrdEventsEmitter(
     try {
       log.info("arn of hmpps-domain-events:: $topicArn")
       val message = objectMapper.writeValueAsString(payload.message)
-      val request = PublishRequest(topicArn, message).withMessageAttributes(payload.messageAttributes?.forSns())
-      domainEventTopicSnsClient.publishAsync(request)
+      val request = PublishRequest.builder()
+        .targetArn(topicArn)
+        .message(message)
+        .messageAttributes(payload.messageAttributes?.forSns())
+        .build()
+      domainEventTopicSnsClient.publish(request)
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
     } catch (e: JsonProcessingException) {
       log.error("Failed to convert payload {} to json", payload)

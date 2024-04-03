@@ -5,7 +5,9 @@ internal data class DocumentRequestQuery(
 )
 
 enum class DocumentRequestType(val type: String) {
-  DOWNLOAD_DOC_X("download-docx"), PREVIEW("preview");
+  DOWNLOAD_DOC_X("download-docx"),
+  PREVIEW("preview"),
+  ;
 
   companion object {
 

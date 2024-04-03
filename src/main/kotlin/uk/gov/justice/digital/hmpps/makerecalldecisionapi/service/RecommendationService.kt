@@ -192,7 +192,7 @@ internal class RecommendationService(
     return recommendationRepository.findByCrn(crn)
       .filter {
         recommendationStatusRepository.findByRecommendationId(it.id).stream()
-          .anyMatch() { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
+          .anyMatch { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
       }.minOrNull()
   }
 

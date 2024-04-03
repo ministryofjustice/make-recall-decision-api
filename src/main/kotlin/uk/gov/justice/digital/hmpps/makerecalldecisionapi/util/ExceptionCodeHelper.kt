@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 
@@ -18,7 +19,7 @@ class ExceptionCodeHelper {
           "TIMEOUT"
         }
         is WebClientResponseException -> {
-          if (exception.rawStatusCode == 404) {
+          if (HttpStatus.NOT_FOUND.isSameCodeAs(exception.statusCode)) {
             if (exception.responseBodyAsString.contains("Latest COMPLETE with types [LAYER_1, LAYER_3] type not found for crn")) {
               log.info("Latest complete assessment not found when trying to get $task for CRN: $crn")
               "NOT_FOUND_LATEST_COMPLETE"
