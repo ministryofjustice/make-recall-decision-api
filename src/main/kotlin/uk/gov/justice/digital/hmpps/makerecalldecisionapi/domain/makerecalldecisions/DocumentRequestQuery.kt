@@ -11,7 +11,7 @@ enum class DocumentRequestType(val type: String) {
 
   companion object {
 
-    private val map = values().associateBy(DocumentRequestType::type)
+    private val map = DocumentRequestType.entries.associateBy(DocumentRequestType::type)
 
     fun fromString(type: String) = map[type]
   }
