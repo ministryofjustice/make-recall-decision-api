@@ -73,7 +73,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
