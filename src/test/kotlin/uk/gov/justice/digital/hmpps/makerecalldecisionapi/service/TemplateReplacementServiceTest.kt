@@ -433,7 +433,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       crn = crn,
       decisionDateTime = LocalDateTime.now(),
       indexOffenceDetails = "Juicy details!",
-      isOver18 = false,
+      isUnder18 = true,
       custodyStatus = CustodyStatus(
         selected = CustodyStatusValue.YES_POLICE,
         details = "Bromsgrove Police Station\r\nLondon",
@@ -450,7 +450,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       whatLedToRecall = "Increasingly violent behaviour",
       isThisAnEmergencyRecall = true,
       isIndeterminateSentence = true,
-      isSentenceUnder12Months = false,
+      isSentence12MonthsOrOver = true,
       isMappaLevelAbove1 = true,
       hasBeenConvictedOfSeriousOffence = true,
       isExtendedSentence = false,

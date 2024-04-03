@@ -214,7 +214,7 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isExtendedSentence = true,
-        isOver18 = true,
+        isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -232,7 +232,7 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isIndeterminateSentence = true,
-        isOver18 = true,
+        isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -251,7 +251,7 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isIndeterminateSentence = false,
         isExtendedSentence = false,
-        isOver18 = true,
+        isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -270,9 +270,9 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isIndeterminateSentence = false,
         isExtendedSentence = false,
-        isOver18 = false,
+        isUnder18 = true,
         isMappaLevelAbove1 = true,
-        isSentenceUnder12Months = true,
+        isSentence12MonthsOrOver = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
