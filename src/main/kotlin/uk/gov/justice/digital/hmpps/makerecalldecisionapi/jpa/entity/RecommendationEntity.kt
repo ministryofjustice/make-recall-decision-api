@@ -3,12 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonMerge
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.hibernate.annotations.JdbcTypeCode
-import org.hibernate.type.SqlTypes
+import org.hibernate.annotations.Type
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookRecallToPpud
@@ -53,7 +53,7 @@ import kotlin.math.abs
 data class RecommendationEntity(
   @Id
   var id: Long = abs(SecureRandom().nextInt().toLong()),
-  @JdbcTypeCode(SqlTypes.JSON)
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel,
   var deleted: Boolean = false,

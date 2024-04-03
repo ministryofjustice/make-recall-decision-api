@@ -62,6 +62,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.3")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:3.1.2")
   implementation("org.json:json:20240303")
 

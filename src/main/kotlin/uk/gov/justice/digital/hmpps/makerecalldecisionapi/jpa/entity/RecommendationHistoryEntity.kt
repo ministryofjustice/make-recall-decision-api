@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 
+import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.hibernate.annotations.JdbcTypeCode
-import org.hibernate.type.SqlTypes
+import org.hibernate.annotations.Type
 import java.security.SecureRandom
 import kotlin.math.abs
 
@@ -18,7 +18,7 @@ data class RecommendationHistoryEntity(
   var modifiedBy: String? = null,
   var modifiedByUserFullName: String? = null,
   var modified: String? = null,
-  @JdbcTypeCode(SqlTypes.JSON)
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb")
   var recommendation: RecommendationModel,
 ) : Comparable<RecommendationHistoryEntity> {
