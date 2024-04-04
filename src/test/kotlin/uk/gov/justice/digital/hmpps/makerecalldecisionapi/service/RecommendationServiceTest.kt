@@ -226,7 +226,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         }
 
         "RECOMMENDATION_STARTED" -> {
-          then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+          then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
           assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
         }
 
@@ -421,7 +421,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         "RECOMMENDATION_STARTED" -> {
           recommendationToSave.data.recommendationStartedDomainEventSent = true
           then(recommendationRepository).should().save(recommendationToSave)
-          then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+          then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
         }
 
         "RECOMMENDATION_STARTED_EVENT_ALREADY_SENT" -> {
@@ -682,7 +682,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       then(recommendationRepository).should().findById(1)
       if (sendSpoDeleteRationaleToDelius == "true") {
         val captor = argumentCaptor<MrdEvent>()
-        then(mrdEmitterMocked).should().sendEvent(captor.capture())
+        then(mrdEmitterMocked).should().sendDomainEvent(captor.capture())
         val mrdEvent = captor.firstValue
         assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
         assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("DECISION_TO_RECALL")
@@ -800,7 +800,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       then(recommendationRepository).should().findById(1)
       if (sentToDelius == "true") {
         val captor = argumentCaptor<MrdEvent>()
-        then(mrdEmitterMocked).should().sendEvent(captor.capture())
+        then(mrdEmitterMocked).should().sendDomainEvent(captor.capture())
         val mrdEvent = captor.firstValue
         assertThat(mrdEvent.message?.personReference?.identifiers?.get(0)?.value).isEqualTo(crn)
         assertThat(mrdEvent.message?.additionalInformation?.contactOutcome).isEqualTo("DECISION_TO_RECALL")
@@ -1785,7 +1785,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
         assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DRAFT)
-        then(mrdEmitterMocked).should().sendEvent(org.mockito.kotlin.any())
+        then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
       } else {
         then(recommendationRepository).should(times(0)).save(any())
 
