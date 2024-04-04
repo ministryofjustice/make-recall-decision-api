@@ -9,9 +9,5 @@
       "groupName": "all non major Gradle dependencies",
       "groupSlug": "all-gradle-minor-patch"
     }
-  ],
-  "ignoreDeps": [
-    "ch.qos.logback:logback-core",
-    "ch.qos.logback:logback-classic"
   ]
 }
