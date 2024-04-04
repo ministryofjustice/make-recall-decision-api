@@ -11,6 +11,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: make-recall-decision-api
   codec:
