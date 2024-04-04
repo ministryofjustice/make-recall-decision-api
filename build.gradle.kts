@@ -22,8 +22,6 @@ testSets {
   "testSmoke"()
 }
 
-val springDocVersion = "1.8.0"
-
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -51,8 +49,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.6.0")
   implementation("io.sentry:sentry-logback:7.6.0")
 
-  implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
-  implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
