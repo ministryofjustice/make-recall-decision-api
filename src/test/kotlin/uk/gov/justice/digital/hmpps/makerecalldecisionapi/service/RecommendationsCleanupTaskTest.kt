@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import java.time.LocalDate
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class RecommendationsCleanupTaskTest {

@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
+import com.google.gson.Gson
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
@@ -144,11 +144,11 @@ internal class RecommendationController(
       recommendationId,
       username,
       readableUserName,
-      null,
-      false,
-      false,
-      refreshProperty,
-      flags,
+      userEmail = null,
+      isPartADownloaded = false,
+      isDntrDownloaded = false,
+      pageRefreshIds = refreshProperty,
+      featureFlags = flags,
     )
   }
 

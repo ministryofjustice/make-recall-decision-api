@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
+import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_GATEWAY
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -26,7 +28,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidati
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationStatusUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
-import javax.validation.ValidationException
 
 @RestControllerAdvice
 class MakeRecallDecisionApiExceptionHandler {
@@ -48,6 +49,20 @@ class MakeRecallDecisionApiExceptionHandler {
   fun handleUserAccessException(e: UserAccessException): ResponseEntity<Unit> {
     log.info("UserAccess exception: {}", e.message)
     return ResponseEntity(FORBIDDEN)
+  }
+
+  @ExceptionHandler(NoResourceFoundException::class)
+  fun handleNoResourceFoundException(e: NoResourceFoundException): ResponseEntity<ErrorResponse> {
+    log.info("No resource found exception: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "No resource found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
   }
 
   @ExceptionHandler(WebClientResponseException.InternalServerError::class)

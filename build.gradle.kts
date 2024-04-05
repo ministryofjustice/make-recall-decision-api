@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.14.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.5"
   kotlin("jvm") version "1.9.23"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -22,14 +22,7 @@ testSets {
   "testSmoke"()
 }
 
-allOpen {
-  annotations("javax.persistence.Entity")
-}
-
-val springDocVersion = "1.8.0"
-
 dependencies {
-
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -53,51 +46,31 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.11.0")
   implementation("org.postgresql:postgresql:42.7.3")
 
-  implementation("io.sentry:sentry-spring-boot-starter:7.6.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.6.0")
   implementation("io.sentry:sentry-logback:7.6.0")
 
-  implementation("org.springdoc:springdoc-openapi-webmvc-core:$springDocVersion")
-  implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
-  implementation("org.springdoc:springdoc-openapi-kotlin:$springDocVersion")
-  implementation("org.springdoc:springdoc-openapi-data-rest:$springDocVersion")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
-  implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.3.1")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:3.1.2")
   implementation("org.json:json:20240303")
+
   testImplementation("org.awaitility:awaitility-kotlin:4.2.1")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
-
   testImplementation("io.jsonwebtoken:jjwt:0.12.5")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
-  testImplementation("net.bytebuddy:byte-buddy:1.14.13") // Needed for Java 21 support until we go to Spring Boot 3
-  testImplementation("net.bytebuddy:byte-buddy-agent:1.14.13") // Needed for Java 21 support until we go to Spring Boot 3
 
-  implementation("io.rest-assured:rest-assured")
-  implementation("io.rest-assured:json-path")
-  implementation("io.rest-assured:xml-path")
-
-  // Update tomcat libraries to address https://nvd.nist.gov/vuln/detail/CVE-2023-41080
-  // Can be removed when parent packages (e.g. springboot) are upgraded
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.87")
-  implementation("org.apache.tomcat.embed:tomcat-embed-el:9.0.87")
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.87")
-  implementation("org.apache.tomcat:tomcat-annotations-api:9.0.87")
-
-  implementation("ch.qos.logback:logback-core:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
-  implementation("ch.qos.logback:logback-classic:1.2.13") // Address CVE-2023-6378. Renovate config ignores upgrades so remove from there when this is removed
-
-  implementation("org.springframework:spring-web:5.3.33") // Address CVE-2024-22243. Until we go to Spring Boot 3
-  implementation("org.springframework.security:spring-security-core:5.8.11") // Address CVE-2024-22257. Until we go to Spring Boot 3
-  implementation("com.jayway.jsonpath:json-path:2.9.0") // Address CVE-2023-51074 present in 2.7.0 and 2.8.0
-  implementation("io.netty:netty-codec-http:4.1.108.Final") // Address CVE-2024-29025. Until we go to Spring Boot 3
+  testImplementation("io.rest-assured:rest-assured")
+  testImplementation("io.rest-assured:json-path")
+  testImplementation("io.rest-assured:xml-path")
 }
 
 java {
@@ -115,6 +88,7 @@ tasks {
 }
 
 tasks.test {
+  jvmArgs("-XX:+EnableDynamicAgentLoading")
   finalizedBy(tasks.jacocoTestReport)
 }
 
@@ -127,7 +101,7 @@ tasks.jacocoTestReport {
 
 val SourceSet.kotlin: SourceDirectorySet
   get() = project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>().sourceSets.getByName(
-    name
+    name,
   ).kotlin
 
 sourceSets {
@@ -147,6 +121,6 @@ task<Test>("functional-test-light") {
   useJUnitPlatform()
 }
 
-tasks.withType<Jar>() {
+tasks.withType<Jar> {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

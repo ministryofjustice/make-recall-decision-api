@@ -116,8 +116,9 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
             bookingId = 123,
             courtDescription = "GHI",
             sentenceDate = LocalDate.now().minusMonths(3).minusDays(1),
+            // sentence date is in the past and so this result should not be returned.
             sentenceEndDate = LocalDate.now()
-              .minusDays(1), // sentence date is in the past and so this result should not be returned.
+              .minusDays(1),
           ),
 
           Sentence(

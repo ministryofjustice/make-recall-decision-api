@@ -3,9 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonMerge
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import io.hypersistence.utils.hibernate.type.json.JsonType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookRecallToPpud
@@ -43,19 +46,14 @@ import java.io.Serializable
 import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 import kotlin.math.abs
 
 @Entity
 @Table(name = "recommendations")
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 data class RecommendationEntity(
   @Id
-  open var id: Long = abs(SecureRandom().nextInt().toLong()),
-  @Type(type = "jsonb")
+  var id: Long = abs(SecureRandom().nextInt().toLong()),
+  @Type(JsonType::class)
   @Column(columnDefinition = "jsonb")
   var data: RecommendationModel,
   var deleted: Boolean = false,
@@ -87,7 +85,8 @@ data class RecommendationModel(
   var custodyStatus: CustodyStatus? = null,
   var localPoliceContact: LocalPoliceContact? = null,
   var responseToProbation: String? = null,
-  var thoughtsLeadingToRecall: String? = null, // deprecated
+  // deprecated
+  var thoughtsLeadingToRecall: String? = null,
   var triggerLeadingToRecall: String? = null,
   var whatLedToRecall: String? = null,
   @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
@@ -110,7 +109,8 @@ data class RecommendationModel(
   var spoRecallRationale: String? = null,
   var spoDeleteRecommendationRationale: String? = null,
   var sendSpoDeleteRationaleToDelius: Boolean? = false,
-  var spoCancelRecommendationRationale: String? = null, // deprecated
+  // deprecated
+  var spoCancelRecommendationRationale: String? = null,
   var reviewOffenderProfile: Boolean? = null,
   var explainTheDecision: Boolean? = null,
   var lastModifiedBy: String? = null,
@@ -163,26 +163,42 @@ data class RecommendationModel(
   val bookRecallToPpud: BookRecallToPpud? = null,
   val ppudOffender: PpudOffender? = null,
   val bookingMemento: BookingMemento? = null,
-  var isOver18: Boolean? = null, // deprecated
+  // deprecated
+  var isOver18: Boolean? = null,
   var isUnder18: Boolean? = null,
   var isMappaLevelAbove1: Boolean? = null,
-  var isSentenceUnder12Months: Boolean? = null, // deprecated
+  // deprecated
+  var isSentenceUnder12Months: Boolean? = null,
   var isSentence12MonthsOrOver: Boolean? = null,
   var hasBeenConvictedOfSeriousOffence: Boolean? = null,
-  var userNamePartACompletedBy: String? = null, // deprecated
-  var userEmailPartACompletedBy: String? = null, // deprecated
-  var lastPartADownloadDateTime: LocalDateTime? = null, // deprecated
-  var countersignSpoDateTime: LocalDateTime? = null, // deprecated
-  var countersignSpoName: String? = null, // deprecated
-  var acoCounterSignEmail: String? = null, // deprecated
-  var spoCounterSignEmail: String? = null, // deprecated
-  var countersignAcoName: String? = null, // deprecated
-  var countersignAcoDateTime: LocalDateTime? = null, // deprecated
-  var deleted: Boolean = false, // deprecated
+  // deprecated
+  var userNamePartACompletedBy: String? = null,
+  // deprecated
+  var userEmailPartACompletedBy: String? = null,
+  // deprecated
+  var lastPartADownloadDateTime: LocalDateTime? = null,
+  // deprecated
+  var countersignSpoDateTime: LocalDateTime? = null,
+  // deprecated
+  var countersignSpoName: String? = null,
+  // deprecated
+  var acoCounterSignEmail: String? = null,
+  // deprecated
+  var spoCounterSignEmail: String? = null,
+  // deprecated
+  var countersignAcoName: String? = null,
+  // deprecated
+  var countersignAcoDateTime: LocalDateTime? = null,
+  // deprecated
+  var deleted: Boolean = false,
 ) : Serializable
 
 enum class Status {
-  DRAFT, DELETED, RECALL_CONSIDERED, DOCUMENT_DOWNLOADED, DOCUMENT_CREATED
+  DRAFT,
+  DELETED,
+  RECALL_CONSIDERED,
+  DOCUMENT_DOWNLOADED,
+  DOCUMENT_CREATED,
 }
 
 data class TextValueOption(

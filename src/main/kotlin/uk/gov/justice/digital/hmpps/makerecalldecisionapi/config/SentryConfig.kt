@@ -5,14 +5,14 @@ import io.sentry.Hint
 import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.SentryOptions
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Component
 class SentryContextAppender : HandlerInterceptor {

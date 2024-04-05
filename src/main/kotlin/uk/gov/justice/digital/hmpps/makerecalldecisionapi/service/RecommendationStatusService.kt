@@ -49,6 +49,7 @@ internal class RecommendationStatusService(
   ): List<RecommendationStatusResponse> {
     return recommendationStatusRepository.findByRecommendationId(recommendationId)
       .map { it.toRecommendationStatusResponse() }
+      .sortedBy { it.modified }
   }
 
   private fun activateNewStatus(
