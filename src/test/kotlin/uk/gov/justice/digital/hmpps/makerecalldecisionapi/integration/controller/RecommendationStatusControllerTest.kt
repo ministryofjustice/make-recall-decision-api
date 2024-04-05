@@ -75,6 +75,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
 
     // and
     assertThat(newStatusActivated.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(newStatusActivated.get("name")).isEqualTo("NEW_STATUS")
     assertThat(newStatusActivated.get("active")).isEqualTo(true)
     assertThat(newStatusActivated.get("createdBy")).isEqualTo("SOME_USER")
     assertThat(newStatusActivated.get("createdByUserFullName")).isEqualTo("some_user")
@@ -82,10 +83,10 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(newStatusActivated.get("modifiedBy")).isEqualTo(null)
     assertThat(newStatusActivated.get("modified")).isEqualTo(null)
     assertThat(newStatusActivated.get("modifiedByUserFullName")).isEqualTo(null)
-    assertThat(newStatusActivated.get("name")).isEqualTo("NEW_STATUS")
 
     // and
     assertThat(anotherNewStatusActivated.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(anotherNewStatusActivated.get("name")).isEqualTo("ANOTHER_NEW_STATUS")
     assertThat(anotherNewStatusActivated.get("active")).isEqualTo(true)
     assertThat(anotherNewStatusActivated.get("createdBy")).isEqualTo("SOME_USER")
     assertThat(anotherNewStatusActivated.get("createdByUserFullName")).isEqualTo("some_user")
@@ -93,10 +94,10 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(anotherNewStatusActivated.get("modifiedBy")).isEqualTo(null)
     assertThat(anotherNewStatusActivated.get("modified")).isEqualTo(null)
     assertThat(anotherNewStatusActivated.get("modifiedByUserFullName")).isEqualTo(null)
-    assertThat(anotherNewStatusActivated.get("name")).isEqualTo("ANOTHER_NEW_STATUS")
 
     // and
     assertThat(oldStatusDeactivated.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(oldStatusDeactivated.get("name")).isEqualTo("OLD_STATUS")
     assertThat(oldStatusDeactivated.get("active")).isEqualTo(false)
     assertThat(oldStatusDeactivated.get("createdBy")).isEqualTo("SOME_USER")
     assertThat(oldStatusDeactivated.get("createdByUserFullName")).isEqualTo("some_user")
@@ -104,10 +105,10 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(oldStatusDeactivated.get("modifiedBy")).isEqualTo("SOME_USER")
     assertThat(oldStatusDeactivated.get("modified")).isNotNull
     assertThat(oldStatusDeactivated.get("modifiedByUserFullName")).isEqualTo("some_user")
-    assertThat(oldStatusDeactivated.get("name")).isEqualTo("OLD_STATUS")
 
     // and
     assertThat(anotherOldStatusDeactivated.get("recommendationId")).isEqualTo(createdRecommendationId)
+    assertThat(anotherOldStatusDeactivated.get("name")).isEqualTo("ANOTHER_OLD_STATUS")
     assertThat(anotherOldStatusDeactivated.get("active")).isEqualTo(false)
     assertThat(anotherOldStatusDeactivated.get("createdBy")).isEqualTo("SOME_USER")
     assertThat(anotherOldStatusDeactivated.get("createdByUserFullName")).isEqualTo("some_user")
@@ -115,7 +116,6 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     assertThat(anotherOldStatusDeactivated.get("modifiedBy")).isEqualTo("SOME_USER")
     assertThat(anotherOldStatusDeactivated.get("modified")).isNotNull
     assertThat(anotherOldStatusDeactivated.get("modifiedByUserFullName")).isEqualTo("some_user")
-    assertThat(anotherOldStatusDeactivated.get("name")).isEqualTo("ANOTHER_OLD_STATUS")
   }
 
   @Test

@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import com.amazonaws.services.sns.AmazonSNSAsync
-import com.amazonaws.services.sns.model.PublishRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import software.amazon.awssdk.services.sns.SnsAsyncClient
+import software.amazon.awssdk.services.sns.model.PublishRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AdditionalInformation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.IdentifierTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MessageAttributes
@@ -41,7 +41,7 @@ class MrdEventsEmitterTest {
   private lateinit var publishRequestCaptor: ArgumentCaptor<PublishRequest>
 
   private val hmppsQueueService = mock<HmppsQueueService>()
-  private val domainEventSnsClient = mock<AmazonSNSAsync>()
+  private val domainEventSnsClient = mock<SnsAsyncClient>()
 
   @BeforeEach
   fun setup() {
@@ -54,7 +54,7 @@ class MrdEventsEmitterTest {
   @Test
   fun `will add payload as message`() {
     service.sendEvent(testPayload())
-    verify(domainEventSnsClient).publishAsync(publishRequestCaptor.capture())
+    verify(domainEventSnsClient).publish(publishRequestCaptor.capture())
     val request = publishRequestCaptor.value
 
     assertThat(request).extracting("message")

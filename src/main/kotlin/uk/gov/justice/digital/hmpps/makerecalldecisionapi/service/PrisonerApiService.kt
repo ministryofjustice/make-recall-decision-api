@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import java.time.LocalDate
-import java.util.*
+import java.util.Base64
 
 @Service
 internal class PrisonerApiService(

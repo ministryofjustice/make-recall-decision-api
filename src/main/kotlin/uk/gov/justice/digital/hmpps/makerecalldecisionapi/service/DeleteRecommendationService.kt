@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,17 +17,13 @@ internal class DeleteRecommendationService(
   val recommendationStatusRepository: RecommendationStatusRepository,
   @Value("\${mrd.url}") private val mrdUrl: String? = null,
 ) {
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
   suspend fun getDeleteRecommendationResponse(
     crn: String,
   ): ResponseEntity<DeleteRecommendationResponse> {
     val recommendations = recommendationRepository.findByCrn(crn).sorted()
     val spoDeleteRecommendationRationale = recommendations[0].data.spoDeleteRecommendationRationale
       ?: throw NoDeletedRecommendationRationaleException("No deleted recommendation rationale available for crn:$crn")
-    val readableNameOfUser = recommendationStatusRepository.findByRecommendationIdAndName(recommendations[0].id, "REC_DELETED").firstOrNull() { it.active }?.createdByUserFullName
+    val readableNameOfUser = recommendationStatusRepository.findByRecommendationIdAndName(recommendations[0].id, "REC_DELETED").firstOrNull { it.active }?.createdByUserFullName
     return ResponseEntity(
       DeleteRecommendationResponse(
         sensitive = recommendations[0].data.sensitive ?: false,

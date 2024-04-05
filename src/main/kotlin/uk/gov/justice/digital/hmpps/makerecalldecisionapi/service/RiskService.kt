@@ -154,7 +154,7 @@ internal class RiskService(
   private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
     assessmentsResponse.assessments
       ?.sortedBy { it.dateCompleted ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
-      ?.lastOrNull() { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
+      ?.lastOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
 
   private fun isLatestAssessment(it: Assessment?) =
     (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
@@ -238,7 +238,11 @@ internal class RiskService(
       null
     } else {
       PredictorScore(
-        date = if (riskScoreResponse.completedDate == null) null else { LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString() },
+        date = if (riskScoreResponse.completedDate == null) {
+          null
+        } else {
+          LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString()
+        },
         scores = scores,
       )
     }
