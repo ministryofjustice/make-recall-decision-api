@@ -47,9 +47,9 @@ slack-fail-post-step: &slack-fail-post-step
 
 jobs:
   validate:
-    machine:
-      image: default
-      docker_layer_caching: true
+    executor:
+      name: hmpps/java
+      tag: "21.0"
     resource_class: xlarge
     steps:
       - checkout
