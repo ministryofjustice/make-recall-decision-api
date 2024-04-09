@@ -48,7 +48,7 @@ slack-fail-post-step: &slack-fail-post-step
 jobs:
   validate:
     executor:
-      name: hmpps/java
+      name: hmpps/java_postgres
       tag: "21.0"
     resource_class: xlarge
     steps:
