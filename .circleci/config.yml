@@ -47,9 +47,13 @@ slack-fail-post-step: &slack-fail-post-step
 
 jobs:
   validate:
-    machine:
-      image: default
-      docker_layer_caching: true
+    executor:
+      name: hmpps/java_postgres
+      jdk_tag: "21.0"
+      postgres_tag: "14"
+      postgres_username: mrd_user
+      postgres_password: secret
+      postgres_db: "make_recall_decision"
     resource_class: xlarge
     steps:
       - checkout
@@ -57,6 +61,7 @@ jobs:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
+      - hmpps/wait_till_ready_postgres
       - run:
           name: Run check & send results to sonarcloud
           command: |

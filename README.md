@@ -116,6 +116,7 @@ The functional test is a black box test of the MRD API. It runs against the dev 
 Run the following script to run all the integraiton and unit tests locally:
 
 ```
+docker-compose -f docker-compose-postgres.yml up
 ./gradlew check
 ```
 
