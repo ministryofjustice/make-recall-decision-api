@@ -61,6 +61,7 @@ jobs:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
+      - hmpps/wait_till_ready_postgres
       - run:
           name: Run check & send results to sonarcloud
           command: |
