@@ -53,7 +53,7 @@ jobs:
       postgres_tag: "14"
       postgres_username: mrd_user
       postgres_password: secret
-      postgres_db: "make-recall-decision"
+      postgres_db: "make_recall_decision"
     resource_class: xlarge
     steps:
       - checkout
