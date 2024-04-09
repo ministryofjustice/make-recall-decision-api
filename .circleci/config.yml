@@ -49,7 +49,8 @@ jobs:
   validate:
     executor:
       name: hmpps/java_postgres
-      tag: "21.0"
+      jdk_tag: "21.0"
+      postgres_tag: "14"
     resource_class: xlarge
     steps:
       - checkout
