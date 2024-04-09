@@ -77,7 +77,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUnavailableResponse
-import java.util.concurrent.TimeUnit
+import java.io.File
+import java.nio.file.Paths
+import java.sql.DriverManager
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -133,24 +135,44 @@ abstract class IntegrationTestBase {
     @JvmStatic
     var postgresStarted = false
 
+    fun popDb() {
+      val currentDirectory = File(".").absoluteFile.parentFile
+      val resourcesDirectory = Paths.get(currentDirectory.toString(), "src", "main", "resources", "db", "migration").toString()
+
+      val url = "jdbc:postgresql://localhost:5432/make_recall_decision"
+      val user = "mrd_user"
+      val password = "secret"
+
+      val sqlFiles = listOf(
+        "V1_0__RECOMMENDATIONS_TABLE.sql",
+        "V1_1__RECOMMENDATIONS_TABLE.sql",
+        "V1_2__RECOMMENDATIONS_TABLE.sql",
+        "V1_11__RECOMMENDATION_STATUS_TABLE.sql",
+        "V1_13__RECOMMENDATION_STATUS_TABLE.sql",
+        "V1_14__RECOMMENDATION_HISTORY_TABLE.sql",
+        "V1_15__RECOMMENDATION_STATUS_TABLE.sql",
+        "V1_16__DATA_MIGRATION.sql",
+        "V1_24__PPUD_USERS_TABLE.sql",
+        "V1_25__RECOMMENDATION_DOCUMENT_TABLE.sql",
+      )
+
+      Class.forName("org.postgresql.Driver")
+      DriverManager.getConnection(url, user, password).use { connection ->
+        for (sqlFile in sqlFiles) {
+          val file = File(resourcesDirectory, sqlFile)
+          val script = file.readText()
+          connection.prepareStatement(script).use { statement ->
+            statement.execute()
+          }
+        }
+      }
+    }
+
     @JvmStatic
     @BeforeAll
     fun setUpDb() {
       if (postgresStarted) return
-      val postgresProcess =
-        ProcessBuilder("docker", "compose", "-f", "docker-compose-integration-test-postgres.yml", "up", "-d").start()
-      postgresProcess.waitFor(120L, TimeUnit.SECONDS)
-      val waitForProcess = ProcessBuilder(
-        "./scripts/wait-for-it.sh",
-        "127.0.0.1:5432",
-        "--strict",
-        "-t",
-        "600",
-        "--",
-        "sleep",
-        "10",
-      ).start()
-      waitForProcess.waitFor(60L, TimeUnit.SECONDS)
+      popDb()
       postgresStarted = true
     }
   }
