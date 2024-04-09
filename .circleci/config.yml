@@ -51,6 +51,8 @@ jobs:
       name: hmpps/java_postgres
       jdk_tag: "21.0"
       postgres_tag: "14"
+      postgres_username: mrd_user
+      postgres_password: secret
     resource_class: xlarge
     steps:
       - checkout
