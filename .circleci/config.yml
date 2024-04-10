@@ -66,7 +66,7 @@ jobs:
           name: Run check & send results to sonarcloud
           command: |
             export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
-            ./gradlew check sonarqube
+            ./gradlew check
       - save_cache:
           paths:
             - ~/.gradle
