@@ -44,7 +44,7 @@ class MrdEventsEmitter(
     return mapOf("eventType" to eventType)
   }
 
-  fun sendEvent(payload: MrdEvent) {
+  fun sendDomainEvent(payload: MrdEvent) {
     try {
       log.info("arn of hmpps-domain-events:: $topicArn")
       val message = objectMapper.writeValueAsString(payload.message)
@@ -55,6 +55,15 @@ class MrdEventsEmitter(
         .build()
       domainEventTopicSnsClient.publish(request)
       telemetryClient.trackEvent(payload.message?.eventType, asTelemetryMap(payload), null)
+    } catch (e: JsonProcessingException) {
+      log.error("Failed to convert payload {} to json", payload)
+    }
+  }
+
+  fun sendAppInsightsEvent(payload: Map<String?, String?>, eventType: String) {
+    try {
+      log.info("sending App Insights event for deleted recommendation:: ${payload["recommendationId"]}")
+      telemetryClient.trackEvent(eventType, payload, null)
     } catch (e: JsonProcessingException) {
       log.error("Failed to convert payload {} to json", payload)
     }

@@ -38,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toSystemDeleteRecommendationEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
@@ -689,7 +690,7 @@ internal class RecommendationService(
   }
 
   private fun sendMrdEventToEventsEmitter(mrdEvent: MrdEvent) {
-    mrdEventsEmitter?.sendEvent(mrdEvent)
+    mrdEventsEmitter?.sendDomainEvent(mrdEvent)
   }
 
   private fun sendManagerRecallDecisionMadeEvent(crn: String?, contactOutcome: String?, username: String) {
@@ -730,7 +731,7 @@ internal class RecommendationService(
   }
 
   fun sendSystemDeleteRecommendationEvent(crn: String?, username: String) {
-    mrdEventsEmitter?.sendEvent(
+    mrdEventsEmitter?.sendDomainEvent(
       toDeleteRecommendationRationaleDomainEventPayload(
         crn = crn,
         recommendationUrl = "$mrdUrl/cases/$crn/overview",
@@ -738,6 +739,18 @@ internal class RecommendationService(
         username = username,
         detailUrl = "$mrdApiUrl/system-delete-recommendation/$crn",
       ),
+    )
+  }
+
+  fun sendSystemDeleteRecommendationAppInsightsEvent(crn: String?, username: String?, recommendationId: String?, region: String?) {
+    mrdEventsEmitter?.sendAppInsightsEvent(
+      payload = toSystemDeleteRecommendationEventPayload(
+        crn = crn,
+        username = username,
+        recommendationId = recommendationId,
+        region = region,
+      ),
+      eventType = "mrdDeletedRecommendation",
     )
   }
 

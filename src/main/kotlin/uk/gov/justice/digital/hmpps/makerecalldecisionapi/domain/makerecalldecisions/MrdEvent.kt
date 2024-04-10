@@ -45,6 +45,20 @@ fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
   )
 }
 
+fun toSystemDeleteRecommendationEventPayload(
+  region: String?,
+  crn: String?,
+  recommendationId: String?,
+  username: String?,
+): Map<String?, String?> {
+  return mapOf(
+    "userName" to username,
+    "crn" to crn,
+    "recommendationId" to recommendationId,
+    "region" to region,
+  )
+}
+
 fun toDeleteRecommendationRationaleDomainEventPayload(
   recommendationUrl: String?,
   crn: String?,

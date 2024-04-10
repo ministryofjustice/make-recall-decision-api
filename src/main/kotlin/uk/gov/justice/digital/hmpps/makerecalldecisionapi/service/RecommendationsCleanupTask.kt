@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation.SERIALIZABLE
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
+// import java.util.concurrent.TimeUnit
 
 @Service
 internal class RecommendationsCleanupTask(
@@ -25,11 +26,12 @@ internal class RecommendationsCleanupTask(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(
-    timeUnit = TimeUnit.MINUTES,
-    initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
-    fixedRateString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
-  )
+  // TODO re-enable once the correctAppInsightsEventsForPreviouslyDeletedStaleRecommendations(..) task has run
+//  @Scheduled(
+//    timeUnit = TimeUnit.MINUTES,
+//    initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
+//    fixedRateString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10,20) }",
+//  )
   @Transactional(isolation = SERIALIZABLE)
   fun softDeleteOldRecommendations() {
     val thresholdDate = LocalDate.now().minusDays(21)
@@ -45,6 +47,7 @@ internal class RecommendationsCleanupTask(
               it.data.createdBy ?: MrdTextConstants.EMPTY_STRING,
             )
             log.info("System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}")
+            sendAppInsightsEvent(it)
           },
           {
             val message = "Recommendation not found for id $openRecommendationId"
@@ -53,5 +56,35 @@ internal class RecommendationsCleanupTask(
         )
       }
     }
+  }
+
+  @Scheduled(
+    initialDelay = 0,
+    fixedDelay = -1,
+  ) // run immediately once, and never again
+  @Transactional(isolation = SERIALIZABLE)
+  fun correctAppInsightsEventsForPreviouslyDeletedStaleRecommendations() {
+    val recommendationIds = recommendationStatusRepository.findStaleRecommendationsForAppInsightsEventCorrection()
+    recommendationIds.forEach { recommendationId ->
+      val recommendation = recommendationRepository.findById(recommendationId)
+      recommendation.ifPresentOrElse(
+        {
+          sendAppInsightsEvent(it)
+        },
+        {
+          val message = "Recommendation not found for id $recommendationId"
+          log.error(message, RecommendationNotFoundException(message))
+        },
+      )
+    }
+  }
+
+  private fun sendAppInsightsEvent(it: RecommendationEntity) {
+    recommendationService.sendSystemDeleteRecommendationAppInsightsEvent(
+      crn = it.data.crn,
+      recommendationId = it.id.toString(),
+      region = it.data.region,
+      username = it.data.createdBy,
+    )
   }
 }

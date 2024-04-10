@@ -53,7 +53,7 @@ class MrdEventsEmitterTest {
 
   @Test
   fun `will add payload as message`() {
-    service.sendEvent(testPayload())
+    service.sendDomainEvent(testPayload())
     verify(domainEventSnsClient).publish(publishRequestCaptor.capture())
     val request = publishRequestCaptor.value
 
@@ -63,7 +63,7 @@ class MrdEventsEmitterTest {
 
   @Test
   fun `will add telemetry event`() {
-    service.sendEvent(testPayloadDntrDownload())
+    service.sendDomainEvent(testPayloadDntrDownload())
 
     verify(customTelemetryClient).trackEvent(
       ArgumentMatchers.eq("DNTR_LETTER_DOWNLOADED"),
@@ -90,6 +90,32 @@ class MrdEventsEmitterTest {
         "6584074d-6c22-426b-a1cf-cbc472080d99",
       ),
     )
+  }
+
+  @Test
+  fun `will send app insights event`() {
+    // given
+    val expectedEventType = "mrdDeletedRecommendation"
+
+    val expectedPayload: Map<String?, String> = mapOf(
+      "userName" to "bill",
+      "crn" to "1234",
+      "recommendationId" to "123",
+      "region" to "region",
+    )
+
+    // when
+    service.sendAppInsightsEvent(expectedPayload, expectedEventType)
+
+    // then
+    verify(customTelemetryClient).trackEvent(
+      ArgumentMatchers.eq(expectedEventType),
+      telemetryAttributesCaptor.capture(),
+      ArgumentMatchers.isNull(),
+    )
+
+    // and
+    assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(expectedPayload)
   }
 
   private fun testPayload(): MrdEvent {
