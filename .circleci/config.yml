@@ -54,6 +54,12 @@ jobs:
       postgres_username: mrd_user
       postgres_password: secret
       postgres_db: "make_recall_decision"
+    environment:
+      _JAVA_OPTIONS: -Xmx2g -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 
+        -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 
+        -Dorg.gradle.daemon=false 
+        -Dkotlin.compiler.execution.strategy=in-process 
+        -Dorg.gradle.workers.max=1
     resource_class: xlarge
     steps:
       - checkout
@@ -66,7 +72,7 @@ jobs:
           name: Run check & send results to sonarcloud
           command: |
             export GRADLE_OPTS="--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED"
-            ./gradlew check
+            ./gradlew check sonar
       - save_cache:
           paths:
             - ~/.gradle
