@@ -30,8 +30,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.12.4")
-  implementation("io.opentelemetry:opentelemetry-api:1.36.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
+  implementation("io.opentelemetry:opentelemetry-api:1.37.0")
   implementation("joda-time:joda-time:2.12.7")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -46,8 +46,8 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.11.0")
   implementation("org.postgresql:postgresql:42.7.3")
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.6.0")
-  implementation("io.sentry:sentry-logback:7.6.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.8.0")
+  implementation("io.sentry:sentry-logback:7.8.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
