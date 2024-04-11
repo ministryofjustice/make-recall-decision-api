@@ -22,7 +22,10 @@ class CaseOverviewControllerTest(
 
   @ParameterizedTest
   @CsvSource("REC_CLOSED,false", "SOME_OPEN_STATUS,true")
-  fun `no active recommendation available when available when BOOK_TO_PPUD or DNTR_DOWNLOADED status active`(status: String, expected: Boolean) {
+  fun `no active recommendation available when available when BOOK_TO_PPUD or DNTR_DOWNLOADED status active`(
+    status: String,
+    expected: Boolean,
+  ) {
     runTest {
       val featureFlagString = "{\"flagConsiderRecall\": true }"
       userAccessAllowed(crn)
@@ -30,7 +33,7 @@ class CaseOverviewControllerTest(
       overviewResponse(crn)
       oasysAssessmentsResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
-      createOrUpdateRecommendationStatus(activate = status, anotherToActivate = "ANOTHER_STATUS")
+      createOrUpdateRecommendationStatus(activate = listOf(status))
       riskManagementPlanResponse(crn)
 
       val response = convertResponseToJSONObject(

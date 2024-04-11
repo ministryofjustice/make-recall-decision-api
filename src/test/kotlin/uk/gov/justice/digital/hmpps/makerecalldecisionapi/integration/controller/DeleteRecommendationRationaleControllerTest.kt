@@ -17,7 +17,10 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     // given
     createRecommendation()
     updateRecommendation()
-    createOrUpdateRecommendationStatus(activate = "REC_DELETED", anotherToActivate = "ANOTHER_STATUS", subject = "prince herbert")
+    createOrUpdateRecommendationStatus(
+      activate = listOf("REC_DELETED"),
+      subject = "prince herbert",
+    )
     softDeleteRecommendation()
 
     // when
@@ -48,7 +51,7 @@ class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
     // given
     createRecommendation()
     updateRecommendation()
-    createOrUpdateRecommendationStatus(activate = "REC_DELETED", anotherToActivate = "ANOTHER_STATUS", subject = "prince herbert")
+    createOrUpdateRecommendationStatus(activate = listOf("REC_DELETED"), subject = "prince herbert")
 
     // when
     val response = convertResponseToJSONObject(

@@ -2097,7 +2097,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             active = true,
             created = null,
             createdBy = null,
-            name = "COMPLETED",
+            name = "PP_DOCUMENT_CREATED",
             recommendationId = recommendation3.id,
           ),
         ),
