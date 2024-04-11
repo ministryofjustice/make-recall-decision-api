@@ -122,5 +122,6 @@ class RecommendationsCleanupTaskTest {
 
     // then
     Mockito.verify(recommendationService).sendSystemDeleteRecommendationAppInsightsEvent(any(), any(), any(), any())
+    Mockito.verify(recommendationStatusRepository).save(any())
   }
 }
