@@ -263,10 +263,8 @@ abstract class IntegrationTestBase {
   }
 
   fun createOrUpdateRecommendationStatus(
-    activate: String,
-    anotherToActivate: String? = null,
-    deactivate: String? = null,
-    anotherToDeactivate: String? = null,
+    activate: List<String>,
+    deactivate: List<String> = emptyList(),
     subject: String? = "SOME_USER",
   ) =
     convertResponseToJSONArray(
@@ -277,9 +275,7 @@ abstract class IntegrationTestBase {
           BodyInserters.fromValue(
             recommendationStatusRequest(
               activate = activate,
-              anotherToActivate = anotherToActivate,
               deactivate = deactivate,
-              anotherToDeactivate = anotherToDeactivate,
             ),
           ),
         )

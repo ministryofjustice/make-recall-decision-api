@@ -18,7 +18,7 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     createRecommendation()
 
     // when
-    val response = createOrUpdateRecommendationStatus(activate = "NEW_STATUS", anotherToActivate = "ANOTHER_NEW_STATUS")
+    val response = createOrUpdateRecommendationStatus(activate = listOf("NEW_STATUS", "ANOTHER_NEW_STATUS"))
 
     // then
     val newStatus = JSONObject(response.get(0).toString())
@@ -49,12 +49,10 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
   fun `update recommendation statuses`() {
     // given
     createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS")) // 2 here
     createOrUpdateRecommendationStatus(
-      activate = "NEW_STATUS",
-      anotherToActivate = "ANOTHER_NEW_STATUS",
-      deactivate = "OLD_STATUS",
-      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      activate = listOf("NEW_STATUS", "ANOTHER_NEW_STATUS"),
+      deactivate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS"),
     ) // 3 here
 
     // when
@@ -123,14 +121,13 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     // given
     userResponse("pp_user", "pp@domain.com")
     createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS")) // 2 here
     createOrUpdateRecommendationStatus(
-      activate = "PO_RECALL_CONSULT_SPO",
-      anotherToActivate = "ANOTHER_NEW_STATUS",
-      deactivate = "OLD_STATUS",
-      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      activate = listOf("PO_RECALL_CONSULT_SPO", "ANOTHER_NEW_STATUS"),
+      deactivate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS"),
       subject = "pp_user",
     ) // 3 here
+
     // when
     val expectBody = webTestClient.get()
       .uri("/recommendations/$createdRecommendationId/statuses")
@@ -154,14 +151,13 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     // given
     userResponse("aco_user", "aco@domain.com")
     createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS")) // 2 here
     createOrUpdateRecommendationStatus(
-      activate = "ACO_SIGNED",
-      anotherToActivate = "ANOTHER_NEW_STATUS",
-      deactivate = "OLD_STATUS",
-      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      activate = listOf("ACO_SIGNED", "ANOTHER_NEW_STATUS"),
+      deactivate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS"),
       subject = "aco_user",
     ) // 3 here
+
     // when
     val expectBody = webTestClient.get()
       .uri("/recommendations/$createdRecommendationId/statuses")
@@ -185,12 +181,10 @@ class RecommendationStatusControllerTest() : IntegrationTestBase() {
     // given
     userResponse("spo_user", "spo@domain.com")
     createRecommendation()
-    createOrUpdateRecommendationStatus(activate = "OLD_STATUS", anotherToActivate = "ANOTHER_OLD_STATUS") // 2 here
+    createOrUpdateRecommendationStatus(activate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS")) // 2 here
     createOrUpdateRecommendationStatus(
-      activate = "SPO_SIGNED",
-      anotherToActivate = "ANOTHER_NEW_STATUS",
-      deactivate = "OLD_STATUS",
-      anotherToDeactivate = "ANOTHER_OLD_STATUS",
+      activate = listOf("SPO_SIGNED", "ANOTHER_NEW_STATUS"),
+      deactivate = listOf("OLD_STATUS", "ANOTHER_OLD_STATUS"),
       subject = "spo_user",
     ) // 3 here
 

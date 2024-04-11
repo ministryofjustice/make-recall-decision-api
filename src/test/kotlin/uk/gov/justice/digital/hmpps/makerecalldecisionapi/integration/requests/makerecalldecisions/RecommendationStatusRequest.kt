@@ -1,14 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions
 
 fun recommendationStatusRequest(
-  activate: String,
-  anotherToActivate: String? = null,
-  deactivate: String? = null,
-  anotherToDeactivate: String? = null,
+  activate: List<String>,
+  deactivate: List<String> = emptyList(),
 ): String {
-  return if (anotherToActivate != null) {
-    """{"activate": ["$activate", "$anotherToActivate"], "deActivate": ["$deactivate", "$anotherToDeactivate"]}""".trimIndent()
-  } else {
-    ""
-  }
+  val active = activate.map { '"' + it + '"' }.joinToString(separator = ",")
+  val deactive = deactivate.map { '"' + it + '"' }.joinToString(separator = ",")
+
+  return """{"activate": [$active], "deActivate": [$deactive]}""".trimIndent()
 }

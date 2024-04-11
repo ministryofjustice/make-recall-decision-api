@@ -39,36 +39,6 @@ import java.time.format.DateTimeFormatter
 class RecommendationControllerTest() : IntegrationTestBase() {
 
   @Test
-  fun `get latest complete recommendation overview for a document sent to ppcs`() {
-    // given
-    createSingleCompletedRecommendationWithSentToPPcsStatus()
-
-    // when
-    val response = webTestClient.get()
-      .uri("/cases/$crn/last-completed")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-
-    // then
-    response
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
-      .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-      .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-      .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
-      .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
-      .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
-      .jsonPath("$.recommendations.length()").isEqualTo(1)
-      .jsonPath("$.recommendations[0].recommendationId").isNotEmpty
-      .jsonPath("$.recommendations[0].lastModifiedByName").isEqualTo("some_user")
-      .jsonPath("$.recommendations[0].createdDate").isNotEmpty
-      .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
-      .jsonPath("$.recommendations[0].recallType.selected.value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recommendations[0].statuses[0].name").isEqualTo("SENT_TO_PPCS")
-  }
-
-  @Test
   fun `get latest complete recommendation overview`() {
     // given
     createMultipleRecommendationsWithStatuses()
@@ -95,7 +65,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.recommendations[0].createdDate").isNotEmpty
       .jsonPath("$.recommendations[0].lastModifiedDate").isNotEmpty
       .jsonPath("$.recommendations[0].recallType.selected.value").isEqualTo("FIXED_TERM")
-      .jsonPath("$.recommendations[0].statuses[0].name").isEqualTo("COMPLETED")
+      .jsonPath("$.recommendations[0].statuses[0].name").isEqualTo("PP_DOCUMENT_CREATED")
   }
 
   @Test
@@ -1077,10 +1047,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
-    createRecommendationsWithStatus("INCOMPLETE", null)
-    createRecommendationsWithStatus("REC_CLOSED", null)
+    createRecommendationsWithStatus(listOf("PO_STARTED_RECALL"), null)
+    createRecommendationsWithStatus(listOf("PP_DOCUMENT_CREATED"), null)
     Thread.sleep(3000)
-    createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
+    createRecommendationsWithStatus(listOf("PP_DOCUMENT_CREATED"), "This is the latest recommendation")
   }
 
   private fun createSingleCompletedRecommendation() {
@@ -1090,20 +1060,10 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponse(crn)
-    createRecommendationsWithStatus("COMPLETED", "This is the latest recommendation")
+    createRecommendationsWithStatus(listOf("PP_DOCUMENT_CREATED"), "This is the latest recommendation")
   }
 
-  private fun createSingleCompletedRecommendationWithSentToPPcsStatus() {
-    repository.deleteAll()
-    statusRepository.deleteAll()
-    licenceConditionsResponse(crn, 2500614567)
-    oasysAssessmentsResponse(crn)
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    createRecommendationsWithStatus("SENT_TO_PPCS", "This is the latest recommendation")
-  }
-
-  private fun createRecommendationsWithStatus(status: String, recallConsideredDetail: String?) {
+  private fun createRecommendationsWithStatus(statuses: List<String>, recallConsideredDetail: String?) {
     val response = convertResponseToJSONObject(
       webTestClient.post()
         .uri("/recommendations")
@@ -1127,7 +1087,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .uri("/recommendations/$createdRecommendationId/status")
       .contentType(MediaType.APPLICATION_JSON)
       .body(
-        BodyInserters.fromValue(recommendationStatusRequest(activate = status, anotherToActivate = "SOME_STATUS")),
+        BodyInserters.fromValue(recommendationStatusRequest(activate = statuses)),
       )
       .headers {
         (

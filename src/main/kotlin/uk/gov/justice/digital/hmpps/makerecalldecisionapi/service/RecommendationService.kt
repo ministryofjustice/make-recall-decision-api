@@ -193,7 +193,7 @@ internal class RecommendationService(
     return recommendationRepository.findByCrn(crn)
       .filter {
         recommendationStatusRepository.findByRecommendationId(it.id).stream()
-          .anyMatch { it.name == "REC_CLOSED" || it.name == "COMPLETED" || it.name == "SENT_TO_PPCS" }
+          .anyMatch { it.name == "PP_DOCUMENT_CREATED" }
       }.minOrNull()
   }
 
@@ -742,7 +742,12 @@ internal class RecommendationService(
     )
   }
 
-  fun sendSystemDeleteRecommendationAppInsightsEvent(crn: String?, username: String?, recommendationId: String?, region: String?) {
+  fun sendSystemDeleteRecommendationAppInsightsEvent(
+    crn: String?,
+    username: String?,
+    recommendationId: String?,
+    region: String?,
+  ) {
     mrdEventsEmitter?.sendAppInsightsEvent(
       payload = toSystemDeleteRecommendationEventPayload(
         crn = crn,
