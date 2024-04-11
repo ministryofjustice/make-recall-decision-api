@@ -193,7 +193,7 @@ internal class RecommendationService(
     return recommendationRepository.findByCrn(crn)
       .filter {
         recommendationStatusRepository.findByRecommendationId(it.id).stream()
-          .anyMatch() { it.name == "PP_DOCUMENT_CREATED" }
+          .anyMatch { it.name == "PP_DOCUMENT_CREATED" }
       }.minOrNull()
   }
 
