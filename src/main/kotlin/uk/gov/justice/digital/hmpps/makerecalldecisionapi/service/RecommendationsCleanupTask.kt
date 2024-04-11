@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
+
 // import java.util.concurrent.TimeUnit
 
 @Service
@@ -61,7 +63,8 @@ internal class RecommendationsCleanupTask(
   }
 
   @Scheduled(
-    initialDelay = 0,
+    timeUnit = TimeUnit.SECONDS,
+    initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(0,60*60) }",
     fixedDelay = -1,
   ) // run immediately once, and never again
   @Transactional(isolation = SERIALIZABLE)
