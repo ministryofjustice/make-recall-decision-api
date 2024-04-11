@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Isolation.SERIALIZABLE
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
 // import java.util.concurrent.TimeUnit
@@ -70,6 +72,7 @@ internal class RecommendationsCleanupTask(
       recommendation.ifPresentOrElse(
         {
           sendAppInsightsEvent(it)
+          recommendationStatusRepository.save(RecommendationStatusEntity(recommendationId = recommendationId, active = true, name = "SENT_DELETED_TO_APP_INSIGHTS", created = DateTimeHelper.utcNowDateTimeString(), createdBy = "SYSTEM", createdByUserFullName = "SYSTEM"))
         },
         {
           val message = "Recommendation not found for id $recommendationId"

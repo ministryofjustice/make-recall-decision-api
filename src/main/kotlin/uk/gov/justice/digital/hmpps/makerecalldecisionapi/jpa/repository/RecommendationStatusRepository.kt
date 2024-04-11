@@ -43,7 +43,7 @@ interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEnt
             LEFT OUTER JOIN make_recall_decision.public.recommendation_status rs2
                 ON rs.recommendation_id = rs2.recommendation_id
                 AND rs2.active = true
-                AND rs2.name IN ('SENT_TO_PPCS', 'REC_CLOSED', 'REC_DELETED')
+                AND rs2.name IN ('SENT_TO_PPCS', 'REC_CLOSED', 'REC_DELETED', 'SENT_DELETED_TO_APP_INSIGHTS')
             LEFT OUTER JOIN make_recall_decision.public.recommendations r
                 ON rs.recommendation_id = r.id
             WHERE rs2.recommendation_id IS NULL
