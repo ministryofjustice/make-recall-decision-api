@@ -5,7 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SupportingDocumentResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SupportingDocumentMetaDataResponse
 import java.security.SecureRandom
 import kotlin.math.abs
 
@@ -29,8 +29,8 @@ data class RecommendationSupportingDocumentEntity(
   var data: ByteArray,
 )
 
-fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): SupportingDocumentResponse =
-  SupportingDocumentResponse(
+fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): SupportingDocumentMetaDataResponse =
+  SupportingDocumentMetaDataResponse(
     id = id,
     recommendationId = recommendationId,
     createdBy = createdBy,
