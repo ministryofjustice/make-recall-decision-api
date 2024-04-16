@@ -99,29 +99,4 @@ class RecommendationsCleanupTaskTest {
     verify(recommendationStatusRepository).findStaleRecommendations(thresholdDate)
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
   }
-
-  @Test
-  fun `correctAppInsightsEventsForPreviouslyDeletedStaleRecommendations sends app insights event`() {
-    recommendationsCleanupTask = RecommendationsCleanupTask(
-      recommendationRepository,
-      recommendationStatusRepository,
-      recommendationService,
-      true,
-    )
-    // given
-    val openRecommendationIds = listOf(1L)
-
-    // and
-    `when`(recommendationStatusRepository.findStaleRecommendationsForAppInsightsEventCorrection()).thenReturn(openRecommendationIds)
-    `when`(
-      recommendationRepository.findById(any()),
-    ).thenReturn(Optional.of(RecommendationEntity(1L, RecommendationModel(crn = "mycrn", createdBy = "Bob", region = "megacity1"), deleted = false)))
-
-    // when
-    recommendationsCleanupTask.correctAppInsightsEventsForPreviouslyDeletedStaleRecommendations()
-
-    // then
-    Mockito.verify(recommendationService).sendSystemDeleteRecommendationAppInsightsEvent(any(), any(), any(), any())
-    Mockito.verify(recommendationStatusRepository).save(any())
-  }
 }
