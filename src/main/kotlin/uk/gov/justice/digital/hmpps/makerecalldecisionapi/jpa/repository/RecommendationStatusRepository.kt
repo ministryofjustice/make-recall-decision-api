@@ -48,6 +48,7 @@ interface RecommendationStatusRepository : JpaRepository<RecommendationStatusEnt
                 ON rs.recommendation_id = r.id
             WHERE rs2.recommendation_id IS NULL
                 AND r.deleted = true
+            LIMIT 2000
         """,
     nativeQuery = true,
   )
