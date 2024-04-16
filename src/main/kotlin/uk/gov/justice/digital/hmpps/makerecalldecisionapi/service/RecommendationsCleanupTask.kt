@@ -70,6 +70,7 @@ internal class RecommendationsCleanupTask(
   @Transactional(isolation = SERIALIZABLE)
   fun correctAppInsightsEventsForPreviouslyDeletedStaleRecommendations() {
     val recommendationIds = recommendationStatusRepository.findStaleRecommendationsForAppInsightsEventCorrection()
+    log.info("${recommendationIds.size} recommendationIds retrieved, processing batch")
     recommendationIds.forEach { recommendationId ->
       val recommendation = recommendationRepository.findById(recommendationId)
       recommendation.ifPresentOrElse(
