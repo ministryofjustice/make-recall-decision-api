@@ -71,6 +71,13 @@ internal class SupportingDocumentService(
     recommendationDocumentRepository.save(file)
   }
 
+  fun removeSupportingDocument(id: Long, flags: FeatureFlags) {
+    val file =
+      recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
+
+    recommendationDocumentRepository.delete(file)
+  }
+
   fun getSupportingDocument(id: Long, flags: FeatureFlags): SupportingDocumentResponse {
     val file =
       recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }

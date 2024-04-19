@@ -205,6 +205,47 @@ class SupportingDocumentControllerTest() : IntegrationTestBase() {
     assertThat(String(result.get().data)).isEqualTo("While I pondered, weak and weary")
   }
 
+  @Test
+  fun `delete supporting documents`() {
+    val created = DateTimeHelper.utcNowDateTimeString()
+
+    recommendationSupportingDocumentRepository.deleteAll()
+    val saved = recommendationSupportingDocumentRepository.save(
+      RecommendationSupportingDocumentEntity(
+        recommendationId = 123,
+        mimetype = "word",
+        type = "PPUDPartA",
+        filename = "doc.docx",
+        created = created,
+        createdByUserFullName = "Da Man",
+        createdBy = "daman",
+        uploaded = created,
+        uploadedBy = "daman",
+        uploadedByUserFullName = "Da Man",
+        data = "Once upon a midnight dreary".encodeToByteArray(),
+      ),
+    )
+
+    webTestClient.delete()
+      .uri("/recommendations/123/documents/" + saved.id)
+      .headers {
+        (
+          listOf(
+            it.authToken(
+              roles = listOf(
+                "ROLE_MAKE_RECALL_DECISION",
+                "ROLE_MAKE_RECALL_DECISION_PPCS",
+              ),
+            ),
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk
+
+    assertThat(recommendationSupportingDocumentRepository.findByRecommendationId(123)).isEmpty()
+  }
+
   fun base64(arg: String): String {
     return Base64.getEncoder().encodeToString(arg.encodeToByteArray())
   }

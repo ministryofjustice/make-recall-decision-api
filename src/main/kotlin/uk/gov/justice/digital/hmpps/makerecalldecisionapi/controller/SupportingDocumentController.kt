@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -104,5 +105,18 @@ internal class SupportingDocumentController(
       data = request.data,
       flags = flags,
     )
+  }
+
+  @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
+  @DeleteMapping("/recommendations/{recommendationId}/documents/{id}")
+  @Operation(summary = "Deletes supporting document")
+  suspend fun deleteSupportingDocument(
+    @PathVariable("recommendationId") recommendationId: Long,
+    @PathVariable("id") id: Long,
+    @RequestHeader("X-Feature-Flags") featureFlags: String?,
+  ) {
+    val flags: FeatureFlags = setFeatureFlags(featureFlags)
+
+    supportingDocumentService.removeSupportingDocument(id = id, flags = flags)
   }
 }
