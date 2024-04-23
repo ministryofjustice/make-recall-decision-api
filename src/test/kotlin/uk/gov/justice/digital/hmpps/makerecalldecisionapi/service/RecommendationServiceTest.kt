@@ -1976,6 +1976,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
+      given(mockRegionService.getRegionName("London")).willReturn("")
+      given(mockRegionService.getRegionName("London2")).willReturn("")
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
           RecommendationStatusEntity(

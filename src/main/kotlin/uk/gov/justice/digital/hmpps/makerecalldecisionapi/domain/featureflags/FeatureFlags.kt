@@ -7,5 +7,4 @@ data class FeatureFlags(
   val flagSendDomainEvent: Boolean = false,
   val flagConsiderRecall: Boolean = false,
   val flagDomainEventRecommendationStarted: Boolean = false,
-  val flagProbationAdmin: Boolean = false,
 )
