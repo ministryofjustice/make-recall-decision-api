@@ -77,6 +77,8 @@ class PartADocumentMapperTest {
     partADisplayText: String,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -111,6 +113,8 @@ class PartADocumentMapperTest {
     partAFixedTermLicenceConditionsDisplayValue: String?,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -141,6 +145,8 @@ class PartADocumentMapperTest {
     partADisplayText: String?,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -160,6 +166,8 @@ class PartADocumentMapperTest {
     partADisplayText: String?,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -179,6 +187,8 @@ class PartADocumentMapperTest {
     partADisplayText: String?,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -194,6 +204,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given date vlo informed then should map to readable date in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -209,6 +221,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given extended sentence used in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -227,6 +241,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given indeterminate sentence used in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -245,6 +261,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given not indeterminate and not extended sentence and standard recall used in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -264,6 +282,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given fixed term recall used in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -285,6 +305,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given null date vlo informed then should map to empty string in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -304,6 +326,8 @@ class PartADocumentMapperTest {
     partADisplayText: String?,
   ) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -319,6 +343,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given has arrest issues data then should map in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -335,6 +361,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given has no arrest issues data then should map in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -350,6 +378,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given has contraband risk data then should map in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -366,6 +396,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given deprecated selected alternative licence conditions then build up the text for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -397,6 +429,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given alternative licence conditions then build up the text for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -436,6 +470,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given alternative licence conditions from cvl then build up the text for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -467,6 +503,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple alternative licence conditions then build up the text with line breaks for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -519,6 +557,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple alternative licence conditions with no note then build up the text with line breaks and no notes for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -560,6 +600,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given has is under integrated offender management then should map in part A text`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -582,6 +624,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given no alternative licence conditions then return empty text for alternative licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -600,6 +644,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given selected standard licence conditions then return this for standard licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -620,6 +666,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given selected standard licence conditions from cvl then return this for standard licences in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -646,6 +694,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given conviction details then convert dates and sentence lengths in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -681,6 +731,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given conviction details with empty dates then set empty dates in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -715,6 +767,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given empty conviction details then set empty conviction in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -737,6 +791,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address details then set address details in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -762,6 +818,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given address is no fixed abode then clear address in the part A and set no fixed abode field`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -787,6 +845,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple main address details then set address details in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -819,6 +879,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given multiple main address details with contradicting no fixed abode values then clear the address details in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -851,6 +913,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given empty address details then clear the address details in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -866,6 +930,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address with all empty lines then clear the address details in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -891,6 +957,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given main address with some empty lines then correctly format the address in the part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -916,6 +984,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given other possible address field is populated then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -934,6 +1004,8 @@ class PartADocumentMapperTest {
   @CsvSource("''", "null", nullValues = ["null"])
   fun `given empty other possible address field then leave this field empty in the Part A`(addressValue: String?) {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -948,6 +1020,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given offence analysis details then show in the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -963,6 +1037,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given previous release details with multiple release dates then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -982,6 +1058,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given previous release details with one last release date then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1001,6 +1079,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given previous recall details with multiple recall dates then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1019,6 +1099,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given previous recall details with one last recall date then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1037,6 +1119,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given rosh data then format it for the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1061,6 +1145,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given indeterminate or extended sentence then populate fields for question 24 in Part A with selected values`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1109,6 +1195,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given indeterminate or extended sentence then populate fields for question 24 in Part A with No for values not selected`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1144,6 +1232,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given non indeterminate or extended sentence then do not populate fields for question 24 in Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1161,55 +1251,9 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given practitioner details and probationAdmin flag is disabled then Q25 mappings include PP details`() {
+  fun `Q25 mappings include who completed Part A details`() {
     runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = false)
-      val recommendation = RecommendationResponse(
-        region = "NPS London",
-        localDeliveryUnit = "All NPS London",
-      )
-      val metadata = RecommendationMetaData(
-        userNamePartACompletedBy = "Peter Parker",
-        userEmailPartACompletedBy = "pp@example.com",
-      )
-
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
-
-      assertThat(result.completedBy.name).isEqualTo("Peter Parker")
-      assertThat(result.completedBy.telephone).isEqualTo(EMPTY_STRING)
-      assertThat(result.completedBy.email).isEqualTo("pp@example.com")
-      assertThat(result.completedBy.region).isEqualTo("NPS London")
-      assertThat(result.completedBy.localDeliveryUnit).isEqualTo("All NPS London")
-    }
-  }
-
-  @Test
-  fun `given probationAdmin flag is disabled then Q26 mappings are empty`() {
-    runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = false)
-      val recommendation = RecommendationResponse(
-        region = "NPS London",
-        localDeliveryUnit = "All NPS London",
-      )
-      val metadata = RecommendationMetaData(
-        userNamePartACompletedBy = "Peter Parker",
-        userEmailPartACompletedBy = "pp@example.com",
-      )
-
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
-
-      assertThat(result.supervisingPractitioner.name).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingPractitioner.telephone).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
-      assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo(EMPTY_STRING)
-    }
-  }
-
-  @Test
-  fun `given probationAdmin flag is enabled then Q25 mappings include who completed Part A details`() {
-    runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       given(regionService.getRegionName(null))
         .willReturn("")
       given(regionService.getRegionName("RegionCode"))
@@ -1241,9 +1285,9 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given probationAdmin flag is enabled and person who completed is not supervising practitioner then Q26 mappings contain supervising practitioner details`() {
+  fun `given person who completed is not supervising practitioner then Q26 mappings contain supervising practitioner details`() {
     runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       given(regionService.getRegionName("RegionCode"))
         .willReturn("Region Name")
       given(regionService.getRegionName(null))
@@ -1272,9 +1316,9 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given probationAdmin flag is enabled and person who completed is the supervising practitioner then Q26 mappings are empty`() {
+  fun `given person who completed is the supervising practitioner then Q26 mappings are empty`() {
     runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       given(regionService.getRegionName(null))
         .willReturn("")
       val recommendation = RecommendationResponse(
@@ -1300,39 +1344,13 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest
-  @CsvSource(
-    "null",
-    "true",
-    "false",
-    nullValues = ["null"],
-  )
-  fun `given ppcs query emails and probationAdminFlag disabled then do not show emails in Q25`(
-    isPersonProbationPractitionerForOffender: Boolean?,
-  ) {
-    runTest {
-      val emails = listOf("test1@example.com", "test2@example.com")
-      val featureFlags = FeatureFlags(flagProbationAdmin = false)
-      val recommendation = RecommendationResponse(
-        whoCompletedPartA = WhoCompletedPartA(
-          isPersonProbationPractitionerForOffender = isPersonProbationPractitionerForOffender,
-        ),
-        ppcsQueryEmails = emails,
-      )
-      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
-
-      assertThat(result.completedBy.ppcsQueryEmails).isEmpty()
-      assertThat(result.supervisingPractitioner.ppcsQueryEmails).isEmpty()
-    }
-  }
-
   @Test
-  fun `given ppcs query emails and probationAdminFlag enabled and supervising practitioner completed the part A then show emails in Q25`() {
+  fun `given ppcs query emails and supervising practitioner completed the part A then show emails in Q25`() {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
       given(regionService.getRegionName(any()))
         .willReturn("")
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
           isPersonProbationPractitionerForOffender = true,
@@ -1347,10 +1365,10 @@ class PartADocumentMapperTest {
   }
 
   @Test
-  fun `given ppcs query emails and probationAdminFlag enabled and supervising practitioner did not complete the part A then show emails in Q26`() {
+  fun `given ppcs query emails and supervising practitioner did not complete the part A then show emails in Q26`() {
     runTest {
       val emails = listOf("test1@example.com", "test2@example.com")
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       given(regionService.getRegionName(any()))
         .willReturn("")
       val recommendation = RecommendationResponse(
@@ -1369,6 +1387,8 @@ class PartADocumentMapperTest {
   @Test
   fun `given revocation recipients then show in the Part A`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
       val emails = listOf("test1@example.com", "test2@example.com")
       val recommendation = RecommendationResponse(
         revocationOrderRecipients = emails,
@@ -1382,6 +1402,8 @@ class PartADocumentMapperTest {
   @Test
   fun `metadata mapped`() {
     runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("Henry Richarlison")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1394,8 +1416,6 @@ class PartADocumentMapperTest {
       assertThat(result.countersignAcoEmail).isEqualTo("jane-the-aco@bla.com")
       assertThat(result.countersignSpoName).isEqualTo("Spo Name")
       assertThat(result.countersignAcoName).isEqualTo("Aco Name")
-      assertThat(result.completedBy.name).isEqualTo("Henry Richarlison")
-      assertThat(result.completedBy.email).isEqualTo("Henry.Richarlison@test.com")
       assertThat(result.countersignAcoDate).isNotBlank
       assertThat(result.countersignAcoTime).isNotBlank
       assertThat(result.countersignSpoDate).isNotBlank

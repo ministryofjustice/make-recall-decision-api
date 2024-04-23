@@ -61,7 +61,8 @@ internal class PartADocumentMapper(
     val (countersignSpoDate, countersignSpoTime) = splitDateTime(metadata.countersignSpoDateTime)
     val (countersignAcoDate, countersignAcoTime) = splitDateTime(metadata.countersignAcoDateTime)
 
-    val decisionDateTimeWithDaylightSaving = recommendation.decisionDateTime?.let { dateTimeWithDaylightSavingFromString(utcDateTimeString = it.toString()) }
+    val decisionDateTimeWithDaylightSaving =
+      recommendation.decisionDateTime?.let { dateTimeWithDaylightSavingFromString(utcDateTimeString = it.toString()) }
     val (decisionDate, decisionTime) = splitDateTime(decisionDateTimeWithDaylightSaving)
 
     val lastRelease = recommendation.previousReleases?.lastReleaseDate
@@ -85,7 +86,10 @@ internal class PartADocumentMapper(
       isUnder18 = generateFixedTermRecallAnswer(recommendation.isUnder18, recommendation),
       isSentence12MonthsOrOver = generateFixedTermRecallAnswer(recommendation.isSentence12MonthsOrOver, recommendation),
       isMappaAboveLevel1 = generateFixedTermRecallAnswer(recommendation.isMappaLevelAbove1, recommendation),
-      isChargedWithSeriousOffence = generateFixedTermRecallAnswer(recommendation.hasBeenConvictedOfSeriousOffence, recommendation),
+      isChargedWithSeriousOffence = generateFixedTermRecallAnswer(
+        recommendation.hasBeenConvictedOfSeriousOffence,
+        recommendation,
+      ),
 
       isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
@@ -183,28 +187,18 @@ internal class PartADocumentMapper(
     metadata: RecommendationMetaData,
     flags: FeatureFlags,
   ): PractitionerDetails {
-    if (flags.flagProbationAdmin) {
-      with(recommendation.whoCompletedPartA) {
-        return PractitionerDetails(
-          name = this?.name ?: "",
-          telephone = this?.telephone ?: "",
-          email = this?.email ?: "",
-          region = regionService.getRegionName(this?.region),
-          localDeliveryUnit = this?.localDeliveryUnit ?: "",
-          ppcsQueryEmails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender == true) {
-            recommendation.ppcsQueryEmails ?: emptyList()
-          } else {
-            emptyList()
-          },
-        )
-      }
-    } else {
+    with(recommendation.whoCompletedPartA) {
       return PractitionerDetails(
-        name = metadata.userNamePartACompletedBy ?: "",
-        telephone = "",
-        email = metadata.userEmailPartACompletedBy ?: "",
-        region = recommendation.region ?: "",
-        localDeliveryUnit = recommendation.localDeliveryUnit ?: "",
+        name = this?.name ?: "",
+        telephone = this?.telephone ?: "",
+        email = this?.email ?: "",
+        region = regionService.getRegionName(this?.region),
+        localDeliveryUnit = this?.localDeliveryUnit ?: "",
+        ppcsQueryEmails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender == true) {
+          recommendation.ppcsQueryEmails ?: emptyList()
+        } else {
+          emptyList()
+        },
       )
     }
   }
@@ -213,7 +207,7 @@ internal class PartADocumentMapper(
     recommendation: RecommendationResponse,
     flags: FeatureFlags,
   ): PractitionerDetails {
-    return if (flags.flagProbationAdmin && recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
+    return if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
       with(recommendation.practitionerForPartA) {
         PractitionerDetails(
           name = this?.name ?: "",
@@ -291,9 +285,11 @@ internal class PartADocumentMapper(
 
   private fun generateFixedTermRecallAnswer(value: Boolean?, recommendation: RecommendationResponse): String {
     val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
-    val isFixedTermRecall = recommendation.recallType?.selected?.value.toString() == RecallTypeValue.FIXED_TERM.toString()
+    val isFixedTermRecall =
+      recommendation.recallType?.selected?.value.toString() == RecallTypeValue.FIXED_TERM.toString()
     val isIndeteriminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
-    val isNotIndeterminateAndNotExtendedAndStandardRecall = !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
+    val isNotIndeterminateAndNotExtendedAndStandardRecall =
+      !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
 
     return when {
       isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall"
