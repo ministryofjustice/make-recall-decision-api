@@ -101,14 +101,25 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @CsvSource(
     "PART_A_DOCUMENT",
     "PREVIEW_PART_A_DOCUMENT",
-    "DNTR_DOCUMENT",
   )
-  fun `given recommendation data and probationAdmin flag is disabled then build the document`(documentType: DocumentType) {
+  fun `given recommendation data is disabled then build the document`(documentType: DocumentType) {
     runTest {
-      val featureFlags = FeatureFlags(flagProbationAdmin = false)
+      given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
+      given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
+      val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
+    }
+  }
+
+  @Test
+  fun `given recommendation data is disabled then build the dntr document`() {
+    runTest {
+      val featureFlags = FeatureFlags()
+      val recommendation = createRecommendationResponse(featureFlags)
+      val metadata = createRecommendationMetaData()
+      templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
     }
   }
 
@@ -117,13 +128,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     "PART_A_DOCUMENT",
     "PREVIEW_PART_A_DOCUMENT",
   )
-  fun `given recommendation data and probationAdmin flag is enabled then build the document`(documentType: DocumentType) {
+  fun `given recommendation data then build the document`(documentType: DocumentType) {
     runTest {
       given(mockRegionService.getRegionName("RegionCode1"))
         .willReturn("Region Name 1")
       given(mockRegionService.getRegionName("RegionCode2"))
         .willReturn("Region Name 2")
-      val featureFlags = FeatureFlags(flagProbationAdmin = true)
+      val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
@@ -706,29 +717,21 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       countersignSpoExposition = "Spo comments on case",
       countersignAcoTelephone = "87654321",
       countersignAcoExposition = "Aco comments on case",
-      whoCompletedPartA = if (featureFlags.flagProbationAdmin) {
-        WhoCompletedPartA(
-          name = "Colin Completed",
-          telephone = "1111111111",
-          email = "completed@example.com",
-          region = "RegionCode1",
-          localDeliveryUnit = "Completed LDU",
-          isPersonProbationPractitionerForOffender = false,
-        )
-      } else {
-        null
-      },
-      practitionerForPartA = if (featureFlags.flagProbationAdmin) {
-        PractitionerForPartA(
-          name = "Sally Supervising",
-          telephone = "2222222222",
-          email = "supervising@example.com",
-          region = "RegionCode2",
-          localDeliveryUnit = "Supervising LDU",
-        )
-      } else {
-        null
-      },
+      whoCompletedPartA = WhoCompletedPartA(
+        name = "Colin Completed",
+        telephone = "1111111111",
+        email = "completed@example.com",
+        region = "RegionCode1",
+        localDeliveryUnit = "Completed LDU",
+        isPersonProbationPractitionerForOffender = false,
+      ),
+      practitionerForPartA = PractitionerForPartA(
+        name = "Sally Supervising",
+        telephone = "2222222222",
+        email = "supervising@example.com",
+        region = "RegionCode2",
+        localDeliveryUnit = "Supervising LDU",
+      ),
       prisonOffender = PrisonOffender(
         locationDescription = "location",
         bookingNo = "1244",

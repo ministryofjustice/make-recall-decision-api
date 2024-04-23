@@ -12,8 +12,8 @@ class FeatureFlagProcessorTest {
 
   @Test
   fun `given valid flag when setFeatureFlags is invoked then FeatureFlags is returned with flag set`() {
-    val flags = setFeatureFlags("{ \"flagProbationAdmin\": true }")
-    assertThat(flags).isEqualTo(FeatureFlags(flagProbationAdmin = true))
+    val flags = setFeatureFlags("{ \"flagSendDomainEvent\": true }")
+    assertThat(flags).isEqualTo(FeatureFlags(flagSendDomainEvent = true))
   }
 
   @Test
