@@ -36,6 +36,7 @@ cvl:
     endpoint:
       url: http://localhost:8096
 
+
 gotenberg:
   endpoint:
     url: http://localhost:8094
@@ -63,6 +64,13 @@ oauth:
 ndelius:
   client:
     timeout: 2
+
+document-management:
+  client:
+    timeout: 2
+  api:
+    endpoint:
+      url: http://localhost:9072
 
 oasys:
   arn:

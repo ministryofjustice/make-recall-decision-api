@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/documents/.*"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "document-management.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
