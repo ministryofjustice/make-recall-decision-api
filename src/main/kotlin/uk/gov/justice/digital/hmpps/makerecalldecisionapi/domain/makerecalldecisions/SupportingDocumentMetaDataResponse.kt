@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
+import java.util.UUID
 data class SupportingDocumentMetaDataResponse(
   val id: Long,
   val recommendationId: Long?,
@@ -11,4 +12,5 @@ data class SupportingDocumentMetaDataResponse(
   var uploadedBy: String?,
   var uploadedByUserFullName: String?,
   var uploaded: String?,
+  var documentUuid: UUID?,
 )

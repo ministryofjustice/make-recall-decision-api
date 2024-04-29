@@ -1,18 +1,26 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DocumentManagementClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SupportingDocumentMetaDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SupportingDocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toSupportingDocumentResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
-import java.util.*
+import java.io.File
+import java.util.Base64
+import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 internal class SupportingDocumentService(
   val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
+  val documentManagementClient: DocumentManagementClient,
+  @Lazy val recommendationRepository: RecommendationRepository,
 ) {
   fun fetchSupportingDocuments(recommendationId: Long): List<SupportingDocumentMetaDataResponse> {
     return recommendationDocumentRepository.findByRecommendationId(recommendationId)
@@ -30,6 +38,8 @@ internal class SupportingDocumentService(
     data: String,
     flags: FeatureFlags,
   ): Long {
+    val crn = recommendationRepository.findById(recommendationId).getOrNull()?.data?.crn
+    val documentUuid = uploadFile(filename, data, crn)
     val result = recommendationDocumentRepository.save(
       RecommendationSupportingDocumentEntity(
         recommendationId = recommendationId,
@@ -42,6 +52,7 @@ internal class SupportingDocumentService(
         uploaded = created,
         uploadedBy = createdBy,
         uploadedByUserFullName = createdByUserFullName,
+        documentUuid = documentUuid,
         data = Base64.getDecoder().decode(data),
       ),
     )
@@ -91,5 +102,15 @@ internal class SupportingDocumentService(
       type = file.type,
       filename = file.filename,
     )
+  }
+
+  private fun uploadFile(
+    filename: String,
+    data: String,
+    crn: String?,
+  ): UUID? {
+    val file = File(filename)
+    file.writeBytes(Base64.getDecoder().decode(data))
+    return getValueAndHandleWrappedException(documentManagementClient.uploadFile(crn, file))
   }
 }

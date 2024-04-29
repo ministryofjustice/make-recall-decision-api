@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
@@ -14,10 +17,14 @@ import java.util.*
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class SupportingDocumentControllerTest() : IntegrationTestBase() {
+class SupportingDocumentControllerTest(
+  @Value("\${document-management.client.timeout}") private val documentManagamentClientTimeout: Long,
+) : IntegrationTestBase() {
 
   @Test
   fun `create supporting document`() {
+    documentManagementApiResponse(documentUuid = UUID.randomUUID().toString())
+
     val recommendationId = "123"
 
     val data = "While I pondered, weak and weary"
@@ -56,6 +63,7 @@ class SupportingDocumentControllerTest() : IntegrationTestBase() {
 
     val result = recommendationSupportingDocumentRepository.findById((response.get("id") as Int).toLong())
     assertThat(String(result.get().data)).isEqualTo("While I pondered, weak and weary")
+    assertThat(result.get().documentUuid).isNotNull
   }
 
   @Test
@@ -244,6 +252,52 @@ class SupportingDocumentControllerTest() : IntegrationTestBase() {
       .expectStatus().isOk
 
     assertThat(recommendationSupportingDocumentRepository.findByRecommendationId(123)).isEmpty()
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Document Management API timeout`() {
+    runTest {
+      val data = "While I pondered, weak and weary"
+      val recommendationId = "123"
+      documentManagementApiResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
+      webTestClient.post()
+        .uri("/recommendations/$recommendationId/documents")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(
+          BodyInserters.fromValue(
+            """
+            {
+              "filename": "doc.docx",
+              "type" : "PPUDPartA",
+              "mimetype": "word",
+              "data": "${base64(data)}"
+            }
+          """,
+          ),
+        )
+        .headers {
+          (
+            listOf(
+              it.authToken(
+                roles = listOf(
+                  "ROLE_MAKE_RECALL_DECISION",
+                  "ROLE_MAKE_RECALL_DECISION_PPCS",
+                ),
+              ),
+            )
+            )
+        }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .value<String> { userMessage ->
+          assertThat(userMessage).contains("Document Management client - /documents/PPUD_RECALL/")
+          assertThat(userMessage).contains("endpoint: [No response within $documentManagamentClientTimeout seconds")
+        }
+    }
   }
 
   fun base64(arg: String): String {

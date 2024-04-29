@@ -41,6 +41,11 @@ spring:
             client-id: ${system.client.id:make-recall-decision-api}
             client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
+          document-management-api:
+            provider: hmpps-auth
+            client-id: ${system.client.id:make-recall-decision-api}
+            client-secret: ${system.client.secret:clientsecret}
+            authorization-grant-type: client_credentials
           delius:
             provider: hmpps-auth
             client-id: ${system.client.id:make-recall-decision-api}
@@ -142,6 +147,13 @@ arn:
   api:
     endpoint:
       url: http://localhost:9071
+
+document-management:
+  client:
+    timeout: 10
+  api:
+    endpoint:
+      url: http://localhost:9072
 
 cvl:
   client:

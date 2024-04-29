@@ -7,6 +7,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SupportingDocumentMetaDataResponse
 import java.security.SecureRandom
+import java.util.UUID
 import kotlin.math.abs
 
 @Entity
@@ -24,6 +25,7 @@ data class RecommendationSupportingDocumentEntity(
   var uploadedBy: String? = null,
   var uploadedByUserFullName: String? = null,
   var uploaded: String? = null,
+  var documentUuid: UUID? = null,
 
   @Basic(fetch = FetchType.LAZY)
   var data: ByteArray,
@@ -41,4 +43,5 @@ fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): Suppo
     uploadedBy = uploadedBy,
     uploadedByUserFullName = uploadedByUserFullName,
     uploaded = uploaded,
+    documentUuid = documentUuid,
   )

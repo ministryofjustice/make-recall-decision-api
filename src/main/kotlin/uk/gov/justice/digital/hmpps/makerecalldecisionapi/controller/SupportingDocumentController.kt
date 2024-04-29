@@ -37,7 +37,7 @@ internal class SupportingDocumentController(
 
   @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @PostMapping("/recommendations/{recommendationId}/documents")
-  @Operation(summary = "Gets recommendation supporting documents")
+  @Operation(summary = "Uploads supporting documents")
   suspend fun createSupportingDocument(
     @PathVariable("recommendationId") recommendationId: Long,
     @RequestBody createSupportingDocumentRequest: CreateSupportingDocumentRequest,

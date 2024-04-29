@@ -26,6 +26,7 @@ import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DocumentManagementClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
@@ -39,6 +40,9 @@ class WebClientConfiguration(
   @Value("\${delius.integration.endpoint.url}") private val deliusIntegrationRootUri: String,
   @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+
+  @Value("\${document-management.api.endpoint.url}") private val documentManagementRootUri: String,
+
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
   @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationApiRootUri: String,
@@ -46,6 +50,9 @@ class WebClientConfiguration(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+
+  @Value("\${document-management.client.timeout}") private val documentManagementTimeout: Long,
+
   @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
   @Value("\${prison.client.timeout}") private val prisonTimeout: Long,
   @Autowired private val meterRegistry: MeterRegistry,
@@ -159,6 +166,22 @@ class WebClientConfiguration(
 
   @Bean
   fun arnApiClientTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
+
+  @Bean
+  fun documentManagementWebClientAppScope(
+    @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
+    builder: WebClient.Builder,
+  ): WebClient {
+    return getOAuthWebClient(authorizedClientManager, builder, documentManagementRootUri, "document-management-api")
+  }
+
+  @Bean
+  fun documentManagementApiClient(@Qualifier("documentManagementWebClientAppScope") webClient: WebClient): DocumentManagementClient {
+    return DocumentManagementClient(webClient, documentManagementTimeout, documentManagementApiClientTimeoutCounter())
+  }
+
+  @Bean
+  fun documentManagementApiClientTimeoutCounter(): Counter = timeoutCounter(documentManagementRootUri)
 
   @Bean
   fun cvlWebClientAppScope(

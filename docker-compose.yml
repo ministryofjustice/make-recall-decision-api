@@ -17,6 +17,7 @@ services:
       - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
       - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
+      - DOCUMENT_MANAGEMENT_API_ENDPOINT_URL=http://fake-document-management-api:8080
       - PPUD_AUTOMATION_API_ENDPOINT_URL=http://fake-ppud-automation-api:8080
       - PRISON_API_ENDPOINT_URL=http://fake-prison-api:8080
       - ARN_API_ENDPOINT_URL=http://fake-arn-api:8080
@@ -106,6 +107,19 @@ services:
     command: --verbose --local-response-templating
     volumes:
       - ./fake-cvl-api:/home/wiremock
+
+  fake-document-management-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-document-management-api
+    ports:
+      - "9072:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-document-management-api:/home/wiremock
 
   fake-ppud-automation-api:
     image: wiremock/wiremock
