@@ -4,12 +4,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DocumentManagementClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import java.util.*
@@ -20,10 +27,16 @@ class SupportingDocumentServiceTest {
 
   @Test
   fun `upload supporting document`() {
-    val repository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
+    val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val client = Mockito.mock(DocumentManagementClient::class.java)
     val created = DateTimeHelper.utcNowDateTimeString()
 
-    given(repository.save(Mockito.any())).willReturn(
+    val documentUuid = UUID.randomUUID()
+    given(client.uploadFile(any(), any())).willReturn(Mono.just(documentUuid))
+
+    given(recommendationRepository.findById(Mockito.any())).willReturn(Optional.of(RecommendationEntity(id = 1L, data = RecommendationModel(crn = "123"))))
+    given(supportingDocumentRepository.save(Mockito.any())).willReturn(
       RecommendationSupportingDocumentEntity(
         id = 456,
         recommendationId = 123,
@@ -36,10 +49,11 @@ class SupportingDocumentServiceTest {
         uploadedBy = null,
         uploadedByUserFullName = null,
         type = "PPUDPartA",
+        documentUuid = documentUuid,
       ),
     )
 
-    val id = SupportingDocumentService(repository).uploadNewSupportingDocument(
+    val id = SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).uploadNewSupportingDocument(
       recommendationId = 123,
       type = "PPUDPartA",
       mimetype = "word",
@@ -55,7 +69,9 @@ class SupportingDocumentServiceTest {
 
     val captor = argumentCaptor<RecommendationSupportingDocumentEntity>()
 
-    Mockito.verify(repository).save(captor.capture())
+    Mockito.verify(supportingDocumentRepository).save(captor.capture())
+    BDDMockito.then(client).should().uploadFile(any(), any())
+    BDDMockito.then(recommendationRepository).should().findById(any())
 
     val entity = captor.firstValue
 
@@ -69,16 +85,19 @@ class SupportingDocumentServiceTest {
     assertThat(entity.uploaded).isEqualTo(created)
     assertThat(entity.uploadedBy).isEqualTo("daman")
     assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.documentUuid).isEqualTo(documentUuid)
     assertThat(String(entity.data)).isEqualTo("The hills are alive with thet sound of music")
   }
 
   @Test
   fun retrieve() {
-    val repository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
+    val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val client = Mockito.mock(DocumentManagementClient::class.java)
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
-    given(repository.findByRecommendationId(123)).willReturn(
+    given(supportingDocumentRepository.findByRecommendationId(123)).willReturn(
       listOf(
         RecommendationSupportingDocumentEntity(
           id = 1,
@@ -97,7 +116,7 @@ class SupportingDocumentServiceTest {
       ),
     )
 
-    val response = SupportingDocumentService(repository).fetchSupportingDocuments(123)
+    val response = SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).fetchSupportingDocuments(123)
 
     assertThat(response.size).isEqualTo(1)
 
@@ -117,11 +136,13 @@ class SupportingDocumentServiceTest {
 
   @Test
   fun replace() {
-    val repository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
+    val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val client = Mockito.mock(DocumentManagementClient::class.java)
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
-    given(repository.findById(123)).willReturn(
+    given(supportingDocumentRepository.findById(123)).willReturn(
       Optional.of(
         RecommendationSupportingDocumentEntity(
           id = 1,
@@ -140,7 +161,7 @@ class SupportingDocumentServiceTest {
       ),
     )
 
-    SupportingDocumentService(repository).replaceSupportingDocument(
+    SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
       123,
       mimetype = "word2",
       uploadedBy = "daman2",
@@ -153,7 +174,7 @@ class SupportingDocumentServiceTest {
 
     val captor = argumentCaptor<RecommendationSupportingDocumentEntity>()
 
-    Mockito.verify(repository).save(captor.capture())
+    Mockito.verify(supportingDocumentRepository).save(captor.capture())
 
     val entity = captor.firstValue
 
@@ -172,11 +193,13 @@ class SupportingDocumentServiceTest {
 
   @Test
   fun `get`() {
-    val repository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
+    val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val client = Mockito.mock(DocumentManagementClient::class.java)
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
-    given(repository.findById(123)).willReturn(
+    given(supportingDocumentRepository.findById(123)).willReturn(
       Optional.of(
         RecommendationSupportingDocumentEntity(
           id = 1,
@@ -195,7 +218,7 @@ class SupportingDocumentServiceTest {
       ),
     )
 
-    val entity = SupportingDocumentService(repository).getSupportingDocument(123, FeatureFlags())
+    val entity = SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).getSupportingDocument(123, FeatureFlags())
 
     assertThat(entity.recommendationId).isEqualTo(123)
     assertThat(entity.type).isEqualTo("PPUDPartA")

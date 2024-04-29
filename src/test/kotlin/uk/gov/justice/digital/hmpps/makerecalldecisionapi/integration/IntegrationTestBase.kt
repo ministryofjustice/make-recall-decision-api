@@ -105,6 +105,7 @@ abstract class IntegrationTestBase {
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
   var oasysARNApi: ClientAndServer = startClientAndServer(8095)
   var cvlApi: ClientAndServer = startClientAndServer(8096)
+  var documentManagementApi: ClientAndServer = startClientAndServer(9072)
   var deliusIntegration: ClientAndServer = startClientAndServer(8097)
   var oauthMock: ClientAndServer = startClientAndServer(9090)
   var prisonApi: ClientAndServer = startClientAndServer(8098)
@@ -154,6 +155,7 @@ abstract class IntegrationTestBase {
         "V1_16__DATA_MIGRATION.sql",
         "V1_24__PPUD_USERS_TABLE.sql",
         "V1_25__RECOMMENDATION_DOCUMENT_TABLE.sql",
+        "V1_27__RECOMMENDATION_DOCUMENT_TABLE.sql",
       )
 
       Class.forName("org.postgresql.Driver")
@@ -181,6 +183,7 @@ abstract class IntegrationTestBase {
   fun startUpServer() {
     oauthMock.reset()
     cvlApi.reset()
+    documentManagementApi.reset()
     deliusIntegration.reset()
     gotenbergMock.reset()
     oasysARNApi.reset()
@@ -193,6 +196,7 @@ abstract class IntegrationTestBase {
 
   @AfterAll
   fun tearDownServer() {
+    documentManagementApi.stop()
     cvlApi.stop()
     deliusIntegration.stop()
     gotenbergMock.stop()
@@ -212,7 +216,7 @@ abstract class IntegrationTestBase {
     repository.deleteAllInBatch()
   }
 
-  private fun createRecommendation(featureFlagString: String? = null) {
+  fun createRecommendation(featureFlagString: String? = null) {
     licenceConditionsResponse(crn, convictionId)
 
     val response = convertResponseToJSONObject(
@@ -850,6 +854,19 @@ abstract class IntegrationTestBase {
     cvlApi.`when`(licenceMatchRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(licenceMatchResponse(nomisId, crn, licenceStatus, licenceId))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun documentManagementApiResponse(
+    documentUuid: String,
+    delaySeconds: Long = 0,
+  ) {
+    val documentManagementApiRequest = request().withPath("/documents.*")
+
+    documentManagementApi.`when`(documentManagementApiRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody("""{"documentUuid": "$documentUuid"}""")
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

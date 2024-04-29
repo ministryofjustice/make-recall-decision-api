@@ -19,6 +19,7 @@ services:
       - "./src/main/resources/db/migration/V1_16__DATA_MIGRATION.sql:/docker-entrypoint-initdb.d/8.sql"
       - "./src/main/resources/db/migration/V1_24__PPUD_USERS_TABLE.sql:/docker-entrypoint-initdb.d/9.sql"
       - "./src/main/resources/db/migration/V1_25__RECOMMENDATION_DOCUMENT_TABLE.sql:/docker-entrypoint-initdb.d/10.sql"
+      - "./src/main/resources/db/migration/V1_27__RECOMMENDATION_DOCUMENT_TABLE.sql:/docker-entrypoint-initdb.d/11.sql"
     ports:
       - "5432:5432"
     networks:
