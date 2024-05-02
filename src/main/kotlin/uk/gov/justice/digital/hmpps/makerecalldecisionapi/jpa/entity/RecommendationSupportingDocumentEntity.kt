@@ -45,4 +45,5 @@ fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): Suppo
     uploadedByUserFullName = uploadedByUserFullName,
     uploaded = uploaded,
     documentUuid = documentUuid,
+    title = title,
   )
