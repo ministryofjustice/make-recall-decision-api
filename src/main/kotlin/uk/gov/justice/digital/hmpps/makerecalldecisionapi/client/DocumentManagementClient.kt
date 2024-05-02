@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeoutException
@@ -29,6 +30,23 @@ class DocumentManagementClient(
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
+  fun downloadFileAsByteArray(crn: String?, documentUuid: String): Mono<ByteArray> {
+    return webClient.get()
+      .uri("/documents/$documentUuid/file")
+      .header("SERVICE_NAME", crn)
+      .header("USERNAME", "mycrn")
+      .accept(MediaType.APPLICATION_OCTET_STREAM)
+      .retrieve()
+      .bodyToMono(ByteArray::class.java)
+      .flatMap { body ->
+        val outputStream = ByteArrayOutputStream()
+        outputStream.write(body)
+        outputStream.flush()
+        outputStream.close()
+        Mono.just(outputStream.toByteArray())
+      }
   }
 
   fun uploadFile(crn: String?, file: ByteArray, filename: String): Mono<UUID> {

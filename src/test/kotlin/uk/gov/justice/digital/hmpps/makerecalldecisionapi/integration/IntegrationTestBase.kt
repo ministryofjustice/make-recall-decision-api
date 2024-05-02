@@ -28,6 +28,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
@@ -80,6 +81,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUna
 import java.io.File
 import java.nio.file.Paths
 import java.sql.DriverManager
+import java.util.concurrent.TimeUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -859,16 +861,34 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun documentManagementApiResponse(
+  protected fun documentManagementApiUploadResponse(
     documentUuid: String,
-    delaySeconds: Long = 0,
+    delaySeconds: Long = 0
   ) {
-    val documentManagementApiRequest = request().withPath("/documents.*")
+    val documentManagementApiRequest = request()
+      .withMethod("POST")
+      .withPath("/documents/PPUD_RECALL.*")
 
     documentManagementApi.`when`(documentManagementApiRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody("""{"documentUuid": "$documentUuid"}""")
         .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun documentManagementApiDownloadResponse(
+    delaySeconds: Long = 0
+  ) {
+    val responseBodyBytes = "hello there!".toByteArray()
+
+    val documentManagementApiRequest = request()
+      .withMethod("GET")
+      .withPath("/documents.*")
+
+    documentManagementApi.`when`(documentManagementApiRequest).respond(
+      response().withStatusCode(200)
+        .withBody(responseBodyBytes)
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
