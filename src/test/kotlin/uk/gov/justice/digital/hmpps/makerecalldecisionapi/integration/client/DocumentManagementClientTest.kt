@@ -18,7 +18,7 @@ class DocumentManagementClientTest : IntegrationTestBase() {
     val documentUid = "deae6fd3-2e16-4565-821a-7b99f949ff76"
 
     // and
-    documentManagementApiResponse(documentUid)
+    documentManagementApiUploadResponse(documentUid)
 
     // and
     val expected = documentUid
@@ -28,5 +28,23 @@ class DocumentManagementClientTest : IntegrationTestBase() {
 
     // then
     assertThat(actual!!.toString()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `downloads a document`() {
+    // given
+    val documentUid = "deae6fd3-2e16-4565-821a-7b99f949ff76"
+
+    // and
+    documentManagementApiDownloadResponse()
+
+    // and
+    val expected = "hello there!"
+
+    // when
+    val actual = documentManagementClient.downloadFileAsByteArray(crn = "123", documentUuid = "123").block()
+
+    // then
+    assertThat(String(actual!!), equalTo(expected))
   }
 }

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/documents.*"
+  },
+  "response": {
+    "status": 201,
+    "body": "",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

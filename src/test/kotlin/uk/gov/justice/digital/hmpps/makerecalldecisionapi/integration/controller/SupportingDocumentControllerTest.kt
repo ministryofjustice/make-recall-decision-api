@@ -24,7 +24,7 @@ class SupportingDocumentControllerTest(
 
   @Test
   fun `create supporting document`() {
-    documentManagementApiResponse(documentUuid = UUID.randomUUID().toString())
+    documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString())
 
     val recommendationId = "123"
 
@@ -268,7 +268,7 @@ class SupportingDocumentControllerTest(
     runTest {
       val data = "While I pondered, weak and weary"
       val recommendationId = "123"
-      documentManagementApiResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
+      documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
       webTestClient.post()
         .uri("/recommendations/$recommendationId/documents")
         .contentType(MediaType.APPLICATION_JSON)
