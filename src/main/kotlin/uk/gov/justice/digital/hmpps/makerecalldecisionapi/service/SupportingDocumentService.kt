@@ -28,6 +28,7 @@ internal class SupportingDocumentService(
   fun uploadNewSupportingDocument(
     recommendationId: Long,
     type: String,
+    title: String,
     mimetype: String,
     filename: String,
     created: String,
@@ -43,6 +44,7 @@ internal class SupportingDocumentService(
         recommendationId = recommendationId,
         mimetype = mimetype,
         type = type,
+        title = title,
         filename = filename,
         created = created,
         createdByUserFullName = createdByUserFullName,
@@ -59,6 +61,7 @@ internal class SupportingDocumentService(
 
   fun replaceSupportingDocument(
     id: Long,
+    title: String,
     mimetype: String,
     filename: String,
     uploaded: String,
@@ -70,6 +73,7 @@ internal class SupportingDocumentService(
     val file =
       recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
 
+    file.title = title
     file.mimetype = mimetype
     file.filename = filename
     file.uploaded = uploaded

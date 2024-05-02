@@ -22,6 +22,7 @@ data class RecommendationSupportingDocumentEntity(
   var filename: String?,
   var mimetype: String?,
   var type: String?,
+  var title: String?,
   var uploadedBy: String? = null,
   var uploadedByUserFullName: String? = null,
   var uploaded: String? = null,
