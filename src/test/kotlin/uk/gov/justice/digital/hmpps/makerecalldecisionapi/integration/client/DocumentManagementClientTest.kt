@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -23,9 +24,9 @@ class DocumentManagementClientTest : IntegrationTestBase() {
     val expected = documentUid
 
     // when
-//    val actual = documentManagementClient.uploadFile(crn = "123", "myFile".toByteArray()).block()
-//
-//    // then
-//    assertThat(actual!!.toString(), equalTo(expected))
+    val actual = documentManagementClient.uploadFile(crn = "123", "myFile".toByteArray(), "").block()
+
+    // then
+    assertThat(actual!!.toString()).isEqualTo(expected)
   }
 }
