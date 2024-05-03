@@ -13,5 +13,5 @@ data class SupportingDocumentMetaDataResponse(
   var uploadedByUserFullName: String?,
   var uploaded: String?,
   var documentUuid: UUID?,
-  var title: String?
+  var title: String?,
 )
