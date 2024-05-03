@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
+import org.mockserver.model.HttpRequest.request
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -60,6 +61,8 @@ class SupportingDocumentControllerTest(
         .exchange()
         .expectStatus().isOk,
     )
+
+    val results = documentManagementApi.retrieveLogMessages(request())
 
     val result = recommendationSupportingDocumentRepository.findById((response.get("id") as Int).toLong())
     assertThat(String(result.get().data)).isEqualTo("While I pondered, weak and weary")
