@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import org.apache.commons.io.IOUtils
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DocumentManagementClient
@@ -11,7 +12,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toSupportingDocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.InputStream
 import java.util.Base64
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
@@ -109,8 +112,17 @@ internal class SupportingDocumentService(
     data: String,
     crn: String?,
   ): UUID? {
-    val file = File(filename)
+    val file = createInMemoryFile(filename, Base64.getDecoder().decode(data))
     file.writeBytes(Base64.getDecoder().decode(data))
     return getValueAndHandleWrappedException(documentManagementClient.uploadFile(crn, file))
+  }
+
+  private fun createInMemoryFile(filename: String, content: ByteArray): File {
+    val inputStream: InputStream = ByteArrayInputStream(content)
+    return File(filename).apply {
+      this.outputStream().use {
+        IOUtils.copy(inputStream, it)
+      }
+    }
   }
 }
