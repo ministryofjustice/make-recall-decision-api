@@ -5,16 +5,20 @@ import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import java.io.File
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeoutException
 
 class DocumentManagementClient(
@@ -27,10 +31,20 @@ class DocumentManagementClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun uploadFile(crn: String?, file: File): Mono<UUID> {
+  fun uploadFile(crn: String?, file: ByteArray, filename: String): Mono<UUID> {
     log.info(StringUtils.normalizeSpace("About to upload file for crn $crn"))
     val responseType = object : ParameterizedTypeReference<DocumentUploadResponse>() {}
     val documentUuid = UUID.randomUUID()
+
+    val fileMap: MultiValueMap<String, String> = LinkedMultiValueMap()
+    val contentDisposition = ContentDisposition
+      .builder("form-data")
+      .name("file")
+      .filename(filename)
+      .build()
+    fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+    val fileEntity: HttpEntity<ByteArray> = HttpEntity(file, fileMap)
+
     val result = webClient
       .post()
       .uri("/documents/PPUD_RECALL/$documentUuid")
@@ -40,7 +54,7 @@ class DocumentManagementClient(
         BodyInserters.fromValue(
           MultipartBodyBuilder()
             .apply {
-              part("file", file)
+              part("file", fileEntity, MediaType.APPLICATION_OCTET_STREAM)
               part("metadata", """{ "crn": $crn }""")
             }
             .build(),

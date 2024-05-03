@@ -33,7 +33,7 @@ class SupportingDocumentServiceTest {
     val created = DateTimeHelper.utcNowDateTimeString()
 
     val documentUuid = UUID.randomUUID()
-    given(client.uploadFile(any(), any())).willReturn(Mono.just(documentUuid))
+    given(client.uploadFile(any(), any(), any())).willReturn(Mono.just(documentUuid))
 
     given(recommendationRepository.findById(Mockito.any())).willReturn(Optional.of(RecommendationEntity(id = 1L, data = RecommendationModel(crn = "123"))))
     given(supportingDocumentRepository.save(Mockito.any())).willReturn(
@@ -70,7 +70,7 @@ class SupportingDocumentServiceTest {
     val captor = argumentCaptor<RecommendationSupportingDocumentEntity>()
 
     Mockito.verify(supportingDocumentRepository).save(captor.capture())
-    BDDMockito.then(client).should().uploadFile(any(), any())
+    BDDMockito.then(client).should().uploadFile(any(), any(), any())
     BDDMockito.then(recommendationRepository).should().findById(any())
 
     val entity = captor.firstValue
