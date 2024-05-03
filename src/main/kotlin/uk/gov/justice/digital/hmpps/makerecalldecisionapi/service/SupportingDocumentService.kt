@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
-import org.apache.commons.io.IOUtils
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DocumentManagementClient
@@ -14,6 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.Base64
 import java.util.UUID
@@ -117,12 +117,14 @@ internal class SupportingDocumentService(
     return getValueAndHandleWrappedException(documentManagementClient.uploadFile(crn, file))
   }
 
-  private fun createInMemoryFile(filename: String, content: ByteArray): File {
+  fun createInMemoryFile(filename: String, content: ByteArray): File {
     val inputStream: InputStream = ByteArrayInputStream(content)
-    return File(filename).apply {
-      this.outputStream().use {
-        IOUtils.copy(inputStream, it)
+    val outputFile = File(null as File?, filename)
+    FileOutputStream(outputFile).use { outputStream ->
+      inputStream.use { inputStream ->
+        inputStream.copyTo(outputStream)
       }
     }
+    return outputFile
   }
 }
