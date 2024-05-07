@@ -40,6 +40,7 @@ class SupportingDocumentServiceTest {
       RecommendationSupportingDocumentEntity(
         id = 456,
         recommendationId = 123,
+        title = "title",
         mimetype = "word",
         filename = "word.docx",
         created = created,
@@ -56,6 +57,7 @@ class SupportingDocumentServiceTest {
     val id = SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).uploadNewSupportingDocument(
       recommendationId = 123,
       type = "PPUDPartA",
+      title = "title",
       mimetype = "word",
       filename = "word.docx",
       created = created,
@@ -102,6 +104,7 @@ class SupportingDocumentServiceTest {
         RecommendationSupportingDocumentEntity(
           id = 1,
           recommendationId = 123,
+          title = "title",
           createdBy = "daman",
           createdByUserFullName = "Inspector Morris",
           created = created,
@@ -147,6 +150,7 @@ class SupportingDocumentServiceTest {
         RecommendationSupportingDocumentEntity(
           id = 1,
           recommendationId = 123,
+          title = "title",
           createdBy = "daman",
           createdByUserFullName = "Inspector Morris",
           created = created,
@@ -164,6 +168,7 @@ class SupportingDocumentServiceTest {
     SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
       123,
       mimetype = "word2",
+      title = "title",
       uploadedBy = "daman2",
       uploadedByUserFullName = "Inspector Morris2",
       uploaded = created,
@@ -204,6 +209,7 @@ class SupportingDocumentServiceTest {
         RecommendationSupportingDocumentEntity(
           id = 1,
           recommendationId = 123,
+          title = "title",
           createdBy = "daman",
           createdByUserFullName = "Inspector Morris",
           created = created,
