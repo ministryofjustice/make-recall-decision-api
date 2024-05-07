@@ -45,6 +45,6 @@ class DocumentManagementClientTest : IntegrationTestBase() {
     val actual = documentManagementClient.downloadFileAsByteArray(crn = "123", documentUuid = "123").block()
 
     // then
-    assertThat(String(actual!!), equalTo(expected))
+    assertThat(String(actual!!)).isEqualTo(expected)
   }
 }
