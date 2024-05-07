@@ -8,6 +8,7 @@
     "bodyFileName": "document-management.json",
     "headers": {
       "Content-Type": "application/json"
-    }
+    },
+    "transformers": ["response-template"]
   }
 }

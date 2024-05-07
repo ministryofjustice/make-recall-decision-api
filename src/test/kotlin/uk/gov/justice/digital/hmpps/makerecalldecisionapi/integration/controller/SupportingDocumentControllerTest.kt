@@ -40,6 +40,7 @@ class SupportingDocumentControllerTest(
             {
               "filename": "doc.docx",
               "type" : "PPUDPartA",
+              "title": "title",
               "mimetype": "word",
               "data": "${base64(data)}"
             }
@@ -78,6 +79,7 @@ class SupportingDocumentControllerTest(
       RecommendationSupportingDocumentEntity(
         recommendationId = 123,
         mimetype = "word",
+        title = "title",
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
@@ -133,6 +135,7 @@ class SupportingDocumentControllerTest(
       RecommendationSupportingDocumentEntity(
         recommendationId = 123,
         mimetype = "word",
+        title = "title",
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
@@ -180,6 +183,7 @@ class SupportingDocumentControllerTest(
       RecommendationSupportingDocumentEntity(
         recommendationId = 123,
         mimetype = "word",
+        title = "title",
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
@@ -203,6 +207,7 @@ class SupportingDocumentControllerTest(
             {
               "filename": "doc.docx",              
               "mimetype": "word",
+              "title": "title",
               "data": "$newData"
             }
           """,
@@ -225,6 +230,7 @@ class SupportingDocumentControllerTest(
       RecommendationSupportingDocumentEntity(
         recommendationId = 123,
         mimetype = "word",
+        title = "title",
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
@@ -272,6 +278,7 @@ class SupportingDocumentControllerTest(
             {
               "filename": "doc.docx",
               "type" : "PPUDPartA",
+              "title": "title",
               "mimetype": "word",
               "data": "${base64(data)}"
             }

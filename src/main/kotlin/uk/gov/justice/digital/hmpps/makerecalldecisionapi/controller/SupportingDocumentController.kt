@@ -48,15 +48,16 @@ internal class SupportingDocumentController(
     val createdBy = userLogin.name
     val createdByFullName = authenticationFacade.currentNameOfUser
     val id = supportingDocumentService.uploadNewSupportingDocument(
-      recommendationId,
-      createSupportingDocumentRequest.type,
-      createSupportingDocumentRequest.mimetype,
-      createSupportingDocumentRequest.filename,
-      DateTimeHelper.utcNowDateTimeString(),
-      createdBy,
-      createdByFullName,
-      createSupportingDocumentRequest.data,
-      flags,
+      recommendationId = recommendationId,
+      type = createSupportingDocumentRequest.type,
+      title = createSupportingDocumentRequest.title,
+      mimetype = createSupportingDocumentRequest.mimetype,
+      filename = createSupportingDocumentRequest.filename,
+      created = DateTimeHelper.utcNowDateTimeString(),
+      createdBy = createdBy,
+      createdByUserFullName = createdByFullName,
+      data = createSupportingDocumentRequest.data,
+      flags = flags,
     )
 
     return SupportingDocumentResponse(
@@ -97,6 +98,7 @@ internal class SupportingDocumentController(
 
     supportingDocumentService.replaceSupportingDocument(
       id = id,
+      title = request.title,
       mimetype = request.mimetype,
       filename = request.filename,
       uploaded = DateTimeHelper.utcNowDateTimeString(),
