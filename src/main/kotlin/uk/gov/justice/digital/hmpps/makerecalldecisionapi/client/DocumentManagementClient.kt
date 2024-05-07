@@ -55,7 +55,7 @@ class DocumentManagementClient(
           MultipartBodyBuilder()
             .apply {
               part("file", fileEntity, MediaType.APPLICATION_OCTET_STREAM)
-              part("metadata", """{ "crn": $crn }""")
+              part("metadata", """{ "crn": "$crn" }""")
             }
             .build(),
         ),
