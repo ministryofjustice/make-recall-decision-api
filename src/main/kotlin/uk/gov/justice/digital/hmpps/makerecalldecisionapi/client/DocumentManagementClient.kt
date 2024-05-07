@@ -32,7 +32,7 @@ class DocumentManagementClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun downloadFileAsByteArray(crn: String?, documentUuid: String): Mono<ByteArray> {
+  fun downloadFileAsByteArray(crn: String?, documentUuid: String?): Mono<ByteArray> {
     return webClient.get()
       .uri("/documents/$documentUuid/file")
       .header("SERVICE_NAME", crn)

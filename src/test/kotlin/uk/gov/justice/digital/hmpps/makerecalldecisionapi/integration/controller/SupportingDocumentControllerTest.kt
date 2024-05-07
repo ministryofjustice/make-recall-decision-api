@@ -129,6 +129,7 @@ class SupportingDocumentControllerTest(
   @Test
   fun `retrieve supporting document`() {
     val created = DateTimeHelper.utcNowDateTimeString()
+    documentManagementApiDownloadResponse("Once upon a midnight dreary")
 
     recommendationSupportingDocumentRepository.deleteAll()
     val result = recommendationSupportingDocumentRepository.save(

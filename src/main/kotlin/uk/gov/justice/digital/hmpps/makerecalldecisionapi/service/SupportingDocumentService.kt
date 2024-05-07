@@ -91,11 +91,11 @@ internal class SupportingDocumentService(
     recommendationDocumentRepository.delete(file)
   }
 
-  fun getSupportingDocument(id: Long, recommendationId: Long?, flags: FeatureFlags): SupportingDocumentResponse {
+  fun getSupportingDocument(id: Long, flags: FeatureFlags): SupportingDocumentResponse {
     val file = recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
-    val crn = recommendationRepository.findById(recommendationId).getOrNull()?.data?.crn
+    val crn = file.recommendationId?.let { recommendationRepository.findById(it).getOrNull()?.data?.crn }
     val bytes = getValueAndHandleWrappedException(
-      documentManagementClient.downloadFileAsByteArray(documentUuid = file.uploadedByUserFullName.toString(), crn = crn)
+      documentManagementClient.downloadFileAsByteArray(documentUuid = file.uploadedByUserFullName.toString(), crn = crn),
     )
     val encodedString: String = Base64.getEncoder().encodeToString(bytes)
 

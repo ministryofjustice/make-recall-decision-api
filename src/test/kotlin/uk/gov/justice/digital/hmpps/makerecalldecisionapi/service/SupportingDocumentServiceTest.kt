@@ -202,6 +202,11 @@ class SupportingDocumentServiceTest {
     val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
     val client = Mockito.mock(DocumentManagementClient::class.java)
 
+    given(recommendationRepository.findById(Mockito.any()))
+      .willReturn(Optional.of(RecommendationEntity(id = 1L, data = RecommendationModel(crn = "123"))))
+    given(client.downloadFileAsByteArray(Mockito.any(), Mockito.any()))
+      .willReturn(Mono.just("The hills are alive with thet sound of music".encodeToByteArray()))
+
     val created = DateTimeHelper.utcNowDateTimeString()
 
     given(supportingDocumentRepository.findById(123)).willReturn(
