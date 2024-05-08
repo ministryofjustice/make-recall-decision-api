@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class ReplaceSupportingDocumentRequest(
   val title: String,
-  val filename: String,
-  val mimetype: String,
-  val data: String,
+  val filename: String?,
+  val mimetype: String?,
+  val data: String?,
 )

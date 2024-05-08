@@ -197,6 +197,66 @@ class SupportingDocumentServiceTest {
   }
 
   @Test
+  fun replace_title() {
+    val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
+    val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
+    val client = Mockito.mock(DocumentManagementClient::class.java)
+
+    val created = DateTimeHelper.utcNowDateTimeString()
+
+    given(supportingDocumentRepository.findById(123)).willReturn(
+      Optional.of(
+        RecommendationSupportingDocumentEntity(
+          id = 1,
+          recommendationId = 123,
+          title = "title",
+          createdBy = "daman",
+          createdByUserFullName = "Inspector Morris",
+          created = created,
+          filename = "word.docx",
+          type = "PPUDPartA",
+          mimetype = "word",
+          uploadedBy = "daman",
+          uploadedByUserFullName = "Inspector Morris",
+          uploaded = created,
+          data = "The hills are alive with thet sound of music".encodeToByteArray(),
+        ),
+      ),
+    )
+
+    SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
+      123,
+      mimetype = "word2",
+      title = "title 2",
+      uploadedBy = "daman2",
+      uploadedByUserFullName = "Inspector Morris2",
+      uploaded = created,
+      data = null,
+      filename = "word.docx",
+      flags = FeatureFlags(),
+    )
+
+    val captor = argumentCaptor<RecommendationSupportingDocumentEntity>()
+
+    Mockito.verify(supportingDocumentRepository).save(captor.capture())
+
+    val entity = captor.firstValue
+
+    assertThat(entity.recommendationId).isEqualTo(123)
+    assertThat(entity.title).isEqualTo("title 2")
+    assertThat(entity.type).isEqualTo("PPUDPartA")
+    assertThat(entity.mimetype).isEqualTo("word2")
+    assertThat(entity.filename).isEqualTo("word.docx")
+    assertThat(entity.created).isEqualTo(created)
+    assertThat(entity.createdBy).isEqualTo("daman")
+    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.uploaded).isEqualTo(created)
+    assertThat(entity.uploadedBy).isEqualTo("daman2")
+    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
+    assertThat(String(entity.data)).isEqualTo("The hills are alive with thet sound of music")
+  }
+
+  @Test
   fun `get`() {
     val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
     val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
