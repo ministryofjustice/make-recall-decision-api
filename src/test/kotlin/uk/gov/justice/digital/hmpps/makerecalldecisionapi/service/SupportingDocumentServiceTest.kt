@@ -226,13 +226,13 @@ class SupportingDocumentServiceTest {
 
     SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
       123,
-      mimetype = "word2",
+      mimetype = null,
       title = "title 2",
       uploadedBy = "daman2",
       uploadedByUserFullName = "Inspector Morris2",
       uploaded = created,
       data = null,
-      filename = "word.docx",
+      filename = null,
       flags = FeatureFlags(),
     )
 
@@ -245,7 +245,7 @@ class SupportingDocumentServiceTest {
     assertThat(entity.recommendationId).isEqualTo(123)
     assertThat(entity.title).isEqualTo("title 2")
     assertThat(entity.type).isEqualTo("PPUDPartA")
-    assertThat(entity.mimetype).isEqualTo("word2")
+    assertThat(entity.mimetype).isEqualTo("word")
     assertThat(entity.filename).isEqualTo("word.docx")
     assertThat(entity.created).isEqualTo(created)
     assertThat(entity.createdBy).isEqualTo("daman")
