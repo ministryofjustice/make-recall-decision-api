@@ -62,24 +62,26 @@ internal class SupportingDocumentService(
   fun replaceSupportingDocument(
     id: Long,
     title: String,
-    mimetype: String,
-    filename: String,
     uploaded: String,
     uploadedBy: String?,
     uploadedByUserFullName: String?,
-    data: String,
+    mimetype: String?,
+    filename: String?,
+    data: String?,
     flags: FeatureFlags,
   ) {
     val file =
       recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
 
     file.title = title
-    file.mimetype = mimetype
-    file.filename = filename
     file.uploaded = uploaded
     file.uploadedBy = uploadedBy
     file.uploadedByUserFullName = uploadedByUserFullName
-    file.data = Base64.getDecoder().decode(data)
+    if (data != null) {
+      file.mimetype = mimetype
+      file.filename = filename
+      file.data = Base64.getDecoder().decode(data)
+    }
 
     recommendationDocumentRepository.save(file)
   }
