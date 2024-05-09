@@ -3,12 +3,44 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.util
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import java.time.LocalDateTime
+import java.util.stream.Stream
 
 class DateTimeHelperTest {
+
+  companion object {
+    @JvmStatic
+    fun utcToLondonTestData(): Stream<Arguments> {
+      return Stream.of(
+        Arguments.of(LocalDateTime.parse("2024-01-31T08:00:00"), LocalDateTime.parse("2024-01-31T08:00:00")),
+        Arguments.of(
+          LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+          LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+        ),
+        Arguments.of(LocalDateTime.parse("2024-07-31T08:00:00"), LocalDateTime.parse("2024-07-31T09:00:00")),
+        Arguments.of(
+          LocalDateTime.of(2024, 5, 31, 23, 0, 0),
+          LocalDateTime.of(2024, 6, 1, 0, 0, 0),
+        ),
+      )
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("utcToLondonTestData")
+  fun `given local date time when convertToLondonTimezone called then assume time is UTC and return date time in London timezone`(
+    original: LocalDateTime,
+    expected: LocalDateTime,
+  ) {
+    val result = DateTimeHelper.convertToLondonTimezone(original)
+
+    assertThat(result).isEqualTo(expected)
+  }
 
   @Test
   fun `given UTC date time string then convert to ISO8601 date`() {

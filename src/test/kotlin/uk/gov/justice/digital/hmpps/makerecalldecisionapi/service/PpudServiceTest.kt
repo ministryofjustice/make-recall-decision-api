@@ -195,13 +195,13 @@ internal class PpudServiceTest : ServiceTestBase() {
   @Test
   fun `call create recall`() {
     val request = CreateRecallRequest(
-      decisionDateTime = LocalDateTime.of(2024, 1, 1, 12, 0),
+      decisionDateTime = LocalDateTime.of(2024, 6, 1, 12, 0),
       isExtendedSentence = false,
       isInCustody = true,
       mappaLevel = "Level 1",
       policeForce = "police force",
       probationArea = "probation area",
-      receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+      receivedDateTime = LocalDateTime.of(2024, 6, 1, 14, 0),
       riskOfContrabandDetails = "some details",
       riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
     )
@@ -224,13 +224,13 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val ppudCreateRecallRequest = captor.firstValue
 
-    assertThat(ppudCreateRecallRequest.decisionDateTime).isEqualTo(LocalDateTime.of(2024, 1, 1, 12, 0))
+    assertThat(ppudCreateRecallRequest.decisionDateTime).isEqualTo(LocalDateTime.of(2024, 6, 1, 13, 0))
     assertThat(ppudCreateRecallRequest.isExtendedSentence).isEqualTo(false)
     assertThat(ppudCreateRecallRequest.isInCustody).isEqualTo(true)
     assertThat(ppudCreateRecallRequest.mappaLevel).isEqualTo("Level 1")
     assertThat(ppudCreateRecallRequest.policeForce).isEqualTo("police force")
     assertThat(ppudCreateRecallRequest.probationArea).isEqualTo("probation area")
-    assertThat(ppudCreateRecallRequest.receivedDateTime).isEqualTo(LocalDateTime.of(2024, 1, 1, 14, 0))
+    assertThat(ppudCreateRecallRequest.receivedDateTime).isEqualTo(LocalDateTime.of(2024, 6, 1, 15, 0))
     assertThat(ppudCreateRecallRequest.riskOfContrabandDetails).isEqualTo("some details")
     assertThat(ppudCreateRecallRequest.riskOfSeriousHarmLevel).isEqualTo(RiskOfSeriousHarmLevel.High)
   }
