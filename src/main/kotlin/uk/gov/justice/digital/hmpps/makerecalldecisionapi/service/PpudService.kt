@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertToLondonTimezone
 
 @Service
 internal class PpudService(
@@ -108,13 +109,13 @@ internal class PpudService(
         offenderId,
         releaseId,
         PpudCreateRecallRequest(
-          decisionDateTime = createRecallRequest.decisionDateTime,
+          decisionDateTime = convertToLondonTimezone(createRecallRequest.decisionDateTime),
           isExtendedSentence = createRecallRequest.isExtendedSentence,
           isInCustody = createRecallRequest.isInCustody,
           mappaLevel = createRecallRequest.mappaLevel,
           policeForce = createRecallRequest.policeForce,
           probationArea = createRecallRequest.probationArea,
-          receivedDateTime = createRecallRequest.receivedDateTime,
+          receivedDateTime = convertToLondonTimezone(createRecallRequest.receivedDateTime),
           recommendedTo = ppudUser,
           riskOfContrabandDetails = createRecallRequest.riskOfContrabandDetails,
           riskOfSeriousHarmLevel = createRecallRequest.riskOfSeriousHarmLevel,

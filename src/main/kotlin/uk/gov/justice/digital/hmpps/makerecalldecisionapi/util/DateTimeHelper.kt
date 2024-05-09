@@ -7,6 +7,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -78,6 +79,12 @@ class DateTimeHelper {
     fun convertDateStringToIso8601Date(input: String?): LocalDate? {
       val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
       return input?.let { LocalDate.parse(it, formatter) }
+    }
+
+    fun convertToLondonTimezone(localDateTimeInUtc: LocalDateTime): LocalDateTime {
+      return localDateTimeInUtc.atOffset(UTC)
+        .atZoneSameInstant(ZoneId.of("Europe/London"))
+        .toLocalDateTime()
     }
   }
 }
