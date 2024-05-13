@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
@@ -20,7 +21,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertToLondonTimezone
@@ -101,8 +105,9 @@ internal class PpudService(
     createRecallRequest: CreateRecallRequest,
     username: String,
   ): PpudCreateRecallResponse {
-    val ppudUser = ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
-      ?: throw NotFoundException("PPUD user not found for username '$username'")
+    val ppudUser =
+      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user not found for username '$username'")
 
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createRecall(
@@ -128,6 +133,40 @@ internal class PpudService(
   fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest) {
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.updateOffender(offenderId, request),
+    )
+  }
+
+  fun uploadMandatoryDocument(
+    recallId: String,
+    uploadMandatoryDocument: UploadMandatoryDocumentRequest,
+    username: String,
+  ) {
+    val ppudUser =
+      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user not found for username '$username'")
+
+    val category = when (uploadMandatoryDocument.category) {
+      "PPUDPartA" -> DocumentCategory.PartA
+      "PPUDLicenceDocument" -> DocumentCategory.Licence
+      "PPUDProbationEmail" -> DocumentCategory.RecallRequestEmail
+      "PPUDOASys" -> DocumentCategory.OASys
+      "PPUDPrecons" -> DocumentCategory.PreviousConvictions
+      "PPUDPSR" -> DocumentCategory.PreSentenceReport
+      "PPUDChargeSheet" -> DocumentCategory.ChargeSheet
+      else -> {
+        throw InvalidRequestException("Invalid document category to upload: " + uploadMandatoryDocument.category)
+      }
+    }
+
+    getValueAndHandleWrappedException(
+      ppudAutomationApiClient.uploadMandatoryDocument(
+        recallId,
+        PpudUploadMandatoryDocumentRequest(
+          id = uploadMandatoryDocument.id,
+          category = category,
+          owningCaseworker = ppudUser,
+        ),
+      ),
     )
   }
 }
