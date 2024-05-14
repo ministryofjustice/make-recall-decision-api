@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
@@ -15,6 +17,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.given
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
@@ -31,7 +34,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
@@ -254,5 +260,28 @@ internal class PpudServiceTest : ServiceTestBase() {
       service.createRecall("123", "456", request, "userId")
     }
     assertThat(ex.message).isEqualTo("PPUD user not found for username 'userId'")
+  }
+
+  @ParameterizedTest
+  @CsvSource("PPUDPartA,PartA", "PPUDLicenceDocument,Licence", "PPUDProbationEmail,RecallRequestEmail", "PPUDOASys,OASys", "PPUDPrecons,PreviousConvictions", "PPUDPSR,PreSentenceReport", "PPUDChargeSheet,ChargeSheet")
+  fun `upload mandatory document`(category: String, ppudCategory: DocumentCategory) {
+    val recallId = "123"
+    val request = UploadMandatoryDocumentRequest("12345", category)
+
+    val captor = argumentCaptor<PpudUploadMandatoryDocumentRequest>()
+
+    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+
+    given(ppudAutomationApiClient.uploadMandatoryDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
+
+    PpudService(ppudAutomationApiClient, ppudUserRepository)
+      .uploadMandatoryDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
+
+    val ppudUploadMandatoryDocumentRequest = captor.firstValue
+
+    assertThat(ppudUploadMandatoryDocumentRequest.id).isEqualTo("12345")
+    assertThat(ppudUploadMandatoryDocumentRequest.category).isEqualTo(ppudCategory)
+    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
   }
 }

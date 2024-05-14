@@ -8,6 +8,7 @@ data class BookingMemento(
   val offenderId: String?,
   val sentenceId: String?,
   val releaseId: String?,
+  val recallId: String?,
   val failed: Boolean?,
   val failedMessage: String?,
 )

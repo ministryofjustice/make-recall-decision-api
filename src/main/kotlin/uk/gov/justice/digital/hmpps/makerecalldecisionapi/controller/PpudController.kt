@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudService
 import java.security.Principal
 
@@ -150,5 +151,17 @@ internal class PpudController(
     userLogin: Principal,
   ): PpudCreateRecallResponse {
     return ppudService.createRecall(offenderId, releaseId, createRecallRequest, userLogin.name)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PutMapping("ppud/recall/{recallId}/upload-mandatory-document")
+  @Operation(summary = "Calls PPUD Automation service to upload a mandatory file to ppud.")
+  suspend fun uploadMandatoryDocument(
+    @PathVariable(required = true) recallId: String,
+    @RequestBody(required = true)
+    uploadMandatoryDocumentRequest: UploadMandatoryDocumentRequest,
+    userLogin: Principal,
+  ) {
+    ppudService.uploadMandatoryDocument(recallId, uploadMandatoryDocumentRequest, userLogin.name)
   }
 }

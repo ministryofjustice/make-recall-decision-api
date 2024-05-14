@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "post-release.json",
+    "bodyFileName": "post-recall.json",
     "headers": {
       "Content-Type": "application/json"
     }
