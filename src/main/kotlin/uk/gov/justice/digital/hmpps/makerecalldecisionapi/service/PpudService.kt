@@ -162,7 +162,7 @@ internal class PpudService(
       ppudAutomationApiClient.uploadMandatoryDocument(
         recallId,
         PpudUploadMandatoryDocumentRequest(
-          id = uploadMandatoryDocument.id,
+          documentId = uploadMandatoryDocument.id,
           category = category,
           owningCaseworker = ppudUser,
         ),

@@ -320,7 +320,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ppudAutomationApiClient.uploadMandatoryDocument(
       recallId,
       PpudUploadMandatoryDocumentRequest(
-        id = "123",
+        documentId = "123",
         category = DocumentCategory.PartA,
         owningCaseworker = PpudUser("", ""),
       ),
