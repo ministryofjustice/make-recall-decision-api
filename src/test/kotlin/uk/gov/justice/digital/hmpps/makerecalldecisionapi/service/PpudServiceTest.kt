@@ -280,7 +280,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
 
-    assertThat(ppudUploadMandatoryDocumentRequest.id).isEqualTo("12345")
+    assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo("12345")
     assertThat(ppudUploadMandatoryDocumentRequest.category).isEqualTo(ppudCategory)
     assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
   }
