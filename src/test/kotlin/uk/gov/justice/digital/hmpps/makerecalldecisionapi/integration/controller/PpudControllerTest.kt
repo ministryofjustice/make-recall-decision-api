@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
@@ -364,6 +365,30 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud upload mandatory document`() {
+    ppudUserRepository.deleteAll()
+    ppudUserRepository.save(
+      PpudUserEntity(
+        userName = "SOME_USER",
+        ppudUserFullName = "User Name",
+        ppudTeamName = "Team 1",
+      ),
+    )
+
+    ppudAutomationUploadMandatoryDocumentApiMatchResponse("123")
+    runTest {
+      putToUploadMandatoryDocument(
+        "123",
+        UploadMandatoryDocumentRequest(
+          id = "456",
+          category = "PPUDPartA",
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -421,6 +446,17 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/offender/$offenderId/sentence/$sentenceId/offence")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToUploadMandatoryDocument(
+    recallId: String,
+    requestBody: UploadMandatoryDocumentRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/recall/$recallId/upload-mandatory-document")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

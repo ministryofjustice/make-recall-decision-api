@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
@@ -64,7 +65,7 @@ class PpudAutomationApiClient(
     val responseType = object : ParameterizedTypeReference<PpudDetailsResponse>() {}
     return webClient
       .get()
-      .uri { builder -> builder.path("/offender/" + id).build() }
+      .uri { builder -> builder.path("/offender/$id").build() }
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
@@ -82,7 +83,7 @@ class PpudAutomationApiClient(
 
     return webClient
       .post()
-      .uri { builder -> builder.path("/offender/" + nomisId + "/recall").build() }
+      .uri { builder -> builder.path("/offender/$nomisId/recall").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -117,7 +118,7 @@ class PpudAutomationApiClient(
   fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
-      .uri { builder -> builder.path("/offender/" + offenderId).build() }
+      .uri { builder -> builder.path("/offender/$offenderId").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -139,7 +140,7 @@ class PpudAutomationApiClient(
     val responseType = object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {}
     return webClient
       .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence").build() }
+      .uri { builder -> builder.path("/offender/$offenderId/sentence").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -161,7 +162,7 @@ class PpudAutomationApiClient(
   ): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId).build() }
+      .uri { builder -> builder.path("/offender/$offenderId/sentence/$sentenceId").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -183,7 +184,7 @@ class PpudAutomationApiClient(
   ): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence").build() }
+      .uri { builder -> builder.path("/offender/$offenderId/sentence/$sentenceId/offence").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -206,7 +207,7 @@ class PpudAutomationApiClient(
     val responseType = object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {}
     return webClient
       .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/release").build() }
+      .uri { builder -> builder.path("/offender/$offenderId/sentence/$sentenceId/release").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -228,11 +229,31 @@ class PpudAutomationApiClient(
     val responseType = object : ParameterizedTypeReference<PpudCreateRecallResponse>() {}
     return webClient
       .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/release/" + releaseId + "/recall").build() }
+      .uri { builder -> builder.path("/offender/$offenderId/release/$releaseId/recall").build() }
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
       .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
+        handleTimeoutException(ex)
+      }
+  }
+
+  fun uploadMandatoryDocument(
+    recallId: String,
+    request: PpudUploadMandatoryDocumentRequest,
+  ): Mono<ResponseEntity<Void>> {
+    return webClient
+      .put()
+      .uri { builder -> builder.path("/recall/$recallId/mandatory-document").build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .toBodilessEntity()
       .timeout(Duration.ofSeconds(ppudAutomationTimeout))
       .doOnError { ex ->
         if (ex is BadRequest) {

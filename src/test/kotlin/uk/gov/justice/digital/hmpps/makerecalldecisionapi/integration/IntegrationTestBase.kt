@@ -1037,6 +1037,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun ppudAutomationUploadMandatoryDocumentApiMatchResponse(
+    recallId: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/recall/$recallId/mandatory-document")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun ppudAutomationReferenceListApiMatchResponse(
     name: String,
     delaySeconds: Long = 0,

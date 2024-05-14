@@ -1,0 +1,9 @@
+{
+  "request": {
+    "method": "PUT",
+    "urlPathPattern": "/recall/.*/mandatory-document"
+  },
+  "response": {
+    "status": 204
+  }
+}
