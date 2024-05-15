@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
@@ -414,6 +415,48 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud upload additional document`() {
+    ppudUserRepository.deleteAll()
+    ppudUserRepository.save(
+      PpudUserEntity(
+        userName = "SOME_USER",
+        ppudUserFullName = "User Name",
+        ppudTeamName = "Team 1",
+      ),
+    )
+
+    val documentId = UUID.randomUUID()
+
+    recommendationDocumentRepository.deleteAll()
+    recommendationDocumentRepository.save(
+      RecommendationSupportingDocumentEntity(
+        id = 456,
+        created = null,
+        createdBy = null,
+        createdByUserFullName = null,
+        data = ByteArray(0),
+        mimetype = null,
+        filename = "",
+        title = "some title",
+        type = "",
+        recommendationId = 123,
+        documentUuid = documentId,
+      ),
+    )
+
+    ppudAutomationUploadAdditionalDocumentApiMatchResponse("123")
+    runTest {
+      putToUploadAdditionalDocument(
+        "123",
+        UploadAdditionalDocumentRequest(
+          id = 456,
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -482,6 +525,17 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/recall/$recallId/upload-mandatory-document")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToUploadAdditionalDocument(
+    recallId: String,
+    requestBody: UploadAdditionalDocumentRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/recall/$recallId/upload-additional-document")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

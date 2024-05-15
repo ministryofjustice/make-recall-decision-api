@@ -1048,6 +1048,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun ppudAutomationUploadAdditionalDocumentApiMatchResponse(
+    recallId: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/recall/$recallId/additional-document")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun ppudAutomationReferenceListApiMatchResponse(
     name: String,
     delaySeconds: Long = 0,

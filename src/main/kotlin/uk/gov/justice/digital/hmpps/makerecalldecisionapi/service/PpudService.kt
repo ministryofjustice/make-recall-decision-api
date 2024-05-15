@@ -21,8 +21,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
@@ -160,7 +162,8 @@ internal class PpudService(
       }
     }
 
-    val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id).orElseThrow { NotFoundException("Supporting document not found") }
+    val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id)
+      .orElseThrow { NotFoundException("Supporting document not found") }
 
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.uploadMandatoryDocument(
@@ -168,6 +171,30 @@ internal class PpudService(
         PpudUploadMandatoryDocumentRequest(
           documentId = doc.documentUuid!!,
           category = category,
+          owningCaseworker = ppudUser,
+        ),
+      ),
+    )
+  }
+
+  fun uploadAdditionalDocument(
+    recallId: String,
+    uploadMandatoryDocument: UploadAdditionalDocumentRequest,
+    username: String,
+  ) {
+    val ppudUser =
+      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user not found for username '$username'")
+
+    val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id)
+      .orElseThrow { NotFoundException("Supporting document not found") }
+
+    getValueAndHandleWrappedException(
+      ppudAutomationApiClient.uploadAdditionalDocument(
+        recallId,
+        PpudUploadAdditionalDocumentRequest(
+          documentId = doc.documentUuid!!,
+          title = doc.title!!,
           owningCaseworker = ppudUser,
         ),
       ),
