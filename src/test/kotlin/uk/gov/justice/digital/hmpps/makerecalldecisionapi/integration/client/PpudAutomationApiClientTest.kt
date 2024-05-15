@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 @ActiveProfiles("test")
 class PpudAutomationApiClientTest : IntegrationTestBase() {
@@ -311,6 +312,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
   @Test
   fun `update mandatory document in ppud`() {
+    val documentId = UUID.randomUUID()
     // given
     val recallId = "123"
 
@@ -320,7 +322,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ppudAutomationApiClient.uploadMandatoryDocument(
       recallId,
       PpudUploadMandatoryDocumentRequest(
-        documentId = "123",
+        documentId = documentId,
         category = DocumentCategory.PartA,
         owningCaseworker = PpudUser("", ""),
       ),

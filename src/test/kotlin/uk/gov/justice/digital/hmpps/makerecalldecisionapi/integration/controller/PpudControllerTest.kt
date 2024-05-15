@@ -26,9 +26,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 @Suppress("SameParameterValue")
 @ActiveProfiles("test")
@@ -37,6 +40,9 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var ppudUserRepository: PpudUserRepository
+
+  @Autowired
+  private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
 
   @Test
   fun `given request including null CRO Number when search is called then any matching results are returned`() {
@@ -376,12 +382,31 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
     )
 
+    val documentId = UUID.randomUUID()
+
+    recommendationDocumentRepository.deleteAll()
+    recommendationDocumentRepository.save(
+      RecommendationSupportingDocumentEntity(
+        id = 456,
+        created = null,
+        createdBy = null,
+        createdByUserFullName = null,
+        data = ByteArray(0),
+        mimetype = null,
+        filename = "",
+        title = "",
+        type = "",
+        recommendationId = 123,
+        documentUuid = documentId,
+      ),
+    )
+
     ppudAutomationUploadMandatoryDocumentApiMatchResponse("123")
     runTest {
       putToUploadMandatoryDocument(
         "123",
         UploadMandatoryDocumentRequest(
-          id = "456",
+          id = 456,
           category = "PPUDPartA",
         ),
       )
