@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
@@ -324,6 +325,28 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       PpudUploadMandatoryDocumentRequest(
         documentId = documentId,
         category = DocumentCategory.PartA,
+        owningCaseworker = PpudUser("", ""),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `update additional document in ppud`() {
+    val documentId = UUID.randomUUID()
+    // given
+    val recallId = "123"
+
+    ppudAutomationUploadAdditionalDocumentApiMatchResponse(recallId)
+
+    // when
+    ppudAutomationApiClient.uploadAdditionalDocument(
+      recallId,
+      PpudUploadAdditionalDocumentRequest(
+        documentId = documentId,
+        title = "some title",
         owningCaseworker = PpudUser("", ""),
       ),
     ).block()

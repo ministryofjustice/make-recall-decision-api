@@ -11,4 +11,5 @@ data class BookingMemento(
   val recallId: String?,
   val failed: Boolean?,
   val failedMessage: String?,
+  val uploadedAdditional: List<String>?,
 )
