@@ -27,12 +27,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertToLondonTimezone
 
 @Service
 internal class PpudService(
   @Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
   private val ppudUserRepository: PpudUserRepository,
+  private val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
 ) {
   fun search(request: PpudSearchRequest): PpudSearchResponse {
     val response = getValueAndHandleWrappedException(
@@ -158,11 +160,13 @@ internal class PpudService(
       }
     }
 
+    val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id).orElseThrow { NotFoundException("Supporting document not found") }
+
     getValueAndHandleWrappedException(
       ppudAutomationApiClient.uploadMandatoryDocument(
         recallId,
         PpudUploadMandatoryDocumentRequest(
-          documentId = uploadMandatoryDocument.id,
+          documentId = doc.documentUuid!!,
           category = category,
           owningCaseworker = ppudUser,
         ),

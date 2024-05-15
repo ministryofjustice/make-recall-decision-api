@@ -40,8 +40,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDateTime
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -49,6 +52,9 @@ internal class PpudServiceTest : ServiceTestBase() {
 
   @Mock
   private lateinit var ppudUserRepository: PpudUserRepository
+
+  @Mock
+  private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
 
   @Test
   fun `call search`() {
@@ -62,7 +68,8 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).search(request)
+    val result =
+      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).search(request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -77,7 +84,8 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).details("12345678")
+    val result =
+      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).details("12345678")
 
     assertThat(result).isEqualTo(response)
   }
@@ -94,7 +102,10 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).bookToPpud("123", request)
+    val result = PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).bookToPpud(
+      "123",
+      request,
+    )
 
     assertThat(result).isEqualTo(response)
   }
@@ -109,7 +120,11 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).retrieveList("custody-type")
+    val result = PpudService(
+      ppudAutomationApiClient,
+      ppudUserRepository,
+      recommendationDocumentRepository,
+    ).retrieveList("custody-type")
 
     assertThat(result).isEqualTo(response)
   }
@@ -126,7 +141,8 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).createOffender(request)
+    val result =
+      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createOffender(request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -137,7 +153,10 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateOffender("123", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository).updateOffender("123", request)
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateOffender(
+      "123",
+      request,
+    )
 
     verify(ppudAutomationApiClient).updateOffender("123", request)
   }
@@ -154,7 +173,10 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository).createSentence("123", request)
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createSentence(
+      "123",
+      request,
+    )
 
     verify(ppudAutomationApiClient).createSentence("123", request)
   }
@@ -165,7 +187,11 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateSentence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository).updateSentence("123", "456", request)
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateSentence(
+      "123",
+      "456",
+      request,
+    )
 
     verify(ppudAutomationApiClient).updateSentence("123", "456", request)
   }
@@ -176,7 +202,11 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateOffence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository).updateOffence("123", "456", request)
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateOffence(
+      "123",
+      "456",
+      request,
+    )
 
     verify(ppudAutomationApiClient).updateOffence("123", "456", request)
   }
@@ -193,7 +223,11 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).createOrUpdateRelease("123", "456", request)
+    val result = PpudService(
+      ppudAutomationApiClient,
+      ppudUserRepository,
+      recommendationDocumentRepository,
+    ).createOrUpdateRelease("123", "456", request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -224,7 +258,13 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository).createRecall("123", "456", request, "userId")
+    val result =
+      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createRecall(
+        "123",
+        "456",
+        request,
+        "userId",
+      )
 
     assertThat(result).isEqualTo(response)
 
@@ -255,7 +295,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
     )
 
-    val service = PpudService(ppudAutomationApiClient, ppudUserRepository)
+    val service = PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
     val ex = assertThrows<NotFoundException> {
       service.createRecall("123", "456", request, "userId")
     }
@@ -263,24 +303,52 @@ internal class PpudServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest
-  @CsvSource("PPUDPartA,PartA", "PPUDLicenceDocument,Licence", "PPUDProbationEmail,RecallRequestEmail", "PPUDOASys,OASys", "PPUDPrecons,PreviousConvictions", "PPUDPSR,PreSentenceReport", "PPUDChargeSheet,ChargeSheet")
+  @CsvSource(
+    "PPUDPartA,PartA",
+    "PPUDLicenceDocument,Licence",
+    "PPUDProbationEmail,RecallRequestEmail",
+    "PPUDOASys,OASys",
+    "PPUDPrecons,PreviousConvictions",
+    "PPUDPSR,PreSentenceReport",
+    "PPUDChargeSheet,ChargeSheet",
+  )
   fun `upload mandatory document`(category: String, ppudCategory: DocumentCategory) {
     val recallId = "123"
-    val request = UploadMandatoryDocumentRequest("12345", category)
+    val request = UploadMandatoryDocumentRequest(12345, category)
+    val documentId = UUID.randomUUID()
 
     val captor = argumentCaptor<PpudUploadMandatoryDocumentRequest>()
 
     given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
       .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
 
+    given(recommendationDocumentRepository.findById(12345))
+      .willReturn(
+        Optional.of(
+          RecommendationSupportingDocumentEntity(
+            id = 456,
+            created = null,
+            createdBy = null,
+            createdByUserFullName = null,
+            data = ByteArray(0),
+            mimetype = null,
+            filename = "",
+            title = "",
+            type = "",
+            recommendationId = 123,
+            documentUuid = documentId,
+          ),
+        ),
+      )
+
     given(ppudAutomationApiClient.uploadMandatoryDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository)
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
       .uploadMandatoryDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
 
-    assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo("12345")
+    assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
     assertThat(ppudUploadMandatoryDocumentRequest.category).isEqualTo(ppudCategory)
     assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
   }
