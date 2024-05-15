@@ -64,7 +64,9 @@ class PpudAutomationApiClient(
 
   fun createSentence(offenderId: String, request: PpudCreateOrUpdateSentenceRequest): Mono<PpudCreateSentenceResponse> {
     return post(
-      "/offender/$offenderId/sentence", request, object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {},
+      "/offender/$offenderId/sentence",
+      request,
+      object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {},
     )
   }
 
@@ -102,9 +104,9 @@ class PpudAutomationApiClient(
     request: PpudCreateRecallRequest,
   ): Mono<PpudCreateRecallResponse> {
     return post(
-        "/offender/$offenderId/release/$releaseId/recall",
-        request,
-        object : ParameterizedTypeReference<PpudCreateRecallResponse>() {},
+      "/offender/$offenderId/release/$releaseId/recall",
+      request,
+      object : ParameterizedTypeReference<PpudCreateRecallResponse>() {},
     )
   }
 
