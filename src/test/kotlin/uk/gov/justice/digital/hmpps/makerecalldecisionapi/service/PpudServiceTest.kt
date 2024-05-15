@@ -34,9 +34,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
@@ -350,6 +352,48 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
     assertThat(ppudUploadMandatoryDocumentRequest.category).isEqualTo(ppudCategory)
+    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
+  }
+
+  @Test
+  fun `upload additional document`() {
+    val recallId = "123"
+    val request = UploadAdditionalDocumentRequest(12345)
+    val documentId = UUID.randomUUID()
+
+    val captor = argumentCaptor<PpudUploadAdditionalDocumentRequest>()
+
+    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+
+    given(recommendationDocumentRepository.findById(12345))
+      .willReturn(
+        Optional.of(
+          RecommendationSupportingDocumentEntity(
+            id = 456,
+            created = null,
+            createdBy = null,
+            createdByUserFullName = null,
+            data = ByteArray(0),
+            mimetype = null,
+            filename = "",
+            title = "some title",
+            type = "",
+            recommendationId = 123,
+            documentUuid = documentId,
+          ),
+        ),
+      )
+
+    given(ppudAutomationApiClient.uploadAdditionalDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
+
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
+      .uploadAdditionalDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
+
+    val ppudUploadMandatoryDocumentRequest = captor.firstValue
+
+    assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
+    assertThat(ppudUploadMandatoryDocumentRequest.title).isEqualTo("some title")
     assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
   }
 }
