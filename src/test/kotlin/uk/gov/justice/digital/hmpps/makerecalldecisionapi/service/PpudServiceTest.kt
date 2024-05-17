@@ -401,9 +401,8 @@ internal class PpudServiceTest : ServiceTestBase() {
 
   @Test
   fun `call create minute`() {
-
     given(ppudAutomationApiClient.createMinute("123", PpudCreateMinuteRequest("some subject", "some text"))).willReturn(
-        Mono.empty(),
+      Mono.empty(),
     )
 
     PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createMinute(

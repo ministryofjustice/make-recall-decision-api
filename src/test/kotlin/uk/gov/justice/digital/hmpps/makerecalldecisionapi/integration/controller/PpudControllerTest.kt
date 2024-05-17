@@ -465,8 +465,8 @@ class PpudControllerTest : IntegrationTestBase() {
       putToCreateMinute(
         "123",
         CreateMinuteRequest(
-            subject = "subject",
-            text = "text",
+          subject = "subject",
+          text = "text",
         ),
       )
         .expectStatus().isOk
