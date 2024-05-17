@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
@@ -122,6 +123,13 @@ class PpudAutomationApiClient(
     request: PpudUploadAdditionalDocumentRequest,
   ): Mono<ResponseEntity<Void>> {
     return put("/recall/$recallId/additional-document", request)
+  }
+
+  fun createMinute(
+    recallId: String,
+    request: PpudCreateMinuteRequest,
+  ): Mono<ResponseEntity<Void>> {
+    return put("/recall/$recallId/minutes", request)
   }
 
   fun retrieveList(name: String): Mono<PpudReferenceListResponse> {

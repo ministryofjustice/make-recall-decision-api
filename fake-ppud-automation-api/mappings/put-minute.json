@@ -1,0 +1,9 @@
+{
+  "request": {
+    "method": "PUT",
+    "urlPathPattern": "/recall/.*/minutes"
+  },
+  "response": {
+    "status": 204
+  }
+}
