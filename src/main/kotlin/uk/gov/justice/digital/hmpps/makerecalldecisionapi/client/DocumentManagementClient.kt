@@ -31,11 +31,47 @@ class DocumentManagementClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun uploadFile(crn: String?, file: ByteArray, filename: String): Mono<UUID> {
+  fun downloadFileAsByteArray(documentUuid: String?, filename: String? = null): Mono<ByteArray> {
+    log.info(StringUtils.normalizeSpace("Fetching document with UUID $documentUuid"))
+    val contentDisposition = "inline; filename=$filename"
+    return webClient.get()
+      .uri("/documents/$documentUuid/file")
+      .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+      .header("Service-Name", "Consider a recall")
+      .header(HttpHeaders.ACCEPT, "application/*")
+      .retrieve()
+      .bodyToMono(ByteArray::class.java)
+      .timeout(Duration.ofSeconds(documentManagementClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "/documents/$documentUuid/file",
+        )
+      }
+      .withRetry()
+  }
+
+  fun deleteFile(documentUuid: String?): Mono<Void> {
+    log.info(StringUtils.normalizeSpace("Deleting document with UUID $documentUuid"))
+    return webClient.delete()
+      .uri("/documents/$documentUuid")
+      .header("Service-Name", "Consider a recall")
+      .retrieve()
+      .toBodilessEntity()
+      .then()
+      .timeout(Duration.ofSeconds(documentManagementClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "/documents/$documentUuid",
+        )
+      }
+      .withRetry()
+  }
+
+  fun uploadFile(crn: String?, file: ByteArray, filename: String? = null, documentUuid: String, mimeType: String?): Mono<UUID> {
     log.info(StringUtils.normalizeSpace("About to upload file for crn $crn"))
     val responseType = object : ParameterizedTypeReference<DocumentUploadResponse>() {}
-    val documentUuid = UUID.randomUUID()
-
     val fileMap: MultiValueMap<String, String> = LinkedMultiValueMap()
     val contentDisposition = ContentDisposition
       .builder("form-data")
@@ -43,6 +79,7 @@ class DocumentManagementClient(
       .filename(filename)
       .build()
     fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+    val contentType = mimeType ?: "application/octet-stream"
     val fileEntity: HttpEntity<ByteArray> = HttpEntity(file, fileMap)
 
     val result = webClient
@@ -54,7 +91,7 @@ class DocumentManagementClient(
         BodyInserters.fromValue(
           MultipartBodyBuilder()
             .apply {
-              part("file", fileEntity, MediaType.APPLICATION_OCTET_STREAM)
+              part("file", fileEntity, MediaType.parseMediaType(contentType))
               part("metadata", """{ "crn": "$crn" }""")
             }
             .build(),

@@ -5,7 +5,6 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
-import org.mockserver.model.HttpRequest.request
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -24,55 +23,24 @@ class SupportingDocumentControllerTest(
 
   @Test
   fun `create supporting document`() {
-    documentManagementApiResponse(documentUuid = UUID.randomUUID().toString())
+    documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString())
 
     val recommendationId = "123"
 
     val data = "While I pondered, weak and weary"
 
-    val response = convertResponseToJSONObject(
-      webTestClient.post()
-        .uri("/recommendations/$recommendationId/documents")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(
-            """
-            {
-              "filename": "doc.docx",
-              "type" : "PPUDPartA",
-              "title": "title",
-              "mimetype": "word",
-              "data": "${base64(data)}"
-            }
-          """,
-          ),
-        )
-        .headers {
-          (
-            listOf(
-              it.authToken(
-                roles = listOf(
-                  "ROLE_MAKE_RECALL_DECISION",
-                  "ROLE_MAKE_RECALL_DECISION_PPCS",
-                ),
-              ),
-            )
-            )
-        }
-        .exchange()
-        .expectStatus().isOk,
-    )
+    val response = uploadDocument(recommendationId, data)
 
-    val results = documentManagementApi.retrieveLogMessages(request())
-
+    val base64Data = response.getString("data")
     val result = recommendationSupportingDocumentRepository.findById((response.get("id") as Int).toLong())
-    assertThat(String(result.get().data)).isEqualTo("While I pondered, weak and weary")
     assertThat(result.get().documentUuid).isNotNull
+    assertThat(Base64.getDecoder().decode(base64Data).decodeToString()).isEqualTo(data)
   }
 
   @Test
   fun `retrieve supporting documents`() {
     val created = DateTimeHelper.utcNowDateTimeString()
+    documentManagementApiDownloadResponse("Once upon a midnight dreary")
 
     recommendationSupportingDocumentRepository.deleteAll()
     recommendationSupportingDocumentRepository.save(
@@ -88,7 +56,6 @@ class SupportingDocumentControllerTest(
         uploaded = created,
         uploadedBy = "daman",
         uploadedByUserFullName = "Da Man",
-        data = "Once upon a midnight dreary".encodeToByteArray(),
       ),
     )
 
@@ -129,6 +96,7 @@ class SupportingDocumentControllerTest(
   @Test
   fun `retrieve supporting document`() {
     val created = DateTimeHelper.utcNowDateTimeString()
+    documentManagementApiDownloadResponse("Once upon a midnight dreary")
 
     recommendationSupportingDocumentRepository.deleteAll()
     val result = recommendationSupportingDocumentRepository.save(
@@ -144,7 +112,6 @@ class SupportingDocumentControllerTest(
         uploaded = created,
         uploadedBy = "daman",
         uploadedByUserFullName = "Da Man",
-        data = "Once upon a midnight dreary".encodeToByteArray(),
       ),
     )
 
@@ -178,6 +145,9 @@ class SupportingDocumentControllerTest(
   fun `update supporting documents`() {
     val created = DateTimeHelper.utcNowDateTimeString()
 
+    documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString())
+    documentManagementApiDeleteResponse()
+
     recommendationSupportingDocumentRepository.deleteAll()
     val saved = recommendationSupportingDocumentRepository.save(
       RecommendationSupportingDocumentEntity(
@@ -192,7 +162,6 @@ class SupportingDocumentControllerTest(
         uploaded = created,
         uploadedBy = "daman",
         uploadedByUserFullName = "Da Man",
-        data = "Once upon a midnight dreary".encodeToByteArray(),
       ),
     )
 
@@ -206,8 +175,8 @@ class SupportingDocumentControllerTest(
           """
             {
               "filename": "doc.docx",              
-              "mimetype": "word",
-              "title": "title",
+              "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "title": "new title",
               "data": "$newData"
             }
           """,
@@ -218,13 +187,13 @@ class SupportingDocumentControllerTest(
       .expectStatus().isOk
 
     val result = recommendationSupportingDocumentRepository.findById(saved.id)
-    assertThat(String(result.get().data)).isEqualTo("While I pondered, weak and weary")
+    assertThat(result.get().title).isEqualTo("new title")
   }
 
   @Test
   fun `delete supporting documents`() {
     val created = DateTimeHelper.utcNowDateTimeString()
-
+    documentManagementApiDeleteResponse()
     recommendationSupportingDocumentRepository.deleteAll()
     val saved = recommendationSupportingDocumentRepository.save(
       RecommendationSupportingDocumentEntity(
@@ -239,7 +208,6 @@ class SupportingDocumentControllerTest(
         uploaded = created,
         uploadedBy = "daman",
         uploadedByUserFullName = "Da Man",
-        data = "Once upon a midnight dreary".encodeToByteArray(),
       ),
     )
 
@@ -264,11 +232,82 @@ class SupportingDocumentControllerTest(
   }
 
   @Test
-  fun `gateway timeout 503 given on Document Management API timeout`() {
+  fun `gateway timeout 503 given on Document Management API timeout for delete endpoint`() {
+    runTest {
+      val recommendationId = "123"
+      val documentUuid = UUID.randomUUID().toString()
+      documentManagementApiUploadResponse(documentUuid = documentUuid)
+      documentManagementApiDownloadResponse()
+      documentManagementApiDeleteResponse(delaySeconds = documentManagamentClientTimeout + 2)
+      val id = uploadDocument(recommendationId = recommendationId, data = "hello there!").get("id").toString()
+      webTestClient.delete()
+        .uri("/recommendations/$recommendationId/documents/$id")
+        .headers {
+          (
+            listOf(
+              it.authToken(
+                roles = listOf(
+                  "ROLE_MAKE_RECALL_DECISION",
+                  "ROLE_MAKE_RECALL_DECISION_PPCS",
+                ),
+              ),
+            )
+            )
+        }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .value<String> { userMessage ->
+          assertThat(userMessage).contains("Document Management client - /documents/$documentUuid")
+          assertThat(userMessage).contains("endpoint: [No response within $documentManagamentClientTimeout seconds")
+        }
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Document Management API timeout for get endpoint`() {
+    runTest {
+      val recommendationId = "123"
+      val documentUuid = UUID.randomUUID().toString()
+      documentManagementApiUploadResponse(documentUuid = documentUuid)
+      documentManagementApiDownloadResponse(delaySeconds = documentManagamentClientTimeout + 2)
+      val id = uploadDocument(recommendationId = recommendationId, data = "hello there!").get("id").toString()
+      webTestClient.get()
+        .uri("/recommendations/$recommendationId/documents/$id")
+        .headers {
+          (
+            listOf(
+              it.authToken(
+                roles = listOf(
+                  "ROLE_MAKE_RECALL_DECISION",
+                  "ROLE_MAKE_RECALL_DECISION_PPCS",
+                ),
+              ),
+            )
+            )
+        }
+        .exchange()
+        .expectStatus()
+        .is5xxServerError
+        .expectBody()
+        .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
+        .jsonPath("$.userMessage")
+        .value<String> { userMessage ->
+          assertThat(userMessage).contains("Document Management client - /documents/$documentUuid")
+          assertThat(userMessage).contains("endpoint: [No response within $documentManagamentClientTimeout seconds")
+        }
+    }
+  }
+
+  @Test
+  fun `gateway timeout 503 given on Document Management API timeout for create endpoint`() {
     runTest {
       val data = "While I pondered, weak and weary"
       val recommendationId = "123"
-      documentManagementApiResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
+      documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
       webTestClient.post()
         .uri("/recommendations/$recommendationId/documents")
         .contentType(MediaType.APPLICATION_JSON)
@@ -279,7 +318,7 @@ class SupportingDocumentControllerTest(
               "filename": "doc.docx",
               "type" : "PPUDPartA",
               "title": "title",
-              "mimetype": "word",
+              "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
               "data": "${base64(data)}"
             }
           """,
@@ -313,4 +352,37 @@ class SupportingDocumentControllerTest(
   fun base64(arg: String): String {
     return Base64.getEncoder().encodeToString(arg.encodeToByteArray())
   }
+
+  private fun uploadDocument(recommendationId: String, data: String) = convertResponseToJSONObject(
+    webTestClient.post()
+      .uri("/recommendations/$recommendationId/documents")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(
+          """
+              {
+                "filename": "doc.docx",
+                "type" : "PPUDPartA",
+                "title": "title",
+                "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "data": "${base64(data)}"
+              }
+            """,
+        ),
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(
+              roles = listOf(
+                "ROLE_MAKE_RECALL_DECISION",
+                "ROLE_MAKE_RECALL_DECISION_PPCS",
+              ),
+            ),
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk,
+  )
 }
