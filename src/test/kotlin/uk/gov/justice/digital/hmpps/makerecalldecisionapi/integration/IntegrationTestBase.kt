@@ -1090,6 +1090,17 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun ppudAutomationCreateMinuteApiMatchResponse(
+    recallId: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/recall/$recallId/minutes")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun ppudAutomationReferenceListApiMatchResponse(
     name: String,
     delaySeconds: Long = 0,

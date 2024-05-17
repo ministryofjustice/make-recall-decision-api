@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
@@ -348,6 +349,27 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         documentId = documentId,
         title = "some title",
         owningCaseworker = PpudUser("", ""),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `create minute in ppud`() {
+    val documentId = UUID.randomUUID()
+    // given
+    val recallId = "123"
+
+    ppudAutomationCreateMinuteApiMatchResponse(recallId)
+
+    // when
+    ppudAutomationApiClient.createMinute(
+      recallId,
+      PpudCreateMinuteRequest(
+        subject = "some subject",
+        text = "some title",
       ),
     ).block()
 
