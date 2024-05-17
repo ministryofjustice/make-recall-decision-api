@@ -80,6 +80,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUna
 import java.io.File
 import java.nio.file.Paths
 import java.sql.DriverManager
+import java.util.concurrent.TimeUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -859,17 +860,47 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun documentManagementApiResponse(
+  protected fun documentManagementApiUploadResponse(
     documentUuid: String,
     delaySeconds: Long = 0,
   ) {
-    val documentManagementApiRequest = request().withPath("/documents.*")
+    val documentManagementApiRequest = request()
+      .withMethod("POST")
+      .withPath("/documents/PPUD_RECALL/.*")
 
     documentManagementApi.`when`(documentManagementApiRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody("""{"documentUuid": "$documentUuid"}""")
         .withDelay(Delay.seconds(delaySeconds)),
     )
+  }
+
+  protected fun documentManagementApiDownloadResponse(responseBody: String = "hello there!", delaySeconds: Long = 0) {
+    val responseBodyBytes = responseBody.toByteArray()
+
+    val documentManagementApiRequest = request()
+      .withMethod("GET")
+      .withPath("/documents/.*")
+
+    documentManagementApi.`when`(documentManagementApiRequest).respond(
+      response().withStatusCode(200)
+        .withBody(responseBodyBytes)
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun documentManagementApiDeleteResponse(delaySeconds: Long = 0) {
+    val requestMatcher = request()
+      .withMethod("DELETE")
+      .withPath("/documents/.*")
+
+    val response = response()
+      .withStatusCode(204)
+      .withDelay(TimeUnit.SECONDS, delaySeconds)
+
+    documentManagementApi
+      .`when`(requestMatcher)
+      .respond(response)
   }
 
   protected fun prisonApiOffenderMatchResponse(

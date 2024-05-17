@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/documents/.*"
+  },
+  "response": {
+    "status": 200,
+    "body": "SGVsbG8sIFdvcmxkIQ==",
+    "headers": {
+      "Content-Type": "application/pdf"
+    }
+  }
+}
