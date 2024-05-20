@@ -229,7 +229,7 @@ class PartADocumentMapperTest {
         dateVloInformed = LocalDate.parse("2022-09-01"),
         isExtendedSentence = true,
         isUnder18 = false,
-        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
+        recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("N/A - standard recall")
