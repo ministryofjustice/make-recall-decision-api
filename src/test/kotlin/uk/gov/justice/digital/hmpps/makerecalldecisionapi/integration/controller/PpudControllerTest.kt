@@ -8,6 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
@@ -457,6 +458,21 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `ppud create minute`() {
+    ppudAutomationCreateMinuteApiMatchResponse("123")
+    runTest {
+      putToCreateMinute(
+        "123",
+        CreateMinuteRequest(
+          subject = "subject",
+          text = "text",
+        ),
+      )
+        .expectStatus().isOk
+    }
+  }
+
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/book-recall/$nomisId")
@@ -536,6 +552,17 @@ class PpudControllerTest : IntegrationTestBase() {
   ): WebTestClient.ResponseSpec =
     webTestClient.put()
       .uri("/ppud/recall/$recallId/upload-additional-document")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
+
+  private fun putToCreateMinute(
+    recallId: String,
+    requestBody: CreateMinuteRequest,
+  ): WebTestClient.ResponseSpec =
+    webTestClient.put()
+      .uri("/ppud/recall/$recallId/minutes")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))

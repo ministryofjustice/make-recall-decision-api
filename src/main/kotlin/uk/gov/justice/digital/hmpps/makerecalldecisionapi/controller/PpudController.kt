@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
@@ -176,5 +177,17 @@ internal class PpudController(
     userLogin: Principal,
   ) {
     ppudService.uploadAdditionalDocument(recallId, uploadAdditionalDocumentRequest, userLogin.name)
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @PutMapping("ppud/recall/{recallId}/minutes")
+  @Operation(summary = "Calls PPUD Automation service to create a minute.")
+  suspend fun createMinute(
+    @PathVariable(required = true) recallId: String,
+    @RequestBody(required = true)
+    createMinuteRequest: CreateMinuteRequest,
+    userLogin: Principal,
+  ) {
+    ppudService.createMinute(recallId, createMinuteRequest, userLogin.name)
   }
 }

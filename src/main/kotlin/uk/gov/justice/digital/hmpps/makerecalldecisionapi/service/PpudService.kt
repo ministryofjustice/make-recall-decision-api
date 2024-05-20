@@ -3,10 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
@@ -196,6 +198,22 @@ internal class PpudService(
           documentId = doc.documentUuid!!,
           title = doc.title!!,
           owningCaseworker = ppudUser,
+        ),
+      ),
+    )
+  }
+
+  fun createMinute(
+    recallId: String,
+    createMinuteRequest: CreateMinuteRequest,
+    username: String,
+  ) {
+    getValueAndHandleWrappedException(
+      ppudAutomationApiClient.createMinute(
+        recallId,
+        PpudCreateMinuteRequest(
+          subject = createMinuteRequest.subject,
+          text = createMinuteRequest.text,
         ),
       ),
     )
