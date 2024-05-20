@@ -83,10 +83,13 @@ internal class PartADocumentMapper(
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
 
-      isUnder18 = generateFixedTermRecallAnswer(recommendation.isUnder18, recommendation),
-      isSentence12MonthsOrOver = generateFixedTermRecallAnswer(recommendation.isSentence12MonthsOrOver, recommendation),
-      isMappaAboveLevel1 = generateFixedTermRecallAnswer(recommendation.isMappaLevelAbove1, recommendation),
-      isChargedWithSeriousOffence = generateFixedTermRecallAnswer(
+      isUnder18 = generateExclusionCriteriaAnswer(recommendation.isUnder18, recommendation),
+      isSentence12MonthsOrOver = generateExclusionCriteriaAnswer(
+        recommendation.isSentence12MonthsOrOver,
+        recommendation,
+      ),
+      isMappaAboveLevel1 = generateExclusionCriteriaAnswer(recommendation.isMappaLevelAbove1, recommendation),
+      isChargedWithSeriousOffence = generateExclusionCriteriaAnswer(
         recommendation.hasBeenConvictedOfSeriousOffence,
         recommendation,
       ),
@@ -283,18 +286,18 @@ internal class PartADocumentMapper(
     return if (value == true) YES else if (value == false) NO else EMPTY_STRING
   }
 
-  private fun generateFixedTermRecallAnswer(value: Boolean?, recommendation: RecommendationResponse): String {
+  private fun generateExclusionCriteriaAnswer(
+    value: Boolean?,
+    recommendation: RecommendationResponse,
+  ): String {
     val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
-    val isFixedTermRecall =
-      recommendation.recallType?.selected?.value.toString() == RecallTypeValue.FIXED_TERM.toString()
-    val isIndeteriminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
+    val isIndeterminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
     val isNotIndeterminateAndNotExtendedAndStandardRecall =
       !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
 
     return when {
-      isIndeteriminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall"
-      isFixedTermRecall -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
-      else -> EMPTY_STRING
+      isIndeterminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall"
+      else -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
     }
   }
 
