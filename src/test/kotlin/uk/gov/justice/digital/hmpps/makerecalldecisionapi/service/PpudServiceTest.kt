@@ -16,10 +16,12 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.given
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
@@ -395,5 +397,20 @@ internal class PpudServiceTest : ServiceTestBase() {
     assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
     assertThat(ppudUploadMandatoryDocumentRequest.title).isEqualTo("some title")
     assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
+  }
+
+  @Test
+  fun `call create minute`() {
+    given(ppudAutomationApiClient.createMinute("123", PpudCreateMinuteRequest("some subject", "some text"))).willReturn(
+      Mono.empty(),
+    )
+
+    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createMinute(
+      "123",
+      CreateMinuteRequest("some subject", "some text"),
+      "username",
+    )
+
+    verify(ppudAutomationApiClient).createMinute("123", PpudCreateMinuteRequest("some subject", "some text"))
   }
 }
