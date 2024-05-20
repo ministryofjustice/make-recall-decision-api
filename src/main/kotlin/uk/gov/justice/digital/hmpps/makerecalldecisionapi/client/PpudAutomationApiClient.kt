@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
@@ -28,6 +29,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
@@ -40,118 +43,32 @@ class PpudAutomationApiClient(
   private val objectMapper: ObjectMapper,
 ) {
 
-  fun search(
-    request: PpudSearchRequest,
-  ): Mono<PpudSearchResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudSearchResponse>() {}
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender/search").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+  fun search(request: PpudSearchRequest): Mono<PpudSearchResponse> {
+    return post("/offender/search", request, object : ParameterizedTypeReference<PpudSearchResponse>() {})
   }
 
-  fun details(
-    id: String,
-  ): Mono<PpudDetailsResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudDetailsResponse>() {}
-    return webClient
-      .get()
-      .uri { builder -> builder.path("/offender/" + id).build() }
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+  fun details(id: String): Mono<PpudDetailsResponse> {
+    return get("/offender/$id", object : ParameterizedTypeReference<PpudDetailsResponse>() {})
   }
 
-  fun bookToPpud(
-    nomisId: String,
-    request: PpudBookRecall,
-  ): Mono<PpudBookRecallResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudBookRecallResponse>() {}
-
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender/" + nomisId + "/recall").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+  fun bookToPpud(nomisId: String, request: PpudBookRecall): Mono<PpudBookRecallResponse> {
+    return post("/offender/$nomisId/recall", request, object : ParameterizedTypeReference<PpudBookRecallResponse>() {})
   }
 
   fun createOffender(request: PpudCreateOffenderRequest): Mono<PpudCreateOffenderResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {}
-
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+    return post("/offender", request, object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {})
   }
 
   fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest): Mono<ResponseEntity<Void>> {
-    return webClient
-      .put()
-      .uri { builder -> builder.path("/offender/" + offenderId).build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .toBodilessEntity()
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+    return put("/offender/$offenderId", request)
   }
 
-  fun createSentence(
-    offenderId: String,
-    request: PpudCreateOrUpdateSentenceRequest,
-  ): Mono<PpudCreateSentenceResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {}
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+  fun createSentence(offenderId: String, request: PpudCreateOrUpdateSentenceRequest): Mono<PpudCreateSentenceResponse> {
+    return post(
+      "/offender/$offenderId/sentence",
+      request,
+      object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {},
+    )
   }
 
   fun updateSentence(
@@ -159,21 +76,7 @@ class PpudAutomationApiClient(
     sentenceId: String,
     request: PpudCreateOrUpdateSentenceRequest,
   ): Mono<ResponseEntity<Void>> {
-    return webClient
-      .put()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId).build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .toBodilessEntity()
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+    return put("/offender/$offenderId/sentence/$sentenceId", request)
   }
 
   fun updateOffence(
@@ -181,21 +84,7 @@ class PpudAutomationApiClient(
     sentenceId: String,
     request: PpudUpdateOffenceRequest,
   ): Mono<ResponseEntity<Void>> {
-    return webClient
-      .put()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .toBodilessEntity()
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+    return put("/offender/$offenderId/sentence/$sentenceId/offence", request)
   }
 
   fun createOrUpdateRelease(
@@ -203,21 +92,11 @@ class PpudAutomationApiClient(
     sentenceId: String,
     request: PpudCreateOrUpdateReleaseRequest,
   ): Mono<PpudCreateOrUpdateReleaseResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {}
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/sentence/" + sentenceId + "/release").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
+    return post(
+      "/offender/$offenderId/sentence/$sentenceId/release",
+      request,
+      object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {},
+    )
   }
 
   fun createRecall(
@@ -225,36 +104,36 @@ class PpudAutomationApiClient(
     releaseId: String,
     request: PpudCreateRecallRequest,
   ): Mono<PpudCreateRecallResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudCreateRecallResponse>() {}
-    return webClient
-      .post()
-      .uri { builder -> builder.path("/offender/" + offenderId + "/release/" + releaseId + "/recall").build() }
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
-      }
+    return post(
+      "/offender/$offenderId/release/$releaseId/recall",
+      request,
+      object : ParameterizedTypeReference<PpudCreateRecallResponse>() {},
+    )
+  }
+
+  fun uploadMandatoryDocument(
+    recallId: String,
+    request: PpudUploadMandatoryDocumentRequest,
+  ): Mono<ResponseEntity<Void>> {
+    return put("/recall/$recallId/mandatory-document", request)
+  }
+
+  fun uploadAdditionalDocument(
+    recallId: String,
+    request: PpudUploadAdditionalDocumentRequest,
+  ): Mono<ResponseEntity<Void>> {
+    return put("/recall/$recallId/additional-document", request)
+  }
+
+  fun createMinute(
+    recallId: String,
+    request: PpudCreateMinuteRequest,
+  ): Mono<ResponseEntity<Void>> {
+    return put("/recall/$recallId/minutes", request)
   }
 
   fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
-    val responseType = object : ParameterizedTypeReference<PpudReferenceListResponse>() {}
-
-    return webClient
-      .get()
-      .uri { builder -> builder.path("/reference/" + name).build() }
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
+    return get("/reference/$name", object : ParameterizedTypeReference<PpudReferenceListResponse>() {})
   }
 
   fun handleTimeoutException(
@@ -270,5 +149,51 @@ class PpudAutomationApiClient(
         )
       }
     }
+  }
+
+  private fun <T> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> {
+    return webClient
+      .get()
+      .uri { builder -> builder.path(url).build() }
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(ex)
+      }
+      .withRetry()
+  }
+
+  private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> {
+    return webClient
+      .post()
+      .uri { builder -> builder.path(url).build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(ex)
+      }
+      .withRetry()
+  }
+
+  private fun put(url: String, request: Any): Mono<ResponseEntity<Void>> {
+    return webClient
+      .put()
+      .uri { builder -> builder.path(url).build() }
+      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+      .body(BodyInserters.fromValue(request))
+      .retrieve()
+      .toBodilessEntity()
+      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+      .doOnError { ex ->
+        if (ex is BadRequest) {
+          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
+        }
+        handleTimeoutException(ex)
+      }
+      .withRetry()
   }
 }

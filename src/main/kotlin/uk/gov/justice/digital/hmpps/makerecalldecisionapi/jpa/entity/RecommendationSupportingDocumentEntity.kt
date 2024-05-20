@@ -28,8 +28,9 @@ data class RecommendationSupportingDocumentEntity(
   var uploaded: String? = null,
   var documentUuid: UUID? = null,
 
+  // deprecated
   @Basic(fetch = FetchType.LAZY)
-  var data: ByteArray,
+  var data: ByteArray? = null,
 )
 
 fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): SupportingDocumentMetaDataResponse =

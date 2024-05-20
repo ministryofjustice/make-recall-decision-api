@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
@@ -18,12 +20,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 @ActiveProfiles("test")
 class PpudAutomationApiClientTest : IntegrationTestBase() {
@@ -305,6 +310,71 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // then
     assertThat(actual.recall.id, equalTo(id))
+  }
+
+  @Test
+  fun `update mandatory document in ppud`() {
+    val documentId = UUID.randomUUID()
+    // given
+    val recallId = "123"
+
+    ppudAutomationUploadMandatoryDocumentApiMatchResponse(recallId)
+
+    // when
+    ppudAutomationApiClient.uploadMandatoryDocument(
+      recallId,
+      PpudUploadMandatoryDocumentRequest(
+        documentId = documentId,
+        category = DocumentCategory.PartA,
+        owningCaseworker = PpudUser("", ""),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `update additional document in ppud`() {
+    val documentId = UUID.randomUUID()
+    // given
+    val recallId = "123"
+
+    ppudAutomationUploadAdditionalDocumentApiMatchResponse(recallId)
+
+    // when
+    ppudAutomationApiClient.uploadAdditionalDocument(
+      recallId,
+      PpudUploadAdditionalDocumentRequest(
+        documentId = documentId,
+        title = "some title",
+        owningCaseworker = PpudUser("", ""),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `create minute in ppud`() {
+    val documentId = UUID.randomUUID()
+    // given
+    val recallId = "123"
+
+    ppudAutomationCreateMinuteApiMatchResponse(recallId)
+
+    // when
+    ppudAutomationApiClient.createMinute(
+      recallId,
+      PpudCreateMinuteRequest(
+        subject = "some subject",
+        text = "some title",
+      ),
+    ).block()
+
+    // then
+    // no exception
   }
 
   @Test

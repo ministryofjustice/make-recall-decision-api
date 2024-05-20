@@ -33,7 +33,7 @@ class SupportingDocumentServiceTest {
     val created = DateTimeHelper.utcNowDateTimeString()
 
     val documentUuid = UUID.randomUUID()
-    given(client.uploadFile(any(), any(), any())).willReturn(Mono.just(documentUuid))
+    given(client.uploadFile(any(), any(), any(), any(), any())).willReturn(Mono.just(documentUuid))
 
     given(recommendationRepository.findById(Mockito.any())).willReturn(Optional.of(RecommendationEntity(id = 1L, data = RecommendationModel(crn = "123"))))
     given(supportingDocumentRepository.save(Mockito.any())).willReturn(
@@ -46,7 +46,6 @@ class SupportingDocumentServiceTest {
         created = created,
         createdBy = "daman",
         createdByUserFullName = "Inspector Morris",
-        data = "while I pondered, weak and weary".encodeToByteArray(),
         uploadedBy = null,
         uploadedByUserFullName = null,
         type = "PPUDPartA",
@@ -72,7 +71,7 @@ class SupportingDocumentServiceTest {
     val captor = argumentCaptor<RecommendationSupportingDocumentEntity>()
 
     Mockito.verify(supportingDocumentRepository).save(captor.capture())
-    BDDMockito.then(client).should().uploadFile(any(), any(), any())
+    BDDMockito.then(client).should().uploadFile(any(), any(), any(), any(), any())
     BDDMockito.then(recommendationRepository).should().findById(any())
 
     val entity = captor.firstValue
@@ -88,7 +87,6 @@ class SupportingDocumentServiceTest {
     assertThat(entity.uploadedBy).isEqualTo("daman")
     assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris")
     assertThat(entity.documentUuid).isEqualTo(documentUuid)
-    assertThat(String(entity.data)).isEqualTo("The hills are alive with thet sound of music")
   }
 
   @Test
@@ -114,7 +112,6 @@ class SupportingDocumentServiceTest {
           uploadedBy = "daman",
           uploadedByUserFullName = "Inspector Morris",
           uploaded = created,
-          data = "".encodeToByteArray(),
         ),
       ),
     )
@@ -142,6 +139,11 @@ class SupportingDocumentServiceTest {
     val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
     val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
     val client = Mockito.mock(DocumentManagementClient::class.java)
+    val documentUuid = UUID.randomUUID()
+
+    given(recommendationRepository.findById(Mockito.any())).willReturn(Optional.of(RecommendationEntity(id = 1L, data = RecommendationModel(crn = "123"))))
+    given(client.deleteFile(any())).willReturn(Mono.empty())
+    given(client.uploadFile(any(), any(), any(), any(), any())).willReturn(Mono.just(documentUuid))
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
@@ -149,6 +151,7 @@ class SupportingDocumentServiceTest {
       Optional.of(
         RecommendationSupportingDocumentEntity(
           id = 1,
+          documentUuid = documentUuid,
           recommendationId = 123,
           title = "title",
           createdBy = "daman",
@@ -160,7 +163,6 @@ class SupportingDocumentServiceTest {
           uploadedBy = "daman",
           uploadedByUserFullName = "Inspector Morris",
           uploaded = created,
-          data = "".encodeToByteArray(),
         ),
       ),
     )
@@ -193,7 +195,6 @@ class SupportingDocumentServiceTest {
     assertThat(entity.uploaded).isEqualTo(created)
     assertThat(entity.uploadedBy).isEqualTo("daman2")
     assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
-    assertThat(String(entity.data)).isEqualTo("The hills are alive with thet sound of music")
   }
 
   @Test
@@ -201,7 +202,11 @@ class SupportingDocumentServiceTest {
     val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
     val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
     val client = Mockito.mock(DocumentManagementClient::class.java)
+    val data = "VGhlIGhpbGxzIGFyZSBhbGl2ZSB3aXRoIHRoZXQgc291bmQgb2YgbXVzaWM="
 
+    given(client.deleteFile(Mockito.any())).willReturn(Mono.empty())
+    given(client.uploadFile(any(), any(), any(), any(), any())).willReturn(Mono.just(UUID.randomUUID()))
+    given(recommendationRepository.findById(any())).willReturn(Optional.of(RecommendationEntity(id = 1, data = RecommendationModel(crn = "123"))))
     val created = DateTimeHelper.utcNowDateTimeString()
 
     given(supportingDocumentRepository.findById(123)).willReturn(
@@ -219,20 +224,20 @@ class SupportingDocumentServiceTest {
           uploadedBy = "daman",
           uploadedByUserFullName = "Inspector Morris",
           uploaded = created,
-          data = "The hills are alive with thet sound of music".encodeToByteArray(),
+          documentUuid = UUID.fromString("61fa04ae-1046-4a63-8249-b04f42620d07"),
         ),
       ),
     )
 
     SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
       123,
-      mimetype = null,
+      mimetype = "word",
       title = "title 2",
       uploadedBy = "daman2",
       uploadedByUserFullName = "Inspector Morris2",
       uploaded = created,
-      data = null,
-      filename = null,
+      data = data,
+      filename = "word.docx",
       flags = FeatureFlags(),
     )
 
@@ -253,7 +258,7 @@ class SupportingDocumentServiceTest {
     assertThat(entity.uploaded).isEqualTo(created)
     assertThat(entity.uploadedBy).isEqualTo("daman2")
     assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
-    assertThat(String(entity.data)).isEqualTo("The hills are alive with thet sound of music")
+    assertThat(String(entity.data!!)).isEqualTo("The hills are alive with thet sound of music")
   }
 
   @Test
@@ -261,6 +266,9 @@ class SupportingDocumentServiceTest {
     val recommendationRepository = Mockito.mock(RecommendationRepository::class.java)
     val supportingDocumentRepository = Mockito.mock(RecommendationSupportingDocumentRepository::class.java)
     val client = Mockito.mock(DocumentManagementClient::class.java)
+
+    given(client.downloadFileAsByteArray(Mockito.any(), Mockito.any()))
+      .willReturn(Mono.just("The hills are alive with thet sound of music".encodeToByteArray()))
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
