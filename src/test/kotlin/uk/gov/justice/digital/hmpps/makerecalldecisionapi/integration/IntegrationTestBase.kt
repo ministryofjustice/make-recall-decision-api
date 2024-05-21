@@ -73,6 +73,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.useraccess.userAccessRestrictedResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
@@ -95,6 +96,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var repository: RecommendationRepository
+
+  @Autowired
+  protected lateinit var recommendationHistoryRepository: RecommendationHistoryRepository
 
   @Autowired
   protected lateinit var statusRepository: RecommendationStatusRepository
@@ -216,6 +220,7 @@ abstract class IntegrationTestBase {
 
   fun deleteRecommendation() {
     repository.deleteAllInBatch()
+    recommendationHistoryRepository.deleteAllInBatch()
   }
 
   fun createRecommendation(featureFlagString: String? = null) {
@@ -654,6 +659,60 @@ abstract class IntegrationTestBase {
       .respond(response().withStatusCode(HttpStatusCode.GATEWAY_TIMEOUT_504.code()))
     deliusIntegration.`when`(personalDetails).respond(
       response().withContentType(APPLICATION_JSON).withBody(personalDetailsResponse()),
+    )
+  }
+
+  protected fun offenderSearchByNomsIdNotFoundResponse(
+    nomsNumber: Int = 0,
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
+    totalPages: Int = 1,
+    delaySeconds: Long = 0,
+  ) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withQueryStringParameter("page", pageNumber.toString())
+      .withQueryStringParameter("size", pageSize.toString())
+      .withBody(
+        json(
+          "{\"nomsNumber\":\"$nomsNumber\"}",
+        ),
+      )
+
+    offenderSearchApi.`when`(offenderSearchRequest).respond(
+      response()
+        .withDelay(Delay.seconds(delaySeconds)).withStatusCode(404),
+    )
+  }
+
+  protected fun offenderSearchByNomsIdResponse(
+    nomsNumber: Int = 0,
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
+    totalPages: Int = 1,
+    delaySeconds: Long = 0,
+  ) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withQueryStringParameter("page", pageNumber.toString())
+      .withQueryStringParameter("size", pageSize.toString())
+      .withBody(
+        json(
+          "{\"nomsNumber\":\"$nomsNumber\"}",
+        ),
+      )
+
+    offenderSearchApi.`when`(offenderSearchRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(
+          offenderSearchDeliusResponse(
+            crn = crn,
+            pageNumber = pageNumber,
+            pageSize = pageSize,
+            totalPages = totalPages,
+          ),
+        )
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 

@@ -26,10 +26,11 @@ class OffenderSearchApiClient(
     crn: String? = null,
     firstName: String? = null,
     surname: String? = null,
+    nomsNumber: String? = null,
     page: Int,
     pageSize: Int,
   ): Mono<OffenderSearchPagedResults> {
-    val request = OffenderSearchPeopleRequest(crn = crn, firstName = firstName, surname = surname)
+    val request = OffenderSearchPeopleRequest(crn = crn, firstName = firstName, surname = surname, nomsNumber = nomsNumber)
     val responseType = object : ParameterizedTypeReference<OffenderSearchPagedResults>() {}
     return webClient
       .post()

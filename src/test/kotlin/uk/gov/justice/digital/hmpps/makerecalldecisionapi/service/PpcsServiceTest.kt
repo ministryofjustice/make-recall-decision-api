@@ -25,7 +25,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `excluded records in offender search will have blank name`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
@@ -56,7 +56,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `single active document for ppcs`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
@@ -103,7 +103,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for active recommendation if already been booked`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
@@ -151,7 +151,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `consider active recommendation only for ppcs search`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
@@ -207,7 +207,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for active recommendation that has not been passed to ppcs`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
@@ -253,7 +253,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for deleted recommendation`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
+    given(offenderSearchApiClient.searchPeople("X90902", null, null, null, 0, 20)).willReturn(
       Mono.fromCallable {
         OffenderSearchPagedResults(
           content = listOf(
