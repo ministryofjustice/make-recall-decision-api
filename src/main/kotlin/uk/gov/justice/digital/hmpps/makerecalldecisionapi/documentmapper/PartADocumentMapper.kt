@@ -291,12 +291,10 @@ internal class PartADocumentMapper(
     recommendation: RecommendationResponse,
   ): String {
     val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
-    val isIndeterminateOrExtended = isIndeterminateSentence || recommendation.isExtendedSentence == true
-    val isNotIndeterminateAndNotExtendedAndStandardRecall =
-      !isIndeterminateSentence && recommendation.isExtendedSentence == false && recommendation.recallType?.selected?.value.toString() == RecallTypeValue.STANDARD.toString()
+    val isExtendedSentence = recommendation.isExtendedSentence == true
 
     return when {
-      isIndeterminateOrExtended || isNotIndeterminateAndNotExtendedAndStandardRecall -> "N/A - standard recall"
+      isIndeterminateSentence || isExtendedSentence -> "N/A - standard recall"
       else -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
     }
   }
