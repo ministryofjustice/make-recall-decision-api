@@ -9,4 +9,17 @@
         <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
         <cpe>cpe:/a:json-java_project:json-java</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+        This is a vulnerability in Prometheus itself, as installed on a server, not the metrics libraries.
+        file name: prometheus-metrics-config-1.2.1.jar
+        file name: prometheus-metrics-core-1.2.1.jar
+        file name: prometheus-metrics-exposition-formats-1.2.1.jar
+        file name: prometheus-metrics-model-1.2.1.jar
+        file name: prometheus-metrics-shaded-protobuf-1.2.1.jar
+        file name: prometheus-metrics-tracer-common-1.2.1.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus\-metrics\-.*@.*$</packageUrl>
+        <cve>CVE-2019-3826</cve>
+    </suppress>
 </suppressions>
