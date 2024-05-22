@@ -5,7 +5,7 @@ plugins {
   id("jacoco")
   kotlin("plugin.jpa") version "2.0.0"
   id("org.sonarqube") version "5.0.0.4638"
-  kotlin("plugin.spring") version "1.9.24"
+  kotlin("plugin.spring") version "2.0.0"
 }
 
 jacoco.toolVersion = "0.8.11"
