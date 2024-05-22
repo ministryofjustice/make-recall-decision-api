@@ -1,6 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
-  kotlin("jvm") version "1.9.24"
+  kotlin("jvm") version "2.0.0"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "2.0.0"
