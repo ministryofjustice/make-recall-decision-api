@@ -294,7 +294,7 @@ internal class PartADocumentMapper(
     val isExtendedSentence = recommendation.isExtendedSentence == true
 
     return when {
-      isIndeterminateSentence || isExtendedSentence -> "N/A - standard recall"
+      isIndeterminateSentence || isExtendedSentence -> "N/A - indeterminate or extended sentence"
       else -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
     }
   }
