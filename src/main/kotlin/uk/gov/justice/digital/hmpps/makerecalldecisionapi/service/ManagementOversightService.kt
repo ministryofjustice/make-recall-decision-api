@@ -39,4 +39,35 @@ internal class ManagementOversightService(
       HttpStatus.OK,
     )
   }
+
+  suspend fun getRecallConsiderationResponse(
+    crn: String,
+  ): ResponseEntity<ManagementOversightResponse> {
+    val recommendations = recommendationRepository.findByCrn(crn)
+    Collections.sort(recommendations)
+
+    val recommendation = recommendations[0]
+    val considerationRationale = recommendation.data.considerationRationale ?: throw NoManagementOversightException(
+      "No consideration rationale available for crn:$crn",
+    )
+
+    return ResponseEntity(
+      ManagementOversightResponse(
+        sensitive = considerationRationale.sensitive,
+
+        notes = "Comment added by Consider a recall Service on ${considerationRationale.createdDate} at ${considerationRationale.createdTime}\n" +
+          "${considerationRationale.createdBy} said:\n" +
+          "Reason for considering recall:\n" +
+          "\n" +
+          "${recommendation.data.triggerLeadingToRecall}\n" +
+          "\n" +
+          "Behaviour on probation so far:\n" +
+          "\n" +
+          "${recommendation.data.responseToProbation}\n" +
+          "\n" +
+          "View the case summary for ${recommendations[0].data.personOnProbation?.name}: $mrdUrl/cases/${recommendations[0].data.crn}/overview",
+      ),
+      HttpStatus.OK,
+    )
+  }
 }

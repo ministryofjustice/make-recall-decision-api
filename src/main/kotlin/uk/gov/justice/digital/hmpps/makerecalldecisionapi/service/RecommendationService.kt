@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConsiderationRationale
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
@@ -36,6 +38,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toDeliusContactOutcome
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toConsiderationRecallEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDeleteRecommendationRationaleDomainEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
@@ -59,6 +62,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
@@ -226,6 +230,7 @@ internal class RecommendationService(
       lastModifiedByUserName = recommendationEntity.data.lastModifiedByUserName,
       lastModifiedDate = recommendationEntity.data.lastModifiedDate,
       managerRecallDecision = recommendationEntity.data.managerRecallDecision,
+      considerationRationale = recommendationEntity.data.considerationRationale,
       recallType = recommendationEntity.data.recallType,
       status = recommendationEntity.data.status,
       custodyStatus = recommendationEntity.data.custodyStatus,
@@ -338,23 +343,46 @@ internal class RecommendationService(
     validateRecallType(jsonRequest)
     val requestJson = JSONObject(jsonRequest.toString())
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
-    val updatedRecommendation: RecommendationModel =
-      recommendationFromRequest(existingRecommendationEntity, jsonRequest)
 
-    val sendSpoRationaleToDelius =
-      requestJson.has("sendSpoRationaleToDelius") && requestJson.getBoolean("sendSpoRationaleToDelius")
-    log.info("sendSpoRationaleToDelius present::" + requestJson.has("sendSpoRationaleToDelius"))
-    log.info("send spo rationale to delius::$sendSpoRationaleToDelius")
-    if (sendSpoRationaleToDelius) {
+    val sendConsiderationRationaleToDelius = requestJson.optBoolean("sendConsiderationRationaleToDelius")
+    val considerationSensitive = requestJson.optBoolean("considerationSensitive")
+
+    // remove these from the incoming request as they are not part of the recommendation model, but rather values applies to sending messages to nDelius.
+    val incoming = jsonRequest as ObjectNode
+    incoming.remove("sendConsiderationRationaleToDelius")
+    incoming.remove("considerationSensitive")
+
+    val updatedRecommendation: RecommendationModel =
+      recommendationFromRequest(existingRecommendationEntity, incoming)
+
+    if (requestJson.optBoolean("sendSpoRationaleToDelius")) {
+      log.info("send spo rationale to delius")
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
       sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
+
+    if (sendConsiderationRationaleToDelius) {
+      log.info("send consideration rationale to delius")
+
+      val (date, time) = splitDateTime(localNowDateTime())
+      existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
+        considerationRationale = ConsiderationRationale(
+          createdBy = readableUserName,
+          createdDate = date,
+          createdTime = time,
+          sensitive = considerationSensitive,
+        ),
+      )
+
+      sendConsiderationRationaleDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
+
     val sendSpoDeleteRationaleToDelius =
       requestJson.has("sendSpoDeleteRationaleToDelius") && requestJson.getBoolean("sendSpoDeleteRationaleToDelius")
-    log.info("sendSpoDeleteRationaleToDelius present::" + requestJson.has("sendSpoDeleteRationaleToDelius"))
-    log.info("send spo delete recommendation rationale to delius::$sendSpoDeleteRationaleToDelius")
+
     if (sendSpoDeleteRationaleToDelius) {
+      log.info("send spo delete recommendation rationale to delius")
       existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
         spoDeleteRecommendationRationale = updatedRecommendation.spoDeleteRecommendationRationale,
         sendSpoDeleteRationaleToDelius = updatedRecommendation.sendSpoDeleteRationaleToDelius,
@@ -425,6 +453,24 @@ internal class RecommendationService(
       throw ex
     }
     log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on manager recall decision made asynchronously for recommendationId $recommendationId")
+  }
+
+  private fun sendConsiderationRationaleDomainEvent(
+    recommendationId: Long,
+    existingRecommendationEntity: RecommendationEntity,
+    userId: String?,
+  ) {
+    log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on consideration rationale for recommendationId $recommendationId")
+    try {
+      sendConsiderationRationaleEvent(
+        crn = existingRecommendationEntity.data.crn,
+        username = userId ?: MrdTextConstants.EMPTY_STRING,
+      )
+    } catch (ex: Exception) {
+      log.info("Failed to send domain event for ${existingRecommendationEntity.data.crn} on consideration rationale for recommendationId $recommendationId")
+      throw ex
+    }
+    log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on consideration rationale made asynchronously for recommendationId $recommendationId")
   }
 
   private fun sendDeleteRecommendationDomainEvent(
@@ -707,6 +753,17 @@ internal class RecommendationService(
         contactOutcome = contactOutcome,
         username = username,
         detailUrl = "$mrdApiUrl/managementOversight/$crn",
+      ),
+    )
+  }
+
+  private fun sendConsiderationRationaleEvent(crn: String?, username: String) {
+    sendMrdEventToEventsEmitter(
+      toConsiderationRecallEventPayload(
+        crn = crn,
+        recommendationUrl = "$mrdUrl/cases/$crn/overview",
+        username = username,
+        detailUrl = "$mrdApiUrl/recallConsiderationRationale/$crn",
       ),
     )
   }
