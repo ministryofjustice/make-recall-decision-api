@@ -30,6 +30,7 @@ data class RecommendationResponse(
   var lastModifiedByUserName: String? = null,
   var lastModifiedDate: String? = null,
   val managerRecallDecision: ManagerRecallDecision? = null,
+  val considerationRationale: ConsiderationRationale? = null,
   val recallType: RecallType? = null,
   val responseToProbation: String? = null,
   val triggerLeadingToRecall: String? = null,
