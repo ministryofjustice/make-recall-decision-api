@@ -4,7 +4,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
 
@@ -34,6 +36,40 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
         "View the case summary for John Smith: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
+  }
+
+  @Test
+  fun `get consideration rationale`() {
+    // given
+    createRecommendation()
+
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue("{\"triggerLeadingToRecall\": \"some blee\", \"responseToProbation\": \"some blaa\", \"sendConsiderationRationaleToDelius\": true, \"considerationSensitive\": true}"),
+      )
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .exchange()
+      .expectStatus().is2xxSuccessful
+
+    // when
+    val response = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/recallConsiderationRationale/$crn")
+        .headers { (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")))) }
+        .exchange()
+        .expectStatus().isOk,
+    )
+
+    // then
+    val notes = response.get("notes") as String
+    assertThat(notes).contains("some_user said")
+    assertThat(notes).contains("some blee")
+    assertThat(notes).contains("some blaa")
+    assertThat(notes).contains("View the case summary for John Smith: environment-host/cases/A12345/overview")
+
+    assertThat(response.get("sensitive")).isEqualTo(true)
   }
 
   @Test

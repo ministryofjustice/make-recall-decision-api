@@ -25,11 +25,23 @@ internal class ManagementOversightController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @GetMapping("/managementOversight/{crn}")
   @Operation(summary = "Provides notes on case for Delius")
-  suspend fun getRecommendationStatus(
+  suspend fun getSpoRationale(
     @PathVariable("crn") crn: String,
   ): ResponseEntity<ManagementOversightResponse> {
     log.info(normalizeSpace("Management oversight endpoint hit for crn: $crn"))
     return managementOversightService.getManagementOversightResponse(
+      crn = crn,
+    )
+  }
+
+  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
+  @GetMapping("/recallConsiderationRationale/{crn}")
+  @Operation(summary = "Provides recall consideration rationale for Delius")
+  suspend fun getConsiderationRationale(
+    @PathVariable("crn") crn: String,
+  ): ResponseEntity<ManagementOversightResponse> {
+    log.info(normalizeSpace("Consideration rationale endpoint hit for crn: $crn"))
+    return managementOversightService.getRecallConsiderationResponse(
       crn = crn,
     )
   }
