@@ -6,7 +6,10 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
+import org.springframework.dao.CannotAcquireLockException
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel.ConvictionDetails
@@ -318,7 +321,10 @@ internal class RecommendationService(
     }
   }
 
-  suspend fun updateRecommendation(
+  // For transactional support, this must not be a suspend function as that is not compatible with JPA
+  @Retryable(retryFor = [CannotAcquireLockException::class], maxAttempts = 3)
+  @Transactional(isolation = Isolation.SERIALIZABLE)
+  fun updateRecommendation(
     jsonRequest: JsonNode?,
     recommendationId: Long,
     userId: String?,
@@ -441,7 +447,7 @@ internal class RecommendationService(
   }
 
   @OptIn(ExperimentalStdlibApi::class)
-  private suspend fun updateAndSaveRecommendation(
+  private fun updateAndSaveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
     readableUserName: String?,
@@ -530,7 +536,7 @@ internal class RecommendationService(
     return existingRecommendation.recallConsideredList
   }
 
-  private suspend fun refreshData(pageRefreshIds: List<String>, model: RecommendationModel) {
+  private fun refreshData(pageRefreshIds: List<String>, model: RecommendationModel) {
     model.crn?.let {
       val deliusDetails = lazy { deliusClient.getRecommendationModel(model.crn) }
       if ("previousReleases" in pageRefreshIds) model.refreshPreviousReleases(deliusDetails.value)
@@ -578,11 +584,11 @@ internal class RecommendationService(
     }
   }
 
-  private suspend fun RecommendationModel.refreshRoshSummary(crn: String) {
+  private fun RecommendationModel.refreshRoshSummary(crn: String) {
     roshSummary = riskService?.getRoshSummary(crn)
   }
 
-  private suspend fun RecommendationModel.refreshIndexOffenceDetails(
+  private fun RecommendationModel.refreshIndexOffenceDetails(
     crn: String,
     deliusDetails: DeliusRecommendationModel,
   ) {
