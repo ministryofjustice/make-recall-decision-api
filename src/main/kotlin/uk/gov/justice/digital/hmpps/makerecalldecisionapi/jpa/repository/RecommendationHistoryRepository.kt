@@ -15,14 +15,14 @@ interface RecommendationHistoryRepository : JpaRepository<RecommendationHistoryE
     value = """
       SELECT t.* FROM make_recall_decision.public.recommendation_history t 
       WHERE t.recommendation ->> 'crn' = :crn
-      AND DATE(t.modified) >= :startDate
-      AND DATE(t.modified) <= :endDate
+      AND DATE(t.modified) >= :fromDate
+      AND DATE(t.modified) <= :toDate
       """,
     nativeQuery = true,
   )
   fun findByCrn(
     @Param("crn") crn: String,
-    @Param("startDate") startDate: LocalDate,
-    @Param("endDate") endDate: LocalDate,
+    @Param("fromDate") fromDate: LocalDate,
+    @Param("toDate") toDate: LocalDate,
   ): List<RecommendationHistoryEntity>
 }

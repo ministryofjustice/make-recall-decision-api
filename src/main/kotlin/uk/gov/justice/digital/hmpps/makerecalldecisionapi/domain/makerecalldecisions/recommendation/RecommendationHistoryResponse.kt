@@ -4,6 +4,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 
 data class RecommendationHistoryResponse(
   val recommendationId: Long?,
-  val crn: String,
+  val crn: String?,
   val recommendations: List<RecommendationModel>? = null,
 )
