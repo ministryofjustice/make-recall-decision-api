@@ -29,7 +29,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.5")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.0")
   implementation("io.micrometer:micrometer-registry-prometheus:1.13.0")
   implementation("io.opentelemetry:opentelemetry-api:1.38.0")
   implementation("joda-time:joda-time:2.12.7")
@@ -37,7 +37,7 @@ dependencies {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.26.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.commons:commons-compress:1.26.2") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
