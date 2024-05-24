@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationHistoryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.hmpps.kotlin.sar.HmppsProbationSubjectAccessRequestService
 import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
@@ -18,15 +19,23 @@ class RecommendationHistoryService(
     fromDate: LocalDate?,
     toDate: LocalDate?,
   ): HmppsSubjectAccessRequestContent? {
-    val recommendationHistory = if (fromDate != null && toDate != null) recommendationHistoryRepository.findByCrn(crn, fromDate, toDate) else emptyList()
-    return recommendationHistory.takeIf { it.isNotEmpty() }?.let {
+    val recommendationHistory = if (fromDate != null && toDate != null) recommendationHistoryRepository.findByCrn(crn, fromDate, toDate) else throw InvalidRequestException("Both fromDate and toDate must be present")
+    val subjectAccessContent = if (recommendationHistory.isNotEmpty()) {
       HmppsSubjectAccessRequestContent(
         content = RecommendationHistoryResponse(
-          recommendationId = it.first().recommendationId,
-          crn = it.first().recommendation.crn,
-          recommendations = it.map { history -> history.recommendation },
+          recommendationId = recommendationHistory.first().recommendationId,
+          crn = recommendationHistory.first().recommendation.crn,
+          recommendations = recommendationHistory.map { history -> history.recommendation },
+        ),
+      )
+    } else {
+      HmppsSubjectAccessRequestContent(
+        content = RecommendationHistoryResponse(
+          recommendations = emptyList(),
+          crn = crn,
         ),
       )
     }
+    return subjectAccessContent
   }
 }
