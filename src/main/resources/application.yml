@@ -132,6 +132,8 @@ management:
 hmpps:
   auth:
     url: http://localhost:9090/auth
+  sar:
+    additionalAccessRole: MAKE_RECALL_DECISION
 
 offender:
   search:
