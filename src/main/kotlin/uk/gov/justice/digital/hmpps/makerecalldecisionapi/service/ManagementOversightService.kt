@@ -55,8 +55,7 @@ internal class ManagementOversightService(
       ManagementOversightResponse(
         sensitive = considerationRationale.sensitive,
 
-        notes = "Comment added by Consider a recall Service on ${considerationRationale.createdDate} at ${considerationRationale.createdTime}\n" +
-          "${considerationRationale.createdBy} said:\n" +
+        notes = "${considerationRationale.createdBy} said:\n" +
           "Reason for considering recall:\n" +
           "\n" +
           "${recommendation.data.triggerLeadingToRecall}\n" +
