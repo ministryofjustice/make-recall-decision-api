@@ -46,10 +46,3 @@ enum class RecallTypeValue(val displayValue: String) {
   FIXED_TERM("Fixed"),
   NO_RECALL("No recall"),
 }
-
-data class ConsiderationRationale(
-  val createdBy: String? = null,
-  val createdDate: String? = null,
-  val createdTime: String? = null,
-  val sensitive: Boolean? = null,
-)

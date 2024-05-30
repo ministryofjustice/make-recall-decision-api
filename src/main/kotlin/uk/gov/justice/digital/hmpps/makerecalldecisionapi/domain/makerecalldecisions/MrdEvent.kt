@@ -90,36 +90,6 @@ fun toDeleteRecommendationRationaleDomainEventPayload(
   )
 }
 
-fun toConsiderationRecallEventPayload(
-  recommendationUrl: String?,
-  crn: String?,
-  username: String,
-  detailUrl: String,
-): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.consideration",
-      version = 1,
-      description = "Management Oversight - Consideration Rationale",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = detailUrl,
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(
-        contactOutcome = null,
-        recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(username),
-      ),
-    ),
-    messageAttributes = MessageAttributes(
-      eventType = TypeValue(
-        type = "String",
-        value = "prison-recall.recommendation.consideration",
-      ),
-    ),
-  )
-}
-
 fun toManagerRecallDecisionMadeEventPayload(
   recommendationUrl: String?,
   crn: String?,
