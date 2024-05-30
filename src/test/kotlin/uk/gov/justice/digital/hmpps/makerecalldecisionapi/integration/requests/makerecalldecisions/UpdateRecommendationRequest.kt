@@ -2,13 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
-fun updateRecommendationRequest(
-  status: Status = Status.DRAFT,
-  recallConsideredDetail: String? = "This is an updated recall considered detail",
-  spoDeleteRecommendationRationale: String = "My wonderful rationale for deleting the recommendation",
-  responseToProbation: String = "They have not responded well",
-) =
-  """
+fun updateRecommendationRequest(status: Status = Status.DRAFT, recallConsideredDetail: String? = "This is an updated recall considered detail") = """
 {
   "ppudRecordPresent": true,
   "custodyStatus": {
@@ -49,8 +43,8 @@ fun updateRecommendationRequest(
       }
     ]
   },
-  "spoDeleteRecommendationRationale": "$spoDeleteRecommendationRationale",
-  "responseToProbation": "$responseToProbation",
+  "spoDeleteRecommendationRationale": "My wonderful rationale for deleting the recommendation",
+  "responseToProbation": "They have not responded well",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
   "isIndeterminateSentence": true,
@@ -347,4 +341,4 @@ fun updateRecommendationRequest(
   "countersignAcoTelephone": "87654321",
   "countersignAcoExposition": "Aco comments on case"
 }
-  """.trimIndent()
+""".trimIndent()
