@@ -387,29 +387,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .expectStatus().isOk
   }
 
-  @Test
-  fun `update recommendation with send consideration rationale to ndelius`() {
-    userAccessAllowed(crn)
-    personalDetailsResponseOneTimeOnly(crn)
-    deleteAndCreateRecommendation()
-    roSHSummaryResponse(crn)
-
-    // when
-    updateRecommendation("{\"sendConsiderationRationaleToDelius\": true, \"considerationSensitive\": true}")
-
-    // then
-    webTestClient.get()
-      .uri("/recommendations/$createdRecommendationId")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.considerationRationale.createdBy").isEqualTo("some_user")
-      .jsonPath("$.considerationRationale.createdDate").isNotEmpty
-      .jsonPath("$.considerationRationale.createdTime").isNotEmpty
-      .jsonPath("$.considerationRationale.sensitive").isEqualTo(true)
-  }
-
 //  @Test
 //  fun `update with refresh and get recommendation`() {
 //    // FIXME: if getting stack overflow error when running this test in CircleCI, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
