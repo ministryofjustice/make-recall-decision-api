@@ -97,7 +97,7 @@ internal class RiskService(
     return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
   }
 
-  fun fetchAssessmentInfo(crn: String, convictionsFromDelius: List<Conviction>): AssessmentInfo? {
+  suspend fun fetchAssessmentInfo(crn: String, convictionsFromDelius: List<Conviction>): AssessmentInfo? {
     val assessmentsResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getAssessments(crn))!!
     } catch (ex: Exception) {
@@ -297,7 +297,7 @@ internal class RiskService(
     }
   }
 
-  private fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
+  private suspend fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
     return RiskOfSeriousHarm(
       overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
       riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
@@ -305,7 +305,7 @@ internal class RiskService(
     )
   }
 
-  private fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo {
+  private suspend fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo {
     return RiskTo(
       riskToChildren = getRiskLevel(riskScore, "children") ?: "",
       riskToPublic = getRiskLevel(riskScore, "public") ?: "",
@@ -330,7 +330,7 @@ internal class RiskService(
     return risks.asIterable().firstOrNull { it.value != null }?.key
   }
 
-  fun getRoshSummary(crn: String): RoshSummary {
+  suspend fun getRoshSummary(crn: String): RoshSummary {
     val riskSummaryResponse = try {
       getValueAndHandleWrappedException(arnApiClient.getRiskSummary(crn))
     } catch (ex: Exception) {
@@ -354,7 +354,7 @@ internal class RiskService(
     )
   }
 
-  fun areAllRiskSummaryFieldsEmpty(riskSummaryResponse: RiskSummaryResponse?): Boolean {
+  suspend fun areAllRiskSummaryFieldsEmpty(riskSummaryResponse: RiskSummaryResponse?): Boolean {
     // There is an issue with the data getting returned by ARN for this. For some cases, it replies with a 200 and just returns an empty object for most fields.
     // In this scenario, check all relevant fields are empty, and if so, return true. This should be followed up with ARN/OASys to understand why this is happening.
     return (

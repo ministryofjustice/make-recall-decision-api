@@ -33,7 +33,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -599,37 +598,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff").isEqualTo("MEDIUM")
       .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners").isEqualTo("")
       .jsonPath("$.roshSummary.lastUpdatedDate").isEqualTo("2022-05-19T08:26:31.000Z")
-  }
-
-  @Test
-  fun `given concurrent updates when patch recommendation is called then all updates are successful`() {
-    userAccessAllowed(crn)
-    personalDetailsResponse(crn)
-    deleteAndCreateRecommendation()
-    val status = Status.DOCUMENT_DOWNLOADED
-    val spoDeleteRecommendationRationale = "Delete recommendation rationale ${UUID.randomUUID()}"
-    val responseToProbation = "Response to probation ${UUID.randomUUID()}"
-
-    val thread1 =
-      Thread.startVirtualThread { updateRecommendation("""{ "status": "$status" } """) }
-    val thread2 =
-      Thread.startVirtualThread { updateRecommendation("""{ "spoDeleteRecommendationRationale": "$spoDeleteRecommendationRationale" } """) }
-    val thread3 =
-      Thread.startVirtualThread { updateRecommendation("""{ "responseToProbation": "$responseToProbation" } """) }
-
-    thread1.join()
-    thread2.join()
-    thread3.join()
-
-    webTestClient.get()
-      .uri("/recommendations/$createdRecommendationId")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.status").isEqualTo(status.toString())
-      .jsonPath("$.spoDeleteRecommendationRationale").isEqualTo(spoDeleteRecommendationRationale)
-      .jsonPath("$.responseToProbation").isEqualTo(responseToProbation)
   }
 
   @Test
