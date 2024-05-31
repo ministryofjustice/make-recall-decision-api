@@ -1,1 +1,1 @@
-CREATE INDEX idxcrnc ON recommendation_history USING btree ((recommendation ->> 'crn'));
+--  CREATE INDEX idxcrnc ON recommendation_history USING btree ((recommendation ->> 'crn'));
