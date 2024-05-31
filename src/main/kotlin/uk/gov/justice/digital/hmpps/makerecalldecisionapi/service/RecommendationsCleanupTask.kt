@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Lazy
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation.SERIALIZABLE
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +11,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
 
 @Service
 internal class RecommendationsCleanupTask(
@@ -26,11 +23,11 @@ internal class RecommendationsCleanupTask(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(
-    timeUnit = TimeUnit.SECONDS,
-    initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10*60, 60*60) }",
-    fixedRateString = "#{T(java.util.concurrent.TimeUnit).HOURS.toSeconds(24)}",
-  )
+//  @Scheduled(
+//    timeUnit = TimeUnit.SECONDS,
+//    initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10*60, 60*60) }",
+//    fixedRateString = "#{T(java.util.concurrent.TimeUnit).HOURS.toSeconds(24)}",
+//  )
   @Transactional(isolation = SERIALIZABLE)
   fun softDeleteOldRecommendations() {
     val thresholdDate = LocalDate.now().minusDays(21)
