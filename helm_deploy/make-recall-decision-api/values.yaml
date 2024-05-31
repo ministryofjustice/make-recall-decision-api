@@ -2,7 +2,7 @@ generic-service:
   nameOverride: make-recall-decision-api
   serviceAccountName: make-recall-decision
 
-  replicaCount: 4
+  replicaCount: 1
 
   image:
     repository: quay.io/hmpps/make-recall-decision-api
