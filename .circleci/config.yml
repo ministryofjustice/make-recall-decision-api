@@ -152,6 +152,11 @@ jobs:
           command: docker compose logs
       - run:
           when: on_fail
+          name: hmpps-auth - docker logs
+          working_directory: hmpps-auth
+          command: docker compose logs
+      - run:
+          when: on_fail
           name: make-recall-decision-ui - docker logs
           working_directory: make-recall-decision-ui
           command: docker compose logs
