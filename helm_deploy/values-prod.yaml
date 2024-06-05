@@ -24,3 +24,6 @@ generic-prometheus-alerts:
 
 gotenberg:
   alertSeverity: make-recall-decision-prod
+
+postgresDatabaseRestore:
+  enabled: true
