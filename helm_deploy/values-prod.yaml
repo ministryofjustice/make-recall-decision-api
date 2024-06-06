@@ -27,3 +27,14 @@ gotenberg:
 
 postgresDatabaseRestore:
   enabled: true
+	namespace_secrets:
+    make-recall-decision-api-database:
+      DB_NAME: "name"
+      DB_USER: "username"
+      DB_PASS: "password"
+      DB_HOST: "host"
+    make-recall-decision-api-database-output-preprod:
+      DB_NAME_PREPROD: "name"
+      DB_USER_PREPROD: "username"
+      DB_PASS_PREPROD: "password"
+      DB_HOST_PREPROD: "host"
