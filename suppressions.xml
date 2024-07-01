@@ -22,4 +22,13 @@
         <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus\-metrics\-.*@.*$</packageUrl>
         <cve>CVE-2019-3826</cve>
     </suppress>
+
+    <suppress>
+        <notes>This CVE is specific to some Cisco software
+            <![CDATA[
+   file name: commons-collections4-4.4-sources.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.commons/commons\-collections4@.*$</packageUrl>
+        <cve>CVE-2015-6420</cve>
+    </suppress>
 </suppressions>
