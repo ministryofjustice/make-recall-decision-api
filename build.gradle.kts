@@ -30,9 +30,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.0")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.13.0")
-  implementation("io.opentelemetry:opentelemetry-api:1.38.0")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.1")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
+  implementation("io.opentelemetry:opentelemetry-api:1.39.0")
   implementation("joda-time:joda-time:2.12.7")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -43,20 +43,20 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.13.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.13.0")
+  implementation("org.flywaydb:flyway-core:10.15.2")
+  implementation("org.flywaydb:flyway-database-postgresql:10.15.2")
   implementation("org.postgresql:postgresql:42.7.3")
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.9.0")
-  implementation("io.sentry:sentry-logback:7.9.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.11.0")
+  implementation("io.sentry:sentry-logback:7.11.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.5")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.0.1")
   implementation("org.json:json:20240303")
 
@@ -65,7 +65,7 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
-  testImplementation("io.jsonwebtoken:jjwt:0.12.5")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.6")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
