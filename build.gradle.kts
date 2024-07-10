@@ -4,7 +4,7 @@ plugins {
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
   kotlin("plugin.jpa") version "2.0.0"
-  id("org.sonarqube") version "5.0.0.4638"
+  id("org.sonarqube") version "5.1.0.4882"
   kotlin("plugin.spring") version "2.0.0"
 }
 
@@ -23,7 +23,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.2")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -31,8 +31,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.39.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.13.2")
+  implementation("io.opentelemetry:opentelemetry-api:1.40.0")
   implementation("joda-time:joda-time:2.12.7")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -56,7 +56,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.0")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.1")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.0.1")
   implementation("org.json:json:20240303")
 
