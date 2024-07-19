@@ -532,7 +532,7 @@ internal class RecommendationService(
     return readerForUpdating.readValue(jsonRequest)
   }
 
-  @Throws(RecommendationUpdateException::class,CannotAcquireLockException::class)
+  @Throws(RecommendationUpdateException::class, CannotAcquireLockException::class)
   private fun saveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
