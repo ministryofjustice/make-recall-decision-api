@@ -30,7 +30,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.1")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.2")
   implementation("io.micrometer:micrometer-registry-prometheus:1.13.2")
   implementation("io.opentelemetry:opentelemetry-api:1.40.0")
   implementation("joda-time:joda-time:2.12.7")
@@ -43,8 +43,8 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.15.2")
-  implementation("org.flywaydb:flyway-database-postgresql:10.15.2")
+  implementation("org.flywaydb:flyway-core:10.16.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.16.0")
   implementation("org.postgresql:postgresql:42.7.3")
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.12.0")
