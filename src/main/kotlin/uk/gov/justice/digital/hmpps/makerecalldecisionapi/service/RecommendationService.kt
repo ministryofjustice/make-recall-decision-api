@@ -532,7 +532,7 @@ internal class RecommendationService(
     return readerForUpdating.readValue(jsonRequest)
   }
 
-  @Throws(RecommendationUpdateException::class)
+  @Throws(RecommendationUpdateException::class,CannotAcquireLockException::class)
   private fun saveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
@@ -544,10 +544,13 @@ internal class RecommendationService(
     val savedRecommendation = try {
       recommendationRepository.save(existingRecommendationEntity)
     } catch (ex: Exception) {
-      throw RecommendationUpdateException(
-        message = "Update failed for recommendation id:: ${existingRecommendationEntity.id}$ex.message",
-        error = RECOMMENDATION_UPDATE_FAILED.toString(),
-      )
+      when (ex) {
+        is CannotAcquireLockException -> throw ex
+        else -> throw RecommendationUpdateException(
+          message = "Update failed for recommendation id:: ${existingRecommendationEntity.id} $ex.message",
+          error = RECOMMENDATION_UPDATE_FAILED.toString(),
+        )
+      }
     }
     log.info("recommendation for ${existingRecommendationEntity.data.crn} updated")
     return savedRecommendation
