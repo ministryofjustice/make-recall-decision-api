@@ -1,11 +1,11 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.1"
-  kotlin("jvm") version "2.0.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.2"
+  kotlin("jvm") version "2.0.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.0.0"
+  kotlin("plugin.jpa") version "2.0.10"
   id("org.sonarqube") version "5.1.0.4882"
-  kotlin("plugin.spring") version "2.0.0"
+  kotlin("plugin.spring") version "2.0.10"
 }
 
 jacoco.toolVersion = "0.8.11"
@@ -23,7 +23,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.3")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -38,17 +38,17 @@ dependencies {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.26.2") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.commons:commons-compress:1.27.0") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.16.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.16.0")
+  implementation("org.flywaydb:flyway-core:10.17.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.17.0")
   implementation("org.postgresql:postgresql:42.7.3")
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.12.0")
-  implementation("io.sentry:sentry-logback:7.12.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.13.0")
+  implementation("io.sentry:sentry-logback:7.13.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
@@ -56,11 +56,11 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.1")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.1.0")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.2.0")
   implementation("org.json:json:20240303")
 
-  testImplementation("org.awaitility:awaitility-kotlin:4.2.1")
+  testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
