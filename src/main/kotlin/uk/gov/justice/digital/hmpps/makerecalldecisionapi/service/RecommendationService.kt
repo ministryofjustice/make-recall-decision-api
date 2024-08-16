@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.databind.node.ObjectNode
-import org.json.JSONObject
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -341,21 +341,25 @@ internal class RecommendationService(
     featureFlags: FeatureFlags?,
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
-    val requestJson = JSONObject(jsonRequest.toString())
+    val requestJson = jacksonObjectMapper().readTree(jsonRequest.toString())
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
-    val sendConsiderationRationaleToDelius = requestJson.optBoolean("sendConsiderationRationaleToDelius")
-    val considerationSensitive = requestJson.optBoolean("considerationSensitive")
+    val sendConsiderationRationaleToDelius = requestJson.has("sendConsiderationRationaleToDelius") &&
+      requestJson.get("sendConsiderationRationaleToDelius").asBoolean()
+    val considerationSensitive = requestJson.has("considerationSensitive") &&
+      requestJson.get("considerationSensitive").asBoolean()
 
-    // remove these from the incoming request as they are not part of the recommendation model, but rather values applies to sending messages to nDelius.
-    val incoming = jsonRequest as ObjectNode
+    // Remove these from the incoming request as they are not part of the recommendation model, but rather values applies to sending messages to nDelius.
+    // Ensure we don't change the 'requestJson' input variable reference otherwise this will affect any possible failure retries
+    val incoming = requestJson.deepCopy() as ObjectNode
     incoming.remove("sendConsiderationRationaleToDelius")
     incoming.remove("considerationSensitive")
 
     val updatedRecommendation: RecommendationModel =
       recommendationFromRequest(existingRecommendationEntity, incoming)
-
-    if (requestJson.optBoolean("sendSpoRationaleToDelius")) {
+    val sendManagementOversightDomainEvent = requestJson.has("sendSpoRationaleToDelius") &&
+      requestJson.get("sendSpoRationaleToDelius").asBoolean()
+    if (sendManagementOversightDomainEvent) {
       log.info("send spo rationale to delius")
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
@@ -378,9 +382,8 @@ internal class RecommendationService(
       sendConsiderationRationaleDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
 
-    val sendSpoDeleteRationaleToDelius =
-      requestJson.has("sendSpoDeleteRationaleToDelius") && requestJson.getBoolean("sendSpoDeleteRationaleToDelius")
-
+    val sendSpoDeleteRationaleToDelius = requestJson.has("sendSpoDeleteRationaleToDelius") &&
+      requestJson.get("sendSpoDeleteRationaleToDelius").asBoolean()
     if (sendSpoDeleteRationaleToDelius) {
       log.info("send spo delete recommendation rationale to delius")
       existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
@@ -390,7 +393,7 @@ internal class RecommendationService(
       sendDeleteRecommendationDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
 
-    existingRecommendationEntity.deleted = requestJson.has("status") && requestJson.getString("status") == "DELETED"
+    existingRecommendationEntity.deleted = requestJson.has("status") && requestJson.get("status").asText() == "DELETED"
     existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
       updatedRecommendation,
       existingRecommendationEntity.data,
@@ -406,7 +409,8 @@ internal class RecommendationService(
     log.info("recommendation for ${result.crn} updated for recommendationId $recommendationId")
 
     val sendRecommendationStartedDomainEvent =
-      featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true && existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
+      featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true &&
+        existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
 
     if (sendRecommendationStartedDomainEvent) {
       log.info("About to send domain event for ${existingRecommendationEntity.data.crn} on Recommendation started for recommendation id $recommendationId")
