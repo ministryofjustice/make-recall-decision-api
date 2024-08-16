@@ -357,18 +357,15 @@ internal class RecommendationService(
 
     val updatedRecommendation: RecommendationModel =
       recommendationFromRequest(existingRecommendationEntity, incoming)
+
     val sendManagementOversightDomainEvent = requestJson.has("sendSpoRationaleToDelius") &&
       requestJson.get("sendSpoRationaleToDelius").asBoolean()
     if (sendManagementOversightDomainEvent) {
-      log.info("send spo rationale to delius")
       existingRecommendationEntity.data =
         addSpoRationale(existingRecommendationEntity, updatedRecommendation, readableUserName)
-      sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
 
     if (sendConsiderationRationaleToDelius) {
-      log.info("send consideration rationale to delius")
-
       val (date, time) = splitDateTime(localNowDateTime())
       existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
         considerationRationale = ConsiderationRationale(
@@ -378,19 +375,15 @@ internal class RecommendationService(
           sensitive = considerationSensitive,
         ),
       )
-
-      sendConsiderationRationaleDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
 
     val sendSpoDeleteRationaleToDelius = requestJson.has("sendSpoDeleteRationaleToDelius") &&
       requestJson.get("sendSpoDeleteRationaleToDelius").asBoolean()
     if (sendSpoDeleteRationaleToDelius) {
-      log.info("send spo delete recommendation rationale to delius")
       existingRecommendationEntity.data = existingRecommendationEntity.data.copy(
         spoDeleteRecommendationRationale = updatedRecommendation.spoDeleteRecommendationRationale,
         sendSpoDeleteRationaleToDelius = updatedRecommendation.sendSpoDeleteRationaleToDelius,
       )
-      sendDeleteRecommendationDomainEvent(recommendationId, existingRecommendationEntity, userId)
     }
 
     existingRecommendationEntity.deleted = requestJson.has("status") && requestJson.get("status").asText() == "DELETED"
@@ -405,8 +398,22 @@ internal class RecommendationService(
     refreshData(pageRefreshIds, existingRecommendationEntity.data)
 
     val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
-
     log.info("recommendation for ${result.crn} updated for recommendationId $recommendationId")
+
+    if (sendManagementOversightDomainEvent) {
+      log.info("send spo rationale to delius")
+      sendManagementOversightDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
+
+    if (sendConsiderationRationaleToDelius) {
+      log.info("send consideration rationale to delius")
+      sendConsiderationRationaleDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
+
+    if (sendSpoDeleteRationaleToDelius) {
+      log.info("send spo delete recommendation rationale to delius")
+      sendDeleteRecommendationDomainEvent(recommendationId, existingRecommendationEntity, userId)
+    }
 
     val sendRecommendationStartedDomainEvent =
       featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true &&
