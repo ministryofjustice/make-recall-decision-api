@@ -355,8 +355,7 @@ internal class RecommendationService(
     incoming.remove("sendConsiderationRationaleToDelius")
     incoming.remove("considerationSensitive")
 
-    val updatedRecommendation: RecommendationModel =
-      recommendationFromRequest(existingRecommendationEntity, incoming)
+    val updatedRecommendation: RecommendationModel = recommendationFromRequest(existingRecommendationEntity, incoming)
 
     val sendManagementOversightDomainEvent = requestJson.has("sendSpoRationaleToDelius") &&
       requestJson.get("sendSpoRationaleToDelius").asBoolean()
@@ -386,16 +385,17 @@ internal class RecommendationService(
       )
     }
 
-    existingRecommendationEntity.deleted = requestJson.has("status") && requestJson.get("status").asText() == "DELETED"
-    existingRecommendationEntity.data.recallConsideredList = updateRecallConsideredList(
-      updatedRecommendation,
-      existingRecommendationEntity.data,
-      userId,
-      readableUserName,
-    )
-    existingRecommendationEntity.data =
-      updatePageReviewedValues(updatedRecommendation, existingRecommendationEntity).data
-    refreshData(pageRefreshIds, existingRecommendationEntity.data)
+    existingRecommendationEntity.apply {
+      deleted = requestJson.has("status") && requestJson.get("status").asText() == "DELETED"
+      data.recallConsideredList = updateRecallConsideredList(
+        updatedRecommendation,
+        data,
+        userId,
+        readableUserName,
+      )
+      data = updatePageReviewedValues(updatedRecommendation, existingRecommendationEntity).data
+      refreshData(pageRefreshIds, data)
+    }
 
     val result = updateAndSaveRecommendation(existingRecommendationEntity, userId, readableUserName)
     log.info("recommendation for ${result.crn} updated for recommendationId $recommendationId")
