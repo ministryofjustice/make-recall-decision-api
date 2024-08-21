@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -341,7 +340,7 @@ internal class RecommendationService(
     featureFlags: FeatureFlags?,
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
-    val requestJson = jacksonObjectMapper().readTree(jsonRequest.toString())
+    val requestJson = CustomMapper.readTree(jsonRequest.toString())
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
     val sendConsiderationRationaleToDelius = requestJson.has("sendConsiderationRationaleToDelius") &&
