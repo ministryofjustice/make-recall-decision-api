@@ -60,6 +60,9 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.1.0")
   implementation("org.json:json:20240303")
 
+  implementation("com.google.code.gson:gson:2.10.1")
+
+
   testImplementation("org.awaitility:awaitility-kotlin:4.2.1")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
