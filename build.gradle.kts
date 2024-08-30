@@ -62,7 +62,6 @@ dependencies {
 
   implementation("com.google.code.gson:gson:2.10.1")
 
-
   testImplementation("org.awaitility:awaitility-kotlin:4.2.1")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
