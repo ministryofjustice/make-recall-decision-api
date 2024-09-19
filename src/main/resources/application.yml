@@ -193,9 +193,9 @@ prison:
 
 ---
 mrd:
-  url:
+  url: ${mrd.url}
   api:
-    url:
+    url: ${mrd.api.url}
 
 cloud:
   aws:
