@@ -71,27 +71,20 @@ internal class SupportingDocumentService(
     flags: FeatureFlags,
   ) {
     val file = recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
-    val crn = recommendationRepository.findById(file.recommendationId).getOrNull()?.data?.crn
+    val crn = file.recommendationId?.run { recommendationRepository.findById(this) }?.getOrNull()?.data?.crn
 
-    recommendationDocumentRepository.delete(file)
-    getValueAndHandleWrappedException(documentManagementClient.deleteFile(file.documentUuid.toString()))
-
-    var documentUuid: UUID? = null
     if (data != null && filename != null) {
-      documentUuid = uploadFile(filename = filename, data = data, crn = crn, documentUuid = UUID.randomUUID().toString(), mimetype = mimetype)
+      recommendationDocumentRepository.delete(file)
+      getValueAndHandleWrappedException(documentManagementClient.deleteFile(file.documentUuid.toString()))
+      file.documentUuid = uploadFile(filename = filename, data = data, crn = crn, documentUuid = UUID.randomUUID().toString(), mimetype = mimetype)
     }
     file.title = title
-    file.mimetype = mimetype
-    file.filename = filename
+    file.mimetype = mimetype ?: file.mimetype
+    file.filename = filename ?: file.filename
     file.uploaded = uploaded
     file.uploadedBy = uploadedBy
     file.uploadedByUserFullName = uploadedByUserFullName
-    if (data != null && documentUuid != null) {
-      file.mimetype = mimetype
-      file.filename = filename
-      file.data = Base64.getDecoder().decode(data)
-      file.documentUuid = documentUuid
-    }
+
     recommendationDocumentRepository.save(file)
   }
 
