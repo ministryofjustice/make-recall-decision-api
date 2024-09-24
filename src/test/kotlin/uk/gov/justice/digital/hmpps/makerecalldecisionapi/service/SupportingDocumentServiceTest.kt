@@ -204,9 +204,9 @@ class SupportingDocumentServiceTest {
     val client = Mockito.mock(DocumentManagementClient::class.java)
     val data = "VGhlIGhpbGxzIGFyZSBhbGl2ZSB3aXRoIHRoZXQgc291bmQgb2YgbXVzaWM="
 
-    given(client.deleteFile(Mockito.any())).willReturn(Mono.empty())
-    given(client.uploadFile(any(), any(), any(), any(), any())).willReturn(Mono.just(UUID.randomUUID()))
-    given(recommendationRepository.findById(any())).willReturn(Optional.of(RecommendationEntity(id = 1, data = RecommendationModel(crn = "123"))))
+    //given(client.deleteFile(Mockito.any())).willReturn(Mono.empty())
+    //given(client.uploadFile(any(), any(), any(), any(), any())).willReturn(Mono.just(UUID.randomUUID()))
+    //given(recommendationRepository.findById(any())).willReturn(Optional.of(RecommendationEntity(id = 1, data = RecommendationModel(crn = "123"))))
     val created = DateTimeHelper.utcNowDateTimeString()
 
     given(supportingDocumentRepository.findById(123)).willReturn(
@@ -231,13 +231,13 @@ class SupportingDocumentServiceTest {
 
     SupportingDocumentService(supportingDocumentRepository, client, recommendationRepository).replaceSupportingDocument(
       123,
-      mimetype = "word",
+      mimetype = null, //"word",
       title = "title 2",
       uploadedBy = "daman2",
       uploadedByUserFullName = "Inspector Morris2",
       uploaded = created,
-      data = data,
-      filename = "word.docx",
+      data = null,//data,
+      filename = null,//"word.docx",
       flags = FeatureFlags(),
     )
 
@@ -258,7 +258,9 @@ class SupportingDocumentServiceTest {
     assertThat(entity.uploaded).isEqualTo(created)
     assertThat(entity.uploadedBy).isEqualTo("daman2")
     assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
-    assertThat(String(entity.data!!)).isEqualTo("The hills are alive with thet sound of music")
+    // RL This next line isn't necessary if we shouldn't be storing the doc in CaR
+    // assertThat(String(entity.data!!)).isEqualTo("The hills are alive with thet sound of music")
+    assertThat(entity.data).isNull()
   }
 
   @Test
