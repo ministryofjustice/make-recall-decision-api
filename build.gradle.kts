@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.5"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.6"
   kotlin("jvm") version "2.0.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -23,17 +23,17 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.5")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.7")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.3")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.4")
   implementation("io.micrometer:micrometer-registry-prometheus:1.13.4")
   implementation("io.opentelemetry:opentelemetry-api:1.42.1")
-  implementation("joda-time:joda-time:2.12.7")
+  implementation("joda-time:joda-time:2.13.0")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
@@ -43,8 +43,8 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.18.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.18.0")
+  implementation("org.flywaydb:flyway-core:10.18.1")
+  implementation("org.flywaydb:flyway-database-postgresql:10.18.1")
   implementation("org.postgresql:postgresql:42.7.4")
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.14.0")
@@ -57,7 +57,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.2")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.4.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.4.4")
   implementation("org.json:json:20240303")
 
   implementation("com.google.code.gson:gson:2.11.0")
