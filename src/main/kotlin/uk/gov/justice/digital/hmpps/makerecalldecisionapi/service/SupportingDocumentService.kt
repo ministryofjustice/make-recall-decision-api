@@ -71,7 +71,7 @@ internal class SupportingDocumentService(
     flags: FeatureFlags,
   ) {
     val file = recommendationDocumentRepository.findById(id).orElseThrow { NotFoundException("Supporting document not found") }
-    val crn = file.recommendationId?.run {recommendationRepository.findById}?.getOrNull()?.data.crn
+    val crn = file.recommendationId?.run {recommendationRepository.findById(id)}?.getOrNull()?.data?.crn
 
     if (data != null && filename != null) {
       recommendationDocumentRepository.delete(file)
