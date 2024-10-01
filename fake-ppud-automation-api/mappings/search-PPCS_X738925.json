@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/offender/search",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "nomsId",
+        "contains": "XX123ABC"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-PPCS_X738925.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

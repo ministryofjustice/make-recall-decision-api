@@ -1,12 +1,12 @@
 {
-  "priority" : 2,
+  "priority" : 1,
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/.*/overview"
+    "urlPathPattern": "/case-summary/X738925/overview"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "overview.json",
+    "bodyFileName": "overview_PPCS_X738925.json",
     "headers": {
       "Content-Type": "application/json"
     }

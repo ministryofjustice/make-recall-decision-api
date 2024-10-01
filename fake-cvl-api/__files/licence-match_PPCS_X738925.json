@@ -1,0 +1,27 @@
+[
+  {
+    "licenceId": 123344,
+    "licenceType": "AP",
+    "licenceStatus": "IN_PROGRESS",
+    "nomisId": "A1234AA",
+    "surname": "Dare",
+    "forename": "Tamara",
+    "prisonCode": "MDI",
+    "prisonDescription": "Moorland (HMP)",
+    "probationAreaCode": "N01",
+    "probationAreaDescription": "Wales",
+    "probationPduCode": "N01CA",
+    "probationPduDescription": "North Wales",
+    "probationLauCode": "NA01CA-02",
+    "probationLauDescription": "North Wales",
+    "probationTeamCode": "NA01CA-02-A",
+    "probationTeamDescription": "Cardiff South",
+    "conditionalReleaseDate": "2022-10-19",
+    "actualReleaseDate": "2022-10-19",
+    "crn": "X738925",
+    "dateOfBirth": "2022-10-19",
+    "comUsername": "jsmith",
+    "bookingId": 773722,
+    "dateCreated": "2022-10-19T16:13:29.274Z"
+  }
+]

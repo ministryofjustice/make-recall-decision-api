@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/search/people",
+    "bodyPatterns" : [ {
+      "matchesJsonPath" : {
+        "expression": "crn",
+        "contains": "X788206"
+      }
+    } ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "searchPPCS_X788206.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
