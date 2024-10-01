@@ -1,12 +1,11 @@
 {
-  "priority" : 2,
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/.*/overview"
+    "urlPath": "/api/offenders/XX123ABC/prison-timeline"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "overview.json",
+    "bodyFileName": "prison-timeline-PPCS-X738925.json",
     "headers": {
       "Content-Type": "application/json"
     }

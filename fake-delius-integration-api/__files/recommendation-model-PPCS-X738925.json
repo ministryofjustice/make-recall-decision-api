@@ -1,0 +1,84 @@
+{
+  "personalDetails": {
+    "name": {
+      "forename": "Tamara",
+      "middleName": "",
+      "surname": "Dare"
+    },
+    "identifiers": {
+      "pncNumber": "",
+      "croNumber": "",
+      "nomsNumber": "XX123ABC",
+      "bookingNumber": ""
+    },
+    "dateOfBirth": "1990-09-15",
+    "gender": "Female",
+    "ethnicity": "White",
+    "primaryLanguage": "English"
+  },
+  "mainAddress": {
+    "noFixedAbode": false,
+    "buildingName": null,
+    "addressNumber": "3764",
+    "streetName": "Elvis Presley Boulevard",
+    "district": "Memphis",
+    "town": "Tennessee",
+    "postcode": "12345"
+  },
+  "mappa": {
+    "level": 1,
+    "category": 0,
+    "notes": "Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.\nNote\nnew note",
+    "startDate": "2021-02-10"
+  },
+  "lastRelease": {
+    "releaseDate": "2017-09-15",
+    "recallDate": "2019-11-27"
+  },
+  "lastReleasedFromInstitution": {
+    "name": "In the Community"
+  },
+  "activeConvictions": [
+    {
+      "number": "1",
+      "mainOffence": {
+        "code": "1234",
+        "description": "(Buggery and attempted buggery - 01600)",
+        "date": "2022-04-24"
+      },
+      "additionalOffences": [],
+      "sentence": {
+        "description": "Extended Determinate Sentence",
+        "length": 2,
+        "lengthUnits": "Months",
+        "isCustodial": true,
+        "custodialStatusCode": "B",
+        "licenceExpiryDate": "2020-06-25",
+        "sentenceExpiryDate": "2020-06-28"
+      }
+    }
+  ],
+  "activeCustodialConvictions": [
+    {
+      "number": "1",
+      "mainOffence": {
+        "code": "1234",
+        "description": "(Buggery and attempted buggery - 01600)",
+        "date": "2022-04-24"
+      },
+      "additionalOffences": [],
+      "sentence": {
+        "description": "Extended Determinate Sentence",
+        "startDate": "2022-04-26",
+        "length": 2,
+        "lengthUnits": "Months",
+        "secondLength": 3,
+        "secondLengthUnits": "Months",
+        "isCustodial": true,
+        "custodialStatusCode": "B",
+        "licenceExpiryDate": "2020-06-25",
+        "sentenceExpiryDate": "2020-06-28"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "locationDescription": "Outside - released from Leeds",
+  "bookingNo": "12",
+  "facialImageId": 1234,
+  "firstName": "Tamara",
+  "middleName": "",
+  "lastName": "Dare",
+  "dateOfBirth": "1970-03-15",
+  "status": "ACTIVE IN",
+  "physicalAttributes": {
+    "gender": "Female",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British"
+  },
+  "identifiers": [],
+  "sentenceDetail": {
+    "licenceExpiryDate": "2020-02-03"
+  }
+}
