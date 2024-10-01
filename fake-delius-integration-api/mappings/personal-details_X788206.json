@@ -1,14 +1,14 @@
 {
-  "priority" : 2,
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/.*/overview"
+    "urlPathPattern": "/case-summary/X788206/personal-details"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "overview.json",
+    "bodyFileName": "personal-details_X788206.json",
     "headers": {
       "Content-Type": "application/json"
     }
   }
 }
+
