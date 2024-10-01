@@ -1,0 +1,60 @@
+{
+  "personalDetails": {
+    "name": {
+      "forename": "HarryX788206",
+      "middleName": "TomX788206",
+      "surname": "SmithX788206"
+    },
+    "identifiers": {
+      "pncNumber": "GD123TEF",
+      "croNumber": "AB123XYZ",
+      "nomsNumber": "JG123POE",
+      "bookingNumber": "MV123EDR"
+    },
+    "dateOfBirth": "1990-09-15",
+    "gender": "Male",
+    "ethnicity": "White",
+    "primaryLanguage": "English"
+  },
+  "registerFlags": [
+    "Very High RoSH",
+    "Victim contact"
+  ],
+  "lastRelease": {
+    "releaseDate": "2017-09-15",
+    "recallDate": "2019-11-27"
+  },
+  "activeConvictions": [
+    {
+      "number": "1",
+      "mainOffence": {
+        "code": "1234",
+        "description": "Buggery and attempted buggery",
+        "date": "2022-04-24"
+      },
+      "additionalOffences": [],
+      "sentence": {
+        "description": "Extended Determinate Sentence",
+        "length": 2,
+        "lengthUnits": "Months",
+        "isCustodial": true,
+        "custodialStatusCode": "B",
+        "licenceExpiryDate": "2020-06-25",
+        "sentenceExpiryDate": "2020-06-28"
+      },
+      "licenceConditions": [
+        {
+          "startDate": "2022-04-24",
+          "mainCategory": {
+            "code": "NLC8",
+            "description": "Freedom of movement"
+          },
+          "subCategory": {
+            "code": "NSTT8",
+            "description": "To only attend places of worship which have been previously agreed with your supervising officer."
+          }
+        }
+      ]
+    }
+  ]
+}
