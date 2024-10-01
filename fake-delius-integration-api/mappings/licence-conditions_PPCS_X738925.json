@@ -1,12 +1,11 @@
 {
-  "priority" : 2,
   "request": {
     "method": "GET",
-    "urlPathPattern": "/case-summary/.*/overview"
+    "urlPathPattern": "/case-summary/X738925/licence-conditions"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "overview.json",
+    "bodyFileName": "licence-conditions_PPCS_X738925.json",
     "headers": {
       "Content-Type": "application/json"
     }
