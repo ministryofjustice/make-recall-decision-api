@@ -259,6 +259,20 @@ class MakeRecallDecisionApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
+  fun handleAccessDeniedException(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
+    log.error("Access denied", e)
+    return ResponseEntity
+      .status(HttpStatus.FORBIDDEN)
+      .body(
+        ErrorResponse(
+          status = FORBIDDEN,
+          userMessage = "Access denied",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
