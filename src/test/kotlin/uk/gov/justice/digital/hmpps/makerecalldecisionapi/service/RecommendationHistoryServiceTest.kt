@@ -25,7 +25,7 @@ class RecommendationHistoryServiceTest {
   private lateinit var service: RecommendationHistoryService
 
   @Test
-  fun `returns empty list and crn when no subject access content available`() {
+  fun `returns null (204) when no subject access content available`() {
     // given
     service = RecommendationHistoryService(recommendationHistoryRepository)
     given(recommendationHistoryRepository.findByCrn(any(), any(), any())).willReturn(emptyList())
@@ -34,8 +34,7 @@ class RecommendationHistoryServiceTest {
     val result = service.getProbationContentFor("bla", LocalDate.now(), LocalDate.now())
 
     // then
-    assertThat(result?.content).extracting("crn").isEqualTo("bla")
-    assertThat(result?.content).extracting("recommendations").asList().isEmpty()
+    assertThat(result?.content).isNull()
   }
 
   @Test
