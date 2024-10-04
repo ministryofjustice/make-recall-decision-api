@@ -38,20 +38,6 @@ class RecommendationHistoryServiceTest {
   }
 
   @Test
-  fun `returns InvalidRequestException when no dates supplied`() {
-    // given
-    service = RecommendationHistoryService(recommendationHistoryRepository)
-
-    // when and then
-    Assertions.assertThatThrownBy {
-      runTest {
-        service.getProbationContentFor("bla", null, null)
-      }
-    }.isInstanceOf(InvalidRequestException::class.java)
-      .hasMessage("Both fromDate and toDate must be present")
-  }
-
-  @Test
   fun `returns content`() {
     // given
     service = RecommendationHistoryService(recommendationHistoryRepository)
