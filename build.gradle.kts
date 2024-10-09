@@ -43,8 +43,8 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.18.2")
-  implementation("org.flywaydb:flyway-database-postgresql:10.18.2")
+  implementation("org.flywaydb:flyway-core:10.19.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.19.0")
   implementation("org.postgresql:postgresql:42.7.4")
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.14.0")
@@ -57,7 +57,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.3")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.0.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.0.1")
   implementation("org.json:json:20240303")
 
   implementation("com.google.code.gson:gson:2.11.0")
