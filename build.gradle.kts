@@ -1,11 +1,11 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.6"
-  kotlin("jvm") version "2.0.20"
+  kotlin("jvm") version "2.0.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.0.20"
+  kotlin("plugin.jpa") version "2.0.21"
   id("org.sonarqube") version "5.1.0.4882"
-  kotlin("plugin.spring") version "2.0.20"
+  kotlin("plugin.spring") version "2.0.21"
 }
 
 jacoco.toolVersion = "0.8.11"
