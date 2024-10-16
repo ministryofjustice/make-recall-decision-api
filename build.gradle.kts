@@ -1,11 +1,11 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.6"
-  kotlin("jvm") version "2.0.20"
+  kotlin("jvm") version "2.0.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.0.20"
+  kotlin("plugin.jpa") version "2.0.21"
   id("org.sonarqube") version "5.1.0.4882"
-  kotlin("plugin.spring") version "2.0.20"
+  kotlin("plugin.spring") version "2.0.21"
 }
 
 jacoco.toolVersion = "0.8.11"
@@ -31,8 +31,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.13.5")
-  implementation("io.opentelemetry:opentelemetry-api:1.42.1")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.13.6")
+  implementation("io.opentelemetry:opentelemetry-api:1.43.0")
   implementation("joda-time:joda-time:2.13.0")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
