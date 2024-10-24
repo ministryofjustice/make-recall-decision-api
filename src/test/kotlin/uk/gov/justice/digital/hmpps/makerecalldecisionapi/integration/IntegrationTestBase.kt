@@ -80,6 +80,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.riskSummaryUna
 import java.io.File
 import java.nio.file.Paths
 import java.sql.DriverManager
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
@@ -117,6 +118,7 @@ abstract class IntegrationTestBase {
   val crn = "A12345"
   val nomsId = "A1234CR"
   val convictionId = 2500614567
+  val dateOfBirth: LocalDate = LocalDate.of(1982, 10, 24)
 
   var createdRecommendationId: Int = 0
 

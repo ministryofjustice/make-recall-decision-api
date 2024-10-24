@@ -9,6 +9,9 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -35,8 +38,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
@@ -72,8 +75,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
@@ -104,8 +107,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm").isEqualTo(null)
@@ -136,8 +139,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.error").isEqualTo("MISSING_DATA")
@@ -165,8 +168,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm.overallRisk").isEqualTo("HIGH")
@@ -241,8 +244,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren").isEqualTo("HIGH")
