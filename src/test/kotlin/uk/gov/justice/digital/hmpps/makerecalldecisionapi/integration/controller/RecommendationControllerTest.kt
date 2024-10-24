@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import java.time.LocalDate
+import java.time.Period
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -56,8 +57,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .expectBody()
       .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
       .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-      .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-      .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+      .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+      .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
       .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
       .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
       .jsonPath("$.recommendations.length()").isEqualTo(1)
@@ -919,8 +920,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectBody()
         .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.recommendations[0].recommendationId").isNotEmpty

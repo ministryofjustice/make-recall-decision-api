@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -217,8 +220,8 @@ class LicenceConditionsControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.activeConvictions.length()").isEqualTo(1)
@@ -291,8 +294,8 @@ class LicenceConditionsControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.activeConvictions.length()").isEqualTo(1)
@@ -328,8 +331,8 @@ class LicenceConditionsControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.activeConvictions.length()").isEqualTo(2)
@@ -376,8 +379,8 @@ class LicenceConditionsControllerTest(
         .isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.activeConvictions.length()").isEqualTo(0)
@@ -398,8 +401,8 @@ class LicenceConditionsControllerTest(
         .isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.activeConvictions.length()").isEqualTo(1)
@@ -426,8 +429,8 @@ class LicenceConditionsControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo("1982-10-24")
-        .jsonPath("$.personalDetailsOverview.age").isEqualTo("41")
+        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
         .jsonPath("$.licenceConditions.length()").isEqualTo(1)
@@ -623,8 +626,8 @@ class LicenceConditionsControllerTest(
 
   private fun assertPersonalDetailsOverview(response: JSONObject) {
     assertThat(response.getJSONObject("personalDetailsOverview").getString("name")).isEqualTo("John Smith")
-    assertThat(response.getJSONObject("personalDetailsOverview").getString("dateOfBirth")).isEqualTo("1982-10-24")
-    assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(41)
+    assertThat(response.getJSONObject("personalDetailsOverview").getString("dateOfBirth")).isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+    assertThat(response.getJSONObject("personalDetailsOverview").getInt("age")).isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
     assertThat(response.getJSONObject("personalDetailsOverview").getString("gender")).isEqualTo("Male")
     assertThat(response.getJSONObject("personalDetailsOverview").getString("crn")).isEqualTo(crn)
   }
