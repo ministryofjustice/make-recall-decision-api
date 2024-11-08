@@ -191,11 +191,10 @@ prison:
     endpoint:
       url: http://localhost:9270
 
----
 mrd:
-  url:
+  url: ${mrd.url}
   api:
-    url:
+    url: ${mrd.api.url}
 
 cloud:
   aws:
