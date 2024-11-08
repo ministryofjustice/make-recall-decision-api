@@ -179,7 +179,7 @@ oasys:
 
 ppud-automation:
   client:
-    timeout: 120
+    timeout: 300
   api:
     endpoint:
       url: http://localhost:9370
@@ -193,9 +193,9 @@ prison:
 
 ---
 mrd:
-  url: ${mrd.url}
+  url:
   api:
-    url: ${mrd.api.url}
+    url:
 
 cloud:
   aws:
