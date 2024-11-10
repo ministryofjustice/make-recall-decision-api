@@ -32,7 +32,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.5")
   implementation("io.micrometer:micrometer-registry-prometheus:1.13.6")
-  implementation("io.opentelemetry:opentelemetry-api:1.43.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.44.1")
   implementation("joda-time:joda-time:2.13.0")
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
@@ -43,8 +43,8 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:10.20.1")
-  implementation("org.flywaydb:flyway-database-postgresql:10.20.1")
+  implementation("org.flywaydb:flyway-core:10.21.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.21.0")
   implementation("org.postgresql:postgresql:42.7.4")
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
@@ -56,7 +56,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.3")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.1.0")
   implementation("org.json:json:20240303")
 
