@@ -43,6 +43,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toSystemDeleteRecommendationEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -76,6 +77,7 @@ internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   val recommendationStatusRepository: RecommendationStatusRepository,
   @Lazy val personDetailsService: PersonDetailsService,
+  @Lazy val prisonerApiService: PrisonerApiService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   @Lazy private val riskService: RiskService?,
@@ -120,6 +122,7 @@ internal class RecommendationService(
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      val nomisOffender = personDetails?.personalDetailsOverview?.nomsNumber?.let { prisonerApiService.searchPrisonApi(it) }
       return saveNewRecommendationEntity(
         recommendationRequest,
         userId,
@@ -130,6 +133,8 @@ internal class RecommendationService(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription,
+          null,
+          nomisOffender?.toPrisonOffender(),
         ),
         sendRecommendationStartedDomainEvent,
       )?.toRecommendationResponse()
@@ -964,6 +969,7 @@ internal class RecommendationService(
         region = recommendationWrapper?.region,
         localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
         recommendationStartedDomainEventSent = recommendationStartedDomainEventSent,
+        prisonOffender = recommendationWrapper?.offender,
       ),
     )
 
