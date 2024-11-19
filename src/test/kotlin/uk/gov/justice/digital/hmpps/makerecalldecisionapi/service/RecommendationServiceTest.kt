@@ -25,6 +25,7 @@ import org.mockito.BDDMockito.times
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doThrow
@@ -40,6 +41,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -132,11 +134,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
+      val offenderResponse = mock(Offender::class.java)
+      org.mockito.kotlin.given(prisonApiClient.retrieveOffender(org.mockito.kotlin.any())).willReturn(
+        Mono.fromCallable {
+          offenderResponse
+        },
+      )
+
       given(recommendationRepository.save(any())).willReturn(recommendationToSave)
       recommendationService = RecommendationService(
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -384,6 +394,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null),
@@ -571,6 +582,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null),
@@ -657,6 +669,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null),
@@ -775,6 +788,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null),
@@ -1809,6 +1823,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -2026,6 +2041,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         ),
       )
 
+      val offenderResponse = mock(Offender::class.java)
+      org.mockito.kotlin.given(prisonApiClient.retrieveOffender(org.mockito.kotlin.any())).willReturn(
+        Mono.fromCallable {
+          offenderResponse
+        },
+      )
+
       given(recommendationRepository.save(any()))
         .willReturn(recommendationToSave)
 
@@ -2049,6 +2071,13 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         data = RecommendationModel(
           crn = crn,
         ),
+      )
+
+      val offenderResponse = mock(Offender::class.java)
+      org.mockito.kotlin.given(prisonApiClient.retrieveOffender(org.mockito.kotlin.any())).willReturn(
+        Mono.fromCallable {
+          offenderResponse
+        },
       )
 
       given(recommendationRepository.save(any()))
@@ -2147,6 +2176,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
+      PrisonerApiService(prisonApiClient),
       templateReplacementServiceMocked,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null),

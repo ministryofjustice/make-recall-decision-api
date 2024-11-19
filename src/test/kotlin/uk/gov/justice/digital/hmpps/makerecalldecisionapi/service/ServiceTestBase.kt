@@ -128,6 +128,7 @@ internal abstract class ServiceTestBase {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
+      PrisonerApiService(prisonApiClient),
       templateReplacementService,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null),
