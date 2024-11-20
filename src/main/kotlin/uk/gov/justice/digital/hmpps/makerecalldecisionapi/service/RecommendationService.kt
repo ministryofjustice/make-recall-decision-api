@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConsiderationRationale
@@ -43,10 +44,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toSystemDeleteRecommendationEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -76,6 +79,7 @@ internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   val recommendationStatusRepository: RecommendationStatusRepository,
   @Lazy val personDetailsService: PersonDetailsService,
+  @Lazy val prisonerApiService: PrisonerApiService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
   @Lazy private val riskService: RiskService?,
@@ -120,6 +124,12 @@ internal class RecommendationService(
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
+      val nomisOffender: Offender? = try {
+        personDetails?.personalDetailsOverview?.nomsNumber?.let { prisonerApiService.searchPrisonApi(it) }
+      } catch (_: NotFoundException) {
+        null.also { log.info("No matching Offender with nomsNumber ${personDetails?.personalDetailsOverview?.nomsNumber} found") }
+      }
+
       return saveNewRecommendationEntity(
         recommendationRequest,
         userId,
@@ -130,6 +140,8 @@ internal class RecommendationService(
           personDetails?.toPersonOnProbation(),
           personDetails?.offenderManager?.probationAreaDescription,
           personDetails?.offenderManager?.probationTeam?.localDeliveryUnitDescription,
+          null,
+          nomisOffender?.toPrisonOffender(),
         ),
         sendRecommendationStartedDomainEvent,
       )?.toRecommendationResponse()
@@ -964,6 +976,7 @@ internal class RecommendationService(
         region = recommendationWrapper?.region,
         localDeliveryUnit = recommendationWrapper?.localDeliveryUnit,
         recommendationStartedDomainEventSent = recommendationStartedDomainEventSent,
+        prisonOffender = recommendationWrapper?.offender,
       ),
     )
 
