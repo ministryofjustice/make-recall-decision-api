@@ -124,11 +124,10 @@ internal class RecommendationService(
         log.info("Sent domain event for ${recommendationRequest.crn} on Recommendation started asynchronously")
       }
       val personDetails = recommendationRequest.crn?.let { personDetailsService.getPersonDetails(it) }
-      var nomisOffender: Offender? = null
-      try {
-        nomisOffender = personDetails?.personalDetailsOverview?.nomsNumber?.let { prisonerApiService.searchPrisonApi(it) }
+      val nomisOffender: Offender? = try {
+        personDetails?.personalDetailsOverview?.nomsNumber?.let { prisonerApiService.searchPrisonApi(it) }
       } catch (_: NotFoundException) {
-        log.info("No matching Offender with nomsNumber ${personDetails?.personalDetailsOverview?.nomsNumber} found")
+        null.also { log.info("No matching Offender with nomsNumber ${personDetails?.personalDetailsOverview?.nomsNumber} found") }
       }
 
       return saveNewRecommendationEntity(

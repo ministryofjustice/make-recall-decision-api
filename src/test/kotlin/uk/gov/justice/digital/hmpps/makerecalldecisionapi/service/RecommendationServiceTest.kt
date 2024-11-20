@@ -42,6 +42,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
@@ -49,6 +52,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
@@ -62,6 +66,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoRecommendationFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
@@ -130,12 +135,33 @@ internal class RecommendationServiceTest : ServiceTestBase() {
               ),
             ),
           ),
+          prisonOffender = PrisonOffender(
+            image = null,
+            status = "ACTIVE IN",
+            lastName = "Teale",
+            bookingNo = "7878783",
+            firstName = "Johnny",
+            middleName = "J",
+            dateOfBirth = LocalDate.parse("1970-03-15"),
+            facialImageId = null,
+            locationDescription = "Outside - released from Leeds",
+          ),
         ),
       )
 
       // and
-      val offenderResponse = mock(Offender::class.java)
-      org.mockito.kotlin.given(prisonApiClient.retrieveOffender(org.mockito.kotlin.any())).willReturn(
+      val offenderResponse = Offender(
+        image = null,
+        status = "ACTIVE IN",
+        lastName = "Teale",
+        bookingNo = "7878783",
+        firstName = "Johnny",
+        middleName = "J",
+        dateOfBirth = LocalDate.parse("1970-03-15"),
+        facialImageId = null,
+        locationDescription = "Outside - released from Leeds",
+      )
+      org.mockito.kotlin.given(prisonApiClient.retrieveOffender("A1234CR")).willReturn(
         Mono.fromCallable {
           offenderResponse
         },
@@ -183,6 +209,319 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       then(recommendationRepository).should().save(captor.capture())
       val recommendationEntity = captor.firstValue
       val expectedStatus = if (featureFlag == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
+
+      assertThat(recommendationEntity.data.prisonOffender).isEqualTo(
+        PrisonOffender(
+          image = null,
+          status = "ACTIVE IN",
+          lastName = "Teale",
+          bookingNo = "7878783",
+          firstName = "Johnny",
+          middleName = "J",
+          dateOfBirth = LocalDate.parse("1970-03-15"),
+          facialImageId = null,
+          locationDescription = "Outside - released from Leeds",
+        ),
+      )
+
+      assertThat(recommendationEntity.id).isNotNull()
+      assertThat(recommendationEntity.data.crn).isEqualTo(crn)
+      assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
+        PersonOnProbation(
+          name = "John Smith",
+          firstName = "John",
+          middleNames = "Homer Bart",
+          surname = "Smith",
+          gender = "Male",
+          ethnicity = "Ainu",
+          primaryLanguage = "English",
+          hasBeenReviewed = false,
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          croNumber = "123456/04A",
+          mostRecentPrisonerNumber = "G12345",
+          nomsNumber = "A1234CR",
+          pncNumber = "2004/0712343H",
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Town address",
+              postcode = "TS1 1ST",
+              noFixedAbode = false,
+            ),
+          ),
+        ),
+      )
+      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("UserBill")
+      assertThat(recommendationEntity.data.lastModifiedByUserName).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
+      assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdByUserFullName).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
+      assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
+      assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
+      assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
+
+      when (featureFlag) {
+        "RECALL_CONSIDERED" -> {
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+
+        "RECOMMENDATION_STARTED" -> {
+          then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
+        }
+
+        else -> {
+          assertThat(recommendationEntity.data.recallConsideredList).isNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+      }
+    }
+  }
+
+  @ParameterizedTest()
+  @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
+  fun `create recommendation with and without recall considered flag when nomsNumber not present`(featureFlag: String) {
+    runTest {
+      // given
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+          status = Status.DRAFT,
+          lastModifiedBy = "Bill",
+          region = "London",
+          localDeliveryUnit = "LDU London",
+          personOnProbation = PersonOnProbation(
+            name = "John Smith",
+            gender = "Male",
+            ethnicity = "Ainu",
+            primaryLanguage = "English",
+            dateOfBirth = LocalDate.parse("1982-10-24"),
+            croNumber = "123456/04A",
+            pncNumber = "2004/0712343H",
+            mostRecentPrisonerNumber = "G12345",
+            nomsNumber = null,
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Town address",
+                postcode = "TS1 1ST",
+                noFixedAbode = false,
+              ),
+            ),
+          ),
+        ),
+      )
+
+      // and
+
+      given(mockPersonDetailService.getPersonDetails(crn)).willReturn(personDetailsResponseNullNomsNumber())
+
+      given(recommendationRepository.save(any())).willReturn(recommendationToSave)
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+      )
+
+      // and
+      val featureFlags = when (featureFlag) {
+        "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(
+          flagDomainEventRecommendationStarted = true,
+          flagConsiderRecall = false,
+        )
+
+        else -> null
+      }
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
+
+      // when
+      val response = recommendationService.createRecommendation(
+        CreateRecommendationRequest(crn, recallConsidereDetail),
+        "UserBill",
+        "Bill",
+        featureFlags,
+      )
+
+      // then
+      assertThat(response?.id).isNotNull
+      assertThat(response?.status).isEqualTo(Status.DRAFT)
+      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
+      val expectedStatus = if (featureFlag == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
+
+      assertThat(recommendationEntity.data.prisonOffender).isNull()
+
+      assertThat(recommendationEntity.id).isNotNull()
+      assertThat(recommendationEntity.data.crn).isEqualTo(crn)
+      assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
+      assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
+        PersonOnProbation(
+          name = "John Smith",
+          firstName = "John",
+          middleNames = "Homer Bart",
+          surname = "Smith",
+          gender = "Male",
+          ethnicity = "Ainu",
+          primaryLanguage = "English",
+          hasBeenReviewed = false,
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          croNumber = "123456/04A",
+          mostRecentPrisonerNumber = "G12345",
+          nomsNumber = null,
+          pncNumber = "2004/0712343H",
+          addresses = listOf(
+            Address(
+              line1 = "Line 1 address",
+              line2 = "Line 2 address",
+              town = "Town address",
+              postcode = "TS1 1ST",
+              noFixedAbode = false,
+            ),
+          ),
+        ),
+      )
+      assertThat(recommendationEntity.data.lastModifiedBy).isEqualTo("UserBill")
+      assertThat(recommendationEntity.data.lastModifiedByUserName).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.lastModifiedDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdBy).isEqualTo("UserBill")
+      assertThat(recommendationEntity.data.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
+      assertThat(recommendationEntity.data.createdByUserFullName).isEqualTo("Bill")
+      assertThat(recommendationEntity.data.region).isEqualTo("Probation area description")
+      assertThat(recommendationEntity.data.localDeliveryUnit).isEqualTo("LDU description")
+      assertThat(recommendationEntity.data.userNamePartACompletedBy).isNull()
+      assertThat(recommendationEntity.data.lastPartADownloadDateTime).isNull()
+
+      when (featureFlag) {
+        "RECALL_CONSIDERED" -> {
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.id).isNotNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+
+        "RECOMMENDATION_STARTED" -> {
+          then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(true)
+        }
+
+        else -> {
+          assertThat(recommendationEntity.data.recallConsideredList).isNull()
+          assertThat(recommendationEntity.data.recommendationStartedDomainEventSent).isEqualTo(false)
+          then(mrdEmitterMocked).shouldHaveNoInteractions()
+        }
+      }
+    }
+  }
+
+  @ParameterizedTest()
+  @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
+  fun `create recommendation with and without recall considered flag, nomis lookup failure`(featureFlag: String) {
+    runTest {
+      // given
+      val recommendationToSave = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+          status = Status.DRAFT,
+          lastModifiedBy = "Bill",
+          region = "London",
+          localDeliveryUnit = "LDU London",
+          personOnProbation = PersonOnProbation(
+            name = "John Smith",
+            gender = "Male",
+            ethnicity = "Ainu",
+            primaryLanguage = "English",
+            dateOfBirth = LocalDate.parse("1982-10-24"),
+            croNumber = "123456/04A",
+            pncNumber = "2004/0712343H",
+            mostRecentPrisonerNumber = "G12345",
+            nomsNumber = "A1234CR",
+            addresses = listOf(
+              Address(
+                line1 = "Line 1 address",
+                line2 = "Line 2 address",
+                town = "Town address",
+                postcode = "TS1 1ST",
+                noFixedAbode = false,
+              ),
+            ),
+          ),
+        ),
+      )
+
+      // and
+      org.mockito.kotlin.given(prisonApiClient.retrieveOffender("A1234CR")).willThrow(
+        NotFoundException::class.java,
+      )
+
+      given(recommendationRepository.save(any())).willReturn(recommendationToSave)
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+      )
+
+      // and
+      val featureFlags = when (featureFlag) {
+        "RECALL_CONSIDERED" -> FeatureFlags(flagConsiderRecall = true)
+        "RECOMMENDATION_STARTED" -> FeatureFlags(
+          flagDomainEventRecommendationStarted = true,
+          flagConsiderRecall = false,
+        )
+
+        else -> null
+      }
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
+
+      // when
+      val response = recommendationService.createRecommendation(
+        CreateRecommendationRequest(crn, recallConsidereDetail),
+        "UserBill",
+        "Bill",
+        featureFlags,
+      )
+
+      // then
+      assertThat(response?.id).isNotNull
+      assertThat(response?.status).isEqualTo(Status.DRAFT)
+      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+
+      val captor = argumentCaptor<RecommendationEntity>()
+      then(recommendationRepository).should().save(captor.capture())
+      val recommendationEntity = captor.firstValue
+      val expectedStatus = if (featureFlag == "RECALL_CONSIDERED") Status.RECALL_CONSIDERED else Status.DRAFT
+
+      assertThat(recommendationEntity.data.prisonOffender).isNull()
 
       assertThat(recommendationEntity.id).isNotNull()
       assertThat(recommendationEntity.data.crn).isEqualTo(crn)
@@ -2184,6 +2523,42 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       mrdEmitterMocked,
     )
   }
+
+  fun personDetailsResponseNullNomsNumber() = PersonDetailsResponse(
+    personalDetailsOverview = PersonalDetailsOverview(
+      fullName = "John Homer Bart Smith",
+      name = "John Smith",
+      firstName = "John",
+      middleNames = "Homer Bart",
+      surname = "Smith",
+      age = null,
+      crn = null,
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      gender = "Male",
+      ethnicity = "Ainu",
+      croNumber = "123456/04A",
+      pncNumber = "2004/0712343H",
+      mostRecentPrisonerNumber = "G12345",
+      nomsNumber = null,
+      primaryLanguage = "English",
+    ),
+    addresses = listOf(
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address(
+        line1 = "Line 1 address",
+        line2 = "Line 2 address",
+        town = "Town address",
+        postcode = "TS1 1ST",
+        noFixedAbode = false,
+      ),
+    ),
+    offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(
+      name = "John Smith",
+      phoneNumber = "01234567654",
+      email = "tester@test.com",
+      probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"),
+      probationAreaDescription = "Probation area description",
+    ),
+  )
 
   object MockitoHelper {
     fun <T> anyObject(): T {
