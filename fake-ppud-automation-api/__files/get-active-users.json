@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "fullName": "aaaaaaaa",
+      "teamName": "Casework Support & Tariff Team",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "aaaaaaaa(Casework Support & Tariff Team)"
+    },
+    {
+      "fullName": "Aaron Aaron",
+      "teamName": "Lifer Team C",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "Aaron Aaron(Lifer Team C)"
+    },
+    {
+      "fullName": "Consider a Recall PPCS User",
+      "teamName": "Recall 1",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "Consider a Recall PPCS User(Recall 1)"
+    },
+    {
+      "fullName": "Consider a Recall Test",
+      "teamName": "Recall 1",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "Consider a Recall Test(Recall 1)"
+    },
+    {
+      "fullName": "Consider a Recall Test Admin",
+      "teamName": "Performance Management",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "Consider a Recall Test Admin(Performance Management)"
+    },
+    {
+      "fullName": "zzzzzFricker, Joanne",
+      "teamName": "Performance Management",
+      "formattedFullNameAndTeam$hmpps_ppud_automation_api": "zzzzzFricker, Joanne(Performance Management)"
+    },
+  ]
+}
