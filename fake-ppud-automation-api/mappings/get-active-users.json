@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/user/list"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "get-active-users.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
