@@ -50,7 +50,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.18.0")
   implementation("io.sentry:sentry-logback:7.18.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
