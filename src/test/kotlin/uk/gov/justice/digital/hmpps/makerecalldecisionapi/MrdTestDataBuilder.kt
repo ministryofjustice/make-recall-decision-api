@@ -30,7 +30,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
@@ -209,15 +208,8 @@ class MrdTestDataBuilder {
                   indexOffence = "123",
                   dateOfIndexOffence = "2007-08-14",
                 ),
-                releases = listOf(
-                  PpudRelease(
-                    category = "cat",
-                    dateOfRelease = "2007-08-14",
-                    releasedFrom = "Kent",
-                    releasedUnder = "abc",
-                    releaseType = "def",
-                  ),
-                ),
+                releaseDate = "2027-08-14",
+                releases = emptyList(),
                 sentenceLength = PpudSentenceLength(1, 1, 1),
                 sentencingCourt = "Richmond",
               ),

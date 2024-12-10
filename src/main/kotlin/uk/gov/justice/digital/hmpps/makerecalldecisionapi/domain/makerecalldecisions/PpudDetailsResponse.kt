@@ -29,7 +29,7 @@ data class SentenceDetails(
   val mappaLevel: String?,
   val licenceExpiryDate: String?,
   val offence: OffenceDetails?,
-  val releases: List<ReleaseDetails>?,
+  val releaseDate: String?,
   val sentenceLength: SentenceLength?,
   val sentencingCourt: String?,
 )
@@ -37,14 +37,6 @@ data class SentenceDetails(
 data class OffenceDetails(
   val indexOffence: String?,
   val dateOfIndexOffence: String?,
-)
-
-data class ReleaseDetails(
-  val category: String?,
-  val dateOfRelease: String?,
-  val releasedFrom: String?,
-  val releasedUnder: String?,
-  val releaseType: String?,
 )
 
 data class SentenceLength(
