@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreType
+
 data class PpudOffender(
   val id: String,
   val croOtherNumber: String,
@@ -27,6 +30,9 @@ data class PpudSentence(
   val mappaLevel: String,
   val licenceExpiryDate: String?,
   val offence: PpudOffence?,
+  val releaseDate: String?,
+  // deprecated
+  @JsonIgnore
   val releases: List<PpudRelease>?,
   val sentenceLength: PpudSentenceLength?,
   val sentencingCourt: String?,
@@ -37,6 +43,8 @@ data class PpudOffence(
   val dateOfIndexOffence: String?,
 )
 
+// deprecated
+@JsonIgnoreType
 data class PpudRelease(
   val category: String?,
   val dateOfRelease: String?,
