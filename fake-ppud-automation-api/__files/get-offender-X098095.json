@@ -33,6 +33,7 @@
           "dateOfIndexOffence": "2008-06-12"
         },
         "sentenceExpiryDate": "2005-06-15",
+        "releaseDate": "2013-01-01",
         "sentenceLength": {
           "partYears": 2,
           "partMonths": 3,
@@ -59,6 +60,7 @@
           "dateOfIndexOffence": "2007-06-13"
         },
         "sentenceExpiryDate": "2005-06-14",
+        "releaseDate": "2010-01-01",
         "sentenceLength": {
           "partYears": 1,
           "partMonths": 2,
