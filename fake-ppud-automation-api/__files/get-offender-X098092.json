@@ -32,19 +32,7 @@
           "indexOffence": "Blasphemy against coca cola",
           "dateOfIndexOffence": "2008-06-12"
         },
-        "releases": [
-          {
-            "category": "Not Applicable",
-            "dateOfRelease": "2013-02-02",
-            "postRelease": {
-              "licenceType": "Standard",
-              "probationService": "Merseyside"
-            },
-            "releasedFrom": "HMP Wakefield",
-            "releasedUnder": "CJA 2008",
-            "releaseType": "On Licence"
-          }
-        ],
+        "releaseDate": "2005-05-12",
         "sentenceExpiryDate": "2005-06-15",
         "sentenceLength": {
           "partYears": 2,
@@ -71,7 +59,6 @@
           "indexOffence": "Some offence to wit you are being punished.",
           "dateOfIndexOffence": "2007-06-13"
         },
-        "releases": [],
         "sentenceExpiryDate": "2005-06-14",
         "sentenceLength": {
           "partYears": 1,
