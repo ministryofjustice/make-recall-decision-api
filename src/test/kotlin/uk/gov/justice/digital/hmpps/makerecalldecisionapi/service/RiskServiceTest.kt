@@ -19,19 +19,9 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.*
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -66,19 +56,21 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(deliusMappaAndRoshHistoryResponse())
       given(arnApiClient.getRiskSummary(crn))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
-      val currentRiskScoreResponseWithNullDate = currentRiskScoreResponse.copy(completedDate = null)
-      val historicalRiskScoreResponseWithNullDate = historicalRiskScoreResponse.copy(completedDate = null)
-      val historicalRiskScoreResponseWithEarlierDate =
-        historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000")
+      val latestRiskScoreDate = randomLocalDateTime()
+      val latestRiskScoreResponse = riskScoreResponse(completedDate = latestRiskScoreDate.toString())
+      val riskScoreResponseWithNullDate = riskScoreResponse(completedDate = null)
+      val yearOldRiskScoreResponse = riskScoreResponse(completedDate = latestRiskScoreDate.minusYears(1).toString())
+      val anotherRiskScoreResponseWithNullDate = riskScoreResponse(completedDate = null)
+      val yearsOldRiskScoreResponse = riskScoreResponse(completedDate = latestRiskScoreDate.minusYears(2).toString())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
           Mono.fromCallable {
             listOf(
-              currentRiskScoreResponse,
-              currentRiskScoreResponseWithNullDate,
-              historicalRiskScoreResponse,
-              historicalRiskScoreResponseWithNullDate,
-              historicalRiskScoreResponseWithEarlierDate,
+              latestRiskScoreResponse,
+              riskScoreResponseWithNullDate,
+              yearOldRiskScoreResponse,
+              anotherRiskScoreResponseWithNullDate,
+              yearsOldRiskScoreResponse,
             )
           },
         )
@@ -139,12 +131,12 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
       assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
       assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
-      comparePredictorScores(historicalScores?.get(0), currentRiskScoreResponse)
-      comparePredictorScores(historicalScores?.get(1), historicalRiskScoreResponse)
-      comparePredictorScores(historicalScores?.get(2), historicalRiskScoreResponseWithEarlierDate)
+      comparePredictorScores(historicalScores?.get(0), latestRiskScoreResponse)
+      comparePredictorScores(historicalScores?.get(1), yearOldRiskScoreResponse)
+      comparePredictorScores(historicalScores?.get(2), yearsOldRiskScoreResponse)
       assertThat(historicalScores?.get(3)?.date).isEqualTo(null)
       assertThat(historicalScores?.get(4)?.date).isEqualTo(null)
-      comparePredictorScores(currentScores, currentRiskScoreResponse)
+      comparePredictorScores(currentScores, latestRiskScoreResponse)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
@@ -162,7 +154,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(Mono.fromCallable { listOf(currentRiskScoreResponse) })
+        .willReturn(Mono.fromCallable { listOf(riskScoreResponse()) })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
 
@@ -926,62 +918,6 @@ internal class RiskServiceTest : ServiceTestBase() {
     ),
     assessedOn = "2022-10-09T08:26:31",
     overallRiskLevel = "HIGH",
-  )
-
-  private val currentRiskScoreResponse = RiskScoreResponse(
-    completedDate = "2018-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = "",
-      ogpDynamicWeightedScore = "",
-      ogpTotalWeightedScore = "1",
-      ogpRisk = "LOW",
-      ogp1Year = "0",
-      ogp2Year = "0",
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "2", scoreLevel = "MEDIUM"),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = "3",
-      ospContactPercentageScore = "2",
-      ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH",
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = "0",
-      ovpDynamicWeightedScore = "0",
-      ovpTotalWeightedScore = "0",
-      ovpRisk = "LOW",
-      oneYear = "0",
-      twoYears = "0",
-    ),
-  )
-
-  private val historicalRiskScoreResponse = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = "",
-      ogpDynamicWeightedScore = "10",
-      ogpTotalWeightedScore = "1",
-      ogpRisk = "LOW",
-      ogp1Year = "0",
-      ogp2Year = "0",
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "1", scoreLevel = "LOW"),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = "3",
-      ospContactPercentageScore = "2",
-      ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH",
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = "0",
-      ovpDynamicWeightedScore = "0",
-      ovpTotalWeightedScore = "0",
-      ovpRisk = "LOW",
-      oneYear = "0",
-      twoYears = "0",
-    ),
   )
 
   private val historicalRiskScoreResponseWhereValuesNull = RiskScoreResponse(
