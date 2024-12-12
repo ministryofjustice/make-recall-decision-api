@@ -16,6 +16,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
@@ -33,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Vio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -60,23 +62,27 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk`() {
     runTest {
-      given(deliusClient.getMappaAndRoshHistory(anyString()))
+      given(deliusClient.getMappaAndRoshHistory(crn))
         .willReturn(deliusMappaAndRoshHistoryResponse())
-      given(arnApiClient.getRiskSummary(anyString()))
+      given(arnApiClient.getRiskSummary(crn))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
-      given(arnApiClient.getRiskScores(anyString()))
+      val currentRiskScoreResponseWithNullDate = currentRiskScoreResponse.copy(completedDate = null)
+      val historicalRiskScoreResponseWithNullDate = historicalRiskScoreResponse.copy(completedDate = null)
+      val historicalRiskScoreResponseWithEarlierDate =
+        historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000")
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
           Mono.fromCallable {
             listOf(
               currentRiskScoreResponse,
-              currentRiskScoreResponse.copy(completedDate = null),
+              currentRiskScoreResponseWithNullDate,
               historicalRiskScoreResponse,
-              historicalRiskScoreResponse.copy(completedDate = null),
-              historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000"),
+              historicalRiskScoreResponseWithNullDate,
+              historicalRiskScoreResponseWithEarlierDate,
             )
           },
         )
-      given(arnApiClient.getAssessments(anyString()))
+      given(arnApiClient.getAssessments(crn))
         .willReturn(
           Mono.fromCallable {
             AssessmentsResponse(
@@ -133,82 +139,12 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
       assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
       assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
-      assertThat(historicalScores?.get(0)?.date).isEqualTo("2018-09-12")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("2")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.type).isEqualTo("RSR")
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(0)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(1)?.date).isEqualTo("2017-09-12")
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.rsr?.score).isEqualTo("1")
-      assertThat(historicalScores?.get(1)?.scores?.rsr?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.date).isEqualTo("2016-09-12")
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.rsr?.score).isEqualTo("1")
-      assertThat(historicalScores?.get(2)?.scores?.rsr?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.twoYears).isEqualTo("0")
+      comparePredictorScores(historicalScores?.get(0), currentRiskScoreResponse)
+      comparePredictorScores(historicalScores?.get(1), historicalRiskScoreResponse)
+      comparePredictorScores(historicalScores?.get(2), historicalRiskScoreResponseWithEarlierDate)
       assertThat(historicalScores?.get(3)?.date).isEqualTo(null)
       assertThat(historicalScores?.get(4)?.date).isEqualTo(null)
-      assertThat(currentScores?.date).isEqualTo("2018-09-12")
-      assertThat(currentScores?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(currentScores?.scores?.rsr?.score).isEqualTo("2")
-      assertThat(currentScores?.scores?.rsr?.type).isEqualTo("RSR")
-      assertThat(currentScores?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(currentScores?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(currentScores?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(currentScores?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(currentScores?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(currentScores?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.type).isEqualTo("OGRS")
+      comparePredictorScores(currentScores, currentRiskScoreResponse)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
@@ -920,6 +856,43 @@ internal class RiskServiceTest : ServiceTestBase() {
       val response = riskService.getLatestRiskManagementPlan(crn)
 
       assertThat(response.error).isEqualTo(expectedErrorCode)
+    }
+  }
+
+  private fun comparePredictorScores(predictorScores: PredictorScore?, riskScoreResponse: RiskScoreResponse) {
+    assertThat(predictorScores?.date).isEqualTo(
+      riskScoreResponse.completedDate?.let { LocalDateTime.parse(it).toLocalDate().toString() },
+    )
+    with(riskScoreResponse.riskOfSeriousRecidivismScore) {
+      assertThat(predictorScores?.scores?.rsr?.level).isEqualTo(this?.scoreLevel)
+      assertThat(predictorScores?.scores?.rsr?.score).isEqualTo(this?.percentageScore)
+      assertThat(predictorScores?.scores?.rsr?.type).isEqualTo("RSR")
+    }
+    with(riskScoreResponse.sexualPredictorScore) {
+      assertThat(predictorScores?.scores?.ospc?.level).isEqualTo(this?.ospContactScoreLevel)
+      assertThat(predictorScores?.scores?.ospc?.score).isEqualTo(null)
+      assertThat(predictorScores?.scores?.ospc?.type).isEqualTo("OSP/C")
+      assertThat(predictorScores?.scores?.ospi?.level).isEqualTo(this?.ospIndecentScoreLevel)
+      assertThat(predictorScores?.scores?.ospi?.score).isEqualTo(null)
+      assertThat(predictorScores?.scores?.ospi?.type).isEqualTo("OSP/I")
+    }
+    with(riskScoreResponse.violencePredictorScore) {
+      assertThat(predictorScores?.scores?.ovp?.oneYear).isEqualTo(this?.oneYear)
+      assertThat(predictorScores?.scores?.ovp?.twoYears).isEqualTo(this?.twoYears)
+      assertThat(predictorScores?.scores?.ovp?.level).isEqualTo(this?.ovpRisk)
+      assertThat(predictorScores?.scores?.ovp?.type).isEqualTo("OVP")
+    }
+    with(riskScoreResponse.generalPredictorScore) {
+      assertThat(predictorScores?.scores?.ogp?.oneYear).isEqualTo(this?.ogp1Year)
+      assertThat(predictorScores?.scores?.ogp?.twoYears).isEqualTo(this?.ogp2Year)
+      assertThat(predictorScores?.scores?.ogp?.level).isEqualTo(this?.ogpRisk)
+      assertThat(predictorScores?.scores?.ogp?.type).isEqualTo("OGP")
+    }
+    with(riskScoreResponse.groupReconvictionScore) {
+      assertThat(predictorScores?.scores?.ogrs?.level).isEqualTo(this?.scoreLevel)
+      assertThat(predictorScores?.scores?.ogrs?.oneYear).isEqualTo(this?.oneYear)
+      assertThat(predictorScores?.scores?.ogrs?.twoYears).isEqualTo(this?.twoYears)
+      assertThat(predictorScores?.scores?.ogrs?.type).isEqualTo("OGRS")
     }
   }
 
