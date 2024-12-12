@@ -17,8 +17,9 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.TestDataHelper.Companion.randomString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
 import java.time.Duration
 import java.util.function.Supplier
@@ -46,9 +47,8 @@ class ArnApiClientTest {
   }
 
   @Test
-  fun retrievesRiskScores() {
-    // TODO: create test data builder class for RiskScoreResponse
-    val singleResponse = RiskScoreResponse(null, null, null, null, null, null)
+  fun `retrieves risk scores`() {
+    val singleResponse = riskScoreResponse()
     val responseList = listOf(singleResponse)
     val responseTypeObject = object : ParameterizedTypeReference<List<RiskScoreResponse>>() {}
     val riskValueName = "risk scores"
@@ -57,7 +57,7 @@ class ArnApiClientTest {
   }
 
   @Test
-  fun handlesTimeoutExceptionWhenRetrievingRiskScores() {
+  fun `handles timeout exceptions raised when retrieveing risk scores`() {
     val crn = randomString()
     val uri = "/risks/crn/$crn/predictors/all"
     val riskScoreCall = { arnApiClient.getRiskScores(crn) }
