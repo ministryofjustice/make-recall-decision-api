@@ -78,6 +78,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
