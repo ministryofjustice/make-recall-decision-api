@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDouble
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 
@@ -28,9 +29,9 @@ fun riskScoreResponse(
 }
 
 fun generalPredictorScore(
-  ogpStaticWeightedScore: String? = randomInt().toString(),
-  ogpDynamicWeightedScore: String? = randomInt().toString(),
-  ogpTotalWeightedScore: String? = randomInt().toString(),
+  ogpStaticWeightedScore: String? = randomDouble().toString(),
+  ogpDynamicWeightedScore: String? = randomDouble().toString(),
+  ogpTotalWeightedScore: String? = randomDouble().toString(),
   ogpRisk: String? = randomScoreLevel(),
   ogp1Year: String? = randomInt().toString(),
   ogp2Year: String? = randomInt().toString(),
@@ -47,7 +48,7 @@ fun generalPredictorScore(
 
 
 fun riskOfSeriousRecidivismScore(
-  percentageScore: String? = randomInt().toString(),
+  percentageScore: String? = randomDouble().toString(),
   scoreLevel: String? = randomScoreLevel(),
 ): RiskOfSeriousRecidivismScore {
   return RiskOfSeriousRecidivismScore(
@@ -57,8 +58,8 @@ fun riskOfSeriousRecidivismScore(
 }
 
 fun sexualPredictorScore(
-  ospIndecentPercentageScore: String? = randomInt().toString(),
-  ospContactPercentageScore: String? = randomInt().toString(),
+  ospIndecentPercentageScore: String? = randomDouble().toString(),
+  ospContactPercentageScore: String? = randomDouble().toString(),
   ospIndecentScoreLevel: String? = randomScoreLevel(),
   ospContactScoreLevel: String? = randomScoreLevel(),
 ): SexualPredictorScore {
@@ -85,9 +86,9 @@ fun groupReconvictionScore(
 
 
 fun violencePredictorScore(
-  ovpStaticWeightedScore: String? = randomInt().toString(),
-  ovpDynamicWeightedScore: String? = randomInt().toString(),
-  ovpTotalWeightedScore: String? = randomInt().toString(),
+  ovpStaticWeightedScore: String? = randomDouble().toString(),
+  ovpDynamicWeightedScore: String? = randomDouble().toString(),
+  ovpTotalWeightedScore: String? = randomDouble().toString(),
   oneYear: String? = randomScoreLevel(),
   twoYears: String? = randomInt().toString(),
   ovpRisk: String? = randomInt().toString(),
@@ -103,5 +104,5 @@ fun violencePredictorScore(
 }
 
 private fun randomScoreLevel(): String {
-  return arrayOf("LOW", "MEDIUM", "HIGH").random()
+  return arrayOf("LOW", "MEDIUM", "HIGH", "VERY HIGH").random()
 }

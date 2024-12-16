@@ -79,6 +79,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -103,6 +104,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Mock
   protected lateinit var templateReplacementServiceMocked: TemplateReplacementService
+
+  @Mock
+  private lateinit var riskScoreConverter: RiskScoreConverter
 
   @ParameterizedTest()
   @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
@@ -737,7 +741,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
-        RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
       )
@@ -925,7 +929,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
-        RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
       )
@@ -1012,7 +1016,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
-        RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
       )
@@ -1131,7 +1135,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         PrisonerApiService(prisonApiClient),
         templateReplacementService,
         userAccessValidator,
-        RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
       )
@@ -2519,7 +2523,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       PrisonerApiService(prisonApiClient),
       templateReplacementServiceMocked,
       userAccessValidator,
-      RiskService(deliusClient, arnApiClient, userAccessValidator, null),
+      RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
       deliusClient,
       mrdEmitterMocked,
     )
