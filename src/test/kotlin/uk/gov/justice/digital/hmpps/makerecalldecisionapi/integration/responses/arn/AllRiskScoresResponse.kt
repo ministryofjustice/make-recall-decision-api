@@ -72,10 +72,10 @@ fun allRiskScoresResponse() = """
       "scoreLevel": "HIGH"
     },
     "sexualPredictorScore": {
-      "ospIndecentPercentageScore": 5,
-      "ospContactPercentageScore": 3.45,
-      "ospIndecentScoreLevel": "MEDIUM",
-      "ospContactScoreLevel": "LOW"
+      "ospIndirectImagePercentageScore": 5,
+      "ospDirectContactPercentageScore": 3.45,
+      "ospIndirectImageScoreLevel": "MEDIUM",
+      "ospDirectContactScoreLevel": "LOW"
     }
   }
 ]

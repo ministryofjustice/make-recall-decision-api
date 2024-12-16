@@ -415,6 +415,8 @@ internal class RiskServiceTest : ServiceTestBase() {
           ),
           ospc = null,
           ospi = null,
+          ospdc = null,
+          ospiic = null,
           ogrs = null,
           ogp = null,
           ovp = null,
@@ -846,51 +848,5 @@ internal class RiskServiceTest : ServiceTestBase() {
     ),
     assessedOn = "2022-10-09T08:26:31",
     overallRiskLevel = "HIGH",
-  )
-
-  private val historicalRiskScoreResponseWhereValuesNull = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = null,
-      ogpDynamicWeightedScore = null,
-      ogpTotalWeightedScore = null,
-      ogpRisk = null,
-      ogp1Year = null,
-      ogp2Year = null,
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = null, scoreLevel = null),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = null,
-      ospContactPercentageScore = null,
-      ospIndecentScoreLevel = null,
-      ospContactScoreLevel = null,
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = null, twoYears = null, scoreLevel = null),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = null,
-      ovpDynamicWeightedScore = null,
-      ovpTotalWeightedScore = null,
-      ovpRisk = null,
-      oneYear = null,
-      twoYears = null,
-    ),
-  )
-
-  private val currentRiskScoreResponseWithOptionalFields = RiskScoreResponse(
-    completedDate = "2018-09-12T12:00:00.000",
-    generalPredictorScore = null,
-    riskOfSeriousRecidivismScore = null,
-    sexualPredictorScore = null,
-    groupReconvictionScore = null,
-    violencePredictorScore = null,
-  )
-
-  private val historicalRiskScoreResponseWithOptionalFields = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = null,
-    riskOfSeriousRecidivismScore = null,
-    sexualPredictorScore = null,
-    groupReconvictionScore = null,
-    violencePredictorScore = null,
   )
 }

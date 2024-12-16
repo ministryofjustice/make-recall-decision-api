@@ -62,12 +62,20 @@ fun sexualPredictorScore(
   ospContactPercentageScore: String? = randomDouble().toString(),
   ospIndecentScoreLevel: String? = randomScoreLevel(),
   ospContactScoreLevel: String? = randomScoreLevel(),
+  ospIndirectImagePercentageScore: String? = randomDouble().toString(),
+  ospDirectContactPercentageScore: String? = randomDouble().toString(),
+  ospIndirectImageScoreLevel: String? = randomScoreLevel(),
+  ospDirectContactScoreLevel: String? = randomScoreLevel(),
 ): SexualPredictorScore {
   return SexualPredictorScore(
     ospIndecentPercentageScore,
     ospContactPercentageScore,
     ospIndecentScoreLevel,
     ospContactScoreLevel,
+    ospIndirectImagePercentageScore,
+    ospDirectContactPercentageScore,
+    ospIndirectImageScoreLevel,
+    ospDirectContactScoreLevel,
   )
 }
 

@@ -14,6 +14,10 @@ data class SexualPredictorScore(
   val ospContactPercentageScore: String?,
   val ospIndecentScoreLevel: String?,
   val ospContactScoreLevel: String?,
+  val ospIndirectImagePercentageScore: String?,
+  val ospDirectContactPercentageScore:	String?,
+  val ospIndirectImageScoreLevel:	String?,
+  val ospDirectContactScoreLevel:	String?,
 )
 
 data class RiskOfSeriousRecidivismScore(

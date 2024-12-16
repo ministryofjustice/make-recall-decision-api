@@ -13,8 +13,23 @@ class RiskScoreConverterTest {
   private val converter = RiskScoreConverter()
 
   @Test
-  fun `converts RiskScoreResponse to PredictorScore`() {
+  fun `converts RiskScoreResponse with non-null ospdc and ospiic to PredictorScore`() {
     val riskScoreResponse = riskScoreResponse()
+    val expectedPredictorScore = expectedPredictorScoreFrom(riskScoreResponse)
+
+    val actualPredictorScore = converter.convert(riskScoreResponse)
+
+    assertThat(actualPredictorScore).isEqualTo(expectedPredictorScore)
+  }
+
+  @Test
+  fun `converts RiskScoreResponse with null ospdc and ospiic to PredictorScore`() {
+    val riskScoreResponse = riskScoreResponse(
+      sexualPredictorScore = sexualPredictorScore(
+        ospIndirectImagePercentageScore = null, ospDirectContactPercentageScore = null,
+        ospIndirectImageScoreLevel = null, ospDirectContactScoreLevel = null,
+      ),
+    )
     val expectedPredictorScore = expectedPredictorScoreFrom(riskScoreResponse)
 
     val actualPredictorScore = converter.convert(riskScoreResponse)
@@ -41,13 +56,33 @@ class RiskScoreConverterTest {
   }
 
   @Test
-  fun `converts RiskScoreResponse with non-null date and null and zero, non-applicable scores to null PredictorScore`() {
+  fun `converts RiskScoreResponse with non-null date and null and zero, non-applicable old sexual predictor scores to null PredictorScore`() {
     val riskScoreResponse = riskScoreResponseWithNullScoreFields().copy(
       sexualPredictorScore = sexualPredictorScore(
         ospContactPercentageScore = "0",
         ospContactScoreLevel = SCORE_NOT_APPLICABLE,
         ospIndecentPercentageScore = "0",
         ospIndecentScoreLevel = SCORE_NOT_APPLICABLE,
+      ),
+    )
+
+    val actualPredictorScore = converter.convert(riskScoreResponse)
+
+    assertThat(actualPredictorScore).isNull()
+  }
+
+  @Test
+  fun `converts RiskScoreResponse with non-null date and null and zero, non-applicable new sexual predictor scores to null PredictorScore`() {
+    val riskScoreResponse = riskScoreResponseWithNullScoreFields().copy(
+      sexualPredictorScore = sexualPredictorScore(
+        ospIndecentPercentageScore = null,
+        ospContactPercentageScore = null,
+        ospIndecentScoreLevel = null,
+        ospContactScoreLevel = null,
+        ospDirectContactPercentageScore = "0",
+        ospDirectContactScoreLevel = SCORE_NOT_APPLICABLE,
+        ospIndirectImagePercentageScore = "0",
+        ospIndirectImageScoreLevel = SCORE_NOT_APPLICABLE,
       ),
     )
 
@@ -70,6 +105,8 @@ class RiskScoreConverterTest {
         ogp = null,
         ospc = intermediatePredictorScore.scores?.ospc,
         ospi = intermediatePredictorScore.scores?.ospi,
+        ospdc = intermediatePredictorScore.scores?.ospdc,
+        ospiic = intermediatePredictorScore.scores?.ospiic,
         ogrs = intermediatePredictorScore.scores?.ogrs,
         ovp = intermediatePredictorScore.scores?.ovp,
       ),
@@ -166,8 +203,46 @@ class RiskScoreConverterTest {
     assertThat(actualPredictorScore).isEqualTo(expectedPredictorScore)
   }
 
-  private fun expectedPredictorScoreFrom(riskScoreResponse: RiskScoreResponse) =
-    PredictorScore(
+  private fun expectedPredictorScoreFrom(riskScoreResponse: RiskScoreResponse): PredictorScore {
+    val hasOspdc = riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel != null
+    val ospc: LevelWithScore?
+    val ospdc: LevelWithScore?
+    if (hasOspdc) {
+      ospc = null
+      ospdc = LevelWithScore(
+        level = riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
+        type = "OSP/DC",
+        score = null,
+      )
+    } else {
+      ospc = LevelWithScore(
+        level = riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
+        type = "OSP/C",
+        score = null,
+      )
+      ospdc = null
+    }
+
+    val hasOspiic = riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel != null
+    val ospi: LevelWithScore?
+    val ospiic: LevelWithScore?
+    if (hasOspiic) {
+      ospi = null
+      ospiic = LevelWithScore(
+        level = riskScoreResponse.sexualPredictorScore?.ospIndirectImageScoreLevel,
+        type = "OSP/IIC",
+        score = null,
+      )
+    } else {
+      ospi = LevelWithScore(
+        level = riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
+        type = "OSP/I",
+        score = null,
+      )
+      ospiic = null
+    }
+
+    return PredictorScore(
       date = riskScoreResponse.completedDate?.let { LocalDateTime.parse(it).toLocalDate().toString() },
       scores = Scores(
         rsr = LevelWithScore(
@@ -175,16 +250,10 @@ class RiskScoreConverterTest {
           type = "RSR",
           score = riskScoreResponse.riskOfSeriousRecidivismScore?.percentageScore,
         ),
-        ospc = LevelWithScore(
-          level = riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
-          type = "OSP/C",
-          score = null,
-        ),
-        ospi = LevelWithScore(
-          level = riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
-          type = "OSP/I",
-          score = null,
-        ),
+        ospc = ospc,
+        ospi = ospi,
+        ospdc = ospdc,
+        ospiic = ospiic,
         ogrs = LevelWithTwoYearScores(
           level = riskScoreResponse.groupReconvictionScore?.scoreLevel,
           type = "OGRS",
@@ -205,6 +274,7 @@ class RiskScoreConverterTest {
         ),
       ),
     )
+  }
 
   private fun riskScoreResponseWithNullScoreFields() = riskScoreResponse(
     riskOfSeriousRecidivismScore = riskOfSeriousRecidivismScore(
@@ -216,6 +286,10 @@ class RiskScoreConverterTest {
       ospContactScoreLevel = null,
       ospIndecentPercentageScore = null,
       ospIndecentScoreLevel = null,
+      ospIndirectImagePercentageScore = null,
+      ospDirectContactPercentageScore = null,
+      ospIndirectImageScoreLevel = null,
+      ospDirectContactScoreLevel = null,
     ),
     groupReconvictionScore = groupReconvictionScore(
       oneYear = null,

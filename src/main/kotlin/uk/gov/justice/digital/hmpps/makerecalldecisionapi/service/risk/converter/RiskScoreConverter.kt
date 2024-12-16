@@ -29,16 +29,16 @@ class RiskScoreConverter {
    */
   fun convert(riskScoreResponse: RiskScoreResponse): PredictorScore? {
     val scores = createScores(riskScoreResponse)
-    if (scores?.ogp == null
+    return if (scores?.ogp == null
       && scores?.ogrs == null
       && scores?.ovp == null
       && scores?.rsr == null
       && scores?.ospc == null
       && scores?.ospi == null
     ) {
-      return null
+      null
     } else {
-      return PredictorScore(
+      PredictorScore(
         date = convertDateTimeStringToDateString(riskScoreResponse.completedDate),
         scores = scores,
       )
@@ -54,18 +54,38 @@ class RiskScoreConverter {
   }
 
   private fun createScores(riskScoreResponse: RiskScoreResponse): Scores? {
-    return Scores(
-      rsr = rsrLevelWithScore(riskScoreResponse),
-      ospc = buildLevelWithScore(
+    val ospdc = buildLevelWithScore(
+      riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
+      riskScoreResponse.sexualPredictorScore?.ospDirectContactPercentageScore,
+      "OSP/DC",
+    )
+    val ospiic = buildLevelWithScore(
+      riskScoreResponse.sexualPredictorScore?.ospIndirectImageScoreLevel,
+      riskScoreResponse.sexualPredictorScore?.ospIndirectImagePercentageScore,
+      "OSP/IIC",
+    )
+
+    val ospc =
+      if (ospdc != null) null
+      else buildLevelWithScore(
         riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
         riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
         "OSP/C",
-      ),
-      ospi = buildLevelWithScore(
+      )
+    val ospi =
+      if (ospiic != null) null
+      else buildLevelWithScore(
         riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
         riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
         "OSP/I",
-      ),
+      )
+
+    return Scores(
+      rsr = rsrLevelWithScore(riskScoreResponse),
+      ospc = ospc,
+      ospi = ospi,
+      ospdc = ospdc,
+      ospiic = ospiic,
       ogrs = buildTwoYearScore(
         riskScoreResponse.groupReconvictionScore?.scoreLevel,
         riskScoreResponse.groupReconvictionScore?.oneYear,
@@ -113,7 +133,7 @@ class RiskScoreConverter {
     } else {
       LevelWithScore(
         level = level,
-        score = if (type == "OSP/I" || type == "OSP/C") null else percentageScore,
+        score = if (arrayOf("OSP/I", "OSP/C", "OSP/IIC", "OSP/DC").contains(type)) null else percentageScore,
         type = type,
       )
     }

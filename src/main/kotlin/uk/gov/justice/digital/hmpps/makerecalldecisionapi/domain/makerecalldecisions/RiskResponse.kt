@@ -60,6 +60,10 @@ data class Scores(
   val ospc: LevelWithScore?,
   @JsonProperty("OSPI")
   val ospi: LevelWithScore?,
+  @JsonProperty("OSPDC")
+  val ospdc: LevelWithScore?,
+  @JsonProperty("OSPIIC")
+  val ospiic: LevelWithScore?,
   @JsonProperty("OGRS")
   val ogrs: LevelWithTwoYearScores?,
   @JsonProperty("OGP")
