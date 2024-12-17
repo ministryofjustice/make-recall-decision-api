@@ -21,15 +21,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserMappingRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -41,7 +42,7 @@ import java.util.*
 class PpudControllerTest : IntegrationTestBase() {
 
   @Autowired
-  private lateinit var ppudUserRepository: PpudUserRepository
+  private lateinit var ppudUserMappingRepository: PpudUserMappingRepository
 
   @Autowired
   private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
@@ -344,9 +345,9 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create recall`() {
-    ppudUserRepository.deleteAll()
-    ppudUserRepository.save(
-      PpudUserEntity(
+    ppudUserMappingRepository.deleteAll()
+    ppudUserMappingRepository.save(
+      PpudUserMappingEntity(
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
@@ -375,9 +376,9 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud upload mandatory document`() {
-    ppudUserRepository.deleteAll()
-    ppudUserRepository.save(
-      PpudUserEntity(
+    ppudUserMappingRepository.deleteAll()
+    ppudUserMappingRepository.save(
+      PpudUserMappingEntity(
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
@@ -418,9 +419,9 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud upload additional document`() {
-    ppudUserRepository.deleteAll()
-    ppudUserRepository.save(
-      PpudUserEntity(
+    ppudUserMappingRepository.deleteAll()
+    ppudUserMappingRepository.save(
+      PpudUserMappingEntity(
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
@@ -472,6 +473,29 @@ class PpudControllerTest : IntegrationTestBase() {
         .expectStatus().isOk
     }
   }
+
+  @Test
+  fun `search active users`() {
+    val searchReq = PpudUserSearchRequest("User Name", "UserName")
+    val teamName = "TeamName"
+
+    ppudAutomationSearchActiveUsersApiMatchResponse(searchReq.fullName!!, searchReq.userName!!, teamName)
+
+    runTest {
+      postToSearchActiveUsers(
+        searchReq,
+      )
+        .expectStatus().isOk
+    }
+  }
+
+  private fun postToSearchActiveUsers(requestBody: PpudUserSearchRequest): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri("/ppud/user/search")
+      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(BodyInserters.fromValue(requestBody))
+      .exchange()
 
   private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
     webTestClient.post()

@@ -26,18 +26,20 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserMappingRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertToLondonTimezone
 
 @Service
 internal class PpudService(
   @Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
-  private val ppudUserRepository: PpudUserRepository,
+  private val ppudUserMappingRepository: PpudUserMappingRepository,
   private val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
 ) {
   fun search(request: PpudSearchRequest): PpudSearchResponse {
@@ -112,8 +114,8 @@ internal class PpudService(
     username: String,
   ): PpudCreateRecallResponse {
     val ppudUser =
-      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
-        ?: throw NotFoundException("PPUD user not found for username '$username'")
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.createRecall(
@@ -148,8 +150,8 @@ internal class PpudService(
     username: String,
   ) {
     val ppudUser =
-      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
-        ?: throw NotFoundException("PPUD user not found for username '$username'")
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val category = when (uploadMandatoryDocument.category) {
       "PPUDPartA" -> DocumentCategory.PartA
@@ -185,8 +187,8 @@ internal class PpudService(
     username: String,
   ) {
     val ppudUser =
-      ppudUserRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
-        ?: throw NotFoundException("PPUD user not found for username '$username'")
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+        ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id)
       .orElseThrow { NotFoundException("Supporting document not found") }
@@ -217,5 +219,12 @@ internal class PpudService(
         ),
       ),
     )
+  }
+
+  fun searchActiveUsers(request: PpudUserSearchRequest): PpudUserResponse {
+    val response = getValueAndHandleWrappedException(
+      ppudAutomationApiClient.searchActiveUsers(request),
+    )
+    return response!!
   }
 }
