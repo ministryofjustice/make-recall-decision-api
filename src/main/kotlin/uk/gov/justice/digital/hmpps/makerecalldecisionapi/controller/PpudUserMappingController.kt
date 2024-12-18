@@ -25,7 +25,7 @@ internal class PpudUserMappingController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PostMapping("/user/search-mapped-users")
+  @PostMapping("/user-mapping/search")
   @Operation(summary = "Calls Ppud User Mapping Service to search for mapped users.")
   suspend fun searchMappedUsers(
     @RequestBody request: PpudUserMappingSearchRequest,

@@ -46,7 +46,7 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
 
   private fun postToSearchMappedUsers(requestBody: PpudUserMappingSearchRequest): WebTestClient.ResponseSpec =
     webTestClient.post()
-      .uri("/user/search-mapped-users")
+      .uri("/user-mapping/search")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
