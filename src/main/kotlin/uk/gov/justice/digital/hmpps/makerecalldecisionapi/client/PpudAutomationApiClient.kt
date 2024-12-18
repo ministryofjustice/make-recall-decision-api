@@ -31,6 +31,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PpudValidationException
 import java.time.Duration
@@ -134,6 +136,10 @@ class PpudAutomationApiClient(
 
   fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
     return get("/reference/$name", object : ParameterizedTypeReference<PpudReferenceListResponse>() {})
+  }
+
+  fun searchActiveUsers(request: PpudUserSearchRequest): Mono<PpudUserResponse> {
+    return post("/user/search", request, object : ParameterizedTypeReference<PpudUserResponse>() {})
   }
 
   fun handleTimeoutException(

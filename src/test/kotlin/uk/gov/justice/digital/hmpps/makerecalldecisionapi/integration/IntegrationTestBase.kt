@@ -47,6 +47,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateSentenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchActiveUsersResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
@@ -1112,6 +1113,21 @@ abstract class IntegrationTestBase {
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody("{ \"values\": [\"one\",\"two\"] }")
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun ppudAutomationSearchActiveUsersApiMatchResponse(
+    userFullName: String,
+    userName: String,
+    teamName: String,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/user/search")
+
+    ppudAutomationApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(ppudAutomationSearchActiveUsersResponse(userFullName, teamName))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

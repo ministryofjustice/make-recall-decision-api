@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -54,7 +55,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.results[0].croNumber, equalTo(croNumber))
+    assertThat(actual?.results?.get(0)?.croNumber, equalTo(croNumber))
   }
 
   @Test
@@ -68,7 +69,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val actual = ppudAutomationApiClient.details(id).block()
 
     // then
-    assertThat(actual.offender.id, equalTo(id))
+    assertThat(actual?.offender?.id, equalTo(id))
   }
 
   @Test
@@ -98,7 +99,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.recall.id, equalTo("12345678"))
+    assertThat(actual?.recall?.id, equalTo("12345678"))
   }
 
   @Test
@@ -130,7 +131,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.offender.id, equalTo(id))
+    assertThat(actual?.offender?.id, equalTo(id))
   }
 
   @Test
@@ -187,7 +188,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.sentence.id, equalTo("12345678"))
+    assertThat(actual?.sentence?.id, equalTo("12345678"))
   }
 
   @Test
@@ -278,7 +279,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.release.id, equalTo(id))
+    assertThat(actual?.release?.id, equalTo(id))
   }
 
   @Test
@@ -309,7 +310,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     ).block()
 
     // then
-    assertThat(actual.recall.id, equalTo(id))
+    assertThat(actual?.recall?.id, equalTo(id))
   }
 
   @Test
@@ -386,6 +387,21 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val actual = ppudAutomationApiClient.retrieveList("custody-types").block()
 
     // then
-    assertThat(actual.values, equalTo(listOf("one", "two")))
+    assertThat(actual?.values, equalTo(listOf("one", "two")))
+  }
+
+  @Test
+  fun `search active users`() {
+    // given
+    val searchReq = PpudUserSearchRequest("User Name", "UserName")
+    var teamName = "TeamName"
+
+    ppudAutomationSearchActiveUsersApiMatchResponse(searchReq.fullName!!, searchReq.userName!!, teamName)
+
+    // when
+    val actual = ppudAutomationApiClient.searchActiveUsers(searchReq).block()
+
+    // then
+    assertThat(actual?.results, equalTo(listOf(PpudUser(searchReq.fullName!!, teamName))))
   }
 }
