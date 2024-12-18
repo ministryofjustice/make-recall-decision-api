@@ -8,7 +8,7 @@ import kotlin.math.abs
 
 @Entity
 @Table(name = "ppud_users")
-data class PpudUserEntity(
+data class PpudUserMappingEntity(
   @Id
   var id: Long = abs(SecureRandom().nextInt().toLong()),
   var userName: String,

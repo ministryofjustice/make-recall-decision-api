@@ -7,27 +7,27 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserMappingRepository
 
 @ActiveProfiles("test")
-class PpudUserRepositoryTest : IntegrationTestBase() {
+class PpudUserMappingRepositoryTest : IntegrationTestBase() {
 
   @Autowired
-  private lateinit var ppudUserRepository: PpudUserRepository
+  private lateinit var ppudUserMappingRepository: PpudUserMappingRepository
 
   @BeforeEach
   fun before() {
-    ppudUserRepository.deleteAll()
-    ppudUserRepository.save(PpudUserEntity(userName = "UserA", ppudUserFullName = "Joe Bloggs", ppudTeamName = "Team 1"))
-    ppudUserRepository.save(PpudUserEntity(userName = "UserB", ppudUserFullName = "Jane Doe", ppudTeamName = "Team 2"))
+    ppudUserMappingRepository.deleteAll()
+    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserA", ppudUserFullName = "Joe Bloggs", ppudTeamName = "Team 1"))
+    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserB", ppudUserFullName = "Jane Doe", ppudTeamName = "Team 2"))
   }
 
   @Suppress("SpellCheckingInspection")
   @ParameterizedTest
   @ValueSource(strings = ["UserA", "USERA", "usEra"])
   fun `given a username in any case when finding user then matching user details are returned`(username: String) {
-    val result = ppudUserRepository.findByUserNameIgnoreCase(username)
+    val result = ppudUserMappingRepository.findByUserNameIgnoreCase(username)
     assertThat(result?.userName).isEqualTo("UserA")
     assertThat(result?.ppudUserFullName).isEqualTo("Joe Bloggs")
   }

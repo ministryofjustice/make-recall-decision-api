@@ -43,9 +43,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserMappingRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDateTime
 import java.util.*
@@ -55,7 +55,7 @@ import java.util.*
 internal class PpudServiceTest : ServiceTestBase() {
 
   @Mock
-  private lateinit var ppudUserRepository: PpudUserRepository
+  private lateinit var ppudUserMappingRepository: PpudUserMappingRepository
 
   @Mock
   private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
@@ -73,7 +73,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result =
-      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).search(request)
+      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).search(request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -89,7 +89,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result =
-      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).details("12345678")
+      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).details("12345678")
 
     assertThat(result).isEqualTo(response)
   }
@@ -106,7 +106,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).bookToPpud(
+    val result = PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).bookToPpud(
       "123",
       request,
     )
@@ -126,7 +126,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val result = PpudService(
       ppudAutomationApiClient,
-      ppudUserRepository,
+      ppudUserMappingRepository,
       recommendationDocumentRepository,
     ).retrieveList("custody-type")
 
@@ -146,7 +146,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result =
-      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createOffender(request)
+      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createOffender(request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -157,7 +157,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateOffender("123", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateOffender(
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateOffender(
       "123",
       request,
     )
@@ -177,7 +177,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createSentence(
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createSentence(
       "123",
       request,
     )
@@ -191,7 +191,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateSentence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateSentence(
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateSentence(
       "123",
       "456",
       request,
@@ -206,7 +206,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateOffence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).updateOffence(
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateOffence(
       "123",
       "456",
       request,
@@ -229,7 +229,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val result = PpudService(
       ppudAutomationApiClient,
-      ppudUserRepository,
+      ppudUserMappingRepository,
       recommendationDocumentRepository,
     ).createOrUpdateRelease("123", "456", request)
 
@@ -254,8 +254,8 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val captor = argumentCaptor<PpudCreateRecallRequest>()
 
-    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+    given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
     given(ppudAutomationApiClient.createRecall(eq("123"), eq("456"), captor.capture())).willReturn(
       Mono.fromCallable {
         response
@@ -263,7 +263,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result =
-      PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createRecall(
+      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createRecall(
         "123",
         "456",
         request,
@@ -286,7 +286,7 @@ internal class PpudServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `create recall throws exception when ppud user not found`() {
+  fun `create recall throws exception when ppud user mapping not found`() {
     val request = CreateRecallRequest(
       decisionDateTime = LocalDateTime.now(),
       isExtendedSentence = false,
@@ -299,11 +299,11 @@ internal class PpudServiceTest : ServiceTestBase() {
       riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
     )
 
-    val service = PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
+    val service = PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
     val ex = assertThrows<NotFoundException> {
       service.createRecall("123", "456", request, "userId")
     }
-    assertThat(ex.message).isEqualTo("PPUD user not found for username 'userId'")
+    assertThat(ex.message).isEqualTo("PPUD user mapping not found for username 'userId'")
   }
 
   @ParameterizedTest
@@ -323,8 +323,8 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val captor = argumentCaptor<PpudUploadMandatoryDocumentRequest>()
 
-    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+    given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
 
     given(recommendationDocumentRepository.findById(12345))
       .willReturn(
@@ -347,7 +347,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.uploadMandatoryDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
       .uploadMandatoryDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
@@ -365,8 +365,8 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val captor = argumentCaptor<PpudUploadAdditionalDocumentRequest>()
 
-    given(ppudUserRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+    given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
 
     given(recommendationDocumentRepository.findById(12345))
       .willReturn(
@@ -389,7 +389,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.uploadAdditionalDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository)
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
       .uploadAdditionalDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
@@ -405,7 +405,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       Mono.empty(),
     )
 
-    PpudService(ppudAutomationApiClient, ppudUserRepository, recommendationDocumentRepository).createMinute(
+    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createMinute(
       "123",
       CreateMinuteRequest("some subject", "some text"),
       "username",
