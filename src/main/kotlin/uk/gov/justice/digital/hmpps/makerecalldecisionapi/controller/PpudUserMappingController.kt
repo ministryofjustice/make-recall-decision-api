@@ -31,6 +31,7 @@ internal class PpudUserMappingController(
     @RequestBody request: PpudUserMappingSearchRequest,
   ): ResponseEntity<PpudUserMappingResponse> {
     log.info(normalizeSpace("Search PPUD user mapping endpoint hit for userName: ${request.userName}"))
-    return ResponseEntity(PpudUserMappingResponse(ppudUserMappingService.findByUserNameIgnoreCase(request.userName)), HttpStatus.OK)
+    val res = ppudUserMappingService.findByUserNameIgnoreCase(request.userName)
+    return ResponseEntity(PpudUserMappingResponse(res?.ppudUserFullName!!, res.ppudTeamName), HttpStatus.OK)
   }
 }

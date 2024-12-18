@@ -1,8 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
-import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -16,7 +14,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUse
 
 @Suppress("SameParameterValue")
 @ActiveProfiles("test")
-@ExperimentalCoroutinesApi
 class PpudUserMappingControllerTest : IntegrationTestBase() {
 
   @Autowired
@@ -41,12 +38,8 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
     )
 
     // then
-    val responseEntity = JSONObject(response.get("ppudUserMapping").toString())
-
-    // and
-    assertThat(responseEntity.get("ppudUserFullName")).isEqualTo(ppudUserFullName)
-    assertThat(responseEntity.get("ppudTeamName")).isEqualTo(teamName)
-    assertThat(responseEntity.get("userName")).isEqualTo(userName)
+    assertThat(response.get("fullName")).isEqualTo(ppudUserFullName)
+    assertThat(response.get("teamName")).isEqualTo(teamName)
 
     ppudUserMappingRepository.delete(entity)
   }

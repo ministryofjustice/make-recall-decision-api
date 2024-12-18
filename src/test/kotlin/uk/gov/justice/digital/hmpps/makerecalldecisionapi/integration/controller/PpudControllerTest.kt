@@ -476,16 +476,21 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `search active users`() {
-    val searchReq = PpudUserSearchRequest("User Name", "UserName")
+    val fullName = "User Name"
+    val userName = "UserName"
+    val searchReq = PpudUserSearchRequest(fullName, userName)
     val teamName = "TeamName"
 
     ppudAutomationSearchActiveUsersApiMatchResponse(searchReq.fullName!!, searchReq.userName!!, teamName)
 
     runTest {
-      postToSearchActiveUsers(
+      val response = postToSearchActiveUsers(
         searchReq,
       )
-        .expectStatus().isOk
+      response.expectStatus().isOk
+      response.expectBody()
+        .jsonPath("$.results[0].fullName").isEqualTo(fullName)
+        .jsonPath("$.results[0].teamName").isEqualTo(teamName)
     }
   }
 
