@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -38,10 +39,28 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
     )
 
     // then
-    assertThat(response.get("fullName")).isEqualTo(ppudUserFullName)
-    assertThat(response.get("teamName")).isEqualTo(teamName)
+    val ppudUserMapping = response.get("ppudUserMapping") as JSONObject
+    assertThat(ppudUserMapping.get("fullName")).isEqualTo(ppudUserFullName)
+    assertThat(ppudUserMapping.get("teamName")).isEqualTo(teamName)
 
     ppudUserMappingRepository.delete(entity)
+  }
+
+  @Test
+  fun `search mapped users - unsuccessful`() {
+    // given
+    val userName = "UserName"
+    val searchReq = PpudUserMappingSearchRequest(userName)
+    // when
+    val response = convertResponseToJSONObject(
+      postToSearchMappedUsers(
+        searchReq,
+      )
+        .expectStatus().isOk,
+    )
+
+    // then
+    assertThat(response.isNull("ppudUserMapping"))
   }
 
   private fun postToSearchMappedUsers(requestBody: PpudUserMappingSearchRequest): WebTestClient.ResponseSpec =

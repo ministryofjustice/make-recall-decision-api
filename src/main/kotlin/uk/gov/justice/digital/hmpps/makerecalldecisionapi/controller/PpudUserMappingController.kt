@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMapping
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMappingResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMappingSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudUserMappingService
@@ -31,7 +32,8 @@ internal class PpudUserMappingController(
     @RequestBody request: PpudUserMappingSearchRequest,
   ): ResponseEntity<PpudUserMappingResponse> {
     log.info(normalizeSpace("Search PPUD user mapping endpoint hit for userName: ${request.userName}"))
-    val res = ppudUserMappingService.findByUserNameIgnoreCase(request.userName)
-    return ResponseEntity(PpudUserMappingResponse(res?.ppudUserFullName!!, res.ppudTeamName), HttpStatus.OK)
+    val response = ppudUserMappingService.findByUserNameIgnoreCase(request.userName)
+    val ppudMapping = response?.let { PpudUserMapping(it) }
+    return ResponseEntity(PpudUserMappingResponse(ppudMapping), HttpStatus.OK)
   }
 }
