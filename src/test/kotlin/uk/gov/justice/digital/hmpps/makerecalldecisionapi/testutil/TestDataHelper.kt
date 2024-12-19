@@ -6,7 +6,6 @@ import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
 
-
 fun randomString(): String {
   return UUID.randomUUID().toString()
 }

@@ -1,7 +1,11 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter
 
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.*
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
@@ -29,12 +33,12 @@ class RiskScoreConverter {
    */
   fun convert(riskScoreResponse: RiskScoreResponse): PredictorScore? {
     val scores = createScores(riskScoreResponse)
-    return if (scores?.ogp == null
-      && scores?.ogrs == null
-      && scores?.ovp == null
-      && scores?.rsr == null
-      && scores?.ospc == null
-      && scores?.ospi == null
+    return if (scores?.ogp == null &&
+      scores?.ogrs == null &&
+      scores?.ovp == null &&
+      scores?.rsr == null &&
+      scores?.ospc == null &&
+      scores?.ospi == null
     ) {
       null
     } else {
@@ -66,19 +70,25 @@ class RiskScoreConverter {
     )
 
     val ospc =
-      if (ospdc != null) null
-      else buildLevelWithScore(
-        riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
-        riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
-        "OSP/C",
-      )
+      if (ospdc != null) {
+        null
+      } else {
+        buildLevelWithScore(
+          riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
+          riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
+          "OSP/C",
+        )
+      }
     val ospi =
-      if (ospiic != null) null
-      else buildLevelWithScore(
-        riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
-        riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
-        "OSP/I",
-      )
+      if (ospiic != null) {
+        null
+      } else {
+        buildLevelWithScore(
+          riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
+          riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
+          "OSP/I",
+        )
+      }
 
     return Scores(
       rsr = rsrLevelWithScore(riskScoreResponse),
@@ -122,7 +132,9 @@ class RiskScoreConverter {
   }
 
   private fun buildLevelWithScore(
-    level: String?, percentageScore: String?, type: String?,
+    level: String?,
+    percentageScore: String?,
+    type: String?,
   ): LevelWithScore? {
     val scoreIsNull = level == null && percentageScore == null
     val notApplicableWithZeroPercentScorePresent =

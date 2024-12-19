@@ -46,7 +46,6 @@ fun generalPredictorScore(
   )
 }
 
-
 fun riskOfSeriousRecidivismScore(
   percentageScore: String? = randomDouble().toString(),
   scoreLevel: String? = randomScoreLevel(),
@@ -79,7 +78,6 @@ fun sexualPredictorScore(
   )
 }
 
-
 fun groupReconvictionScore(
   oneYear: String? = randomInt().toString(),
   twoYears: String? = randomInt().toString(),
@@ -91,7 +89,6 @@ fun groupReconvictionScore(
     scoreLevel,
   )
 }
-
 
 fun violencePredictorScore(
   ovpStaticWeightedScore: String? = randomDouble().toString(),

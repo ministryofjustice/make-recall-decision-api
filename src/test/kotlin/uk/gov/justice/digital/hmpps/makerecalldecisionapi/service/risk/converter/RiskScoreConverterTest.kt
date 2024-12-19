@@ -2,8 +2,18 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converte
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.*
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.*
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.generalPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.groupReconvictionScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskOfSeriousRecidivismScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.sexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.violencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDateTime
@@ -26,8 +36,10 @@ class RiskScoreConverterTest {
   fun `converts RiskScoreResponse with null ospdc and ospiic to PredictorScore`() {
     val riskScoreResponse = riskScoreResponse(
       sexualPredictorScore = sexualPredictorScore(
-        ospIndirectImagePercentageScore = null, ospDirectContactPercentageScore = null,
-        ospIndirectImageScoreLevel = null, ospDirectContactScoreLevel = null,
+        ospIndirectImagePercentageScore = null,
+        ospDirectContactPercentageScore = null,
+        ospIndirectImageScoreLevel = null,
+        ospDirectContactScoreLevel = null,
       ),
     )
     val expectedPredictorScore = expectedPredictorScoreFrom(riskScoreResponse)
@@ -112,7 +124,6 @@ class RiskScoreConverterTest {
       ),
     )
 
-
     val actualPredictorScore = converter.convert(riskScoreResponse)
 
     assertThat(actualPredictorScore).isEqualTo(expectedPredictorScore)
@@ -140,7 +151,8 @@ class RiskScoreConverterTest {
     val riskScoreResponseList = listOf(
       latestRiskScoreResponse,
       yearOldRiskScoreResponse,
-      riskScoreResponseWithNulls, // this one should disappear from the final result
+      // this one with nulls should disappear from the final result
+      riskScoreResponseWithNulls,
       twoYearOldRiskScoreResponse,
       nullDateRiskScoreResponse,
       anotherNullDateRiskScoreResponse,

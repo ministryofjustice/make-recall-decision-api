@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client;
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
 import ch.qos.logback.classic.Level
 import io.micrometer.core.instrument.Counter
@@ -19,12 +19,12 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.Duration
 import java.util.function.Supplier
 
-private const val timeoutInSeconds = 15L
+private const val TIMEOUT_IN_SECONDS = 15L
 
 @ExtendWith(MockitoExtension::class)
 class ArnApiClientTest {
@@ -34,16 +34,16 @@ class ArnApiClientTest {
   lateinit var arnApiClient: ArnApiClient
 
   @Mock
-  lateinit var webClient: WebClient;
+  lateinit var webClient: WebClient
 
   @Mock
-  lateinit var timeoutCounter: Counter;
+  lateinit var timeoutCounter: Counter
 
   private val logAppender = findLogAppender(ArnApiClient::class.java)
 
   @BeforeEach
   fun setup() {
-    arnApiClient = ArnApiClient(webClient, timeoutInSeconds, timeoutCounter)
+    arnApiClient = ArnApiClient(webClient, TIMEOUT_IN_SECONDS, timeoutCounter)
   }
 
   @Test
@@ -107,11 +107,11 @@ class ArnApiClientTest {
     StepVerifier
       .withVirtualTime(arnEndpointCall)
       .expectSubscription()
-      .thenAwait(Duration.ofSeconds(timeoutInSeconds * 2)) // we wait twice because the service
-      .thenAwait(Duration.ofSeconds(timeoutInSeconds * 2)) // will retry once on failure
+      .thenAwait(Duration.ofSeconds(TIMEOUT_IN_SECONDS * 2)) // we wait twice because the service
+      .thenAwait(Duration.ofSeconds(TIMEOUT_IN_SECONDS * 2)) // will retry once on failure
       .expectErrorMatches { exception ->
         exception is ClientTimeoutException &&
-          exception.message == expectedExceptionMessage(endpointName, timeoutInSeconds)
+          exception.message == expectedExceptionMessage(endpointName, TIMEOUT_IN_SECONDS)
       }
       .verify()
   }

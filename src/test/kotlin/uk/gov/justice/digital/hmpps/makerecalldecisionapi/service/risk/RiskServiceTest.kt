@@ -16,10 +16,21 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.*
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.*
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
@@ -816,7 +827,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.error).isEqualTo(expectedErrorCode)
     }
   }
-
 
   private val riskSummaryResponse = RiskSummaryResponse(
     whoIsAtRisk = "X, Y and Z are at risk",
