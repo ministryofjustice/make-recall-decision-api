@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -12,17 +12,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Of
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentInfo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registration
@@ -30,12 +26,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessValidator
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.getValueAndHandleWrappedException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertUtcDateTimeStringToIso8601Date
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelper.Helper.extractErrorCode
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -45,6 +43,7 @@ internal class RiskService(
   @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
   @Lazy private val recommendationService: RecommendationService?,
+  private val riskScoreConverter: RiskScoreConverter,
 ) {
 
   suspend fun getRisk(crn: String): RiskResponse {
@@ -183,7 +182,7 @@ internal class RiskService(
   }
 
   suspend fun fetchPredictorScores(crn: String): PredictorScores {
-    val riskScoresResponse = try {
+    val riskScoresResponses = try {
       getValueAndHandleWrappedException(arnApiClient.getRiskScores(crn))!!
     } catch (ex: Exception) {
       return PredictorScores(
@@ -192,109 +191,7 @@ internal class RiskService(
         historical = null,
       )
     }
-    val historicalScores = riskScoresResponse
-      .sortedBy { it.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
-      .reversed()
-    val latestScore = historicalScores.firstOrNull()
-    return PredictorScores(
-      current = latestScore?.let { createTimelineDataPoint(it) },
-      historical = historicalScores.mapNotNull { createTimelineDataPoint(it) },
-    )
-  }
-
-  private fun createTimelineDataPoint(riskScoreResponse: RiskScoreResponse): PredictorScore? {
-    val scores = Scores(
-      rsr = rsrLevelWithScore(riskScoreResponse),
-      ospc = buildLevelWithScore(
-        riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
-        riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
-        "OSP/C",
-      ),
-      ospi = buildLevelWithScore(
-        riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
-        riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
-        "OSP/I",
-      ),
-      ogrs = buildTwoYearScore(
-        riskScoreResponse.groupReconvictionScore?.scoreLevel,
-        riskScoreResponse.groupReconvictionScore?.oneYear,
-        riskScoreResponse.groupReconvictionScore?.twoYears,
-        "OGRS",
-      ),
-      ogp = buildTwoYearScore(
-        riskScoreResponse.generalPredictorScore?.ogpRisk,
-        riskScoreResponse.generalPredictorScore?.ogp1Year,
-        riskScoreResponse.generalPredictorScore?.ogp2Year,
-        "OGP",
-      ),
-      ovp = buildTwoYearScore(
-        riskScoreResponse.violencePredictorScore?.ovpRisk,
-        riskScoreResponse.violencePredictorScore?.oneYear,
-        riskScoreResponse.violencePredictorScore?.twoYears,
-        "OVP",
-      ),
-    )
-    return if (scores.ogp == null && scores.ogrs == null && scores.ovp == null && scores.rsr == null && scores.ospc == null && scores.ospi == null) {
-      null
-    } else {
-      PredictorScore(
-        date = if (riskScoreResponse.completedDate == null) {
-          null
-        } else {
-          LocalDateTime.parse(riskScoreResponse.completedDate).toLocalDate().toString()
-        },
-        scores = scores,
-      )
-    }
-  }
-
-  private fun buildTwoYearScore(
-    level: String?,
-    oneYear: String?,
-    twoYears: String?,
-    type: String?,
-  ): LevelWithTwoYearScores? {
-    val scoreEmpty = level == null && twoYears == null && oneYear == null
-    return if (scoreEmpty) {
-      null
-    } else {
-      LevelWithTwoYearScores(
-        level = level,
-        oneYear = oneYear,
-        twoYears = twoYears,
-        type = type,
-      )
-    }
-  }
-
-  private fun buildLevelWithScore(level: String?, percentageScore: String?, type: String?): LevelWithScore? {
-    val scoreIsNull = level == null && percentageScore == null
-    val notApplicableWithZeroPercentScorePresent =
-      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
-    val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
-    return if (noScore) {
-      null
-    } else {
-      LevelWithScore(
-        level = level,
-        score = if (type == "OSP/I" || type == "OSP/C") null else percentageScore,
-        type = type,
-      )
-    }
-  }
-
-  private fun rsrLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
-    val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
-    val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
-    return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) {
-      null
-    } else {
-      LevelWithScore(
-        level = rsr?.scoreLevel,
-        score = rsr?.percentageScore,
-        type = "RSR",
-      )
-    }
+    return riskScoreConverter.convert(riskScoresResponses)
   }
 
   private fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
