@@ -39,4 +39,14 @@ internal class PpudUserMappingServiceTest : ServiceTestBase() {
     assertThat(response?.ppudTeamName).isEqualTo(teamName)
     assertThat(response?.userName).isEqualTo(userName)
   }
+
+  @Test
+  fun unsuccessfulFindByUserNameIgnoreCase() {
+    val userName = "UserNameNotFound"
+
+    given(ppudUserMappingRepository.findByUserNameIgnoreCase(userName)).willReturn(null)
+
+    val response = ppudUserMappingService.findByUserNameIgnoreCase(userName)
+    assertThat(response).isNull()
+  }
 }
