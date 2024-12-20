@@ -7,12 +7,25 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDateTime
 
 @Service
 class RiskScoreConverter {
+
+  companion object {
+    private val OSP_NAMES =
+      arrayOf(OSPIIC, OSPDC, OSPC, OSPI).map { riskScoreType -> riskScoreType.printName }
+  }
 
   /**
    * Convert a list of RiskScoreResponses to a PredictorScores object
@@ -61,12 +74,12 @@ class RiskScoreConverter {
     val ospdc = buildLevelWithScore(
       riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
       riskScoreResponse.sexualPredictorScore?.ospDirectContactPercentageScore,
-      "OSP/DC",
+      OSPDC.printName,
     )
     val ospiic = buildLevelWithScore(
       riskScoreResponse.sexualPredictorScore?.ospIndirectImageScoreLevel,
       riskScoreResponse.sexualPredictorScore?.ospIndirectImagePercentageScore,
-      "OSP/IIC",
+      OSPIIC.printName,
     )
 
     val ospc =
@@ -76,7 +89,7 @@ class RiskScoreConverter {
         buildLevelWithScore(
           riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
           riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
-          "OSP/C",
+          OSPC.printName,
         )
       }
     val ospi =
@@ -86,7 +99,7 @@ class RiskScoreConverter {
         buildLevelWithScore(
           riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
           riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
-          "OSP/I",
+          OSPI.printName,
         )
       }
 
@@ -100,19 +113,19 @@ class RiskScoreConverter {
         riskScoreResponse.groupReconvictionScore?.scoreLevel,
         riskScoreResponse.groupReconvictionScore?.oneYear,
         riskScoreResponse.groupReconvictionScore?.twoYears,
-        "OGRS",
+        OGRS.printName,
       ),
       ogp = buildTwoYearScore(
         riskScoreResponse.generalPredictorScore?.ogpRisk,
         riskScoreResponse.generalPredictorScore?.ogp1Year,
         riskScoreResponse.generalPredictorScore?.ogp2Year,
-        "OGP",
+        OGP.printName,
       ),
       ovp = buildTwoYearScore(
         riskScoreResponse.violencePredictorScore?.ovpRisk,
         riskScoreResponse.violencePredictorScore?.oneYear,
         riskScoreResponse.violencePredictorScore?.twoYears,
-        "OVP",
+        OVP.printName,
       ),
     )
   }
@@ -125,7 +138,7 @@ class RiskScoreConverter {
       LevelWithScore(
         level = rsrScore.scoreLevel,
         score = rsrScore.percentageScore,
-        type = "RSR",
+        type = RSR.printName,
       )
     }
   }
@@ -144,7 +157,7 @@ class RiskScoreConverter {
     } else {
       LevelWithScore(
         level = level,
-        score = if (arrayOf("OSP/I", "OSP/C", "OSP/IIC", "OSP/DC").contains(type)) null else percentageScore,
+        score = if (OSP_NAMES.contains(type)) null else percentageScore,
         type = type,
       )
     }

@@ -8,6 +8,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.generalPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.groupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskOfSeriousRecidivismScore
@@ -223,13 +231,13 @@ class RiskScoreConverterTest {
       ospc = null
       ospdc = LevelWithScore(
         level = riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
-        type = "OSP/DC",
+        type = OSPDC.printName,
         score = null,
       )
     } else {
       ospc = LevelWithScore(
         level = riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
-        type = "OSP/C",
+        type = OSPC.printName,
         score = null,
       )
       ospdc = null
@@ -242,13 +250,13 @@ class RiskScoreConverterTest {
       ospi = null
       ospiic = LevelWithScore(
         level = riskScoreResponse.sexualPredictorScore?.ospIndirectImageScoreLevel,
-        type = "OSP/IIC",
+        type = OSPIIC.printName,
         score = null,
       )
     } else {
       ospi = LevelWithScore(
         level = riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
-        type = "OSP/I",
+        type = OSPI.printName,
         score = null,
       )
       ospiic = null
@@ -259,7 +267,7 @@ class RiskScoreConverterTest {
       scores = Scores(
         rsr = LevelWithScore(
           level = riskScoreResponse.riskOfSeriousRecidivismScore?.scoreLevel,
-          type = "RSR",
+          type = RSR.printName,
           score = riskScoreResponse.riskOfSeriousRecidivismScore?.percentageScore,
         ),
         ospc = ospc,
@@ -268,19 +276,19 @@ class RiskScoreConverterTest {
         ospiic = ospiic,
         ogrs = LevelWithTwoYearScores(
           level = riskScoreResponse.groupReconvictionScore?.scoreLevel,
-          type = "OGRS",
+          type = OGRS.printName,
           oneYear = riskScoreResponse.groupReconvictionScore?.oneYear,
           twoYears = riskScoreResponse.groupReconvictionScore?.twoYears,
         ),
         ogp = LevelWithTwoYearScores(
           level = riskScoreResponse.generalPredictorScore?.ogpRisk,
-          type = "OGP",
+          type = OGP.printName,
           oneYear = riskScoreResponse.generalPredictorScore?.ogp1Year,
           twoYears = riskScoreResponse.generalPredictorScore?.ogp2Year,
         ),
         ovp = LevelWithTwoYearScores(
           level = riskScoreResponse.violencePredictorScore?.ovpRisk,
-          type = "OVP",
+          type = OVP.printName,
           oneYear = riskScoreResponse.violencePredictorScore?.oneYear,
           twoYears = riskScoreResponse.violencePredictorScore?.twoYears,
         ),
