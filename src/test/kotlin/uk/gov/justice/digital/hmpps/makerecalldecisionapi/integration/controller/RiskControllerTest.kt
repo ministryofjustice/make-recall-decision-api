@@ -6,6 +6,22 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspdcScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiicScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
@@ -38,7 +54,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -75,7 +92,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -107,7 +125,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -139,7 +158,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -168,7 +188,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -208,10 +229,12 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -244,7 +267,8 @@ class RiskControllerTest(
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -271,69 +295,69 @@ class RiskControllerTest(
         .jsonPath("$.roshSummary.riskImminence").isEqualTo("the risk is imminent and more probably in X situation")
         .jsonPath("$.predictorScores.error").isEqualTo(EMPTY_STRING)
         .jsonPath("$.predictorScores.current.date").isEqualTo("2022-04-16")
-        .jsonPath("$.predictorScores.current.scores.RSR.type").isEqualTo("RSR")
-        .jsonPath("$.predictorScores.current.scores.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.current.scores.RSR.type").isEqualTo(RSR.printName)
+        .jsonPath("$.predictorScores.current.scores.RSR.level").isEqualTo(RsrScoreLevel.HIGH.toString())
         .jsonPath("$.predictorScores.current.scores.RSR.score").isEqualTo(23)
-        .jsonPath("$.predictorScores.current.scores.OGP.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.current.scores.OGP.type").isEqualTo("OGP")
+        .jsonPath("$.predictorScores.current.scores.OGP.level").isEqualTo(OgpScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.current.scores.OGP.type").isEqualTo(OGP.printName)
         .jsonPath("$.predictorScores.current.scores.OGP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.current.scores.OGP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.current.scores.OVP.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.current.scores.OVP.type").isEqualTo("OVP")
+        .jsonPath("$.predictorScores.current.scores.OVP.level").isEqualTo(OvpScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.current.scores.OVP.type").isEqualTo(OVP.printName)
         .jsonPath("$.predictorScores.current.scores.OVP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.current.scores.OVP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.current.scores.OSPC.type").isEqualTo("OSP/C")
-        .jsonPath("$.predictorScores.current.scores.OSPC.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.current.scores.OSPC.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.current.scores.OSPI.type").isEqualTo("OSP/I")
-        .jsonPath("$.predictorScores.current.scores.OSPI.level").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.current.scores.OSPI.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.current.scores.OGRS.type").isEqualTo("OGRS")
-        .jsonPath("$.predictorScores.current.scores.OGRS.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.current.scores.OSPDC.type").isEqualTo(OSPDC.printName)
+        .jsonPath("$.predictorScores.current.scores.OSPDC.level").isEqualTo(OspdcScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.current.scores.OSPDC.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.current.scores.OSPIIC.type").isEqualTo(OSPIIC.printName)
+        .jsonPath("$.predictorScores.current.scores.OSPIIC.level").isEqualTo(OspiicScoreLevel.MEDIUM.toString())
+        .jsonPath("$.predictorScores.current.scores.OSPIIC.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.current.scores.OGRS.type").isEqualTo(OGRS.printName)
+        .jsonPath("$.predictorScores.current.scores.OGRS.level").isEqualTo(OgrsScoreLevel.LOW.toString())
         .jsonPath("$.predictorScores.current.scores.OGRS.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.current.scores.OGRS.twoYears").isEqualTo(0)
         .jsonPath("$.predictorScores.current.date").isEqualTo("2022-04-16")
-        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo("RSR")
-        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo(RSR.printName)
+        .jsonPath("$.predictorScores.historical[0].scores.RSR.level").isEqualTo(RsrScoreLevel.HIGH.toString())
         .jsonPath("$.predictorScores.historical[0].scores.RSR.score").isEqualTo(23)
-        .jsonPath("$.predictorScores.historical[0].scores.OGP.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.OGP.type").isEqualTo("OGP")
+        .jsonPath("$.predictorScores.historical[0].scores.OGP.level").isEqualTo(OgpScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[0].scores.OGP.type").isEqualTo(OGP.printName)
         .jsonPath("$.predictorScores.historical[0].scores.OGP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.OGP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.historical[0].scores.OVP.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.OVP.type").isEqualTo("OVP")
+        .jsonPath("$.predictorScores.historical[0].scores.OVP.level").isEqualTo(OvpScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[0].scores.OVP.type").isEqualTo(OVP.printName)
         .jsonPath("$.predictorScores.historical[0].scores.OVP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.OVP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.type").isEqualTo("OSP/C")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.level").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPC.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.type").isEqualTo("OSP/I")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.level").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.OSPI.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo("OGRS")
-        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo("LOW")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPDC.type").isEqualTo(OSPDC.printName)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPDC.level").isEqualTo(OspdcScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[0].scores.OSPDC.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPIIC.type").isEqualTo(OSPIIC.printName)
+        .jsonPath("$.predictorScores.historical[0].scores.OSPIIC.level").isEqualTo(OspiicScoreLevel.MEDIUM.toString())
+        .jsonPath("$.predictorScores.historical[0].scores.OSPIIC.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.historical[0].scores.OGRS.type").isEqualTo(OGRS.printName)
+        .jsonPath("$.predictorScores.historical[0].scores.OGRS.level").isEqualTo(OgrsScoreLevel.LOW.toString())
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[0].scores.OGRS.twoYears").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[1].date").isEqualTo("2021-06-16")
-        .jsonPath("$.predictorScores.historical[1].scores.OGP.level").isEqualTo("HIGH")
-        .jsonPath("$.predictorScores.historical[1].scores.OGP.type").isEqualTo("OGP")
+        .jsonPath("$.predictorScores.historical[1].scores.OGP.level").isEqualTo(OgpScoreLevel.HIGH.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OGP.type").isEqualTo(OGP.printName)
         .jsonPath("$.predictorScores.historical[1].scores.OGP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[1].scores.OGP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.historical[1].scores.OVP.level").isEqualTo("HIGH")
-        .jsonPath("$.predictorScores.historical[1].scores.OVP.type").isEqualTo("OVP")
+        .jsonPath("$.predictorScores.historical[1].scores.OVP.level").isEqualTo(OvpScoreLevel.HIGH.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OVP.type").isEqualTo(OVP.printName)
         .jsonPath("$.predictorScores.historical[1].scores.OVP.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[1].scores.OVP.twoYears").isEqualTo(0)
-        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo(RsrScoreLevel.HIGH.toString())
         .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(0)
-        .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo("RSR")
-        .jsonPath("$.predictorScores.historical[1].scores.OSPC.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo(RSR.printName)
+        .jsonPath("$.predictorScores.historical[1].scores.OSPC.level").isEqualTo(OspcScoreLevel.HIGH.toString())
         .jsonPath("$.predictorScores.historical[1].scores.OSPC.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.historical[1].scores.OSPC.type").isEqualTo("OSP/C")
-        .jsonPath("$.predictorScores.historical[1].scores.OSPI.level").isEqualTo("HIGH")
+        .jsonPath("$.predictorScores.historical[1].scores.OSPC.type").isEqualTo(OSPC.printName)
+        .jsonPath("$.predictorScores.historical[1].scores.OSPI.level").isEqualTo(OspiScoreLevel.HIGH.toString())
         .jsonPath("$.predictorScores.historical[1].scores.OSPI.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.historical[1].scores.OSPI.type").isEqualTo("OSP/I")
-        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo("HIGH")
-        .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo("OGRS")
+        .jsonPath("$.predictorScores.historical[1].scores.OSPI.type").isEqualTo(OSPI.printName)
+        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(OgrsScoreLevel.HIGH.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo(OGRS.printName)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.oneYear").isEqualTo(0)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.twoYears").isEqualTo(0)
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
@@ -345,10 +369,12 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.recallConsideredList[0].createdDate").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].id").isNotEmpty
         .jsonPath("$.activeRecommendation.recallConsideredList[0].userId").isEqualTo("SOME_USER")
-        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail").isEqualTo("This is an updated recall considered detail")
+        .jsonPath("$.activeRecommendation.recallConsideredList[0].recallConsideredDetail")
+        .isEqualTo("This is an updated recall considered detail")
         .jsonPath("$.activeRecommendation.status").isEqualTo("DRAFT")
         .jsonPath("$.activeRecommendation.managerRecallDecision.selected.value").isEqualTo("NO_RECALL")
-        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details").isEqualTo("details of no recall selected")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.selected.details")
+        .isEqualTo("details of no recall selected")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].value").isEqualTo("NO_RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[1].text").isEqualTo("Do not recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
@@ -373,7 +399,8 @@ class RiskControllerTest(
       .exchange()
       .expectStatus().isNotFound
       .expectBody()
-      .jsonPath("$.developerMessage").isEqualTo("No details available for endpoint: /case-summary/A12345/mappa-and-rosh-history")
+      .jsonPath("$.developerMessage")
+      .isEqualTo("No details available for endpoint: /case-summary/A12345/mappa-and-rosh-history")
   }
 
   @Test
