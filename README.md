@@ -113,7 +113,7 @@ The functional test is a black box test of the MRD API. It runs against the dev 
 
 ### Running Tests
 
-Run the following script to run all the integraiton and unit tests locally:
+Run the following script to run all the integration and unit tests locally:
 
 ```
 docker-compose -f docker-compose-postgres.yml up

@@ -118,14 +118,13 @@ class RiskScoreConverter {
   }
 
   private fun rsrLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
-    val rsr = riskScoreResponse?.riskOfSeriousRecidivismScore
     val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
     return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) {
       null
     } else {
       LevelWithScore(
-        level = rsr?.scoreLevel,
-        score = rsr?.percentageScore,
+        level = rsrScore.scoreLevel,
+        score = rsrScore.percentageScore,
         type = "RSR",
       )
     }
