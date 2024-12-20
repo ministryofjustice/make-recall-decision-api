@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk
 
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,22 +16,27 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -40,6 +45,9 @@ internal class RiskServiceTest : ServiceTestBase() {
 
   @Mock
   lateinit var templateReplacementService2: TemplateReplacementService
+
+  @Mock
+  lateinit var riskScoreConverter: RiskScoreConverter
 
   @BeforeEach
   fun setup() {
@@ -54,29 +62,26 @@ internal class RiskServiceTest : ServiceTestBase() {
       deliusClient,
       null,
     )
-    riskService = RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService)
+    riskService =
+      RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService, riskScoreConverter)
   }
 
   @Test
   fun `retrieves risk`() {
     runTest {
-      given(deliusClient.getMappaAndRoshHistory(anyString()))
+      given(deliusClient.getMappaAndRoshHistory(crn))
         .willReturn(deliusMappaAndRoshHistoryResponse())
-      given(arnApiClient.getRiskSummary(anyString()))
+      given(arnApiClient.getRiskSummary(crn))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
-      given(arnApiClient.getRiskScores(anyString()))
+      val riskScoreResponses = listOf(riskScoreResponse())
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponse,
-              currentRiskScoreResponse.copy(completedDate = null),
-              historicalRiskScoreResponse,
-              historicalRiskScoreResponse.copy(completedDate = null),
-              historicalRiskScoreResponse.copy(completedDate = "2016-09-12T12:00:00.000"),
-            )
-          },
+          Mono.fromCallable { riskScoreResponses },
         )
-      given(arnApiClient.getAssessments(anyString()))
+      val expectedPredictorScores = PredictorScores(current = null, historical = null)
+      given(riskScoreConverter.convert(riskScoreResponses))
+        .willReturn(expectedPredictorScores)
+      given(arnApiClient.getAssessments(crn))
         .willReturn(
           Mono.fromCallable {
             AssessmentsResponse(
@@ -99,8 +104,6 @@ internal class RiskServiceTest : ServiceTestBase() {
       val personalDetails = response.personalDetailsOverview!!
       val riskOfSeriousHarm = response.roshSummary?.riskOfSeriousHarm!!
       val mappa = response.mappa!!
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
       val roshHistory = response.roshHistory
       assertThat(roshHistory?.registrations?.get(0)?.active).isEqualTo(true)
       assertThat(roshHistory?.registrations?.get(0)?.type?.code).isEqualTo("ABC123")
@@ -133,82 +136,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
       assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
       assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
-      assertThat(historicalScores?.get(0)?.date).isEqualTo("2018-09-12")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("2")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.type).isEqualTo("RSR")
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(0)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(0)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(0)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(0)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(1)?.date).isEqualTo("2017-09-12")
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(1)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(1)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.rsr?.score).isEqualTo("1")
-      assertThat(historicalScores?.get(1)?.scores?.rsr?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(1)?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.date).isEqualTo("2016-09-12")
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(2)?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(2)?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.rsr?.score).isEqualTo("1")
-      assertThat(historicalScores?.get(2)?.scores?.rsr?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.level).isEqualTo("LOW")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.type).isEqualTo("OGRS")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(historicalScores?.get(2)?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(historicalScores?.get(3)?.date).isEqualTo(null)
-      assertThat(historicalScores?.get(4)?.date).isEqualTo(null)
-      assertThat(currentScores?.date).isEqualTo("2018-09-12")
-      assertThat(currentScores?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(currentScores?.scores?.rsr?.score).isEqualTo("2")
-      assertThat(currentScores?.scores?.rsr?.type).isEqualTo("RSR")
-      assertThat(currentScores?.scores?.ospc?.level).isEqualTo("HIGH")
-      assertThat(currentScores?.scores?.ospc?.score).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc?.type).isEqualTo("OSP/C")
-      assertThat(currentScores?.scores?.ospi?.level).isEqualTo("MEDIUM")
-      assertThat(currentScores?.scores?.ospi?.score).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi?.type).isEqualTo("OSP/I")
-      assertThat(currentScores?.scores?.ovp?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ovp?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogp?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogp?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.level).isEqualTo("HIGH")
-      assertThat(currentScores?.scores?.ogrs?.oneYear).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.twoYears).isEqualTo("0")
-      assertThat(currentScores?.scores?.ogrs?.type).isEqualTo("OGRS")
+      assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
@@ -226,7 +154,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(Mono.fromCallable { listOf(currentRiskScoreResponse) })
+        .willReturn(Mono.fromCallable { listOf(riskScoreResponse()) })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
 
@@ -452,30 +380,24 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  // TODO: review whether this test needs reworking or removing - are the assessmentStatus
+  //       and roshSummary fields tested under these conditions elsewhere?
   @Test
   fun `retrieves risk with null predictor score field`() {
     runTest {
-      given(arnApiClient.getRiskScores(anyString()))
+      val riskScoreResponses = listOf(riskScoreResponse())
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWhereValuesNull,
-            )
-          },
+          Mono.fromCallable { riskScoreResponses },
         )
+      val expectedPredictorScores = PredictorScores(null, null, emptyList())
+      given(riskScoreConverter.convert(riskScoreResponses))
+        .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
 
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
+      assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
@@ -486,45 +408,43 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  // TODO: review whether this test needs reworking or removing - are the assessmentStatus
+  //       and roshSummary fields tested under these conditions elsewhere?
   @Test
   fun `retrieves risk with null scores except rsr`() {
     runTest {
-      given(arnApiClient.getRiskScores(anyString()))
+      val riskScoreResponses = listOf(riskScoreResponse())
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields.copy(
-                riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-                  "10",
-                  "MEDIUM",
-                ),
-              ),
-              historicalRiskScoreResponseWhereValuesNull.copy(
-                riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-                  "10",
-                  "MEDIUM",
-                ),
-              ),
-            )
-          },
+          Mono.fromCallable { riskScoreResponses },
         )
+      val predictorScoreWithRsrScoreOnly = PredictorScore(
+        date = "2018-09-12",
+        scores = Scores(
+          rsr = LevelWithScore(
+            score = "10",
+            level = RsrScoreLevel.MEDIUM.toString(),
+            type = RSR.printName,
+          ),
+          ospc = null,
+          ospi = null,
+          ospdc = null,
+          ospiic = null,
+          ogrs = null,
+          ogp = null,
+          ovp = null,
+        ),
+      )
+      val expectedPredictorScores = PredictorScores(
+        current = predictorScoreWithRsrScoreOnly,
+        historical = listOf(predictorScoreWithRsrScoreOnly),
+      )
+      given(riskScoreConverter.convert(riskScoreResponses))
+        .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
-
-      assertThat(historicalScores?.get(0)?.date).isEqualTo("2018-09-12")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.score).isEqualTo("10")
-      assertThat(historicalScores?.get(0)?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(historicalScores?.get(0)?.scores?.ospc).isEqualTo(null)
-      assertThat(historicalScores?.get(0)?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.date).isEqualTo("2018-09-12")
-      assertThat(currentScores?.scores?.rsr?.score).isEqualTo("10")
-      assertThat(currentScores?.scores?.rsr?.level).isEqualTo("MEDIUM")
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
+      assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
@@ -535,37 +455,27 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  // TODO: review whether this test needs reworking or removing - is the
+  //       assessmentStatus field tested under these conditions elsewhere?
   @Test
   fun `retrieves risk with empty OSPC risk score values`() {
     runTest {
-      given(arnApiClient.getRiskScores(anyString()))
+      val riskScoreResponses = listOf(riskScoreResponse())
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWhereValuesNull.copy(
-                sexualPredictorScore = SexualPredictorScore(
-                  ospIndecentPercentageScore = "0",
-                  ospContactPercentageScore = "0",
-                  ospIndecentScoreLevel = SCORE_NOT_APPLICABLE,
-                  ospContactScoreLevel = SCORE_NOT_APPLICABLE,
-                ),
-              ),
-            )
-          },
+          Mono.fromCallable { riskScoreResponses },
         )
+      val expectedPredictorScores = PredictorScores(
+        current = null,
+        historical = emptyList(),
+      )
+      given(riskScoreConverter.convert(riskScoreResponses))
+        .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
 
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
+      assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
@@ -575,26 +485,28 @@ internal class RiskServiceTest : ServiceTestBase() {
     }
   }
 
+  // TODO: review whether this test needs reworking or removing - is the
+  //       assessmentStatus field tested under these conditions elsewhere?
   @Test
   fun `retrieves risk with optional fields missing`() {
     runTest {
-      given(arnApiClient.getRiskScores(anyString()))
+      val riskScoreResponses = listOf(riskScoreResponse())
+      given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable {
-            listOf(
-              currentRiskScoreResponseWithOptionalFields,
-              historicalRiskScoreResponseWithOptionalFields,
-            )
-          },
+          Mono.fromCallable { riskScoreResponses },
         )
+      val expectedPredictorScores = PredictorScores(
+        current = null,
+        historical = emptyList(),
+      )
+      given(riskScoreConverter.convert(riskScoreResponses))
+        .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
       val response = riskService.getRisk(crn)
 
       val personalDetails = response.personalDetailsOverview!!
       val mappa = response.mappa
-      val historicalScores = response.predictorScores?.historical
-      val currentScores = response.predictorScores?.current
 
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth.until(LocalDate.now()).years
@@ -605,12 +517,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.name).isEqualTo("John Smith")
       assertThat(mappa).isEqualTo(null)
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
-      assertThat(historicalScores).isEmpty()
-      assertThat(currentScores?.date).isEqualTo(null)
-      assertThat(currentScores?.scores?.rsr).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospc).isEqualTo(null)
-      assertThat(currentScores?.scores?.ospi).isEqualTo(null)
-      assertThat(currentScores?.scores?.ogrs).isEqualTo(null)
+      assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
       then(arnApiClient).should().getAssessments(crn)
@@ -953,107 +860,5 @@ internal class RiskServiceTest : ServiceTestBase() {
     ),
     assessedOn = "2022-10-09T08:26:31",
     overallRiskLevel = "HIGH",
-  )
-
-  private val currentRiskScoreResponse = RiskScoreResponse(
-    completedDate = "2018-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = "",
-      ogpDynamicWeightedScore = "",
-      ogpTotalWeightedScore = "1",
-      ogpRisk = "LOW",
-      ogp1Year = "0",
-      ogp2Year = "0",
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "2", scoreLevel = "MEDIUM"),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = "3",
-      ospContactPercentageScore = "2",
-      ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH",
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = "0",
-      ovpDynamicWeightedScore = "0",
-      ovpTotalWeightedScore = "0",
-      ovpRisk = "LOW",
-      oneYear = "0",
-      twoYears = "0",
-    ),
-  )
-
-  private val historicalRiskScoreResponse = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = "",
-      ogpDynamicWeightedScore = "10",
-      ogpTotalWeightedScore = "1",
-      ogpRisk = "LOW",
-      ogp1Year = "0",
-      ogp2Year = "0",
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "1", scoreLevel = "LOW"),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = "3",
-      ospContactPercentageScore = "2",
-      ospIndecentScoreLevel = "MEDIUM",
-      ospContactScoreLevel = "HIGH",
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = "0",
-      ovpDynamicWeightedScore = "0",
-      ovpTotalWeightedScore = "0",
-      ovpRisk = "LOW",
-      oneYear = "0",
-      twoYears = "0",
-    ),
-  )
-
-  private val historicalRiskScoreResponseWhereValuesNull = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = GeneralPredictorScore(
-      ogpStaticWeightedScore = null,
-      ogpDynamicWeightedScore = null,
-      ogpTotalWeightedScore = null,
-      ogpRisk = null,
-      ogp1Year = null,
-      ogp2Year = null,
-    ),
-    riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = null, scoreLevel = null),
-    sexualPredictorScore = SexualPredictorScore(
-      ospIndecentPercentageScore = null,
-      ospContactPercentageScore = null,
-      ospIndecentScoreLevel = null,
-      ospContactScoreLevel = null,
-    ),
-    groupReconvictionScore = GroupReconvictionScore(oneYear = null, twoYears = null, scoreLevel = null),
-    violencePredictorScore = ViolencePredictorScore(
-      ovpStaticWeightedScore = null,
-      ovpDynamicWeightedScore = null,
-      ovpTotalWeightedScore = null,
-      ovpRisk = null,
-      oneYear = null,
-      twoYears = null,
-    ),
-  )
-
-  private val currentRiskScoreResponseWithOptionalFields = RiskScoreResponse(
-    completedDate = "2018-09-12T12:00:00.000",
-    generalPredictorScore = null,
-    riskOfSeriousRecidivismScore = null,
-    sexualPredictorScore = null,
-    groupReconvictionScore = null,
-    violencePredictorScore = null,
-  )
-
-  private val historicalRiskScoreResponseWithOptionalFields = RiskScoreResponse(
-    completedDate = "2017-09-12T12:00:00.000",
-    generalPredictorScore = null,
-    riskOfSeriousRecidivismScore = null,
-    sexualPredictorScore = null,
-    groupReconvictionScore = null,
-    violencePredictorScore = null,
   )
 }
