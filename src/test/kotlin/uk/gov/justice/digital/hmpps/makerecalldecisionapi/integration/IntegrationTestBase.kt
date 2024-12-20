@@ -335,6 +335,7 @@ abstract class IntegrationTestBase {
     val currentScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/all")
 
+    val allRiskScoresResponse = allRiskScoresResponse()
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds)),

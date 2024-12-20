@@ -35,3 +35,7 @@ fun randomLocalDateTime(): LocalDateTime {
   val randomSecond: Long = Random.Default.nextLong(minSecond, maxSecond)
   return LocalDateTime.ofEpochSecond(randomSecond, 0, ZoneOffset.UTC)
 }
+
+inline fun <reified E : Enum<E>> randomEnum(): E {
+  return enumValues<E>()[Random.Default.nextInt(0, enumValues<E>().size)]
+}

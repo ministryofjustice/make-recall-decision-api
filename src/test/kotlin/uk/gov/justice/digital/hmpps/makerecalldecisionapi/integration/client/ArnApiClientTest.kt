@@ -11,7 +11,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspdcScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiicScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
@@ -22,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryRiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -128,27 +136,34 @@ class ArnApiClientTest : IntegrationTestBase() {
           ogpStaticWeightedScore = "0",
           ogpDynamicWeightedScore = "0",
           ogpTotalWeightedScore = "0",
-          ogpRisk = "HIGH",
+          ogpRisk = OgpScoreLevel.HIGH.toString(),
           ogp1Year = "0",
           ogp2Year = "0",
         ),
-        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "0", scoreLevel = "HIGH"),
+        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+          percentageScore = "0",
+          scoreLevel = RsrScoreLevel.HIGH.toString(),
+        ),
         sexualPredictorScore = SexualPredictorScore(
           ospIndecentPercentageScore = "0",
           ospContactPercentageScore = "0",
-          ospIndecentScoreLevel = "HIGH",
-          ospContactScoreLevel = "HIGH",
+          ospIndecentScoreLevel = OspiScoreLevel.HIGH.toString(),
+          ospContactScoreLevel = OspcScoreLevel.HIGH.toString(),
           ospIndirectImagePercentageScore = null,
           ospDirectContactPercentageScore = null,
           ospIndirectImageScoreLevel = null,
           ospDirectContactScoreLevel = null,
         ),
-        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "HIGH"),
+        groupReconvictionScore = GroupReconvictionScore(
+          oneYear = "0",
+          twoYears = "0",
+          scoreLevel = OgrsScoreLevel.HIGH.toString(),
+        ),
         violencePredictorScore = ViolencePredictorScore(
           ovpStaticWeightedScore = "0",
           ovpDynamicWeightedScore = "0",
           ovpTotalWeightedScore = "0",
-          ovpRisk = "HIGH",
+          ovpRisk = OvpScoreLevel.HIGH.toString(),
           oneYear = "0",
           twoYears = "0",
         ),
@@ -159,11 +174,14 @@ class ArnApiClientTest : IntegrationTestBase() {
           ogpStaticWeightedScore = "0",
           ogpDynamicWeightedScore = "0",
           ogpTotalWeightedScore = "12",
-          ogpRisk = "LOW",
+          ogpRisk = OgpScoreLevel.LOW.toString(),
           ogp1Year = "0",
           ogp2Year = "0",
         ),
-        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(percentageScore = "23", scoreLevel = "HIGH"),
+        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+          percentageScore = "23",
+          scoreLevel = RsrScoreLevel.HIGH.toString(),
+        ),
         sexualPredictorScore = SexualPredictorScore(
           ospIndecentPercentageScore = null,
           ospContactPercentageScore = null,
@@ -171,15 +189,15 @@ class ArnApiClientTest : IntegrationTestBase() {
           ospContactScoreLevel = null,
           ospIndirectImagePercentageScore = "5",
           ospDirectContactPercentageScore = "3.45",
-          ospIndirectImageScoreLevel = "MEDIUM",
-          ospDirectContactScoreLevel = "LOW",
+          ospIndirectImageScoreLevel = OspiicScoreLevel.MEDIUM.toString(),
+          ospDirectContactScoreLevel = OspdcScoreLevel.LOW.toString(),
         ),
-        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = "LOW"),
+        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = OgrsScoreLevel.LOW.toString()),
         violencePredictorScore = ViolencePredictorScore(
           ovpStaticWeightedScore = "0",
           ovpDynamicWeightedScore = "0",
           ovpTotalWeightedScore = "0",
-          ovpRisk = "LOW",
+          ovpRisk = OvpScoreLevel.LOW.toString(),
           oneYear = "0",
           twoYears = "0",
         ),
