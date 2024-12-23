@@ -14,4 +14,5 @@ data class PpudUserMappingEntity(
   var userName: String,
   var ppudUserFullName: String,
   var ppudTeamName: String,
+  var ppudUserName: String,
 )

@@ -161,6 +161,7 @@ abstract class IntegrationTestBase {
         "V1_25__RECOMMENDATION_DOCUMENT_TABLE.sql",
         "V1_27__RECOMMENDATION_DOCUMENT_TABLE.sql",
         "V1_28__RECOMMENDATION_DOCUMENT_TABLE.sql",
+        "V1_30__PPUD_USERS_TABLE_ADD_PPUD_USER_NAME_COL.sql",
       )
 
       Class.forName("org.postgresql.Driver")
