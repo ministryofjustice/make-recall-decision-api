@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter

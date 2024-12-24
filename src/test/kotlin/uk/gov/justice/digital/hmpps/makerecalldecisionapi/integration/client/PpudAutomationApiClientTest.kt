@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall

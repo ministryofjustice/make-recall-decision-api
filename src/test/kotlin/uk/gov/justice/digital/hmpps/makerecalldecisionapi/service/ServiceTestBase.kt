@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
