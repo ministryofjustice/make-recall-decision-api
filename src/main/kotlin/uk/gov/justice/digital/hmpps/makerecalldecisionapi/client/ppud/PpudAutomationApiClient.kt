@@ -173,7 +173,7 @@ class PpudAutomationApiClient(
   private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> {
     return webClient
       .post()
-      .uri { builder -> builder.path(url).build() }
+      .uri(url)
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()

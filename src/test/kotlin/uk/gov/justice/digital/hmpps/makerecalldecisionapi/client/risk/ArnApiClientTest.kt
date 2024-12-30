@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk
 
 import ch.qos.logback.classic.Level
 import io.micrometer.core.instrument.Counter
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -59,7 +59,7 @@ class ArnApiClientTest {
   }
 
   @Test
-  fun `handles timeout exceptions raised when retrieveing risk scores`() {
+  fun `handles timeout exceptions raised when retrieving risk scores`() {
     val crn = randomString()
     val uri = "/risks/crn/$crn/predictors/all"
     val riskScoreCall = { arnApiClient.getRiskScores(crn) }
@@ -81,16 +81,16 @@ class ArnApiClientTest {
 
     val actualResponse = arnApiClient.getRiskScores(crn)
 
-    Assertions.assertThat(actualResponse.block()).isEqualTo(responseList)
+    assertThat(actualResponse.block()).isEqualTo(responseList)
     with(logAppender.list) {
-      Assertions.assertThat(size).isEqualTo(2)
+      assertThat(size).isEqualTo(2)
       with(get(0)) {
-        Assertions.assertThat(level).isEqualTo(Level.INFO)
-        Assertions.assertThat(message).isEqualTo("About to get $riskValueName for $crn")
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("About to get $riskValueName for $crn")
       }
       with(get(1)) {
-        Assertions.assertThat(level).isEqualTo(Level.INFO)
-        Assertions.assertThat(message).isEqualTo("Returning $riskValueName for $crn")
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("Returning $riskValueName for $crn")
       }
     }
   }
