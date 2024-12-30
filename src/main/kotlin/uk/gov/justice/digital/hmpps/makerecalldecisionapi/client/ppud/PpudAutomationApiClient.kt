@@ -188,7 +188,7 @@ class PpudAutomationApiClient(
   private fun put(url: String, request: Any): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
-      .uri { builder -> builder.path(url).build() }
+      .uri(url)
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
