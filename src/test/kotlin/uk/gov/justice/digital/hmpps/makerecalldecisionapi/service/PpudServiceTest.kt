@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
@@ -16,6 +17,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.given
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
@@ -54,6 +56,12 @@ import java.util.*
 @ExperimentalCoroutinesApi
 internal class PpudServiceTest : ServiceTestBase() {
 
+  @InjectMocks
+  private lateinit var ppudService: PpudService
+
+  @Mock
+  private lateinit var ppudAutomationApiClient: PpudAutomationApiClient
+
   @Mock
   private lateinit var ppudUserMappingRepository: PpudUserMappingRepository
 
@@ -72,8 +80,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result =
-      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).search(request)
+    val result = ppudService.search(request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -88,8 +95,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result =
-      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).details("12345678")
+    val result = ppudService.details("12345678")
 
     assertThat(result).isEqualTo(response)
   }
@@ -106,10 +112,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).bookToPpud(
-      "123",
-      request,
-    )
+    val result = ppudService.bookToPpud("123", request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -124,11 +127,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(
-      ppudAutomationApiClient,
-      ppudUserMappingRepository,
-      recommendationDocumentRepository,
-    ).retrieveList("custody-type")
+    val result = ppudService.retrieveList("custody-type")
 
     assertThat(result).isEqualTo(response)
   }
@@ -139,30 +138,22 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     val response = mock(PpudCreateOffenderResponse::class.java)
 
-    given(ppudAutomationApiClient.createOffender(request)).willReturn(
-      Mono.fromCallable {
-        response
-      },
-    )
+    given(ppudAutomationApiClient.createOffender(request)).willReturn(Mono.just(response))
 
-    val result =
-      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createOffender(request)
+    val result = ppudService.createOffender(request)
 
     assertThat(result).isEqualTo(response)
   }
 
   @Test
   fun `call update offender`() {
+    val offenderId = "123"
     val request = mock(PpudUpdateOffenderRequest::class.java)
+    given(ppudAutomationApiClient.updateOffender(offenderId, request)).willReturn(Mono.empty())
 
-    given(ppudAutomationApiClient.updateOffender("123", request)).willReturn(Mono.empty())
+    ppudService.updateOffender(offenderId, request)
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateOffender(
-      "123",
-      request,
-    )
-
-    verify(ppudAutomationApiClient).updateOffender("123", request)
+    verify(ppudAutomationApiClient).updateOffender(offenderId, request)
   }
 
   @Test
@@ -177,10 +168,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createSentence(
-      "123",
-      request,
-    )
+    ppudService.createSentence("123", request)
 
     verify(ppudAutomationApiClient).createSentence("123", request)
   }
@@ -191,11 +179,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateSentence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateSentence(
-      "123",
-      "456",
-      request,
-    )
+    ppudService.updateSentence("123", "456", request)
 
     verify(ppudAutomationApiClient).updateSentence("123", "456", request)
   }
@@ -206,11 +190,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.updateOffence("123", "456", request)).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).updateOffence(
-      "123",
-      "456",
-      request,
-    )
+    ppudService.updateOffence("123", "456", request)
 
     verify(ppudAutomationApiClient).updateOffence("123", "456", request)
   }
@@ -227,11 +207,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PpudService(
-      ppudAutomationApiClient,
-      ppudUserMappingRepository,
-      recommendationDocumentRepository,
-    ).createOrUpdateRelease("123", "456", request)
+    val result = ppudService.createOrUpdateRelease("123", "456", request)
 
     assertThat(result).isEqualTo(response)
   }
@@ -262,13 +238,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       },
     )
 
-    val result =
-      PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createRecall(
-        "123",
-        "456",
-        request,
-        "userId",
-      )
+    val result = ppudService.createRecall("123", "456", request, "userId")
 
     assertThat(result).isEqualTo(response)
 
@@ -299,9 +269,8 @@ internal class PpudServiceTest : ServiceTestBase() {
       riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
     )
 
-    val service = PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
     val ex = assertThrows<NotFoundException> {
-      service.createRecall("123", "456", request, "userId")
+      ppudService.createRecall("123", "456", request, "userId")
     }
     assertThat(ex.message).isEqualTo("PPUD user mapping not found for username 'userId'")
   }
@@ -347,8 +316,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.uploadMandatoryDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
-      .uploadMandatoryDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
+    ppudService.uploadMandatoryDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
 
@@ -389,8 +357,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     given(ppudAutomationApiClient.uploadAdditionalDocument(eq("123"), captor.capture())).willReturn(Mono.empty())
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository)
-      .uploadAdditionalDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
+    ppudService.uploadAdditionalDocument(recallId = recallId, uploadMandatoryDocument = request, "userId")
 
     val ppudUploadMandatoryDocumentRequest = captor.firstValue
 
@@ -405,11 +372,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       Mono.empty(),
     )
 
-    PpudService(ppudAutomationApiClient, ppudUserMappingRepository, recommendationDocumentRepository).createMinute(
-      "123",
-      CreateMinuteRequest("some subject", "some text"),
-      "username",
-    )
+    ppudService.createMinute("123", CreateMinuteRequest("some subject", "some text"), "username")
 
     verify(ppudAutomationApiClient).createMinute("123", PpudCreateMinuteRequest("some subject", "some text"))
   }

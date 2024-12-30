@@ -73,9 +73,6 @@ internal abstract class ServiceTestBase {
   protected lateinit var cvlApiClient: CvlApiClient
 
   @Mock
-  protected lateinit var ppudAutomationApiClient: PpudAutomationApiClient
-
-  @Mock
   protected lateinit var prisonApiClient: PrisonApiClient
 
   @Mock
