@@ -262,6 +262,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
+      sentencedUnder = "Duress",
     )
     ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, "12345678")
     runTest {
@@ -284,6 +285,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
+      sentencedUnder = "Duress",
     )
     ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
     runTest {

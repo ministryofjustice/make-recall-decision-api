@@ -8,11 +8,11 @@ import java.time.LocalDate
 
 /**
  * Helper functions for generating instances of classes related to
- * PPUD sentence requests with their fields pre-filled with random
+ * PPUD Automation responses with their fields pre-filled with random
  * values. Intended for use in unit tests.
  */
 
-internal fun ppudCreateOrUpdateSentenceRequest(
+fun ppudCreateOrUpdateSentenceRequest(
   custodyType: String = randomString(),
   dateOfSentence: LocalDate = randomLocalDate(),
   licenceExpiryDate: LocalDate? = randomLocalDate(),
@@ -23,6 +23,7 @@ internal fun ppudCreateOrUpdateSentenceRequest(
   espExtendedPeriod: PpudYearMonth? = ppudYearMonth(),
   sentenceExpiryDate: LocalDate? = randomLocalDate(),
   sentencingCourt: String = randomString(),
+  sentencedUnder: String = randomString(),
 ) = PpudCreateOrUpdateSentenceRequest(
   custodyType,
   dateOfSentence,
@@ -34,6 +35,7 @@ internal fun ppudCreateOrUpdateSentenceRequest(
   espExtendedPeriod,
   sentenceExpiryDate,
   sentencingCourt,
+  sentencedUnder,
 )
 
 internal fun PpudCreateOrUpdateSentenceRequest.toJson() =
@@ -49,7 +51,8 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() =
         "espCustodialPeriod": ${espCustodialPeriod?.toJson()},
         "espExtendedPeriod": ${espExtendedPeriod?.toJson()},
         "sentenceExpiryDate": ${toJsonNullableStringField(sentenceExpiryDate)},
-        "sentencingCourt": "$sentencingCourt"
+        "sentencingCourt": "$sentencingCourt",
+        "sentencedUnder": "$sentencedUnder"
       }
   """.trimIndent(),
   )

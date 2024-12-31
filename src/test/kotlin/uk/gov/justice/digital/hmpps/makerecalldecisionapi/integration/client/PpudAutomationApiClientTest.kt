@@ -177,12 +177,14 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceLength = SentenceLength(1, 1, 1),
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
+      sentencedUnder = "Duress",
     )
 
     ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
 
     // when
     val actual = ppudAutomationApiClient.createSentence(offenderId, createSentenceRequest).block()
+
 
     // then
     assertThat(actual?.sentence?.id, equalTo("12345678"))
@@ -202,6 +204,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceLength = SentenceLength(1, 1, 1),
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
+      sentencedUnder = "Duress",
     )
 
     ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
