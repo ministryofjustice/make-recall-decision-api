@@ -251,45 +251,43 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create sentence`() {
-    ppudAutomationCreateSentenceApiMatchResponse("123", "12345678")
+    val offenderId = "123"
+    val createSentenceRequest = PpudCreateOrUpdateSentenceRequest(
+      custodyType = "Determinate",
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      licenceExpiryDate = LocalDate.of(2004, 1, 3),
+      mappaLevel = "1",
+      releaseDate = LocalDate.of(2004, 1, 4),
+      sentenceLength = SentenceLength(1, 1, 1),
+      sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+      sentencingCourt = "sentencing court",
+      espExtendedPeriod = PpudYearMonth(1, 1),
+    )
+    ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, "12345678")
     runTest {
-      postToCreateSentence(
-        "123",
-        PpudCreateOrUpdateSentenceRequest(
-          custodyType = "Determinate",
-          dateOfSentence = LocalDate.of(2004, 1, 2),
-          licenceExpiryDate = LocalDate.of(2004, 1, 3),
-          mappaLevel = "1",
-          releaseDate = LocalDate.of(2004, 1, 4),
-          sentenceLength = SentenceLength(1, 1, 1),
-          sentenceExpiryDate = LocalDate.of(2004, 1, 5),
-          sentencingCourt = "sentencing court",
-          espExtendedPeriod = PpudYearMonth(1, 1),
-        ),
-      )
+      postToCreateSentence(offenderId, createSentenceRequest)
         .expectStatus().isOk
     }
   }
 
   @Test
   fun `ppud update sentence`() {
-    ppudAutomationUpdateSentenceApiMatchResponse("123", "456", "12345678")
+    val offenderId = "123"
+    val sentenceId = "456"
+    val updateSentenceRequest = PpudCreateOrUpdateSentenceRequest(
+      custodyType = "Determinate",
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      licenceExpiryDate = LocalDate.of(2004, 1, 3),
+      mappaLevel = "1",
+      releaseDate = LocalDate.of(2004, 1, 4),
+      sentenceLength = SentenceLength(1, 1, 1),
+      sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+      sentencingCourt = "sentencing court",
+      espExtendedPeriod = PpudYearMonth(1, 1),
+    )
+    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
     runTest {
-      putToUpdateSentence(
-        "123",
-        "456",
-        PpudCreateOrUpdateSentenceRequest(
-          custodyType = "Determinate",
-          dateOfSentence = LocalDate.of(2004, 1, 2),
-          licenceExpiryDate = LocalDate.of(2004, 1, 3),
-          mappaLevel = "1",
-          releaseDate = LocalDate.of(2004, 1, 4),
-          sentenceLength = SentenceLength(1, 1, 1),
-          sentenceExpiryDate = LocalDate.of(2004, 1, 5),
-          sentencingCourt = "sentencing court",
-          espExtendedPeriod = PpudYearMonth(1, 1),
-        ),
-      )
+      putToUpdateSentence(offenderId, sentenceId, updateSentenceRequest)
         .expectStatus().isOk
     }
   }
@@ -312,33 +310,32 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud update release`() {
-    ppudAutomationUpdateReleaseApiMatchResponse("123", "456", "12345678")
-    runTest {
-      postToUpdateRelease(
-        "123",
-        "456",
-        PpudCreateOrUpdateReleaseRequest(
-          dateOfRelease = LocalDate.of(2016, 1, 1),
-          postRelease = PpudUpdatePostRelease(
-            assistantChiefOfficer = PpudContact(
-              name = "Mr A",
-              faxEmail = "1234",
-            ),
-            offenderManager = PpudContactWithTelephone(
-              name = "Mr B",
-              faxEmail = "567",
-              telephone = "1234",
-            ),
-            probationService = "Argyl",
-            spoc = PpudContact(
-              name = "Mr C",
-              faxEmail = "123",
-            ),
-          ),
-          releasedFrom = "Hull",
-          releasedUnder = "Duress",
+    val offenderId = "123"
+    val sentenceId = "456"
+    val updateReleaseRequest = PpudCreateOrUpdateReleaseRequest(
+      dateOfRelease = LocalDate.of(2016, 1, 1),
+      postRelease = PpudUpdatePostRelease(
+        assistantChiefOfficer = PpudContact(
+          name = "Mr A",
+          faxEmail = "1234",
         ),
-      )
+        offenderManager = PpudContactWithTelephone(
+          name = "Mr B",
+          faxEmail = "567",
+          telephone = "1234",
+        ),
+        probationService = "Argyl",
+        spoc = PpudContact(
+          name = "Mr C",
+          faxEmail = "123",
+        ),
+      ),
+      releasedFrom = "Hull",
+      releasedUnder = "Duress",
+    )
+    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, "12345678")
+    runTest {
+      postToUpdateRelease(offenderId, sentenceId, updateReleaseRequest)
         .expectStatus().isOk
     }
   }

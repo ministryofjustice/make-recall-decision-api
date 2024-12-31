@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
+import org.mockserver.model.JsonBody
+import org.mockserver.model.JsonBody.json
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 
 /**
@@ -7,9 +9,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
  * fields pre-filled with random values. Intended for use in unit tests.
  */
 
-fun ppudYearMonth(
+internal fun ppudYearMonth(
   years: Int = randomInt(),
   months: Int = randomInt(),
-): PpudYearMonth {
-  return PpudYearMonth(years, months)
-}
+) =
+  PpudYearMonth(years, months)
+
+internal fun PpudYearMonth.toJson() =
+  json(
+    """
+      {
+        "years": $years,
+        "months": $months
+      }
+  """.trimIndent())

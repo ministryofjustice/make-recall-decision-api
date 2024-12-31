@@ -29,6 +29,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJson
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
@@ -142,7 +145,8 @@ abstract class IntegrationTestBase {
 
     fun popDb() {
       val currentDirectory = File(".").absoluteFile.parentFile
-      val resourcesDirectory = Paths.get(currentDirectory.toString(), "src", "main", "resources", "db", "migration").toString()
+      val resourcesDirectory =
+        Paths.get(currentDirectory.toString(), "src", "main", "resources", "db", "migration").toString()
 
       val url = "jdbc:postgresql://localhost:5432/make_recall_decision"
       val user = "mrd_user"
@@ -1003,10 +1007,11 @@ abstract class IntegrationTestBase {
 
   protected fun ppudAutomationCreateSentenceApiMatchResponse(
     offenderId: String,
+    createSentenceRequest: PpudCreateOrUpdateSentenceRequest,
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence")
+    val request = request().withPath("/offender/$offenderId/sentence").withBody(createSentenceRequest.toJson())
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
@@ -1018,10 +1023,11 @@ abstract class IntegrationTestBase {
   protected fun ppudAutomationUpdateSentenceApiMatchResponse(
     offenderId: String,
     sentenceId: String,
-    id: String,
+    updateSentenceRequest: PpudCreateOrUpdateSentenceRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId)
+    val request =
+      request().withPath("/offender/$offenderId/sentence/$sentenceId").withBody(updateSentenceRequest.toJson())
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
@@ -1045,10 +1051,12 @@ abstract class IntegrationTestBase {
   protected fun ppudAutomationUpdateReleaseApiMatchResponse(
     offenderId: String,
     sentenceId: String,
+    updateReleaseRequest: PpudCreateOrUpdateReleaseRequest,
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/release")
+    val request =
+      request().withPath("/offender/$offenderId/sentence/$sentenceId/release").withBody(updateReleaseRequest.toJson())
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
