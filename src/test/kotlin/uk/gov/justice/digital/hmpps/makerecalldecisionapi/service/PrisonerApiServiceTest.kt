@@ -8,6 +8,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoMoreInteractions
+import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.given
@@ -82,6 +83,37 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     verify(prisonApiClient).retrieveOffender(nomsId)
 
     verify(result, times(2)).facialImageId
+
+    verifyNoMoreInteractions(result)
+
+    verifyNoMoreInteractions(prisonApiClient)
+  }
+
+  @Test
+  fun `call retrieve offender with none-zero facialImageId but no matching image`() {
+    val nomsId = "AB234A"
+
+    val response = mock(Offender::class.java)
+
+    given(prisonApiClient.retrieveOffender(any())).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    given(response.facialImageId).willReturn(1)
+
+    `when`(prisonApiClient.retrieveImageData(any())).thenThrow(
+      RuntimeException("Something went wrong"),
+    )
+
+    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+
+    assertThat(result).isEqualTo(response)
+
+    assertThat(result.facialImageId).isEqualTo(1)
+
+    verify(prisonApiClient).retrieveOffender(nomsId)
 
     verifyNoMoreInteractions(result)
 

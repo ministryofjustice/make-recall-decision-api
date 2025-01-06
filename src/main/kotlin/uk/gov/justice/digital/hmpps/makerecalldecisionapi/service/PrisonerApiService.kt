@@ -20,13 +20,19 @@ internal class PrisonerApiService(
 
     response?.facialImageId?.let {
       if (response.facialImageId > 0) {
-        val responseImage = getValueAndHandleWrappedException(
-          prisonApiClient.retrieveImageData(response.facialImageId.toString()),
-        )
-
-        val contentType = responseImage?.headers?.get("Content-Type")?.get(0)
-        response.image =
-          "data:" + contentType + ";base64," + String(Base64.getEncoder().encode(responseImage?.body?.byteArray))
+        try {
+          val responseImage = prisonApiClient.retrieveImageData(response.facialImageId.toString()).block()
+          val contentType = responseImage?.headers?.get("Content-Type")?.get(0)
+          response.image =
+            "data:" + contentType + ";base64," + String(Base64.getEncoder().encode(responseImage?.body?.byteArray))
+        } catch (ex: Exception) {
+          log.info(
+            "could not retrieve facial image id: " +
+              "${response.facialImageId} for NOMIS offender id: " +
+              "$nomsId; exception message: " +
+              "${ex.message}",
+          )
+        }
       }
     }
 
