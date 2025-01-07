@@ -24,5 +24,6 @@ data class BookRecallToPpud(
   val cro: String? = null,
   val prisonNumber: String? = null,
   val legislationReleasedUnder: String? = null,
+  val legislationSentencedUnder: String? = null,
   val minute: String? = null,
 )
