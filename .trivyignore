@@ -29,3 +29,6 @@ CVE-2016-1000027
 # Suppression as our project cannot currently be upgraded to SpringBoot V3.X, see MRD-1329 for details
 CVE-2023-1370
 CVE-2023-20863
+# Suppression for tomcat vulnerability affecting jsp compilation in the default servlet
+#   can be suppressed as we do not use the default servlet and haven't configured it for write either
+CVE-2024-50379
