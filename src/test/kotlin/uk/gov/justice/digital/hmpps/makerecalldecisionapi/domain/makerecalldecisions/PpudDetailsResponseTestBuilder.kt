@@ -24,5 +24,5 @@ internal fun SentenceLength.toJson() =
         "partMonths": $partMonths,
         "partDays": $partDays
       }
-  """.trimIndent()
+    """.trimIndent(),
   )

@@ -33,4 +33,5 @@ internal fun PpudCreateOrUpdateReleaseRequest.toJson() =
         "releasedFrom": "$releasedFrom",
         "releasedUnder": "$releasedUnder"
       }
-  """.trimIndent())
+    """.trimIndent(),
+  )

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
-import org.mockserver.model.JsonBody
 import org.mockserver.model.JsonBody.json
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 
@@ -22,4 +21,5 @@ internal fun PpudYearMonth.toJson() =
         "years": $years,
         "months": $months
       }
-  """.trimIndent())
+    """.trimIndent(),
+  )

@@ -7,6 +7,4 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 fun ppudCreateSentenceResponse(
   sentence: PpudCreatedSentence = ppudCreatedSentence(),
-): PpudCreateSentenceResponse {
-  return PpudCreateSentenceResponse(sentence)
-}
+) = PpudCreateSentenceResponse(sentence)

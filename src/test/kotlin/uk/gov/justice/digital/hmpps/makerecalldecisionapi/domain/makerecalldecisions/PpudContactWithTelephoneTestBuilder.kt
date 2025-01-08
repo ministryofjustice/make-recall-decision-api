@@ -22,5 +22,5 @@ internal fun PpudContactWithTelephone.toJson() =
         "faxEmail": "$faxEmail",
         "telephone": "$telephone"
       }
-  """.trimIndent(),
+    """.trimIndent(),
   )

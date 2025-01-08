@@ -78,4 +78,4 @@ internal fun BookRecallToPpud.toJsonString() =
           "legislationSentencedUnder":${toJsonNullableStringField(legislationSentencedUnder)},
           "minute":${toJsonNullableStringField(minute)}
         }
-    """.trimIndent()
+  """.trimIndent()

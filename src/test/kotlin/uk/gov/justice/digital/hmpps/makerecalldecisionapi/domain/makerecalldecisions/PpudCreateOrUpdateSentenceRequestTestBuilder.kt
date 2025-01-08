@@ -54,5 +54,5 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() =
         "sentencingCourt": "$sentencingCourt",
         "sentencedUnder": "$sentencedUnder"
       }
-  """.trimIndent(),
+    """.trimIndent(),
   )

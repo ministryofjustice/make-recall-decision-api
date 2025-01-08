@@ -375,7 +375,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       {
         "bookRecallToPpud": ${bookRecallToPpud.toJsonString()}
       }
-    """.trimIndent(),
+      """.trimIndent(),
     )
 
     // CHECK

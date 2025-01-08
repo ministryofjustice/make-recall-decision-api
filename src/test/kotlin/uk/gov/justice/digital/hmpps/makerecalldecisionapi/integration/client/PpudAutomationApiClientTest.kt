@@ -185,7 +185,6 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // when
     val actual = ppudAutomationApiClient.createSentence(offenderId, createSentenceRequest).block()
 
-
     // then
     assertThat(actual?.sentence?.id, equalTo("12345678"))
   }

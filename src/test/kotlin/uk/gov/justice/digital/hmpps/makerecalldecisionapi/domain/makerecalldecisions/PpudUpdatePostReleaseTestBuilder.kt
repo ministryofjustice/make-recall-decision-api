@@ -12,13 +12,13 @@ internal fun ppudUpdatePostRelease(
   assistantChiefOfficer: PpudContact = ppudContact(),
   offenderManager: PpudContactWithTelephone = ppudContactWithTelephone(),
   probationService: String = randomString(),
-  spoc: PpudContact = ppudContact()
+  spoc: PpudContact = ppudContact(),
 ) =
   PpudUpdatePostRelease(
     assistantChiefOfficer,
     offenderManager,
     probationService,
-    spoc
+    spoc,
   )
 
 internal fun PpudUpdatePostRelease.toJson() =
@@ -30,5 +30,5 @@ internal fun PpudUpdatePostRelease.toJson() =
         "probationService": "$probationService",
         "spoc": ${spoc.toJson()}
       }
-  """.trimIndent()
+    """.trimIndent(),
   )
