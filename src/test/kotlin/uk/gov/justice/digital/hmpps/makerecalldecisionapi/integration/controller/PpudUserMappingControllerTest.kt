@@ -25,9 +25,10 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
     // given
     val userName = "UserName"
     val ppudUserFullName = "PpudUserFullName"
+    val ppudUserName = "PpudUserName"
     val teamName = "TeamName"
     val searchReq = PpudUserMappingSearchRequest(userName)
-    val entity = PpudUserMappingEntity(userName = userName, ppudUserFullName = ppudUserFullName, ppudTeamName = teamName)
+    val entity = PpudUserMappingEntity(userName = userName, ppudUserFullName = ppudUserFullName, ppudTeamName = teamName, ppudUserName = ppudUserName)
     ppudUserMappingRepository.save(entity)
 
     // when
@@ -42,6 +43,7 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
     val ppudUserMapping = response.get("ppudUserMapping") as JSONObject
     assertThat(ppudUserMapping.get("fullName")).isEqualTo(ppudUserFullName)
     assertThat(ppudUserMapping.get("teamName")).isEqualTo(teamName)
+    assertThat(ppudUserMapping.get("userName")).isEqualTo(ppudUserName)
 
     ppudUserMappingRepository.delete(entity)
   }
