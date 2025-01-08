@@ -5,7 +5,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMap
 data class PpudUserMapping(
   val fullName: String,
   val teamName: String,
+  val userName: String,
 ) {
   constructor(ppudUserMappingEntity: PpudUserMappingEntity) :
-    this(ppudUserMappingEntity.ppudUserFullName, ppudUserMappingEntity.ppudTeamName)
+    this(ppudUserMappingEntity.ppudUserFullName, ppudUserMappingEntity.ppudTeamName, ppudUserMappingEntity.ppudUserName)
 }

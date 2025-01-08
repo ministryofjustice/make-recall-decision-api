@@ -351,6 +351,7 @@ class PpudControllerTest : IntegrationTestBase() {
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
+        ppudUserName = "UName",
       ),
     )
     ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
@@ -382,6 +383,7 @@ class PpudControllerTest : IntegrationTestBase() {
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
+        ppudUserName = "UName",
       ),
     )
 
@@ -425,6 +427,7 @@ class PpudControllerTest : IntegrationTestBase() {
         userName = "SOME_USER",
         ppudUserFullName = "User Name",
         ppudTeamName = "Team 1",
+        ppudUserName = "UName",
       ),
     )
 

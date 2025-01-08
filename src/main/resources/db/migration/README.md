@@ -15,6 +15,10 @@ Where:
 
 These migrations will be applied on application startup.
 
+N.B. Migration scripts are also currently listed within [IntegrationTestBase.kt](https://github.com/ministryofjustice/make-recall-decision-api/blob/e7667bb610f76a9fc56b3f0bb8dd45288a1c5d5b/src/test/kotlin/uk/gov/justice/digital/hmpps/makerecalldecisionapi/integration/IntegrationTestBase.kt#L151)
+This will need to be updated until a better system is in place to deploy all scripts in a similar manner to FlyWay.
+
+
 ## Warnings on Backwards Compatibility
 
 Keep your migrations **backwards compatible** - the reason for this is that when you deploy your application onto kubernetes it will do a "rolling deployment". This means that **2 versions** of the application are running at the same time (the old version, plus the new version). So whilst the new version of the application is starting up and performing its migrations, the old version must be able to continue to run - if not, the pods will crash, kubernetes will get into a mixed state, your deployment will fail and the app **will go offline** - you've been warned. :)  

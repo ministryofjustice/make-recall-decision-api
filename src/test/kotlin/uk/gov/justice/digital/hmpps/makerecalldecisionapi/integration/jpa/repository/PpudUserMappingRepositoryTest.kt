@@ -19,8 +19,9 @@ class PpudUserMappingRepositoryTest : IntegrationTestBase() {
   @BeforeEach
   fun before() {
     ppudUserMappingRepository.deleteAll()
-    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserA", ppudUserFullName = "Joe Bloggs", ppudTeamName = "Team 1"))
-    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserB", ppudUserFullName = "Jane Doe", ppudTeamName = "Team 2"))
+    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserA", ppudUserFullName = "Joe Bloggs", ppudTeamName = "Team 1", ppudUserName = "JBloggs"))
+    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "UserB", ppudUserFullName = "Jane Doe", ppudTeamName = "Team 2", ppudUserName = "JDoe"))
+    ppudUserMappingRepository.save(PpudUserMappingEntity(userName = "MAKE_RECALL_DECISION_PPCS_USER", ppudUserFullName = "MRD PPCS User", ppudTeamName = "Team 2", ppudUserName = "car_test_ppcs"))
   }
 
   @Suppress("SpellCheckingInspection")
@@ -30,5 +31,6 @@ class PpudUserMappingRepositoryTest : IntegrationTestBase() {
     val result = ppudUserMappingRepository.findByUserNameIgnoreCase(username)
     assertThat(result?.userName).isEqualTo("UserA")
     assertThat(result?.ppudUserFullName).isEqualTo("Joe Bloggs")
+    assertThat(result?.ppudUserName).isEqualTo("JBloggs")
   }
 }

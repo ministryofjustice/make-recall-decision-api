@@ -1,4 +1,8 @@
 {
-  "fullName": "smith",
-  "teamName": ""
+  "results": [
+    {
+      "fullName": "John Smith",
+      "teamName": ""
+    }
+  ]
 }

@@ -23,6 +23,7 @@ internal class PpudUserMappingServiceTest : ServiceTestBase() {
   fun findByUserNameIgnoreCase() {
     val userName = "UserName"
     val ppudUserFullName = "PpudUserFullName"
+    val ppudUserName = "PpudUserName"
     val teamName = "TeamName"
 
     given(ppudUserMappingRepository.findByUserNameIgnoreCase(userName)).willReturn(
@@ -31,6 +32,7 @@ internal class PpudUserMappingServiceTest : ServiceTestBase() {
         userName = userName,
         ppudTeamName = teamName,
         ppudUserFullName = ppudUserFullName,
+        ppudUserName = ppudUserName,
       ),
     )
 
@@ -38,6 +40,7 @@ internal class PpudUserMappingServiceTest : ServiceTestBase() {
     assertThat(response?.ppudUserFullName).isEqualTo(ppudUserFullName)
     assertThat(response?.ppudTeamName).isEqualTo(teamName)
     assertThat(response?.userName).isEqualTo(userName)
+    assertThat(response?.ppudUserName).isEqualTo(ppudUserName)
   }
 
   @Test

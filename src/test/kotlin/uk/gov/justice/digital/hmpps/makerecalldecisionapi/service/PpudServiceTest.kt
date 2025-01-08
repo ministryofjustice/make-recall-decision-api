@@ -255,7 +255,8 @@ internal class PpudServiceTest : ServiceTestBase() {
     val captor = argumentCaptor<PpudCreateRecallRequest>()
 
     given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team", ppudUserName = "UserName"))
+
     given(ppudAutomationApiClient.createRecall(eq("123"), eq("456"), captor.capture())).willReturn(
       Mono.fromCallable {
         response
@@ -324,7 +325,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     val captor = argumentCaptor<PpudUploadMandatoryDocumentRequest>()
 
     given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team", ppudUserName = "UserName"))
 
     given(recommendationDocumentRepository.findById(12345))
       .willReturn(
@@ -366,7 +367,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     val captor = argumentCaptor<PpudUploadAdditionalDocumentRequest>()
 
     given(ppudUserMappingRepository.findByUserNameIgnoreCase("userId"))
-      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team"))
+      .willReturn(PpudUserMappingEntity(userName = "userId", ppudUserFullName = "Name", ppudTeamName = "Team", ppudUserName = "UserName"))
 
     given(recommendationDocumentRepository.findById(12345))
       .willReturn(
