@@ -39,6 +39,7 @@ data class DocumentData(
   val ethnicity: String? = null,
   val croNumber: String? = null,
   val pncNumber: String? = null,
+  val crn: String? = null,
   val mostRecentPrisonerNumber: String? = null,
   val nomsNumber: String? = null,
   val indexOffenceDescription: String? = null,
