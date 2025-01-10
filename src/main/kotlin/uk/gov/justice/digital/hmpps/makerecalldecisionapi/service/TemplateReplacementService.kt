@@ -142,6 +142,7 @@ internal class TemplateReplacementService(
       "no_fixed_abode" to documentData.noFixedAbode,
       "cro_number" to documentData.croNumber,
       "pnc_number" to documentData.pncNumber,
+      "crn" to documentData.crn,
       "most_recent_prisoner_number" to documentData.mostRecentPrisonerNumber,
       "noms_number" to documentData.nomsNumber,
       "gender" to documentData.gender,

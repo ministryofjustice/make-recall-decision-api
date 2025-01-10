@@ -128,6 +128,7 @@ internal class PartADocumentMapper(
       ethnicity = recommendation.personOnProbation?.ethnicity,
       croNumber = recommendation.personOnProbation?.croNumber,
       pncNumber = recommendation.personOnProbation?.pncNumber,
+      crn = recommendation.crn,
       mostRecentPrisonerNumber = recommendation.personOnProbation?.mostRecentPrisonerNumber,
       nomsNumber = recommendation.personOnProbation?.nomsNumber,
       indexOffenceDescription = recommendation.convictionDetail?.indexOffenceDescription,

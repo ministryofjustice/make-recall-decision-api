@@ -185,7 +185,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(139)
+      assertThat(result.size).isEqualTo(140)
       assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
       assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
       assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
@@ -237,6 +237,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["primary_language"]).isEqualTo("English")
       assertThat(result["cro_number"]).isEqualTo("123456/04A")
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
+      assertThat(result["crn"]).isEqualTo("X123456")
       assertThat(result["most_recent_prisoner_number"]).isEqualTo("G12345")
       assertThat(result["noms_number"]).isEqualTo("A1234CR")
       assertThat(result["index_offence_description"]).isEqualTo("Armed robbery")
@@ -853,6 +854,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       dateOfBirth = parse("1982-10-24"),
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
+      crn = "X123456",
       mostRecentPrisonerNumber = "G12345",
       nomsNumber = "A1234CR",
       indexOffenceDescription = "Armed robbery",
