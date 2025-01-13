@@ -62,6 +62,7 @@ internal class PpudController(
     return ppudService.details(id)
   }
 
+  // TODO: MRD-2650 - This endpoint looks like it's no longer used. Double check and remove.
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/book-recall/{nomisId}")
   @Operation(summary = "Calls PPUD Automation service to book recall.")

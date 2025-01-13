@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PpudAutomationApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
@@ -167,25 +167,23 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   fun `create sentence to ppud`() {
     // given
     val offenderId = "123"
-    val sentenceId = "456"
     val id = "12345678"
+    val createSentenceRequest = PpudCreateOrUpdateSentenceRequest(
+      custodyType = "Determinate",
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      licenceExpiryDate = LocalDate.of(2004, 1, 3),
+      mappaLevel = "1",
+      releaseDate = LocalDate.of(2004, 1, 4),
+      sentenceLength = SentenceLength(1, 1, 1),
+      sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+      sentencingCourt = "sentencing court",
+      sentencedUnder = "Duress",
+    )
 
-    ppudAutomationCreateSentenceApiMatchResponse(offenderId, id)
+    ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
 
     // when
-    val actual = ppudAutomationApiClient.createSentence(
-      offenderId,
-      PpudCreateOrUpdateSentenceRequest(
-        custodyType = "Determinate",
-        dateOfSentence = LocalDate.of(2004, 1, 2),
-        licenceExpiryDate = LocalDate.of(2004, 1, 3),
-        mappaLevel = "1",
-        releaseDate = LocalDate.of(2004, 1, 4),
-        sentenceLength = SentenceLength(1, 1, 1),
-        sentenceExpiryDate = LocalDate.of(2004, 1, 5),
-        sentencingCourt = "sentencing court",
-      ),
-    ).block()
+    val actual = ppudAutomationApiClient.createSentence(offenderId, createSentenceRequest).block()
 
     // then
     assertThat(actual?.sentence?.id, equalTo("12345678"))
@@ -196,25 +194,22 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val offenderId = "123"
     val sentenceId = "456"
-    val id = "12345678"
+    val updateSentenceRequest = PpudCreateOrUpdateSentenceRequest(
+      custodyType = "Determinate",
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      licenceExpiryDate = LocalDate.of(2004, 1, 3),
+      mappaLevel = "1",
+      releaseDate = LocalDate.of(2004, 1, 4),
+      sentenceLength = SentenceLength(1, 1, 1),
+      sentenceExpiryDate = LocalDate.of(2004, 1, 5),
+      sentencingCourt = "sentencing court",
+      sentencedUnder = "Duress",
+    )
 
-    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, id)
+    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
 
     // when
-    ppudAutomationApiClient.updateSentence(
-      offenderId,
-      sentenceId,
-      PpudCreateOrUpdateSentenceRequest(
-        custodyType = "Determinate",
-        dateOfSentence = LocalDate.of(2004, 1, 2),
-        licenceExpiryDate = LocalDate.of(2004, 1, 3),
-        mappaLevel = "1",
-        releaseDate = LocalDate.of(2004, 1, 4),
-        sentenceLength = SentenceLength(1, 1, 1),
-        sentenceExpiryDate = LocalDate.of(2004, 1, 5),
-        sentencingCourt = "sentencing court",
-      ),
-    ).block()
+    ppudAutomationApiClient.updateSentence(offenderId, sentenceId, updateSentenceRequest).block()
 
     // then
     // no exception
@@ -248,35 +243,32 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val offenderId = "123"
     val sentenceId = "456"
     val id = "12345678"
+    val updateReleaseRequest = PpudCreateOrUpdateReleaseRequest(
+      dateOfRelease = LocalDate.of(2016, 1, 1),
+      postRelease = PpudUpdatePostRelease(
+        assistantChiefOfficer = PpudContact(
+          name = "Mr A",
+          faxEmail = "1234",
+        ),
+        offenderManager = PpudContactWithTelephone(
+          name = "Mr B",
+          faxEmail = "567",
+          telephone = "1234",
+        ),
+        probationService = "Argyl",
+        spoc = PpudContact(
+          name = "Mr C",
+          faxEmail = "123",
+        ),
+      ),
+      releasedFrom = "Hull",
+      releasedUnder = "Duress",
+    )
 
-    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, id)
+    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, id)
 
     // when
-    val actual = ppudAutomationApiClient.createOrUpdateRelease(
-      offenderId,
-      sentenceId,
-      PpudCreateOrUpdateReleaseRequest(
-        dateOfRelease = LocalDate.of(2016, 1, 1),
-        postRelease = PpudUpdatePostRelease(
-          assistantChiefOfficer = PpudContact(
-            name = "Mr A",
-            faxEmail = "1234",
-          ),
-          offenderManager = PpudContactWithTelephone(
-            name = "Mr B",
-            faxEmail = "567",
-            telephone = "1234",
-          ),
-          probationService = "Argyl",
-          spoc = PpudContact(
-            name = "Mr C",
-            faxEmail = "123",
-          ),
-        ),
-        releasedFrom = "Hull",
-        releasedUnder = "Duress",
-      ),
-    ).block()
+    val actual = ppudAutomationApiClient.createOrUpdateRelease(offenderId, sentenceId, updateReleaseRequest).block()
 
     // then
     assertThat(actual?.release?.id, equalTo(id))

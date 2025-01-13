@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk
 
 import io.micrometer.core.instrument.Counter
 import org.apache.commons.lang3.StringUtils
