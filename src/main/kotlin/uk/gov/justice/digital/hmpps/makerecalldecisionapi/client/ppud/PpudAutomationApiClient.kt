@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
@@ -173,7 +173,7 @@ class PpudAutomationApiClient(
   private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> {
     return webClient
       .post()
-      .uri { builder -> builder.path(url).build() }
+      .uri(url)
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()
@@ -188,7 +188,7 @@ class PpudAutomationApiClient(
   private fun put(url: String, request: Any): Mono<ResponseEntity<Void>> {
     return webClient
       .put()
-      .uri { builder -> builder.path(url).build() }
+      .uri(url)
       .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
       .body(BodyInserters.fromValue(request))
       .retrieve()

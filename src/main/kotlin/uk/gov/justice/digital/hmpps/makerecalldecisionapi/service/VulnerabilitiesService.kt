@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ArnApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Vulnerabilities
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.VulnerabilitiesResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.VulnerabilityDetail

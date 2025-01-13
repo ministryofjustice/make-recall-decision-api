@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk
 
 import ch.qos.logback.classic.Level
 import io.micrometer.core.instrument.Counter
@@ -13,7 +13,9 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
@@ -29,7 +31,7 @@ private const val TIMEOUT_IN_SECONDS = 15L
 @ExtendWith(MockitoExtension::class)
 class ArnApiClientTest {
 
-  // We can't use @InjectMockks, as the ArnApiClient has a primitive value as
+  // We can't use @InjectMocks, as the ArnApiClient has a primitive value as
   // one of its constructor's parameters and primitive values cannot be mocked
   lateinit var arnApiClient: ArnApiClient
 
@@ -57,7 +59,7 @@ class ArnApiClientTest {
   }
 
   @Test
-  fun `handles timeout exceptions raised when retrieveing risk scores`() {
+  fun `handles timeout exceptions raised when retrieving risk scores`() {
     val crn = randomString()
     val uri = "/risks/crn/$crn/predictors/all"
     val riskScoreCall = { arnApiClient.getRiskScores(crn) }
@@ -104,8 +106,7 @@ class ArnApiClientTest {
       Mono.never(),
     )
 
-    StepVerifier
-      .withVirtualTime(arnEndpointCall)
+    StepVerifier.withVirtualTime(arnEndpointCall)
       .expectSubscription()
       .thenAwait(Duration.ofSeconds(TIMEOUT_IN_SECONDS * 2)) // we wait twice because the service
       .thenAwait(Duration.ofSeconds(TIMEOUT_IN_SECONDS * 2)) // will retry once on failure
@@ -116,12 +117,12 @@ class ArnApiClientTest {
       .verify()
   }
 
-  private fun mockWebClientCall(uri: String): WebClient.ResponseSpec {
+  private fun mockWebClientCall(uri: String): ResponseSpec {
     val requestHeadersUriSpec = mock<RequestHeadersUriSpec<*>>()
     whenever(webClient.get()).thenReturn(requestHeadersUriSpec)
-    val requestHeaderSpec = mock<WebClient.RequestHeadersSpec<*>>()
+    val requestHeaderSpec = mock<RequestHeadersSpec<*>>()
     whenever(requestHeadersUriSpec.uri(uri)).thenReturn(requestHeaderSpec)
-    val responseSpec = mock<WebClient.ResponseSpec>()
+    val responseSpec = mock<ResponseSpec>()
     whenever(requestHeaderSpec.retrieve()).thenReturn(responseSpec)
     return responseSpec
   }

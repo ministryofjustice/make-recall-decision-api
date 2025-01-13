@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.bookRecallToPpud
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
@@ -57,7 +59,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .expectBody()
       .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
       .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-      .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+      .jsonPath("$.personalDetailsOverview.dateOfBirth")
+      .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
       .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
       .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
       .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
@@ -345,6 +348,68 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `update recommendation with bookRecallToPpud data`() {
+    // SET-UP
+    userAccessAllowed(crn)
+    personalDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation()
+
+    val responseAfterCreation = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk,
+    )
+
+    assertThat(responseAfterCreation.isNull("bookRecallToPpud")).isTrue()
+
+    val bookRecallToPpud = bookRecallToPpud()
+
+    // TEST
+    updateRecommendation(
+      """
+      {
+        "bookRecallToPpud": ${bookRecallToPpud.toJsonString()}
+      }
+      """.trimIndent(),
+    )
+
+    // CHECK
+    val responseAfterUpdate = convertResponseToJSONObject(
+      webTestClient.get()
+        .uri("/recommendations/$createdRecommendationId")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .exchange()
+        .expectStatus().isOk,
+    )
+
+    val bookRecallToPpudAfterUpdate = responseAfterUpdate.getJSONObject("bookRecallToPpud")
+    with(bookRecallToPpudAfterUpdate) {
+      assertThat(get("decisionDateTime")).isEqualTo(bookRecallToPpud.decisionDateTime.toString())
+      assertThat(get("custodyType")).isEqualTo(bookRecallToPpud.custodyType)
+      assertThat(get("releasingPrison")).isEqualTo(bookRecallToPpud.releasingPrison)
+      assertThat(get("indexOffence")).isEqualTo(bookRecallToPpud.indexOffence)
+      assertThat(get("ppudSentenceId")).isEqualTo(bookRecallToPpud.ppudSentenceId)
+      assertThat(get("mappaLevel")).isEqualTo(bookRecallToPpud.mappaLevel)
+      assertThat(get("policeForce")).isEqualTo(bookRecallToPpud.policeForce)
+      assertThat(get("probationArea")).isEqualTo(bookRecallToPpud.probationArea)
+      assertThat(get("receivedDateTime")).isEqualTo(bookRecallToPpud.receivedDateTime.toString())
+      assertThat(get("sentenceDate")).isEqualTo(bookRecallToPpud.sentenceDate.toString())
+      assertThat(get("gender")).isEqualTo(bookRecallToPpud.gender)
+      assertThat(get("ethnicity")).isEqualTo(bookRecallToPpud.ethnicity)
+      assertThat(get("firstNames")).isEqualTo(bookRecallToPpud.firstNames)
+      assertThat(get("lastName")).isEqualTo(bookRecallToPpud.lastName)
+      assertThat(get("dateOfBirth")).isEqualTo(bookRecallToPpud.dateOfBirth.toString())
+      assertThat(get("cro")).isEqualTo(bookRecallToPpud.cro)
+      assertThat(get("prisonNumber")).isEqualTo(bookRecallToPpud.prisonNumber)
+      assertThat(get("legislationReleasedUnder")).isEqualTo(bookRecallToPpud.legislationReleasedUnder)
+      assertThat(get("legislationSentencedUnder")).isEqualTo(bookRecallToPpud.legislationSentencedUnder)
+      assertThat(get("minute")).isEqualTo(bookRecallToPpud.minute.toString())
+    }
   }
 
   @Test
@@ -920,7 +985,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
         .expectBody()
         .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
         .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
-        .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .jsonPath("$.personalDetailsOverview.dateOfBirth")
+        .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
         .jsonPath("$.personalDetailsOverview.crn").isEqualTo(crn)
