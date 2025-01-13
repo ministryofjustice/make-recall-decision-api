@@ -21,7 +21,7 @@ generic-service:
 
   postgresDatabaseRestore:
     enabled: true
-    timeout: 5400
+    timeout: 10800
     schedule: "30 7 * * 1-5"
     namespace_secrets:
       make-recall-decision-api-database:
