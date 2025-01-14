@@ -30,5 +30,8 @@ CVE-2016-1000027
 CVE-2023-1370
 CVE-2023-20863
 # Suppression for tomcat vulnerability affecting jsp compilation in the default servlet
-#   can be suppressed as we do not use the default servlet and haven't configured it for write either
+# can be suppressed as we do not use the default servlet and haven't configured it for write either
 CVE-2024-50379
+# Follow-up CVE-2024-50379 - this new one can be suppressed, as we use Java version 21, where no further
+# configuration is required to avoid the issue
+CVE-2024-56337
