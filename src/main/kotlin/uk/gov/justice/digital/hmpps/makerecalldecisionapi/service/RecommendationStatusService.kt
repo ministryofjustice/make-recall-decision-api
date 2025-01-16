@@ -11,17 +11,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.Recommendati
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.toRecommendationStatusResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationHistoryRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
-import java.util.Collections
 
 @Transactional
 @Service
 internal class RecommendationStatusService(
   val recommendationStatusRepository: RecommendationStatusRepository,
-  val recommendationHistoryRepository: RecommendationHistoryRepository? = null,
   val recommendationRepository: RecommendationRepository? = null,
   val deliusClient: DeliusClient? = null,
 ) {
@@ -62,7 +59,6 @@ internal class RecommendationStatusService(
       recommendationId = recommendationId,
       userId = userId,
       createdByUserName = readableNameOfUser,
-      recommendationHistoryId = findRecHistoryId(recommendationId),
       email = fetchEmailAndPersistDetails(recommendationStatusRequest, userId),
     )
     return saveAllRecommendationStatuses(statuses)
@@ -82,20 +78,6 @@ internal class RecommendationStatusService(
         null
       }
     return emailAddress
-  }
-
-  private fun findRecHistoryId(recommendationId: Long): Long? {
-    val recommendationHistories =
-      recommendationHistoryRepository?.findByrecommendationId(recommendationId = recommendationId)
-    if (recommendationHistories != null) {
-      Collections.sort(recommendationHistories)
-    }
-    val recommendationHistoryId = if (recommendationHistories?.isNotEmpty() == true) {
-      recommendationHistories[0].id
-    } else {
-      null
-    }
-    return recommendationHistoryId
   }
 
   private fun deactivateOldStatus(
