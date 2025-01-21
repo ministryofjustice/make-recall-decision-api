@@ -20,7 +20,6 @@ data class RecommendationStatusEntity(
   var modifiedByUserFullName: String? = null,
   var modified: String? = null,
   var name: String?,
-  var recommendationHistoryId: Long? = null,
   var active: Boolean,
   var emailAddress: String? = null,
 ) : Comparable<RecommendationStatusEntity> {
@@ -41,6 +40,5 @@ fun RecommendationStatusEntity.toRecommendationStatusResponse(): RecommendationS
     modified = modified,
     modifiedBy = modifiedBy,
     modifiedByUserFullName = modifiedByUserFullName,
-    recommendationHistoryId = recommendationHistoryId,
     emailAddress = emailAddress,
   )
