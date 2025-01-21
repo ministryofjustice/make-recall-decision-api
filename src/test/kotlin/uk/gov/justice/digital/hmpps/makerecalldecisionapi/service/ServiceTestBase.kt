@@ -110,6 +110,8 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var templateReplacementService: TemplateReplacementService
 
+  protected lateinit var subjectAccessRequestService: SubjectAccessRequestService
+
   private lateinit var partADocumentMapper: PartADocumentMapper
 
   private lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
@@ -144,6 +146,7 @@ internal abstract class ServiceTestBase {
     riskService =
       RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService, riskScoreConverter)
     createAndVaryALicenceService = CreateAndVaryALicenceService(cvlApiClient)
+    subjectAccessRequestService = SubjectAccessRequestService(recommendationRepository)
   }
 
   fun assessmentResponse(crn: String): AssessmentsResponse {
