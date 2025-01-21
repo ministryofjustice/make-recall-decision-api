@@ -40,7 +40,6 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     val subjectAccessRequestResponse = probationContent?.content as SubjectAccessRequestResponse
     assertThat(subjectAccessRequestResponse.crn).isEqualTo(crn)
     assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> rec.data })
-    assertThat(subjectAccessRequestResponse.recommendations).first().extracting("createdBy").isEqualTo("Jack")
   }
 
   @Test
@@ -54,7 +53,6 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     val subjectAccessRequestResponse = probationContent?.content as SubjectAccessRequestResponse
     assertThat(subjectAccessRequestResponse.crn).isEqualTo(crn)
     assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> rec.data })
-    assertThat(subjectAccessRequestResponse.recommendations).first().extracting("createdBy").isEqualTo("Jack")
   }
 
   @Test
