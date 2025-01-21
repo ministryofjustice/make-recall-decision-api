@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import java.time.LocalDate
 
 @Repository
 interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
@@ -26,6 +27,20 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
     nativeQuery = true,
   )
   fun findByCrn(@Param("crn") crn: String): List<RecommendationEntity>
+
+  @Query(
+    value = "SELECT t.* FROM make_recall_decision.public.recommendations t " +
+      "WHERE t.data ->> 'crn' = :crn " +
+      "AND t.deleted = false " +
+      "AND (data ->> 'createdDate')::timestamp >= COALESCE(:fromDate, (data ->> 'createdDate')::timestamp) " +
+      "AND (data ->> 'createdDate')::timestamp <= COALESCE(:toDate, (data ->> 'createdDate')::timestamp) ",
+    nativeQuery = true,
+  )
+  fun findByCrnAndCreatedDate(
+    @Param("crn") crn: String,
+    @Param("fromDate") fromDate: LocalDate?,
+    @Param("toDate") toDate: LocalDate?,
+  ): List<RecommendationEntity>
 
   @Transactional
   @Modifying
