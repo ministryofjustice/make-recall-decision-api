@@ -8,7 +8,6 @@ services:
     container_name: make-recall-decision-api
     ports:
       - "8080:8080"
-      - "8081:8081"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
     environment:
