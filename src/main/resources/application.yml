@@ -105,8 +105,6 @@ housekeeping:
   sendDomainEvents: false
 
 management:
-  server:
-    port: 8081
   endpoints:
     enabled-by-default: false
     web:
