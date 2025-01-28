@@ -190,7 +190,7 @@ generic-service:
     enabled: true
     scrapeInterval: 15s
     metricsPath: /prometheus
-    metricsPort: 8081
+    metricsPort: 8080
 
 generic-prometheus-alerts:
   targetApplication: make-recall-decision-api

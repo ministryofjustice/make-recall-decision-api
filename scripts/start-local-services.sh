@@ -85,7 +85,7 @@ function wait_for {
 
 wait_for "http://localhost:9090/auth/health/ping" "${AUTH_NAME}"
 wait_for "http://localhost:3000/ping" "${UI_NAME}"
-wait_for "http://localhost:8081/health/readiness" "${API_NAME}"
+wait_for "http://localhost:8080/health/readiness" "${API_NAME}"
 wait_for "http://localhost:9091/health" "gotenberg"
 
 printf "\n\nAll services started.\n\n"
