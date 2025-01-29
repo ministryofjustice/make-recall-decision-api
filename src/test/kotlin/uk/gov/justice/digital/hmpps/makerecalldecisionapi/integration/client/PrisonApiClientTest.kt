@@ -113,29 +113,15 @@ class PrisonApiClientTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `retrieve agency, including inactive`() {
-    val request = HttpRequest.request().withPath("/api/agencies/MDI%3FactiveOnly=false")
+  fun `retrieve agency`() {
+    val request = HttpRequest.request().withPath("/api/agencies/MDI")
 
     prisonApi.`when`(request).respond(
       HttpResponse.response().withContentType(MediaType.APPLICATION_JSON)
         .withBody(agencyResponse("MDI")),
     )
 
-    val agency = prisonApiClient.retrieveAgency("MDI", false).block()
-
-    assertThat(agency?.agencyId, equalTo("MDI"))
-  }
-
-  @Test
-  fun `retrieve agency, active only`() {
-    val request = HttpRequest.request().withPath("/api/agencies/MDI%3FactiveOnly=true")
-
-    prisonApi.`when`(request).respond(
-      HttpResponse.response().withContentType(MediaType.APPLICATION_JSON)
-        .withBody(agencyResponse("MDI")),
-    )
-
-    val agency = prisonApiClient.retrieveAgency("MDI", true).block()
+    val agency = prisonApiClient.retrieveAgency("MDI").block()
 
     assertThat(agency?.agencyId, equalTo("MDI"))
   }

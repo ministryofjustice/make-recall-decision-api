@@ -110,12 +110,12 @@ class PrisonApiClient(
     }
   }
 
-  fun retrieveAgency(agencyId: String, activeOnly: Boolean = false): Mono<Agency> {
+  fun retrieveAgency(agencyId: String): Mono<Agency> {
     val responseType = object : ParameterizedTypeReference<Agency>() {}
     return webClient
       .get()
       .uri { builder ->
-        builder.path("/api/agencies/$agencyId?activeOnly=$activeOnly").build()
+        builder.path("/api/agencies/$agencyId").queryParam("activeOnly", false).build()
       }
       .retrieve()
       .onStatus(

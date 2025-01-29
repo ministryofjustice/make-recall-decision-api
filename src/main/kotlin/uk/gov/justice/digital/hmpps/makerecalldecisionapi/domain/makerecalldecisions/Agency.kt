@@ -3,6 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 data class Agency(
   val agencyId: String? = null,
   val description: String? = null,
-  val formattedDescription: String? = null,
+  val longDescription: String? = null,
   val agencyType: String? = null,
 )

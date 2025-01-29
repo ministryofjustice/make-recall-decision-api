@@ -51,7 +51,7 @@ internal class PrisonerApiService(
           val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
           val prisonDescription = movement?.releaseFromPrisonId?.let {
             try {
-              prisonApiClient.retrieveAgency(movement.releaseFromPrisonId, activeOnly = false).block()?.formattedDescription
+              prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
             } catch (notFoundEx: NotFoundException) {
               log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
               null

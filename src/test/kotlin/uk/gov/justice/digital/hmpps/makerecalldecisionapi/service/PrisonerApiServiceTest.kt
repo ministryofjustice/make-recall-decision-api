@@ -319,8 +319,10 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
 
     val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
 
-    val offences = result.get(0).offences
+    val offences = result[0].offences
     assertThat(offences.size).isGreaterThan(0)
+    assertThat(offences[0].offenceDescription).isEqualTo("ABC")
+    assertThat(result[0].releasingPrison).isNull()
   }
 
   @Test
@@ -370,7 +372,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     given(prisonApiClient.retrieveAgency("A1234")).willReturn(
       Mono.fromCallable {
         Agency(
-          formattedDescription = "Hogwarts",
+          longDescription = "Hogwarts",
         )
       },
     )

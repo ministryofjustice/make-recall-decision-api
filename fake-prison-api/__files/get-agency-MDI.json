@@ -1,22 +1,12 @@
 {
   "agencyId": "MDI",
-  "description": "MOORLAND (HMP & YOI)",
-  "formattedDescription": "Moorland (HMP & YOI)",
+  "description": "Moorland (HMP & YOI)",
+  "longDescription": "Moorland (HMP & YOI)",
   "agencyType": "INST",
-  "addressType": "string",
-  "premise": "string",
-  "locality": "string",
-  "city": "string",
-  "country": "string",
-  "postCode": "string",
-  "phones": [
-    {
-      "phoneId": 2234232,
-      "number": "0114 2345678",
-      "type": "TEL",
-      "ext": "123"
-    }
-  ],
+  "active": true,
+  "courtType": "CC",
+  "courtTypeDescription": "Crown Court",
+  "deactivationDate": "2012-01-12",
   "addresses": [
     {
       "addressId": 543524,
@@ -26,12 +16,16 @@
       "street": "Slinn Street",
       "locality": "Brincliffe",
       "town": "Liverpool",
+      "townCode": "17743",
       "postalCode": "LI1 5TH",
-      "county": "HEREFORD",
-      "country": "ENG",
+      "county": "Herefordshire",
+      "countyCode": "HEREFORD",
+      "country": "England",
+      "countryCode": "ENG",
       "comment": "This is a comment text",
-      "primary": false,
-      "noFixedAddress": false,
+      "primary": "Y",
+      "mail": "Y",
+      "noFixedAddress": "N",
       "startDate": "2005-05-12",
       "endDate": "2021-02-12",
       "phones": [
@@ -51,5 +45,26 @@
         }
       ]
     }
-  ]
+  ],
+  "phones": [
+    {
+      "phoneId": 2234232,
+      "number": "0114 2345678",
+      "type": "TEL",
+      "ext": "123"
+    }
+  ],
+  "emails": [
+    {
+      "email": "string"
+    }
+  ],
+  "area": {
+    "code": "code",
+    "description": "description"
+  },
+  "region": {
+    "code": "code",
+    "description": "description"
+  }
 }
