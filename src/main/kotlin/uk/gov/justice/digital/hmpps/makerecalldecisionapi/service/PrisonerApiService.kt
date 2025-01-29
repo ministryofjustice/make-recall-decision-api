@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import java.time.LocalDate
 import java.util.Base64
 
@@ -44,19 +45,25 @@ internal class PrisonerApiService(
       prisonApiClient.retrievePrisonTimelines(nomsId),
     )!!.prisonPeriod
       .flatMap { t ->
-        prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map {
+        prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentencesAndOffences ->
           val lastDateOutOfPrison =
             t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
           val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
-          val prisonDescription =
-            movement?.releaseFromPrisonId?.let { prisonApiClient.retrieveAgency(it).block()?.formattedDescription }
+          val prisonDescription = movement?.releaseFromPrisonId?.let {
+            try {
+              prisonApiClient.retrieveAgency(movement.releaseFromPrisonId, activeOnly = false).block()?.formattedDescription
+            } catch (notFoundEx: NotFoundException) {
+              log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
+              null
+            }
+          }
 
           val offender = prisonApiClient.retrieveOffender(nomsId).block()
-          it.copy(
+          sentencesAndOffences.copy(
             releaseDate = movement?.dateOutOfPrison,
             releasingPrison = prisonDescription,
             licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
-            offences = it.offences.sortedBy { it.offenceDescription },
+            offences = sentencesAndOffences.offences.sortedBy { it.offenceDescription },
           )
         }
       }
