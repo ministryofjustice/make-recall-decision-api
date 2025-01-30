@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -263,6 +264,68 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `prison movements which refer to prisonIds referencing inactive prisons are catered for`() {
+    val nomsId = "AB234A"
+
+    val response = mock(PrisonTimelineResponse::class.java)
+
+    given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    given(response.prisonPeriod).willReturn(
+      listOf(
+        PrisonPeriod(
+          bookingId = 123,
+          movementDates = listOf(
+            Movement(releaseFromPrisonId = "MDI"),
+          ),
+        ),
+      ),
+    )
+
+    given(prisonApiClient.retrieveSentencesAndOffences(123)).willReturn(
+      Mono.fromCallable {
+        listOf(
+          Sentence(
+            bookingId = 123,
+            courtDescription = "DEF",
+            sentenceDate = LocalDate.now().minusMonths(3).plusDays(2),
+            sentenceEndDate = LocalDate.now(),
+
+            offences = listOf(
+              SentenceOffence(offenceDescription = "DEF"),
+              SentenceOffence(offenceDescription = "ABC"),
+              SentenceOffence(offenceDescription = "NMO"),
+              SentenceOffence(offenceDescription = "GHI"),
+            ),
+          ),
+        )
+      },
+    )
+
+    given(prisonApiClient.retrieveAgency("MDI"))
+      .willThrow(NotFoundException("Prison api returned agency not found for agency id MDI"))
+
+    val offenderResponse = mock(Offender::class.java)
+
+    given(prisonApiClient.retrieveOffender(any())).willReturn(
+      Mono.fromCallable {
+        offenderResponse
+      },
+    )
+
+    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+
+    val offences = result[0].offences
+    assertThat(offences.size).isGreaterThan(0)
+    assertThat(offences[0].offenceDescription).isEqualTo("ABC")
+    assertThat(result[0].releasingPrison).isNull()
+  }
+
+  @Test
   fun `call retrieve sentences with additional details`() {
     val nomsId = "AB234A"
     val referenceDate = LocalDateTime.now()
@@ -309,7 +372,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     given(prisonApiClient.retrieveAgency("A1234")).willReturn(
       Mono.fromCallable {
         Agency(
-          formattedDescription = "Hogwarts",
+          longDescription = "Hogwarts",
         )
       },
     )

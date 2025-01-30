@@ -115,7 +115,7 @@ class PrisonApiClient(
     return webClient
       .get()
       .uri { builder ->
-        builder.path("/api/agencies/prison/" + agencyId).build()
+        builder.path("/api/agencies/$agencyId").queryParam("activeOnly", false).build()
       }
       .retrieve()
       .onStatus(

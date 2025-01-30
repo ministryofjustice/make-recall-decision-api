@@ -114,7 +114,9 @@ class PrisonApiClientTest : IntegrationTestBase() {
 
   @Test
   fun `retrieve agency`() {
-    val request = HttpRequest.request().withPath("/api/agencies/prison/MDI")
+    val request = HttpRequest.request()
+      .withPath("/api/agencies/MDI")
+      .withQueryStringParameter("activeOnly", "false")
 
     prisonApi.`when`(request).respond(
       HttpResponse.response().withContentType(MediaType.APPLICATION_JSON)
@@ -128,7 +130,7 @@ class PrisonApiClientTest : IntegrationTestBase() {
 
   @Test
   fun `agency not found`() {
-    val request = HttpRequest.request().withPath("/api/agencies/prison/MDI")
+    val request = HttpRequest.request().withPath("/api/agencies/MDI")
 
     prisonApi.`when`(request).respond(
       HttpResponse.response().withStatusCode(404),
