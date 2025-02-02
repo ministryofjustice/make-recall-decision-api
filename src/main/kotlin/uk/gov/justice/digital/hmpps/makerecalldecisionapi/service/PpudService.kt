@@ -6,8 +6,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutoma
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
@@ -52,13 +50,6 @@ internal class PpudService(
   fun details(id: String): PpudDetailsResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.details(id),
-    )
-    return response!!
-  }
-
-  fun bookToPpud(nomisId: String, payload: PpudBookRecall): PpudBookRecallResponse {
-    val response = getValueAndHandleWrappedException(
-      ppudAutomationApiClient.bookToPpud(nomisId, payload),
     )
     return response!!
   }
