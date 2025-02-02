@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
@@ -69,36 +68,6 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
 
     // then
     assertThat(actual?.offender?.id, equalTo(id))
-  }
-
-  @Test
-  fun `book recall to ppud`() {
-    // given
-    val id = "12345678"
-    val nomsId = "AB234A"
-
-    ppudAutomationBookRecallApiMatchResponse(nomsId, id)
-
-    // when
-    val actual = ppudAutomationApiClient.bookToPpud(
-      nomsId,
-      PpudBookRecall(
-        LocalDateTime.of(2023, 11, 1, 12, 5, 10),
-        isInCustody = true,
-        mappaLevel = "Level 3 – MAPPP",
-        policeForce = "Kent Police",
-        probationArea = "Merseyside",
-        recommendedTo = PpudUser("Consider a Recall Test", "Recall 1"),
-        receivedDateTime = LocalDateTime.of(2023, 11, 20, 11, 30),
-        releaseDate = LocalDate.of(2023, 11, 5),
-        riskOfContrabandDetails = "Smuggling in cigarettes",
-        riskOfSeriousHarmLevel = "Low",
-        sentenceDate = LocalDate.of(2023, 11, 4),
-      ),
-    ).block()
-
-    // then
-    assertThat(actual?.recall?.id, equalTo("12345678"))
   }
 
   @Test
