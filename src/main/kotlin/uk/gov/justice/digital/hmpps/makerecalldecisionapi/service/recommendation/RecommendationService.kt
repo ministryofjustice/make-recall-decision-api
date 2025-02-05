@@ -187,7 +187,7 @@ internal class RecommendationService(
 
   private fun getRecommendationResponseById(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
-    return buildRecommendationResponse(recommendationEntity)
+    return recommendationConverter.convert(recommendationEntity)
   }
 
   fun getLatestCompleteRecommendationOverview(crn: String): RecommendationsResponse {

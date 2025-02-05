@@ -45,7 +45,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
@@ -2110,7 +2112,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationStatusRepository,
         mockPersonDetailService,
         PrisonerApiService(prisonApiClient),
-        templateReplacementService,
+        templateReplacementServiceMocked,
         userAccessValidator,
         riskServiceMocked,
         deliusClient,
@@ -2118,11 +2120,22 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationConverter,
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+      val recommendationId = existingRecommendation.id
 
-      given(recommendationRepository.findById(any()))
+      given(recommendationRepository.findById(recommendationId))
         .willReturn(Optional.of(existingRecommendation))
 
-      val result =
+      val recommendationResponse = RecommendationResponse(crn = crn)
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(recommendationResponse)
+
+      val letterContent = LetterContent()
+      given(templateReplacementServiceMocked.generateLetterContentForPreviewFromRecommendation(recommendationResponse))
+        .willReturn(letterContent)
+
+      val expectedDocumentResponse = DocumentResponse(letterContent = letterContent)
+
+      val actualDocumentResponse =
         recommendationService.generateDntr(
           1L,
           "john.smith",
@@ -2132,14 +2145,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           FeatureFlags(),
         )
 
-      assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
-      assertThat(result.letterContent?.letterAddress).isEqualTo(
-        "Jim Long\n" +
-          "Line 1 address\n" +
-          "Line 2 address\n" +
-          "Town address\n" +
-          "TS1 1ST",
-      )
+      assertThat(actualDocumentResponse).isEqualTo(expectedDocumentResponse)
     }
   }
 
