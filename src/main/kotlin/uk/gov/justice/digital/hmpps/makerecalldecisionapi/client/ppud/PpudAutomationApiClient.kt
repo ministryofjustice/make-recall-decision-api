@@ -12,8 +12,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
@@ -51,10 +49,6 @@ class PpudAutomationApiClient(
 
   fun details(id: String): Mono<PpudDetailsResponse> {
     return get("/offender/$id", object : ParameterizedTypeReference<PpudDetailsResponse>() {})
-  }
-
-  fun bookToPpud(nomisId: String, request: PpudBookRecall): Mono<PpudBookRecallResponse> {
-    return post("/offender/$nomisId/recall", request, object : ParameterizedTypeReference<PpudBookRecallResponse>() {})
   }
 
   fun createOffender(request: PpudCreateOffenderRequest): Mono<PpudCreateOffenderResponse> {

@@ -21,8 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutoma
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
@@ -96,23 +94,6 @@ internal class PpudServiceTest : ServiceTestBase() {
     )
 
     val result = ppudService.details("12345678")
-
-    assertThat(result).isEqualTo(response)
-  }
-
-  @Test
-  fun `call book to ppud`() {
-    val request = mock(PpudBookRecall::class.java)
-
-    val response = mock(PpudBookRecallResponse::class.java)
-
-    given(ppudAutomationApiClient.bookToPpud("123", request)).willReturn(
-      Mono.fromCallable {
-        response
-      },
-    )
-
-    val result = ppudService.bookToPpud("123", request)
 
     assertThat(result).isEqualTo(response)
   }

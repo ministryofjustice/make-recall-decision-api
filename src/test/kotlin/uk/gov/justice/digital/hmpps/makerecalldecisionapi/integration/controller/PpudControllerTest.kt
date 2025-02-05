@@ -11,7 +11,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
@@ -20,7 +19,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
@@ -99,30 +97,6 @@ class PpudControllerTest : IntegrationTestBase() {
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
       .exchange()
-
-  @Test
-  fun `book recall`() {
-    ppudAutomationBookRecallApiMatchResponse("A1234AB", "12345678")
-    runTest {
-      postToBookRecall(
-        "A1234AB",
-        PpudBookRecall(
-          LocalDateTime.of(2023, 11, 1, 12, 5, 10),
-          isInCustody = true,
-          mappaLevel = "Level 3 – MAPPP",
-          policeForce = "Kent Police",
-          probationArea = "Merseyside",
-          recommendedTo = PpudUser("Consider a Recall Test", "Recall 1"),
-          receivedDateTime = LocalDateTime.of(2023, 11, 20, 11, 30),
-          releaseDate = LocalDate.of(2023, 11, 5),
-          riskOfContrabandDetails = "Smuggling in cigarettes",
-          riskOfSeriousHarmLevel = "Low",
-          sentenceDate = LocalDate.of(2023, 11, 4),
-        ),
-      )
-        .expectStatus().isOk
-    }
-  }
 
   @Test
   fun `ppud create offender`() {
@@ -499,14 +473,6 @@ class PpudControllerTest : IntegrationTestBase() {
   private fun postToSearchActiveUsers(requestBody: PpudUserSearchRequest): WebTestClient.ResponseSpec =
     webTestClient.post()
       .uri("/ppud/user/search")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
-
-  private fun postToBookRecall(nomisId: String, requestBody: PpudBookRecall): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/book-recall/$nomisId")
       .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
       .contentType(MediaType.APPLICATION_JSON)
       .body(BodyInserters.fromValue(requestBody))
