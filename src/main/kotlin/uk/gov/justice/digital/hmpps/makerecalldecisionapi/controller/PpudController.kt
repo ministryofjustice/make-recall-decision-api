@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecall
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudBookRecallResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
@@ -60,17 +58,6 @@ internal class PpudController(
     @PathVariable("id") id: String,
   ): PpudDetailsResponse {
     return ppudService.details(id)
-  }
-
-  // TODO: MRD-2650 - This endpoint looks like it's no longer used. Double check and remove.
-  @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PostMapping("/ppud/book-recall/{nomisId}")
-  @Operation(summary = "Calls PPUD Automation service to book recall.")
-  suspend fun bookRecall(
-    @PathVariable("nomisId") nomisId: String,
-    @RequestBody request: PpudBookRecall,
-  ): PpudBookRecallResponse {
-    return ppudService.bookToPpud(nomisId, request)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
