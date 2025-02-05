@@ -12,7 +12,6 @@ class RecommendationConverter(
   /**
    * Converts a RecommendationEntity to a RecommendationResponse
    */
-  // Copy of RecommendationService.buildRecommendationResponse
   fun convert(recommendationEntity: RecommendationEntity): RecommendationResponse {
     return RecommendationResponse(
       id = recommendationEntity.id,

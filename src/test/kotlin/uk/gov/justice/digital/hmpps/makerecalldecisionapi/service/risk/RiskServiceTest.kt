@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiSer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
 
@@ -49,6 +50,9 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Mock
   lateinit var riskScoreConverter: RiskScoreConverter
 
+  @Mock
+  private lateinit var recommendationConverter: RecommendationConverter
+
   @BeforeEach
   fun setup() {
     recommendationService = RecommendationService(
@@ -61,6 +65,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       null,
       deliusClient,
       null,
+      recommendationConverter,
     )
     riskService =
       RiskService(deliusClient, arnApiClient, userAccessValidator, recommendationService, riskScoreConverter)

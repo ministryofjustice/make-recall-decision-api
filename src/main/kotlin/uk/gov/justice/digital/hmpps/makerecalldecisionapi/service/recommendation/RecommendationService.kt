@@ -66,6 +66,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiSer
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.StaticRecommendationDataWrapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessValidator
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
@@ -90,6 +91,7 @@ internal class RecommendationService(
   @Lazy private val riskService: RiskService?,
   private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
+  private val recommendationConverter: RecommendationConverter,
   @Value("\${mrd.url}") private val mrdUrl: String? = null,
   @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
 ) {
@@ -172,7 +174,7 @@ internal class RecommendationService(
     if (recommendationEntity.deleted) {
       throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
     }
-    val recommendationResponse = buildRecommendationResponse(recommendationEntity)
+    val recommendationResponse = recommendationConverter.convert(recommendationEntity)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       RecommendationResponse(
@@ -183,7 +185,6 @@ internal class RecommendationService(
     }
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   private fun getRecommendationResponseById(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
     return buildRecommendationResponse(recommendationEntity)
@@ -220,7 +221,6 @@ internal class RecommendationService(
       }.minOrNull()
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   private fun getRecommendationEntityById(recommendationId: Long): RecommendationEntity {
     return recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
@@ -316,7 +316,6 @@ internal class RecommendationService(
 
   @Deprecated("Now using updateRecommendation")
   @kotlin.Throws(Exception::class)
-  @OptIn(ExperimentalStdlibApi::class)
   suspend fun updateRecommendationWithManagerRecallDecision(
     jsonRequest: JsonNode?,
     recommendationId: Long,
@@ -519,7 +518,6 @@ internal class RecommendationService(
     log.info("Sent domain event for ${existingRecommendationEntity.data.crn} on delete a recommendation made asynchronously for recommendationId $recommendationId")
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   private fun updateAndSaveRecommendation(
     existingRecommendationEntity: RecommendationEntity,
     userId: String?,
@@ -868,8 +866,7 @@ internal class RecommendationService(
     }
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
-  suspend fun generateDntrPreview(recommendationId: Long): DocumentResponse {
+  private suspend fun generateDntrPreview(recommendationId: Long): DocumentResponse {
     val recommendationResponse = getRecommendationResponseById(recommendationId)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
@@ -883,7 +880,6 @@ internal class RecommendationService(
     }
   }
 
-  @OptIn(ExperimentalStdlibApi::class)
   suspend fun generatePartA(
     recommendationId: Long,
     userId: String?,

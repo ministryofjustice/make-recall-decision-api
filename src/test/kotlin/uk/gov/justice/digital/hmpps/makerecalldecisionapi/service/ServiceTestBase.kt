@@ -57,6 +57,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
@@ -92,6 +93,9 @@ internal abstract class ServiceTestBase {
 
   @Mock
   private lateinit var riskScoreConverter: RiskScoreConverter
+
+  @Mock
+  private lateinit var recommendationConverter: RecommendationConverter
 
   protected lateinit var personDetailsService: PersonDetailsService
 
@@ -142,6 +146,7 @@ internal abstract class ServiceTestBase {
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
       deliusClient,
       null,
+      recommendationConverter,
     )
     recommendationStatusService = RecommendationStatusService(recommendationStatusRepository, null)
     riskService =
