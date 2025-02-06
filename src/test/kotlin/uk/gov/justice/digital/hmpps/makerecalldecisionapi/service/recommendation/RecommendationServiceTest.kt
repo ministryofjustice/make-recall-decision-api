@@ -89,7 +89,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
