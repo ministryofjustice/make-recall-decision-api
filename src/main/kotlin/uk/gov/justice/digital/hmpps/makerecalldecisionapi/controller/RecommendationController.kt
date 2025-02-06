@@ -105,6 +105,7 @@ internal class RecommendationController(
     return recommendationService.getRecommendation(recommendationId)
   }
 
+  // TODO MRD-2650 this endpoint seems to be unused, should be able to remove it
   @Deprecated("Now using updateRecommendation endpoint")
   @PatchMapping("/recommendations/{recommendationId}/manager-recall-decision")
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_SPO')")

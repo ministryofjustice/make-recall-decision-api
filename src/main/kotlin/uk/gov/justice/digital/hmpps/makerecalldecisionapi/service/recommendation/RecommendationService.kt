@@ -528,7 +528,7 @@ internal class RecommendationService(
       RecommendationResponse(userAccessResponse = userAccessResponse)
     } else {
       val savedRecommendation = saveRecommendation(existingRecommendationEntity, userId, readableUserName)
-      buildRecommendationResponse(savedRecommendation)
+      recommendationConverter.convert(savedRecommendation)
     }
   }
 
