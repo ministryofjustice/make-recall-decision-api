@@ -122,7 +122,6 @@ internal class PpudService(
           receivedDateTime = convertToLondonTimezone(createRecallRequest.receivedDateTime),
           recommendedTo = ppudUser,
           riskOfContrabandDetails = createRecallRequest.riskOfContrabandDetails,
-          riskOfSeriousHarmLevel = createRecallRequest.riskOfSeriousHarmLevel,
         ),
       ),
     )
