@@ -24,6 +24,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudCreateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
@@ -99,125 +102,86 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create offender`() {
-    ppudAutomationCreateOffenderApiMatchResponse("12345678")
+    val ppudCreateOffenderRequest = PpudCreateOffenderRequest(
+      croNumber = "A/2342",
+      nomsId = "A897",
+      prisonNumber = "123",
+      firstNames = "Spuddy",
+      familyName = "Spiffens",
+      indexOffence = "bad language",
+      ethnicity = "W",
+      gender = "M",
+      mappaLevel = "",
+      custodyType = "Determinate",
+      isInCustody = true,
+      dateOfBirth = LocalDate.of(2004, 1, 1),
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      additionalAddresses = listOf(),
+      address = PpudAddress(
+        premises = "",
+        line1 = "No Fixed Abode",
+        line2 = "",
+        postcode = "",
+        phoneNumber = "",
+      ),
+    )
+    ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
-      postToCreateOffender(
-        PpudCreateOffenderRequest(
-          croNumber = "A/2342",
-          nomsId = "A897",
-          prisonNumber = "123",
-          firstNames = "Spuddy",
-          familyName = "Spiffens",
-          indexOffence = "bad language",
-          ethnicity = "W",
-          gender = "M",
-          mappaLevel = "",
-          custodyType = "Determinate",
-          isInCustody = true,
-          dateOfBirth = LocalDate.of(2004, 1, 1),
-          dateOfSentence = LocalDate.of(2004, 1, 2),
-          additionalAddresses = listOf(),
-          address = PpudAddress(
-            premises = "",
-            line1 = "No Fixed Abode",
-            line2 = "",
-            postcode = "",
-            phoneNumber = "",
-          ),
-        ),
-      )
+      postToCreateOffender(ppudCreateOffenderRequest)
         .expectStatus().isOk
     }
   }
 
   @Test
   fun `ppud create offender accepts null CRO Number and NOMIS ID`() {
-    ppudAutomationCreateOffenderApiMatchResponse("12345678")
-    val requestBody = """
-      {
-        "croNumber": null,
-        "nomsId": null,
-        "prisonNumber": "123",
-        "firstNames": "Peter",
-        "familyName": "Parker",
-        "ethnicity": "W",
-        "gender": "M",
-        "isInCustody": true,
-        "mappaLevel": "",
-        "custodyType": "Determinate",
-        "dateOfBirth": "2004-01-01",
-        "additionalAddresses": [],
-        "address": {
-          "premises": "",
-          "line1": "No Fixed Abode",
-          "line2": "",
-          "postcode": "",
-          "phoneNumber": ""
-         }
-      }
-    """.trimIndent()
+    val ppudCreateOffenderRequest = ppudCreateOffenderRequest(
+      croNumber = null,
+      nomsId = null,
+    )
+    ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
-      postToCreateOffender(requestBody)
+      postToCreateOffender(ppudCreateOffenderRequest.toJsonString())
         .expectStatus().isOk
     }
   }
 
   @Test
   fun `ppud update offender`() {
-    ppudAutomationUpdateOffenderApiMatchResponse("12345678")
+    val ppudUpdateOffenderRequest = PpudUpdateOffenderRequest(
+      croNumber = "A/2342",
+      nomsId = "A897",
+      prisonNumber = "123",
+      firstNames = "Spuddy",
+      familyName = "Spiffens",
+      ethnicity = "W",
+      gender = "M",
+      isInCustody = true,
+      dateOfBirth = LocalDate.of(2004, 1, 1),
+      additionalAddresses = listOf(),
+      address = PpudAddress(
+        premises = "",
+        line1 = "No Fixed Abode",
+        line2 = "",
+        postcode = "",
+        phoneNumber = "",
+      ),
+    )
+    ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {
-      putToUpdateOffender(
-        "12345678",
-        PpudUpdateOffenderRequest(
-          croNumber = "A/2342",
-          nomsId = "A897",
-          prisonNumber = "123",
-          firstNames = "Spuddy",
-          familyName = "Spiffens",
-          ethnicity = "W",
-          gender = "M",
-          isInCustody = true,
-          dateOfBirth = LocalDate.of(2004, 1, 1),
-          additionalAddresses = listOf(),
-          address = PpudAddress(
-            premises = "",
-            line1 = "No Fixed Abode",
-            line2 = "",
-            postcode = "",
-            phoneNumber = "",
-          ),
-        ),
-      )
+      putToUpdateOffender("12345678", ppudUpdateOffenderRequest)
         .expectStatus().isOk
     }
   }
 
   @Test
   fun `ppud update offender accepts null CRO Number and NOMS ID`() {
-    ppudAutomationUpdateOffenderApiMatchResponse("12345678")
-    val requestBody = """
-      {
-        "croNumber": null,
-        "nomsId": null,
-        "prisonNumber": "123",
-        "firstNames": "Peter",
-        "familyName": "Parker",
-        "ethnicity": "W",
-        "gender": "M",
-        "isInCustody": true,
-        "dateOfBirth": "2004-01-01",
-        "additionalAddresses": [],
-        "address": {
-          "premises": "",
-          "line1": "No Fixed Abode",
-          "line2": "",
-          "postcode": "",
-          "phoneNumber": ""
-        }
-      }
-    """.trimIndent()
+    val ppudUpdateOffenderRequest = ppudUpdateOffenderRequest(
+      croNumber = null,
+      nomsId = null,
+    )
+    ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {
-      putToUpdateOffender("12345678", requestBody)
+      putToUpdateOffender("12345678", ppudUpdateOffenderRequest.toJsonString())
         .expectStatus().isOk
     }
   }

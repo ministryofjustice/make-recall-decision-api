@@ -74,29 +74,28 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   fun `create offender to ppud`() {
     // given
     val id = "12345678"
+    val ppudCreateOffenderRequest = PpudCreateOffenderRequest(
+      croNumber = "A/2342",
+      nomsId = "A897",
+      prisonNumber = "123",
+      firstNames = "Spuddy",
+      familyName = "Spiffens",
+      indexOffence = "bad language",
+      ethnicity = "W",
+      gender = "M",
+      mappaLevel = "",
+      custodyType = "Determinate",
+      isInCustody = true,
+      dateOfBirth = LocalDate.of(2004, 1, 1),
+      dateOfSentence = LocalDate.of(2004, 1, 2),
+      additionalAddresses = listOf(),
+      address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+    )
 
-    ppudAutomationCreateOffenderApiMatchResponse(id)
+    ppudAutomationCreateOffenderApiMatchResponse(id, ppudCreateOffenderRequest)
 
     // when
-    val actual = ppudAutomationApiClient.createOffender(
-      PpudCreateOffenderRequest(
-        croNumber = "A/2342",
-        nomsId = "A897",
-        prisonNumber = "123",
-        firstNames = "Spuddy",
-        familyName = "Spiffens",
-        indexOffence = "bad language",
-        ethnicity = "W",
-        gender = "M",
-        mappaLevel = "",
-        custodyType = "Determinate",
-        isInCustody = true,
-        dateOfBirth = LocalDate.of(2004, 1, 1),
-        dateOfSentence = LocalDate.of(2004, 1, 2),
-        additionalAddresses = listOf(),
-        address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
-      ),
-    ).block()
+    val actual = ppudAutomationApiClient.createOffender(ppudCreateOffenderRequest).block()
 
     // then
     assertThat(actual?.offender?.id, equalTo(id))
@@ -106,25 +105,26 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   fun `update offender to ppud`() {
     // given
     val offenderId = "123"
+    val ppudUpdateOffenderRequest = PpudUpdateOffenderRequest(
+      croNumber = "A/2342",
+      nomsId = "A897",
+      prisonNumber = "123",
+      firstNames = "Spuddy",
+      familyName = "Spiffens",
+      ethnicity = "W",
+      gender = "M",
+      isInCustody = true,
+      dateOfBirth = LocalDate.of(2004, 1, 1),
+      additionalAddresses = listOf(),
+      address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+    )
 
-    ppudAutomationUpdateOffenderApiMatchResponse(offenderId)
+    ppudAutomationUpdateOffenderApiMatchResponse(offenderId, ppudUpdateOffenderRequest)
 
     // when
     ppudAutomationApiClient.updateOffender(
       offenderId,
-      PpudUpdateOffenderRequest(
-        croNumber = "A/2342",
-        nomsId = "A897",
-        prisonNumber = "123",
-        firstNames = "Spuddy",
-        familyName = "Spiffens",
-        ethnicity = "W",
-        gender = "M",
-        isInCustody = true,
-        dateOfBirth = LocalDate.of(2004, 1, 1),
-        additionalAddresses = listOf(),
-        address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
-      ),
+      ppudUpdateOffenderRequest,
     ).block()
 
     // then

@@ -29,8 +29,11 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJson
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
@@ -984,9 +987,10 @@ abstract class IntegrationTestBase {
 
   protected fun ppudAutomationCreateOffenderApiMatchResponse(
     id: String,
+    createOffenderRequest: PpudCreateOffenderRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender")
+    val request = request().withPath("/offender").withBody(createOffenderRequest.toJsonBody())
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
@@ -997,9 +1001,10 @@ abstract class IntegrationTestBase {
 
   protected fun ppudAutomationUpdateOffenderApiMatchResponse(
     offenderId: String,
+    updateOffenderRequest: PpudUpdateOffenderRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId)
+    val request = request().withPath("/offender/$offenderId").withBody(updateOffenderRequest.toJsonBody())
 
     ppudAutomationApi.`when`(request).respond(
       response().withDelay(Delay.seconds(delaySeconds)),
