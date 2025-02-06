@@ -844,7 +844,7 @@ internal class RecommendationService(
       updateDownloadLetterDataForRecommendation(recommendationEntity, readableUsername, false)
       updateAndSaveRecommendation(recommendationEntity, userId, readableUsername)
     } else {
-      buildRecommendationResponse(recommendationEntity)
+      recommendationConverter.convert(recommendationEntity)
     }
 
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }

@@ -2096,9 +2096,20 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val firstName = "Jim"
       val firstNameInitial = firstName.substring(0, 1)
       val surname = "Long"
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = firstName,
+          surname = surname,
+        ),
+        userNameDntrLetterCompletedBy = "Jack",
+        lastDntrLetterDownloadDateTime = LocalDateTime.of(2022, 12, 1, 15, 22, 24),
+        status = Status.DOCUMENT_DOWNLOADED,
+      )
       val existingRecommendation =
         if (!firstDownload) {
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
+          val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(crn)
             .copy(
               data = RecommendationModel(
                 crn = crn,
@@ -2108,6 +2119,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
                 lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24"),
               ),
             )
+          given(recommendationConverter.convert(recommendationEntity))
+            .willReturn(expectedRecommendationResponse)
+
+          recommendationEntity
         } else {
           val recommendationToSave = RecommendationEntity(
             data = RecommendationModel(
@@ -2119,14 +2134,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           given(recommendationRepository.save(any()))
             .willReturn(recommendationToSave)
 
-          val expectedRecommendationResponse = RecommendationResponse(
-            crn = crn,
-            personOnProbation = PersonOnProbationDto(
-              fullName = randomString(),
-              firstName = firstName,
-              surname = surname,
-            ),
-          )
           given(recommendationConverter.convert(recommendationToSave))
             .willReturn(expectedRecommendationResponse)
 
@@ -2175,7 +2182,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
         assertThat(recommendationResponseResult.lastDntrLetterDownloadDateTime).isEqualTo("2022-12-01T15:22:24")
         assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
-        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
       then(mrdEmitterMocked).shouldHaveNoInteractions()
     }
@@ -2201,9 +2207,20 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val firstName = "Jim"
       val firstNameInitial = firstName.substring(0, 1)
       val surname = "Long"
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = firstName,
+          surname = surname,
+        ),
+        userNameDntrLetterCompletedBy = "Jack",
+        lastDntrLetterDownloadDateTime = LocalDateTime.of(2022, 12, 1, 15, 22, 24),
+        status = Status.DOCUMENT_DOWNLOADED,
+      )
       val existingRecommendation =
         if (!firstDownload) {
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
+          val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(crn)
             .copy(
               data = RecommendationModel(
                 crn = crn,
@@ -2213,6 +2230,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
                 lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24"),
               ),
             )
+
+          given(recommendationConverter.convert(recommendationEntity))
+            .willReturn(expectedRecommendationResponse)
+
+          recommendationEntity
         } else {
           val recommendationToSave = RecommendationEntity(
             data = RecommendationModel(
@@ -2224,14 +2246,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           given(recommendationRepository.save(any()))
             .willReturn(recommendationToSave)
 
-          val expectedRecommendationResponse = RecommendationResponse(
-            crn = crn,
-            personOnProbation = PersonOnProbationDto(
-              fullName = randomString(),
-              firstName = firstName,
-              surname = surname,
-            ),
-          )
           given(recommendationConverter.convert(recommendationToSave))
             .willReturn(expectedRecommendationResponse)
 
@@ -2260,7 +2274,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         FeatureFlags(flagSendDomainEvent = true),
       )
 
-      assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
+      assertThat(result.fileName).isEqualTo("No_Recall_26072022_${surname}_${firstNameInitial}_$crn.docx")
       assertThat(result.fileContents).isNotNull
       if (firstDownload) {
         val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
