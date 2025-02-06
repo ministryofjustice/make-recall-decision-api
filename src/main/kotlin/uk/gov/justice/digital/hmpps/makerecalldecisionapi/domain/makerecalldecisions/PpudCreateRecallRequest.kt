@@ -12,13 +12,4 @@ data class PpudCreateRecallRequest(
   val receivedDateTime: LocalDateTime,
   val recommendedTo: PpudUser = PpudUser("", ""),
   val riskOfContrabandDetails: String = "",
-  val riskOfSeriousHarmLevel: RiskOfSeriousHarmLevel,
 )
-
-enum class RiskOfSeriousHarmLevel(val descriptor: String) {
-  Low("Low"),
-  Medium("Medium"),
-  High("High"),
-  VeryHigh("Very High"),
-  NotApplicable("Not Applicable"),
-}

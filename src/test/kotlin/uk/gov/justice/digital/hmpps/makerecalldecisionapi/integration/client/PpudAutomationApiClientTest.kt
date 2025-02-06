@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarmLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import java.time.LocalDate
@@ -266,7 +265,6 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
         recommendedTo = PpudUser("", ""),
         riskOfContrabandDetails = "some details",
-        riskOfSeriousHarmLevel = RiskOfSeriousHarmLevel.High,
       ),
     ).block()
 

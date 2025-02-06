@@ -11,5 +11,4 @@ data class CreateRecallRequest(
   val probationArea: String,
   val receivedDateTime: LocalDateTime,
   val riskOfContrabandDetails: String = "",
-  val riskOfSeriousHarmLevel: RiskOfSeriousHarmLevel,
 )
