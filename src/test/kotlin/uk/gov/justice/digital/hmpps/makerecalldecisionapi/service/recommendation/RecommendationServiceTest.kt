@@ -53,12 +53,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -2396,6 +2398,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = existingRecommendation.data.personOnProbation?.firstName,
+          surname = existingRecommendation.data.personOnProbation?.surname,
+        ),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
       // when
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
 
@@ -2411,6 +2424,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           metaDataCaptor.capture(),
           anyObject(),
         )
+      assertThat(recommendationResponseCaptor.firstValue).isEqualTo(expectedRecommendationResponse)
       assertThat(metaDataCaptor.firstValue.countersignAcoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.countersignSpoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.userPartACompletedByDateTime).isNotNull
@@ -2467,6 +2481,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = existingRecommendation.data.personOnProbation?.firstName,
+          surname = existingRecommendation.data.personOnProbation?.surname,
+        ),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
       // when
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", true)
 
@@ -2474,13 +2499,31 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
 
       then(templateReplacementServiceMocked).should(times(1))
-        .generateDocFromRecommendation(anyObject(), eq(DocumentType.PREVIEW_PART_A_DOCUMENT), anyObject(), anyObject())
+        .generateDocFromRecommendation(
+          eq(expectedRecommendationResponse),
+          eq(DocumentType.PREVIEW_PART_A_DOCUMENT),
+          anyObject(),
+          anyObject(),
+        )
     }
   }
 
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       given(mockRegionService.getRegionName("London")).willReturn("")
       given(mockRegionService.getRegionName("London2")).willReturn("")
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
@@ -2500,6 +2543,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
+
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        whoCompletedPartA = WhoCompletedPartA(region = existingRecommendation.data.whoCompletedPartA?.region),
+        practitionerForPartA = PractitionerForPartA(region = existingRecommendation.data.practitionerForPartA?.region),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
 
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(

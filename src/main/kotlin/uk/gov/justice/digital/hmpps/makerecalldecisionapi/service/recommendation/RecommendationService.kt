@@ -38,7 +38,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsListItem
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toDeliusContactOutcome
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toConsiderationRecallEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDeleteRecommendationRationaleDomainEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
@@ -224,94 +223,6 @@ internal class RecommendationService(
   private fun getRecommendationEntityById(recommendationId: Long): RecommendationEntity {
     return recommendationRepository.findById(recommendationId).getOrNull()
       ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-  }
-
-  private fun buildRecommendationResponse(recommendationEntity: RecommendationEntity): RecommendationResponse {
-    return RecommendationResponse(
-      id = recommendationEntity.id,
-      createdByUserFullName = recommendationEntity.data.createdByUserFullName,
-      createdBy = recommendationEntity.data.createdBy,
-      createdDate = recommendationEntity.data.createdDate,
-      crn = recommendationEntity.data.crn,
-      ppudRecordPresent = recommendationEntity.data.ppudRecordPresent,
-      sensitive = recommendationEntity.data.sensitive,
-      reviewPractitionersConcerns = recommendationEntity.data.reviewPractitionersConcerns,
-      odmName = recommendationEntity.data.odmName,
-      spoRecallType = recommendationEntity.data.spoRecallType,
-      spoRecallRationale = recommendationEntity.data.spoRecallRationale,
-      spoDeleteRecommendationRationale = recommendationEntity.data.spoDeleteRecommendationRationale,
-      reviewOffenderProfile = recommendationEntity.data.reviewOffenderProfile,
-      explainTheDecision = recommendationEntity.data.explainTheDecision,
-      lastModifiedBy = recommendationEntity.data.lastModifiedBy,
-      lastModifiedByUserName = recommendationEntity.data.lastModifiedByUserName,
-      lastModifiedDate = recommendationEntity.data.lastModifiedDate,
-      managerRecallDecision = recommendationEntity.data.managerRecallDecision,
-      considerationRationale = recommendationEntity.data.considerationRationale,
-      recallType = recommendationEntity.data.recallType,
-      status = recommendationEntity.data.status,
-      custodyStatus = recommendationEntity.data.custodyStatus,
-      responseToProbation = recommendationEntity.data.responseToProbation,
-      triggerLeadingToRecall = recommendationEntity.data.triggerLeadingToRecall,
-      whatLedToRecall = recommendationEntity.data.whatLedToRecall,
-      isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
-      isIndeterminateSentence = recommendationEntity.data.isIndeterminateSentence,
-      isExtendedSentence = recommendationEntity.data.isExtendedSentence,
-      activeCustodialConvictionCount = recommendationEntity.data.activeCustodialConvictionCount,
-      hasVictimsInContactScheme = recommendationEntity.data.hasVictimsInContactScheme,
-      indeterminateSentenceType = recommendationEntity.data.indeterminateSentenceType,
-      dateVloInformed = recommendationEntity.data.dateVloInformed,
-      hasArrestIssues = recommendationEntity.data.hasArrestIssues,
-      hasContrabandRisk = recommendationEntity.data.hasContrabandRisk,
-      personOnProbation = recommendationEntity.data.personOnProbation?.toPersonOnProbationDto(),
-      alternativesToRecallTried = recommendationEntity.data.alternativesToRecallTried,
-      licenceConditionsBreached = recommendationEntity.data.licenceConditionsBreached,
-      cvlLicenceConditionsBreached = recommendationEntity.data.cvlLicenceConditionsBreached,
-      additionalLicenceConditionsText = recommendationEntity.data.additionalLicenceConditionsText,
-      underIntegratedOffenderManagement = recommendationEntity.data.underIntegratedOffenderManagement,
-      localPoliceContact = recommendationEntity.data.localPoliceContact,
-      vulnerabilities = recommendationEntity.data.vulnerabilities,
-      convictionDetail = recommendationEntity.data.convictionDetail,
-      region = recommendationEntity.data.region,
-      localDeliveryUnit = recommendationEntity.data.localDeliveryUnit,
-      userNameDntrLetterCompletedBy = recommendationEntity.data.userNameDntrLetterCompletedBy,
-      lastDntrLetterDownloadDateTime = recommendationEntity.data.lastDntrLetterADownloadDateTime,
-      indexOffenceDetails = recommendationEntity.data.indexOffenceDetails,
-      offenceDataFromLatestCompleteAssessment = recommendationEntity.data.offenceDataFromLatestCompleteAssessment,
-      offencesMatch = recommendationEntity.data.offencesMatch,
-      offenceAnalysis = recommendationEntity.data.offenceAnalysis,
-      fixedTermAdditionalLicenceConditions = recommendationEntity.data.fixedTermAdditionalLicenceConditions,
-      indeterminateOrExtendedSentenceDetails = recommendationEntity.data.indeterminateOrExtendedSentenceDetails,
-      mainAddressWherePersonCanBeFound = recommendationEntity.data.mainAddressWherePersonCanBeFound,
-      whyConsideredRecall = recommendationEntity.data.whyConsideredRecall,
-      reasonsForNoRecall = recommendationEntity.data.reasonsForNoRecall,
-      nextAppointment = recommendationEntity.data.nextAppointment,
-      previousReleases = recommendationEntity.data.previousReleases,
-      previousRecalls = recommendationEntity.data.previousRecalls,
-      recallConsideredList = recommendationEntity.data.recallConsideredList,
-      currentRoshForPartA = recommendationEntity.data.currentRoshForPartA,
-      roshSummary = recommendationEntity.data.roshSummary,
-      countersignSpoTelephone = recommendationEntity.data.countersignSpoTelephone,
-      countersignSpoExposition = recommendationEntity.data.countersignSpoExposition,
-      countersignAcoTelephone = recommendationEntity.data.countersignAcoTelephone,
-      countersignAcoExposition = recommendationEntity.data.countersignAcoExposition,
-      whoCompletedPartA = recommendationEntity.data.whoCompletedPartA,
-      practitionerForPartA = recommendationEntity.data.practitionerForPartA,
-      revocationOrderRecipients = recommendationEntity.data.revocationOrderRecipients,
-      ppcsQueryEmails = recommendationEntity.data.ppcsQueryEmails,
-      prisonOffender = recommendationEntity.data.prisonOffender,
-      releaseUnderECSL = recommendationEntity.data.releaseUnderECSL,
-      dateOfRelease = recommendationEntity.data.dateOfRelease,
-      conditionalReleaseDate = recommendationEntity.data.conditionalReleaseDate,
-      nomisIndexOffence = recommendationEntity.data.nomisIndexOffence,
-      bookRecallToPpud = recommendationEntity.data.bookRecallToPpud,
-      ppudOffender = recommendationEntity.data.ppudOffender,
-      bookingMemento = recommendationEntity.data.bookingMemento,
-      decisionDateTime = recommendationEntity.data.decisionDateTime,
-      isUnder18 = recommendationEntity.data.isUnder18,
-      isSentence12MonthsOrOver = recommendationEntity.data.isSentence12MonthsOrOver,
-      isMappaLevelAbove1 = recommendationEntity.data.isMappaLevelAbove1,
-      hasBeenConvictedOfSeriousOffence = recommendationEntity.data.hasBeenConvictedOfSeriousOffence,
-    )
   }
 
   @Deprecated("Now using updateRecommendation")
@@ -889,7 +800,7 @@ internal class RecommendationService(
     featureFlags: FeatureFlags = FeatureFlags(),
   ): DocumentResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
-    val recommendationResponse = buildRecommendationResponse(recommendationEntity)
+    val recommendationResponse = recommendationConverter.convert(recommendationEntity)
     val userAccessResponse = recommendationResponse.crn?.let { userAccessValidator.checkUserAccess(it) }
     return if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       DocumentResponse(userAccessResponse)
