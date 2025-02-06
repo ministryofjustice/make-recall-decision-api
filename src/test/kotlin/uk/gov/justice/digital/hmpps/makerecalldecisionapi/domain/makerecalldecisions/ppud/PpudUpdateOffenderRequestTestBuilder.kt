@@ -22,6 +22,7 @@ internal fun ppudUpdateOffenderRequest(
   isInCustody: Boolean = randomBoolean(),
   nomsId: String? = randomString(),
   prisonNumber: String = randomString(),
+  establishment: String = randomString(),
 ) =
   PpudUpdateOffenderRequest(
     address,
@@ -35,6 +36,7 @@ internal fun ppudUpdateOffenderRequest(
     isInCustody,
     nomsId,
     prisonNumber,
+    establishment,
   )
 
 internal fun PpudUpdateOffenderRequest.toJsonBody() = json(toJsonString())
@@ -52,6 +54,7 @@ internal fun PpudUpdateOffenderRequest.toJsonString() =
           "gender" : ${toJsonNullableStringField(gender)},
           "isInCustody" : $isInCustody,
           "nomsId" : ${toJsonNullableStringField(nomsId)},
-          "prisonNumber" : ${toJsonNullableStringField(prisonNumber)}
+          "prisonNumber" : ${toJsonNullableStringField(prisonNumber)},
+          "establishment" : ${toJsonNullableStringField(establishment)}
         }
   """.trimIndent()

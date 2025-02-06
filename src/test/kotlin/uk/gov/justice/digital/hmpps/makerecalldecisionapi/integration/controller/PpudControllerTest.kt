@@ -113,6 +113,7 @@ class PpudControllerTest : IntegrationTestBase() {
       gender = "M",
       mappaLevel = "",
       custodyType = "Determinate",
+      establishment = "The Kiln",
       isInCustody = true,
       dateOfBirth = LocalDate.of(2004, 1, 1),
       dateOfSentence = LocalDate.of(2004, 1, 2),
@@ -165,6 +166,7 @@ class PpudControllerTest : IntegrationTestBase() {
         postcode = "",
         phoneNumber = "",
       ),
+      establishment = "The Kiln",
     )
     ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {

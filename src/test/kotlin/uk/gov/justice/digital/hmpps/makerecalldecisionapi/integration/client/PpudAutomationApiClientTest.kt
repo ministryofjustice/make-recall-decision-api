@@ -85,6 +85,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       gender = "M",
       mappaLevel = "",
       custodyType = "Determinate",
+      establishment = "The Kiln",
       isInCustody = true,
       dateOfBirth = LocalDate.of(2004, 1, 1),
       dateOfSentence = LocalDate.of(2004, 1, 2),
@@ -117,6 +118,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       dateOfBirth = LocalDate.of(2004, 1, 1),
       additionalAddresses = listOf(),
       address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+      establishment = "The Kiln",
     )
 
     ppudAutomationUpdateOffenderApiMatchResponse(offenderId, ppudUpdateOffenderRequest)
