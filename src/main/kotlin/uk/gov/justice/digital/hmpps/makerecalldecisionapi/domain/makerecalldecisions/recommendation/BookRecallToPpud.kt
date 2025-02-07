@@ -10,6 +10,7 @@ data class BookRecallToPpud(
   val custodyType: String? = null,
   val releasingPrison: String? = null,
   val indexOffence: String? = null,
+  val indexOffenceComment: String? = null,
   val ppudSentenceId: String? = null,
   val mappaLevel: String? = null,
   val policeForce: String? = null,

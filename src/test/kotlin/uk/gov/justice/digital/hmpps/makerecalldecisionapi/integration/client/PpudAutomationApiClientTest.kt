@@ -198,6 +198,30 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceId,
       PpudUpdateOffenceRequest(
         indexOffence = "some dastardly deed",
+        indexOffenceComment = "some dastardly deed's comments",
+        dateOfIndexOffence = LocalDate.of(2016, 1, 1),
+      ),
+    ).block()
+
+    // then
+    // no exception
+  }
+
+  @Test
+  fun `update offence in ppud with index null comment`() {
+    // given
+    val offenderId = "123"
+    val sentenceId = "456"
+
+    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
+
+    // when
+    ppudAutomationApiClient.updateOffence(
+      offenderId,
+      sentenceId,
+      PpudUpdateOffenceRequest(
+        indexOffence = "some dastardly deed",
+        indexOffenceComment = null,
         dateOfIndexOffence = LocalDate.of(2016, 1, 1),
       ),
     ).block()
