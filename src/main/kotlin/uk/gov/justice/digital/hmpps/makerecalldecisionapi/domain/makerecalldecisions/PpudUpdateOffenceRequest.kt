@@ -4,5 +4,6 @@ import java.time.LocalDate
 
 data class PpudUpdateOffenceRequest(
   val indexOffence: String,
+  val indexOffenceComment: String?,
   val dateOfIndexOffence: LocalDate?,
 )

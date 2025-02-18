@@ -276,6 +276,7 @@ class PpudControllerTest : IntegrationTestBase() {
         "456",
         PpudUpdateOffenceRequest(
           indexOffence = "some dastardly deed",
+          indexOffenceComment = "some dastardly deed's comments",
           dateOfIndexOffence = LocalDate.of(2016, 1, 1),
         ),
       )
