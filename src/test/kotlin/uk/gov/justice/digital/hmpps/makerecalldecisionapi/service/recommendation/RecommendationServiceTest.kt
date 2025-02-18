@@ -158,6 +158,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             firstName = "Johnny",
             middleName = "J",
             dateOfBirth = LocalDate.parse("1970-03-15"),
+            agencyId = "KLN",
             facialImageId = null,
             locationDescription = "Outside - released from Leeds",
           ),
@@ -173,6 +174,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         firstName = "Johnny",
         middleName = "J",
         dateOfBirth = LocalDate.parse("1970-03-15"),
+        agencyId = "KLN",
         facialImageId = null,
         locationDescription = "Outside - released from Leeds",
       )
@@ -235,6 +237,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           firstName = "Johnny",
           middleName = "J",
           dateOfBirth = LocalDate.parse("1970-03-15"),
+          agencyId = "KLN",
           facialImageId = null,
           locationDescription = "Outside - released from Leeds",
         ),

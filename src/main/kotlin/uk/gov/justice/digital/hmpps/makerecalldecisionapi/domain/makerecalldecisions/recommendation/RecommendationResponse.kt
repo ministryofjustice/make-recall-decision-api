@@ -148,6 +148,7 @@ data class PrisonOffender(
   var middleName: String? = null,
   var lastName: String? = null,
   var dateOfBirth: LocalDate? = null,
+  var agencyId: String? = null,
   var status: String? = null,
   var gender: String? = null,
   var ethnicity: String? = null,

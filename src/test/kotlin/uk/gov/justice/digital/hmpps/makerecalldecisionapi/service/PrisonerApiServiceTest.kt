@@ -387,6 +387,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
           middleName = "A",
           lastName = "Buchanan",
           dateOfBirth = LocalDate.now().minusYears(45),
+          agencyId = "KLN",
           status = "",
           physicalAttributes = PhysicalAttributes(gender = "M", ethnicity = "Caucasian"),
           identifiers = listOf(),
