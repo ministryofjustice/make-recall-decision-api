@@ -11,6 +11,7 @@ fun ppudAutomationDetailsResponse(id: String) = """
     "firstNames": "string",
     "gender": "string",
     "immigrationStatus": "string",
+    "establishment": "string",
     "nomsId": "string",
     "prisonerCategory": "string",
     "prisonNumber": "string",

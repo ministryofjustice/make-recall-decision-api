@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CaseSummaryOverviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Risk
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 
 @Service

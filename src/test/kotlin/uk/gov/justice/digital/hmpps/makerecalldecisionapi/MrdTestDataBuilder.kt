@@ -192,6 +192,7 @@ class MrdTestDataBuilder {
             firstNames = "",
             gender = "Male",
             immigrationStatus = "Naturalized",
+            establishment = "The Kyln",
             nomsId = "",
             prisonerCategory = "Incarcerated",
             prisonNumber = "1234",

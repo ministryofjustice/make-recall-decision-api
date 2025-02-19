@@ -17,6 +17,7 @@
     "firstNames": "Mandy Car Test",
     "gender": "M",
     "immigrationStatus": "Not Applicable",
+    "establishment": "The Kyln",
     "isInCustody": true,
     "nomsId": "NOMS-01",
     "prisonerCategory": "B",

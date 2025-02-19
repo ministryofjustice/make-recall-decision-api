@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CaseDocument
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.reader.ContactGroupsCsvReader
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import java.time.LocalDate
 
 @Service

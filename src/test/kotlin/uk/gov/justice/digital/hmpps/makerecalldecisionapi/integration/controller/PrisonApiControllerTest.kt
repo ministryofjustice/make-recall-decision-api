@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
 
@@ -18,8 +19,13 @@ class PrisonApiControllerTest : IntegrationTestBase() {
   fun `retrieves offender details`() {
     runTest {
       val nomsId = "A123456"
-      prisonApiOffenderMatchResponse(nomsId, "Leeds, clearly Leeds", "1234")
-      prisonApiImageResponse("1234", "data")
+      val locationDescription = "Leeds, clearly Leeds"
+      val facialImageId = "1234"
+      val agencyId = "KLN"
+      prisonApiOffenderMatchResponse(nomsId, locationDescription, facialImageId, agencyId)
+      prisonApiImageResponse(facialImageId, "data")
+      val agencyDescription = "The Kyln"
+      mockPrisonApiAgencyResponse(agencyId, agency(description = agencyDescription))
 
       val response = convertResponseToJSONObject(
         webTestClient.post()
@@ -34,7 +40,8 @@ class PrisonApiControllerTest : IntegrationTestBase() {
           .exchange()
           .expectStatus().isOk,
       )
-      assertThat(response.get("locationDescription")).isEqualTo("Leeds, clearly Leeds")
+      assertThat(response.get("locationDescription")).isEqualTo(locationDescription)
+      assertThat(response.get("agencyDescription")).isEqualTo(agencyDescription)
     }
   }
 }
