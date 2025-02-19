@@ -29,6 +29,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
@@ -919,13 +920,14 @@ abstract class IntegrationTestBase {
     nomsId: String,
     description: String,
     facialImageId: String,
+    agencyId: String,
     delaySeconds: Long = 0,
   ) {
     val request = request().withPath("/api/offenders/" + nomsId)
 
     prisonApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
-        .withBody(prisonResponse(description, facialImageId))
+        .withBody(prisonResponse(description, facialImageId, agencyId))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }
@@ -940,6 +942,20 @@ abstract class IntegrationTestBase {
     prisonApi.`when`(request).respond(
       response().withContentType(JPEG)
         .withBody(data.toByteArray())
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun mockPrisonApiAgencyResponse(
+    agencyId: String,
+    agency: Agency,
+    delaySeconds: Long = 0,
+  ) {
+    val request = request().withPath("/api/agencies/$agencyId").withQueryStringParameter("activeOnly", "false")
+
+    prisonApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(agency.toJson())
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

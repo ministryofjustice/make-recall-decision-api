@@ -38,20 +38,28 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
   fun `call retrieve offender`() {
     val nomsId = "AB234A"
 
-    val response = mock(Offender::class.java)
+    val response = Offender(
+      agencyId = "KLN",
+      facialImageId = 1,
+    )
 
-    given(prisonApiClient.retrieveOffender(any())).willReturn(
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
       Mono.fromCallable {
         response
       },
     )
 
-    given(response.facialImageId).willReturn(1)
+    val expectedAgencyDescription = "The Kyln"
+    given(prisonApiClient.retrieveAgency(response.agencyId!!)).willReturn(
+      Mono.fromCallable {
+        Agency(description = expectedAgencyDescription)
+      },
+    )
 
     val headers = HttpHeaders()
     headers.put("Content-Type", listOf("image/jpeg"))
 
-    given(prisonApiClient.retrieveImageData(any()))
+    given(prisonApiClient.retrieveImageData(response.facialImageId.toString()))
       .willReturn(
         Mono.fromCallable {
           ResponseEntity(ByteArrayResource("data".toByteArray()), headers, HttpStatus.OK)
@@ -61,8 +69,73 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
+    assertThat(result.agencyDescription).isEqualTo(expectedAgencyDescription)
+    assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
+  }
 
-    verify(result).image = "data:image/jpeg;base64,ZGF0YQ=="
+  @Test
+  fun `call retrieve offender with no agency`() {
+    val nomsId = "AB234A"
+
+    val response = Offender(
+      facialImageId = 1,
+    )
+
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    val headers = HttpHeaders()
+    headers.put("Content-Type", listOf("image/jpeg"))
+
+    given(prisonApiClient.retrieveImageData(response.facialImageId.toString()))
+      .willReturn(
+        Mono.fromCallable {
+          ResponseEntity(ByteArrayResource("data".toByteArray()), headers, HttpStatus.OK)
+        },
+      )
+
+    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+
+    assertThat(result).isEqualTo(response)
+    assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
+  }
+
+  @Test
+  fun `call retrieve offender with invalid agency`() {
+    val nomsId = "AB234A"
+
+    val response = Offender(
+      agencyId = "KLN",
+      facialImageId = 1,
+    )
+
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
+      Mono.fromCallable {
+        response
+      },
+    )
+
+    given(prisonApiClient.retrieveAgency(any())).willThrow(
+      NotFoundException("Agency not found"),
+    )
+
+    val headers = HttpHeaders()
+    headers.put("Content-Type", listOf("image/jpeg"))
+
+    given(prisonApiClient.retrieveImageData(response.facialImageId.toString()))
+      .willReturn(
+        Mono.fromCallable {
+          ResponseEntity(ByteArrayResource("data".toByteArray()), headers, HttpStatus.OK)
+        },
+      )
+
+    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+
+    assertThat(result).isEqualTo(response)
+    assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
   }
 
   @Test
@@ -82,6 +155,8 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     assertThat(result).isEqualTo(response)
 
     verify(prisonApiClient).retrieveOffender(nomsId)
+
+    verify(result).agencyId
 
     verify(result, times(2)).facialImageId
 
@@ -113,6 +188,8 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     assertThat(result).isEqualTo(response)
 
     assertThat(result.facialImageId).isEqualTo(1)
+
+    verify(result).agencyId
 
     verify(prisonApiClient).retrieveOffender(nomsId)
 

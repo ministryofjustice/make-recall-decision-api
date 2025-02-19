@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison
 
-fun prisonResponse(description: String, facialImageId: String) = """
+fun prisonResponse(description: String, facialImageId: String, agencyId: String) = """
 {
   "locationDescription": "$description",
   "bookingNo": "string",
@@ -9,6 +9,7 @@ fun prisonResponse(description: String, facialImageId: String) = """
   "middleName": "string",
   "lastName": "string",
   "dateOfBirth": "1970-03-15",
+  "agencyId": "$agencyId",
   "status": "ACTIVE IN",
   "physicalAttributes": {
     "gender": "Male",
