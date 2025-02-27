@@ -11,11 +11,16 @@ import org.joda.time.LocalDateTime
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.CacheManager
+import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.bookRecallToPpud
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -41,6 +46,14 @@ import java.util.UUID
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class RecommendationControllerTest() : IntegrationTestBase() {
+
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun setup() {
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
+  }
 
   @Test
   fun `get latest complete recommendation overview`() {
@@ -329,8 +342,12 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `should not fetch deleted recommendations`() {
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
+    // Clear previous cache write
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
     licenceConditionsResponse(crn, 2500614567)
     oasysAssessmentsResponse(crn)
+    // Clear previous cache write
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
     deleteAndCreateRecommendation()
 
     webTestClient.patch()
@@ -1057,8 +1074,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     runTest {
       userAccessAllowedOnce(crn)
       personalDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       deleteAndCreateRecommendation()
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       userAccessExcluded(crn)
       webTestClient.get()
         .uri("/recommendations/$createdRecommendationId")
@@ -1078,6 +1098,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
   fun `given case is excluded when creating a recommendation then only return user access details`() {
     runTest {
       userAccessExcluded(crn)
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       webTestClient.post()
         .uri("/recommendations")
         .contentType(MediaType.APPLICATION_JSON)
@@ -1122,6 +1144,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn)
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       deleteAndCreateRecommendation()
 
       webTestClient.patch()
@@ -1142,8 +1166,11 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userResponse("some_user", "test@digital.justice.gov.uk")
       userAccessAllowedOnce(crn)
       personalDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       deleteAndCreateRecommendation()
+      // Clear previous cache write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       userAccessExcluded(crn)
       webTestClient.post()
         .uri("/recommendations/$createdRecommendationId/part-a")

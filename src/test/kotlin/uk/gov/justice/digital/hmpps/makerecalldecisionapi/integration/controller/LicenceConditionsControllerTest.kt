@@ -4,10 +4,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.CacheManager
+import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import java.time.LocalDate
@@ -20,6 +25,14 @@ class LicenceConditionsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
 ) : IntegrationTestBase() {
+
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun setup() {
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
+  }
 
   @Test
   fun `CVL licence null when exception thrown`() {
