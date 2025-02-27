@@ -49,7 +49,7 @@ slack-fail-post-step: &slack-fail-post-step
 
 
 executors:
-  javaAndPostgresAndRedis:
+  java_postgres_Redis:
     docker:
       - image: cimg/openjdk:21.0
         environment:
@@ -73,7 +73,7 @@ executors:
 
 jobs:
   validate:
-    executor: javaAndPostgresAndRedis
+    executor: java_postgres_Redis
     environment:
       _JAVA_OPTIONS: -Xmx2g -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 
         -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 
