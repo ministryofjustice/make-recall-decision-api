@@ -55,6 +55,9 @@ jobs:
       postgres_username: mrd_user
       postgres_password: secret
       postgres_db: "make_recall_decision"
+      docker:
+        - image: cimg/redis:7.4.2
+          command: redis-server --port 6396
     environment:
       _JAVA_OPTIONS: -Xmx2g -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 
         -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 
