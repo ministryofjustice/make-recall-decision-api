@@ -19,7 +19,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import java.time.Duration
 
-@EnableCaching(proxyTargetClass = true)
+@EnableCaching
 @Configuration
 class CacheConfiguration(private val buildProperties: BuildProperties) {
 
