@@ -66,9 +66,7 @@ executors:
         command: redis-server --port 6396
         environment:
           ALLOW_EMPTY_PASSWORD: yes
-    working_directory: ~/app
-    machine: true
-    macos:
+    working_directory: ~/app    
 
 
 jobs:
