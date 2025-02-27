@@ -45,13 +45,6 @@ slack-fail-post-step: &slack-fail-post-step
             ]
           }
 
-executors:
-  java:
-    docker:
-      - image: cimg/redis:7.4.2
-        environment:
-          ALLOW_EMPTY_PASSWORD: yes
-    working_directory: ~/app
 
 jobs:
   validate:
@@ -69,6 +62,9 @@ jobs:
         -Dkotlin.compiler.execution.strategy=in-process 
         -Dorg.gradle.workers.max=1
     resource_class: xlarge
+    docker:
+      - image: cimg/redis:7.4.2
+        command: redis-server --port 6396
     steps:
       - checkout
       - restore_cache:
