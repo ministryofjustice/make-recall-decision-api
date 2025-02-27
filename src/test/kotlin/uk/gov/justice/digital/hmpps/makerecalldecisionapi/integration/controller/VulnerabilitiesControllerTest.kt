@@ -2,9 +2,14 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.CacheManager
+import org.springframework.cache.get
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import java.time.LocalDate
@@ -16,6 +21,14 @@ import java.time.format.DateTimeFormatter
 class VulnerabilitiesControllerTest(
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
 ) : IntegrationTestBase() {
+
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun setup() {
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
+  }
 
   @Test
   fun `retrieves risk vulnerability details`() {
