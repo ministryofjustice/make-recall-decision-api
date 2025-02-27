@@ -55,6 +55,17 @@ services:
       - POSTGRES_USER=mrd_user
       - POSTGRES_DB=make_recall_decision
 
+  redis:
+    image: redis:7.4.2-alpine3.21
+    ports:
+      - 6369:6369
+    expose:
+      - 6369
+    networks:
+      - hmpps
+    command:
+      --port 6369
+
   fake-offender-search-api:
     image: wiremock/wiremock
     networks:

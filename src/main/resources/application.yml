@@ -61,13 +61,14 @@ spring:
             client-id: ${system.client.id:make-recall-decision-api}
             client-secret: ${system.client.secret:clientsecret}
             authorization-grant-type: client_credentials
-
         provider:
           hmpps-auth:
             token-uri: ${hmpps.auth.url}/oauth/token
       resourceserver:
         jwt:
           jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
+  cache:
+    type: redis
 
   jackson:
     parser:
@@ -86,6 +87,12 @@ spring:
     group:
       test:
         - "stdout"
+
+  data:
+    redis:
+      port: 6369
+      repositories:
+        enabled: false
 
 server:
   port: 8080
@@ -191,9 +198,9 @@ prison:
 
 ---
 mrd:
-  url: ${mrd.url}
+  url:
   api:
-    url: ${mrd.api.url}
+    url:
 
 cloud:
   aws:
