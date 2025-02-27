@@ -46,15 +46,31 @@ slack-fail-post-step: &slack-fail-post-step
           }
 
 
+
+
+executors:
+  java_postgres_redis:
+    docker:
+      - image: cimg/openjdk:21.0
+        environment:
+          _JAVA_OPTIONS: -Xmx1024m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2
+            -XX:ParallelGCThreads=2
+            -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+            -Dorg.gradle.daemon=false
+      - image: postgres:14
+        environment:
+          - POSTGRES_PASSWORD=secret
+          - POSTGRES_USER=mrd_user
+          - POSTGRES_DB=make_recall_decision
+      - image: cimg/redis:7.4.2
+        command: redis-server --port 6369
+        environment:
+          ALLOW_EMPTY_PASSWORD: yes
+    working_directory: ~/app
+
 jobs:
   validate:
-    executor:
-      name: hmpps/java_postgres
-      jdk_tag: "21.0"
-      postgres_tag: "14"
-      postgres_username: mrd_user
-      postgres_password: secret
-      postgres_db: "make_recall_decision"
+    executor: java_postgres_redis
     environment:
       _JAVA_OPTIONS: -Xmx2g -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 
         -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 
@@ -62,9 +78,6 @@ jobs:
         -Dkotlin.compiler.execution.strategy=in-process 
         -Dorg.gradle.workers.max=1
     resource_class: xlarge
-    docker:
-      - image: cimg/redis:7.4.2
-        command: redis-server --port 6396
     steps:
       - checkout
       - restore_cache:
