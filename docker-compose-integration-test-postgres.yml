@@ -27,6 +27,17 @@ services:
       - postgres
     restart: unless-stopped
 
+  redis:
+    image: redis:7.4.2-alpine3.21
+    ports:
+      - 6369:6369
+    expose:
+      - 6369
+    networks:
+      - hmpps
+    command:
+      --port 6369
+
 networks:
   postgres:
     driver: bridge
