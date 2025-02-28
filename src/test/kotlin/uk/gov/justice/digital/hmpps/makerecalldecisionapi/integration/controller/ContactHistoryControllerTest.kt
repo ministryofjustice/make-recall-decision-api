@@ -2,10 +2,15 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.CacheManager
+import org.springframework.cache.get
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.deliusContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
@@ -17,6 +22,14 @@ class ContactHistoryControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
 
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun setup() {
+    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
+  }
+
   @Test
   fun `retrieves all contact history details`() {
     runTest {
@@ -24,6 +37,8 @@ class ContactHistoryControllerTest(
       personalDetailsResponse(crn)
       deliusContactHistoryResponse(crn, deliusContactHistoryResponse())
       deleteAndCreateRecommendation()
+      // Clear cache from previous write
+      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       updateRecommendation(Status.DRAFT)
 
       webTestClient.get()
