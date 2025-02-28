@@ -391,6 +391,7 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     with(bookRecallToPpudAfterUpdate) {
       assertThat(get("decisionDateTime")).isEqualTo(bookRecallToPpud.decisionDateTime.toString())
       assertThat(get("custodyType")).isEqualTo(bookRecallToPpud.custodyType)
+      assertThat(get("currentEstablishment")).isEqualTo(bookRecallToPpud.currentEstablishment)
       assertThat(get("releasingPrison")).isEqualTo(bookRecallToPpud.releasingPrison)
       assertThat(get("indexOffence")).isEqualTo(bookRecallToPpud.indexOffence)
       assertThat(get("indexOffenceComment")).isEqualTo(bookRecallToPpud.indexOffenceComment)
