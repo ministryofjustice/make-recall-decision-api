@@ -61,15 +61,12 @@ executors:
         environment:
           - POSTGRES_PASSWORD=secret
           - POSTGRES_USER=mrd_user
-          - POSTGRES_DB="make_recall_decision"
+          - POSTGRES_DB=make_recall_decision
       - image: cimg/redis:7.4.2
-        command: redis-server --port 6396
+        command: redis-server --port 6369
         environment:
           ALLOW_EMPTY_PASSWORD: yes
     working_directory: ~/app
-    machine: true
-    macos:
-
 
 jobs:
   validate:
