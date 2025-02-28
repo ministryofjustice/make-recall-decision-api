@@ -69,6 +69,15 @@ spring:
         jwt:
           jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
 
+  cache:
+    type: none
+
+  data:
+    redis:
+      port: 6369
+      repositories:
+        enabled: false
+
   jackson:
     parser:
       allow-backslash-escaping-any-character: true
