@@ -19,6 +19,20 @@ internal class PrisonerApiService(
       prisonApiClient.retrieveOffender(nomsId),
     )
 
+    response?.agencyId?.let {
+      try {
+        val agency = prisonApiClient.retrieveAgency(it).block()
+        response.agencyDescription = agency?.description
+      } catch (ex: Exception) {
+        log.info(
+          "Could not retrieve offender agency (prison): " +
+            "${response.agencyId} for NOMIS offender id: " +
+            "$nomsId; exception message: " +
+            "${ex.message}",
+        )
+      }
+    }
+
     response?.facialImageId?.let {
       if (response.facialImageId > 0) {
         try {
@@ -72,6 +86,7 @@ internal class PrisonerApiService(
       .sortedBy { it.courtDescription }
       .sortedByDescending { it.sentenceDate }
   }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }

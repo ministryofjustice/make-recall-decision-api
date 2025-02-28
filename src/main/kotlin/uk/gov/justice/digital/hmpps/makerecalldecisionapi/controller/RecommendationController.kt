@@ -31,7 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.setFeatureFlags
 import java.security.Principal
 
@@ -105,6 +105,7 @@ internal class RecommendationController(
     return recommendationService.getRecommendation(recommendationId)
   }
 
+  // TODO MRD-2650 this endpoint seems to be unused, should be able to remove it
   @Deprecated("Now using updateRecommendation endpoint")
   @PatchMapping("/recommendations/{recommendationId}/manager-recall-decision")
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_SPO')")

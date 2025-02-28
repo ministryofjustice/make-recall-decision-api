@@ -7,6 +7,7 @@ data class PpudCreateOffenderRequest(
   val additionalAddresses: List<PpudAddress> = emptyList(),
   val croNumber: String?,
   val custodyType: String?,
+  val establishment: String?,
   val dateOfBirth: LocalDate?,
   val dateOfSentence: LocalDate?,
   val ethnicity: String?,

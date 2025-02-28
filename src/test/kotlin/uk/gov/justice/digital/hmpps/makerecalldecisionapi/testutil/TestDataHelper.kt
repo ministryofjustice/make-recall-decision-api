@@ -22,6 +22,10 @@ fun randomDouble(): Double {
   return Random.Default.nextDouble()
 }
 
+fun randomBoolean(): Boolean {
+  return Random.Default.nextBoolean()
+}
+
 /**
  * Produces a random date between 1970-01-01 and 2150-12-31
  */

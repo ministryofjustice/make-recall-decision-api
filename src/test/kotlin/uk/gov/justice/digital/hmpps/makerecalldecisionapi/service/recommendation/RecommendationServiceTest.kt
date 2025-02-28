@@ -1,12 +1,12 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.joda.time.DateTimeUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -45,22 +45,22 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbationDto
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -77,9 +77,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RecommendationServiceTest.MockitoHelper.anyObject
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.MrdEventsEmitter
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationServiceTest.MockitoHelper.anyObject
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -107,6 +114,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   @Mock
   private lateinit var riskScoreConverter: RiskScoreConverter
+
+  @Mock
+  private lateinit var recommendationConverter: RecommendationConverter
 
   @ParameterizedTest()
   @CsvSource("RECOMMENDATION_STARTED", "RECALL_CONSIDERED", "NO_FLAGS")
@@ -148,6 +158,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             firstName = "Johnny",
             middleName = "J",
             dateOfBirth = LocalDate.parse("1970-03-15"),
+            agencyId = "KLN",
             facialImageId = null,
             locationDescription = "Outside - released from Leeds",
           ),
@@ -163,6 +174,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         firstName = "Johnny",
         middleName = "J",
         dateOfBirth = LocalDate.parse("1970-03-15"),
+        agencyId = "KLN",
         facialImageId = null,
         locationDescription = "Outside - released from Leeds",
       )
@@ -183,6 +195,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         riskServiceMocked,
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       // and
@@ -224,6 +237,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           firstName = "Johnny",
           middleName = "J",
           dateOfBirth = LocalDate.parse("1970-03-15"),
+          agencyId = "KLN",
           facialImageId = null,
           locationDescription = "Outside - released from Leeds",
         ),
@@ -344,6 +358,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         riskServiceMocked,
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       // and
@@ -494,6 +509,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         riskServiceMocked,
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       // and
@@ -728,6 +744,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
@@ -744,6 +765,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       val featureFlags = when (scenario) {
@@ -757,7 +779,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       }
 
       // when
-      recommendationService.updateRecommendation(
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -770,6 +792,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
       recallConsideredIdWorkaround(recommendationToSave)
 
       when (scenario) {
@@ -830,14 +854,33 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       // when
-      recommendationService.updateRecommendation(
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -848,6 +891,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         emptyList(),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(recommendationRepository).should().findById(1)
     }
@@ -932,6 +977,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       try {
@@ -1002,6 +1048,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
@@ -1019,10 +1070,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       // when
-      recommendationService.updateRecommendation(
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         jsonRequest = recommendationJsonNode,
         recommendationId = 1L,
         userId = "bill",
@@ -1035,6 +1087,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
       then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
       if (sendSpoDeleteRationaleToDelius == "true") {
@@ -1121,6 +1174,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(recommendationToSave)
 
       // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
@@ -1138,10 +1196,11 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
 
       // when
-      recommendationService.updateRecommendation(
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         jsonRequest = recommendationJsonNode,
         recommendationId = 1L,
         userId = "bill",
@@ -1154,6 +1213,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
       then(recommendationRepository).should().save(recommendationToSave)
       then(recommendationRepository).should().findById(1)
       if (sentToDelius == "true") {
@@ -1211,7 +1271,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1222,6 +1299,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("previousReleases"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
@@ -1254,7 +1333,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1265,6 +1361,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("previousRecalls"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
@@ -1297,7 +1395,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1308,6 +1423,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("mappa"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(deliusClient).should(times(1)).getRecommendationModel(anyString())
 
@@ -1342,7 +1459,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1353,6 +1487,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("riskOfSeriousHarm"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(arnApiClient).should(times(1)).getRiskSummary(anyString())
 
@@ -1407,7 +1543,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1418,6 +1571,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("indexOffenceDetails"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(arnApiClient).should().getAssessments(anyString())
       then(deliusClient).should().getRecommendationModel(ArgumentMatchers.anyString())
@@ -1448,7 +1603,24 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
       given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
 
-      recommendationService.updateRecommendation(
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
         recommendationJsonNode,
         1L,
         "bill",
@@ -1459,6 +1631,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         listOf("personOnProbation"),
         null,
       )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
 
       then(deliusClient).should().getRecommendationModel(anyString())
 
@@ -1513,7 +1687,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
     val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-    Assertions.assertThatThrownBy {
+    assertThatThrownBy {
       runTest {
         recommendationService.updateRecommendation(
           recommendationJsonNode,
@@ -1534,153 +1708,32 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `get a recommendation from the database`() {
-    val recommendation = Optional.of(MrdTestDataBuilder.recommendationDataEntityData(crn))
+  fun `get a recommendation by id`() {
+    recommendationService = RecommendationService(
+      recommendationRepository,
+      recommendationStatusRepository,
+      mockPersonDetailService,
+      PrisonerApiService(prisonApiClient),
+      templateReplacementService,
+      userAccessValidator,
+      riskServiceMocked,
+      deliusClient,
+      mrdEmitterMocked,
+      recommendationConverter,
+    )
 
-    given(recommendationRepository.findById(456L))
-      .willReturn(recommendation)
+    val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(crn)
 
-    val recommendationResponse = recommendationService.getRecommendation(456L)
+    given(recommendationRepository.findById(recommendationEntity.id))
+      .willReturn(Optional.of(recommendationEntity))
 
-    assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
-    assertThat(recommendationResponse.createdBy).isEqualTo(recommendation.get().data.createdBy)
-    assertThat(recommendationResponse.createdDate).isEqualTo(recommendation.get().data.createdDate)
-    assertThat(recommendationResponse.recallConsideredList?.get(0)?.id).isNotNull
-    assertThat(recommendationResponse.recallConsideredList?.get(0)?.createdDate).isEqualTo("2022-07-26T09:48:27.443Z")
-    assertThat(recommendationResponse.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
-    assertThat(recommendationResponse.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("I have concerns about their behaviour")
-    assertThat(recommendationResponse.recallConsideredList?.get(0)?.userId).isEqualTo("bill")
-    assertThat(recommendationResponse.id).isEqualTo(recommendation.get().id)
-    assertThat(recommendationResponse.crn).isEqualTo(recommendation.get().data.crn)
-    assertThat(recommendationResponse.personOnProbation).isEqualTo(recommendation.get().data.personOnProbation?.toPersonOnProbationDto())
-    assertThat(recommendationResponse.status).isEqualTo(recommendation.get().data.status)
-    assertThat(recommendationResponse.recallType?.selected?.value).isEqualTo(RecallTypeValue.FIXED_TERM)
-    assertThat(recommendationResponse.recallType?.selected?.details).isEqualTo("My details")
-    assertThat(recommendationResponse.recallType?.allOptions!![0].value).isEqualTo("NO_RECALL")
-    assertThat(recommendationResponse.recallType?.allOptions!![0].text).isEqualTo("No recall")
-    assertThat(recommendationResponse.recallType?.allOptions!![1].value).isEqualTo("FIXED_TERM")
-    assertThat(recommendationResponse.recallType?.allOptions!![1].text).isEqualTo("Fixed term")
-    assertThat(recommendationResponse.recallType?.allOptions!![2].value).isEqualTo("STANDARD")
-    assertThat(recommendationResponse.recallType?.allOptions!![2].text).isEqualTo("Standard")
-    assertThat(recommendationResponse.custodyStatus?.selected).isEqualTo(CustodyStatusValue.YES_PRISON)
-    assertThat(recommendationResponse.custodyStatus?.details).isEqualTo("Bromsgrove Police Station\r\nLondon")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![0].value).isEqualTo("YES_PRISON")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![0].text).isEqualTo("Yes, prison custody")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![1].value).isEqualTo("YES_POLICE")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![1].text).isEqualTo("Yes, police custody")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![2].value).isEqualTo("NO")
-    assertThat(recommendationResponse.custodyStatus?.allOptions!![2].text).isEqualTo("No")
-    assertThat(recommendationResponse.responseToProbation).isEqualTo("They have not responded well")
-    assertThat(recommendationResponse.whatLedToRecall).isEqualTo("Increasingly violent behaviour")
-    assertThat(recommendationResponse.isThisAnEmergencyRecall).isEqualTo(true)
-    assertThat(recommendationResponse.isIndeterminateSentence).isEqualTo(true)
-    assertThat(recommendationResponse.isExtendedSentence).isEqualTo(true)
-    assertThat(recommendationResponse.activeCustodialConvictionCount).isEqualTo(1)
-    assertThat(recommendationResponse.hasVictimsInContactScheme?.selected).isEqualTo(YesNoNotApplicableOptions.YES)
-    assertThat(recommendationResponse.indeterminateSentenceType?.selected).isEqualTo(IndeterminateSentenceTypeOptions.LIFE)
-    assertThat(recommendationResponse.dateVloInformed).isEqualTo(LocalDate.now())
-    assertThat(recommendationResponse.hasArrestIssues?.selected).isEqualTo(true)
-    assertThat(recommendationResponse.hasArrestIssues?.details).isEqualTo("Arrest issue details")
-    assertThat(recommendationResponse.hasContrabandRisk?.selected).isEqualTo(true)
-    assertThat(recommendationResponse.decisionDateTime).isNotNull()
-    assertThat(recommendationResponse.hasContrabandRisk?.details).isEqualTo("Contraband risk details")
-    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.selected!![0]).isEqualTo(
-      SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].value).isEqualTo(
-      SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name,
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.standardLicenceConditions?.allOptions!![0].text).isEqualTo(
-      "They had good behaviour",
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.selected!![0]).isEqualTo("NST14")
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].title).isEqualTo(
-      "Additional title",
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].details).isEqualTo(
-      "Additional details",
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].note).isEqualTo(
-      "Additional note",
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].mainCatCode).isEqualTo(
-      "NLC5",
-    )
-    assertThat(recommendationResponse.licenceConditionsBreached?.additionalLicenceConditions?.allOptions!![0].subCatCode).isEqualTo(
-      "NST14",
-    )
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.selected).isEqualTo("YES")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(0)?.text).isEqualTo("Yes")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(0)?.value).isEqualTo("YES")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(1)?.text).isEqualTo("No")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(1)?.value).isEqualTo("NO")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(2)?.text).isEqualTo("N/A")
-    assertThat(recommendationResponse.underIntegratedOffenderManagement?.allOptions?.get(2)?.value).isEqualTo("NOT_APPLICABLE")
-    assertThat(recommendationResponse.localPoliceContact?.contactName).isEqualTo("Thomas Magnum")
-    assertThat(recommendationResponse.localPoliceContact?.phoneNumber).isEqualTo("555-0100")
-    assertThat(recommendationResponse.localPoliceContact?.faxNumber).isEqualTo("555-0199")
-    assertThat(recommendationResponse.localPoliceContact?.emailAddress).isEqualTo("thomas.magnum@gmail.com")
-    assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
-    assertThat(recommendationResponse.convictionDetail?.indexOffenceDescription).isEqualTo("This is the index offence")
-    assertThat(recommendationResponse.convictionDetail?.dateOfOriginalOffence).isEqualTo("2022-09-01")
-    assertThat(recommendationResponse.convictionDetail?.dateOfSentence).isEqualTo("2022-09-02")
-    assertThat(recommendationResponse.convictionDetail?.lengthOfSentence).isEqualTo(6)
-    assertThat(recommendationResponse.convictionDetail?.lengthOfSentenceUnits).isEqualTo("days")
-    assertThat(recommendationResponse.convictionDetail?.sentenceDescription).isEqualTo("CJA - Extended Sentence")
-    assertThat(recommendationResponse.convictionDetail?.licenceExpiryDate).isEqualTo("2022-09-03")
-    assertThat(recommendationResponse.convictionDetail?.sentenceExpiryDate).isEqualTo("2022-09-04")
-    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLength).isEqualTo(12)
-    assertThat(recommendationResponse.convictionDetail?.sentenceSecondLengthUnits).isEqualTo("months")
-    assertThat(recommendationResponse.region).isEqualTo("London")
-    assertThat(recommendationResponse.localDeliveryUnit).isEqualTo("LDU London")
-    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.selected).isEqualTo(true)
-    assertThat(recommendationResponse.fixedTermAdditionalLicenceConditions?.details).isEqualTo("This is an additional licence condition")
-    assertThat(recommendationResponse.mainAddressWherePersonCanBeFound?.selected).isEqualTo(false)
-    assertThat(recommendationResponse.mainAddressWherePersonCanBeFound?.details).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
-    assertThat(recommendationResponse.whyConsideredRecall?.selected).isEqualTo(WhyConsideredRecallValue.RISK_INCREASED)
-    assertThat(recommendationResponse.reasonsForNoRecall?.licenceBreach).isEqualTo("Reason for breaching licence")
-    assertThat(recommendationResponse.reasonsForNoRecall?.noRecallRationale).isEqualTo("Rationale for no recall")
-    assertThat(recommendationResponse.reasonsForNoRecall?.popProgressMade).isEqualTo("Progress made so far detail")
-    assertThat(recommendationResponse.reasonsForNoRecall?.futureExpectations).isEqualTo("Future expectations detail")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.selected.toString()).isEqualTo("TELEPHONE")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(0)?.text).isEqualTo("Telephone")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(0)?.value.toString()).isEqualTo(
-      "TELEPHONE",
-    )
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(1)?.text).isEqualTo("Video call")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(1)?.value).isEqualTo("VIDEO_CALL")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(2)?.text).isEqualTo("Office visit")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(2)?.value).isEqualTo("OFFICE_VISIT")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(3)?.text).isEqualTo("Home visit")
-    assertThat(recommendationResponse.nextAppointment?.howWillAppointmentHappen?.allOptions?.get(3)?.value).isEqualTo("HOME_VISIT")
-    assertThat(recommendationResponse.nextAppointment?.dateTimeOfAppointment).isEqualTo("2022-04-24T20:39:00.000Z")
-    assertThat(recommendationResponse.nextAppointment?.probationPhoneNumber).isEqualTo("01238282838")
-    assertThat(recommendationResponse.previousReleases?.lastReleaseDate).isEqualTo("2022-09-02")
-    assertThat(recommendationResponse.previousReleases?.lastReleasingPrisonOrCustodialEstablishment).isEqualTo("HMP Holloway")
-    assertThat(recommendationResponse.previousReleases?.previousReleaseDates?.get(0)).isEqualTo("2020-02-01")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToChildren).isEqualTo("LOW")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPublic).isEqualTo("MEDIUM")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToKnownAdult).isEqualTo("MEDIUM")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToStaff).isEqualTo("LOW")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPublic).isEqualTo("MEDIUM")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToKnownAdult).isEqualTo("MEDIUM")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToStaff).isEqualTo("LOW")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPrisoners).isEqualTo("")
-    assertThat(recommendationResponse.roshSummary?.riskOfSeriousHarm?.overallRisk).isEqualTo("HIGH")
-    assertThat(recommendationResponse.roshSummary?.lastUpdatedDate).isEqualTo("2023-01-12T20:39:00.000Z")
-    assertThat(recommendationResponse.whoCompletedPartA?.name).isEqualTo("Mr Jenkins")
-    assertThat(recommendationResponse.whoCompletedPartA?.email).isEqualTo("jenkins@onsabatical.com")
-    assertThat(recommendationResponse.whoCompletedPartA?.telephone).isEqualTo("1234567")
-    assertThat(recommendationResponse.whoCompletedPartA?.region).isEqualTo("London")
-    assertThat(recommendationResponse.whoCompletedPartA?.isPersonProbationPractitionerForOffender).isEqualTo(false)
-    assertThat(recommendationResponse.whoCompletedPartA?.localDeliveryUnit).isEqualTo("A123")
-    assertThat(recommendationResponse.practitionerForPartA?.name).isEqualTo("Mr Jenkins 1")
-    assertThat(recommendationResponse.practitionerForPartA?.email).isEqualTo("jenkins1@onsabatical.com")
-    assertThat(recommendationResponse.practitionerForPartA?.telephone).isEqualTo("12345678")
-    assertThat(recommendationResponse.practitionerForPartA?.region).isEqualTo("London2")
-    assertThat(recommendationResponse.practitionerForPartA?.localDeliveryUnit).isEqualTo("A1234")
+    val expectedRecommendationResponse = RecommendationResponse(crn = randomLong().toString())
+    given(recommendationConverter.convert(recommendationEntity))
+      .willReturn(expectedRecommendationResponse)
+
+    val actualRecommendationResponse = recommendationService.getRecommendation(recommendationEntity.id)
+
+    assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
   }
 
   @Test
@@ -1704,16 +1757,34 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `given case is excluded when fetching a recommendation for user then return user access response details`() {
     runTest {
       // given
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
+      val recommendationEntity = RecommendationEntity(
+        data = RecommendationModel(
+          crn = crn,
+        ),
+      )
       given(recommendationRepository.findById(anyLong())).willReturn {
         Optional.of(
-          RecommendationEntity(
-            data = RecommendationModel(
-              crn = crn,
-            ),
-          ),
+          recommendationEntity,
         )
       }
+
+      val expectedRecommendationResponse = RecommendationResponse(crn = randomLong().toString())
+      given(recommendationConverter.convert(recommendationEntity))
+        .willReturn(expectedRecommendationResponse)
 
       // when
       val response = recommendationService.getRecommendation(123L)
@@ -1811,7 +1882,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
       val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
 
-      try {
+      assertThatThrownBy {
         recommendationService.updateRecommendation(
           recommendationJsonNode,
           1L,
@@ -1823,9 +1894,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           emptyList(),
           null,
         )
-      } catch (e: InvalidRequestException) {
-        // nothing to do here!!
-      }
+      }.isInstanceOf(InvalidRequestException::class.java)
+        .hasMessage("${RecallTypeValue.FIXED_TERM} is not a valid recall type, available types are ${RecallTypeValue.NO_RECALL}")
       then(recommendationRepository).shouldHaveNoMoreInteractions()
     }
   }
@@ -1833,6 +1903,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `given user is not found when updating a recommendation for user then return user access response details`() {
     runTest {
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val existingRecommendation = RecommendationEntity(
@@ -1841,6 +1924,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
         ),
       )
+
+      val expectedRecommendationResponse = RecommendationResponse(crn = crn)
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
 
@@ -1865,6 +1952,19 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `given case is excluded when updating a recommendation for user then return user access response details`() {
     runTest {
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
       val existingRecommendation = RecommendationEntity(
@@ -1873,6 +1973,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
         ),
       )
+
+      val expectedRecommendationResponse = RecommendationResponse(crn = crn)
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
 
       given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
 
@@ -1965,7 +2069,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     given(recommendationRepository.findById(456L))
       .willReturn(recommendation)
 
-    Assertions.assertThatThrownBy {
+    assertThatThrownBy {
       runTest {
         recommendationService.getRecommendation(456L)
       }
@@ -1994,28 +2098,49 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
       initialiseWithMockedTemplateReplacementService()
 
+      val firstName = "Jim"
+      val firstNameInitial = firstName.substring(0, 1)
+      val surname = "Long"
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = firstName,
+          surname = surname,
+        ),
+        userNameDntrLetterCompletedBy = "Jack",
+        lastDntrLetterDownloadDateTime = LocalDateTime.of(2022, 12, 1, 15, 22, 24),
+        status = Status.DOCUMENT_DOWNLOADED,
+      )
       val existingRecommendation =
         if (!firstDownload) {
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
+          val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(crn)
             .copy(
               data = RecommendationModel(
                 crn = crn,
-                personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"),
+                personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
                 status = Status.DOCUMENT_DOWNLOADED,
                 userNameDntrLetterCompletedBy = "Jack",
                 lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24"),
               ),
             )
+          given(recommendationConverter.convert(recommendationEntity))
+            .willReturn(expectedRecommendationResponse)
+
+          recommendationEntity
         } else {
           val recommendationToSave = RecommendationEntity(
             data = RecommendationModel(
               crn = crn,
-              personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"),
+              personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
             ),
           )
 
           given(recommendationRepository.save(any()))
             .willReturn(recommendationToSave)
+
+          given(recommendationConverter.convert(recommendationToSave))
+            .willReturn(expectedRecommendationResponse)
 
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
@@ -2041,7 +2166,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         null,
       )
 
-      assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
+      assertThat(result.fileName).isEqualTo("No_Recall_26072022_${surname}_${firstNameInitial}_$crn.docx")
       assertThat(result.fileContents).isNotNull
       if (firstDownload) {
         val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
@@ -2061,7 +2186,6 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         assertThat(recommendationResponseResult.userNameDntrLetterCompletedBy).isEqualTo("Jack")
         assertThat(recommendationResponseResult.lastDntrLetterDownloadDateTime).isEqualTo("2022-12-01T15:22:24")
-        assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
         assertThat(recommendationResponseResult.status).isEqualTo(Status.DOCUMENT_DOWNLOADED)
       }
       then(mrdEmitterMocked).shouldHaveNoInteractions()
@@ -2085,28 +2209,50 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         ),
       )
       initialiseWithMockedTemplateReplacementService()
+      val firstName = "Jim"
+      val firstNameInitial = firstName.substring(0, 1)
+      val surname = "Long"
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = firstName,
+          surname = surname,
+        ),
+        userNameDntrLetterCompletedBy = "Jack",
+        lastDntrLetterDownloadDateTime = LocalDateTime.of(2022, 12, 1, 15, 22, 24),
+        status = Status.DOCUMENT_DOWNLOADED,
+      )
       val existingRecommendation =
         if (!firstDownload) {
-          MrdTestDataBuilder.recommendationDataEntityData(crn)
+          val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(crn)
             .copy(
               data = RecommendationModel(
                 crn = crn,
-                personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"),
+                personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
                 status = Status.DOCUMENT_DOWNLOADED,
                 userNameDntrLetterCompletedBy = "Jack",
                 lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-12-01T15:22:24"),
               ),
             )
+
+          given(recommendationConverter.convert(recommendationEntity))
+            .willReturn(expectedRecommendationResponse)
+
+          recommendationEntity
         } else {
           val recommendationToSave = RecommendationEntity(
             data = RecommendationModel(
               crn = crn,
-              personOnProbation = PersonOnProbation(firstName = "Jim", surname = "Long"),
+              personOnProbation = PersonOnProbation(firstName = firstName, surname = surname),
             ),
           )
 
           given(recommendationRepository.save(any()))
             .willReturn(recommendationToSave)
+
+          given(recommendationConverter.convert(recommendationToSave))
+            .willReturn(expectedRecommendationResponse)
 
           MrdTestDataBuilder.recommendationDataEntityData(crn)
         }
@@ -2133,7 +2279,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         FeatureFlags(flagSendDomainEvent = true),
       )
 
-      assertThat(result.fileName).isEqualTo("No_Recall_26072022_Long_J_$crn.docx")
+      assertThat(result.fileName).isEqualTo("No_Recall_26072022_${surname}_${firstNameInitial}_$crn.docx")
       assertThat(result.fileContents).isNotNull
       if (firstDownload) {
         val captorAfterRecommendationSaved = argumentCaptor<RecommendationEntity>()
@@ -2168,18 +2314,30 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationStatusRepository,
         mockPersonDetailService,
         PrisonerApiService(prisonApiClient),
-        templateReplacementService,
+        templateReplacementServiceMocked,
         userAccessValidator,
         riskServiceMocked,
         deliusClient,
         mrdEmitterMocked,
+        recommendationConverter,
       )
       val existingRecommendation = MrdTestDataBuilder.recommendationDataEntityData(crn)
+      val recommendationId = existingRecommendation.id
 
-      given(recommendationRepository.findById(any()))
+      given(recommendationRepository.findById(recommendationId))
         .willReturn(Optional.of(existingRecommendation))
 
-      val result =
+      val recommendationResponse = RecommendationResponse(crn = crn)
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(recommendationResponse)
+
+      val letterContent = LetterContent()
+      given(templateReplacementServiceMocked.generateLetterContentForPreviewFromRecommendation(recommendationResponse))
+        .willReturn(letterContent)
+
+      val expectedDocumentResponse = DocumentResponse(letterContent = letterContent)
+
+      val actualDocumentResponse =
         recommendationService.generateDntr(
           1L,
           "john.smith",
@@ -2189,14 +2347,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           FeatureFlags(),
         )
 
-      assertThat(result.letterContent?.salutation).isEqualTo("Dear Jim Long,")
-      assertThat(result.letterContent?.letterAddress).isEqualTo(
-        "Jim Long\n" +
-          "Line 1 address\n" +
-          "Line 2 address\n" +
-          "Town address\n" +
-          "TS1 1ST",
-      )
+      assertThat(actualDocumentResponse).isEqualTo(expectedDocumentResponse)
     }
   }
 
@@ -2250,6 +2401,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = existingRecommendation.data.personOnProbation?.firstName,
+          surname = existingRecommendation.data.personOnProbation?.surname,
+        ),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
       // when
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
 
@@ -2265,6 +2427,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           metaDataCaptor.capture(),
           anyObject(),
         )
+      assertThat(recommendationResponseCaptor.firstValue).isEqualTo(expectedRecommendationResponse)
       assertThat(metaDataCaptor.firstValue.countersignAcoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.countersignSpoDateTime).isNotNull
       assertThat(metaDataCaptor.firstValue.userPartACompletedByDateTime).isNotNull
@@ -2321,6 +2484,17 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
 
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        personOnProbation = PersonOnProbationDto(
+          fullName = randomString(),
+          firstName = existingRecommendation.data.personOnProbation?.firstName,
+          surname = existingRecommendation.data.personOnProbation?.surname,
+        ),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
       // when
       val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", true)
 
@@ -2328,13 +2502,31 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(result.fileContents).isNotNull
 
       then(templateReplacementServiceMocked).should(times(1))
-        .generateDocFromRecommendation(anyObject(), eq(DocumentType.PREVIEW_PART_A_DOCUMENT), anyObject(), anyObject())
+        .generateDocFromRecommendation(
+          eq(expectedRecommendationResponse),
+          eq(DocumentType.PREVIEW_PART_A_DOCUMENT),
+          anyObject(),
+          anyObject(),
+        )
     }
   }
 
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient),
+        templateReplacementService,
+        userAccessValidator,
+        riskServiceMocked,
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
       given(mockRegionService.getRegionName("London")).willReturn("")
       given(mockRegionService.getRegionName("London2")).willReturn("")
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
@@ -2354,6 +2546,14 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       given(recommendationRepository.findById(any()))
         .willReturn(Optional.of(existingRecommendation))
+
+      val expectedRecommendationResponse = RecommendationResponse(
+        crn = crn,
+        whoCompletedPartA = WhoCompletedPartA(region = existingRecommendation.data.whoCompletedPartA?.region),
+        practitionerForPartA = PractitionerForPartA(region = existingRecommendation.data.practitionerForPartA?.region),
+      )
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
 
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
@@ -2526,6 +2726,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
       deliusClient,
       mrdEmitterMocked,
+      recommendationConverter,
     )
   }
 

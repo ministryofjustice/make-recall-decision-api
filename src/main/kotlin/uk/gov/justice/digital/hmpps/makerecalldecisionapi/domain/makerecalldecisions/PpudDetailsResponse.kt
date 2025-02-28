@@ -13,6 +13,7 @@ data class OffenderDetails(
   val firstNames: String,
   val gender: String,
   val immigrationStatus: String,
+  val establishment: String,
   val nomsId: String,
   val prisonerCategory: String,
   val prisonNumber: String,

@@ -14,6 +14,7 @@ class PpudUpdateOffenderRequest(
   val isInCustody: Boolean,
   nomsId: String? = null,
   val prisonNumber: String,
+  val establishment: String?,
 ) {
   val croNumber = croNumber ?: ""
   val nomsId = nomsId ?: ""
