@@ -12,7 +12,8 @@ data class PpudOffender(
   val firstNames: String,
   val gender: String,
   val immigrationStatus: String,
-  val establishment: String,
+  // TODO MRD-2693 make establishment field mandatory
+  val establishment: String?,
   val nomsId: String,
   val prisonerCategory: String,
   val prisonNumber: String,
