@@ -3,13 +3,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
@@ -42,10 +38,6 @@ class RiskControllerTest(
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var cacheManager: CacheManager
-
   @Test
   fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available`() {
     runTest {
@@ -53,8 +45,6 @@ class RiskControllerTest(
       roshHistoryOnlyResponse(crn)
       noRiskScoresResponse(crn)
       noOffenderFoundRoshSummaryResponse(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -93,8 +83,6 @@ class RiskControllerTest(
       noMappaOrRoshHistoryResponse(crn)
       noRiskScoresResponse(crn)
       noLatestCompleteRoshSummaryResponse(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -128,8 +116,6 @@ class RiskControllerTest(
       noMappaOrRoshHistoryResponse(crn)
       failedRiskScoresResponse(crn)
       failedRoSHSummaryResponse(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -163,8 +149,6 @@ class RiskControllerTest(
       noMappaOrRoshHistoryResponse(crn)
       allRiskScoresEmptyResponse(crn)
       roSHSummaryNoDataResponse(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -195,8 +179,6 @@ class RiskControllerTest(
       allRiskScoresEmptyResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -276,8 +258,6 @@ class RiskControllerTest(
       allRiskScoresResponse(crn)
       deleteAndCreateRecommendation(featureFlagString)
       updateRecommendation(Status.DRAFT)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -411,8 +391,6 @@ class RiskControllerTest(
     roSHSummaryResponse(crn)
     mappaAndRoshHistoryNotFound(crn)
     allRiskScoresResponse(crn)
-    // Clear previous cache write
-    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
     webTestClient.get()
       .uri("/cases/$crn/risk")
@@ -440,8 +418,6 @@ class RiskControllerTest(
   fun `given case is excluded then only return user access details`() {
     runTest {
       userAccessRestricted(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -465,8 +441,6 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       mappaAndRoshHistoryResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
 
       webTestClient.get()
         .uri("/cases/$crn/risk")
@@ -486,8 +460,6 @@ class RiskControllerTest(
       userAccessAllowed(crn)
       mappaAndRoshHistoryResponse(crn)
       roSHSummaryResponse(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       allRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
       webTestClient.get()

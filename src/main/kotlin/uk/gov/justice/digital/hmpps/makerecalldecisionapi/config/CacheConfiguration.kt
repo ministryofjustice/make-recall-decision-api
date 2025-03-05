@@ -26,7 +26,7 @@ class CacheConfiguration(private val buildProperties: BuildProperties) {
   @Bean
   fun cacheManager(
     connectionFactory: RedisConnectionFactory,
-    @Value("\${spring.cache.type}") isCacheEnabled: String = "none",
+    @Value("\${spring.cache.type:none}") isCacheEnabled: String,
   ): CacheManager {
     if (isCacheEnabled.equals("none", ignoreCase = true)) {
       return NoOpCacheManager()

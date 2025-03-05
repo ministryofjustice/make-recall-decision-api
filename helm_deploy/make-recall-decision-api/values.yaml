@@ -40,7 +40,6 @@ generic-service:
     SENTRY_DSN: https://d51aaaaf56b547b8b0582ed0af80bdb7@o345774.ingest.sentry.io/6361157
     GOTENBERG_ENDPOINT_URL: http://make-recall-decision-api-gotenberg
     HMPPS_SQS_USE_WEB_TOKEN: "true"
-    REDIS_CACHING_ENABLED: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

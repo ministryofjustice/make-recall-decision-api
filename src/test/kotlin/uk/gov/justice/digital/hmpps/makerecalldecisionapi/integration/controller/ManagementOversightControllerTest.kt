@@ -3,23 +3,16 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationForNoRecallRequest
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class ManagementOversightControllerTest() : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var cacheManager: CacheManager
 
   @Test
   fun `get management oversight`() {
@@ -98,12 +91,8 @@ class ManagementOversightControllerTest() : IntegrationTestBase() {
     oasysAssessmentsResponse(crn)
     userAccessAllowed(crn)
     personalDetailsResponseOneTimeOnly(crn)
-    // Clear previous cache write
-    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
     licenceConditionsResponse(crn, 2500614567)
     personalDetailsResponseOneTimeOnly(crn)
-    // Clear previous cache write
-    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
     deleteAndCreateRecommendation()
   }
 }

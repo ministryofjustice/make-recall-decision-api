@@ -3,14 +3,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import java.time.LocalDate
@@ -22,10 +18,6 @@ import java.time.format.DateTimeFormatter
 class PersonDetailsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var cacheManager: CacheManager
-
   @Test
   fun `retrieves person details`() {
     runTest {
@@ -86,8 +78,6 @@ class PersonDetailsControllerTest(
   fun `handles scenario where no person exists matching crn`() {
     runTest {
       userAccessAllowed(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       personalDetailsNotFound(crn)
 
       webTestClient.get()
@@ -107,8 +97,6 @@ class PersonDetailsControllerTest(
   fun `given case is excluded then only return user access details`() {
     runTest {
       userAccessRestricted(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -129,8 +117,6 @@ class PersonDetailsControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }

@@ -3,14 +3,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters.fromValue
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import kotlin.random.Random
@@ -20,9 +16,6 @@ import kotlin.random.Random
 class OffenderSearchControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var cacheManager: CacheManager
 
   @Test
   fun `retrieves simple case summary details using crn`() {
@@ -98,8 +91,6 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessExcluded(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")
@@ -169,8 +160,6 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userNotFound(crn)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")
@@ -214,8 +203,6 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       limitedAccessPractitionerOffenderSearchResponse(crn)
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
-      // Clear previous cache write
-      cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")

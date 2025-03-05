@@ -70,7 +70,7 @@ spring:
           jwk-set-uri: ${hmpps.auth.url}/.well-known/jwks.json
 
   cache:
-    type: none
+    type: redis
 
   data:
     redis:
@@ -200,9 +200,9 @@ prison:
 
 ---
 mrd:
-  url: ${mrd.url}
+  url:
   api:
-    url: ${mrd.api.url}
+    url:
 
 cloud:
   aws:

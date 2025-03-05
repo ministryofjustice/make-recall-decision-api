@@ -3,17 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.CacheConstants.USER_ACCESS_CACHE_KEY
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.isNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -27,14 +22,6 @@ class CaseOverviewControllerTest(
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var cacheManager: CacheManager
-
-  @BeforeEach
-  fun setup() {
-    cacheManager[USER_ACCESS_CACHE_KEY]?.invalidate()
-  }
 
   @ParameterizedTest
   @CsvSource("REC_CLOSED,false", "SOME_OPEN_STATUS,true")
