@@ -58,6 +58,7 @@ executors:
           - POSTGRES_PASSWORD=secret
           - POSTGRES_USER=mrd_user
           - POSTGRES_DB=make_recall_decision
+          - POSTGRES_PORT=5432
       - image: cimg/redis:7.4.2
         command: redis-server --port 6369
         environment:

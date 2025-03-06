@@ -7,6 +7,7 @@ spring:
   flyway:
     enabled: false
 
+  # Cache disabled during majority of tests which rely on specific user access responses
   cache:
     type: none
 
