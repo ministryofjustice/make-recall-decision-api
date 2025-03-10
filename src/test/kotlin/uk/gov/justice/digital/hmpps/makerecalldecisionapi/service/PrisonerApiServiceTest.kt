@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -17,6 +19,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Movement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
@@ -32,7 +35,13 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-internal class PrisonerApiServiceTest : ServiceTestBase() {
+internal class PrisonerApiServiceTest {
+
+  @InjectMocks
+  private lateinit var prisonerApiService: PrisonerApiService
+
+  @Mock
+  private lateinit var prisonApiClient: PrisonApiClient
 
   @Test
   fun `call retrieve offender`() {
@@ -66,7 +75,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.agencyDescription).isEqualTo(expectedAgencyDescription)
@@ -97,7 +106,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
@@ -132,7 +141,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
@@ -150,7 +159,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
 
@@ -183,7 +192,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       RuntimeException("Something went wrong"),
     )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
 
@@ -268,7 +277,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     assertThat(result.size).isEqualTo(5)
 
@@ -331,7 +340,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     val offences = result.get(0).offences
     assertThat(offences[0].offenceDescription).isEqualTo("ABC")
@@ -394,7 +403,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     val offences = result[0].offences
     assertThat(offences.size).isGreaterThan(0)
@@ -473,7 +482,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     assertThat(result.size).isEqualTo(1)
 
