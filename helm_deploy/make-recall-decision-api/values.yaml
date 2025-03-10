@@ -58,6 +58,9 @@ generic-service:
       POSTGRES_PASSWORD: "password"
     hmpps-domain-events-topic:
       HMPPS_DOMAIN_EVENT_TOPIC_ARN: "topic_arn"
+    elasticache-redis:
+      SPRING_DATA_REDIS_HOST: "primary_endpoint_address"
+      SPRING_DATA_REDIS_PASSWORD: "auth_token"
 
   allowlist:
     north_shields_user: 194.33.192.1/24

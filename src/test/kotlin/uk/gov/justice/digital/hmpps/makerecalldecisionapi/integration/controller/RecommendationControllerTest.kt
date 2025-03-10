@@ -12,6 +12,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -1058,7 +1059,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
     runTest {
       userAccessAllowedOnce(crn)
       personalDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
       webTestClient.get()
@@ -1143,7 +1143,6 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       userResponse("some_user", "test@digital.justice.gov.uk")
       userAccessAllowedOnce(crn)
       personalDetailsResponse(crn)
-      userAccessAllowedOnce(crn)
       deleteAndCreateRecommendation()
       userAccessExcluded(crn)
       webTestClient.post()

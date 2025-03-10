@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter
 class PersonDetailsControllerTest(
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
   @Test
   fun `retrieves person details`() {
     runTest {
@@ -98,7 +97,6 @@ class PersonDetailsControllerTest(
   fun `given case is excluded then only return user access details`() {
     runTest {
       userAccessRestricted(crn)
-
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -119,7 +117,6 @@ class PersonDetailsControllerTest(
     runTest {
       userAccessAllowed(crn)
       personalDetailsResponse(crn, delaySeconds = nDeliusTimeout + 2)
-
       webTestClient.get()
         .uri("/cases/$crn/personal-details")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
