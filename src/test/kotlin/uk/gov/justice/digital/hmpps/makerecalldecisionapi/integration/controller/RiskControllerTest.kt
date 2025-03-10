@@ -38,7 +38,6 @@ class RiskControllerTest(
   @Value("\${oasys.arn.client.timeout}") private val oasysArnClientTimeout: Long,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
 ) : IntegrationTestBase() {
-
   @Test
   fun `retrieves risk summary when no MAPPA or risk scores and RoSH summary available`() {
     runTest {
