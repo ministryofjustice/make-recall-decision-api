@@ -74,7 +74,7 @@ spring:
 
   data:
     redis:
-      port: 6369
+      port: 6379
       repositories:
         enabled: false
 
