@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
@@ -202,15 +203,22 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(ClientTimeoutException::class)
-  fun handleClientTimeoutException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> {
-    log.info("Client timeout exception: {}", e.message)
+  fun handleClientTimeoutException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> =
+    handleClientTimeoutException(e.message)
+
+  @ExceptionHandler(ClientTimeoutRuntimeException::class)
+  fun handleClientTimeoutRuntimeException(e: ClientTimeoutRuntimeException): ResponseEntity<ErrorResponse> =
+    handleClientTimeoutException(e.message)
+
+  fun handleClientTimeoutException(message: String?): ResponseEntity<ErrorResponse> {
+    log.info("Client timeout exception: {}", message)
     return ResponseEntity
       .status(GATEWAY_TIMEOUT)
       .body(
         ErrorResponse(
           status = GATEWAY_TIMEOUT,
-          userMessage = "Client timeout: ${e.message}",
-          developerMessage = e.message,
+          userMessage = "Client timeout: $message",
+          developerMessage = message,
         ),
       )
   }
@@ -299,6 +307,28 @@ data class ErrorResponse(
 
 open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) :
   Exception(message, cause) {
+  override fun toString(): String {
+    return if (this.message == null) {
+      this.javaClass.simpleName
+    } else {
+      "${this.javaClass.simpleName}: ${this.message}"
+    }
+  }
+}
+
+// It is unclear why MakeRecallDecisionException extends Exception and not RuntimeException. Because
+// it is widely used, for now we create this runtime version and can look into this replacing the
+// above one with.
+// The reason for creating a runtime version is that uses of doOnError for processing react Monos
+// should be throwing runtime exceptions. It looks like they got around this back then through the
+// GetValueAndHandleWrappedException method, but I couldn't find or think of a reason why we might
+// want to do this instead of using a runtime one and letting the relevant @ExceptionHandler-annotated
+// method pick it up.
+open class MakeRecallDecisionRuntimeException(
+  override val message: String? = null,
+  override val cause: Throwable? = null,
+) :
+  RuntimeException(message, cause) {
   override fun toString(): String {
     return if (this.message == null) {
       this.javaClass.simpleName

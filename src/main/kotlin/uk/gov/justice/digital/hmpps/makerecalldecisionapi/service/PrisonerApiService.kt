@@ -5,13 +5,16 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import java.time.LocalDate
 import java.util.Base64
 
 @Service
 internal class PrisonerApiService(
   private val prisonApiClient: PrisonApiClient,
+  private val offenderMovementConverter: OffenderMovementConverter,
 ) {
   fun searchPrisonApi(nomsId: String): Offender {
     log.info("searching for offender using nomis id : $nomsId")
@@ -85,6 +88,18 @@ internal class PrisonerApiService(
       .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
       .sortedBy { it.courtDescription }
       .sortedByDescending { it.sentenceDate }
+  }
+
+  fun getOffenderMovements(nomsId: String): List<OffenderMovement> {
+    log.info("Searching for offender movements for offender with NOMIS ID $nomsId")
+    val prisonApiOffenderMovements = prisonApiClient.retrieveOffenderMovements(nomsId).block()
+
+    return if (prisonApiOffenderMovements != null) {
+      offenderMovementConverter.convert(prisonApiOffenderMovements)
+    } else {
+      log.info("No movements found for offender with NOMIS ID $nomsId")
+      emptyList()
+    }
   }
 
   companion object {

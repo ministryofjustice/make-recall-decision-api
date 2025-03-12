@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.ppud.PpudAutomationApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import java.net.URI
 import java.time.Duration
 import java.util.concurrent.TimeoutException
@@ -94,6 +95,7 @@ class WebClientConfiguration(
 
     private fun shouldBeRetried(ex: Throwable): Boolean {
       return ex is ClientTimeoutException ||
+        ex is ClientTimeoutRuntimeException ||
         ex is TimeoutException ||
         ex is WebClientRequestException ||
         (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode.value()))

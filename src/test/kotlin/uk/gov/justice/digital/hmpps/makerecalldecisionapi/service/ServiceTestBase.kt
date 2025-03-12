@@ -56,6 +56,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
@@ -96,6 +97,9 @@ internal abstract class ServiceTestBase {
 
   @Mock
   private lateinit var recommendationConverter: RecommendationConverter
+
+  @Mock
+  protected lateinit var offenderMovementConverter: OffenderMovementConverter
 
   protected lateinit var personDetailsService: PersonDetailsService
 
@@ -140,7 +144,7 @@ internal abstract class ServiceTestBase {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
-      PrisonerApiService(prisonApiClient),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter),
       templateReplacementService,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
