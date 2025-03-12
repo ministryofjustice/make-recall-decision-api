@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
