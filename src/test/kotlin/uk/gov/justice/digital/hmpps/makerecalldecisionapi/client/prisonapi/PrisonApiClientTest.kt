@@ -61,7 +61,7 @@ class PrisonApiClientTest {
     val nomsId = randomString()
     val responseList = listOf(prisonApiOffenderMovement(), prisonApiOffenderMovement())
     mockGetEndpointWithSuccess(
-      "/api/movements/offender/$nomsId",
+      offenderMovementsEndpoint(nomsId),
       responseList.joinToString(",", "[", "]") { it.toJsonString() },
     )
 
@@ -76,7 +76,7 @@ class PrisonApiClientTest {
   fun `handles timeout exceptions raised when retrieving offender movements`() {
     // given
     val nomsId = randomString()
-    mockGetEndpointWithSuccess("/api/movements/offender/$nomsId", "", (TIMEOUT_IN_SECONDS * 2).toInt())
+    mockGetEndpointWithSuccess(offenderMovementsEndpoint(nomsId), "", (TIMEOUT_IN_SECONDS * 2).toInt())
 
     // when then
     assertThatThrownBy {
@@ -93,7 +93,7 @@ class PrisonApiClientTest {
   fun `handles not found exceptions raised when retrieving offender movements`() {
     // given
     val nomsId = randomString()
-    mockGetEndpointWithFailure("/api/movements/offender/$nomsId", NOT_FOUND)
+    mockGetEndpointWithFailure(offenderMovementsEndpoint(nomsId), NOT_FOUND)
 
     // when then
     assertThatThrownBy {
@@ -103,4 +103,6 @@ class PrisonApiClientTest {
       .isInstanceOf(NotFoundException::class.java)
       .hasMessage("Prison API found no movements for NOMIS ID $nomsId")
   }
+
+  private fun offenderMovementsEndpoint(nomsId: String) = "/api/movements/offender/$nomsId"
 }
