@@ -5,8 +5,6 @@ services:
       context: .
     networks:
       - hmpps
-    depends_on:
-      - redis
     container_name: make-recall-decision-api
     ports:
       - "8080:8080"
