@@ -149,5 +149,4 @@ services:
 
 networks:
   hmpps:
-    external: true
     name: hmpps
