@@ -121,7 +121,8 @@ class PrisonApiControllerTest : IntegrationTestBase() {
     assertThat(jsonMovement.get("toAgencyDescription")).isEqualTo(prisonApiMovement.toAgencyDescription)
     assertThat(jsonMovement.get("movementType")).isEqualTo(prisonApiMovement.movementType)
     assertThat(jsonMovement.get("movementTypeDescription")).isEqualTo(prisonApiMovement.movementTypeDescription)
-    assertThat(jsonMovement.get("movementDateTime")).isEqualTo(
+    // we don't compare these as strings, as trailing zeroes can produce false assertion failures
+    assertThat(LocalDateTime.parse(jsonMovement.getString("movementDateTime"))).isEqualTo(
       LocalDateTime.of(
         prisonApiMovement.movementDate,
         prisonApiMovement.movementTime,
