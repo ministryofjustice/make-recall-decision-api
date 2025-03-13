@@ -114,7 +114,7 @@ class PrisonApiControllerTest : IntegrationTestBase() {
     jsonMovement: JSONObject,
     prisonApiMovement: PrisonApiOffenderMovement,
   ) {
-    assertThat(jsonMovement.get("offenderNo")).isEqualTo(prisonApiMovement.offenderNo)
+    assertThat(jsonMovement.get("nomisId")).isEqualTo(prisonApiMovement.offenderNo)
     assertThat(jsonMovement.get("fromAgency")).isEqualTo(prisonApiMovement.fromAgency)
     assertThat(jsonMovement.get("fromAgencyDescription")).isEqualTo(prisonApiMovement.fromAgencyDescription)
     assertThat(jsonMovement.get("toAgency")).isEqualTo(prisonApiMovement.toAgency)

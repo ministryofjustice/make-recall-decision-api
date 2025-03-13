@@ -10,7 +10,7 @@ import java.time.LocalDateTime
  */
 
 internal fun offenderMovement(
-  offenderNo: String = randomString(),
+  nomisId: String = randomString(),
   movementType: String = randomString(),
   movementTypeDescription: String = randomString(),
   fromAgency: String? = randomString(),
@@ -19,7 +19,7 @@ internal fun offenderMovement(
   toAgencyDescription: String? = randomString(),
   movementDateTime: LocalDateTime = randomLocalDateTime(),
 ) = OffenderMovement(
-  offenderNo,
+  nomisId,
   movementType,
   movementTypeDescription,
   fromAgency,

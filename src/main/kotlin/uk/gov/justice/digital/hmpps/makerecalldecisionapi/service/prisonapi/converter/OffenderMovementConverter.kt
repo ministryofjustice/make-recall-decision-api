@@ -14,7 +14,7 @@ class OffenderMovementConverter {
 
   fun convert(prisonApiOffenderMovement: PrisonApiOffenderMovement): OffenderMovement {
     return OffenderMovement(
-      offenderNo = prisonApiOffenderMovement.offenderNo,
+      nomisId = prisonApiOffenderMovement.offenderNo,
       movementType = prisonApiOffenderMovement.movementType,
       movementTypeDescription = prisonApiOffenderMovement.movementTypeDescription,
       fromAgency = prisonApiOffenderMovement.fromAgency,

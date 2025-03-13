@@ -53,7 +53,7 @@ class OffenderMovementConverterTest {
 
   private fun offenderMovementFrom(prisonApiOffenderMovement: PrisonApiOffenderMovement) =
     offenderMovement(
-      offenderNo = prisonApiOffenderMovement.offenderNo,
+      nomisId = prisonApiOffenderMovement.offenderNo,
       movementType = prisonApiOffenderMovement.movementType,
       movementTypeDescription = prisonApiOffenderMovement.movementTypeDescription,
       fromAgency = prisonApiOffenderMovement.fromAgency,
