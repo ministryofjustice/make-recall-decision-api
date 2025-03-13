@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
@@ -34,6 +35,18 @@ fun randomLocalDate(): LocalDate {
   val maxDay = LocalDate.of(2150, 12, 31).toEpochDay()
   val randomDay: Long = Random.Default.nextLong(minDay, maxDay)
   return LocalDate.ofEpochDay(randomDay)
+}
+
+/**
+ * Produces a random time between 00:00:00:000000000 and 23:59:59:999999999
+ */
+fun randomLocalTime(): LocalTime {
+  return LocalTime.of(
+    Random.nextInt(0, 23),
+    Random.nextInt(0, 59),
+    Random.nextInt(0, 59),
+    Random.nextInt(0, 999999999),
+  )
 }
 
 /**
