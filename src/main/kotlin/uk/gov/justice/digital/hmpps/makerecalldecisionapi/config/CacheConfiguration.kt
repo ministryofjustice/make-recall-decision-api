@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.cache.CacheManager
@@ -22,6 +23,9 @@ import java.time.Duration
 @EnableCaching
 @Configuration
 class CacheConfiguration(private val buildProperties: BuildProperties) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   @Bean
   fun cacheManager(
@@ -29,8 +33,10 @@ class CacheConfiguration(private val buildProperties: BuildProperties) {
     @Value("\${spring.cache.type:none}") isCacheEnabled: String,
   ): CacheManager {
     return if (isCacheEnabled.equals("none", ignoreCase = true)) {
+      log.info("NoOpCacheManager in use")
       NoOpCacheManager()
     } else if (isCacheEnabled.equals("redis", ignoreCase = true)) {
+      log.info("RedisCacheManager in use")
       RedisCacheManager.builder(connectionFactory)
         .withCacheConfiguration(USER_ACCESS_CACHE_KEY, getCacheConfiguration(Duration.ofMinutes(60)))
         .build()
