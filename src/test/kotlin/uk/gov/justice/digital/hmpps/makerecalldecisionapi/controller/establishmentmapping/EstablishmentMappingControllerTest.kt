@@ -31,7 +31,7 @@ class EstablishmentMappingControllerTest {
       val response = controller.getEstablishmentMappings()
 
       // then
-      assertThat(response.body?.establishmentMappings).isEqualTo(expectedEstablishmentMappings)
+      assertThat(response.body).isEqualTo(expectedEstablishmentMappings)
     }
   }
 }

@@ -16,9 +16,7 @@ class EstablishmentMappingControllerTest : IntegrationTestBase() {
             .expectStatus().isOk,
         )
 
-      assertThat(actualMappings.keySet()).contains("establishmentMappings")
-      val actualEstablishmentMappingsJsonNode = actualMappings.getJSONObject("establishmentMappings")
-      val actualEstablishmentMappings = actualEstablishmentMappingsJsonNode.toMap()
+      val actualEstablishmentMappings = actualMappings.toMap()
       assertThat(actualEstablishmentMappings).isNotEmpty
       actualEstablishmentMappings.entries.forEach { entry ->
         assertThat(entry.key).isNotNull()

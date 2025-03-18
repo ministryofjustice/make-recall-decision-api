@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.establishmentmapping.EstablishmentMappingResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.establishmentmapping.EstablishmentMappingService
 
 @RestController
@@ -20,8 +19,8 @@ internal class EstablishmentMappingController(
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @GetMapping("/establishment-mappings")
   @Operation(summary = "Gets all NOMIS to PPUD establishment mappings")
-  suspend fun getEstablishmentMappings(): ResponseEntity<EstablishmentMappingResponse> {
+  suspend fun getEstablishmentMappings(): ResponseEntity<Map<String, String>> {
     val mappings = establishmentMappingService.getEstablishmentMappings()
-    return ResponseEntity(EstablishmentMappingResponse(mappings), HttpStatus.OK)
+    return ResponseEntity(mappings, HttpStatus.OK)
   }
 }
