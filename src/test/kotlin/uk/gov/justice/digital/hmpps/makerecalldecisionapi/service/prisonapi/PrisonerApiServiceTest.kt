@@ -1,9 +1,12 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi
 
+import ch.qos.logback.classic.Level
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -17,6 +20,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.PrisonApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Movement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
@@ -27,12 +32,26 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
-internal class PrisonerApiServiceTest : ServiceTestBase() {
+internal class PrisonerApiServiceTest {
+
+  @InjectMocks
+  private lateinit var prisonerApiService: PrisonerApiService
+
+  @Mock
+  private lateinit var prisonApiClient: PrisonApiClient
+
+  @Mock
+  private lateinit var offenderMovementConverter: OffenderMovementConverter
+
+  private val logAppender = findLogAppender(PrisonerApiService::class.java)
 
   @Test
   fun `call retrieve offender`() {
@@ -66,7 +85,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.agencyDescription).isEqualTo(expectedAgencyDescription)
@@ -97,7 +116,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
@@ -132,7 +151,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
         },
       )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
     assertThat(result.image).isEqualTo("data:image/jpeg;base64,ZGF0YQ==")
@@ -150,7 +169,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
 
@@ -183,7 +202,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       RuntimeException("Something went wrong"),
     )
 
-    val result = PrisonerApiService(prisonApiClient).searchPrisonApi(nomsId)
+    val result = prisonerApiService.searchPrisonApi(nomsId)
 
     assertThat(result).isEqualTo(response)
 
@@ -268,7 +287,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     assertThat(result.size).isEqualTo(5)
 
@@ -331,7 +350,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     val offences = result.get(0).offences
     assertThat(offences[0].offenceDescription).isEqualTo("ABC")
@@ -394,7 +413,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     val offences = result[0].offences
     assertThat(offences.size).isGreaterThan(0)
@@ -473,7 +492,7 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
       },
     )
 
-    val result = PrisonerApiService(prisonApiClient).retrieveOffences(nomsId)
+    val result = prisonerApiService.retrieveOffences(nomsId)
 
     assertThat(result.size).isEqualTo(1)
 
@@ -481,5 +500,60 @@ internal class PrisonerApiServiceTest : ServiceTestBase() {
     assertThat(result[0].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
     assertThat(result[0].releasingPrison).isEqualTo("Hogwarts")
     assertThat(result[0].licenceExpiryDate).isEqualTo(LocalDate.now())
+  }
+
+  @Test
+  fun `gets offender movements`() {
+    // given
+    val nomsId = randomString()
+    val prisonApiOffenderMovements = listOf(prisonApiOffenderMovement())
+    given(prisonApiClient.retrieveOffenderMovements(nomsId)).willReturn(
+      Mono.fromCallable { prisonApiOffenderMovements },
+    )
+
+    val expectedOffenderMovements =
+      listOf(uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.offenderMovement())
+    given(offenderMovementConverter.convert(prisonApiOffenderMovements)).willReturn(
+      expectedOffenderMovements,
+    )
+
+    // when
+    val actualOffenderMovements = prisonerApiService.getOffenderMovements(nomsId)
+
+    // then
+    assertThat(actualOffenderMovements).isEqualTo(expectedOffenderMovements)
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(1)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("Searching for offender movements for offender with NOMIS ID $nomsId")
+      }
+    }
+  }
+
+  @Test
+  fun `returns empty offender movements list if no response given`() {
+    // given
+    val nomsId = randomString()
+    given(prisonApiClient.retrieveOffenderMovements(nomsId)).willReturn(
+      Mono.empty(),
+    )
+
+    // when
+    val actualOffenderMovements = prisonerApiService.getOffenderMovements(nomsId)
+
+    // then
+    assertThat(actualOffenderMovements).isEmpty()
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(2)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("Searching for offender movements for offender with NOMIS ID $nomsId")
+      }
+      with(get(1)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("No movements found for offender with NOMIS ID $nomsId")
+      }
+    }
   }
 }
