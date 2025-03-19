@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
@@ -12,12 +12,14 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.PrisonApiOffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.assertMovementsAreEqual
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
-import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -74,9 +76,12 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       )
 
       // then
-      assertThat(response.length()).isEqualTo(prisonApiMovements.size)
-      for (i in 0..<response.length()) {
-        assertJsonMovementIsEqualToExpectedMovement(response.getJSONObject(i), prisonApiMovements[i])
+      val jacksonTypeReference: TypeReference<List<OffenderMovement>> =
+        object : TypeReference<List<OffenderMovement>>() {}
+      val movements = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
+      assertThat(movements).hasSameSizeAs(prisonApiMovements)
+      for (i in movements.indices) {
+        assertMovementsAreEqual(movements[i], prisonApiMovements[i])
       }
     }
   }
@@ -107,26 +112,6 @@ class PrisonApiControllerTest : IntegrationTestBase() {
     prisonApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(movements.joinToString(",", "[", "]") { it.toJsonString() }),
-    )
-  }
-
-  private fun assertJsonMovementIsEqualToExpectedMovement(
-    jsonMovement: JSONObject,
-    prisonApiMovement: PrisonApiOffenderMovement,
-  ) {
-    assertThat(jsonMovement.get("nomisId")).isEqualTo(prisonApiMovement.offenderNo)
-    assertThat(jsonMovement.get("fromAgency")).isEqualTo(prisonApiMovement.fromAgency)
-    assertThat(jsonMovement.get("fromAgencyDescription")).isEqualTo(prisonApiMovement.fromAgencyDescription)
-    assertThat(jsonMovement.get("toAgency")).isEqualTo(prisonApiMovement.toAgency)
-    assertThat(jsonMovement.get("toAgencyDescription")).isEqualTo(prisonApiMovement.toAgencyDescription)
-    assertThat(jsonMovement.get("movementType")).isEqualTo(prisonApiMovement.movementType)
-    assertThat(jsonMovement.get("movementTypeDescription")).isEqualTo(prisonApiMovement.movementTypeDescription)
-    // we don't compare these as strings, as trailing zeroes can produce false assertion failures
-    assertThat(LocalDateTime.parse(jsonMovement.getString("movementDateTime"))).isEqualTo(
-      LocalDateTime.of(
-        prisonApiMovement.movementDate,
-        prisonApiMovement.movementTime,
-      ),
     )
   }
 }
