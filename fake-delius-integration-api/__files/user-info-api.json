@@ -1,0 +1,10 @@
+{
+    "username": "Art Major",
+    "email": "abc@123.com",
+    "staffCode": "TEST01",
+    "name": {
+      "forename": "John",
+      "middleName": null,
+      "surname": "Smith"
+    }
+  }
