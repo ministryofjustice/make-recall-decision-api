@@ -6,9 +6,13 @@ import org.apache.commons.lang3.StringUtils.normalizeSpace
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
+import org.springframework.data.web.PagedModel.PageMetadata
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
@@ -32,11 +36,20 @@ class DeliusClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  fun findByName(firstName: String?, surname: String?, page: Int, pageSize: Int) =
+    post<CasePage>(
+      "/case-summary/search",
+      parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
+      body = listOfNotNull(firstName?.let { "forename" to firstName }, surname?.let { "surname" to surname }).toMap(),
+    ).body!!
+
+  fun findByCrn(crn: String) = get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
+
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
   fun getUserInfo(name: String): UserInfo = getBody("/user/$name")
 
-  fun getProvider(code: String): Provider = getBody("/provider/$code") { RegionNotFoundException(it) }
+  fun getProvider(code: String): Provider = getBody("/provider/$code") { Mono.error(RegionNotFoundException(it)) }
 
   fun getOverview(crn: String): Overview = getBody("/case-summary/$crn/overview")
 
@@ -67,20 +80,19 @@ class DeliusClient(
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
   fun getDocument(crn: String, id: String): ResponseEntity<Resource> =
-    get("/document/$crn/$id") { PersonNotFoundException(it) }
+    get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
 
   private inline fun <reified T : Any> getBody(
     endpoint: String,
     parameters: Map<String, List<Any>> = emptyMap(),
-    crossinline notFoundExceptionFunction: (String) -> Throwable = { PersonNotFoundException(it) },
-  ) =
-    get<T>(endpoint, parameters, notFoundExceptionFunction).body!!
+    crossinline notFoundExceptionFunction: (String) -> Mono<Throwable> = { Mono.error(PersonNotFoundException(it)) },
+  ) = get<T>(endpoint, parameters, notFoundExceptionFunction)?.body!!
 
   private inline fun <reified T : Any> get(
     endpoint: String,
     parameters: Map<String, List<Any>> = emptyMap(),
-    crossinline notFoundExceptionFunction: (String) -> Throwable,
-  ): ResponseEntity<T> {
+    crossinline notFoundExceptionFunction: (String) -> Mono<Throwable>,
+  ): ResponseEntity<T>? {
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
@@ -89,8 +101,29 @@ class DeliusClient(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw notFoundExceptionFunction("No details available for endpoint: $endpoint") },
+        { notFoundExceptionFunction("No details available for endpoint: $endpoint") },
       )
+      .toEntity(T::class.java)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { handleTimeoutException(it, endpoint) }
+      .withRetry()
+    log.info(normalizeSpace("Returning $endpoint details"))
+    return getValueAndHandleWrappedException(result)
+  }
+
+  private inline fun <reified T : Any> post(
+    endpoint: String,
+    parameters: Map<String, List<Any>> = emptyMap(),
+    body: Map<String, Any> = emptyMap(),
+  ): ResponseEntity<T> {
+    log.info(normalizeSpace("About to call $endpoint"))
+    val result = webClient.post()
+      .uri {
+        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+      }
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(fromValue(body))
+      .retrieve()
       .toEntity(T::class.java)
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
@@ -143,12 +176,18 @@ class DeliusClient(
     val primaryLanguage: String?,
   ) {
     data class Identifiers(
+      val crn: String,
       val pncNumber: String?,
       val croNumber: String?,
       val nomsNumber: String?,
       val bookingNumber: String?,
     )
   }
+
+  data class CasePage(
+    val content: List<PersonalDetailsOverview>,
+    val page: PageMetadata,
+  )
 
   data class Address(
     val buildingName: String? = null,

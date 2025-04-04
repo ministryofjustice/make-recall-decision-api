@@ -63,14 +63,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusNoMappaOrRoshHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRecommendationModelResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByCrnResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByNameResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseMultipleConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.multipleLicenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.noActiveOrInactiveLicences
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.nonCustodialLicencesResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.limitedAccessOffenderSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.offenderSearchDeliusResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNoConvictions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.overviewResponseNonCustodial
@@ -111,7 +111,6 @@ abstract class IntegrationTestBase {
   @Autowired
   protected lateinit var recommendationSupportingDocumentRepository: RecommendationSupportingDocumentRepository
 
-  var offenderSearchApi: ClientAndServer = startClientAndServer(8093)
   var gotenbergMock: ClientAndServer = startClientAndServer(8094)
   var oasysARNApi: ClientAndServer = startClientAndServer(8095)
   var cvlApi: ClientAndServer = startClientAndServer(8096)
@@ -208,7 +207,6 @@ abstract class IntegrationTestBase {
     deliusIntegration.reset()
     gotenbergMock.reset()
     oasysARNApi.reset()
-    offenderSearchApi.reset()
     prisonApi.reset()
     ppudAutomationApi.reset()
     setupOauth()
@@ -223,7 +221,6 @@ abstract class IntegrationTestBase {
     gotenbergMock.stop()
     oasysARNApi.stop()
     oauthMock.stop()
-    offenderSearchApi.stop()
     prisonApi.stop()
     ppudAutomationApi.stop()
   }
@@ -675,30 +672,49 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun offenderSearchByCrnResponse(
+  protected fun findByCrnSuccess(
     crn: String = "X123456",
     firstName: String = "Pontius",
     surname: String = "Pilate",
     dateOfBirth: String = "2000-11-09",
+    delaySeconds: Long = 0,
+  ) {
+    deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(findByCrnResponse(crn, firstName, surname, dateOfBirth))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun findByNameSuccess(
+    crn: String = "Y654321",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
+    dateOfBirth: String = "1980-12-01",
     pageNumber: Int = 0,
     pageSize: Int = 1,
     totalPages: Int = 1,
     delaySeconds: Long = 0,
   ) {
     val offenderSearchRequest = request()
-      .withPath("/search/people")
+      .withPath("/case-summary/search")
       .withQueryStringParameter("page", pageNumber.toString())
       .withQueryStringParameter("size", pageSize.toString())
       .withBody(
         json(
-          "{\"crn\":\"$crn\"}",
+          """
+          {
+            "forename": "$firstName",
+            "surname": "$surname"
+          }
+          """.trimIndent(),
         ),
       )
 
-    offenderSearchApi.`when`(offenderSearchRequest).respond(
+    deliusIntegration.`when`(offenderSearchRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(
-          offenderSearchDeliusResponse(
+          findByNameResponse(
             crn = crn,
             firstName = firstName,
             surname = surname,
@@ -708,62 +724,6 @@ abstract class IntegrationTestBase {
             totalPages = totalPages,
           ),
         )
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun offenderSearchByNameResponse(
-    crn: String = "Y654321",
-    firstName: String = "Joe",
-    surname: String = "Bloggs",
-    dateOfBirth: String = "1980-12-01",
-    pageNumber: Int = 0,
-    pageSize: Int = 1,
-    delaySeconds: Long = 0,
-  ) {
-    val offenderSearchRequest = request()
-      .withPath("/search/people")
-      .withQueryStringParameter("page", pageNumber.toString())
-      .withQueryStringParameter("size", pageSize.toString())
-      .withBody(
-        json(
-          "{" +
-            "\"firstName\":\"$firstName\"," +
-            "\"surname\":\"$surname\"" +
-            "}",
-        ),
-      )
-
-    offenderSearchApi.`when`(offenderSearchRequest).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(
-          offenderSearchDeliusResponse(
-            crn = crn,
-            firstName = firstName,
-            surname = surname,
-            dateOfBirth = dateOfBirth,
-            pageNumber = pageNumber,
-            pageSize = pageSize,
-          ),
-        )
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun limitedAccessPractitionerOffenderSearchResponse(crn: String, delaySeconds: Long = 0) {
-    val offenderSearchRequest = request()
-      .withPath("/search/people")
-      .withBody(
-        json(
-          "{" +
-            "\"crn\":\"$crn\"" +
-            "}",
-        ),
-      )
-
-    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(limitedAccessOffenderSearchResponse(crn))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }
@@ -1216,14 +1176,6 @@ abstract class IntegrationTestBase {
 
     deliusIntegration
       .`when`(request().withPath("/health"))
-      .respond(
-        response()
-          .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "OK"))),
-      )
-
-    offenderSearchApi
-      .`when`(request().withPath("/health/ping"))
       .respond(
         response()
           .withContentType(APPLICATION_JSON)
