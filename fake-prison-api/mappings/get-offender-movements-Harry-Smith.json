@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/movements/offender/JG123POE"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "get-offender-movements-Harry-Smith.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

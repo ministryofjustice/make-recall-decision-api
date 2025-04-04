@@ -79,6 +79,8 @@ dependencies {
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("io.rest-assured:json-path")
   testImplementation("io.rest-assured:xml-path")
+
+  testImplementation("org.wiremock:wiremock-standalone:3.12.1")
 }
 
 java {
