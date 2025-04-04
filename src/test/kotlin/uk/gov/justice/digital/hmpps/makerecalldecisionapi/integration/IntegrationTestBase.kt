@@ -147,11 +147,21 @@ abstract class IntegrationTestBase {
     @JvmStatic
     var postgresStarted = false
 
-    fun popDb() {
-      val currentDirectory = File(".").absoluteFile.parentFile
-      val resourcesDirectory =
-        Paths.get(currentDirectory.toString(), "src", "main", "resources", "db", "migration").toString()
+    @JvmStatic
+    @BeforeAll
+    fun setUpDb() {
+      if (postgresStarted) return
+      runDbMigrations()
+      postgresStarted = true
+    }
 
+    /**
+     * The programmatic execution of the migration files below was introduced with
+     * https://github.com/ministryofjustice/make-recall-decision-api/pull/983 . It is
+     * unclear (to me, anyway) why the changes meant this programmatic migration is
+     * now required. MRD-2686 has been opened to investigate.
+     */
+    private fun runDbMigrations() {
       val url = "jdbc:postgresql://localhost:5432/make_recall_decision"
       val user = "mrd_user"
       val password = "secret"
@@ -170,26 +180,23 @@ abstract class IntegrationTestBase {
         "V1_27__RECOMMENDATION_DOCUMENT_TABLE.sql",
         "V1_28__RECOMMENDATION_DOCUMENT_TABLE.sql",
         "V1_30__PPUD_USERS_TABLE_ADD_PPUD_USER_NAME_COL.sql",
+        "V1_31__create-NOMIS_TO_PPUD_ESTABLISHMENT_MAPPING-table.sql",
+        "V1_32__insert-establishment-mappings.sql",
       )
 
+      val currentDirectory = File(".").absoluteFile.parentFile
+      val resourcesDirectoryPath =
+        Paths.get(currentDirectory.toString(), "src", "main", "resources", "db", "migration").toString()
       Class.forName("org.postgresql.Driver")
       DriverManager.getConnection(url, user, password).use { connection ->
         for (sqlFile in sqlFiles) {
-          val file = File(resourcesDirectory, sqlFile)
+          val file = File(resourcesDirectoryPath, sqlFile)
           val script = file.readText()
           connection.prepareStatement(script).use { statement ->
             statement.execute()
           }
         }
       }
-    }
-
-    @JvmStatic
-    @BeforeAll
-    fun setUpDb() {
-      if (postgresStarted) return
-      popDb()
-      postgresStarted = true
     }
   }
 
@@ -343,8 +350,6 @@ abstract class IntegrationTestBase {
   protected fun allRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
       request().withPath("/risks/crn/$crn/predictors/all")
-
-    val allRiskScoresResponse = allRiskScoresResponse()
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds)),
