@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/case-summary/X788206"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "searchPPCS_X788206.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

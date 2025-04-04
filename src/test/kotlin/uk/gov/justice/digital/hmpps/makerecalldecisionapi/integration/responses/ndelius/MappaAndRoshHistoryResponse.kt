@@ -9,6 +9,7 @@ fun deliusMappaAndRoshHistoryResponse(mappaLevel: Int = 1, mappaCategory: Int = 
       "surname": "Smith"
     },
     "identifiers": {
+      "crn": "X000001",
       "pncNumber": "2004/0712343H",
       "croNumber": "123456/04A",
       "nomsNumber": "A1234CR",
@@ -45,6 +46,7 @@ fun deliusRoshHistoryOnlyResponse(mappaLevel: Int = 1, mappaCategory: Int = 0) =
       "surname": "Smith"
     },
     "identifiers": {
+      "crn": "X000001",
       "pncNumber": "2004/0712343H",
       "croNumber": "123456/04A",
       "nomsNumber": "A1234CR",
@@ -76,6 +78,7 @@ fun deliusNoMappaOrRoshHistoryResponse() = """
       "surname": "Smith"
     },
     "identifiers": {
+      "crn": "X000001",
       "pncNumber": "2004/0712343H",
       "croNumber": "123456/04A",
       "nomsNumber": "A1234CR",
