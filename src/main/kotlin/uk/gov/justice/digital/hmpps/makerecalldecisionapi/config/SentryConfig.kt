@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 
 @Component
 class SentryContextAppender : HandlerInterceptor {
@@ -45,7 +46,7 @@ class SentryBeforeSendCallback : SentryOptions.BeforeSendCallback {
   override fun execute(event: SentryEvent, hint: Hint): SentryEvent? {
     log.info("event: '{}', throwable: '{}', hint: '{}'", event, event.throwable, hint)
 
-    if (event.throwable is ClientTimeoutException) {
+    if (event.throwable is ClientTimeoutException || event.throwable is ClientTimeoutRuntimeException) {
       return null
     }
 

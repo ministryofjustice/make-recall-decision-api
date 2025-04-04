@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Value
@@ -8,12 +8,14 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
@@ -101,15 +103,6 @@ class PrisonApiClient(
       .withRetry()
   }
 
-  private fun handleTimeoutException(exception: Throwable?) {
-    when (exception) {
-      is TimeoutException -> {
-        timeoutCounter.increment()
-        throw ClientTimeoutException("Prison API Client", "No response within $prisonTimeout seconds")
-      }
-    }
-  }
-
   fun retrieveAgency(agencyId: String): Mono<Agency> {
     val responseType = object : ParameterizedTypeReference<Agency>() {}
     return webClient
@@ -120,7 +113,7 @@ class PrisonApiClient(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw NotFoundException("Prison api returned agency not found for agency id " + agencyId) },
+        { throw NotFoundException("Prison api returned agency not found for agency id $agencyId") },
       )
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(prisonTimeout))
@@ -128,5 +121,41 @@ class PrisonApiClient(
         handleTimeoutException(exception = ex)
       }
       .withRetry()
+  }
+
+  fun retrieveOffenderMovements(nomsId: String): Mono<List<PrisonApiOffenderMovement>> {
+    val responseType = object : ParameterizedTypeReference<List<PrisonApiOffenderMovement>>() {}
+    return webClient
+      .get()
+      .uri { builder -> builder.path("api/movements/offender/$nomsId").build() }
+      .retrieve()
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw NotFoundException("Prison API found no movements for NOMIS ID $nomsId") },
+      )
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(prisonTimeout))
+      .doOnError { ex ->
+        handleTimeoutRuntimeException(exception = ex)
+      }
+      .withRetry()
+  }
+
+  private fun handleTimeoutException(exception: Throwable?) {
+    when (exception) {
+      is TimeoutException -> {
+        timeoutCounter.increment()
+        throw ClientTimeoutException("Prison API Client", "No response within $prisonTimeout seconds")
+      }
+    }
+  }
+
+  private fun handleTimeoutRuntimeException(exception: Throwable?) {
+    when (exception) {
+      is TimeoutException -> {
+        timeoutCounter.increment()
+        throw ClientTimeoutRuntimeException("Prison API Client", "No response within $prisonTimeout seconds")
+      }
+    }
   }
 }

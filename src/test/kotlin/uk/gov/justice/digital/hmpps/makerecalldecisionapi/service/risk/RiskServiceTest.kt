@@ -32,9 +32,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
@@ -59,7 +59,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       recommendationRepository,
       recommendationStatusRepository,
       personDetailsService,
-      PrisonerApiService(prisonApiClient),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter),
       templateReplacementService2,
       userAccessValidator,
       null,
