@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import org.mockserver.model.MediaType.APPLICATION_JSON
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
@@ -15,15 +17,20 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domai
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.assertMovementsAreEqual
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
+import java.util.concurrent.TimeUnit.SECONDS
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class PrisonApiControllerTest : IntegrationTestBase() {
+
+  @Value("\${prison.client.timeout}")
+  var prisonTimeout: Long = 0
 
   @Test
   fun `retrieves offender details`() {
@@ -103,6 +110,38 @@ class PrisonApiControllerTest : IntegrationTestBase() {
     }
   }
 
+  @Test
+  fun `offender movement retrieval fails due to Prison API timeouts`() {
+    runTest {
+      // given
+      val nomsId = "A123456"
+      val timeoutMessage = "Prison API Client: [No response within $prisonTimeout seconds]"
+      val expectedErrorResponse = ErrorResponse(
+        status = GATEWAY_TIMEOUT,
+        userMessage = "Client timeout: $timeoutMessage",
+        developerMessage = timeoutMessage,
+      )
+      mockPrisonApiOffenderMovementsTimeout(nomsId)
+
+      // when
+      val response = convertResponseToJSONObject(
+        webTestClient.get()
+          .uri("/offenders/$nomsId/movements")
+          .headers {
+            (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_PPCS"))))
+          }
+          .exchange()
+          .expectStatus().isEqualTo(GATEWAY_TIMEOUT),
+      )
+
+      // then
+      val jacksonTypeReference: TypeReference<ErrorResponse> =
+        object : TypeReference<ErrorResponse>() {}
+      val actualErrorResponse = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
+      assertThat(actualErrorResponse).isEqualTo(expectedErrorResponse)
+    }
+  }
+
   private fun mockPrisonApiOffenderMovementsResponse(
     nomsId: String,
     movements: List<PrisonApiOffenderMovement>,
@@ -112,6 +151,18 @@ class PrisonApiControllerTest : IntegrationTestBase() {
     prisonApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(movements.joinToString(",", "[", "]") { it.toJsonString() }),
+    )
+  }
+
+  private fun mockPrisonApiOffenderMovementsTimeout(
+    nomsId: String,
+  ) {
+    val request = request().withPath("/api/movements/offender/$nomsId")
+
+    prisonApi.`when`(request).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody("[]")
+        .withDelay(SECONDS, prisonTimeout * 3),
     )
   }
 }
