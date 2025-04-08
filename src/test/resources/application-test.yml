@@ -51,6 +51,8 @@ ppud-automation:
       url: http://localhost:8099
 
 prison:
+  client:
+    timeout: 2
   api:
     endpoint:
       url: http://localhost:8098
