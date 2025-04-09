@@ -1,8 +1,0 @@
-{
-  "status": "UP",
-  "components": {
-    "ping": {
-      "status": "UP"
-    }
-  }
-}

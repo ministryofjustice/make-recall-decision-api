@@ -22,13 +22,7 @@ class OffenderSearchControllerDeprecatedTest : IntegrationTestBase() {
       val firstName = "Pontius"
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-30"
-      offenderSearchByCrnResponse(
-        crn = crn,
-        firstName = firstName,
-        surname = lastName,
-        dateOfBirth = dateOfBirth,
-        pageSize = 10,
-      )
+      findByCrnSuccess(crn, firstName, lastName, dateOfBirth)
       webTestClient.get()
         .uri("/search?crn=$crn")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }

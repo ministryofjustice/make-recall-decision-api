@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/case-summary/X098097"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "search-cvl-no-additional.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

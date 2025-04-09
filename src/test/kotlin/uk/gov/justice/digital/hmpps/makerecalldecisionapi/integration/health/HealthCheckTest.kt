@@ -70,7 +70,6 @@ class HealthCheckTest : IntegrationTestBase() {
       "status" to "UP",
       "components.hmppsAuth.status" to "UP",
       "components.deliusIntegration.status" to "UP",
-      "components.offenderSearchApi.status" to "UP",
       "components.gotenberg.status" to "UP",
       "components.ppudAutomationApi.status" to "UP",
     )
@@ -84,9 +83,6 @@ class HealthCheckTest : IntegrationTestBase() {
     deliusIntegration.clear(request().withPath("/health"))
     deliusIntegration.`when`(request().withPath("/health")).error(HttpError.error())
 
-    offenderSearchApi.clear(request().withPath("/health/ping"))
-    offenderSearchApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
-
     gotenbergMock.clear(request().withPath("/health"))
     gotenbergMock.`when`(request().withPath("/health")).error(HttpError.error())
 
@@ -98,7 +94,6 @@ class HealthCheckTest : IntegrationTestBase() {
       HttpStatus.SERVICE_UNAVAILABLE,
       "components.hmppsAuth.status" to "DOWN",
       "components.deliusIntegration.status" to "DOWN",
-      "components.offenderSearchApi.status" to "DOWN",
       "components.gotenberg.status" to "DOWN",
       "components.ppudAutomationApi.status" to "DOWN_BUT_OPTIONAL",
     )
@@ -116,7 +111,6 @@ class HealthCheckTest : IntegrationTestBase() {
       "status" to "UP",
       "components.hmppsAuth.status" to "UP",
       "components.deliusIntegration.status" to "UP",
-      "components.offenderSearchApi.status" to "UP",
       "components.gotenberg.status" to "UP",
       "components.ppudAutomationApi.status" to "DOWN_BUT_OPTIONAL",
     )

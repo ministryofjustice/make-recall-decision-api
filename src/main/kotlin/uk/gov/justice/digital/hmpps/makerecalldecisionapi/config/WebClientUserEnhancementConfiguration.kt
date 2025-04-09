@@ -22,13 +22,11 @@ import org.springframework.security.oauth2.server.resource.web.reactive.function
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import java.net.URI
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
-  @Value("\${offender.search.endpoint.url}") private val offenderSearchApiRootUri: String,
   @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
   @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
   @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
@@ -74,28 +72,6 @@ class WebClientUserEnhancementConfiguration(
 
   @Bean
   fun cvlApiClientUserEnhancedTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
-
-  @Bean
-  @RequestScope
-  fun offenderSearchWebClientUserEnhancedAppScope(
-    clientRegistrationRepository: ClientRegistrationRepository,
-    builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(
-      authorizedClientManagerUserEnhanced(clientRegistrationRepository),
-      builder,
-      offenderSearchApiRootUri,
-      "offender-search-api",
-    )
-  }
-
-  @Bean
-  fun offenderSearchApiClientUserEnhanced(@Qualifier("offenderSearchWebClientUserEnhancedAppScope") webClient: WebClient): OffenderSearchApiClient {
-    return OffenderSearchApiClient(webClient, nDeliusTimeout, offenderSearchApiClientTimeoutCounter2())
-  }
-
-  @Bean
-  fun offenderSearchApiClientTimeoutCounter2(): Counter = timeoutCounter(offenderSearchApiRootUri)
 
   private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
     val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
