@@ -52,7 +52,7 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:11.1.1")
   implementation("org.postgresql:postgresql:42.7.5")
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.11.1")
   implementation("io.sentry:sentry-logback:7.20.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3")
