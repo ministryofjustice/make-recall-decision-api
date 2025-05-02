@@ -98,7 +98,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1392",
         "dateOfSentence": "2000-04-20",
         "custodyType": "IPP",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Doing an underhand serve",
           "dateOfIndexOffence": "1990-04-20"
@@ -116,7 +115,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1393",
         "dateOfSentence": "2013-12-31",
         "custodyType": "DPP",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Mixing toothpaste and orange juice",
           "dateOfIndexOffence": "2012-06-06"
@@ -134,7 +132,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1394",
         "dateOfSentence": "2006-01-26",
         "custodyType": "Mandatory (MLP)",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Not replacing the toilet roll",
           "dateOfIndexOffence": "2006-01-25"
@@ -152,7 +149,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1395",
         "dateOfSentence": "2014-04-21",
         "custodyType": "Discretionary",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Eating the last chocolate egg",
           "dateOfIndexOffence": "2014-04-20"
@@ -170,7 +166,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1390",
         "dateOfSentence": "2003-06-12",
         "custodyType": "Discretionary (Tariff Expired)",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Playing a point and click adventure with a controller",
           "dateOfIndexOffence": "2002-01-01"
@@ -188,7 +183,6 @@
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1391",
         "dateOfSentence": "2019-10-31",
         "custodyType": "Automatic",
-        "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Abbreviating should have to should of",
           "dateOfIndexOffence": "2019-10-31"
