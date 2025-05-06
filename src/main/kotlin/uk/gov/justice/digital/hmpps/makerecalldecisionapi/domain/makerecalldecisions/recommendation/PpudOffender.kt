@@ -29,7 +29,7 @@ data class PpudSentence(
   val sentenceExpiryDate: String?,
   val dateOfSentence: String,
   val custodyType: String,
-  val mappaLevel: String,
+  val mappaLevel: String?,
   val licenceExpiryDate: String?,
   val offence: PpudOffence?,
   val releaseDate: String?,

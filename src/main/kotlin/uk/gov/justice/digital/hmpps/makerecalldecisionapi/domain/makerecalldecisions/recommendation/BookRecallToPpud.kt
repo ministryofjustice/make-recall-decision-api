@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class BookRecallToPpud(
   val decisionDateTime: LocalDateTime? = null,
+  val custodyGroup: String? = null,
   val custodyType: String? = null,
   val currentEstablishment: String? = null,
   val releasingPrison: String? = null,

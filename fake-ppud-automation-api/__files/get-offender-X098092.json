@@ -53,7 +53,7 @@
       {
         "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313238393334G1375H1387",
         "dateOfSentence": "2010-09-01",
-        "custodyType": "Indeterminate (life)",
+        "custodyType": "EDS",
         "licenceExpiryDate": "2005-06-13",
         "mappaLevel": "",
         "offence": {
@@ -75,6 +75,126 @@
           "months": 0
         },
         "sentencingCourt": "Clydesdale"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1389",
+        "dateOfSentence": "2004-07-21",
+        "custodyType": "EDS (non parole)",
+        "mappaLevel": "Level 2 – Local Inter-Agency Management",
+        "offence": {
+          "indexOffence": "Putting ketchup on pizza",
+          "dateOfIndexOffence": "2002-01-01"
+        },
+        "releaseDate": "2005-09-13",
+        "sentenceExpiryDate": "2005-09-13",
+        "sentenceLength": {
+          "partYears": 1,
+          "partMonths": 1,
+          "partDays": 23
+        },
+        "sentencingCourt": "The Court of Elders"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1392",
+        "dateOfSentence": "2000-04-20",
+        "custodyType": "IPP",
+        "offence": {
+          "indexOffence": "Doing an underhand serve",
+          "dateOfIndexOffence": "1990-04-20"
+        },
+        "releaseDate": "2025-09-20",
+        "sentenceExpiryDate": "2025-09-20",
+        "sentenceLength": {
+          "partYears": 25,
+          "partMonths": 5,
+          "partDays": 0
+        },
+        "sentencingCourt": "Tennis Court"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1393",
+        "dateOfSentence": "2013-12-31",
+        "custodyType": "DPP",
+        "offence": {
+          "indexOffence": "Mixing toothpaste and orange juice",
+          "dateOfIndexOffence": "2012-06-06"
+        },
+        "releaseDate": "2015-12-31",
+        "sentenceExpiryDate": "2015-12-31",
+        "sentenceLength": {
+          "partYears": 2,
+          "partMonths": 0,
+          "partDays": 0
+        },
+        "sentencingCourt": "King's Court"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1394",
+        "dateOfSentence": "2006-01-26",
+        "custodyType": "Mandatory (MLP)",
+        "offence": {
+          "indexOffence": "Not replacing the toilet roll",
+          "dateOfIndexOffence": "2006-01-25"
+        },
+        "releaseDate": "2007-02-01",
+        "sentenceExpiryDate": "2007-02-01",
+        "sentenceLength": {
+          "partYears": 1,
+          "partMonths": 0,
+          "partDays": 6
+        },
+        "sentencingCourt": "Queen's Court"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1395",
+        "dateOfSentence": "2014-04-21",
+        "custodyType": "Discretionary",
+        "offence": {
+          "indexOffence": "Eating the last chocolate egg",
+          "dateOfIndexOffence": "2014-04-20"
+        },
+        "releaseDate": "2015-04-05",
+        "sentenceExpiryDate": "2015-04-05",
+        "sentenceLength": {
+          "partYears": 0,
+          "partMonths": 11,
+          "partDays": 15
+        },
+        "sentencingCourt": "Southcourt"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1390",
+        "dateOfSentence": "2003-06-12",
+        "custodyType": "Discretionary (Tariff Expired)",
+        "offence": {
+          "indexOffence": "Playing a point and click adventure with a controller",
+          "dateOfIndexOffence": "2002-01-01"
+        },
+        "releaseDate": "2005-09-13",
+        "sentenceExpiryDate": "2005-09-13",
+        "sentenceLength": {
+          "partYears": 1,
+          "partMonths": 1,
+          "partDays": 23
+        },
+        "sentencingCourt": "The Illuminati Court"
+      },
+      {
+        "id": "4F6666656E64657249643D3136323931342653656E74656E636549643D313231303334G1366H1391",
+        "dateOfSentence": "2019-10-31",
+        "custodyType": "Automatic",
+        "offence": {
+          "indexOffence": "Abbreviating should have to should of",
+          "dateOfIndexOffence": "2019-10-31"
+        },
+        "releaseDate": "2045-09-13",
+        "sentenceExpiryDate": "2045-09-13",
+        "sentenceLength": {
+          "partYears": 25,
+          "partMonths": 10,
+          "partDays": 13
+        },
+        "sentencingCourt": "Courter-pounder with cheese"
       }
     ],
     "status": "Recalled [*]",
