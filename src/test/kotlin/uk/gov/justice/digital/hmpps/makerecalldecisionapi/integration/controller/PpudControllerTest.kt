@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
@@ -27,6 +28,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
@@ -34,7 +37,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Suppress("SameParameterValue")
 @ActiveProfiles("test")
@@ -81,14 +84,18 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `given details request`() {
-    ppudAutomationDetailsMatchResponse("12345678")
+    val ppudDetailsResponse: PpudDetailsResponse = ppudDetailsResponse()
+
+    ppudAutomationDetailsMatchResponse(ppudDetailsResponse)
 
     runTest {
       webTestClient.post()
-        .uri("/ppud/details/12345678")
+        .uri("/ppud/details/${ppudDetailsResponse.offender.id}")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
+        .expectBody()
+        .json(ppudDetailsResponse.toJsonString())
     }
   }
 
