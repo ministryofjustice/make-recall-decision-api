@@ -1,15 +1,16 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import org.mockserver.model.JsonBody.json
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.toJsonNullableStringField
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 internal fun bookRecallToPpud(
   decisionDateTime: LocalDateTime? = randomLocalDateTime(),
+  custodyGroup: String? = randomString(),
   custodyType: String? = randomString(),
   currentEstablishment: String? = randomString(),
   releasingPrison: String? = randomString(),
@@ -33,6 +34,7 @@ internal fun bookRecallToPpud(
   minute: String? = randomString(),
 ) = BookRecallToPpud(
   decisionDateTime,
+  custodyGroup,
   custodyType,
   currentEstablishment,
   releasingPrison,
@@ -59,31 +61,4 @@ internal fun bookRecallToPpud(
 internal fun BookRecallToPpud.toJsonBody() = json(toJsonString())
 
 internal fun BookRecallToPpud.toJsonString() =
-  """
-      {
-          "decisionDateTime":${toJsonNullableStringField(decisionDateTime)},
-          "custodyType":${toJsonNullableStringField(custodyType)},
-          "currentEstablishment" : ${toJsonNullableStringField(currentEstablishment)},
-          "releasingPrison":${toJsonNullableStringField(releasingPrison)},
-          "indexOffence":${toJsonNullableStringField(indexOffence)},
-          "indexOffenceComment":${toJsonNullableStringField(indexOffenceComment)},
-          "releasingPrison" : ${toJsonNullableStringField(releasingPrison)},
-          "indexOffence" : ${toJsonNullableStringField(indexOffence)},
-          "ppudSentenceId" : ${toJsonNullableStringField(ppudSentenceId)},
-          "mappaLevel" : ${toJsonNullableStringField(mappaLevel)},
-          "policeForce" : ${toJsonNullableStringField(policeForce)},
-          "probationArea" : ${toJsonNullableStringField(probationArea)},
-          "receivedDateTime" : ${toJsonNullableStringField(receivedDateTime)},
-          "sentenceDate" : ${toJsonNullableStringField(sentenceDate)},
-          "gender" : ${toJsonNullableStringField(gender)},
-          "ethnicity" : ${toJsonNullableStringField(ethnicity)},
-          "firstNames" : ${toJsonNullableStringField(firstNames)},
-          "lastName" : ${toJsonNullableStringField(lastName)},
-          "dateOfBirth" : ${toJsonNullableStringField(dateOfBirth)},
-          "cro" : ${toJsonNullableStringField(cro)},
-          "prisonNumber" : ${toJsonNullableStringField(prisonNumber)},
-          "legislationReleasedUnder" : ${toJsonNullableStringField(legislationReleasedUnder)},
-          "legislationSentencedUnder" : ${toJsonNullableStringField(legislationSentencedUnder)},
-          "minute" : ${toJsonNullableStringField(minute)}
-        }
-  """.trimIndent()
+  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
