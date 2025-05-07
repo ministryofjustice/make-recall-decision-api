@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "url": "/search/people?page=1&size=20",
+    "url": "/case-summary/search?page=1&size=20",
     "bodyPatterns": [
       {
         "matchesJsonPath": "[?($.surname =~ /o'connor/i)]"

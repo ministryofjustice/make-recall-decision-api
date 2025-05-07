@@ -1,11 +1,7 @@
 {
   "request": {
-    "method": "POST",
-    "urlPath": "/search/people",
-    "bodyPatterns" : [ {
-      "contains" : "name"
-     }
-    ]
+    "method": "GET",
+    "urlPath": "/case-summary/X098082"
   },
   "response": {
     "status": 200,

@@ -9,6 +9,7 @@ fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstNa
       "surname": "Smith"
     },
     "identifiers": {
+      "crn": "X000001",
       "pncNumber": "2004/0712343H",
       "croNumber": "123456/04A",
       "nomsNumber": "$nomisId",

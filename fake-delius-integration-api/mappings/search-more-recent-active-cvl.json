@@ -1,13 +1,7 @@
 {
   "request": {
-    "method": "POST",
-    "urlPath": "/search/people",
-    "bodyPatterns" : [ {
-      "matchesJsonPath" : {
-        "expression": "crn",
-        "contains": "X098084"
-      }
-    } ]
+    "method": "GET",
+    "urlPath": "/case-summary/X098084"
   },
   "response": {
     "status": 200,
