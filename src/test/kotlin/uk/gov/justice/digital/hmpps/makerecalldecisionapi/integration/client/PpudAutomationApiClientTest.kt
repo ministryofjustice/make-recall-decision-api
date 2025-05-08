@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -28,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation.PpudAutomationResponseMocker
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -37,13 +40,29 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var ppudAutomationApiClient: PpudAutomationApiClient
 
+  @Autowired
+  private lateinit var ppudAutomationResponseMocker: PpudAutomationResponseMocker
+
+  @BeforeEach
+  override fun startUpServer() {
+    super.startUpServer()
+    ppudAutomationResponseMocker.startUpServer()
+    ppudAutomationResponseMocker.setUpSuccessfulHealthCheck()
+  }
+
+  @AfterAll
+  override fun tearDownServer() {
+    super.tearDownServer()
+    ppudAutomationResponseMocker.tearDownServer()
+  }
+
   @Test
   fun `retrieves licence matches`() {
     // given
     val croNumber = "123456/12A"
     val nomsId = "AB234A"
 
-    ppudAutomationSearchApiMatchResponse(nomsId, croNumber)
+    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse(nomsId, croNumber)
 
     // when
     val actual = ppudAutomationApiClient.search(
@@ -64,7 +83,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val ppudDetailsResponse: PpudDetailsResponse = ppudDetailsResponse()
 
-    ppudAutomationDetailsMatchResponse(ppudDetailsResponse)
+    ppudAutomationResponseMocker.ppudAutomationDetailsMatchResponse(ppudDetailsResponse)
 
     // when
     val actualPpudDetailsResponse = ppudAutomationApiClient.details(ppudDetailsResponse.offender.id).block()
@@ -98,7 +117,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
     )
 
-    ppudAutomationCreateOffenderApiMatchResponse(id, ppudCreateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse(id, ppudCreateOffenderRequest)
 
     // when
     val actual = ppudAutomationApiClient.createOffender(ppudCreateOffenderRequest).block()
@@ -126,7 +145,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       establishment = "HMP Brixton",
     )
 
-    ppudAutomationUpdateOffenderApiMatchResponse(offenderId, ppudUpdateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenderApiMatchResponse(offenderId, ppudUpdateOffenderRequest)
 
     // when
     ppudAutomationApiClient.updateOffender(
@@ -155,7 +174,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentencedUnder = "Legislation 123",
     )
 
-    ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
+    ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
 
     // when
     val actual = ppudAutomationApiClient.createSentence(offenderId, createSentenceRequest).block()
@@ -181,7 +200,11 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentencedUnder = "Legislation 123",
     )
 
-    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
+    ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(
+      offenderId,
+      sentenceId,
+      updateSentenceRequest,
+    )
 
     // when
     ppudAutomationApiClient.updateSentence(offenderId, sentenceId, updateSentenceRequest).block()
@@ -196,7 +219,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val offenderId = "123"
     val sentenceId = "456"
 
-    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
 
     // when
     ppudAutomationApiClient.updateOffence(
@@ -219,7 +242,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val offenderId = "123"
     val sentenceId = "456"
 
-    ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenceApiMatchResponse(offenderId, sentenceId)
 
     // when
     ppudAutomationApiClient.updateOffence(
@@ -264,7 +287,12 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       releasedUnder = "Legislation 123",
     )
 
-    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, id)
+    ppudAutomationResponseMocker.ppudAutomationUpdateReleaseApiMatchResponse(
+      offenderId,
+      sentenceId,
+      updateReleaseRequest,
+      id,
+    )
 
     // when
     val actual = ppudAutomationApiClient.createOrUpdateRelease(offenderId, sentenceId, updateReleaseRequest).block()
@@ -280,7 +308,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val releaseId = "456"
     val id = "12345678"
 
-    ppudAutomationCreateRecallApiMatchResponse(offenderId, releaseId, id)
+    ppudAutomationResponseMocker.ppudAutomationCreateRecallApiMatchResponse(offenderId, releaseId, id)
 
     // when
     val actual = ppudAutomationApiClient.createRecall(
@@ -309,7 +337,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val recallId = "123"
 
-    ppudAutomationUploadMandatoryDocumentApiMatchResponse(recallId)
+    ppudAutomationResponseMocker.ppudAutomationUploadMandatoryDocumentApiMatchResponse(recallId)
 
     // when
     ppudAutomationApiClient.uploadMandatoryDocument(
@@ -331,7 +359,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val recallId = "123"
 
-    ppudAutomationUploadAdditionalDocumentApiMatchResponse(recallId)
+    ppudAutomationResponseMocker.ppudAutomationUploadAdditionalDocumentApiMatchResponse(recallId)
 
     // when
     ppudAutomationApiClient.uploadAdditionalDocument(
@@ -353,7 +381,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     // given
     val recallId = "123"
 
-    ppudAutomationCreateMinuteApiMatchResponse(recallId)
+    ppudAutomationResponseMocker.ppudAutomationCreateMinuteApiMatchResponse(recallId)
 
     // when
     ppudAutomationApiClient.createMinute(
@@ -371,7 +399,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   @Test
   fun `reference list`() {
     // given
-    ppudAutomationReferenceListApiMatchResponse("custody-types")
+    ppudAutomationResponseMocker.ppudAutomationReferenceListApiMatchResponse("custody-types")
 
     // when
     val actual = ppudAutomationApiClient.retrieveList("custody-types").block()
@@ -386,7 +414,11 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val searchReq = PpudUserSearchRequest("User Name", "UserName")
     var teamName = "TeamName"
 
-    ppudAutomationSearchActiveUsersApiMatchResponse(searchReq.fullName!!, searchReq.userName!!, teamName)
+    ppudAutomationResponseMocker.ppudAutomationSearchActiveUsersApiMatchResponse(
+      searchReq.fullName!!,
+      searchReq.userName!!,
+      teamName,
+    )
 
     // when
     val actual = ppudAutomationApiClient.searchActiveUsers(searchReq).block()
