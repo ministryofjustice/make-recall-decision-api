@@ -32,14 +32,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.FindByNameRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonBody
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJson
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
@@ -53,13 +46,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404NoOffenderFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryNoDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSHSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateOffenderResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateSentenceResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchActiveUsersResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceIdResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.cvl.licenceMatchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusMappaAndRoshHistoryResponse
@@ -125,7 +111,6 @@ abstract class IntegrationTestBase {
   var deliusIntegration: ClientAndServer = startClientAndServer(8097)
   var oauthMock: ClientAndServer = startClientAndServer(9090)
   var prisonApi: ClientAndServer = startClientAndServer(8098)
-  var ppudAutomationApi: ClientAndServer = startClientAndServer(8099)
 
   private val gson: Gson = Gson()
 
@@ -216,7 +201,6 @@ abstract class IntegrationTestBase {
     gotenbergMock.reset()
     oasysARNApi.reset()
     prisonApi.reset()
-    ppudAutomationApi.reset()
     setupOauth()
     setupHealthChecks()
   }
@@ -230,7 +214,6 @@ abstract class IntegrationTestBase {
     oasysARNApi.stop()
     oauthMock.stop()
     prisonApi.stop()
-    ppudAutomationApi.stop()
   }
 
   fun deleteAndCreateRecommendation(featureFlagString: String? = null) {
@@ -971,209 +954,6 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun ppudAutomationSearchApiMatchResponse(
-    nomsId: String,
-    croNumber: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/search")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationSearchResponse(nomsId, croNumber))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationDetailsMatchResponse(
-    ppudDetailsResponse: PpudDetailsResponse,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/${ppudDetailsResponse.offender.id}")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudDetailsResponse.toJsonString())
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationBookRecallApiMatchResponse(
-    nomsId: String,
-    id: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/$nomsId/recall")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationBookRecallResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationCreateOffenderApiMatchResponse(
-    id: String,
-    createOffenderRequest: PpudCreateOffenderRequest,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender").withBody(createOffenderRequest.toJsonBody())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateOffenderResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUpdateOffenderApiMatchResponse(
-    offenderId: String,
-    updateOffenderRequest: PpudUpdateOffenderRequest,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/$offenderId").withBody(updateOffenderRequest.toJsonBody())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationCreateSentenceApiMatchResponse(
-    offenderId: String,
-    createSentenceRequest: PpudCreateOrUpdateSentenceRequest,
-    id: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/$offenderId/sentence").withBody(createSentenceRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateSentenceResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUpdateSentenceApiMatchResponse(
-    offenderId: String,
-    sentenceId: String,
-    updateSentenceRequest: PpudCreateOrUpdateSentenceRequest,
-    delaySeconds: Long = 0,
-  ) {
-    val request =
-      request().withPath("/offender/$offenderId/sentence/$sentenceId").withBody(updateSentenceRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUpdateOffenceApiMatchResponse(
-    offenderId: String,
-    sentenceId: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUpdateReleaseApiMatchResponse(
-    offenderId: String,
-    sentenceId: String,
-    updateReleaseRequest: PpudCreateOrUpdateReleaseRequest,
-    id: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request =
-      request().withPath("/offender/$offenderId/sentence/$sentenceId/release").withBody(updateReleaseRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationUpdateReleaseResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationCreateRecallApiMatchResponse(
-    offenderId: String,
-    releaseId: String,
-    id: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/offender/" + offenderId + "/release/" + releaseId + "/recall")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateRecallResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUploadMandatoryDocumentApiMatchResponse(
-    recallId: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/recall/$recallId/mandatory-document")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationUploadAdditionalDocumentApiMatchResponse(
-    recallId: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/recall/$recallId/additional-document")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationCreateMinuteApiMatchResponse(
-    recallId: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/recall/$recallId/minutes")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationReferenceListApiMatchResponse(
-    name: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/reference/$name")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody("{ \"values\": [\"one\",\"two\"] }")
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
-  protected fun ppudAutomationSearchActiveUsersApiMatchResponse(
-    userFullName: String,
-    userName: String,
-    teamName: String,
-    delaySeconds: Long = 0,
-  ) {
-    val request = request().withPath("/user/search")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationSearchActiveUsersResponse(userFullName, teamName))
-        .withDelay(Delay.seconds(delaySeconds)),
-    )
-  }
-
   protected fun cvlLicenceByIdResponse(
     licenceId: Int,
     nomisId: String,
@@ -1234,14 +1014,6 @@ abstract class IntegrationTestBase {
         response()
           .withContentType(APPLICATION_JSON)
           .withBody(gson.toJson(mapOf("status" to "up"))),
-      )
-
-    ppudAutomationApi
-      .`when`(request().withPath("/health/ping"))
-      .respond(
-        response()
-          .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "UP"))),
       )
   }
 }
