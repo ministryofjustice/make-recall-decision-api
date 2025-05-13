@@ -36,7 +36,9 @@ internal class OffenderSearchService(
         ),
       )
     }
-  } else OffenderSearchResponse()
+  } else {
+    OffenderSearchResponse()
+  }
 
   private fun DeliusClient.PersonalDetailsOverview.toOffenderSearchOffender(): OffenderSearchOffender {
     val access = userAccessValidator.checkUserAccess(identifiers.crn)
