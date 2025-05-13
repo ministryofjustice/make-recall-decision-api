@@ -41,6 +41,8 @@ services:
 networks:
   postgres:
     driver: bridge
+  hmpps:
+    name: hmpps
 
 volumes:
     postgres:

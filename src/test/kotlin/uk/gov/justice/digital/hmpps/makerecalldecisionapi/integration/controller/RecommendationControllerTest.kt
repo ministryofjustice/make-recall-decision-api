@@ -12,7 +12,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.springframework.cache.get
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -390,7 +389,8 @@ class RecommendationControllerTest() : IntegrationTestBase() {
 
     val bookRecallToPpudAfterUpdate = responseAfterUpdate.getJSONObject("bookRecallToPpud")
     with(bookRecallToPpudAfterUpdate) {
-      assertThat(get("decisionDateTime")).isEqualTo(bookRecallToPpud.decisionDateTime.toString())
+      assertThat(get("decisionDateTime")).isEqualTo(bookRecallToPpud.decisionDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+      assertThat(get("custodyGroup")).isEqualTo(bookRecallToPpud.custodyGroup)
       assertThat(get("custodyType")).isEqualTo(bookRecallToPpud.custodyType)
       assertThat(get("currentEstablishment")).isEqualTo(bookRecallToPpud.currentEstablishment)
       assertThat(get("releasingPrison")).isEqualTo(bookRecallToPpud.releasingPrison)
@@ -400,13 +400,13 @@ class RecommendationControllerTest() : IntegrationTestBase() {
       assertThat(get("mappaLevel")).isEqualTo(bookRecallToPpud.mappaLevel)
       assertThat(get("policeForce")).isEqualTo(bookRecallToPpud.policeForce)
       assertThat(get("probationArea")).isEqualTo(bookRecallToPpud.probationArea)
-      assertThat(get("receivedDateTime")).isEqualTo(bookRecallToPpud.receivedDateTime.toString())
-      assertThat(get("sentenceDate")).isEqualTo(bookRecallToPpud.sentenceDate.toString())
+      assertThat(get("receivedDateTime")).isEqualTo(bookRecallToPpud.receivedDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+      assertThat(get("sentenceDate")).isEqualTo(bookRecallToPpud.sentenceDate?.format(DateTimeFormatter.ISO_LOCAL_DATE))
       assertThat(get("gender")).isEqualTo(bookRecallToPpud.gender)
       assertThat(get("ethnicity")).isEqualTo(bookRecallToPpud.ethnicity)
       assertThat(get("firstNames")).isEqualTo(bookRecallToPpud.firstNames)
       assertThat(get("lastName")).isEqualTo(bookRecallToPpud.lastName)
-      assertThat(get("dateOfBirth")).isEqualTo(bookRecallToPpud.dateOfBirth.toString())
+      assertThat(get("dateOfBirth")).isEqualTo(bookRecallToPpud.dateOfBirth?.format(DateTimeFormatter.ISO_LOCAL_DATE))
       assertThat(get("cro")).isEqualTo(bookRecallToPpud.cro)
       assertThat(get("prisonNumber")).isEqualTo(bookRecallToPpud.prisonNumber)
       assertThat(get("legislationReleasedUnder")).isEqualTo(bookRecallToPpud.legislationReleasedUnder)
