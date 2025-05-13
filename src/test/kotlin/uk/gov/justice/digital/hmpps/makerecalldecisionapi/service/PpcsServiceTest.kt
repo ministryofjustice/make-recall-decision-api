@@ -21,7 +21,7 @@ import java.time.ZonedDateTime
 internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
-  fun `excluded records in offender search will have blank name`() {
+  fun `excluded records won't be returned`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
       DeliusClient.PersonalDetailsOverview(
         name = Name(
@@ -42,7 +42,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         primaryLanguage = "test",
       ),
     )
-    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(excludedAccess())
 
     val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")

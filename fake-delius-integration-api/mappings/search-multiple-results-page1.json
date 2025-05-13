@@ -7,7 +7,7 @@
         "matchesJsonPath": "[?($.surname =~ /o'connor/i)]"
       },
       {
-        "matchesJsonPath": "[?($.firstName =~ /john/i)]"
+        "matchesJsonPath": "[?($.forename =~ /john/i)]"
       }
     ]
   },

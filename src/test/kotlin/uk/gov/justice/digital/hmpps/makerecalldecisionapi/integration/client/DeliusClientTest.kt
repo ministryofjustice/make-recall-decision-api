@@ -31,24 +31,8 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by name`() {
-    findByNameSuccess(firstName = "Joe", surname = "Bloggs")
+    findByNameSuccess(crn = "Y654321", firstName = "Joe", surname = "Bloggs")
     val response = deliusClient.findByName("Joe", "Bloggs", 0, 1)
-    assertThat(response.content.size).isEqualTo(1)
-    assertThat(response.content[0].identifiers.crn).isEqualTo("Y654321")
-  }
-
-  @Test
-  fun `find by name with null forename`() {
-    findByNameSuccess(firstName = null, surname = "Bloggs")
-    val response = deliusClient.findByName(null, "Bloggs", 0, 1)
-    assertThat(response.content.size).isEqualTo(1)
-    assertThat(response.content[0].identifiers.crn).isEqualTo("Y654321")
-  }
-
-  @Test
-  fun `find by name with null surname`() {
-    findByNameSuccess(firstName = "Joe", surname = null)
-    val response = deliusClient.findByName("Joe", null, 0, 1)
     assertThat(response.content.size).isEqualTo(1)
     assertThat(response.content[0].identifiers.crn).isEqualTo("Y654321")
   }

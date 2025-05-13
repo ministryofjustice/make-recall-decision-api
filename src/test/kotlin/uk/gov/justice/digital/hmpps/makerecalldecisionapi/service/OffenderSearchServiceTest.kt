@@ -163,7 +163,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given search result contains case with null name and dob fields and access is restricted then set user access fields`() {
+  fun `given access is restricted then set user access fields`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
         .willReturn(buildSearchPeople1ResultClientResponse().content[0])
@@ -180,7 +180,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   }
 
   @Test
-  fun `given search result contains case with null name and dob fields and user is excluded then set user access fields`() {
+  fun `given user is excluded then set user access fields`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
         .willReturn(buildSearchPeople1ResultClientResponse().content[0])

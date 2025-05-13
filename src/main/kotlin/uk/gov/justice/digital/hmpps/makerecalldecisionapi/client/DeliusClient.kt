@@ -35,7 +35,7 @@ class DeliusClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun findByName(firstName: String?, surname: String?, page: Int, pageSize: Int) =
+  fun findByName(firstName: String, surname: String, page: Int, pageSize: Int) =
     post<CasePage>(
       "/case-summary/search",
       body = FindByNameRequest(firstName, surname),
@@ -184,8 +184,8 @@ class DeliusClient(
   }
 
   data class FindByNameRequest(
-    val forename: String?,
-    val surname: String?,
+    val forename: String,
+    val surname: String,
   )
 
   data class CasePage(

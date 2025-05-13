@@ -25,7 +25,7 @@ internal class OffenderSearchService(
         paging = Paging(page = 1, pageSize = pageSize, totalNumberOfPages = 1),
       )
     } ?: OffenderSearchResponse()
-  } else {
+  } else if (firstName != null && lastName != null) {
     deliusClient.findByName(firstName, lastName, page, pageSize).let {
       OffenderSearchResponse(
         results = it.content.map { it.toOffenderSearchOffender() },
@@ -36,7 +36,7 @@ internal class OffenderSearchService(
         ),
       )
     }
-  }
+  } else OffenderSearchResponse()
 
   private fun DeliusClient.PersonalDetailsOverview.toOffenderSearchOffender(): OffenderSearchOffender {
     val access = userAccessValidator.checkUserAccess(identifiers.crn)

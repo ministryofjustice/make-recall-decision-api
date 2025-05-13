@@ -693,8 +693,8 @@ abstract class IntegrationTestBase {
 
   protected fun findByNameSuccess(
     crn: String = "Y654321",
-    firstName: String? = "Joe",
-    surname: String? = "Bloggs",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
     dateOfBirth: String = "1980-12-01",
     pageNumber: Int = 0,
     pageSize: Int = 1,
@@ -725,8 +725,8 @@ abstract class IntegrationTestBase {
   }
 
   protected fun findByNameNoResults(
-    firstName: String? = "Joe",
-    surname: String? = "Bloggs",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
     pageNumber: Int = 0,
     pageSize: Int = 1,
     totalPages: Int = 1,
