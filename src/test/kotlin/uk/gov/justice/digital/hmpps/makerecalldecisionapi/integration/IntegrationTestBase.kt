@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -764,6 +765,51 @@ abstract class IntegrationTestBase {
     offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(limitedAccessOffenderSearchResponse(crn))
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun notFoundOffenderSearchByCrnResponse(crn: String, delaySeconds: Long = 0) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withBody(
+        json(
+          "{" +
+            "\"crn\":\"$crn\"" +
+            "}",
+        ),
+      )
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withStatusCode(HttpStatus.NOT_FOUND.value())
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun notFoundOffenderSearchByNameResponse(
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
+    pageNumber: Int = 0,
+    pageSize: Int = 1,
+    delaySeconds: Long = 0,
+  ) {
+    val offenderSearchRequest = request()
+      .withPath("/search/people")
+      .withQueryStringParameter("page", pageNumber.toString())
+      .withQueryStringParameter("size", pageSize.toString())
+      .withBody(
+        json(
+          "{" +
+            "\"firstName\":\"$firstName\"," +
+            "\"surname\":\"$surname\"" +
+            "}",
+        ),
+      )
+
+    offenderSearchApi.`when`(offenderSearchRequest, exactly(1)).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withStatusCode(HttpStatus.NOT_FOUND.value())
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }

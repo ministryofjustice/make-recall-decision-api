@@ -219,6 +219,41 @@ class OffenderSearchControllerTest(
   }
 
   @Test
+  fun `404 response from Delius on search by CRN results in empty response`() {
+    runTest {
+      val crn = "X123456"
+      notFoundOffenderSearchByCrnResponse(crn)
+      userAccessAllowed(crn)
+      val requestBody = OffenderSearchRequest(crn = crn)
+      webTestClient.post()
+        .uri("/paged-search?page=0&pageSize=1")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .body(fromValue(requestBody))
+        .exchange()
+        .expectStatus()
+        .isNotFound
+    }
+  }
+
+  @Test
+  fun `404 response from Delius on search by name results in empty response`() {
+    runTest {
+      val firstName = "Joe"
+      val lastName = "Bloggs"
+      notFoundOffenderSearchByCrnResponse(crn)
+      userAccessAllowed(crn)
+      val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
+      webTestClient.post()
+        .uri("/paged-search?page=0&pageSize=1")
+        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+        .body(fromValue(requestBody))
+        .exchange()
+        .expectStatus()
+        .isNotFound
+    }
+  }
+
+  @Test
   fun `access denied on paged search endpoint when insufficient privileges used`() {
     runTest {
       webTestClient.post()
