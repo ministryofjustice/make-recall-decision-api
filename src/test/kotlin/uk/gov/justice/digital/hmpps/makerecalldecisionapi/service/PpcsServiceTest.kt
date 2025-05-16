@@ -8,11 +8,9 @@ import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.given
-import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderDetails
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OffenderSearchPagedResults
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.OtherIds
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.PageableResponse
+import org.mockito.kotlin.verifyNoInteractions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
@@ -24,31 +22,41 @@ import java.time.ZonedDateTime
 internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
-  fun `excluded records in offender search will have blank name`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "",
-              surname = "",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+  fun `excluded records won't be returned`() {
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(excludedAccess())
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+      .search("X90902")
+
+    assertThat(result.results).isEmpty()
+    verifyNoInteractions(recommendationRepository)
+  }
+
+  @Test
+  fun `no case record`() {
+    given(deliusClient.findByCrn("X90902")).willReturn(null)
+
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -56,28 +64,27 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `single active document for ppcs`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "Harry",
-              surname = "Smith",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
 
     given(recommendationRepository.findByCrn("X90902")).willReturn(
       listOf(
@@ -95,7 +102,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     assertThat(result.results).isNotEmpty
@@ -103,28 +110,27 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for active recommendation if already been booked`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "Harry",
-              surname = "Smith",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
 
     given(recommendationRepository.findByCrn("X90902")).willReturn(
       listOf(
@@ -143,7 +149,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -151,28 +157,27 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `consider active recommendation only for ppcs search`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "Harry",
-              surname = "Smith",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
 
     val notTheActiveRecommendation = RecommendationEntity(
       id = 123L,
@@ -198,7 +203,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     then(recommendationStatusRepository).should(times(1)).findByRecommendationId(1234L)
@@ -207,28 +212,27 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for active recommendation that has not been passed to ppcs`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "Harry",
-              surname = "Smith",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
 
     given(recommendationRepository.findByCrn("X90902")).willReturn(
       listOf(
@@ -245,7 +249,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -253,28 +257,27 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
   @Test
   fun `do not return results for deleted recommendation`() {
-    given(offenderSearchApiClient.searchPeople("X90902", null, null, 0, 20)).willReturn(
-      Mono.fromCallable {
-        OffenderSearchPagedResults(
-          content = listOf(
-            OffenderDetails(
-              firstName = "Harry",
-              surname = "Smith",
-              dateOfBirth = LocalDate.now(),
-              otherIds = OtherIds(
-                crn = "X90902",
-                nomsNumber = "12345L",
-                croNumber = "123/XYZ",
-                mostRecentPrisonerNumber = "1234567890",
-                pncNumber = "123",
-              ),
-            ),
-          ),
-          pageable = PageableResponse(1, 20),
-          totalPages = 1,
-        )
-      },
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Smith",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
     )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
 
     given(recommendationRepository.findByCrn("X90902")).willReturn(
       listOf(
@@ -286,7 +289,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, offenderSearchApiClient)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
       .search("X90902")
 
     then(recommendationStatusRepository).should(times(0)).findByRecommendationId(1234L)

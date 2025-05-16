@@ -1,0 +1,21 @@
+{
+  "page": {
+    "size": 10,
+    "number": 0,
+    "totalPages": 1,
+    "totalElements": 1
+  },
+  "content": [
+    {
+      "name": {
+        "forename": "Terrence",
+        "surname": "Greenholt"
+      },
+      "dateOfBirth": "1985-11-29",
+      "gender": "Male",
+      "otherIds": {
+        "crn": "X788206"
+      }
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/health/ping"
+    "urlPath": "/case-summary/X098092"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "ping.json",
+    "bodyFileName": "search-nd-no-active-cvl.json",
     "headers": {
       "Content-Type": "application/json"
     }

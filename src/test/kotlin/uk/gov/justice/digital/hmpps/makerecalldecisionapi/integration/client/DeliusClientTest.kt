@@ -17,6 +17,34 @@ class DeliusClientTest : IntegrationTestBase() {
   private lateinit var deliusClient: DeliusClient
 
   @Test
+  fun `find by crn`() {
+    findByCrnSuccess(surname = "Smith")
+    val response = deliusClient.findByCrn("X123456")
+    assertThat(response?.name?.surname).isEqualTo("Smith")
+  }
+
+  @Test
+  fun `find by crn returns null when not found`() {
+    val response = deliusClient.findByCrn("X123456")
+    assertThat(response).isNull()
+  }
+
+  @Test
+  fun `find by name`() {
+    findByNameSuccess(crn = "Y654321", firstName = "Joe", surname = "Bloggs")
+    val response = deliusClient.findByName("Joe", "Bloggs", 0, 1)
+    assertThat(response.content.size).isEqualTo(1)
+    assertThat(response.content[0].identifiers.crn).isEqualTo("Y654321")
+  }
+
+  @Test
+  fun `find by name returns no results`() {
+    findByNameNoResults(firstName = "Joe", surname = "Smith")
+    val response = deliusClient.findByName("Joe", "Smith", 0, 1)
+    assertThat(response.content.size).isEqualTo(0)
+  }
+
+  @Test
   fun `throws exception when no person matching crn exists`() {
     val nonExistentCrn = "X123456"
     personalDetailsNotFound(nonExistentCrn)

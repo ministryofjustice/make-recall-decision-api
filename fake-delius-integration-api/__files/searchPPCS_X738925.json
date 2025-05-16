@@ -1,0 +1,21 @@
+{
+  "page": {
+    "size": 10,
+    "number": 0,
+    "totalPages": 1,
+    "totalElements": 1
+  },
+  "content": [
+    {
+      "name": {
+        "forename": "Tamara",
+        "surname": "Dare"
+      },
+      "dateOfBirth": "1955-01-31",
+      "gender": "Fenale",
+      "otherIds": {
+        "crn": "X738925"
+      }
+    }
+  ]
+}

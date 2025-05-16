@@ -13,7 +13,6 @@ services:
     environment:
       - SERVER_PORT=8080
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth # auth comes from UI docker-compose
-      - OFFENDER_SEARCH_ENDPOINT_URL=http://fake-offender-search-api:8080
       - DELIUS_INTEGRATION_ENDPOINT_URL=http://fake-delius-integration-api:8080
       - CVL_API_ENDPOINT_URL=http://fake-cvl-api:8080
       - DOCUMENT_MANAGEMENT_API_ENDPOINT_URL=http://fake-document-management-api:8080
@@ -65,19 +64,6 @@ services:
       - hmpps
     command:
       --port 6379
-
-  fake-offender-search-api:
-    image: wiremock/wiremock
-    networks:
-      - hmpps
-    container_name: fake-offender-search-api
-    ports:
-      - "9080:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
-    command: --verbose --local-response-templating
-    volumes:
-      - ./fake-offender-search-api:/home/wiremock
 
   fake-document-management-api:
     image: wiremock/wiremock
