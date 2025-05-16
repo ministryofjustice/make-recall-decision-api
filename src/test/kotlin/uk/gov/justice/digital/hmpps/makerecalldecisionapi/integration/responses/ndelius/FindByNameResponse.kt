@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun offenderSearchDeliusResponse(
+fun findByNameResponse(
   crn: String? = "X123456",
   firstName: String? = "Pontius",
   surname: String? = "Pilate",
@@ -8,22 +8,27 @@ fun offenderSearchDeliusResponse(
   pageSize: Int = 1,
   pageNumber: Int = 1,
   totalPages: Int = 1,
+  // language=json
 ) = """
 {
   "content": [
     {
-      "firstName": "$firstName",
-      "surname": "$surname",
+      "name": {
+        "forename": "$firstName",
+        "surname": "$surname"
+      },
       "dateOfBirth": "$dateOfBirth",
-      "otherIds": {
+      "gender": "Male",
+      "identifiers": {
         "crn": "$crn"
       }
     }
   ],
-  "pageable": {
-    "pageSize": $pageSize,
-    "pageNumber": $pageNumber
-  },
-  "totalPages": $totalPages
+  "page": {
+    "size": $pageSize,
+    "number": $pageNumber,
+    "totalElements": 1,
+    "totalPages": $totalPages
+  }
 }
 """.trimIndent()

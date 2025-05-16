@@ -24,7 +24,7 @@ class OffenderSearchControllerTest(
       val firstName = "Pontius"
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-09"
-      offenderSearchByCrnResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
+      findByCrnSuccess(crn, firstName, lastName, dateOfBirth)
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")
@@ -47,7 +47,7 @@ class OffenderSearchControllerTest(
       val firstName = "Pontius"
       val lastName = "Pilate"
       val dateOfBirth = "2000-11-09"
-      offenderSearchByNameResponse(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
+      findByNameSuccess(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")
@@ -67,11 +67,13 @@ class OffenderSearchControllerTest(
   fun `search response contains paging data`() {
     runTest {
       val crn = "A123456"
+      val firstName = "test"
+      val lastName = "test"
       val page = Random.Default.nextInt(0, 20)
       val pageSize = Random.Default.nextInt(1, 10)
       val totalNumberOfPages = Random.Default.nextInt(page + 1, 20 + 1)
-      offenderSearchByCrnResponse(crn = crn, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
-      val requestBody = OffenderSearchRequest(crn = crn)
+      findByNameSuccess(crn, firstName, lastName, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
+      val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
       webTestClient.post()
         .uri("/paged-search?page=$page&pageSize=$pageSize")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
@@ -89,7 +91,7 @@ class OffenderSearchControllerTest(
   fun `given excluded case for my user then set the user access excluded field`() {
     runTest {
       val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
+      findByCrnSuccess(crn)
       userAccessExcluded(crn)
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
@@ -109,33 +111,10 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `given missing name and case is excluded but not for my user then default missing name details`() {
-    runTest {
-      val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
-      userAccessAllowed(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("No name available")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
-    }
-  }
-
-  @Test
   fun `given restricted case for my user then set the user restricted flag to true`() {
     runTest {
       val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
+      findByCrnSuccess(crn)
       userAccessRestricted(crn)
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
@@ -155,33 +134,10 @@ class OffenderSearchControllerTest(
   }
 
   @Test
-  fun `given case with no name and user access replies with 404 then set search to no name available`() {
-    runTest {
-      val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
-      userNotFound(crn)
-      val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
-        .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-        .body(fromValue(requestBody))
-        .exchange()
-        .expectStatus().isOk
-        .expectBody()
-        .jsonPath("$.results.length()").isEqualTo(1)
-        .jsonPath("$.results[0].name").isEqualTo("No name available")
-        .jsonPath("$.results[0].dateOfBirth").isEqualTo(null)
-        .jsonPath("$.results[0].crn").isEqualTo(crn)
-        .jsonPath("$.results[0].userExcluded").isEqualTo(false)
-        .jsonPath("$.results[0].userRestricted").isEqualTo(false)
-    }
-  }
-
-  @Test
   fun `gateway timeout 504 given on Offender Search Api timeout on offenders search people endpoint`() {
     runTest {
       val crn = "X123456"
-      offenderSearchByCrnResponse(crn, delaySeconds = nDeliusTimeout + 2)
+      findByCrnSuccess(crn, delaySeconds = nDeliusTimeout + 2)
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()
         .uri("/paged-search?page=0&pageSize=1")
@@ -193,7 +149,7 @@ class OffenderSearchControllerTest(
         .expectBody()
         .jsonPath("$.status").isEqualTo(HttpStatus.GATEWAY_TIMEOUT.value())
         .jsonPath("$.userMessage")
-        .isEqualTo("Client timeout: Offender Search API Client - search by phrase endpoint: [No response within $nDeliusTimeout seconds]")
+        .isEqualTo("Client timeout: Delius integration client - /case-summary/X123456 endpoint: [No response within $nDeliusTimeout seconds]")
     }
   }
 
@@ -201,7 +157,7 @@ class OffenderSearchControllerTest(
   fun `gateway timeout 503 given on Delius timeout on user access endpoint`() {
     runTest {
       val crn = "X123456"
-      limitedAccessPractitionerOffenderSearchResponse(crn)
+      findByCrnSuccess(crn)
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
       val requestBody = OffenderSearchRequest(crn = crn)
       webTestClient.post()

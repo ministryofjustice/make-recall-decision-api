@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel.Institution
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Release
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
@@ -77,9 +76,6 @@ internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var prisonApiClient: PrisonApiClient
-
-  @Mock
-  protected lateinit var offenderSearchApiClient: OffenderSearchApiClient
 
   @Mock
   protected lateinit var recommendationRepository: RecommendationRepository
@@ -354,6 +350,7 @@ internal abstract class ServiceTestBase {
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
         bookingNumber = "G12345",
+        crn = crn,
       ),
     ),
     mainAddress = address,
@@ -475,6 +472,7 @@ internal abstract class ServiceTestBase {
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
         bookingNumber = "G12345",
+        crn = crn,
       ),
     ),
     registerFlags = registerFlags,
@@ -540,6 +538,7 @@ internal abstract class ServiceTestBase {
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
         bookingNumber = "G12345",
+        crn = crn,
       ),
     ),
     activeConvictions = activeConvictions,
@@ -577,6 +576,7 @@ internal abstract class ServiceTestBase {
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
         bookingNumber = "G12345",
+        crn = crn,
       ),
     ),
     mappa = mappa,
@@ -717,6 +717,7 @@ internal abstract class ServiceTestBase {
         croNumber = "123456/04A",
         nomsNumber = "A1234CR",
         bookingNumber = "G12345",
+        crn = crn,
       ),
     ),
     mainAddress = Address(

@@ -1,9 +1,10 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.OffenderSearchApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResult
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -14,7 +15,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 internal class PpcsService(
   private val recommendationRepository: RecommendationRepository,
   private val recommendationStatusRepository: RecommendationStatusRepository,
-  @Qualifier("offenderSearchApiClientUserEnhanced") private val offenderSearchApiClient: OffenderSearchApiClient,
+  private val deliusClient: DeliusClient,
+  private val userAccessValidator: UserAccessValidator,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -23,41 +25,34 @@ internal class PpcsService(
   fun search(crn: String): PpcsSearchResponse {
     log.info("ppcs searching for crn: " + crn)
 
-    val apiResponse = getValueAndHandleWrappedException(
-      offenderSearchApiClient.searchPeople(
-        crn = crn,
-        page = 0,
-        pageSize = 20,
-      ),
-    )
+    val apiResponse = deliusClient.findByCrn(crn)?.takeIf {
+      userAccessValidator.checkUserAccess(crn, SecurityContextHolder.getContext().authentication.name)
+        .run { !userRestricted && !userExcluded }
+    }
 
-    log.info("prison api returns " + apiResponse!!.content.size + " results")
+    log.info("delius returns ${if (apiResponse != null) 1 else 0} results")
 
     val results = mutableListOf<PpcsSearchResult>()
 
-    for (offender in apiResponse.content) {
-      if (!offender.isNameNullOrBlank) {
-        log.info("looking for recommendation doc")
-        val activeRecDoc = recommendationRepository.findByCrn(offender.otherIds.crn)
-          .sorted()
-          .firstOrNull()
+    if (apiResponse != null) {
+      log.info("looking for recommendation doc")
+      val activeRecDoc = recommendationRepository.findByCrn(apiResponse.identifiers.crn).minOrNull()
 
-        if (activeRecDoc != null && isRecommendationReadyForPpcs(activeRecDoc)) {
-          log.info("doc is accepted")
-          results.add(
-            PpcsSearchResult(
-              crn = activeRecDoc.data.crn!!,
-              name = (offender.firstName + " " + offender.surname).trim(),
-              dateOfBirth = offender.dateOfBirth,
-              recommendationId = activeRecDoc.id,
-            ),
-          )
-        } else {
-          log.info("doc is rejected")
-        }
+      if (activeRecDoc != null && isRecommendationReadyForPpcs(activeRecDoc)) {
+        log.info("doc is accepted")
+        results.add(
+          PpcsSearchResult(
+            crn = activeRecDoc.data.crn!!,
+            name = (apiResponse.name.forename + " " + apiResponse.name.surname).trim(),
+            dateOfBirth = apiResponse.dateOfBirth,
+            recommendationId = activeRecDoc.id,
+          ),
+        )
       } else {
-        log.info("result is excluded")
+        log.info("doc is rejected")
       }
+    } else {
+      log.info("result is not found or excluded")
     }
 
     return PpcsSearchResponse(results = results)
