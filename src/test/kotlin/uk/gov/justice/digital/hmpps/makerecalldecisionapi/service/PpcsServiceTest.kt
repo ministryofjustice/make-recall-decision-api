@@ -7,7 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.given
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.quality.Strictness
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -48,6 +53,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       .search("X90902")
 
     assertThat(result.results).isEmpty()
+    verifyNoInteractions(recommendationRepository)
   }
 
   @Test
