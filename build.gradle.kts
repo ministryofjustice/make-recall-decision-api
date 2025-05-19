@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.1.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.1.0"
   kotlin("jvm") version "2.0.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -36,14 +36,17 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.1")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  implementation("org.springframework:spring-context:6.2.7") // Address CVE-2025-22233 until dependencies pulling it in are updated
   implementation("io.micrometer:micrometer-registry-prometheus:1.14.3")
   implementation("io.opentelemetry:opentelemetry-api:1.46.0")
   implementation("joda-time:joda-time:2.13.0")
+  // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
     implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.poi:poi-ooxml:5.4.0") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
