@@ -37,6 +37,11 @@
         <appender-ref ref="consoleAppender"/>
     </logger>
 
+    <!-- Without this, Flyway logs the database instance, schema and username unredacted on application startup -->
+    <logger name="org.flywaydb.core.FlywayExecutor" additivity="false" level="WARN">
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="consoleAppender"/>
     </root>
