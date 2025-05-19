@@ -1,21 +1,11 @@
 {
-  "page": {
-    "size": 10,
-    "number": 0,
-    "totalPages": 1,
-    "totalElements": 1
+  "name": {
+    "forename": "Harry",
+    "surname": "Smith"
   },
-  "content": [
-    {
-      "name": {
-        "forename": "Harry",
-        "surname": "Smith"
-      },
-      "dateOfBirth": "1980-05-06",
-      "gender": "Male",
-      "identifiers": {
-        "crn": "X098092"
-      }
-    }
-  ]
+  "dateOfBirth": "1980-05-06",
+  "gender": "Male",
+  "identifiers": {
+    "crn": "X098092"
+  }
 }
