@@ -92,9 +92,7 @@ internal class RiskService(
     return getStatusFromSuperStatus(latestAssessment?.superStatus)
   }
 
-  suspend fun getStatusFromSuperStatus(superStatus: String?): String {
-    return if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
-  }
+  suspend fun getStatusFromSuperStatus(superStatus: String?): String = if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
 
   fun fetchAssessmentInfo(crn: String, convictionsFromDelius: List<Conviction>): AssessmentInfo? {
     val assessmentsResponse = try {
@@ -121,7 +119,8 @@ internal class RiskService(
     val offences = getOffencesFromLatestCompleteAssessment(convictionsFromDelius, latestCompleteAssessment)
     val offencesMatch = offences.any {
       currentOffenceCodesMatch(latestCompleteAssessment, it) && datesMatch(latestCompleteAssessment, it.date)
-    } && convictionsFromDelius.isNotEmpty()
+    } &&
+      convictionsFromDelius.isNotEmpty()
 
     val lastUpdatedDate = latestCompleteAssessment?.dateCompleted?.let { convertUtcDateTimeStringToIso8601Date(it) }
 
@@ -150,13 +149,11 @@ internal class RiskService(
     .map { it.mainOffence }
     .filter { datesMatch(latestAssessment, it.date) }
 
-  private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) =
-    assessmentsResponse.assessments
-      ?.sortedBy { it.dateCompleted ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
-      ?.lastOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
+  private fun getLatestCompleteAssessment(assessmentsResponse: AssessmentsResponse) = assessmentsResponse.assessments
+    ?.sortedBy { it.dateCompleted ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
+    ?.lastOrNull { it.assessmentStatus == "COMPLETE" && it.superStatus == "COMPLETE" }
 
-  private fun isLatestAssessment(it: Assessment?) =
-    (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
+  private fun isLatestAssessment(it: Assessment?) = (it?.laterCompleteAssessmentExists == false && it.laterWIPAssessmentExists == false && it.laterPartCompSignedAssessmentExists == false && it.laterSignLockAssessmentExists == false && it.laterPartCompUnsignedAssessmentExists == false)
 
   private fun datesMatch(
     latestAssessment: Assessment?,
@@ -165,8 +162,7 @@ internal class RiskService(
     it.offenceDate != null && (LocalDateTime.parse(it.offenceDate).toLocalDate() == mainOffenceDate)
   } == true
 
-  private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) =
-    it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.code) && (it.type == "CURRENT") } == true
+  private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) = it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.code) && (it.type == "CURRENT") } == true
 
   private fun fetchAssessments(crn: String): AssessmentsResponse {
     val assessmentsResponse = try {
@@ -194,23 +190,19 @@ internal class RiskService(
     return riskScoreConverter.convert(riskScoresResponses)
   }
 
-  private fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm {
-    return RiskOfSeriousHarm(
-      overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
-      riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
-      riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity),
-    )
-  }
+  private fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm = RiskOfSeriousHarm(
+    overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
+    riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
+    riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity),
+  )
 
-  private fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo {
-    return RiskTo(
-      riskToChildren = getRiskLevel(riskScore, "children") ?: "",
-      riskToPublic = getRiskLevel(riskScore, "public") ?: "",
-      riskToKnownAdult = getRiskLevel(riskScore, "known adult") ?: "",
-      riskToStaff = getRiskLevel(riskScore, "staff") ?: "",
-      riskToPrisoners = getRiskLevel(riskScore, "prisoners") ?: "",
-    )
-  }
+  private fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo = RiskTo(
+    riskToChildren = getRiskLevel(riskScore, "children") ?: "",
+    riskToPublic = getRiskLevel(riskScore, "public") ?: "",
+    riskToKnownAdult = getRiskLevel(riskScore, "known adult") ?: "",
+    riskToStaff = getRiskLevel(riskScore, "staff") ?: "",
+    riskToPrisoners = getRiskLevel(riskScore, "prisoners") ?: "",
+  )
 
   private fun getRiskLevel(riskScore: RiskScore?, key: String): String? {
     val veryHigh = riskScore?.veryHigh

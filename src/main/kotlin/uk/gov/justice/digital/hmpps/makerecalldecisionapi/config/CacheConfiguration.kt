@@ -31,18 +31,16 @@ class CacheConfiguration(private val buildProperties: BuildProperties) {
   fun cacheManager(
     connectionFactory: RedisConnectionFactory,
     @Value("\${spring.cache.type:none}") isCacheEnabled: String,
-  ): CacheManager {
-    return if (isCacheEnabled.equals("none", ignoreCase = true)) {
-      log.info("NoOpCacheManager in use")
-      NoOpCacheManager()
-    } else if (isCacheEnabled.equals("redis", ignoreCase = true)) {
-      log.info("RedisCacheManager in use")
-      RedisCacheManager.builder(connectionFactory)
-        .withCacheConfiguration(USER_ACCESS_CACHE_KEY, getCacheConfiguration(Duration.ofMinutes(60)))
-        .build()
-    } else {
-      throw RuntimeException("Unsupported cache type: '$isCacheEnabled'")
-    }
+  ): CacheManager = if (isCacheEnabled.equals("none", ignoreCase = true)) {
+    log.info("NoOpCacheManager in use")
+    NoOpCacheManager()
+  } else if (isCacheEnabled.equals("redis", ignoreCase = true)) {
+    log.info("RedisCacheManager in use")
+    RedisCacheManager.builder(connectionFactory)
+      .withCacheConfiguration(USER_ACCESS_CACHE_KEY, getCacheConfiguration(Duration.ofMinutes(60)))
+      .build()
+  } else {
+    throw RuntimeException("Unsupported cache type: '$isCacheEnabled'")
   }
 
   private fun getCacheConfiguration(ttl: Duration): RedisCacheConfiguration {

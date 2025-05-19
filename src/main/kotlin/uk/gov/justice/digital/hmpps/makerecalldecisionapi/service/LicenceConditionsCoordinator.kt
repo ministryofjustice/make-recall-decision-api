@@ -28,10 +28,8 @@ class LicenceConditionsCoordinator {
     )
   }
 
-  private fun hasAllActiveCustodialConvictionsReleasedOnLicence(activeCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions>): Boolean {
-    return activeCustodialConvictions.isNotEmpty() &&
-      activeCustodialConvictions.all { it.sentence?.custodialStatusCode == "B" }
-  }
+  private fun hasAllActiveCustodialConvictionsReleasedOnLicence(activeCustodialConvictions: List<LicenceConditions.ConvictionWithLicenceConditions>): Boolean = activeCustodialConvictions.isNotEmpty() &&
+    activeCustodialConvictions.all { it.sentence?.custodialStatusCode == "B" }
 
   private fun isCvlLicenceMoreOrAsRecent(
     cvlLicenceConditions: List<LicenceConditionResponse>,

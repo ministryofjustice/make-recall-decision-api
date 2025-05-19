@@ -38,9 +38,8 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentencedUnder,
 )
 
-internal fun PpudCreateOrUpdateSentenceRequest.toJson() =
-  json(
-    """
+internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
+  """
       {
         "custodyType": "$custodyType",
         "dateOfSentence": "$dateOfSentence",
@@ -54,5 +53,5 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() =
         "sentencingCourt": "$sentencingCourt",
         "sentencedUnder": "$sentencedUnder"
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

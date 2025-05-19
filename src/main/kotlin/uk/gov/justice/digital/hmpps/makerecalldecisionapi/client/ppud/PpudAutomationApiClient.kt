@@ -43,98 +43,70 @@ class PpudAutomationApiClient(
   private val objectMapper: ObjectMapper,
 ) {
 
-  fun search(request: PpudSearchRequest): Mono<PpudSearchResponse> {
-    return post("/offender/search", request, object : ParameterizedTypeReference<PpudSearchResponse>() {})
-  }
+  fun search(request: PpudSearchRequest): Mono<PpudSearchResponse> = post("/offender/search", request, object : ParameterizedTypeReference<PpudSearchResponse>() {})
 
-  fun details(id: String): Mono<PpudDetailsResponse> {
-    return get("/offender/$id", object : ParameterizedTypeReference<PpudDetailsResponse>() {})
-  }
+  fun details(id: String): Mono<PpudDetailsResponse> = get("/offender/$id", object : ParameterizedTypeReference<PpudDetailsResponse>() {})
 
-  fun createOffender(request: PpudCreateOffenderRequest): Mono<PpudCreateOffenderResponse> {
-    return post("/offender", request, object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {})
-  }
+  fun createOffender(request: PpudCreateOffenderRequest): Mono<PpudCreateOffenderResponse> = post("/offender", request, object : ParameterizedTypeReference<PpudCreateOffenderResponse>() {})
 
-  fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest): Mono<ResponseEntity<Void>> {
-    return put("/offender/$offenderId", request)
-  }
+  fun updateOffender(offenderId: String, request: PpudUpdateOffenderRequest): Mono<ResponseEntity<Void>> = put("/offender/$offenderId", request)
 
-  fun createSentence(offenderId: String, request: PpudCreateOrUpdateSentenceRequest): Mono<PpudCreateSentenceResponse> {
-    return post(
-      "/offender/$offenderId/sentence",
-      request,
-      object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {},
-    )
-  }
+  fun createSentence(offenderId: String, request: PpudCreateOrUpdateSentenceRequest): Mono<PpudCreateSentenceResponse> = post(
+    "/offender/$offenderId/sentence",
+    request,
+    object : ParameterizedTypeReference<PpudCreateSentenceResponse>() {},
+  )
 
   fun updateSentence(
     offenderId: String,
     sentenceId: String,
     request: PpudCreateOrUpdateSentenceRequest,
-  ): Mono<ResponseEntity<Void>> {
-    return put("/offender/$offenderId/sentence/$sentenceId", request)
-  }
+  ): Mono<ResponseEntity<Void>> = put("/offender/$offenderId/sentence/$sentenceId", request)
 
   fun updateOffence(
     offenderId: String,
     sentenceId: String,
     request: PpudUpdateOffenceRequest,
-  ): Mono<ResponseEntity<Void>> {
-    return put("/offender/$offenderId/sentence/$sentenceId/offence", request)
-  }
+  ): Mono<ResponseEntity<Void>> = put("/offender/$offenderId/sentence/$sentenceId/offence", request)
 
   fun createOrUpdateRelease(
     offenderId: String,
     sentenceId: String,
     request: PpudCreateOrUpdateReleaseRequest,
-  ): Mono<PpudCreateOrUpdateReleaseResponse> {
-    return post(
-      "/offender/$offenderId/sentence/$sentenceId/release",
-      request,
-      object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {},
-    )
-  }
+  ): Mono<PpudCreateOrUpdateReleaseResponse> = post(
+    "/offender/$offenderId/sentence/$sentenceId/release",
+    request,
+    object : ParameterizedTypeReference<PpudCreateOrUpdateReleaseResponse>() {},
+  )
 
   fun createRecall(
     offenderId: String,
     releaseId: String,
     request: PpudCreateRecallRequest,
-  ): Mono<PpudCreateRecallResponse> {
-    return post(
-      "/offender/$offenderId/release/$releaseId/recall",
-      request,
-      object : ParameterizedTypeReference<PpudCreateRecallResponse>() {},
-    )
-  }
+  ): Mono<PpudCreateRecallResponse> = post(
+    "/offender/$offenderId/release/$releaseId/recall",
+    request,
+    object : ParameterizedTypeReference<PpudCreateRecallResponse>() {},
+  )
 
   fun uploadMandatoryDocument(
     recallId: String,
     request: PpudUploadMandatoryDocumentRequest,
-  ): Mono<ResponseEntity<Void>> {
-    return put("/recall/$recallId/mandatory-document", request)
-  }
+  ): Mono<ResponseEntity<Void>> = put("/recall/$recallId/mandatory-document", request)
 
   fun uploadAdditionalDocument(
     recallId: String,
     request: PpudUploadAdditionalDocumentRequest,
-  ): Mono<ResponseEntity<Void>> {
-    return put("/recall/$recallId/additional-document", request)
-  }
+  ): Mono<ResponseEntity<Void>> = put("/recall/$recallId/additional-document", request)
 
   fun createMinute(
     recallId: String,
     request: PpudCreateMinuteRequest,
-  ): Mono<ResponseEntity<Void>> {
-    return put("/recall/$recallId/minutes", request)
-  }
+  ): Mono<ResponseEntity<Void>> = put("/recall/$recallId/minutes", request)
 
-  fun retrieveList(name: String): Mono<PpudReferenceListResponse> {
-    return get("/reference/$name", object : ParameterizedTypeReference<PpudReferenceListResponse>() {})
-  }
+  fun retrieveList(name: String): Mono<PpudReferenceListResponse> = get("/reference/$name", object : ParameterizedTypeReference<PpudReferenceListResponse>() {})
 
-  fun searchActiveUsers(request: PpudUserSearchRequest): Mono<PpudUserResponse> {
-    return post("/user/search", request, object : ParameterizedTypeReference<PpudUserResponse>() {})
-  }
+  fun searchActiveUsers(request: PpudUserSearchRequest): Mono<PpudUserResponse> = post("/user/search", request, object : ParameterizedTypeReference<PpudUserResponse>() {})
 
   fun handleTimeoutException(
     exception: Throwable?,
@@ -151,49 +123,43 @@ class PpudAutomationApiClient(
     }
   }
 
-  private fun <T> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> {
-    return webClient
-      .get()
-      .uri { builder -> builder.path(url).build() }
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
-  }
+  private fun <T> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+    .get()
+    .uri { builder -> builder.path(url).build() }
+    .retrieve()
+    .bodyToMono(responseType)
+    .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+    .doOnError { ex ->
+      handleTimeoutException(ex)
+    }
+    .withRetry()
 
-  private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> {
-    return webClient
-      .post()
-      .uri(url)
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .bodyToMono(responseType)
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(ex)
-      }
-      .withRetry()
-  }
+  private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+    .post()
+    .uri(url)
+    .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+    .body(BodyInserters.fromValue(request))
+    .retrieve()
+    .bodyToMono(responseType)
+    .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+    .doOnError { ex ->
+      handleTimeoutException(ex)
+    }
+    .withRetry()
 
-  private fun put(url: String, request: Any): Mono<ResponseEntity<Void>> {
-    return webClient
-      .put()
-      .uri(url)
-      .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-      .body(BodyInserters.fromValue(request))
-      .retrieve()
-      .toBodilessEntity()
-      .timeout(Duration.ofSeconds(ppudAutomationTimeout))
-      .doOnError { ex ->
-        if (ex is BadRequest) {
-          throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
-        }
-        handleTimeoutException(ex)
+  private fun put(url: String, request: Any): Mono<ResponseEntity<Void>> = webClient
+    .put()
+    .uri(url)
+    .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+    .body(BodyInserters.fromValue(request))
+    .retrieve()
+    .toBodilessEntity()
+    .timeout(Duration.ofSeconds(ppudAutomationTimeout))
+    .doOnError { ex ->
+      if (ex is BadRequest) {
+        throw PpudValidationException(objectMapper.readValue(ex.responseBodyAsString, ErrorResponse::class.java))
       }
-      .withRetry()
-  }
+      handleTimeoutException(ex)
+    }
+    .withRetry()
 }

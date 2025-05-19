@@ -210,26 +210,22 @@ internal class PartADocumentMapper(
   private suspend fun determineSupervisingPractitioner(
     recommendation: RecommendationResponse,
     flags: FeatureFlags,
-  ): PractitionerDetails {
-    return if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
-      with(recommendation.practitionerForPartA) {
-        PractitionerDetails(
-          name = this?.name ?: "",
-          telephone = this?.telephone ?: "",
-          email = this?.email ?: "",
-          region = regionService.getRegionName(this?.region),
-          localDeliveryUnit = this?.localDeliveryUnit ?: "",
-          ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
-        )
-      }
-    } else {
-      PractitionerDetails()
+  ): PractitionerDetails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
+    with(recommendation.practitionerForPartA) {
+      PractitionerDetails(
+        name = this?.name ?: "",
+        telephone = this?.telephone ?: "",
+        email = this?.email ?: "",
+        region = regionService.getRegionName(this?.region),
+        localDeliveryUnit = this?.localDeliveryUnit ?: "",
+        ppcsQueryEmails = recommendation.ppcsQueryEmails ?: emptyList(),
+      )
     }
+  } else {
+    PractitionerDetails()
   }
 
-  private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> {
-    return previousReleases?.previousReleaseDates ?: emptyList()
-  }
+  private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
 
   private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate> {
     var dates: List<LocalDate> = previousRecalls?.previousRecallDates ?: emptyList()
@@ -243,18 +239,16 @@ internal class PartADocumentMapper(
     recallType: RecallType?,
     isIndeterminateSentence: Boolean?,
     isExtendedSentence: Boolean?,
-  ): ValueWithDetails {
-    return if (isIndeterminateSentence == true || isExtendedSentence == true) {
-      val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
-      ValueWithDetails(textToDisplay, textToDisplay)
-    } else {
-      val partAValue = when (recallType?.selected?.value) {
-        RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
-        RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
-        else -> null
-      }
-      ValueWithDetails(partAValue, recallType?.selected?.details)
+  ): ValueWithDetails = if (isIndeterminateSentence == true || isExtendedSentence == true) {
+    val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
+    ValueWithDetails(textToDisplay, textToDisplay)
+  } else {
+    val partAValue = when (recallType?.selected?.value) {
+      RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
+      RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
+      else -> null
     }
+    ValueWithDetails(partAValue, recallType?.selected?.details)
   }
 
   private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationResponse): String? {
@@ -271,20 +265,22 @@ internal class PartADocumentMapper(
     isIndeterminateSentence: Boolean?,
     isExtendedSentence: Boolean?,
     isStandardRecall: Boolean?,
-  ): String? {
-    return if (isIndeterminateSentence == true) {
-      "$NOT_APPLICABLE (not a determinate recall)"
-    } else if (isExtendedSentence == true) {
-      "$NOT_APPLICABLE (extended sentence recall)"
-    } else if (isStandardRecall == true) {
-      "$NOT_APPLICABLE (standard recall)"
-    } else {
-      null
-    }
+  ): String? = if (isIndeterminateSentence == true) {
+    "$NOT_APPLICABLE (not a determinate recall)"
+  } else if (isExtendedSentence == true) {
+    "$NOT_APPLICABLE (extended sentence recall)"
+  } else if (isStandardRecall == true) {
+    "$NOT_APPLICABLE (standard recall)"
+  } else {
+    null
   }
 
-  private fun convertBooleanToYesNo(value: Boolean?): String {
-    return if (value == true) YES else if (value == false) NO else EMPTY_STRING
+  private fun convertBooleanToYesNo(value: Boolean?): String = if (value == true) {
+    YES
+  } else if (value == false) {
+    NO
+  } else {
+    EMPTY_STRING
   }
 
   private fun generateExclusionCriteriaAnswer(
@@ -296,7 +292,13 @@ internal class PartADocumentMapper(
 
     return when {
       isIndeterminateSentence || isExtendedSentence -> "N/A - indeterminate or extended sentence"
-      else -> if (value == true) YES else if (value == false) NO else EMPTY_STRING
+      else -> if (value == true) {
+        YES
+      } else if (value == false) {
+        NO
+      } else {
+        EMPTY_STRING
+      }
     }
   }
 
@@ -377,12 +379,10 @@ internal class PartADocumentMapper(
     return result.toString().trim()
   }
 
-  private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String {
-    return if (null != dateToConvert) {
-      convertLocalDateToDateWithSlashes(dateToConvert)
-    } else {
-      EMPTY_STRING
-    }
+  private fun buildFormattedLocalDate(dateToConvert: LocalDate?): String = if (null != dateToConvert) {
+    convertLocalDateToDateWithSlashes(dateToConvert)
+  } else {
+    EMPTY_STRING
   }
 
   private fun getAddressDetails(addresses: List<Address>?): Pair<String, String> {
@@ -404,33 +404,27 @@ internal class PartADocumentMapper(
     }
   }
 
-  private fun buildLengthOfSentence(convictionDetail: ConvictionDetail?): String? {
-    return convictionDetail?.let {
-      val lengthOfSentence = it.lengthOfSentence?.toString() ?: EMPTY_STRING
-      val lengthOfSentenceUnits = it.lengthOfSentenceUnits ?: EMPTY_STRING
+  private fun buildLengthOfSentence(convictionDetail: ConvictionDetail?): String? = convictionDetail?.let {
+    val lengthOfSentence = it.lengthOfSentence?.toString() ?: EMPTY_STRING
+    val lengthOfSentenceUnits = it.lengthOfSentenceUnits ?: EMPTY_STRING
 
-      "$lengthOfSentence $lengthOfSentenceUnits"
-    }
+    "$lengthOfSentence $lengthOfSentenceUnits"
   }
 
   private fun getIndeterminateOrExtendedSentenceDetails(
     indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails?,
     field: String,
-  ): Pair<String, String?> {
-    return if (indeterminateOrExtendedSentenceDetails != null) {
-      if (indeterminateOrExtendedSentenceDetails.selected?.any { it.value == field } == true) {
-        Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
-      } else {
-        Pair(NO, EMPTY_STRING)
-      }
+  ): Pair<String, String?> = if (indeterminateOrExtendedSentenceDetails != null) {
+    if (indeterminateOrExtendedSentenceDetails.selected?.any { it.value == field } == true) {
+      Pair(YES, indeterminateOrExtendedSentenceDetails.selected.filter { it.value == field }[0].details)
     } else {
-      Pair(EMPTY_STRING, EMPTY_STRING)
+      Pair(NO, EMPTY_STRING)
     }
+  } else {
+    Pair(EMPTY_STRING, EMPTY_STRING)
   }
 
-  private fun formatAddressWherePersonCanBeFound(details: String?): String? {
-    return if (details?.isBlank() == false) "Police can find this person at: $details" else null
-  }
+  private fun formatAddressWherePersonCanBeFound(details: String?): String? = if (details?.isBlank() == false) "Police can find this person at: $details" else null
 
   private fun formatMultipleDates(dates: List<LocalDate>?): String {
     if (dates != null) {

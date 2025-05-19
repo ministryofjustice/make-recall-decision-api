@@ -31,9 +31,7 @@ internal class SupportingDocumentController(
   @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @GetMapping("/recommendations/{recommendationId}/documents")
   @Operation(summary = "Gets recommendation supporting documents")
-  suspend fun getSupportingDocuments(@PathVariable("recommendationId") recommendationId: Long): List<SupportingDocumentMetaDataResponse> {
-    return supportingDocumentService.fetchSupportingDocuments(recommendationId)
-  }
+  suspend fun getSupportingDocuments(@PathVariable("recommendationId") recommendationId: Long): List<SupportingDocumentMetaDataResponse> = supportingDocumentService.fetchSupportingDocuments(recommendationId)
 
   @PreAuthorize("hasAnyRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @PostMapping("/recommendations/{recommendationId}/documents")

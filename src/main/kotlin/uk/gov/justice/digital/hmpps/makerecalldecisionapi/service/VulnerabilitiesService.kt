@@ -53,13 +53,11 @@ internal class VulnerabilitiesService(
     )
   }
 
-  private suspend fun extractVulnerabilityFromRisk(vulnerabilityResponse: RiskVulnerabilityTypeResponse?): VulnerabilityDetail {
-    return VulnerabilityDetail(
-      vulnerabilityResponse?.risk,
-      vulnerabilityResponse?.previous,
-      vulnerabilityResponse?.previousConcernsText,
-      vulnerabilityResponse?.current,
-      vulnerabilityResponse?.currentConcernsText,
-    )
-  }
+  private suspend fun extractVulnerabilityFromRisk(vulnerabilityResponse: RiskVulnerabilityTypeResponse?): VulnerabilityDetail = VulnerabilityDetail(
+    vulnerabilityResponse?.risk,
+    vulnerabilityResponse?.previous,
+    vulnerabilityResponse?.previousConcernsText,
+    vulnerabilityResponse?.current,
+    vulnerabilityResponse?.currentConcernsText,
+  )
 }

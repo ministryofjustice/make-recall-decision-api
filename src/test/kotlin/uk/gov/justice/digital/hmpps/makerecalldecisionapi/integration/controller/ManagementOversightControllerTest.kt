@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class ManagementOversightControllerTest() : IntegrationTestBase() {
+class ManagementOversightControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get management oversight`() {

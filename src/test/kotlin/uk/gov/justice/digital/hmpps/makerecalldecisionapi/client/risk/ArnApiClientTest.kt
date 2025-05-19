@@ -127,7 +127,5 @@ class ArnApiClientTest {
     return responseSpec
   }
 
-  private fun expectedExceptionMessage(endpointName: String, timeoutInSeconds: Long): String {
-    return "ARN API Client - $endpointName endpoint: [No response within $timeoutInSeconds seconds]"
-  }
+  private fun expectedExceptionMessage(endpointName: String, timeoutInSeconds: Long): String = "ARN API Client - $endpointName endpoint: [No response within $timeoutInSeconds seconds]"
 }

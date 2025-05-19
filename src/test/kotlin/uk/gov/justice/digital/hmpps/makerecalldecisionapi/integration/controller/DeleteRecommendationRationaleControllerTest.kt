@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class DeleteRecommendationRationaleControllerTest() : IntegrationTestBase() {
+class DeleteRecommendationRationaleControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get expired recommendation deletion info`() {

@@ -13,12 +13,11 @@ internal fun ppudContact(
   faxEmail: String = randomString(),
 ) = PpudContact(name, faxEmail)
 
-internal fun PpudContact.toJson() =
-  json(
-    """
+internal fun PpudContact.toJson() = json(
+  """
       {
         "name": "$name",
         "faxEmail": "$faxEmail"
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

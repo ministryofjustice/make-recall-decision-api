@@ -52,16 +52,14 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
     return formattedDateTime
   }
 
-  fun getDayOfMonthSuffix(n: Int): String? {
-    return if (n in 11..13) {
-      "th"
-    } else {
-      when (n % 10) {
-        1 -> "st"
-        2 -> "nd"
-        3 -> "rd"
-        else -> "th"
-      }
+  fun getDayOfMonthSuffix(n: Int): String? = if (n in 11..13) {
+    "th"
+  } else {
+    when (n % 10) {
+      1 -> "st"
+      2 -> "nd"
+      3 -> "rd"
+      else -> "th"
     }
   }
 
@@ -91,13 +89,9 @@ abstract class LetterDocumentMapper : RecommendationDataToDocumentMapper() {
     }
   }
 
-  private fun buildSalutationName(popName: String?): String {
-    return "Dear $popName,"
-  }
+  private fun buildSalutationName(popName: String?): String = "Dear $popName,"
 
   abstract fun buildLetterTitle(): String
 
-  private fun buildSignedByParagraph(): String? {
-    return "Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU"
-  }
+  private fun buildSignedByParagraph(): String? = "Yours sincerely,\n\n\nProbation Practitioner/Senior Probation Officer/Head of PDU"
 }

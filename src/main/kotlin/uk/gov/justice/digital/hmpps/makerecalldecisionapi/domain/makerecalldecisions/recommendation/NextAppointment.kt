@@ -13,7 +13,7 @@ data class NextAppointment(
   val probationPhoneNumber: String? = null,
 )
 
-enum class NextAppointmentValue() {
+enum class NextAppointmentValue {
   TELEPHONE,
   VIDEO_CALL,
   OFFICE_VISIT,

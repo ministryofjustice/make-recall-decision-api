@@ -45,6 +45,5 @@ internal class PersonDetailsService(
     }
   }
 
-  fun buildPersonalDetailsOverviewResponse(crn: String) =
-    deliusClient.getPersonalDetails(crn).personalDetails.toOverview(crn)
+  fun buildPersonalDetailsOverviewResponse(crn: String) = deliusClient.getPersonalDetails(crn).personalDetails.toOverview(crn)
 }

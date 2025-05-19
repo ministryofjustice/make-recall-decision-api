@@ -23,21 +23,20 @@ internal fun ppudUpdateOffenderRequest(
   nomsId: String? = randomString(),
   prisonNumber: String = randomString(),
   establishment: String = randomString(),
-) =
-  PpudUpdateOffenderRequest(
-    address,
-    additionalAddresses,
-    croNumber,
-    dateOfBirth,
-    ethnicity,
-    familyName,
-    firstNames,
-    gender,
-    isInCustody,
-    nomsId,
-    prisonNumber,
-    establishment,
-  )
+) = PpudUpdateOffenderRequest(
+  address,
+  additionalAddresses,
+  croNumber,
+  dateOfBirth,
+  ethnicity,
+  familyName,
+  firstNames,
+  gender,
+  isInCustody,
+  nomsId,
+  prisonNumber,
+  establishment,
+)
 
 internal fun PpudUpdateOffenderRequest.toJsonBody() = json(toJsonString())
 

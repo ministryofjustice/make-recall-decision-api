@@ -60,17 +60,15 @@ class WebClientConfiguration(
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun <T> Mono<T>.withRetry(): Mono<T> {
-      return this
-        .retryWhen(
-          Retry.backoff(2, Duration.ofMillis(500))
-            .filter(::shouldBeRetried)
-            .doBeforeRetry(::logRetrySignal)
-            .onRetryExhaustedThrow { _, retrySignal ->
-              retrySignal.failure()
-            },
-        )
-    }
+    fun <T> Mono<T>.withRetry(): Mono<T> = this
+      .retryWhen(
+        Retry.backoff(2, Duration.ofMillis(500))
+          .filter(::shouldBeRetried)
+          .doBeforeRetry(::logRetrySignal)
+          .onRetryExhaustedThrow { _, retrySignal ->
+            retrySignal.failure()
+          },
+      )
 
     private fun logRetrySignal(retrySignal: Retry.RetrySignal) {
       val exception = retrySignal.failure()?.cause ?: retrySignal.failure()
@@ -91,19 +89,15 @@ class WebClientConfiguration(
       499,
     )
 
-    private fun shouldBeRetried(ex: Throwable): Boolean {
-      return ex is ClientTimeoutException ||
-        ex is ClientTimeoutRuntimeException ||
-        ex is TimeoutException ||
-        ex is WebClientRequestException ||
-        (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode.value()))
-    }
+    private fun shouldBeRetried(ex: Throwable): Boolean = ex is ClientTimeoutException ||
+      ex is ClientTimeoutRuntimeException ||
+      ex is TimeoutException ||
+      ex is WebClientRequestException ||
+      (ex is WebClientResponseException && transientStatusCodes.contains(ex.statusCode.value()))
   }
 
   @Bean
-  fun webClientNoAuthNoMetrics(): WebClient {
-    return WebClient.create()
-  }
+  fun webClientNoAuthNoMetrics(): WebClient = WebClient.create()
 
   @Bean
   fun authorizedClientManagerAppScope(
@@ -123,14 +117,10 @@ class WebClientConfiguration(
   fun deliusWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, deliusIntegrationRootUri, "delius")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, deliusIntegrationRootUri, "delius")
 
   @Bean
-  fun deliusClient(@Qualifier("deliusWebClientAppScope") webClient: WebClient): DeliusClient {
-    return DeliusClient(webClient, nDeliusTimeout, deliusClientTimeoutCounter())
-  }
+  fun deliusClient(@Qualifier("deliusWebClientAppScope") webClient: WebClient): DeliusClient = DeliusClient(webClient, nDeliusTimeout, deliusClientTimeoutCounter())
 
   @Bean
   fun deliusClientTimeoutCounter(): Counter = timeoutCounter(deliusIntegrationRootUri)
@@ -139,14 +129,10 @@ class WebClientConfiguration(
   fun arnWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, arnApiRootUri, "arn-api")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, arnApiRootUri, "arn-api")
 
   @Bean
-  fun arnApiClient(@Qualifier("arnWebClientAppScope") webClient: WebClient): ArnApiClient {
-    return ArnApiClient(webClient, arnTimeout, arnApiClientTimeoutCounter())
-  }
+  fun arnApiClient(@Qualifier("arnWebClientAppScope") webClient: WebClient): ArnApiClient = ArnApiClient(webClient, arnTimeout, arnApiClientTimeoutCounter())
 
   @Bean
   fun arnApiClientTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
@@ -155,14 +141,10 @@ class WebClientConfiguration(
   fun documentManagementWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, documentManagementRootUri, "document-management-api")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, documentManagementRootUri, "document-management-api")
 
   @Bean
-  fun documentManagementApiClient(@Qualifier("documentManagementWebClientAppScope") webClient: WebClient): DocumentManagementClient {
-    return DocumentManagementClient(webClient, documentManagementTimeout, documentManagementApiClientTimeoutCounter())
-  }
+  fun documentManagementApiClient(@Qualifier("documentManagementWebClientAppScope") webClient: WebClient): DocumentManagementClient = DocumentManagementClient(webClient, documentManagementTimeout, documentManagementApiClientTimeoutCounter())
 
   @Bean
   fun documentManagementApiClientTimeoutCounter(): Counter = timeoutCounter(documentManagementRootUri)
@@ -171,22 +153,16 @@ class WebClientConfiguration(
   fun cvlWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, cvlApiRootUri, "cvl-api")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, cvlApiRootUri, "cvl-api")
 
   @Bean
-  fun cvlApiClient(@Qualifier("cvlWebClientAppScope") webClient: WebClient): CvlApiClient {
-    return CvlApiClient(webClient, cvlTimeout, cvlApiClientTimeoutCounter())
-  }
+  fun cvlApiClient(@Qualifier("cvlWebClientAppScope") webClient: WebClient): CvlApiClient = CvlApiClient(webClient, cvlTimeout, cvlApiClientTimeoutCounter())
 
   @Bean
   fun cvlApiClientTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
 
   @Bean
-  fun gotenbergClient(): WebClient {
-    return getPlainWebClient(WebClient.builder(), gotenbergRootUri)
-  }
+  fun gotenbergClient(): WebClient = getPlainWebClient(WebClient.builder(), gotenbergRootUri)
 
   @Bean
   fun gotenbergClientTimeoutCounter(): Counter = timeoutCounter(gotenbergRootUri)
@@ -208,22 +184,18 @@ class WebClientConfiguration(
   fun ppudAutomationWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, ppudAutomationApiRootUri, "ppud-automation-api")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, ppudAutomationApiRootUri, "ppud-automation-api")
 
   @Bean
   fun ppudAutomationApiClient(
     @Qualifier("ppudAutomationWebClientAppScope") webClient: WebClient,
     objectMapper: ObjectMapper,
-  ): PpudAutomationApiClient {
-    return PpudAutomationApiClient(
-      webClient,
-      ppudAutomationTimeout,
-      ppudAutomationApiClientTimeoutCounter(),
-      objectMapper,
-    )
-  }
+  ): PpudAutomationApiClient = PpudAutomationApiClient(
+    webClient,
+    ppudAutomationTimeout,
+    ppudAutomationApiClientTimeoutCounter(),
+    objectMapper,
+  )
 
   @Bean
   fun ppudAutomationApiClientTimeoutCounter(): Counter = timeoutCounter(ppudAutomationApiRootUri)
@@ -232,14 +204,10 @@ class WebClientConfiguration(
   fun prisonWebClientAppScope(
     @Qualifier(value = "authorizedClientManagerAppScope") authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(authorizedClientManager, builder, prisonRootUri, "prison-api")
-  }
+  ): WebClient = getOAuthWebClient(authorizedClientManager, builder, prisonRootUri, "prison-api")
 
   @Bean
-  fun prisonApiClient(@Qualifier("prisonWebClientAppScope") webClient: WebClient): PrisonApiClient {
-    return PrisonApiClient(webClient, prisonTimeout, prisonClientTimeoutCounter())
-  }
+  fun prisonApiClient(@Qualifier("prisonWebClientAppScope") webClient: WebClient): PrisonApiClient = PrisonApiClient(webClient, prisonTimeout, prisonClientTimeoutCounter())
 
   @Bean
   fun prisonClientTimeoutCounter(): Counter = timeoutCounter(prisonRootUri)
@@ -247,10 +215,8 @@ class WebClientConfiguration(
   private fun getPlainWebClient(
     builder: WebClient.Builder,
     rootUri: String,
-  ): WebClient {
-    return builder.baseUrl(rootUri)
-      .build()
-  }
+  ): WebClient = builder.baseUrl(rootUri)
+    .build()
 
   private fun timeoutCounter(endpointUrl: String): Counter {
     val metricName = "http_client_requests_timeout"
