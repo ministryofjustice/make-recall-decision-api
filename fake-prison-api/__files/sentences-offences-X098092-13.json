@@ -141,6 +141,7 @@
     "bookingId": 13,
     "sentenceSequence": 4,
     "lineSequence": 4,
+    "consecutiveToSequence": 3,
     "caseSequence": 2,
     "courtDescription": "Blackburn County Court",
     "sentenceStatus": "A",

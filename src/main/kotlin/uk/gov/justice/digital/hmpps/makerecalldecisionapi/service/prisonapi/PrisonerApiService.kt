@@ -58,36 +58,64 @@ internal class PrisonerApiService(
     return response!!
   }
 
-  fun retrieveOffences(nomsId: String): List<Sentence> = getValueAndHandleWrappedException(
-    prisonApiClient.retrievePrisonTimelines(nomsId),
-  )!!.prisonPeriod
-    .flatMap { t ->
-      prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentencesAndOffences ->
-        val lastDateOutOfPrison =
-          t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
-        val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
-        val prisonDescription = movement?.releaseFromPrisonId?.let {
-          try {
-            prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
-          } catch (notFoundEx: NotFoundException) {
-            log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
-            null
+  fun retrieveOffences(nomsId: String): List<Sentence> {
+    val sentences = ArrayList(
+      getValueAndHandleWrappedException(
+        prisonApiClient.retrievePrisonTimelines(nomsId),
+      )!!.prisonPeriod
+        .flatMap { t ->
+          prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentenceAndOffences ->
+            val lastDateOutOfPrison =
+              t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
+            val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
+            val prisonDescription = movement?.releaseFromPrisonId?.let {
+              try {
+                prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
+              } catch (notFoundEx: NotFoundException) {
+                log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
+                null
+              }
+            }
+
+            val offender = prisonApiClient.retrieveOffender(nomsId).block()
+            sentenceAndOffences.copy(
+              releaseDate = movement?.dateOutOfPrison,
+              releasingPrison = prisonDescription,
+              licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
+              offences = sentenceAndOffences.offences.sortedBy { it.offenceDescription },
+            )
           }
         }
+        .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
+        .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
+        .sortedBy { it.courtDescription }
+        .sortedByDescending { it.sentenceDate },
+    )
 
-        val offender = prisonApiClient.retrieveOffender(nomsId).block()
-        sentencesAndOffences.copy(
-          releaseDate = movement?.dateOutOfPrison,
-          releasingPrison = prisonDescription,
-          licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
-          offences = sentencesAndOffences.offences.sortedBy { it.offenceDescription },
-        )
+    sentences.forEach { sentence ->
+      // If the sentence is consecutive but nothing is consecutive to it, we are at the end of the sequence
+      if (sentence.consecutiveToSequence != null && !sentences.any { s -> s.consecutiveToSequence == sentence.sentenceSequence }) {
+        val consecutiveGroup = ArrayList<Int>()
+        fun buildSequence(consecutiveTo: Int?) {
+          val previousInSequence = sentences.find { s -> s.sentenceSequence == consecutiveTo }
+          if (previousInSequence?.consecutiveToSequence != null) {
+            buildSequence(previousInSequence.consecutiveToSequence)
+            consecutiveGroup.add(previousInSequence.sentenceSequence!!)
+          } else {
+            consecutiveGroup.add(previousInSequence?.sentenceSequence!!)
+          }
+        }
+        buildSequence(sentence.consecutiveToSequence)
+        consecutiveGroup.add(sentence.sentenceSequence!!)
+        consecutiveGroup.forEach { sentenceSequence ->
+          val sentenceToUpdateIndex = sentences.indexOf(sentences.find { s -> s.sentenceSequence == sentenceSequence })
+          sentences[sentenceToUpdateIndex] = sentences[sentenceToUpdateIndex].copy(consecutiveGroup = consecutiveGroup)
+        }
       }
     }
-    .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
-    .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
-    .sortedBy { it.courtDescription }
-    .sortedByDescending { it.sentenceDate }
+
+    return sentences
+  }
 
   fun getOffenderMovements(nomsId: String): List<OffenderMovement> {
     log.info("Searching for offender movements for offender with NOMIS ID $nomsId")

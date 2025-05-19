@@ -7,6 +7,8 @@ data class Sentence(
   val bookingId: Int? = null,
   val sentenceSequence: Int? = null,
   val lineSequence: Int? = null,
+  val consecutiveToSequence: Int? = null,
+  val consecutiveGroup: List<Int> = listOf(),
   val caseSequence: Int? = null,
   val courtDescription: String? = null,
   val sentenceStatus: String? = null,
