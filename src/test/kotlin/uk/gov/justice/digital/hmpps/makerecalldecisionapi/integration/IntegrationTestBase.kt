@@ -293,29 +293,28 @@ abstract class IntegrationTestBase {
     activate: List<String>,
     deactivate: List<String> = emptyList(),
     subject: String? = "SOME_USER",
-  ) =
-    convertResponseToJSONArray(
-      webTestClient.patch()
-        .uri("/recommendations/$createdRecommendationId/status")
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-          BodyInserters.fromValue(
-            recommendationStatusRequest(
-              activate = activate,
-              deactivate = deactivate,
-            ),
+  ) = convertResponseToJSONArray(
+    webTestClient.patch()
+      .uri("/recommendations/$createdRecommendationId/status")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(
+          recommendationStatusRequest(
+            activate = activate,
+            deactivate = deactivate,
           ),
-        )
-        .headers {
-          (
-            listOf(
-              it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"), subject = subject),
-            )
-            )
-        }
-        .exchange()
-        .expectStatus().isOk,
-    )
+        ),
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_SPO"), subject = subject),
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().isOk,
+  )
 
   fun convertResponseToJSONObject(response: WebTestClient.ResponseSpec): JSONObject {
     val responseBodySpec = response.expectBody<String>()

@@ -37,16 +37,12 @@ class WebClientUserEnhancementConfiguration(
 
   @Bean
   @RequestScope
-  fun assessRisksNeedsWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient {
-    return builder.baseUrl(arnApiRootUri)
-      .filter(ServletBearerExchangeFilterFunction())
-      .build()
-  }
+  fun assessRisksNeedsWebClientUserEnhancedAppScope(builder: WebClient.Builder): WebClient = builder.baseUrl(arnApiRootUri)
+    .filter(ServletBearerExchangeFilterFunction())
+    .build()
 
   @Bean
-  fun assessRisksNeedsApiClientUserEnhanced(@Qualifier("assessRisksNeedsWebClientUserEnhancedAppScope") webClient: WebClient): ArnApiClient {
-    return ArnApiClient(webClient, arnTimeout, arnApiClientEnhancedTimeoutCounter())
-  }
+  fun assessRisksNeedsApiClientUserEnhanced(@Qualifier("assessRisksNeedsWebClientUserEnhancedAppScope") webClient: WebClient): ArnApiClient = ArnApiClient(webClient, arnTimeout, arnApiClientEnhancedTimeoutCounter())
 
   @Bean
   fun arnApiClientEnhancedTimeoutCounter(): Counter = timeoutCounter(arnApiRootUri)
@@ -56,19 +52,15 @@ class WebClientUserEnhancementConfiguration(
   fun cvlWebClientUserEnhancedAppScope(
     clientRegistrationRepository: ClientRegistrationRepository,
     builder: WebClient.Builder,
-  ): WebClient {
-    return getOAuthWebClient(
-      authorizedClientManagerUserEnhanced(clientRegistrationRepository),
-      builder,
-      cvlApiRootUri,
-      "cvl-api",
-    )
-  }
+  ): WebClient = getOAuthWebClient(
+    authorizedClientManagerUserEnhanced(clientRegistrationRepository),
+    builder,
+    cvlApiRootUri,
+    "cvl-api",
+  )
 
   @Bean
-  fun cvlApiClientUserEnhanced(@Qualifier("cvlWebClientUserEnhancedAppScope") webClient: WebClient): CvlApiClient {
-    return CvlApiClient(webClient, cvlTimeout, cvlApiClientUserEnhancedTimeoutCounter())
-  }
+  fun cvlApiClientUserEnhanced(@Qualifier("cvlWebClientUserEnhancedAppScope") webClient: WebClient): CvlApiClient = CvlApiClient(webClient, cvlTimeout, cvlApiClientUserEnhancedTimeoutCounter())
 
   @Bean
   fun cvlApiClientUserEnhancedTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)

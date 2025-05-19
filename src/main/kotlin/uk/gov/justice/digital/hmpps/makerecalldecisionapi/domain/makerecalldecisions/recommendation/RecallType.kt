@@ -32,14 +32,12 @@ enum class ManagerRecallDecisionTypeValue(val displayValue: String) {
   RECALL("Recall"),
 }
 
-enum class DeliusContactOutcome() {
+enum class DeliusContactOutcome {
   DECISION_NOT_TO_RECALL,
   DECISION_TO_RECALL,
 }
 
-fun toDeliusContactOutcome(spoRecallType: String?): DeliusContactOutcome {
-  return if (spoRecallType == ManagerRecallDecisionTypeValue.NO_RECALL.name) DECISION_NOT_TO_RECALL else DECISION_TO_RECALL
-}
+fun toDeliusContactOutcome(spoRecallType: String?): DeliusContactOutcome = if (spoRecallType == ManagerRecallDecisionTypeValue.NO_RECALL.name) DECISION_NOT_TO_RECALL else DECISION_TO_RECALL
 
 enum class RecallTypeValue(val displayValue: String) {
   STANDARD("Standard"),

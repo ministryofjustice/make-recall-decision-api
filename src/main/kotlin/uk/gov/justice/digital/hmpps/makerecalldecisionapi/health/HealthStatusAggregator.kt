@@ -6,7 +6,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class HealthStatusAggregator : StatusAggregator {
-  override fun getAggregateStatus(statuses: MutableSet<Status>?): Status {
-    return if (statuses != null && statuses.any { status -> status == Status.DOWN }) Status.DOWN else Status.UP
-  }
+  override fun getAggregateStatus(statuses: MutableSet<Status>?): Status = if (statuses != null && statuses.any { status -> status == Status.DOWN }) Status.DOWN else Status.UP
 }

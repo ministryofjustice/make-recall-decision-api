@@ -48,20 +48,18 @@ class PrisonApiClient(
 
   fun retrieveImageData(
     facialImageId: String,
-  ): Mono<ResponseEntity<ByteArrayResource>> {
-    return webClient
-      .get()
-      .uri { builder -> builder.path("/api/images/" + facialImageId + "/data").build() }
-      .retrieve()
-      .toEntity(ByteArrayResource::class.java)
-      .timeout(Duration.ofSeconds(prisonTimeout))
-      .doOnError { ex ->
-        handleTimeoutException(
-          exception = ex,
-        )
-      }
-      .withRetry()
-  }
+  ): Mono<ResponseEntity<ByteArrayResource>> = webClient
+    .get()
+    .uri { builder -> builder.path("/api/images/" + facialImageId + "/data").build() }
+    .retrieve()
+    .toEntity(ByteArrayResource::class.java)
+    .timeout(Duration.ofSeconds(prisonTimeout))
+    .doOnError { ex ->
+      handleTimeoutException(
+        exception = ex,
+      )
+    }
+    .withRetry()
 
   fun retrievePrisonTimelines(
     nomsId: String,

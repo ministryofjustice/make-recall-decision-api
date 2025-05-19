@@ -15,9 +15,7 @@ class ContactGroupsCsvReader {
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun getContactGroupsForSystemGeneratedContacts(): List<ContactGroup> {
-      return contactGroupsForSystemGeneratedContacts
-    }
+    fun getContactGroupsForSystemGeneratedContacts(): List<ContactGroup> = contactGroupsForSystemGeneratedContacts
 
     init {
       log.info("Building contact groups list on application startup")

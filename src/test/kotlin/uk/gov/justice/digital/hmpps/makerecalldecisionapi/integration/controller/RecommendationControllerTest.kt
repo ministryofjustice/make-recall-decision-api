@@ -40,7 +40,7 @@ import java.util.UUID
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class RecommendationControllerTest() : IntegrationTestBase() {
+class RecommendationControllerTest : IntegrationTestBase() {
 
   @Test
   fun `get latest complete recommendation overview`() {

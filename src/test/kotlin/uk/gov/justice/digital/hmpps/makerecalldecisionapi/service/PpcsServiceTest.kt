@@ -297,16 +297,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   }
 
   companion object {
-    fun status(name: String, active: Boolean, recommendationId: Long): RecommendationStatusEntity {
-      return RecommendationStatusEntity(
-        id = System.currentTimeMillis(),
-        recommendationId = recommendationId,
-        createdBy = "me",
-        createdByUserFullName = "me2",
-        created = ZonedDateTime.now().toString(),
-        name = name,
-        active = active,
-      )
-    }
+    fun status(name: String, active: Boolean, recommendationId: Long): RecommendationStatusEntity = RecommendationStatusEntity(
+      id = System.currentTimeMillis(),
+      recommendationId = recommendationId,
+      createdBy = "me",
+      createdByUserFullName = "me2",
+      created = ZonedDateTime.now().toString(),
+      name = name,
+      active = active,
+    )
   }
 }

@@ -16,22 +16,20 @@ internal fun ppudCreateOrUpdateReleaseRequest(
   postRelease: PpudUpdatePostRelease = ppudUpdatePostRelease(),
   releasedFrom: String = randomString(),
   releasedUnder: String = randomString(),
-) =
-  PpudCreateOrUpdateReleaseRequest(
-    dateOfRelease,
-    postRelease,
-    releasedFrom,
-    releasedUnder,
-  )
+) = PpudCreateOrUpdateReleaseRequest(
+  dateOfRelease,
+  postRelease,
+  releasedFrom,
+  releasedUnder,
+)
 
-internal fun PpudCreateOrUpdateReleaseRequest.toJson() =
-  json(
-    """
+internal fun PpudCreateOrUpdateReleaseRequest.toJson() = json(
+  """
       {
         "dateOfRelease": "$dateOfRelease",
         "postRelease": ${postRelease.toJson()},
         "releasedFrom": "$releasedFrom",
         "releasedUnder": "$releasedUnder"
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

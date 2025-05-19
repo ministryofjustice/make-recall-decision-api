@@ -12,19 +12,18 @@ data class PersonDetailsResponse(
   val activeRecommendation: ActiveRecommendation? = null,
 )
 
-fun PersonDetailsResponse.toPersonOnProbation(): PersonOnProbation =
-  PersonOnProbation(
-    croNumber = this.personalDetailsOverview?.croNumber,
-    mostRecentPrisonerNumber = this.personalDetailsOverview?.mostRecentPrisonerNumber,
-    nomsNumber = this.personalDetailsOverview?.nomsNumber,
-    pncNumber = this.personalDetailsOverview?.pncNumber,
-    name = this.personalDetailsOverview?.name,
-    firstName = this.personalDetailsOverview?.firstName,
-    middleNames = this.personalDetailsOverview?.middleNames,
-    surname = this.personalDetailsOverview?.surname,
-    gender = this.personalDetailsOverview?.gender,
-    ethnicity = this.personalDetailsOverview?.ethnicity,
-    primaryLanguage = this.personalDetailsOverview?.primaryLanguage,
-    dateOfBirth = this.personalDetailsOverview?.dateOfBirth,
-    addresses = this.addresses,
-  )
+fun PersonDetailsResponse.toPersonOnProbation(): PersonOnProbation = PersonOnProbation(
+  croNumber = this.personalDetailsOverview?.croNumber,
+  mostRecentPrisonerNumber = this.personalDetailsOverview?.mostRecentPrisonerNumber,
+  nomsNumber = this.personalDetailsOverview?.nomsNumber,
+  pncNumber = this.personalDetailsOverview?.pncNumber,
+  name = this.personalDetailsOverview?.name,
+  firstName = this.personalDetailsOverview?.firstName,
+  middleNames = this.personalDetailsOverview?.middleNames,
+  surname = this.personalDetailsOverview?.surname,
+  gender = this.personalDetailsOverview?.gender,
+  ethnicity = this.personalDetailsOverview?.ethnicity,
+  primaryLanguage = this.personalDetailsOverview?.primaryLanguage,
+  dateOfBirth = this.personalDetailsOverview?.dateOfBirth,
+  addresses = this.addresses,
+)

@@ -4,7 +4,7 @@ import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class DocumentFunctionalTest() : FunctionalTest() {
+class DocumentFunctionalTest : FunctionalTest() {
 
   @Test
   fun `fetch document`() {

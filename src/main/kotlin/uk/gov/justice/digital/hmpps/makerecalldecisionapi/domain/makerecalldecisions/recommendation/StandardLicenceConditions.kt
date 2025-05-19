@@ -19,7 +19,5 @@ enum class SelectedStandardLicenceConditions(val cvlCode: String) {
   CONTACT_DETAILS("6FA6E492-F0AB-4E76-B868-63813DB44696"),
   ;
 
-  fun isCodeForCvl(cvlCode: String): Boolean {
-    return this.cvlCode.equals(cvlCode, ignoreCase = true)
-  }
+  fun isCodeForCvl(cvlCode: String): Boolean = this.cvlCode.equals(cvlCode, ignoreCase = true)
 }

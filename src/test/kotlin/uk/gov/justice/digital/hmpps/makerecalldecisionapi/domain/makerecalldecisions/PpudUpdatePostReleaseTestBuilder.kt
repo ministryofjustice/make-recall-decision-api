@@ -13,22 +13,20 @@ internal fun ppudUpdatePostRelease(
   offenderManager: PpudContactWithTelephone = ppudContactWithTelephone(),
   probationService: String = randomString(),
   spoc: PpudContact = ppudContact(),
-) =
-  PpudUpdatePostRelease(
-    assistantChiefOfficer,
-    offenderManager,
-    probationService,
-    spoc,
-  )
+) = PpudUpdatePostRelease(
+  assistantChiefOfficer,
+  offenderManager,
+  probationService,
+  spoc,
+)
 
-internal fun PpudUpdatePostRelease.toJson() =
-  json(
-    """
+internal fun PpudUpdatePostRelease.toJson() = json(
+  """
       {
         "assistantChiefOfficer": ${assistantChiefOfficer.toJson()},
         "offenderManager": ${offenderManager.toJson()},
         "probationService": "$probationService",
         "spoc": ${spoc.toJson()}
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

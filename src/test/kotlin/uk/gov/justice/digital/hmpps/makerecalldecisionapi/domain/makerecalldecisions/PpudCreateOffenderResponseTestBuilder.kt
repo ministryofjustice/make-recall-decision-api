@@ -10,6 +10,4 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
 fun ppudCreatedSentence(
   id: String? = randomString(),
-): PpudCreatedSentence {
-  return PpudCreatedSentence(id)
-}
+): PpudCreatedSentence = PpudCreatedSentence(id)

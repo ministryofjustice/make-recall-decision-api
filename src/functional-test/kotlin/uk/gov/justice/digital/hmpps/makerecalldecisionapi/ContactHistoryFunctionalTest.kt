@@ -4,7 +4,7 @@ import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ContactHistoryTest() : FunctionalTest() {
+class ContactHistoryTest : FunctionalTest() {
 
   @Test
   fun `fetch contact history, expected 200`() {

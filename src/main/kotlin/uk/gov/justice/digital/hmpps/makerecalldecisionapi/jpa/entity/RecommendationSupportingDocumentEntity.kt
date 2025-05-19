@@ -33,18 +33,17 @@ data class RecommendationSupportingDocumentEntity(
   var data: ByteArray? = null,
 )
 
-fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): SupportingDocumentMetaDataResponse =
-  SupportingDocumentMetaDataResponse(
-    id = id,
-    recommendationId = recommendationId,
-    createdBy = createdBy,
-    createdByUserFullName = createdByUserFullName,
-    created = created,
-    filename = filename,
-    type = type,
-    uploadedBy = uploadedBy,
-    uploadedByUserFullName = uploadedByUserFullName,
-    uploaded = uploaded,
-    documentUuid = documentUuid,
-    title = title,
-  )
+fun RecommendationSupportingDocumentEntity.toSupportingDocumentResponse(): SupportingDocumentMetaDataResponse = SupportingDocumentMetaDataResponse(
+  id = id,
+  recommendationId = recommendationId,
+  createdBy = createdBy,
+  createdByUserFullName = createdByUserFullName,
+  created = created,
+  filename = filename,
+  type = type,
+  uploadedBy = uploadedBy,
+  uploadedByUserFullName = uploadedByUserFullName,
+  uploaded = uploaded,
+  documentUuid = documentUuid,
+  title = title,
+)

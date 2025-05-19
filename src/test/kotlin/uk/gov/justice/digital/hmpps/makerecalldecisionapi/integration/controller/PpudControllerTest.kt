@@ -92,13 +92,12 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
-  private fun postToSearch(requestBody: String): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/search")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  private fun postToSearch(requestBody: String): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/search")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   @Test
   fun `ppud create offender`() {
@@ -435,124 +434,113 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
-  private fun postToSearchActiveUsers(requestBody: PpudUserSearchRequest): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/user/search")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  private fun postToSearchActiveUsers(requestBody: PpudUserSearchRequest): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/user/search")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
-  private fun <T> postToCreateOffender(requestBody: T & Any): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/offender")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  private fun <T> postToCreateOffender(requestBody: T & Any): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/offender")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun <T> putToUpdateOffender(
     offenderId: String,
     requestBody: T & Any,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/offender/$offenderId")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/offender/$offenderId")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun postToCreateSentence(
     offenderId: String,
     requestBody: PpudCreateOrUpdateSentenceRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/offender/$offenderId/sentence")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/offender/$offenderId/sentence")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun putToUpdateSentence(
     offenderId: String,
     sentenceId: String,
     requestBody: PpudCreateOrUpdateSentenceRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/offender/$offenderId/sentence/$sentenceId")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/offender/$offenderId/sentence/$sentenceId")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun putToUpdateOffence(
     offenderId: String,
     sentenceId: String,
     requestBody: PpudUpdateOffenceRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/offender/$offenderId/sentence/$sentenceId/offence")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/offender/$offenderId/sentence/$sentenceId/offence")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun putToUploadMandatoryDocument(
     recallId: String,
     requestBody: UploadMandatoryDocumentRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/recall/$recallId/upload-mandatory-document")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/recall/$recallId/upload-mandatory-document")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun putToUploadAdditionalDocument(
     recallId: String,
     requestBody: UploadAdditionalDocumentRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/recall/$recallId/upload-additional-document")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/recall/$recallId/upload-additional-document")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun putToCreateMinute(
     recallId: String,
     requestBody: CreateMinuteRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.put()
-      .uri("/ppud/recall/$recallId/minutes")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.put()
+    .uri("/ppud/recall/$recallId/minutes")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun postToUpdateRelease(
     offenderId: String,
     sentenceId: String,
     requestBody: PpudCreateOrUpdateReleaseRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/offender/$offenderId/sentence/$sentenceId/release")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/offender/$offenderId/sentence/$sentenceId/release")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   private fun postToCreateRecall(
     offenderId: String,
     releaseId: String,
     requestBody: CreateRecallRequest,
-  ): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/offender/$offenderId/release/$releaseId/recall")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  ): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/offender/$offenderId/release/$releaseId/recall")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 
   @Test
   fun `reference list`() {
@@ -562,9 +550,8 @@ class PpudControllerTest : IntegrationTestBase() {
     }
   }
 
-  private fun referenceList(name: String): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/ppud/reference/$name")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .exchange()
+  private fun referenceList(name: String): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/ppud/reference/$name")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .exchange()
 }

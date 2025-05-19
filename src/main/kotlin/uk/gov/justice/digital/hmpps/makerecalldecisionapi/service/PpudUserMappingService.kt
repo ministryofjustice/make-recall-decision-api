@@ -12,7 +12,5 @@ internal class PpudUserMappingService(
 ) {
   fun findByUserNameIgnoreCase(
     username: String,
-  ): PpudUserMappingEntity? {
-    return ppudUserMappingRepository.findByUserNameIgnoreCase(username)
-  }
+  ): PpudUserMappingEntity? = ppudUserMappingRepository.findByUserNameIgnoreCase(username)
 }

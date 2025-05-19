@@ -349,9 +349,7 @@ class SupportingDocumentControllerTest(
     }
   }
 
-  fun base64(arg: String): String {
-    return Base64.getEncoder().encodeToString(arg.encodeToByteArray())
-  }
+  fun base64(arg: String): String = Base64.getEncoder().encodeToString(arg.encodeToByteArray())
 
   private fun uploadDocument(recommendationId: String, data: String) = convertResponseToJSONObject(
     webTestClient.post()

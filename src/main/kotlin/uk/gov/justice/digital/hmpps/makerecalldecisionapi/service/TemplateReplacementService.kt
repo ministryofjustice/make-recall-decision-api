@@ -226,8 +226,7 @@ internal class TemplateReplacementService(
     return mappings
   }
 
-  private fun hasVulnerabilities(vulnerabilities: VulnerabilitiesRecommendation?) =
-    vulnerabilities?.selected?.isNotEmpty() == true && !vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
+  private fun hasVulnerabilities(vulnerabilities: VulnerabilitiesRecommendation?) = vulnerabilities?.selected?.isNotEmpty() == true && !vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
@@ -264,66 +263,62 @@ internal class TemplateReplacementService(
     )
   }
 
-  private fun convertToSelectedStandardConditionsBreachedMap(selectedConditions: List<String>?): Map<String, String> {
-    return mapOf(
-      "other_name_known_by" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NAME_CHANGE.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "contact_details_changed" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.CONTACT_DETAILS.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "good_behaviour_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
-      "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    )
-  }
+  private fun convertToSelectedStandardConditionsBreachedMap(selectedConditions: List<String>?): Map<String, String> = mapOf(
+    "other_name_known_by" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NAME_CHANGE.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "contact_details_changed" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.CONTACT_DETAILS.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "good_behaviour_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING),
+  )
 
-  private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> {
-    return mapOf(
-      "risk_of_suicide_or_self_harm" to (
-        getVulnerabilityDisplayText(
-          RISK_OF_SUICIDE_OR_SELF_HARM.name,
-          vulnerabilities,
-        )
-        ),
-      "relationship_breakdown" to (getVulnerabilityDisplayText(RELATIONSHIP_BREAKDOWN.name, vulnerabilities)),
-      "not_known" to (getVulnerabilityDisplayText(NOT_KNOWN.name, vulnerabilities)),
-      "none" to (getVulnerabilityDisplayText(NONE.name, vulnerabilities)),
-      "domestic_abuse" to (getVulnerabilityDisplayText(DOMESTIC_ABUSE.name, vulnerabilities)),
-      "drug_or_alcohol_use" to (getVulnerabilityDisplayText(DRUG_OR_ALCOHOL_USE.name, vulnerabilities)),
-      "bullying_others" to (getVulnerabilityDisplayText(BULLYING_OTHERS.name, vulnerabilities)),
-      "being_bullied_by_others" to (getVulnerabilityDisplayText(BEING_BULLIED_BY_OTHERS.name, vulnerabilities)),
-      "being_at_risk_of_serious_harm_from_others" to (
-        getVulnerabilityDisplayText(
-          BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
-          vulnerabilities,
-        )
-        ),
-      "adult_or_child_safeguarding_concerns" to (
-        getVulnerabilityDisplayText(
-          ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name,
-          vulnerabilities,
-        )
-        ),
-      "mental_health_concerns" to (getVulnerabilityDisplayText(MENTAL_HEALTH_CONCERNS.name, vulnerabilities)),
-      "physical_health_concerns" to (getVulnerabilityDisplayText(PHYSICAL_HEALTH_CONCERNS.name, vulnerabilities)),
-      "medication_taken_including_compliance_with_medication" to (
-        getVulnerabilityDisplayText(
-          MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name,
-          vulnerabilities,
-        )
-        ),
-      "bereavement_issues" to (getVulnerabilityDisplayText(BEREAVEMENT_ISSUES.name, vulnerabilities)),
-      "learning_difficulties" to (getVulnerabilityDisplayText(LEARNING_DIFFICULTIES.name, vulnerabilities)),
-      "physical_disabilities" to (getVulnerabilityDisplayText(PHYSICAL_DISABILITIES.name, vulnerabilities)),
-      "cultural_or_language_differences" to (
-        getVulnerabilityDisplayText(
-          CULTURAL_OR_LANGUAGE_DIFFERENCES.name,
-          vulnerabilities,
-        )
-        ),
-    )
-  }
+  private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> = mapOf(
+    "risk_of_suicide_or_self_harm" to (
+      getVulnerabilityDisplayText(
+        RISK_OF_SUICIDE_OR_SELF_HARM.name,
+        vulnerabilities,
+      )
+      ),
+    "relationship_breakdown" to (getVulnerabilityDisplayText(RELATIONSHIP_BREAKDOWN.name, vulnerabilities)),
+    "not_known" to (getVulnerabilityDisplayText(NOT_KNOWN.name, vulnerabilities)),
+    "none" to (getVulnerabilityDisplayText(NONE.name, vulnerabilities)),
+    "domestic_abuse" to (getVulnerabilityDisplayText(DOMESTIC_ABUSE.name, vulnerabilities)),
+    "drug_or_alcohol_use" to (getVulnerabilityDisplayText(DRUG_OR_ALCOHOL_USE.name, vulnerabilities)),
+    "bullying_others" to (getVulnerabilityDisplayText(BULLYING_OTHERS.name, vulnerabilities)),
+    "being_bullied_by_others" to (getVulnerabilityDisplayText(BEING_BULLIED_BY_OTHERS.name, vulnerabilities)),
+    "being_at_risk_of_serious_harm_from_others" to (
+      getVulnerabilityDisplayText(
+        BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
+        vulnerabilities,
+      )
+      ),
+    "adult_or_child_safeguarding_concerns" to (
+      getVulnerabilityDisplayText(
+        ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name,
+        vulnerabilities,
+      )
+      ),
+    "mental_health_concerns" to (getVulnerabilityDisplayText(MENTAL_HEALTH_CONCERNS.name, vulnerabilities)),
+    "physical_health_concerns" to (getVulnerabilityDisplayText(PHYSICAL_HEALTH_CONCERNS.name, vulnerabilities)),
+    "medication_taken_including_compliance_with_medication" to (
+      getVulnerabilityDisplayText(
+        MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION.name,
+        vulnerabilities,
+      )
+      ),
+    "bereavement_issues" to (getVulnerabilityDisplayText(BEREAVEMENT_ISSUES.name, vulnerabilities)),
+    "learning_difficulties" to (getVulnerabilityDisplayText(LEARNING_DIFFICULTIES.name, vulnerabilities)),
+    "physical_disabilities" to (getVulnerabilityDisplayText(PHYSICAL_DISABILITIES.name, vulnerabilities)),
+    "cultural_or_language_differences" to (
+      getVulnerabilityDisplayText(
+        CULTURAL_OR_LANGUAGE_DIFFERENCES.name,
+        vulnerabilities,
+      )
+      ),
+  )
 
   private fun getVulnerabilityDisplayText(
     vulnerability: String?,
@@ -346,23 +341,19 @@ internal class TemplateReplacementService(
     }
   }
 
-  private fun formatMappaCategory(mappa: Mappa?): String {
-    return if (mappa == null) {
-      EMPTY_STRING
-    } else if (mappa.category == null) {
-      MrdTextConstants.NOT_APPLICABLE
-    } else {
-      "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
-    }
+  private fun formatMappaCategory(mappa: Mappa?): String = if (mappa == null) {
+    EMPTY_STRING
+  } else if (mappa.category == null) {
+    MrdTextConstants.NOT_APPLICABLE
+  } else {
+    "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
   }
 
-  private fun formatMappaLevel(mappa: Mappa?): String {
-    return if (mappa == null) {
-      EMPTY_STRING
-    } else if (mappa.level == null) {
-      MrdTextConstants.NOT_APPLICABLE
-    } else {
-      "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
-    }
+  private fun formatMappaLevel(mappa: Mappa?): String = if (mappa == null) {
+    EMPTY_STRING
+  } else if (mappa.level == null) {
+    MrdTextConstants.NOT_APPLICABLE
+  } else {
+    "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
   }
 }

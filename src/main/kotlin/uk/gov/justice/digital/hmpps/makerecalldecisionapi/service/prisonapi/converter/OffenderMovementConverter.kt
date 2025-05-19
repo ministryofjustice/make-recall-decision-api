@@ -8,23 +8,19 @@ import java.time.LocalDateTime
 @Service
 class OffenderMovementConverter {
 
-  fun convert(prisonApiOffenderMovements: List<PrisonApiOffenderMovement>): List<OffenderMovement> {
-    return prisonApiOffenderMovements.map { convert(it) }
-  }
+  fun convert(prisonApiOffenderMovements: List<PrisonApiOffenderMovement>): List<OffenderMovement> = prisonApiOffenderMovements.map { convert(it) }
 
-  fun convert(prisonApiOffenderMovement: PrisonApiOffenderMovement): OffenderMovement {
-    return OffenderMovement(
-      nomisId = prisonApiOffenderMovement.offenderNo,
-      movementType = prisonApiOffenderMovement.movementType,
-      movementTypeDescription = prisonApiOffenderMovement.movementTypeDescription,
-      fromAgency = prisonApiOffenderMovement.fromAgency,
-      fromAgencyDescription = prisonApiOffenderMovement.fromAgencyDescription,
-      toAgency = prisonApiOffenderMovement.toAgency,
-      toAgencyDescription = prisonApiOffenderMovement.toAgencyDescription,
-      movementDateTime = LocalDateTime.of(
-        prisonApiOffenderMovement.movementDate,
-        prisonApiOffenderMovement.movementTime,
-      ),
-    )
-  }
+  fun convert(prisonApiOffenderMovement: PrisonApiOffenderMovement): OffenderMovement = OffenderMovement(
+    nomisId = prisonApiOffenderMovement.offenderNo,
+    movementType = prisonApiOffenderMovement.movementType,
+    movementTypeDescription = prisonApiOffenderMovement.movementTypeDescription,
+    fromAgency = prisonApiOffenderMovement.fromAgency,
+    fromAgencyDescription = prisonApiOffenderMovement.fromAgencyDescription,
+    toAgency = prisonApiOffenderMovement.toAgency,
+    toAgencyDescription = prisonApiOffenderMovement.toAgencyDescription,
+    movementDateTime = LocalDateTime.of(
+      prisonApiOffenderMovement.movementDate,
+      prisonApiOffenderMovement.movementTime,
+    ),
+  )
 }

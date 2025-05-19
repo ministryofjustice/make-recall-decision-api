@@ -21,10 +21,8 @@ internal class SupportingDocumentService(
   val documentManagementClient: DocumentManagementClient,
   @Lazy val recommendationRepository: RecommendationRepository,
 ) {
-  fun fetchSupportingDocuments(recommendationId: Long): List<SupportingDocumentMetaDataResponse> {
-    return recommendationDocumentRepository.findByRecommendationId(recommendationId)
-      .map { it.toSupportingDocumentResponse() }
-  }
+  fun fetchSupportingDocuments(recommendationId: Long): List<SupportingDocumentMetaDataResponse> = recommendationDocumentRepository.findByRecommendationId(recommendationId)
+    .map { it.toSupportingDocumentResponse() }
 
   fun uploadNewSupportingDocument(
     recommendationId: Long,

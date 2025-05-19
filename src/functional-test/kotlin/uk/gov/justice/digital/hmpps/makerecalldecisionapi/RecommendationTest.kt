@@ -6,7 +6,7 @@ import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
-class RecommendationTest() : FunctionalTest() {
+class RecommendationTest : FunctionalTest() {
 
   @Test
   fun `make a recommendation, expected 201`() {

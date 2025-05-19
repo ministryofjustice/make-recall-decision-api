@@ -13,11 +13,10 @@ class HealthController {
   @PublicEndpoint
   @GetMapping("/health")
   @ResponseStatus(HttpStatus.OK)
-  fun getHealth(): Map<String, String> =
-    hashMapOf(
-      "status" to "UP",
-      "version" to version(),
-    )
+  fun getHealth(): Map<String, String> = hashMapOf(
+    "status" to "UP",
+    "version" to version(),
+  )
 
   private fun version(): String = System.getenv("BUILD_NUMBER") ?: "app_version"
 }

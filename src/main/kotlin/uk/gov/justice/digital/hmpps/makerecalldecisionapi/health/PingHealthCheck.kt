@@ -76,8 +76,7 @@ abstract class PingHealthCheck(
       .build()
   }
 
-  private fun upWithStatus(it: ResponseEntity<String>): Mono<Health> =
-    Mono.just(Health.up().withHttpStatus(it.statusCode).build())
+  private fun upWithStatus(it: ResponseEntity<String>): Mono<Health> = Mono.just(Health.up().withHttpStatus(it.statusCode).build())
 
   private fun Health.Builder.withHttpStatus(status: HttpStatusCode) = this.withDetail("status", status)
 

@@ -4,7 +4,7 @@ import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class OffenderSearchTest() : FunctionalTest() {
+class OffenderSearchTest : FunctionalTest() {
 
   @Test
   fun `fetch offender search`() {

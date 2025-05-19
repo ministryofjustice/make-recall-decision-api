@@ -13,16 +13,14 @@ internal fun sentenceLength(
   partYears: Int? = randomInt(),
   partMonths: Int? = randomInt(),
   partDays: Int? = randomInt(),
-) =
-  SentenceLength(partYears, partMonths, partDays)
+) = SentenceLength(partYears, partMonths, partDays)
 
-internal fun SentenceLength.toJson() =
-  json(
-    """
+internal fun SentenceLength.toJson() = json(
+  """
       {
         "partYears": $partYears,
         "partMonths": $partMonths,
         "partDays": $partDays
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

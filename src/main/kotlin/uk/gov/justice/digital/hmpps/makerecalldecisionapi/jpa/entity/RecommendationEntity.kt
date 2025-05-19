@@ -65,13 +65,11 @@ data class RecommendationEntity(
   ) { it.data.lastModifiedDate }
 }
 
-fun RecommendationEntity.toRecommendationResponse(): RecommendationResponse {
-  return RecommendationResponse(
-    id = id,
-    status = data.status,
-    personOnProbation = data.personOnProbation?.toPersonOnProbationDto(),
-  )
-}
+fun RecommendationEntity.toRecommendationResponse(): RecommendationResponse = RecommendationResponse(
+  id = id,
+  status = data.status,
+  personOnProbation = data.personOnProbation?.toPersonOnProbationDto(),
+)
 
 data class RecommendationModel(
   val crn: String?,
