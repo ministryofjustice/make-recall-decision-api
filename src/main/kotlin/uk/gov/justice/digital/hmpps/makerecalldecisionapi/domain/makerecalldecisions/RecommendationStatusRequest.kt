@@ -13,20 +13,18 @@ fun RecommendationStatusRequest.toActiveRecommendationStatusEntity(
   userId: String?,
   createdByUserName: String?,
   email: String? = null,
-): List<RecommendationStatusEntity> {
-  return activate
-    .map {
-      RecommendationStatusEntity(
-        recommendationId = recommendationId,
-        createdBy = userId,
-        createdByUserFullName = createdByUserName,
-        created = DateTimeHelper.utcNowDateTimeString(),
-        name = it,
-        active = true,
-        emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED" || it == "PO_RECALL_CONSULT_SPO") email else null,
-      )
-    }
-}
+): List<RecommendationStatusEntity> = activate
+  .map {
+    RecommendationStatusEntity(
+      recommendationId = recommendationId,
+      createdBy = userId,
+      createdByUserFullName = createdByUserName,
+      created = DateTimeHelper.utcNowDateTimeString(),
+      name = it,
+      active = true,
+      emailAddress = if (it == "ACO_SIGNED" || it == "SPO_SIGNED" || it == "PO_RECALL_CONSULT_SPO") email else null,
+    )
+  }
 
 data class RecommendationStatusResponse(
   val name: String? = null,

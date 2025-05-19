@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessValidator
 
 @ActiveProfiles("test")
-class UserAccessValidatorWithCacheDisabledTest() : IntegrationTestBase() {
+class UserAccessValidatorWithCacheDisabledTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var userAccessValidator: UserAccessValidator

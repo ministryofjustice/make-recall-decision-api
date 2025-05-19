@@ -15,20 +15,18 @@ class DateTimeHelperTest {
 
   companion object {
     @JvmStatic
-    fun utcToLondonTestData(): Stream<Arguments> {
-      return Stream.of(
-        Arguments.of(LocalDateTime.parse("2024-01-31T08:00:00"), LocalDateTime.parse("2024-01-31T08:00:00")),
-        Arguments.of(
-          LocalDateTime.of(2024, 1, 1, 0, 0, 0),
-          LocalDateTime.of(2024, 1, 1, 0, 0, 0),
-        ),
-        Arguments.of(LocalDateTime.parse("2024-07-31T08:00:00"), LocalDateTime.parse("2024-07-31T09:00:00")),
-        Arguments.of(
-          LocalDateTime.of(2024, 5, 31, 23, 0, 0),
-          LocalDateTime.of(2024, 6, 1, 0, 0, 0),
-        ),
-      )
-    }
+    fun utcToLondonTestData(): Stream<Arguments> = Stream.of(
+      Arguments.of(LocalDateTime.parse("2024-01-31T08:00:00"), LocalDateTime.parse("2024-01-31T08:00:00")),
+      Arguments.of(
+        LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+        LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+      ),
+      Arguments.of(LocalDateTime.parse("2024-07-31T08:00:00"), LocalDateTime.parse("2024-07-31T09:00:00")),
+      Arguments.of(
+        LocalDateTime.of(2024, 5, 31, 23, 0, 0),
+        LocalDateTime.of(2024, 6, 1, 0, 0, 0),
+      ),
+    )
   }
 
   @ParameterizedTest

@@ -62,12 +62,10 @@ class RiskScoreConverter {
     }
   }
 
-  private fun convertDateTimeStringToDateString(dateTime: String?): String? {
-    return if (dateTime != null) {
-      LocalDateTime.parse(dateTime).toLocalDate().toString()
-    } else {
-      null
-    }
+  private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {
+    LocalDateTime.parse(dateTime).toLocalDate().toString()
+  } else {
+    null
   }
 
   private fun createScores(riskScoreResponse: RiskScoreResponse): Scores? {

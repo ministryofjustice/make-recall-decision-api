@@ -71,7 +71,5 @@ internal class OffenderSearchController(
   @Operation(summary = "Returns a list of recommendation docs that are appropriate for ppcs to process.")
   suspend fun ppcsSearch(
     @RequestBody body: PpcsSearchRequest,
-  ): PpcsSearchResponse {
-    return ppcsService.search(body.crn)
-  }
+  ): PpcsSearchResponse = ppcsService.search(body.crn)
 }

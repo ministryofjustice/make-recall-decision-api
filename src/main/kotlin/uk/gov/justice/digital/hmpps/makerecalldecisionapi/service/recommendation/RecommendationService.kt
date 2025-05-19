@@ -157,16 +157,14 @@ internal class RecommendationService(
     username: String?,
     readableUsername: String?,
     recallConsideredDetail: String?,
-  ): List<RecallConsidered> {
-    return listOf(
-      RecallConsidered(
-        userId = username,
-        createdDate = utcNowDateTimeString(),
-        userName = readableUsername,
-        recallConsideredDetail = recallConsideredDetail,
-      ),
-    )
-  }
+  ): List<RecallConsidered> = listOf(
+    RecallConsidered(
+      userId = username,
+      createdDate = utcNowDateTimeString(),
+      userName = readableUsername,
+      recallConsideredDetail = recallConsideredDetail,
+    ),
+  )
 
   fun getRecommendation(recommendationId: Long): RecommendationResponse {
     val recommendationEntity = getRecommendationEntityById(recommendationId)
@@ -212,18 +210,14 @@ internal class RecommendationService(
     )
   }
 
-  private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? {
-    return recommendationRepository.findByCrn(crn)
-      .filter {
-        recommendationStatusRepository.findByRecommendationId(it.id).stream()
-          .anyMatch { it.name == "PP_DOCUMENT_CREATED" }
-      }.minOrNull()
-  }
+  private fun getLatestRecommendationEntity(crn: String): RecommendationEntity? = recommendationRepository.findByCrn(crn)
+    .filter {
+      recommendationStatusRepository.findByRecommendationId(it.id).stream()
+        .anyMatch { it.name == "PP_DOCUMENT_CREATED" }
+    }.minOrNull()
 
-  private fun getRecommendationEntityById(recommendationId: Long): RecommendationEntity {
-    return recommendationRepository.findById(recommendationId).getOrNull()
-      ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
-  }
+  private fun getRecommendationEntityById(recommendationId: Long): RecommendationEntity = recommendationRepository.findById(recommendationId).getOrNull()
+    ?: throw NoRecommendationFoundException("No recommendation found for id: $recommendationId")
 
   @Deprecated("Now using updateRecommendation")
   @kotlin.Throws(Exception::class)
@@ -342,7 +336,8 @@ internal class RecommendationService(
     }
 
     val sendRecommendationStartedDomainEvent =
-      featureFlags?.flagDomainEventRecommendationStarted == true && featureFlags.flagConsiderRecall == true &&
+      featureFlags?.flagDomainEventRecommendationStarted == true &&
+        featureFlags.flagConsiderRecall == true &&
         existingRecommendationEntity.data.recommendationStartedDomainEventSent != true
 
     if (sendRecommendationStartedDomainEvent) {
@@ -359,19 +354,17 @@ internal class RecommendationService(
     existingRecommendationEntity: RecommendationEntity,
     updatedRecommendation: RecommendationModel,
     readableUserName: String?,
-  ): RecommendationModel {
-    return existingRecommendationEntity.data.copy(
-      managerRecallDecision = ManagerRecallDecision(
-        isSentToDelius = true,
-        selected = ManagerRecallDecisionTypeSelectedValue(
-          value = ManagerRecallDecisionTypeValue.valueOf(updatedRecommendation.spoRecallType!!),
-          details = updatedRecommendation.spoRecallRationale,
-        ),
-        createdBy = readableUserName,
-        createdDate = utcNowDateTimeString(),
+  ): RecommendationModel = existingRecommendationEntity.data.copy(
+    managerRecallDecision = ManagerRecallDecision(
+      isSentToDelius = true,
+      selected = ManagerRecallDecisionTypeSelectedValue(
+        value = ManagerRecallDecisionTypeValue.valueOf(updatedRecommendation.spoRecallType!!),
+        details = updatedRecommendation.spoRecallRationale,
       ),
-    )
-  }
+      createdBy = readableUserName,
+      createdDate = utcNowDateTimeString(),
+    ),
+  )
 
   private fun sendManagementOversightDomainEvent(
     recommendationId: Long,
@@ -646,21 +639,19 @@ internal class RecommendationService(
     documentRequestType: DocumentRequestType?,
     isUserSpoOrAco: Boolean? = false,
     featureFlags: FeatureFlags = FeatureFlags(),
-  ): DocumentResponse {
-    return if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
-      val recommendationEntity = getRecommendationEntityById(recommendationId)
-      val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
-      val documentResponse =
-        generateDntrDownload(recommendationEntity, userId, readableUsername, recommendationId, featureFlags)
-      if (featureFlags.flagSendDomainEvent && isFirstDntrDownload) {
-        log.info("Sent domain event for DNTR download asynchronously")
-        sendDntrDownloadEvent(recommendationId)
-        log.info("Sent domain event for DNTR download asynchronously")
-      }
-      documentResponse
-    } else {
-      generateDntrPreview(recommendationId)
+  ): DocumentResponse = if (documentRequestType == DocumentRequestType.DOWNLOAD_DOC_X) {
+    val recommendationEntity = getRecommendationEntityById(recommendationId)
+    val isFirstDntrDownload = recommendationEntity.data.userNameDntrLetterCompletedBy == null
+    val documentResponse =
+      generateDntrDownload(recommendationEntity, userId, readableUsername, recommendationId, featureFlags)
+    if (featureFlags.flagSendDomainEvent && isFirstDntrDownload) {
+      log.info("Sent domain event for DNTR download asynchronously")
+      sendDntrDownloadEvent(recommendationId)
+      log.info("Sent domain event for DNTR download asynchronously")
     }
+    documentResponse
+  } else {
+    generateDntrPreview(recommendationId)
   }
 
   private fun sendMrdEventToEventsEmitter(mrdEvent: MrdEvent) {
@@ -911,20 +902,18 @@ internal class RecommendationService(
   private fun extendedSentenceDetails(
     conviction: ConvictionDetails,
     isExtendedSentenceInRecommendation: Boolean?,
-  ): Pair<String?, String?> {
-    return if ("Extended Determinate Sentence" == conviction.sentence.description ||
-      "CJA - Extended Sentence" == conviction.sentence.description ||
-      isExtendedSentenceInRecommendation == true
-    ) {
-      val custodialTerm =
-        conviction.sentence.length?.toString() + MrdTextConstants.WHITE_SPACE + conviction.sentence.lengthUnits
-      val sentenceSecondLength = conviction.sentence.secondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
-      val sentenceSecondLengthUnits = conviction.sentence.secondLengthUnits ?: MrdTextConstants.EMPTY_STRING
+  ): Pair<String?, String?> = if ("Extended Determinate Sentence" == conviction.sentence.description ||
+    "CJA - Extended Sentence" == conviction.sentence.description ||
+    isExtendedSentenceInRecommendation == true
+  ) {
+    val custodialTerm =
+      conviction.sentence.length?.toString() + MrdTextConstants.WHITE_SPACE + conviction.sentence.lengthUnits
+    val sentenceSecondLength = conviction.sentence.secondLength?.toString() ?: MrdTextConstants.EMPTY_STRING
+    val sentenceSecondLengthUnits = conviction.sentence.secondLengthUnits ?: MrdTextConstants.EMPTY_STRING
 
-      Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
-    } else {
-      Pair(null, null)
-    }
+    Pair(custodialTerm, sentenceSecondLength + MrdTextConstants.WHITE_SPACE + sentenceSecondLengthUnits)
+  } else {
+    Pair(null, null)
   }
 
   @Throws(InvalidRequestException::class)
@@ -991,10 +980,9 @@ internal class RecommendationService(
       }
   }
 
-  private fun isStatusOpen(it: RecommendationEntity) =
-    recommendationStatusRepository.findByRecommendationId(it.id)
-      .any { it.active && (it.name == "REC_CLOSED") }
-      .not()
+  private fun isStatusOpen(it: RecommendationEntity) = recommendationStatusRepository.findByRecommendationId(it.id)
+    .any { it.active && (it.name == "REC_CLOSED") }
+    .not()
 }
 
 data class RecommendationMetaData(

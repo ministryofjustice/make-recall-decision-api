@@ -31,33 +31,29 @@ data class MrdEvent(
   val messageAttributes: MessageAttributes? = null,
 )
 
-fun toDntrDownloadedEventPayload(crn: String?): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "DNTR_LETTER_DOWNLOADED",
-      version = 1,
-      description = "DNTR letter downloaded",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = "",
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-    ),
-  )
-}
+fun toDntrDownloadedEventPayload(crn: String?): MrdEvent = MrdEvent(
+  timeStamp = utcNowDateTimeString(),
+  message = MrdEventMessageBody(
+    eventType = "DNTR_LETTER_DOWNLOADED",
+    version = 1,
+    description = "DNTR letter downloaded",
+    occurredAt = utcNowDateTimeString(),
+    detailUrl = "",
+    personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+  ),
+)
 
 fun toSystemDeleteRecommendationEventPayload(
   region: String?,
   crn: String?,
   recommendationId: String?,
   username: String?,
-): Map<String?, String?> {
-  return mapOf(
-    "userName" to username,
-    "crn" to crn,
-    "recommendationId" to recommendationId,
-    "region" to region,
-  )
-}
+): Map<String?, String?> = mapOf(
+  "userName" to username,
+  "crn" to crn,
+  "recommendationId" to recommendationId,
+  "region" to region,
+)
 
 fun toDeleteRecommendationRationaleDomainEventPayload(
   recommendationUrl: String?,
@@ -65,60 +61,56 @@ fun toDeleteRecommendationRationaleDomainEventPayload(
   contactOutcome: String?,
   username: String,
   detailUrl: String,
-): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.deleted",
-      version = 1,
-      description = "Deleted recommendation in 'Consider a recall'",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = detailUrl,
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(
-        contactOutcome = contactOutcome,
-        recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(username),
-      ),
+): MrdEvent = MrdEvent(
+  timeStamp = utcNowDateTimeString(),
+  message = MrdEventMessageBody(
+    eventType = "prison-recall.recommendation.deleted",
+    version = 1,
+    description = "Deleted recommendation in 'Consider a recall'",
+    occurredAt = utcNowDateTimeString(),
+    detailUrl = detailUrl,
+    personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+    additionalInformation = AdditionalInformation(
+      contactOutcome = contactOutcome,
+      recommendationUrl = recommendationUrl,
+      bookedBy = BookedBy(username),
     ),
-    messageAttributes = MessageAttributes(
-      eventType = TypeValue(
-        type = "String",
-        value = "prison-recall.recommendation.deleted",
-      ),
+  ),
+  messageAttributes = MessageAttributes(
+    eventType = TypeValue(
+      type = "String",
+      value = "prison-recall.recommendation.deleted",
     ),
-  )
-}
+  ),
+)
 
 fun toConsiderationRecallEventPayload(
   recommendationUrl: String?,
   crn: String?,
   username: String,
   detailUrl: String,
-): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.consideration",
-      version = 1,
-      description = "Management Oversight - Consideration Rationale",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = detailUrl,
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(
-        contactOutcome = null,
-        recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(username),
-      ),
+): MrdEvent = MrdEvent(
+  timeStamp = utcNowDateTimeString(),
+  message = MrdEventMessageBody(
+    eventType = "prison-recall.recommendation.consideration",
+    version = 1,
+    description = "Management Oversight - Consideration Rationale",
+    occurredAt = utcNowDateTimeString(),
+    detailUrl = detailUrl,
+    personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+    additionalInformation = AdditionalInformation(
+      contactOutcome = null,
+      recommendationUrl = recommendationUrl,
+      bookedBy = BookedBy(username),
     ),
-    messageAttributes = MessageAttributes(
-      eventType = TypeValue(
-        type = "String",
-        value = "prison-recall.recommendation.consideration",
-      ),
+  ),
+  messageAttributes = MessageAttributes(
+    eventType = TypeValue(
+      type = "String",
+      value = "prison-recall.recommendation.consideration",
     ),
-  )
-}
+  ),
+)
 
 fun toManagerRecallDecisionMadeEventPayload(
   recommendationUrl: String?,
@@ -126,55 +118,51 @@ fun toManagerRecallDecisionMadeEventPayload(
   contactOutcome: String?,
   username: String,
   detailUrl: String,
-): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.management-oversight",
-      version = 1,
-      description = "Management Oversight - Recall",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = detailUrl,
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(
-        contactOutcome = contactOutcome,
-        recommendationUrl = recommendationUrl,
-        bookedBy = BookedBy(username),
-      ),
+): MrdEvent = MrdEvent(
+  timeStamp = utcNowDateTimeString(),
+  message = MrdEventMessageBody(
+    eventType = "prison-recall.recommendation.management-oversight",
+    version = 1,
+    description = "Management Oversight - Recall",
+    occurredAt = utcNowDateTimeString(),
+    detailUrl = detailUrl,
+    personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+    additionalInformation = AdditionalInformation(
+      contactOutcome = contactOutcome,
+      recommendationUrl = recommendationUrl,
+      bookedBy = BookedBy(username),
     ),
-    messageAttributes = MessageAttributes(
-      eventType = TypeValue(
-        type = "String",
-        value = "prison-recall.recommendation.management-oversight",
-      ),
+  ),
+  messageAttributes = MessageAttributes(
+    eventType = TypeValue(
+      type = "String",
+      value = "prison-recall.recommendation.management-oversight",
     ),
-  )
-}
+  ),
+)
 
-fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?): MrdEvent {
-  return MrdEvent(
-    timeStamp = utcNowDateTimeString(),
-    message = MrdEventMessageBody(
-      eventType = "prison-recall.recommendation.started",
-      version = 1,
-      description = "Recommendation started (recall or no recall)",
-      occurredAt = utcNowDateTimeString(),
-      detailUrl = "",
-      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
-      additionalInformation = AdditionalInformation(
-        recommendationUrl = recommendationUrl,
-        bookedBy = null,
-        contactOutcome = null,
-      ),
+fun toRecommendationStartedEventPayload(recommendationUrl: String, crn: String?): MrdEvent = MrdEvent(
+  timeStamp = utcNowDateTimeString(),
+  message = MrdEventMessageBody(
+    eventType = "prison-recall.recommendation.started",
+    version = 1,
+    description = "Recommendation started (recall or no recall)",
+    occurredAt = utcNowDateTimeString(),
+    detailUrl = "",
+    personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = crn))),
+    additionalInformation = AdditionalInformation(
+      recommendationUrl = recommendationUrl,
+      bookedBy = null,
+      contactOutcome = null,
     ),
-    messageAttributes = MessageAttributes(
-      eventType = TypeValue(
-        type = "String",
-        value = "prison-recall.recommendation.started",
-      ),
+  ),
+  messageAttributes = MessageAttributes(
+    eventType = TypeValue(
+      type = "String",
+      value = "prison-recall.recommendation.started",
     ),
-  )
-}
+  ),
+)
 
 data class MessageAttributes(
   val eventType: TypeValue? = null,

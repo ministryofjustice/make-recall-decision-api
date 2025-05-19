@@ -9,5 +9,4 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil
  * with Int or with objects with sub-fields that should be printed as another
  * JSON object).
  */
-internal fun toJsonNullableStringField(obj: Any?) =
-  obj?.let { "\"$it\"" }
+internal fun toJsonNullableStringField(obj: Any?) = obj?.let { "\"$it\"" }

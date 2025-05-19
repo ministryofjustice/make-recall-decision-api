@@ -29,16 +29,15 @@ data class RecommendationStatusEntity(
   ) { it.modified ?: it.created }
 }
 
-fun RecommendationStatusEntity.toRecommendationStatusResponse(): RecommendationStatusResponse =
-  RecommendationStatusResponse(
-    name = name,
-    recommendationId = recommendationId,
-    active = active,
-    created = created,
-    createdBy = createdBy,
-    createdByUserFullName = createdByUserFullName,
-    modified = modified,
-    modifiedBy = modifiedBy,
-    modifiedByUserFullName = modifiedByUserFullName,
-    emailAddress = emailAddress,
-  )
+fun RecommendationStatusEntity.toRecommendationStatusResponse(): RecommendationStatusResponse = RecommendationStatusResponse(
+  name = name,
+  recommendationId = recommendationId,
+  active = active,
+  created = created,
+  createdBy = createdBy,
+  createdByUserFullName = createdByUserFullName,
+  modified = modified,
+  modifiedBy = modifiedBy,
+  modifiedByUserFullName = modifiedByUserFullName,
+  emailAddress = emailAddress,
+)

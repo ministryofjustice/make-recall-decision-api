@@ -7,7 +7,7 @@ data class WhyConsideredRecall(
   val allOptions: List<TextValueOption>? = null,
 )
 
-enum class WhyConsideredRecallValue() {
+enum class WhyConsideredRecallValue {
   RISK_INCREASED,
   CONTACT_STOPPED,
   RISK_INCREASED_AND_CONTACT_STOPPED,

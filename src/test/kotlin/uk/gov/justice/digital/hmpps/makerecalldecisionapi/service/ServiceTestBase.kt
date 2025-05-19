@@ -156,9 +156,7 @@ internal abstract class ServiceTestBase {
     subjectAccessRequestService = SubjectAccessRequestService(recommendationRepository)
   }
 
-  fun assessmentResponse(crn: String): AssessmentsResponse {
-    return AssessmentsResponse(crn, false, listOf(assessment()))
-  }
+  fun assessmentResponse(crn: String): AssessmentsResponse = AssessmentsResponse(crn, false, listOf(assessment()))
 
   fun assessment() = Assessment(
     dateCompleted = "2022-08-26T15:00:08",
@@ -188,84 +186,82 @@ internal abstract class ServiceTestBase {
     superStatus = "COMPLETE",
   )
 
-  fun riskResponse(): RiskResponse {
-    return RiskResponse(
-      riskToSelf = RiskToSelfResponse(
-        suicide = RiskVulnerabilityTypeResponse(
-          risk = "Yes",
-          previous = "Yes",
-          previousConcernsText = "Previous risk of suicide concerns due to ...",
-          current = "Yes",
-          currentConcernsText = "Risk of suicide concerns due to ...",
+  fun riskResponse(): RiskResponse = RiskResponse(
+    riskToSelf = RiskToSelfResponse(
+      suicide = RiskVulnerabilityTypeResponse(
+        risk = "Yes",
+        previous = "Yes",
+        previousConcernsText = "Previous risk of suicide concerns due to ...",
+        current = "Yes",
+        currentConcernsText = "Risk of suicide concerns due to ...",
+      ),
+      selfHarm = RiskVulnerabilityTypeResponse(
+        risk = "Yes",
+        previous = "Yes",
+        previousConcernsText = "Previous risk of self harm concerns due to ...",
+        current = "Yes",
+        currentConcernsText = "Risk of self harm concerns due to ...",
+      ),
+      custody = RiskVulnerabilityTypeResponse(
+        risk = "Yes",
+        previous = "Yes",
+        previousConcernsText = "Previous risk of custody concerns due to ...",
+        current = "Yes",
+        currentConcernsText = "Risk of custody concerns due to ...",
+      ),
+      hostelSetting = RiskVulnerabilityTypeResponse(
+        risk = "Yes",
+        previous = "Yes",
+        previousConcernsText = "Previous risk of hostel setting concerns due to ...",
+        current = "Yes",
+        currentConcernsText = "Risk of hostel setting concerns due to ...",
+      ),
+      vulnerability = RiskVulnerabilityTypeResponse(
+        risk = "Yes",
+        previous = "Yes",
+        previousConcernsText = "Previous risk of vulnerability concerns due to ...",
+        current = "Yes",
+        currentConcernsText = "Risk of vulnerability concerns due to ...",
+      ),
+    ),
+    otherRisks = OtherRisksResponse(
+      escapeOrAbscond = "YES",
+      controlIssuesDisruptiveBehaviour = "YES",
+      breachOfTrust = "YES",
+      riskToOtherPrisoners = "YES",
+    ),
+    summary = RiskSummaryRiskResponse(
+      whoIsAtRisk = "X, Y and Z are at risk",
+      natureOfRisk = "The nature of the risk is X",
+      riskImminence = "the risk is imminent and more probably in X situation",
+      riskIncreaseFactors = "If offender in situation X the risk can be higher",
+      riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
+      riskInCommunity = RiskScore(
+        veryHigh = null,
+        high = listOf(
+          "Children",
+          "Public",
+          "Known adult",
         ),
-        selfHarm = RiskVulnerabilityTypeResponse(
-          risk = "Yes",
-          previous = "Yes",
-          previousConcernsText = "Previous risk of self harm concerns due to ...",
-          current = "Yes",
-          currentConcernsText = "Risk of self harm concerns due to ...",
+        medium = listOf("Staff"),
+        low = listOf("Prisoners"),
+      ),
+      riskInCustody = RiskScore(
+        veryHigh = listOf(
+          "Staff",
+          "Prisoners",
         ),
-        custody = RiskVulnerabilityTypeResponse(
-          risk = "Yes",
-          previous = "Yes",
-          previousConcernsText = "Previous risk of custody concerns due to ...",
-          current = "Yes",
-          currentConcernsText = "Risk of custody concerns due to ...",
-        ),
-        hostelSetting = RiskVulnerabilityTypeResponse(
-          risk = "Yes",
-          previous = "Yes",
-          previousConcernsText = "Previous risk of hostel setting concerns due to ...",
-          current = "Yes",
-          currentConcernsText = "Risk of hostel setting concerns due to ...",
-        ),
-        vulnerability = RiskVulnerabilityTypeResponse(
-          risk = "Yes",
-          previous = "Yes",
-          previousConcernsText = "Previous risk of vulnerability concerns due to ...",
-          current = "Yes",
-          currentConcernsText = "Risk of vulnerability concerns due to ...",
+        high = listOf("Known adult"),
+        medium = null,
+        low = listOf(
+          "Children",
+          "Public",
         ),
       ),
-      otherRisks = OtherRisksResponse(
-        escapeOrAbscond = "YES",
-        controlIssuesDisruptiveBehaviour = "YES",
-        breachOfTrust = "YES",
-        riskToOtherPrisoners = "YES",
-      ),
-      summary = RiskSummaryRiskResponse(
-        whoIsAtRisk = "X, Y and Z are at risk",
-        natureOfRisk = "The nature of the risk is X",
-        riskImminence = "the risk is imminent and more probably in X situation",
-        riskIncreaseFactors = "If offender in situation X the risk can be higher",
-        riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
-        riskInCommunity = RiskScore(
-          veryHigh = null,
-          high = listOf(
-            "Children",
-            "Public",
-            "Known adult",
-          ),
-          medium = listOf("Staff"),
-          low = listOf("Prisoners"),
-        ),
-        riskInCustody = RiskScore(
-          veryHigh = listOf(
-            "Staff",
-            "Prisoners",
-          ),
-          high = listOf("Known adult"),
-          medium = null,
-          low = listOf(
-            "Children",
-            "Public",
-          ),
-        ),
-        overallRiskLevel = "HIGH",
-      ),
-      assessedOn = "2022-11-23T00:01:50",
-    )
-  }
+      overallRiskLevel = "HIGH",
+    ),
+    assessedOn = "2022-11-23T00:01:50",
+  )
 
   fun personDetailsResponse() = PersonDetailsResponse(
     personalDetailsOverview = PersonalDetailsOverview(
@@ -382,75 +378,70 @@ internal abstract class ServiceTestBase {
     ),
   )
 
-  protected fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: List<LicenceCondition>): List<ConvictionWithLicenceConditions> {
-    return listOf(
-      ConvictionWithLicenceConditions(
-        number = "1",
-        mainOffence = DeliusClient.Offence(
-          description = "Robbery (other than armed robbery)",
-          code = "ABC123",
+  protected fun expectedOffenceWithLicenceConditionsResponse(licenceConditions: List<LicenceCondition>): List<ConvictionWithLicenceConditions> = listOf(
+    ConvictionWithLicenceConditions(
+      number = "1",
+      mainOffence = DeliusClient.Offence(
+        description = "Robbery (other than armed robbery)",
+        code = "ABC123",
+        date = LocalDate.parse("2022-08-26"),
+      ),
+      additionalOffences = listOf(
+        DeliusClient.Offence(
+          description = "Arson",
+          code = "ZYX789",
           date = LocalDate.parse("2022-08-26"),
         ),
-        additionalOffences = listOf(
-          DeliusClient.Offence(
-            description = "Arson",
-            code = "ZYX789",
-            date = LocalDate.parse("2022-08-26"),
-          ),
-        ),
-        sentence = DeliusClient.Sentence(
-          description = "CJA - Extended Sentence",
-          isCustodial = true,
-          custodialStatusCode = "ABC123",
-          length = 6,
-          lengthUnits = "Days",
-          sentenceExpiryDate = LocalDate.parse("2022-06-10"),
-          licenceExpiryDate = LocalDate.parse("2022-05-10"),
-        ),
-        licenceConditions = licenceConditions,
       ),
-    )
-  }
+      sentence = DeliusClient.Sentence(
+        description = "CJA - Extended Sentence",
+        isCustodial = true,
+        custodialStatusCode = "ABC123",
+        length = 6,
+        lengthUnits = "Days",
+        sentenceExpiryDate = LocalDate.parse("2022-06-10"),
+        licenceExpiryDate = LocalDate.parse("2022-05-10"),
+      ),
+      licenceConditions = licenceConditions,
+    ),
+  )
 
   protected fun activeConviction(
     description: String = "CJA - Extended Sentence",
     isCustodial: Boolean = true,
     custodialStatusCode: String? = "ABC123",
-  ): DeliusClient.Conviction {
-    return DeliusClient.Conviction(
-      number = "1",
-      mainOffence = DeliusClient.Offence(
-        code = "ABC123",
-        description = "Robbery (other than armed robbery)",
+  ): DeliusClient.Conviction = DeliusClient.Conviction(
+    number = "1",
+    mainOffence = DeliusClient.Offence(
+      code = "ABC123",
+      description = "Robbery (other than armed robbery)",
+      date = LocalDate.of(2022, 8, 26),
+    ),
+    additionalOffences = listOf(
+      DeliusClient.Offence(
+        code = "ZYX789",
+        description = "Arson",
         date = LocalDate.of(2022, 8, 26),
       ),
-      additionalOffences = listOf(
-        DeliusClient.Offence(
-          code = "ZYX789",
-          description = "Arson",
-          date = LocalDate.of(2022, 8, 26),
-        ),
-      ),
-      sentence = DeliusClient.Sentence(
-        description = description,
-        length = 6,
-        lengthUnits = "Days",
-        isCustodial = isCustodial,
-        custodialStatusCode = custodialStatusCode,
-        licenceExpiryDate = LocalDate.of(2022, 5, 10),
-        sentenceExpiryDate = LocalDate.of(2022, 6, 10),
-      ),
-    )
-  }
+    ),
+    sentence = DeliusClient.Sentence(
+      description = description,
+      length = 6,
+      lengthUnits = "Days",
+      isCustodial = isCustodial,
+      custodialStatusCode = custodialStatusCode,
+      licenceExpiryDate = LocalDate.of(2022, 5, 10),
+      sentenceExpiryDate = LocalDate.of(2022, 6, 10),
+    ),
+  )
 
-  protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) =
-    ConvictionWithLicenceConditions(
-      number = number,
-      mainOffence = mainOffence,
-      additionalOffences = additionalOffences,
-      sentence = sentence,
-      licenceConditions = licenceConditions,
-    )
+  protected fun DeliusClient.Conviction.withLicenceConditions(licenceConditions: List<LicenceCondition>) = ConvictionWithLicenceConditions(
+    number = number,
+    mainOffence = mainOffence,
+    additionalOffences = additionalOffences,
+    sentence = sentence,
+    licenceConditions = licenceConditions,
+  )
 
   protected fun deliusOverviewResponse(
     forename: String = "John",
@@ -483,22 +474,20 @@ internal abstract class ServiceTestBase {
     ),
   )
 
-  protected fun deliusLicenceConditions(startDate: LocalDate): List<LicenceCondition> {
-    return listOf(
-      LicenceCondition(
-        licenceConditionNotes = "Licence condition notes",
-        licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
-          code = "NLC8",
-          description = "Freedom of movement",
-        ),
-        licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
-          code = "NSTT8",
-          description = "To only attend places of worship which have been previously agreed with your supervising officer.",
-        ),
-        startDate = startDate,
+  protected fun deliusLicenceConditions(startDate: LocalDate): List<LicenceCondition> = listOf(
+    LicenceCondition(
+      licenceConditionNotes = "Licence condition notes",
+      licenceConditionTypeMainCat = LicenceConditionTypeMainCat(
+        code = "NLC8",
+        description = "Freedom of movement",
       ),
-    )
-  }
+      licenceConditionTypeSubCat = LicenceConditionTypeSubCat(
+        code = "NSTT8",
+        description = "To only attend places of worship which have been previously agreed with your supervising officer.",
+      ),
+      startDate = startDate,
+    ),
+  )
 
   protected val licenceConditions = listOf(
     LicenceCondition(
@@ -586,112 +575,108 @@ internal abstract class ServiceTestBase {
   protected fun expectedCvlLicenceConditionsResponse(
     licenceStatus: String? = null,
     licenceStartDate: LocalDate? = LocalDate.parse("2022-06-14"),
-  ): List<LicenceConditionResponse> {
-    return listOf(
-      LicenceConditionResponse(
-        licenceStatus = licenceStatus,
-        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-        actualReleaseDate = LocalDate.parse("2022-06-11"),
-        sentenceStartDate = LocalDate.parse("2022-06-12"),
-        sentenceEndDate = LocalDate.parse("2022-06-13"),
-        licenceStartDate = licenceStartDate,
-        licenceExpiryDate = LocalDate.parse("2022-06-15"),
-        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(
-          LicenceConditionDetail(
-            code = "1",
-            text = "This is a standard licence condition",
-          ),
+  ): List<LicenceConditionResponse> = listOf(
+    LicenceConditionResponse(
+      licenceStatus = licenceStatus,
+      conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+      actualReleaseDate = LocalDate.parse("2022-06-11"),
+      sentenceStartDate = LocalDate.parse("2022-06-12"),
+      sentenceEndDate = LocalDate.parse("2022-06-13"),
+      licenceStartDate = licenceStartDate,
+      licenceExpiryDate = LocalDate.parse("2022-06-15"),
+      topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+      topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+      standardLicenceConditions = listOf(
+        LicenceConditionDetail(
+          code = "1",
+          text = "This is a standard licence condition",
         ),
-        standardPssConditions = listOf(
-          LicenceConditionDetail(
-            code = "2",
-            text = "This is a standard PSS licence condition",
-          ),
-        ),
-        additionalLicenceConditions = listOf(
-          LicenceConditionDetail(
-            code = "3",
-            category = "Generic category",
-            text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
-        ),
-        additionalPssConditions = listOf(
-          LicenceConditionDetail(
-            code = "4",
-            text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
-        ),
-        bespokeConditions = listOf(LicenceConditionDetail(code = "5", text = "This is a bespoke condition")),
       ),
-    )
-  }
+      standardPssConditions = listOf(
+        LicenceConditionDetail(
+          code = "2",
+          text = "This is a standard PSS licence condition",
+        ),
+      ),
+      additionalLicenceConditions = listOf(
+        LicenceConditionDetail(
+          code = "3",
+          category = "Generic category",
+          text = "This is an additional licence condition",
+          expandedText = "Expanded additional licence condition",
+        ),
+      ),
+      additionalPssConditions = listOf(
+        LicenceConditionDetail(
+          code = "4",
+          text = "This is an additional PSS licence condition",
+          expandedText = "Expanded additional PSS licence condition",
+        ),
+      ),
+      bespokeConditions = listOf(LicenceConditionDetail(code = "5", text = "This is a bespoke condition")),
+    ),
+  )
 
   protected fun expectedMultipleCvlLicenceConditionsResponse(
     licenceStatus: String? = null,
     licenceStartDate1: LocalDate? = LocalDate.parse("2022-06-14"),
     licenceStartDate2: LocalDate? = LocalDate.parse("2022-06-14"),
-  ): List<LicenceConditionResponse> {
-    return listOf(
-      LicenceConditionResponse(
-        licenceStatus = licenceStatus,
-        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-        actualReleaseDate = LocalDate.parse("2022-06-11"),
-        sentenceStartDate = LocalDate.parse("2022-06-12"),
-        sentenceEndDate = LocalDate.parse("2022-06-13"),
-        licenceStartDate = licenceStartDate1,
-        licenceExpiryDate = LocalDate.parse("2022-06-15"),
-        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(
-          LicenceConditionDetail(
-            category = "Generic category",
-            text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
+  ): List<LicenceConditionResponse> = listOf(
+    LicenceConditionResponse(
+      licenceStatus = licenceStatus,
+      conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+      actualReleaseDate = LocalDate.parse("2022-06-11"),
+      sentenceStartDate = LocalDate.parse("2022-06-12"),
+      sentenceEndDate = LocalDate.parse("2022-06-13"),
+      licenceStartDate = licenceStartDate1,
+      licenceExpiryDate = LocalDate.parse("2022-06-15"),
+      topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+      topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+      standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+      standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+      additionalLicenceConditions = listOf(
+        LicenceConditionDetail(
+          category = "Generic category",
+          text = "This is an additional licence condition",
+          expandedText = "Expanded additional licence condition",
         ),
-        additionalPssConditions = listOf(
-          LicenceConditionDetail(
-            text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
-        ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
       ),
-      LicenceConditionResponse(
-        licenceStatus = licenceStatus,
-        conditionalReleaseDate = LocalDate.parse("2022-06-10"),
-        actualReleaseDate = LocalDate.parse("2022-06-11"),
-        sentenceStartDate = LocalDate.parse("2022-06-12"),
-        sentenceEndDate = LocalDate.parse("2022-06-13"),
-        licenceStartDate = licenceStartDate2,
-        licenceExpiryDate = LocalDate.parse("2022-06-15"),
-        topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
-        topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
-        standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
-        standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
-        additionalLicenceConditions = listOf(
-          LicenceConditionDetail(
-            category = "Generic category",
-            text = "This is an additional licence condition",
-            expandedText = "Expanded additional licence condition",
-          ),
+      additionalPssConditions = listOf(
+        LicenceConditionDetail(
+          text = "This is an additional PSS licence condition",
+          expandedText = "Expanded additional PSS licence condition",
         ),
-        additionalPssConditions = listOf(
-          LicenceConditionDetail(
-            text = "This is an additional PSS licence condition",
-            expandedText = "Expanded additional PSS licence condition",
-          ),
-        ),
-        bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
       ),
-    )
-  }
+      bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
+    ),
+    LicenceConditionResponse(
+      licenceStatus = licenceStatus,
+      conditionalReleaseDate = LocalDate.parse("2022-06-10"),
+      actualReleaseDate = LocalDate.parse("2022-06-11"),
+      sentenceStartDate = LocalDate.parse("2022-06-12"),
+      sentenceEndDate = LocalDate.parse("2022-06-13"),
+      licenceStartDate = licenceStartDate2,
+      licenceExpiryDate = LocalDate.parse("2022-06-15"),
+      topupSupervisionStartDate = LocalDate.parse("2022-06-16"),
+      topupSupervisionExpiryDate = LocalDate.parse("2022-06-17"),
+      standardLicenceConditions = listOf(LicenceConditionDetail(text = "This is a standard licence condition")),
+      standardPssConditions = listOf(LicenceConditionDetail(text = "This is a standard PSS licence condition")),
+      additionalLicenceConditions = listOf(
+        LicenceConditionDetail(
+          category = "Generic category",
+          text = "This is an additional licence condition",
+          expandedText = "Expanded additional licence condition",
+        ),
+      ),
+      additionalPssConditions = listOf(
+        LicenceConditionDetail(
+          text = "This is an additional PSS licence condition",
+          expandedText = "Expanded additional PSS licence condition",
+        ),
+      ),
+      bespokeConditions = listOf(LicenceConditionDetail(text = "This is a bespoke condition")),
+    ),
+  )
 
   protected fun deliusRecommendationModelResponse(
     activeConvictions: List<DeliusClient.Conviction> = listOf(activeConviction(), nonCustodialConviction()),
@@ -759,39 +744,37 @@ internal abstract class ServiceTestBase {
     ),
   )
 
-  protected fun riskSummaryResponse(): RiskSummaryResponse {
-    return RiskSummaryResponse(
-      whoIsAtRisk = "X, Y and Z are at risk",
-      natureOfRisk = "The nature of the risk is X",
-      riskImminence = "the risk is imminent and more probably in X situation",
-      riskIncreaseFactors = "If offender in situation X the risk can be higher",
-      riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
-      riskInCommunity = RiskScore(
-        veryHigh = null,
-        high = listOf(
-          "Children",
-          "Public",
-          "Known adult",
-        ),
-        medium = listOf("Staff"),
-        low = listOf("Prisoners"),
+  protected fun riskSummaryResponse(): RiskSummaryResponse = RiskSummaryResponse(
+    whoIsAtRisk = "X, Y and Z are at risk",
+    natureOfRisk = "The nature of the risk is X",
+    riskImminence = "the risk is imminent and more probably in X situation",
+    riskIncreaseFactors = "If offender in situation X the risk can be higher",
+    riskMitigationFactors = "Giving offender therapy in X will reduce the risk",
+    riskInCommunity = RiskScore(
+      veryHigh = null,
+      high = listOf(
+        "Children",
+        "Public",
+        "Known adult",
       ),
-      riskInCustody = RiskScore(
-        veryHigh = listOf(
-          "Staff",
-          "Prisoners",
-        ),
-        high = listOf("Known adult"),
-        medium = null,
-        low = listOf(
-          "Children",
-          "Public",
-        ),
+      medium = listOf("Staff"),
+      low = listOf("Prisoners"),
+    ),
+    riskInCustody = RiskScore(
+      veryHigh = listOf(
+        "Staff",
+        "Prisoners",
       ),
-      assessedOn = "2022-10-09T08:26:31",
-      overallRiskLevel = "HIGH",
-    )
-  }
+      high = listOf("Known adult"),
+      medium = null,
+      low = listOf(
+        "Children",
+        "Public",
+      ),
+    ),
+    assessedOn = "2022-10-09T08:26:31",
+    overallRiskLevel = "HIGH",
+  )
 
   protected fun userAccessResponse(excluded: Boolean, restricted: Boolean, userNotFound: Boolean) = UserAccess(
     userRestricted = restricted,
@@ -825,120 +808,114 @@ internal abstract class ServiceTestBase {
     crn: String,
     status: String,
     dateCompleted: String? = "2022-10-01T14:20:27",
-  ): RiskManagementResponse {
-    return RiskManagementResponse(
+  ): RiskManagementResponse = RiskManagementResponse(
+    crn = crn,
+    limitedAccessOffender = true,
+    riskManagementPlan = listOf(
+      RiskManagementPlanResponse(
+        initiationDate = "2021-10-01T14:20:27",
+      ),
+      RiskManagementPlanResponse(
+        assessmentId = 0,
+        dateCompleted = dateCompleted,
+        partcompStatus = "Part comp status",
+        initiationDate = "2022-10-02T14:20:27",
+        assessmentStatus = status,
+        assessmentType = "LAYER1",
+        superStatus = status,
+        keyInformationCurrentSituation = "patternOfOffending",
+        furtherConsiderationsCurrentSituation = "string",
+        supervision = "string",
+        monitoringAndControl = "string",
+        interventionsAndTreatment = "string",
+        victimSafetyPlanning = "string",
+        contingencyPlans = "I am the contingency plan text",
+        laterWIPAssessmentExists = true,
+        latestWIPDate = "2022-10-03T14:20:27",
+        laterSignLockAssessmentExists = true,
+        latestSignLockDate = "2022-10-04T14:20:27",
+        laterPartCompUnsignedAssessmentExists = true,
+        latestPartCompUnsignedDate = "2022-10-05T14:20:27",
+        laterPartCompSignedAssessmentExists = true,
+        latestPartCompSignedDate = "2022-10-06T14:20:27",
+        laterCompleteAssessmentExists = true,
+        latestCompleteDate = "2022-10-07T14:20:27",
+      ),
+      RiskManagementPlanResponse(
+        initiationDate = "2020-10-02T14:20:27",
+      ),
+    ),
+  )
+
+  protected fun licenceMatchedResponse(licenceId: Int, crn: String): List<LicenceMatchResponse> = listOf(
+    LicenceMatchResponse(
+      licenceId = licenceId,
+      licenceType = "AP",
+      licenceStatus = "IN_PROGRESS",
       crn = crn,
-      limitedAccessOffender = true,
-      riskManagementPlan = listOf(
-        RiskManagementPlanResponse(
-          initiationDate = "2021-10-01T14:20:27",
-        ),
-        RiskManagementPlanResponse(
-          assessmentId = 0,
-          dateCompleted = dateCompleted,
-          partcompStatus = "Part comp status",
-          initiationDate = "2022-10-02T14:20:27",
-          assessmentStatus = status,
-          assessmentType = "LAYER1",
-          superStatus = status,
-          keyInformationCurrentSituation = "patternOfOffending",
-          furtherConsiderationsCurrentSituation = "string",
-          supervision = "string",
-          monitoringAndControl = "string",
-          interventionsAndTreatment = "string",
-          victimSafetyPlanning = "string",
-          contingencyPlans = "I am the contingency plan text",
-          laterWIPAssessmentExists = true,
-          latestWIPDate = "2022-10-03T14:20:27",
-          laterSignLockAssessmentExists = true,
-          latestSignLockDate = "2022-10-04T14:20:27",
-          laterPartCompUnsignedAssessmentExists = true,
-          latestPartCompUnsignedDate = "2022-10-05T14:20:27",
-          laterPartCompSignedAssessmentExists = true,
-          latestPartCompSignedDate = "2022-10-06T14:20:27",
-          laterCompleteAssessmentExists = true,
-          latestCompleteDate = "2022-10-07T14:20:27",
-        ),
-        RiskManagementPlanResponse(
-          initiationDate = "2020-10-02T14:20:27",
-        ),
-      ),
-    )
-  }
+    ),
+  )
 
-  protected fun licenceMatchedResponse(licenceId: Int, crn: String): List<LicenceMatchResponse> {
-    return listOf(
-      LicenceMatchResponse(
-        licenceId = licenceId,
-        licenceType = "AP",
-        licenceStatus = "IN_PROGRESS",
-        crn = crn,
+  protected fun licenceByIdResponse(): LicenceConditionCvlResponse = LicenceConditionCvlResponse(
+    conditionalReleaseDate = "10/06/2022",
+    actualReleaseDate = "11/06/2022",
+    sentenceStartDate = "12/06/2022",
+    sentenceEndDate = "13/06/2022",
+    licenceStartDate = "14/06/2022",
+    licenceExpiryDate = "15/06/2022",
+    topupSupervisionStartDate = "16/06/2022",
+    topupSupervisionExpiryDate = "17/06/2022",
+    standardLicenceConditions = listOf(
+      LicenceConditionCvlDetail(
+        code = null,
+        text = "",
       ),
-    )
-  }
-
-  protected fun licenceByIdResponse(): LicenceConditionCvlResponse {
-    return LicenceConditionCvlResponse(
-      conditionalReleaseDate = "10/06/2022",
-      actualReleaseDate = "11/06/2022",
-      sentenceStartDate = "12/06/2022",
-      sentenceEndDate = "13/06/2022",
-      licenceStartDate = "14/06/2022",
-      licenceExpiryDate = "15/06/2022",
-      topupSupervisionStartDate = "16/06/2022",
-      topupSupervisionExpiryDate = "17/06/2022",
-      standardLicenceConditions = listOf(
-        LicenceConditionCvlDetail(
-          code = null,
-          text = "",
-        ),
-        LicenceConditionCvlDetail(
-          code = "1",
-          text = "This is a standard licence condition",
-        ),
+      LicenceConditionCvlDetail(
+        code = "1",
+        text = "This is a standard licence condition",
       ),
-      standardPssConditions = listOf(
-        LicenceConditionCvlDetail(
-          code = null,
-          text = "",
-        ),
-        LicenceConditionCvlDetail(
-          code = "2",
-          text = "This is a standard PSS licence condition",
-        ),
+    ),
+    standardPssConditions = listOf(
+      LicenceConditionCvlDetail(
+        code = null,
+        text = "",
       ),
-      additionalLicenceConditions = listOf(
-        LicenceConditionCvlDetail(
-          code = null,
-          text = "",
-        ),
-        LicenceConditionCvlDetail(
-          code = "3",
-          text = "This is an additional licence condition",
-          expandedText = "Expanded additional licence condition",
-          category = "Generic category",
-        ),
+      LicenceConditionCvlDetail(
+        code = "2",
+        text = "This is a standard PSS licence condition",
       ),
-      additionalPssConditions = listOf(
-        LicenceConditionCvlDetail(
-          code = null,
-          text = "",
-        ),
-        LicenceConditionCvlDetail(
-          code = "4",
-          text = "This is an additional PSS licence condition",
-          expandedText = "Expanded additional PSS licence condition",
-        ),
+    ),
+    additionalLicenceConditions = listOf(
+      LicenceConditionCvlDetail(
+        code = null,
+        text = "",
       ),
-      bespokeConditions = listOf(
-        LicenceConditionCvlDetail(
-          code = null,
-          text = "",
-        ),
-        LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
+      LicenceConditionCvlDetail(
+        code = "3",
+        text = "This is an additional licence condition",
+        expandedText = "Expanded additional licence condition",
+        category = "Generic category",
       ),
-    )
-  }
+    ),
+    additionalPssConditions = listOf(
+      LicenceConditionCvlDetail(
+        code = null,
+        text = "",
+      ),
+      LicenceConditionCvlDetail(
+        code = "4",
+        text = "This is an additional PSS licence condition",
+        expandedText = "Expanded additional PSS licence condition",
+      ),
+    ),
+    bespokeConditions = listOf(
+      LicenceConditionCvlDetail(
+        code = null,
+        text = "",
+      ),
+      LicenceConditionCvlDetail(code = "5", text = "This is a bespoke condition"),
+    ),
+  )
 
   fun expectedPersonDetailsResponse(): PersonalDetailsOverview {
     val dateOfBirth = LocalDate.parse("1982-10-24")

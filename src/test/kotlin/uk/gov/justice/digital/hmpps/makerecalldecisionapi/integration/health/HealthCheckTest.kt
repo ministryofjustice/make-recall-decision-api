@@ -138,8 +138,7 @@ class HealthCheckTest : IntegrationTestBase() {
       }
   }
 
-  private fun WebTestClient.BodyContentSpec.hasJsonPath(jsonPath: String, equalTo: String) =
-    jsonPath(jsonPath).isEqualTo(equalTo)
+  private fun WebTestClient.BodyContentSpec.hasJsonPath(jsonPath: String, equalTo: String) = jsonPath(jsonPath).isEqualTo(equalTo)
 }
 
 @Configuration

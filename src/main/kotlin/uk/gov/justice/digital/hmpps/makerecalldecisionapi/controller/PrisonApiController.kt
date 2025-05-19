@@ -27,24 +27,18 @@ internal class PrisonApiController(
   @Operation(summary = "Returns a list of prison offenders.")
   suspend fun prisonOffenderSearch(
     @RequestBody request: PrisonOffenderSearchRequest,
-  ): Offender {
-    return prisonerApiService.searchPrisonApi(request.nomsId)
-  }
+  ): Offender = prisonerApiService.searchPrisonApi(request.nomsId)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/prison-sentences")
   @Operation(summary = "Returns a list of prison sentences.")
   suspend fun retrieveSentences(
     @RequestBody request: PrisonSentencesRequest,
-  ): List<Sentence> {
-    return prisonerApiService.retrieveOffences(request.nomsId)
-  }
+  ): List<Sentence> = prisonerApiService.retrieveOffences(request.nomsId)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @GetMapping("/offenders/{nomisId}/movements")
   suspend fun getOffenderMovements(
     @PathVariable("nomisId") nomisId: String,
-  ): List<OffenderMovement> {
-    return prisonerApiService.getOffenderMovements(nomisId)
-  }
+  ): List<OffenderMovement> = prisonerApiService.getOffenderMovements(nomisId)
 }

@@ -35,9 +35,8 @@ class EstablishmentMappingControllerTest : IntegrationTestBase() {
     }
   }
 
-  private fun getEstablishmentMappings(roles: List<String> = listOf("ROLE_MAKE_RECALL_DECISION_PPCS")) =
-    webTestClient.get()
-      .uri("/establishment-mappings")
-      .headers { it.authToken(roles) }
-      .exchange()
+  private fun getEstablishmentMappings(roles: List<String> = listOf("ROLE_MAKE_RECALL_DECISION_PPCS")) = webTestClient.get()
+    .uri("/establishment-mappings")
+    .headers { it.authToken(roles) }
+    .exchange()
 }

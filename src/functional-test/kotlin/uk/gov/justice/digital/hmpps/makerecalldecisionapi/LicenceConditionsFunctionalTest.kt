@@ -4,7 +4,7 @@ import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class LicenceConditionsFunctionalTest() : FunctionalTest() {
+class LicenceConditionsFunctionalTest : FunctionalTest() {
 
   @Test
   fun `retrieve licence conditions`() {

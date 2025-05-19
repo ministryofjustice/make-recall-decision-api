@@ -7,8 +7,7 @@ fun updateRecommendationRequest(
   recallConsideredDetail: String? = "This is an updated recall considered detail",
   spoDeleteRecommendationRationale: String = "My wonderful rationale for deleting the recommendation",
   responseToProbation: String = "They have not responded well",
-) =
-  """
+) = """
 {
   "ppudRecordPresent": true,
   "custodyStatus": {
@@ -347,4 +346,4 @@ fun updateRecommendationRequest(
   "countersignAcoTelephone": "87654321",
   "countersignAcoExposition": "Aco comments on case"
 }
-  """.trimIndent()
+""".trimIndent()

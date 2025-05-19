@@ -128,124 +128,120 @@ internal class ContactHistoryServiceTest : ServiceTestBase() {
     }
   }
 
-  private fun expectedContactSummaryResponse(): List<ContactSummaryResponse> {
-    return listOf(
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-06-03T07:00Z"),
-        descriptionType = "Registration Review",
-        outcome = null,
-        notes = "Comment added by John Smith on 05/05/2022",
-        enforcementAction = null,
-        systemGenerated = false,
-        code = "COAI",
-        sensitive = false,
-        contactDocuments = listOf(
-          CaseDocument(
-            id = "f2943b31-2250-41ab-a04d-004e27a97add",
-            documentName = "test doc.docx",
-            lastModifiedAt = ZonedDateTime.parse("2022-06-21T20:27:23.407Z"),
-          ),
+  private fun expectedContactSummaryResponse(): List<ContactSummaryResponse> = listOf(
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-06-03T07:00Z"),
+      descriptionType = "Registration Review",
+      outcome = null,
+      notes = "Comment added by John Smith on 05/05/2022",
+      enforcementAction = null,
+      systemGenerated = false,
+      code = "COAI",
+      sensitive = false,
+      contactDocuments = listOf(
+        CaseDocument(
+          id = "f2943b31-2250-41ab-a04d-004e27a97add",
+          documentName = "test doc.docx",
+          lastModifiedAt = ZonedDateTime.parse("2022-06-21T20:27:23.407Z"),
         ),
-        description = "This is a contact description",
       ),
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
-        descriptionType = "Police Liaison",
-        outcome = "Test - Not Clean / Not Acceptable / Unsuitable",
-        notes = "This is a test",
-        enforcementAction = "Enforcement Letter Requested",
-        systemGenerated = true,
-        code = "COAI",
-        sensitive = true,
-        contactDocuments = listOf(
-          CaseDocument(
-            id = "630ca741-cbb6-4f2e-8e86-73825d8c4d82",
-            documentName = "a test.pdf",
-            lastModifiedAt = ZonedDateTime.parse("2022-06-21T20:29:17.324Z"),
-          ),
-          CaseDocument(
-            id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
-            documentName = "conviction contact doc.pdf",
-            lastModifiedAt = ZonedDateTime.parse("2022-06-23T20:29:17.324Z"),
-          ),
+      description = "This is a contact description",
+    ),
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-05-10T10:39Z"),
+      descriptionType = "Police Liaison",
+      outcome = "Test - Not Clean / Not Acceptable / Unsuitable",
+      notes = "This is a test",
+      enforcementAction = "Enforcement Letter Requested",
+      systemGenerated = true,
+      code = "COAI",
+      sensitive = true,
+      contactDocuments = listOf(
+        CaseDocument(
+          id = "630ca741-cbb6-4f2e-8e86-73825d8c4d82",
+          documentName = "a test.pdf",
+          lastModifiedAt = ZonedDateTime.parse("2022-06-21T20:29:17.324Z"),
         ),
-        description = null,
+        CaseDocument(
+          id = "630ca741-cbb6-4f2e-8e86-73825d8c4999",
+          documentName = "conviction contact doc.pdf",
+          lastModifiedAt = ZonedDateTime.parse("2022-06-23T20:29:17.324Z"),
+        ),
       ),
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
-        descriptionType = "Planned visit",
-        outcome = "Planned test",
-        notes = "This is a test",
-        enforcementAction = null,
-        systemGenerated = true,
-        code = "COAP",
-        sensitive = false,
-        contactDocuments = emptyList(),
-        description = null,
-      ),
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
-        descriptionType = "Home visit",
-        outcome = "Testing",
-        notes = "This is another test",
-        enforcementAction = null,
-        systemGenerated = true,
-        code = "CHVS",
-        sensitive = false,
-        contactDocuments = emptyList(),
-        description = null,
-      ),
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
-        descriptionType = "Unpaid work",
-        outcome = "Unknown contact",
-        notes = "This is another test",
-        enforcementAction = null,
-        systemGenerated = true,
-        code = "EASU",
-        sensitive = false,
-        contactDocuments = emptyList(),
-        description = null,
-      ),
-      ContactSummaryResponse(
-        contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
-        descriptionType = "I am also unknown",
-        outcome = "Another unknown contact",
-        notes = "This is another unknown test",
-        enforcementAction = null,
-        systemGenerated = true,
-        code = "EFGH",
-        sensitive = false,
-        contactDocuments = emptyList(),
-        description = null,
-      ),
-    )
-  }
+      description = null,
+    ),
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-05-12T10:39Z"),
+      descriptionType = "Planned visit",
+      outcome = "Planned test",
+      notes = "This is a test",
+      enforcementAction = null,
+      systemGenerated = true,
+      code = "COAP",
+      sensitive = false,
+      contactDocuments = emptyList(),
+      description = null,
+    ),
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-05-11T10:39Z"),
+      descriptionType = "Home visit",
+      outcome = "Testing",
+      notes = "This is another test",
+      enforcementAction = null,
+      systemGenerated = true,
+      code = "CHVS",
+      sensitive = false,
+      contactDocuments = emptyList(),
+      description = null,
+    ),
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
+      descriptionType = "Unpaid work",
+      outcome = "Unknown contact",
+      notes = "This is another test",
+      enforcementAction = null,
+      systemGenerated = true,
+      code = "EASU",
+      sensitive = false,
+      contactDocuments = emptyList(),
+      description = null,
+    ),
+    ContactSummaryResponse(
+      contactStartDate = OffsetDateTime.parse("2022-05-13T10:39Z"),
+      descriptionType = "I am also unknown",
+      outcome = "Another unknown contact",
+      notes = "This is another unknown test",
+      enforcementAction = null,
+      systemGenerated = true,
+      code = "EFGH",
+      sensitive = false,
+      contactDocuments = emptyList(),
+      description = null,
+    ),
+  )
 
-  private fun expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn(): List<ContactGroupResponse> {
-    return listOf(
-      ContactGroupResponse(
-        groupId = "3",
-        label = "Appointments",
-        contactTypeCodes = listOf("CHVS", "COAI", "COAP"),
-      ),
-      ContactGroupResponse(
-        groupId = "11",
-        label = "Home visit",
-        contactTypeCodes = listOf("CHVS"),
-      ),
-      ContactGroupResponse(
-        groupId = "21",
-        label = "Unpaid work",
-        contactTypeCodes = listOf("EASU"),
-      ),
-      ContactGroupResponse(
-        groupId = "unknown",
-        label = "Not categorised",
-        contactTypeCodes = listOf("EFGH"),
-      ),
-    )
-  }
+  private fun expectedContactTypeGroupsResponseWithSystemGeneratedContactsFeatureOn(): List<ContactGroupResponse> = listOf(
+    ContactGroupResponse(
+      groupId = "3",
+      label = "Appointments",
+      contactTypeCodes = listOf("CHVS", "COAI", "COAP"),
+    ),
+    ContactGroupResponse(
+      groupId = "11",
+      label = "Home visit",
+      contactTypeCodes = listOf("CHVS"),
+    ),
+    ContactGroupResponse(
+      groupId = "21",
+      label = "Unpaid work",
+      contactTypeCodes = listOf("EASU"),
+    ),
+    ContactGroupResponse(
+      groupId = "unknown",
+      label = "Not categorised",
+      contactTypeCodes = listOf("EFGH"),
+    ),
+  )
 
   private fun deliusContactHistoryResponse(
     contacts: List<Contact> = listOf(

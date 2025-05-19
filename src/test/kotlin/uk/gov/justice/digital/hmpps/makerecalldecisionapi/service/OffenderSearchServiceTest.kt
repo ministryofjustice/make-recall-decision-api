@@ -214,22 +214,21 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     }
   }
 
-  private fun buildSearchPeople1ResultClientResponse(page: Int = 0, pageSize: Int = 1, totalPages: Int = page + 1) =
-    CasePage(
-      content = listOf(
-        DeliusClient.PersonalDetailsOverview(
-          name = Name(
-            forename = "John",
-            middleName = null,
-            surname = "Blair",
-          ),
-          dateOfBirth = LocalDate.parse("1982-10-24"),
-          identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(crn = crn, null, null, null, null),
-          gender = "Male",
-          ethnicity = null,
-          primaryLanguage = null,
+  private fun buildSearchPeople1ResultClientResponse(page: Int = 0, pageSize: Int = 1, totalPages: Int = page + 1) = CasePage(
+    content = listOf(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "John",
+          middleName = null,
+          surname = "Blair",
         ),
+        dateOfBirth = LocalDate.parse("1982-10-24"),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(crn = crn, null, null, null, null),
+        gender = "Male",
+        ethnicity = null,
+        primaryLanguage = null,
       ),
-      page = PagedModel.PageMetadata(pageSize.toLong(), page.toLong(), 1, totalPages.toLong()),
-    )
+    ),
+    page = PagedModel.PageMetadata(pageSize.toLong(), page.toLong(), 1, totalPages.toLong()),
+  )
 }

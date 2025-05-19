@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
 
-class RiskTest() : FunctionalTest() {
+class RiskTest : FunctionalTest() {
 
   @Test
   fun `retrieve risk data`() {

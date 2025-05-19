@@ -26,21 +26,17 @@ class DateTimeHelper {
       return formatter.print(DateTime(DateTimeZone.UTC)).toString()
     }
 
-    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime {
-      return if (utcDateTimeString.isNullOrBlank()) {
-        LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
-      } else {
-        val utcZonedDateTime = ZonedDateTime.of(
-          LocalDateTime.parse(utcDateTimeString.replace("Z", MrdTextConstants.EMPTY_STRING)),
-          ZoneId.of("UTC"),
-        )
-        utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
-      }
+    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime = if (utcDateTimeString.isNullOrBlank()) {
+      LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+    } else {
+      val utcZonedDateTime = ZonedDateTime.of(
+        LocalDateTime.parse(utcDateTimeString.replace("Z", MrdTextConstants.EMPTY_STRING)),
+        ZoneId.of("UTC"),
+      )
+      utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
     }
 
-    fun localNowDateTime(): LocalDateTime {
-      return LocalDateTime.now(ZoneOffset.UTC)
-    }
+    fun localNowDateTime(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
 
     fun convertLocalDateToReadableDate(date: LocalDate?): String {
       val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
@@ -81,10 +77,8 @@ class DateTimeHelper {
       return input?.let { LocalDate.parse(it, formatter) }
     }
 
-    fun convertToLondonTimezone(localDateTimeInUtc: LocalDateTime): LocalDateTime {
-      return localDateTimeInUtc.atOffset(UTC)
-        .atZoneSameInstant(ZoneId.of("Europe/London"))
-        .toLocalDateTime()
-    }
+    fun convertToLondonTimezone(localDateTimeInUtc: LocalDateTime): LocalDateTime = localDateTimeInUtc.atOffset(UTC)
+      .atZoneSameInstant(ZoneId.of("Europe/London"))
+      .toLocalDateTime()
   }
 }

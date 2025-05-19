@@ -55,8 +55,7 @@ internal fun prisonApiOffenderMovement(
 
 internal fun PrisonApiOffenderMovement.toJson() = json(toJsonString())
 
-internal fun PrisonApiOffenderMovement.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun PrisonApiOffenderMovement.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 fun assertMovementsAreEqual(
   movement: OffenderMovement,

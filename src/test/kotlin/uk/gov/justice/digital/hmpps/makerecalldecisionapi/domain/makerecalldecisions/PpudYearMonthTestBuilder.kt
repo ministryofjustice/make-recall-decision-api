@@ -11,15 +11,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 internal fun ppudYearMonth(
   years: Int = randomInt(),
   months: Int = randomInt(),
-) =
-  PpudYearMonth(years, months)
+) = PpudYearMonth(years, months)
 
-internal fun PpudYearMonth.toJson() =
-  json(
-    """
+internal fun PpudYearMonth.toJson() = json(
+  """
       {
         "years": $years,
         "months": $months
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

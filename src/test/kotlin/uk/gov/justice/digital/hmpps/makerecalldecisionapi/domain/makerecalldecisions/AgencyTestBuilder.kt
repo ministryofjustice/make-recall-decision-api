@@ -21,14 +21,13 @@ internal fun agency(
   agencyType,
 )
 
-internal fun Agency.toJson() =
-  json(
-    """
+internal fun Agency.toJson() = json(
+  """
       {
         "agencyId": ${toJsonNullableStringField(agencyId)},
         "description": ${toJsonNullableStringField(description)},
         "longDescription": ${toJsonNullableStringField(longDescription)},
         "agencyType": ${toJsonNullableStringField(agencyType)}
       }
-    """.trimIndent(),
-  )
+  """.trimIndent(),
+)

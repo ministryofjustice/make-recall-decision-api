@@ -203,12 +203,10 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(ClientTimeoutException::class)
-  fun handleClientTimeoutException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> =
-    handleClientTimeoutException(e.message)
+  fun handleClientTimeoutException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> = handleClientTimeoutException(e.message)
 
   @ExceptionHandler(ClientTimeoutRuntimeException::class)
-  fun handleClientTimeoutRuntimeException(e: ClientTimeoutRuntimeException): ResponseEntity<ErrorResponse> =
-    handleClientTimeoutException(e.message)
+  fun handleClientTimeoutRuntimeException(e: ClientTimeoutRuntimeException): ResponseEntity<ErrorResponse> = handleClientTimeoutException(e.message)
 
   fun handleClientTimeoutException(message: String?): ResponseEntity<ErrorResponse> {
     log.info("Client timeout exception: {}", message)
@@ -305,14 +303,11 @@ data class ErrorResponse(
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo, error)
 }
 
-open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) :
-  Exception(message, cause) {
-  override fun toString(): String {
-    return if (this.message == null) {
-      this.javaClass.simpleName
-    } else {
-      "${this.javaClass.simpleName}: ${this.message}"
-    }
+open class MakeRecallDecisionException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
+  override fun toString(): String = if (this.message == null) {
+    this.javaClass.simpleName
+  } else {
+    "${this.javaClass.simpleName}: ${this.message}"
   }
 }
 
@@ -327,13 +322,10 @@ open class MakeRecallDecisionException(override val message: String? = null, ove
 open class MakeRecallDecisionRuntimeException(
   override val message: String? = null,
   override val cause: Throwable? = null,
-) :
-  RuntimeException(message, cause) {
-  override fun toString(): String {
-    return if (this.message == null) {
-      this.javaClass.simpleName
-    } else {
-      "${this.javaClass.simpleName}: ${this.message}"
-    }
+) : RuntimeException(message, cause) {
+  override fun toString(): String = if (this.message == null) {
+    this.javaClass.simpleName
+  } else {
+    "${this.javaClass.simpleName}: ${this.message}"
   }
 }

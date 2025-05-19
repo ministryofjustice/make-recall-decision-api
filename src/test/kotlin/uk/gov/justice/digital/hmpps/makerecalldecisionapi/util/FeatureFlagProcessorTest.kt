@@ -46,14 +46,12 @@ class FeatureFlagProcessorTest {
 
   companion object {
     @JvmStatic
-    fun nullOrEmptyFlagsString(): Stream<String?> {
-      return Stream.of(
-        null,
-        "",
-        " ",
-        "\t",
-        "\r\n",
-      )
-    }
+    fun nullOrEmptyFlagsString(): Stream<String?> = Stream.of(
+      null,
+      "",
+      " ",
+      "\t",
+      "\r\n",
+    )
   }
 }

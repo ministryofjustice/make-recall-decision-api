@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
-class RecommendationStatusControllerTest() : IntegrationTestBase() {
+class RecommendationStatusControllerTest : IntegrationTestBase() {
 
   @Test
   fun `create recommendation statuses`() {

@@ -4,12 +4,10 @@ class LogHelper {
 
   companion object Helper {
 
-    fun redact(value: String?): String {
-      return if (value == null) {
-        "null"
-      } else {
-        value.first() + "*".repeat(value.length - 1)
-      }
+    fun redact(value: String?): String = if (value == null) {
+      "null"
+    } else {
+      value.first() + "*".repeat(value.length - 1)
     }
   }
 }

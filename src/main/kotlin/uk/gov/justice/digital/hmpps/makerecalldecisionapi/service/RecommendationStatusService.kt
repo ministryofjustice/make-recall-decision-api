@@ -43,11 +43,9 @@ internal class RecommendationStatusService(
 
   suspend fun fetchRecommendationStatuses(
     recommendationId: Long,
-  ): List<RecommendationStatusResponse> {
-    return recommendationStatusRepository.findByRecommendationId(recommendationId)
-      .map { it.toRecommendationStatusResponse() }
-      .sortedBy { it.modified }
-  }
+  ): List<RecommendationStatusResponse> = recommendationStatusRepository.findByRecommendationId(recommendationId)
+    .map { it.toRecommendationStatusResponse() }
+    .sortedBy { it.modified }
 
   private fun activateNewStatus(
     recommendationStatusRequest: RecommendationStatusRequest,
@@ -69,7 +67,9 @@ internal class RecommendationStatusService(
     userId: String?,
   ): String? {
     val emailAddress =
-      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") || recommendationStatusRequest.activate.contains("SPO_SIGNED") || recommendationStatusRequest.activate.contains(
+      if (recommendationStatusRequest.activate.contains("ACO_SIGNED") ||
+        recommendationStatusRequest.activate.contains("SPO_SIGNED") ||
+        recommendationStatusRequest.activate.contains(
           "PO_RECALL_CONSULT_SPO",
         )
       ) {
@@ -109,14 +109,12 @@ internal class RecommendationStatusService(
     }
   }
 
-  private fun saveAllRecommendationStatuses(existingRecommendationStatusList: List<RecommendationStatusEntity>): List<RecommendationStatusEntity> {
-    return try {
-      recommendationStatusRepository.saveAll(existingRecommendationStatusList)
-    } catch (ex: Exception) {
-      throw RecommendationUpdateException(
-        message = "Update failed for recommendation id:: ${existingRecommendationStatusList.firstOrNull()?.id}$ex.message",
-        error = UpdateExceptionTypes.RECOMMENDATION_STATUS_UPDATE_FAILED.toString(),
-      )
-    }
+  private fun saveAllRecommendationStatuses(existingRecommendationStatusList: List<RecommendationStatusEntity>): List<RecommendationStatusEntity> = try {
+    recommendationStatusRepository.saveAll(existingRecommendationStatusList)
+  } catch (ex: Exception) {
+    throw RecommendationUpdateException(
+      message = "Update failed for recommendation id:: ${existingRecommendationStatusList.firstOrNull()?.id}$ex.message",
+      error = UpdateExceptionTypes.RECOMMENDATION_STATUS_UPDATE_FAILED.toString(),
+    )
   }
 }

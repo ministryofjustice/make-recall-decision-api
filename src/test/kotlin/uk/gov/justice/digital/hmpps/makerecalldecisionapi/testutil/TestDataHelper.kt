@@ -7,25 +7,15 @@ import java.time.ZoneOffset
 import java.util.UUID
 import kotlin.random.Random
 
-fun randomString(): String {
-  return UUID.randomUUID().toString()
-}
+fun randomString(): String = UUID.randomUUID().toString()
 
-fun randomInt(): Int {
-  return Random.Default.nextInt()
-}
+fun randomInt(): Int = Random.Default.nextInt()
 
-fun randomLong(): Long {
-  return Random.Default.nextLong()
-}
+fun randomLong(): Long = Random.Default.nextLong()
 
-fun randomDouble(): Double {
-  return Random.Default.nextDouble()
-}
+fun randomDouble(): Double = Random.Default.nextDouble()
 
-fun randomBoolean(): Boolean {
-  return Random.Default.nextBoolean()
-}
+fun randomBoolean(): Boolean = Random.Default.nextBoolean()
 
 /**
  * Produces a random date between 1970-01-01 and 2150-12-31
@@ -40,14 +30,12 @@ fun randomLocalDate(): LocalDate {
 /**
  * Produces a random time between 00:00:00:000000000 and 23:59:59:999999999
  */
-fun randomLocalTime(): LocalTime {
-  return LocalTime.of(
-    Random.nextInt(0, 23),
-    Random.nextInt(0, 59),
-    Random.nextInt(0, 59),
-    Random.nextInt(0, 999999999),
-  )
-}
+fun randomLocalTime(): LocalTime = LocalTime.of(
+  Random.nextInt(0, 23),
+  Random.nextInt(0, 59),
+  Random.nextInt(0, 59),
+  Random.nextInt(0, 999999999),
+)
 
 /**
  * Produces a random date and time between 1970-01-01T00:00:00 and 2150-12-31T23:59:59
@@ -59,6 +47,4 @@ fun randomLocalDateTime(): LocalDateTime {
   return LocalDateTime.ofEpochSecond(randomSecond, 0, ZoneOffset.UTC)
 }
 
-inline fun <reified E : Enum<E>> randomEnum(): E {
-  return enumValues<E>()[Random.Default.nextInt(0, enumValues<E>().size)]
-}
+inline fun <reified E : Enum<E>> randomEnum(): E = enumValues<E>()[Random.Default.nextInt(0, enumValues<E>().size)]

@@ -95,52 +95,47 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
     }
   }
 
-  private fun expectedRecommendationListItemResponse(recommendation: RecommendationEntity): RecommendationsListItem {
-    return RecommendationsListItem(
-      recommendationId = 1,
-      lastModifiedByName = "jack",
-      createdDate = "2022-07-01T15:22:24.567Z",
-      lastModifiedDate = recommendation.data.lastModifiedDate,
-      status = recommendation.data.status,
-      recallType = recommendation.data.recallType,
-    )
-  }
+  private fun expectedRecommendationListItemResponse(recommendation: RecommendationEntity): RecommendationsListItem = RecommendationsListItem(
+    recommendationId = 1,
+    lastModifiedByName = "jack",
+    createdDate = "2022-07-01T15:22:24.567Z",
+    lastModifiedDate = recommendation.data.lastModifiedDate,
+    status = recommendation.data.status,
+    recallType = recommendation.data.recallType,
+  )
 
   private fun expectedActiveRecommendationResponse(
     status: Status,
     recommendation: RecommendationEntity,
-  ): ActiveRecommendation {
-    return ActiveRecommendation(
-      recommendationId = 1,
-      lastModifiedDate = recommendation.data.lastModifiedDate,
-      lastModifiedBy = "Jack",
-      lastModifiedByName = "jack",
-      recallType = recommendation.data.recallType,
-      recallConsideredList = listOf(
-        RecallConsidered(
-          id = 1,
-          userId = "bill",
-          createdDate = "2022-07-26T09:48:27.443Z",
-          userName = "Bill",
-          recallConsideredDetail = "I have concerns about their behaviour",
-        ),
+  ): ActiveRecommendation = ActiveRecommendation(
+    recommendationId = 1,
+    lastModifiedDate = recommendation.data.lastModifiedDate,
+    lastModifiedBy = "Jack",
+    lastModifiedByName = "jack",
+    recallType = recommendation.data.recallType,
+    recallConsideredList = listOf(
+      RecallConsidered(
+        id = 1,
+        userId = "bill",
+        createdDate = "2022-07-26T09:48:27.443Z",
+        userName = "Bill",
+        recallConsideredDetail = "I have concerns about their behaviour",
       ),
-      status = status,
-    )
-  }
+    ),
+    status = status,
+  )
 
   companion object {
     @JvmStatic
-    private fun recommendationTabTestData(): Stream<RecommendationTabTestData> =
-      Stream.of(
-        RecommendationTabTestData(Status.RECALL_CONSIDERED, null),
-        RecommendationTabTestData(Status.DRAFT, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DRAFT, RecallTypeValue.STANDARD),
-        RecommendationTabTestData(Status.DRAFT, null),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.NO_RECALL),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.FIXED_TERM),
-        RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, null),
-      )
+    private fun recommendationTabTestData(): Stream<RecommendationTabTestData> = Stream.of(
+      RecommendationTabTestData(Status.RECALL_CONSIDERED, null),
+      RecommendationTabTestData(Status.DRAFT, RecallTypeValue.NO_RECALL),
+      RecommendationTabTestData(Status.DRAFT, RecallTypeValue.STANDARD),
+      RecommendationTabTestData(Status.DRAFT, null),
+      RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.NO_RECALL),
+      RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, RecallTypeValue.FIXED_TERM),
+      RecommendationTabTestData(Status.DOCUMENT_DOWNLOADED, null),
+    )
   }
 
   data class RecommendationTabTestData(

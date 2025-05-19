@@ -24,6 +24,5 @@ internal class UserAccessValidator(private val deliusClient: DeliusClient) {
     )
   }
 
-  fun isUserExcludedRestrictedOrNotFound(userAccess: UserAccess?) =
-    userAccess != null && (userAccess.userExcluded || userAccess.userRestricted || userAccess.userNotFound)
+  fun isUserExcludedRestrictedOrNotFound(userAccess: UserAccess?) = userAccess != null && (userAccess.userExcluded || userAccess.userRestricted || userAccess.userNotFound)
 }

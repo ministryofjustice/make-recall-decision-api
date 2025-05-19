@@ -58,38 +58,36 @@ internal class PrisonerApiService(
     return response!!
   }
 
-  fun retrieveOffences(nomsId: String): List<Sentence> {
-    return getValueAndHandleWrappedException(
-      prisonApiClient.retrievePrisonTimelines(nomsId),
-    )!!.prisonPeriod
-      .flatMap { t ->
-        prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentencesAndOffences ->
-          val lastDateOutOfPrison =
-            t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
-          val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
-          val prisonDescription = movement?.releaseFromPrisonId?.let {
-            try {
-              prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
-            } catch (notFoundEx: NotFoundException) {
-              log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
-              null
-            }
+  fun retrieveOffences(nomsId: String): List<Sentence> = getValueAndHandleWrappedException(
+    prisonApiClient.retrievePrisonTimelines(nomsId),
+  )!!.prisonPeriod
+    .flatMap { t ->
+      prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentencesAndOffences ->
+        val lastDateOutOfPrison =
+          t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
+        val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
+        val prisonDescription = movement?.releaseFromPrisonId?.let {
+          try {
+            prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
+          } catch (notFoundEx: NotFoundException) {
+            log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
+            null
           }
-
-          val offender = prisonApiClient.retrieveOffender(nomsId).block()
-          sentencesAndOffences.copy(
-            releaseDate = movement?.dateOutOfPrison,
-            releasingPrison = prisonDescription,
-            licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
-            offences = sentencesAndOffences.offences.sortedBy { it.offenceDescription },
-          )
         }
+
+        val offender = prisonApiClient.retrieveOffender(nomsId).block()
+        sentencesAndOffences.copy(
+          releaseDate = movement?.dateOutOfPrison,
+          releasingPrison = prisonDescription,
+          licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
+          offences = sentencesAndOffences.offences.sortedBy { it.offenceDescription },
+        )
       }
-      .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
-      .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
-      .sortedBy { it.courtDescription }
-      .sortedByDescending { it.sentenceDate }
-  }
+    }
+    .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
+    .sortedByDescending { it.sentenceEndDate ?: LocalDate.MAX }
+    .sortedBy { it.courtDescription }
+    .sortedByDescending { it.sentenceDate }
 
   fun getOffenderMovements(nomsId: String): List<OffenderMovement> {
     log.info("Searching for offender movements for offender with NOMIS ID $nomsId")

@@ -11,7 +11,5 @@ enum class RiskScoreType(val printName: String) {
   RSR("RSR"),
   ;
 
-  override fun toString(): String {
-    return printName
-  }
+  override fun toString(): String = printName
 }

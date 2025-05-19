@@ -20,25 +20,23 @@ data class Offender(
   val sentenceDetail: SentenceDetail? = null,
 )
 
-fun Offender.toPrisonOffender(): PrisonOffender {
-  return PrisonOffender(
-    image = this.image,
-    locationDescription = this.locationDescription,
-    bookingNo = this.bookingNo,
-    facialImageId = this.facialImageId,
-    firstName = this.firstName,
-    middleName = this.middleName,
-    lastName = this.lastName,
-    dateOfBirth = this.dateOfBirth,
-    agencyId = this.agencyId,
-    agencyDescription = this.agencyDescription,
-    status = this.status,
-    gender = this.physicalAttributes?.gender,
-    ethnicity = this.physicalAttributes?.ethnicity,
-    cro = this.identifiers?.find { id -> id.type == "CRO" }?.value,
-    pnc = this.identifiers?.find { id -> id.type == "PNC" }?.value,
-  )
-}
+fun Offender.toPrisonOffender(): PrisonOffender = PrisonOffender(
+  image = this.image,
+  locationDescription = this.locationDescription,
+  bookingNo = this.bookingNo,
+  facialImageId = this.facialImageId,
+  firstName = this.firstName,
+  middleName = this.middleName,
+  lastName = this.lastName,
+  dateOfBirth = this.dateOfBirth,
+  agencyId = this.agencyId,
+  agencyDescription = this.agencyDescription,
+  status = this.status,
+  gender = this.physicalAttributes?.gender,
+  ethnicity = this.physicalAttributes?.ethnicity,
+  cro = this.identifiers?.find { id -> id.type == "CRO" }?.value,
+  pnc = this.identifiers?.find { id -> id.type == "PNC" }?.value,
+)
 
 data class PhysicalAttributes(
   val gender: String? = null,

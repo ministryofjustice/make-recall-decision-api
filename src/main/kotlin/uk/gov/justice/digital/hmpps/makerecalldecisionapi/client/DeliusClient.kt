@@ -35,12 +35,11 @@ class DeliusClient(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun findByName(firstName: String, surname: String, page: Int, pageSize: Int) =
-    post<CasePage>(
-      "/case-summary/search",
-      body = FindByNameRequest(firstName, surname),
-      parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
-    ).body!!
+  fun findByName(firstName: String, surname: String, page: Int, pageSize: Int) = post<CasePage>(
+    "/case-summary/search",
+    body = FindByNameRequest(firstName, surname),
+    parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
+  ).body!!
 
   fun findByCrn(crn: String) = get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
 
@@ -78,8 +77,7 @@ class DeliusClient(
 
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
-  fun getDocument(crn: String, id: String): ResponseEntity<Resource> =
-    get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
 
   private inline fun <reified T : Any> getBody(
     endpoint: String,

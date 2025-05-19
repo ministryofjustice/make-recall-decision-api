@@ -18,16 +18,14 @@ fun riskScoreResponse(
   sexualPredictorScore: SexualPredictorScore? = sexualPredictorScore(),
   groupReconvictionScore: GroupReconvictionScore? = groupReconvictionScore(),
   violencePredictorScore: ViolencePredictorScore? = violencePredictorScore(),
-): RiskScoreResponse {
-  return RiskScoreResponse(
-    completedDate,
-    generalPredictorScore,
-    riskOfSeriousRecidivismScore,
-    sexualPredictorScore,
-    groupReconvictionScore,
-    violencePredictorScore,
-  )
-}
+): RiskScoreResponse = RiskScoreResponse(
+  completedDate,
+  generalPredictorScore,
+  riskOfSeriousRecidivismScore,
+  sexualPredictorScore,
+  groupReconvictionScore,
+  violencePredictorScore,
+)
 
 fun generalPredictorScore(
   ogpStaticWeightedScore: String? = randomDouble().toString(),
@@ -36,26 +34,22 @@ fun generalPredictorScore(
   ogpRisk: String? = randomEnum<OgpScoreLevel>().toString(),
   ogp1Year: String? = randomInt().toString(),
   ogp2Year: String? = randomInt().toString(),
-): GeneralPredictorScore {
-  return GeneralPredictorScore(
-    ogpStaticWeightedScore,
-    ogpDynamicWeightedScore,
-    ogpTotalWeightedScore,
-    ogpRisk,
-    ogp1Year,
-    ogp2Year,
-  )
-}
+): GeneralPredictorScore = GeneralPredictorScore(
+  ogpStaticWeightedScore,
+  ogpDynamicWeightedScore,
+  ogpTotalWeightedScore,
+  ogpRisk,
+  ogp1Year,
+  ogp2Year,
+)
 
 fun riskOfSeriousRecidivismScore(
   percentageScore: String? = randomDouble().toString(),
   scoreLevel: String? = randomEnum<RsrScoreLevel>().toString(),
-): RiskOfSeriousRecidivismScore {
-  return RiskOfSeriousRecidivismScore(
-    percentageScore,
-    scoreLevel,
-  )
-}
+): RiskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+  percentageScore,
+  scoreLevel,
+)
 
 fun sexualPredictorScore(
   ospIndecentPercentageScore: String? = randomDouble().toString(),
@@ -66,30 +60,26 @@ fun sexualPredictorScore(
   ospDirectContactPercentageScore: String? = randomDouble().toString(),
   ospIndirectImageScoreLevel: String? = randomEnum<OspiicScoreLevel>().toString(),
   ospDirectContactScoreLevel: String? = randomEnum<OspdcScoreLevel>().toString(),
-): SexualPredictorScore {
-  return SexualPredictorScore(
-    ospIndecentPercentageScore,
-    ospContactPercentageScore,
-    ospIndecentScoreLevel,
-    ospContactScoreLevel,
-    ospIndirectImagePercentageScore,
-    ospDirectContactPercentageScore,
-    ospIndirectImageScoreLevel,
-    ospDirectContactScoreLevel,
-  )
-}
+): SexualPredictorScore = SexualPredictorScore(
+  ospIndecentPercentageScore,
+  ospContactPercentageScore,
+  ospIndecentScoreLevel,
+  ospContactScoreLevel,
+  ospIndirectImagePercentageScore,
+  ospDirectContactPercentageScore,
+  ospIndirectImageScoreLevel,
+  ospDirectContactScoreLevel,
+)
 
 fun groupReconvictionScore(
   oneYear: String? = randomInt().toString(),
   twoYears: String? = randomInt().toString(),
   scoreLevel: String? = randomEnum<OgrsScoreLevel>().toString(),
-): GroupReconvictionScore {
-  return GroupReconvictionScore(
-    oneYear,
-    twoYears,
-    scoreLevel,
-  )
-}
+): GroupReconvictionScore = GroupReconvictionScore(
+  oneYear,
+  twoYears,
+  scoreLevel,
+)
 
 fun violencePredictorScore(
   ovpStaticWeightedScore: String? = randomDouble().toString(),
@@ -98,13 +88,11 @@ fun violencePredictorScore(
   oneYear: String? = randomInt().toString(),
   twoYears: String? = randomInt().toString(),
   ovpRisk: String? = randomEnum<OvpScoreLevel>().toString(),
-): ViolencePredictorScore {
-  return ViolencePredictorScore(
-    ovpStaticWeightedScore,
-    ovpDynamicWeightedScore,
-    ovpTotalWeightedScore,
-    oneYear,
-    twoYears,
-    ovpRisk,
-  )
-}
+): ViolencePredictorScore = ViolencePredictorScore(
+  ovpStaticWeightedScore,
+  ovpDynamicWeightedScore,
+  ovpTotalWeightedScore,
+  oneYear,
+  twoYears,
+  ovpRisk,
+)

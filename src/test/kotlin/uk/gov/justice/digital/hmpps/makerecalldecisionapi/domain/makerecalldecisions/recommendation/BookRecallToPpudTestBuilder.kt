@@ -60,5 +60,4 @@ internal fun bookRecallToPpud(
 
 internal fun BookRecallToPpud.toJsonBody() = json(toJsonString())
 
-internal fun BookRecallToPpud.toJsonString() =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun BookRecallToPpud.toJsonString() = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)

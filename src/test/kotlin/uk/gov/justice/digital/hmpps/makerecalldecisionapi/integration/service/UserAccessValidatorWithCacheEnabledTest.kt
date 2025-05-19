@@ -20,7 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessVali
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["spring.cache.type=redis"])
 @DirtiesContext
-class UserAccessValidatorWithCacheEnabledTest() : IntegrationTestBase() {
+class UserAccessValidatorWithCacheEnabledTest : IntegrationTestBase() {
 
   @Autowired
   lateinit var cacheManager: CacheManager

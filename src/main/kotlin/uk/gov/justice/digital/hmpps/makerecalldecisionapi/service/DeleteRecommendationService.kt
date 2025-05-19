@@ -37,14 +37,12 @@ internal class DeleteRecommendationService(
 
   suspend fun getSystemDeleteRecommendationResponse(
     crn: String,
-  ): ResponseEntity<DeleteRecommendationResponse> {
-    return ResponseEntity(
-      DeleteRecommendationResponse(
-        sensitive = false,
-        notes = "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
-          "View the case summary: $mrdUrl/cases/$crn/overview",
-      ),
-      HttpStatus.OK,
-    )
-  }
+  ): ResponseEntity<DeleteRecommendationResponse> = ResponseEntity(
+    DeleteRecommendationResponse(
+      sensitive = false,
+      notes = "Recommendation automatically deleted by Consider a Recall. This is because there is an old, incomplete Part A or decision not to recall letter.\n" +
+        "View the case summary: $mrdUrl/cases/$crn/overview",
+    ),
+    HttpStatus.OK,
+  )
 }

@@ -47,36 +47,28 @@ internal class PpudController(
   @Operation(summary = "Calls PPUD Automation service for a search.")
   suspend fun ppudSearch(
     @RequestBody request: PpudSearchRequest,
-  ): PpudSearchResponse {
-    return ppudService.search(request)
-  }
+  ): PpudSearchResponse = ppudService.search(request)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/details/{id}")
   @Operation(summary = "Calls PPUD Automation service for a search.")
   suspend fun ppcsDetails(
     @PathVariable("id") id: String,
-  ): PpudDetailsResponse {
-    return ppudService.details(id)
-  }
+  ): PpudDetailsResponse = ppudService.details(id)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/reference/{name}")
   @Operation(summary = "Calls PPUD Automation service to retrieve reference list.")
   suspend fun retrieveList(
     @PathVariable("name") name: String,
-  ): PpudReferenceListResponse {
-    return ppudService.retrieveList(name)
-  }
+  ): PpudReferenceListResponse = ppudService.retrieveList(name)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/offender")
   @Operation(summary = "Calls PPUD Automation service to create an offender.")
   suspend fun createOffender(
     @RequestBody request: PpudCreateOffenderRequest,
-  ): PpudCreateOffenderResponse {
-    return ppudService.createOffender(request)
-  }
+  ): PpudCreateOffenderResponse = ppudService.createOffender(request)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PutMapping("/ppud/offender/{offenderId}")
@@ -94,9 +86,7 @@ internal class PpudController(
   suspend fun createSentence(
     @PathVariable(required = true) offenderId: String,
     @RequestBody request: PpudCreateOrUpdateSentenceRequest,
-  ): PpudCreateSentenceResponse {
-    return ppudService.createSentence(offenderId, request)
-  }
+  ): PpudCreateSentenceResponse = ppudService.createSentence(offenderId, request)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PutMapping("/ppud/offender/{offenderId}/sentence/{sentenceId}")
@@ -128,9 +118,7 @@ internal class PpudController(
     @PathVariable(required = true) sentenceId: String,
     @RequestBody(required = true)
     createOrUpdateReleaseRequest: PpudCreateOrUpdateReleaseRequest,
-  ): PpudCreateOrUpdateReleaseResponse {
-    return ppudService.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest)
-  }
+  ): PpudCreateOrUpdateReleaseResponse = ppudService.createOrUpdateRelease(offenderId, sentenceId, createOrUpdateReleaseRequest)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("ppud/offender/{offenderId}/release/{releaseId}/recall")
@@ -141,9 +129,7 @@ internal class PpudController(
     @RequestBody(required = true)
     createRecallRequest: CreateRecallRequest,
     userLogin: Principal,
-  ): PpudCreateRecallResponse {
-    return ppudService.createRecall(offenderId, releaseId, createRecallRequest, userLogin.name)
-  }
+  ): PpudCreateRecallResponse = ppudService.createRecall(offenderId, releaseId, createRecallRequest, userLogin.name)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PutMapping("ppud/recall/{recallId}/upload-mandatory-document")
@@ -186,7 +172,5 @@ internal class PpudController(
   @Operation(summary = "Calls PPUD Automation service to search for active users.")
   suspend fun searchActiveUsers(
     @RequestBody request: PpudUserSearchRequest,
-  ): PpudUserResponse {
-    return ppudService.searchActiveUsers(request)
-  }
+  ): PpudUserResponse = ppudService.searchActiveUsers(request)
 }

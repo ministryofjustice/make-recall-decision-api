@@ -118,52 +118,48 @@ class MrdEventsEmitterTest {
     assertThat(telemetryAttributesCaptor.value).containsAllEntriesOf(expectedPayload)
   }
 
-  private fun testPayload(): MrdEvent {
-    return MrdEvent(
-      messageId = "b4745442-3be4-4e06-8fc6-d8dd8cea87e2",
-      timeStamp = "2022-12-1T14:25:40.117Z",
-      message = MrdEventMessageBody(
-        eventType = "prison-recall.recommendation.started",
-        version = 1,
-        description = "Recommendation started (recall or no recall)",
-        occurredAt = "2022-12-1T14:25:40.117Z",
-        personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
-        additionalInformation = AdditionalInformation(
-          recommendationUrl = "someurl/cases/crn/overview",
-          bookedBy = null,
-          contactOutcome = null,
-        ),
+  private fun testPayload(): MrdEvent = MrdEvent(
+    messageId = "b4745442-3be4-4e06-8fc6-d8dd8cea87e2",
+    timeStamp = "2022-12-1T14:25:40.117Z",
+    message = MrdEventMessageBody(
+      eventType = "prison-recall.recommendation.started",
+      version = 1,
+      description = "Recommendation started (recall or no recall)",
+      occurredAt = "2022-12-1T14:25:40.117Z",
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "CRN", value = "crn"))),
+      additionalInformation = AdditionalInformation(
+        recommendationUrl = "someurl/cases/crn/overview",
+        bookedBy = null,
+        contactOutcome = null,
       ),
-      messageAttributes = MessageAttributes(
-        eventType = TypeValue(
-          type = "String",
-          value = "prison-recall.recommendation.started",
-        ),
+    ),
+    messageAttributes = MessageAttributes(
+      eventType = TypeValue(
+        type = "String",
+        value = "prison-recall.recommendation.started",
       ),
-    )
-  }
+    ),
+  )
 
-  private fun testPayloadDntrDownload(): MrdEvent {
-    return MrdEvent(
-      type = "Notification",
-      messageId = "6584074d-6c22-426b-a1cf-cbc472080d99",
-      token = null,
-      topicArn = "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
-      timeStamp = "2022-04-26T20:39:47.778",
-      signatureVersion = null,
-      subscribeUrl = "http://localhost:9999",
-      signature = null,
-      signingCertURL = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem",
-      messageAttributes = MessageAttributes(eventType = TypeValue(type = "", value = "")),
-      message = MrdEventMessageBody(
-        eventType = "DNTR_LETTER_DOWNLOADED",
-        version = 1,
-        description = "DNTR letter downloaded",
-        occurredAt = "2022-04-26T20:39:47.778",
-        personReference = PersonReference(listOf(IdentifierTypeValue(type = "some type", value = "some value"))),
-        additionalInformation = AdditionalInformation(referralId = null, contactOutcome = null, bookedBy = null),
-        detailUrl = "http://someurl",
-      ),
-    )
-  }
+  private fun testPayloadDntrDownload(): MrdEvent = MrdEvent(
+    type = "Notification",
+    messageId = "6584074d-6c22-426b-a1cf-cbc472080d99",
+    token = null,
+    topicArn = "arn:aws:sns:eu-west-2:000000000000:hmpps-domain",
+    timeStamp = "2022-04-26T20:39:47.778",
+    signatureVersion = null,
+    subscribeUrl = "http://localhost:9999",
+    signature = null,
+    signingCertURL = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem",
+    messageAttributes = MessageAttributes(eventType = TypeValue(type = "", value = "")),
+    message = MrdEventMessageBody(
+      eventType = "DNTR_LETTER_DOWNLOADED",
+      version = 1,
+      description = "DNTR letter downloaded",
+      occurredAt = "2022-04-26T20:39:47.778",
+      personReference = PersonReference(listOf(IdentifierTypeValue(type = "some type", value = "some value"))),
+      additionalInformation = AdditionalInformation(referralId = null, contactOutcome = null, bookedBy = null),
+      detailUrl = "http://someurl",
+    ),
+  )
 }
