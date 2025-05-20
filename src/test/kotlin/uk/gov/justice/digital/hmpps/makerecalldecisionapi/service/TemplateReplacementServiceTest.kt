@@ -148,7 +148,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val recommendation = RecommendationResponse(crn = "123456")
 
       val documentData = DocumentData(
-        salutation = "Dear John Smith",
+        salutation = "Dear Joe Bloggs",
         letterTitle = "Decision not to recall",
         letterAddress = "My address",
         section1 = "Section 1",
@@ -167,7 +167,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")
       assertThat(letterContent.letterDate).isEqualTo(DateTimeHelper.convertLocalDateToDateWithSlashes(now()))
-      assertThat(letterContent.salutation).isEqualTo("Dear John Smith")
+      assertThat(letterContent.salutation).isEqualTo("Dear Joe Bloggs")
       assertThat(letterContent.letterTitle).isEqualTo("Decision not to recall")
       assertThat(letterContent.section1).isEqualTo("Section 1")
       assertThat(letterContent.section2).isEqualTo("Section 2")
@@ -227,14 +227,14 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
       assertThat(result["is_under_integrated_offender_management"]).isEqualTo("Yes")
-      assertThat(result["contact_name"]).isEqualTo("Thomas Magnum")
-      assertThat(result["phone_number"]).isEqualTo("555-0100")
-      assertThat(result["fax_number"]).isEqualTo("555-0199")
-      assertThat(result["email_address"]).isEqualTo("thomas.magnum@gmail.com")
+      assertThat(result["contact_name"]).isEqualTo("John Doe")
+      assertThat(result["phone_number"]).isEqualTo("01234567890")
+      assertThat(result["fax_number"]).isEqualTo("09876543210")
+      assertThat(result["email_address"]).isEqualTo("john.doe@gmail.com")
       assertThat(result["gender"]).isEqualTo("Male")
-      assertThat(result["name"]).isEqualTo("Homer Bart Simpson")
+      assertThat(result["name"]).isEqualTo("Jane Bloggs")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
-      assertThat(result["ethnicity"]).isEqualTo("Ainu")
+      assertThat(result["ethnicity"]).isEqualTo("White")
       assertThat(result["primary_language"]).isEqualTo("English")
       assertThat(result["cro_number"]).isEqualTo("123456/04A")
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
@@ -253,9 +253,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
       assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
       assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["completed_by_name"]).isEqualTo("Henry Richarlison")
+      assertThat(result["completed_by_name"]).isEqualTo("Henry Bloggs")
       assertThat(result["completed_by_telephone"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["completed_by_email"]).isEqualTo("Henry.Richarlison@test.com")
+      assertThat(result["completed_by_email"]).isEqualTo("Henry.Bloggs@test.com")
       assertThat(result["completed_by_region"]).isEqualTo("NPS London")
       assertThat(result["completed_by_local_delivery_unit"]).isEqualTo("All NPS London")
       assertThat(result["completed_by_ppcs_query_emails"]).isEqualTo("query1@example.com; query2@example.com")
@@ -268,7 +268,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["revocation_order_recipients"]).isEqualTo("revocation1@example.com; revocation2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
-      assertThat(result["index_offence_details"]).isEqualTo("Juicy details!")
+      assertThat(result["index_offence_details"]).isEqualTo("Offence details")
       assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
       assertThat(result["behaviour_similar_to_index_offence"]).isEqualTo("behavior similar to index offence")
       assertThat(result["behaviour_similar_to_index_offence_present"]).isEqualTo(YES.partADisplayValue)
@@ -276,15 +276,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"]).isEqualTo(YES.partADisplayValue)
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
-      assertThat(result["other_possible_addresses"]).isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
-      assertThat(result["salutation"]).isEqualTo("Dear Duncan Edwards")
-      assertThat(result["letter_address"]).isEqualTo("123 Acacia Avenue, Birmingham B23 1AB")
+      assertThat(result["other_possible_addresses"]).isEqualTo("123 Oak Avenue, Birmingham, B23 1AV")
+      assertThat(result["salutation"]).isEqualTo("Dear Duncan Bloggs")
+      assertThat(result["letter_address"]).isEqualTo("123 Oak Avenue, Birmingham B23 1AB")
       assertThat(result["letter_title"]).isEqualTo("DECISION NOT TO RECALL")
       assertThat(result["letter_date"]).isEqualTo("27/09/2022")
       assertThat(result["section_1"]).isEqualTo("This is the first paragraph")
       assertThat(result["section_2"]).isEqualTo("This is the second paragraph")
       assertThat(result["section_3"]).isEqualTo("This is the third paragraph")
-      assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Jim Smith")
+      assertThat(result["letter_signed_by_paragraph"]).isEqualTo("Yours faithfully, Joe Bloggs")
       assertThat(result["last_releasing_prison"]).isEqualTo("HMP Holloway")
       assertThat(result["last_release_date"]).isEqualTo("07/10/2021")
       assertThat(result["dates_of_last_releases"]).isEqualTo("07/10/2022")
@@ -444,7 +444,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     id = 1,
     crn = crn,
     decisionDateTime = LocalDateTime.now(),
-    indexOffenceDetails = "Juicy details!",
+    indexOffenceDetails = "Offence details",
     isUnder18 = true,
     custodyStatus = CustodyStatus(
       selected = CustodyStatusValue.YES_POLICE,
@@ -469,10 +469,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     personOnProbation = PersonOnProbation(
       gender = "Male",
       dateOfBirth = parse("1982-10-24"),
-      firstName = "Homer",
-      middleNames = "Bart",
-      surname = "Simpson",
-      ethnicity = "Ainu",
+      firstName = "Henry",
+      middleNames = "Joseph",
+      surname = "Bloggs",
+      ethnicity = "White",
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
@@ -546,10 +546,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ),
     ),
     localPoliceContact = LocalPoliceContact(
-      contactName = "Thomas Magnum",
-      phoneNumber = "555-0100",
-      faxNumber = "555-0199",
-      emailAddress = "thomas.magnum@gmail.com",
+      contactName = "John Doe",
+      phoneNumber = "01234567890",
+      faxNumber = "09876543210",
+      emailAddress = "john.doe@gmail.com",
     ),
     vulnerabilities = VulnerabilitiesRecommendation(
       selected = listOf(
@@ -575,7 +575,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
         ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
         ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
-        ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Jedi fundamentalist"),
+        ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Religious fundamentalist"),
       ),
       allOptions = listOf(
         TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
@@ -661,7 +661,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     ),
     mainAddressWherePersonCanBeFound = SelectedWithDetails(
       selected = false,
-      "123 Acacia Avenue, Birmingham, B23 1AV",
+      "123 Oak Avenue, Birmingham, B23 1AV",
     ),
     whyConsideredRecall = WhyConsideredRecall(
       selected = WhyConsideredRecallValue.RISK_INCREASED,
@@ -737,13 +737,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       locationDescription = "location",
       bookingNo = "1244",
       facialImageId = 1234,
-      firstName = "time",
-      middleName = "thyme",
-      lastName = "tyme",
+      firstName = "Harry",
+      middleName = "Joe",
+      lastName = "Bluggs",
       dateOfBirth = null,
       status = "INACTIVE IN",
       gender = "Male",
-      ethnicity = "caucasian",
+      ethnicity = "white",
       cro = "123X",
       pnc = "4545",
     ),
@@ -754,8 +754,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     spoCounterSignEmail = "john-the-spo@bla.com",
     countersignSpoName = "Spo Name",
     countersignAcoName = "Aco Name",
-    userNamePartACompletedBy = "Henry Richarlison",
-    userEmailPartACompletedBy = "Henry.Richarlison@test.com",
+    userNamePartACompletedBy = "Henry Bloggs",
+    userEmailPartACompletedBy = "Henry.Bloggs@test.com",
     countersignAcoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
     countersignSpoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
     userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London")),
@@ -795,14 +795,14 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isUnder18 = "No",
       isMappaAboveLevel1 = "Yes",
       isChargedWithSeriousOffence = "No",
-      salutation = "Dear Duncan Edwards",
+      salutation = "Dear Duncan Bloggs",
       letterTitle = "DECISION NOT TO RECALL",
       letterDate = "27/09/2022",
       section1 = "This is the first paragraph",
       section2 = "This is the second paragraph",
       section3 = "This is the third paragraph",
-      signedByParagraph = "Yours faithfully, Jim Smith",
-      offenceAnalysis = "Juicy details!",
+      signedByParagraph = "Yours faithfully, Joe Bloggs",
+      offenceAnalysis = "Offence details",
       custodyStatus = ValueWithDetails(
         value = CustodyStatusValue.YES_POLICE.partADisplayValue,
         details = "Bromsgrove Police Station\r\nLondon",
@@ -832,10 +832,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       additionalConditionsBreached = "These are the additional conditions breached",
       isUnderIntegratedOffenderManagement = "YES",
       localPoliceContact = LocalPoliceContact(
-        contactName = "Thomas Magnum",
-        phoneNumber = "555-0100",
-        faxNumber = "555-0199",
-        emailAddress = "thomas.magnum@gmail.com",
+        contactName = "John Doe",
+        phoneNumber = "01234567890",
+        faxNumber = "09876543210",
+        emailAddress = "john.doe@gmail.com",
       ),
       vulnerabilities = VulnerabilitiesRecommendation(
         selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
@@ -845,8 +845,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         ),
       ),
       gender = "Male",
-      name = "Homer Bart Simpson",
-      ethnicity = "Ainu",
+      name = "Jane Bloggs",
+      ethnicity = "White",
       primaryLanguage = "English",
       dateOfBirth = parse("1982-10-24"),
       croNumber = "123456/04A",
@@ -864,11 +864,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       extendedTerm = "20 days",
       mappa = Mappa(level = 1, category = 1, lastUpdatedDate = null),
       lastRecordedAddress = "Address line 1, Address line 2, My town, TS1 1ST",
-      letterAddress = "123 Acacia Avenue, Birmingham B23 1AB",
+      letterAddress = "123 Oak Avenue, Birmingham B23 1AB",
       noFixedAbode = "",
       completedBy = PractitionerDetails(
-        name = "Henry Richarlison",
-        email = "Henry.Richarlison@test.com",
+        name = "Henry Bloggs",
+        email = "Henry.Bloggs@test.com",
         region = "NPS London",
         localDeliveryUnit = "All NPS London",
         ppcsQueryEmails = listOf("query1@example.com", "query2@example.com"),
@@ -883,7 +883,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
-      otherPossibleAddresses = "123 Acacia Avenue, Birmingham, B23 1AV",
+      otherPossibleAddresses = "123 Oak Avenue, Birmingham, B23 1AV",
       lastReleasingPrison = "HMP Holloway",
       datesOfLastReleases = "07/10/2022",
       lastReleaseDate = "07/10/2021",

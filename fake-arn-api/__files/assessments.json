@@ -11,7 +11,7 @@
       "assessorSignedDate": "2022-09-12T15:00:08.286",
       "assessmentStatus": "COMPLETE",
       "superStatus": "COMPLETE",
-      "offence": "Juicy offence details.",
+      "offence": "Offence details.",
       "disinhibitors": [
         "string"
       ],

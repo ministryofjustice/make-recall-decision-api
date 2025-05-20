@@ -3,7 +3,7 @@
     "name": {
       "forename": "Harry",
       "middleName": "Tom",
-      "surname": "Smith"
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X252642",
@@ -21,7 +21,7 @@
     "noFixedAbode": false,
     "buildingName": null,
     "addressNumber": "3764",
-    "streetName": "Elvis Presley Boulevard",
+    "streetName": "Oak Boulevard",
     "district": "Memphis",
     "town": "Tennessee",
     "postcode": "12345"
@@ -44,7 +44,7 @@
       "number": "1",
       "mainOffence": {
         "code": "1234",
-        "description": "(Buggery and attempted buggery - 01600)",
+        "description": "(Assault - 01600)",
         "date": "2022-04-24"
       },
       "additionalOffences": [],
@@ -64,7 +64,7 @@
       "number": "1",
       "mainOffence": {
         "code": "1234",
-        "description": "(Buggery and attempted buggery - 01600)",
+        "description": "(Assault - 01600)",
         "date": "2022-04-24"
       },
       "additionalOffences": [],

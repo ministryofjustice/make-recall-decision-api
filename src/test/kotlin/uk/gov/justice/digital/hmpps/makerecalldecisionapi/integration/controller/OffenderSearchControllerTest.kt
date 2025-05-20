@@ -21,8 +21,8 @@ class OffenderSearchControllerTest(
   fun `retrieves simple case summary details using crn`() {
     runTest {
       val crn = "A123456"
-      val firstName = "Pontius"
-      val lastName = "Pilate"
+      val firstName = "Joe"
+      val lastName = "Bloggs"
       val dateOfBirth = "2000-11-09"
       findByCrnSuccess(crn, firstName, lastName, dateOfBirth)
       val requestBody = OffenderSearchRequest(crn = crn)
@@ -44,8 +44,8 @@ class OffenderSearchControllerTest(
   fun `retrieves simple case summary details using first and last name`() {
     runTest {
       val crn = "A123456"
-      val firstName = "Pontius"
-      val lastName = "Pilate"
+      val firstName = "Joe"
+      val lastName = "Bloggs"
       val dateOfBirth = "2000-11-09"
       findByNameSuccess(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)

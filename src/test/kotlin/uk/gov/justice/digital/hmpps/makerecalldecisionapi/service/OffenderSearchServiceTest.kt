@@ -53,8 +53,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `returns empty list when search by name returns no results`() {
     runTest {
-      val nonExistentFirstName = "Laura"
-      val nonExistentSurname = "Biding"
+      val nonExistentFirstName = "Jane"
+      val nonExistentSurname = "Bloggs"
       given(
         deliusClient.findByName(
           firstName = nonExistentFirstName,
@@ -92,7 +92,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
-      assertThat(result.name).isEqualTo("John Blair")
+      assertThat(result.name).isEqualTo("Joe Bloggs")
       assertThat(result.crn).isEqualTo(crn)
       assertThat(result.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
 
@@ -103,8 +103,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   @Test
   fun `returns search results when searching by name`() {
     runTest {
-      val firstName = "John"
-      val lastName = "Blair"
+      val firstName = "Joe"
+      val lastName = "Bloggs"
       given(
         deliusClient.findByName(
           firstName = firstName,
@@ -119,7 +119,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
 
       assertThat(response.results.size).isEqualTo(1)
       val result = response.results.first()
-      assertThat(result.name).isEqualTo("John Blair")
+      assertThat(result.name).isEqualTo("Joe Bloggs")
       assertThat(result.crn).isEqualTo(crn)
       assertThat(result.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
 
@@ -136,8 +136,8 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `returns page information when searching`() {
     runTest {
       val totalPages = Random.Default.nextInt(1, 10)
-      val firstName = "John"
-      val lastName = "Blair"
+      val firstName = "Joe"
+      val lastName = "Bloggs"
       given(
         deliusClient.findByName(
           firstName = firstName,
@@ -218,9 +218,9 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     content = listOf(
       DeliusClient.PersonalDetailsOverview(
         name = Name(
-          forename = "John",
+          forename = "Joe",
           middleName = null,
-          surname = "Blair",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.parse("1982-10-24"),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(crn = crn, null, null, null, null),

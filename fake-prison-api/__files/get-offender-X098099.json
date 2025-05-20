@@ -4,7 +4,7 @@
   "facialImageId": 1234,
   "firstName": "Harry",
   "middleName": "Tom",
-  "lastName": "Smith",
+  "lastName": "Bloggs",
   "dateOfBirth": "1970-03-15",
   "status": "ACTIVE IN",
   "physicalAttributes": {

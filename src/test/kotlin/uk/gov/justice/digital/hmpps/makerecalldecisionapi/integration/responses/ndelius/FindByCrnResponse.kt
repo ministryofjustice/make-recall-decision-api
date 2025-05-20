@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses
 
 fun findByCrnResponse(
   crn: String? = "X123456",
-  firstName: String? = "Pontius",
-  surname: String? = "Pilate",
+  firstName: String? = "Joe",
+  surname: String? = "Bloggs",
   dateOfBirth: String? = "2000-11-30",
   // language=json
 ) = """

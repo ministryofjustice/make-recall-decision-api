@@ -5,8 +5,8 @@ fun deliusRecommendationModelResponse(firstName: String) = """
   "personalDetails": {
     "name": {
       "forename": "$firstName",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun deliusRecommendationModelResponse(firstName: String) = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "mappa": {

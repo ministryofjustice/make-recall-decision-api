@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 fun updateRecommendationRequest(
   status: Status = Status.DRAFT,
   recallConsideredDetail: String? = "This is an updated recall considered detail",
-  spoDeleteRecommendationRationale: String = "My wonderful rationale for deleting the recommendation",
+  spoDeleteRecommendationRationale: String = "My rationale for deleting the recommendation",
   responseToProbation: String = "They have not responded well",
 ) = """
 {
@@ -163,7 +163,7 @@ fun updateRecommendationRequest(
           "subCatCode": "NST14",
           "title": "Disclosure of information",
           "details": "Notify your supervising officer of any intimate relationships",
-          "note": "Persons wife is Joan Smyth"
+          "note": "Persons wife is Jane Bloggs"
         }
       ]
     }
@@ -186,10 +186,10 @@ fun updateRecommendationRequest(
     ]
   },
   "localPoliceContact": {
-    "contactName": "Thomas Magnum",
-    "phoneNumber": "555-0100",
-    "faxNumber": "555-0199",
-    "emailAddress": "thomas.magnum@gmail.com"
+    "contactName": "John Doe",
+    "phoneNumber": "01234567890",
+    "faxNumber": "09876543210",
+    "emailAddress": "john.doe@gmail.com"
   },
   "vulnerabilities": {
     "selected": [
@@ -249,7 +249,7 @@ fun updateRecommendationRequest(
   },
   "isMainAddressWherePersonCanBeFound": {
     "selected": false,
-    "details": "123 Acacia Avenue, Birmingham, B23 1AV"
+    "details": "123 Oak Avenue, Birmingham, B23 1AV"
   },
   "whyConsideredRecall": {
     "selected": "RISK_INCREASED",
@@ -331,7 +331,7 @@ fun updateRecommendationRequest(
         "value": "NO_RECALL"
       }
     ],
-    "createdBy": "John Smith",
+    "createdBy": "Joe Bloggs",
     "createdDate": "2023-01-01T15:00:08.000Z"
   },
   "currentRoshForPartA": {

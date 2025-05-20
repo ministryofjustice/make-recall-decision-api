@@ -3,7 +3,7 @@
     "name": {
       "forename": "Harry",
       "middleName": "Tom",
-      "surname": "Smith"
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -30,7 +30,7 @@
       "number": "1",
       "mainOffence": {
         "code": "1234",
-        "description": "Buggery and attempted buggery",
+        "description": "Assault",
         "date": "2022-04-24"
       },
       "additionalOffences": [],

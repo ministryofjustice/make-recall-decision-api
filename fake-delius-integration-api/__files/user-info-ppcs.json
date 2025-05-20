@@ -3,8 +3,8 @@
   "email": "abc@123.com",
   "staffCode": "TEST01",
   "name": {
-    "forename": "John",
+    "forename": "Joe",
     "middleName": null,
-    "surname": "Smith"
+    "surname": "Bloggs"
   }
 }

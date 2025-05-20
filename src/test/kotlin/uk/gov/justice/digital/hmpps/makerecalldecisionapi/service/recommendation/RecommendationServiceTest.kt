@@ -131,9 +131,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           region = "London",
           localDeliveryUnit = "LDU London",
           personOnProbation = PersonOnProbation(
-            name = "John Smith",
+            name = "Joe Bloggs",
             gender = "Male",
-            ethnicity = "Ainu",
+            ethnicity = "White",
             primaryLanguage = "English",
             dateOfBirth = LocalDate.parse("1982-10-24"),
             croNumber = "123456/04A",
@@ -153,12 +153,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           prisonOffender = PrisonOffender(
             image = null,
             status = "ACTIVE IN",
-            lastName = "Teale",
+            lastName = "Bloggs",
             bookingNo = "7878783",
-            firstName = "Johnny",
+            firstName = "Joe",
             middleName = "J",
             dateOfBirth = LocalDate.parse("1970-03-15"),
-            agencyId = "KLN",
+            agencyId = "BRX",
             facialImageId = null,
             locationDescription = "Outside - released from Leeds",
           ),
@@ -169,12 +169,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val offenderResponse = Offender(
         image = null,
         status = "ACTIVE IN",
-        lastName = "Teale",
+        lastName = "Bloggs",
         bookingNo = "7878783",
-        firstName = "Johnny",
+        firstName = "Joe",
         middleName = "J",
         dateOfBirth = LocalDate.parse("1970-03-15"),
-        agencyId = "KLN",
+        agencyId = "BRX",
         facialImageId = null,
         locationDescription = "Outside - released from Leeds",
       )
@@ -208,7 +208,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         else -> null
       }
-      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Offence details" else null
 
       // when
       val response = recommendationService.createRecommendation(
@@ -232,12 +232,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         PrisonOffender(
           image = null,
           status = "ACTIVE IN",
-          lastName = "Teale",
+          lastName = "Bloggs",
           bookingNo = "7878783",
-          firstName = "Johnny",
+          firstName = "Joe",
           middleName = "J",
           dateOfBirth = LocalDate.parse("1970-03-15"),
-          agencyId = "KLN",
+          agencyId = "BRX",
           facialImageId = null,
           locationDescription = "Outside - released from Leeds",
         ),
@@ -248,12 +248,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
       assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
         PersonOnProbation(
-          name = "John Smith",
-          firstName = "John",
-          middleNames = "Homer Bart",
-          surname = "Smith",
+          name = "Joe Bloggs",
+          firstName = "Joe",
+          middleNames = "Michael",
+          surname = "Bloggs",
           gender = "Male",
-          ethnicity = "Ainu",
+          ethnicity = "White",
           primaryLanguage = "English",
           hasBeenReviewed = false,
           dateOfBirth = LocalDate.parse("1982-10-24"),
@@ -285,7 +285,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       when (featureFlag) {
         "RECALL_CONSIDERED" -> {
-          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Offence details")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
@@ -321,9 +321,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           region = "London",
           localDeliveryUnit = "LDU London",
           personOnProbation = PersonOnProbation(
-            name = "John Smith",
+            name = "Joe Bloggs",
             gender = "Male",
-            ethnicity = "Ainu",
+            ethnicity = "White",
             primaryLanguage = "English",
             dateOfBirth = LocalDate.parse("1982-10-24"),
             croNumber = "123456/04A",
@@ -371,7 +371,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         else -> null
       }
-      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Offence details" else null
 
       // when
       val response = recommendationService.createRecommendation(
@@ -398,12 +398,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
       assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
         PersonOnProbation(
-          name = "John Smith",
-          firstName = "John",
-          middleNames = "Homer Bart",
-          surname = "Smith",
+          name = "Joe Bloggs",
+          firstName = "Joe",
+          middleNames = "Michael",
+          surname = "Bloggs",
           gender = "Male",
-          ethnicity = "Ainu",
+          ethnicity = "White",
           primaryLanguage = "English",
           hasBeenReviewed = false,
           dateOfBirth = LocalDate.parse("1982-10-24"),
@@ -435,7 +435,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       when (featureFlag) {
         "RECALL_CONSIDERED" -> {
-          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Offence details")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
@@ -471,9 +471,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           region = "London",
           localDeliveryUnit = "LDU London",
           personOnProbation = PersonOnProbation(
-            name = "John Smith",
+            name = "Joe Bloggs",
             gender = "Male",
-            ethnicity = "Ainu",
+            ethnicity = "White",
             primaryLanguage = "English",
             dateOfBirth = LocalDate.parse("1982-10-24"),
             croNumber = "123456/04A",
@@ -522,7 +522,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
         else -> null
       }
-      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Juicy details" else null
+      val recallConsidereDetail = if (featureFlag == "RECALL_CONSIDERED") "Offence details" else null
 
       // when
       val response = recommendationService.createRecommendation(
@@ -549,12 +549,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.status).isEqualTo(expectedStatus)
       assertThat(recommendationEntity.data.personOnProbation).isEqualTo(
         PersonOnProbation(
-          name = "John Smith",
-          firstName = "John",
-          middleNames = "Homer Bart",
-          surname = "Smith",
+          name = "Joe Bloggs",
+          firstName = "Joe",
+          middleNames = "Michael",
+          surname = "Bloggs",
           gender = "Male",
-          ethnicity = "Ainu",
+          ethnicity = "White",
           primaryLanguage = "English",
           hasBeenReviewed = false,
           dateOfBirth = LocalDate.parse("1982-10-24"),
@@ -586,7 +586,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       when (featureFlag) {
         "RECALL_CONSIDERED" -> {
-          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Juicy details")
+          assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.recallConsideredDetail).isEqualTo("Offence details")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userName).isEqualTo("Bill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.userId).isEqualTo("UserBill")
           assertThat(recommendationEntity.data.recallConsideredList?.get(0)?.createdDate).isNotBlank
@@ -627,7 +627,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
           status = Status.RECALL_CONSIDERED,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -672,7 +672,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
           status = Status.RECALL_CONSIDERED,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -834,7 +834,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       // and
       var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
       updateRecommendationRequest =
-        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "John Smith", mappa = null))
+        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "Joe Bloggs", mappa = null))
 
       // and
       val recommendationToSave =
@@ -843,7 +843,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           data = RecommendationModel(
             crn = existingRecommendation.data.crn,
             personOnProbation = PersonOnProbation(
-              name = "John Smith",
+              name = "Joe Bloggs",
               hasBeenReviewed = true,
               mappa = Mappa(hasBeenReviewed = true),
             ),
@@ -1007,7 +1007,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
           status = Status.RECALL_CONSIDERED,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -1133,7 +1133,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             ),
           ),
           status = Status.RECALL_CONSIDERED,
-          personOnProbation = PersonOnProbation(name = "John Smith"),
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
           lastModifiedBy = "Jack",
           lastModifiedDate = "2022-07-01T15:22:24.567Z",
           createdBy = "Jack",
@@ -1381,7 +1381,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith"),
+          personOnProbation = PersonOnProbation(firstName = "Joe", surname = "Bloggs"),
         ),
       )
 
@@ -1434,7 +1434,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(recommendationEntity.data.personOnProbation?.mappa?.category).isEqualTo(0)
       assertThat(recommendationEntity.data.personOnProbation?.mappa?.lastUpdatedDate).isEqualTo("2021-02-10")
       assertThat(recommendationEntity.data.personOnProbation?.mappa?.hasBeenReviewed).isEqualTo(true)
-      assertThat(recommendationEntity.data.personOnProbation?.firstName).isEqualTo("Alan")
+      assertThat(recommendationEntity.data.personOnProbation?.firstName).isEqualTo("Joe")
     }
   }
 
@@ -1445,7 +1445,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith"),
+          personOnProbation = PersonOnProbation(firstName = "Joe", surname = "Bloggs"),
         ),
       )
 
@@ -1518,7 +1518,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         id = 1,
         data = RecommendationModel(
           crn = crn,
-          personOnProbation = PersonOnProbation(firstName = "Alan", surname = "Smith"),
+          personOnProbation = PersonOnProbation(firstName = "Joe", surname = "Bloggs"),
         ),
       )
 
@@ -1579,7 +1579,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       val recommendationEntity = recommendationCaptor.firstValue
 
-      assertThat(recommendationEntity.data.indexOffenceDetails).isEqualTo("Juicy offence details.")
+      assertThat(recommendationEntity.data.indexOffenceDetails).isEqualTo("Offence details.")
     }
   }
 
@@ -2004,7 +2004,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       id = 1,
       data = RecommendationModel(
         crn = crn,
-        lastModifiedBy = "John Smith",
+        lastModifiedBy = "Joe Bloggs",
         lastModifiedDate = "2022-07-19T23:00:00.000",
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
@@ -2014,7 +2014,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       id = 2,
       data = RecommendationModel(
         crn = crn,
-        lastModifiedBy = "Mary Berry",
+        lastModifiedBy = "Jane Bloggs",
         lastModifiedDate = "2022-08-01T10:00:00.000",
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
@@ -2024,7 +2024,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       id = 3,
       data = RecommendationModel(
         crn = crn,
-        lastModifiedBy = "Mary Berry",
+        lastModifiedBy = "Jane Bloggs",
         lastModifiedDate = "2022-08-01T11:00:00.000",
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
@@ -2034,7 +2034,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       id = 4,
       data = RecommendationModel(
         crn = crn,
-        lastModifiedBy = "Mary Berry",
+        lastModifiedBy = "Jane Bloggs",
         lastModifiedDate = "2022-08-01T09:00:00.000",
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
@@ -2044,7 +2044,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       id = 5,
       data = RecommendationModel(
         crn = crn,
-        lastModifiedBy = "Harry Winks",
+        lastModifiedBy = "Joe Bloggs",
         lastModifiedDate = "2022-07-26T12:00:00.000",
         createdBy = "Jack",
         createdDate = "2022-07-01T15:22:24.567Z",
@@ -2087,7 +2087,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
           RecommendationStatusEntity(
-            createdByUserFullName = "John Smith",
+            createdByUserFullName = "Joe Bloggs",
             active = true,
             created = null,
             createdBy = null,
@@ -2098,7 +2098,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
       initialiseWithMockedTemplateReplacementService()
 
-      val firstName = "Jim"
+      val firstName = "Joe"
       val firstNameInitial = firstName.substring(0, 1)
       val surname = "Long"
       val expectedRecommendationResponse = RecommendationResponse(
@@ -2160,8 +2160,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       val result = recommendationService.generateDntr(
         1L,
-        "john.smith",
-        "John Smith",
+        "joe.bloggs",
+        "Joe Bloggs",
         DocumentRequestType.DOWNLOAD_DOC_X,
         null,
       )
@@ -2173,7 +2173,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
         val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
 
-        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("Joe Bloggs")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
         assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DRAFT)
       } else {
@@ -2199,7 +2199,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
           RecommendationStatusEntity(
-            createdByUserFullName = "John Smith",
+            createdByUserFullName = "Joe Bloggs",
             active = true,
             created = null,
             createdBy = null,
@@ -2209,7 +2209,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         ),
       )
       initialiseWithMockedTemplateReplacementService()
-      val firstName = "Jim"
+      val firstName = "Joe"
       val firstNameInitial = firstName.substring(0, 1)
       val surname = "Long"
       val expectedRecommendationResponse = RecommendationResponse(
@@ -2272,8 +2272,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       val result = recommendationService.generateDntr(
         1L,
-        "john.smith",
-        "John Smith",
+        "joe.bloggs",
+        "Joe Bloggs",
         DocumentRequestType.DOWNLOAD_DOC_X,
         null,
         FeatureFlags(flagSendDomainEvent = true),
@@ -2286,7 +2286,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         then(recommendationRepository).should(times(1)).save(captorAfterRecommendationSaved.capture())
         val savedRecommendationEntity = captorAfterRecommendationSaved.firstValue
 
-        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("John Smith")
+        assertThat(savedRecommendationEntity.data.userNameDntrLetterCompletedBy).isEqualTo("Joe Bloggs")
         assertThat(savedRecommendationEntity.data.lastDntrLetterADownloadDateTime).isNotNull
         assertThat(savedRecommendationEntity.data.status).isEqualTo(Status.DRAFT)
         then(mrdEmitterMocked).should().sendDomainEvent(org.mockito.kotlin.any())
@@ -2340,8 +2340,8 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val actualDocumentResponse =
         recommendationService.generateDntr(
           1L,
-          "john.smith",
-          "John Smith",
+          "joe.bloggs",
+          "Joe Bloggs",
           DocumentRequestType.PREVIEW,
           null,
           FeatureFlags(),
@@ -2355,7 +2355,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `generate Part A document from recommendation data`() {
     runTest {
       val status = RecommendationStatusEntity(
-        createdByUserFullName = "John Smith",
+        createdByUserFullName = "Joe Bloggs",
         active = true,
         created = "2023-08-08T08:20:05.047Z",
         createdBy = null,
@@ -2382,9 +2382,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           data = RecommendationModel(
             crn = crn,
             personOnProbation = PersonOnProbation(
-              name = "John Smith",
-              firstName = "John",
-              surname = "Smith",
+              name = "Joe Bloggs",
+              firstName = "Joe",
+              surname = "Bloggs",
             ),
           ),
         )
@@ -2413,9 +2413,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(expectedRecommendationResponse)
 
       // when
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
+      val result = recommendationService.generatePartA(1L, "joe.bloggs", "Joe Bloggs")
 
-      assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
+      assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022_Bloggs_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
 
       val recommendationResponseCaptor = argumentCaptor<RecommendationResponse>()
@@ -2438,7 +2438,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   fun `generate Preview Part A document from recommendation data`() {
     runTest {
       val status = RecommendationStatusEntity(
-        createdByUserFullName = "John Smith",
+        createdByUserFullName = "Joe Bloggs",
         active = true,
         created = "2023-08-08T08:20:05.047Z",
         createdBy = null,
@@ -2465,9 +2465,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           data = RecommendationModel(
             crn = crn,
             personOnProbation = PersonOnProbation(
-              name = "John Smith",
-              firstName = "John",
-              surname = "Smith",
+              name = "Joe Bloggs",
+              firstName = "Joe",
+              surname = "Bloggs",
             ),
           ),
         )
@@ -2496,9 +2496,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         .willReturn(expectedRecommendationResponse)
 
       // when
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith", true)
+      val result = recommendationService.generatePartA(1L, "joe.bloggs", "Joe Bloggs", true)
 
-      assertThat(result.fileName).isEqualTo("Preview_NAT_Recall_Part_A_26072022_Smith_J_$crn.docx")
+      assertThat(result.fileName).isEqualTo("Preview_NAT_Recall_Part_A_26072022_Bloggs_J_$crn.docx")
       assertThat(result.fileContents).isNotNull
 
       then(templateReplacementServiceMocked).should(times(1))
@@ -2532,7 +2532,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
           RecommendationStatusEntity(
-            createdByUserFullName = "John Smith",
+            createdByUserFullName = "Joe Bloggs",
             active = true,
             created = null,
             createdBy = null,
@@ -2558,7 +2558,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationStatusRepository.findByRecommendationId(1L)).willReturn(
         listOf(
           RecommendationStatusEntity(
-            createdByUserFullName = "John Smith",
+            createdByUserFullName = "Joe Bloggs",
             active = true,
             created = null,
             createdBy = null,
@@ -2568,7 +2568,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         ),
       )
 
-      val result = recommendationService.generatePartA(1L, "john.smith", "John Smith")
+      val result = recommendationService.generatePartA(1L, "joe.bloggs", "Joe Bloggs")
 
       assertThat(result.fileName).isEqualTo("NAT_Recall_Part_A_26072022___12345.docx")
       assertThat(result.fileContents).isNotNull
@@ -2668,7 +2668,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(recommendationStatusRepository.findByRecommendationId(recommendation3.id)).willReturn(
         listOf(
           RecommendationStatusEntity(
-            createdByUserFullName = "John Smith",
+            createdByUserFullName = "Joe Bloggs",
             active = true,
             created = null,
             createdBy = null,
@@ -2732,16 +2732,16 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
   fun personDetailsResponseNullNomsNumber() = PersonDetailsResponse(
     personalDetailsOverview = PersonalDetailsOverview(
-      fullName = "John Homer Bart Smith",
-      name = "John Smith",
-      firstName = "John",
-      middleNames = "Homer Bart",
-      surname = "Smith",
+      fullName = "Joe Bloggs",
+      name = "Joe Bloggs",
+      firstName = "Joe",
+      middleNames = "Michael",
+      surname = "Bloggs",
       age = null,
       crn = null,
       dateOfBirth = LocalDate.parse("1982-10-24"),
       gender = "Male",
-      ethnicity = "Ainu",
+      ethnicity = "White",
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
@@ -2758,7 +2758,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       ),
     ),
     offenderManager = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderManager(
-      name = "John Smith",
+      name = "Joe Bloggs",
       phoneNumber = "01234567654",
       email = "tester@test.com",
       probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"),

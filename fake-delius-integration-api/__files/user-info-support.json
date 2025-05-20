@@ -1,10 +1,10 @@
 {
   "username": "Art Major",
-  "email": "haveyoutriedturningitoffandon@domain.com",
+  "email": "emailaddress@domain.com",
   "staffCode": "TEST01",
   "name": {
-    "forename": "John",
+    "forename": "Joe",
     "middleName": null,
-    "surname": "Smith"
+    "surname": "Bloggs"
   }
 }

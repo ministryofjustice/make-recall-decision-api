@@ -71,7 +71,7 @@ class CaseOverviewControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
@@ -114,12 +114,12 @@ class CaseOverviewControllerTest(
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.isSentToDelius").isEqualTo(false)
-        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("John Smith")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("Joe Bloggs")
         .jsonPath("$.activeRecommendation.managerRecallDecision.createdDate").isEqualTo("2023-01-01T15:00:08.000Z")
         .jsonPath("$.risk.assessments.lastUpdatedDate").isEqualTo("2022-04-24T15:00:08.000Z")
         .jsonPath("$.risk.assessments.offenceDataFromLatestCompleteAssessment").isEqualTo(true)
         .jsonPath("$.risk.assessments.offencesMatch").isEqualTo(true)
-        .jsonPath("$.risk.assessments.offenceDescription").isEqualTo("Juicy offence details.")
+        .jsonPath("$.risk.assessments.offenceDescription").isEqualTo("Offence details.")
         .jsonPath("$.risk.assessments.error").value(isNull())
     }
   }
@@ -155,7 +155,7 @@ class CaseOverviewControllerTest(
         .expectStatus()
         .isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
@@ -178,7 +178,7 @@ class CaseOverviewControllerTest(
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage")
-        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
     }

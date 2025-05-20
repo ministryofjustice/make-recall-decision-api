@@ -84,8 +84,8 @@ fun prisonSentencesAndOffences(bookingId: Int) = """
         "offenderChargeId": 3934357,
         "offenceStartDate": "2018-12-21",
         "offenceStatute": "HT04",
-        "offenceCode": "HT04001",
-        "offenceDescription": "Activity without appropriate consent - Human Tissue Act 2004",
+        "offenceCode": "OC01234",
+        "offenceDescription": "Generic Offence 01234",
         "indicators": [
           "99"
         ]

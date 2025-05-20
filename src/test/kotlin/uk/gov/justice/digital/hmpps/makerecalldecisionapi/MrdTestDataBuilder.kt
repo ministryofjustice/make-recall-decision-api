@@ -68,8 +68,8 @@ class MrdTestDataBuilder {
 
     fun recommendationDataEntityData(
       crn: String?,
-      firstName: String = "Jim",
-      surname: String = "Long",
+      firstName: String = "Joe",
+      surname: String = "Bloggs",
       status: Status = Status.DRAFT,
       recallTypeValue: RecallTypeValue? = RecallTypeValue.FIXED_TERM,
       lastModifiedDate: String? = "2022-07-01T15:22:24.567Z",
@@ -129,8 +129,8 @@ class MrdTestDataBuilder {
         convictionDetail = convictionDetail(),
         region = "London",
         localDeliveryUnit = "LDU London",
-        userNamePartACompletedBy = "Ben Baker",
-        userEmailPartACompletedBy = "Ben.Baker@test.com",
+        userNamePartACompletedBy = "John Doe",
+        userEmailPartACompletedBy = "John.Doe@test.com",
         lastPartADownloadDateTime = null,
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(
           selected = true,
@@ -140,12 +140,12 @@ class MrdTestDataBuilder {
         whyConsideredRecall = whyConsideredRecall(),
         reasonsForNoRecall = reasonForNoRecall(),
         nextAppointment = nextAppointment(),
-        indexOffenceDetails = "Juicy details",
+        indexOffenceDetails = "Offence details",
         previousReleases = previousReleases(),
         roshSummary = roshSummary(),
         whoCompletedPartA = WhoCompletedPartA(
           name = "Mr Jenkins",
-          email = "jenkins@onsabatical.com",
+          email = "jenkins@email.com",
           telephone = "1234567",
           region = "London",
           localDeliveryUnit = "A123",
@@ -153,7 +153,7 @@ class MrdTestDataBuilder {
         ),
         practitionerForPartA = PractitionerForPartA(
           name = "Mr Jenkins 1",
-          email = "jenkins1@onsabatical.com",
+          email = "jenkins1@email.com",
           telephone = "12345678",
           region = "London2",
           localDeliveryUnit = "A1234",
@@ -191,7 +191,7 @@ class MrdTestDataBuilder {
           firstNames = "",
           gender = "Male",
           immigrationStatus = "Naturalized",
-          establishment = "The Kyln",
+          establishment = "HMP Brixton",
           nomsId = "",
           prisonerCategory = "Incarcerated",
           prisonNumber = "1234",
@@ -216,7 +216,7 @@ class MrdTestDataBuilder {
           ),
           status = "Active",
           youngOffender = "No",
-          ethnicity = "Caucasian",
+          ethnicity = "White",
         ),
       ),
     )
@@ -280,7 +280,7 @@ class MrdTestDataBuilder {
       hasContrabandRisk = contrabandRisk(),
       licenceConditionsBreached = licenceConditionsBreached(),
       underIntegratedOffenderManagement = integratedOffenderManagement(),
-      indexOffenceDetails = "Juicy details",
+      indexOffenceDetails = "Offence details",
       localPoliceContact = localPoliceContact(),
       vulnerabilities = vulnerabilities(),
       convictionDetail = convictionDetail(),
@@ -454,7 +454,7 @@ class MrdTestDataBuilder {
 
     private fun contrabandRisk(): SelectedWithDetails = SelectedWithDetails(selected = true, details = "Contraband risk details")
 
-    private fun isMainAddressWherePersonCanBeFound(): SelectedWithDetails = SelectedWithDetails(selected = false, details = "123 Acacia Avenue, Birmingham, B23 1AV")
+    private fun isMainAddressWherePersonCanBeFound(): SelectedWithDetails = SelectedWithDetails(selected = false, details = "123 Oak Avenue, Birmingham, B23 1AV")
 
     private fun licenceConditionsBreached(): LicenceConditionsBreached = LicenceConditionsBreached(
       standardLicenceConditions = StandardLicenceConditions(
@@ -481,10 +481,10 @@ class MrdTestDataBuilder {
     )
 
     private fun localPoliceContact(): LocalPoliceContact = LocalPoliceContact(
-      contactName = "Thomas Magnum",
-      phoneNumber = "555-0100",
-      faxNumber = "555-0199",
-      emailAddress = "thomas.magnum@gmail.com",
+      contactName = "John Doe",
+      phoneNumber = "01234567890",
+      faxNumber = "09876543210",
+      emailAddress = "john.doe@gmail.com",
     )
 
     private fun integratedOffenderManagement(): UnderIntegratedOffenderManagement = UnderIntegratedOffenderManagement(

@@ -34,9 +34,9 @@ class DecisionNotToRecallLetterDocumentMapperTest {
       val recommendation = RecommendationResponse(
         crn = "ABC123",
         personOnProbation = PersonOnProbation(
-          firstName = "Cliff",
+          firstName = "Joseph",
           middleNames = "Dave",
-          surname = "Rowland",
+          surname = "Bloggs",
           addresses = listOf(
             Address(
               line1 = "Address line 1",
@@ -86,8 +86,8 @@ class DecisionNotToRecallLetterDocumentMapperTest {
 
       val result = decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
 
-      assertThat(result.salutation).isEqualTo("Dear Cliff Rowland,")
-      assertThat(result.letterAddress).isEqualTo("Cliff Rowland\nAddress line 1\nAddress line 2\nAddress line town\nTS1 1ST")
+      assertThat(result.salutation).isEqualTo("Dear Joseph Bloggs,")
+      assertThat(result.letterAddress).isEqualTo("Joseph Bloggs\nAddress line 1\nAddress line 2\nAddress line town\nTS1 1ST")
       assertThat(result.letterTitle).isEqualTo("DECISION NOT TO RECALL")
       assertThat(result.letterDate).isEqualTo("26/12/2022")
 

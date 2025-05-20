@@ -109,7 +109,7 @@ private fun expectedDntrDocumentResponse(letterDate: String) = """
     "letterContent": {
       "signedByParagraph": "Yours sincerely,\n\n\nProbation Practitioner\/Senior Probation Officer\/Head of PDU",
       "letterDate": "$letterDate",
-      "letterAddress": "Ikenberry Camploongo\n99 Oxford Road\nEpsom\nSW16 1AF",
+      "letterAddress": "Ikenberry Camploongo\n99 Oxford Road\nEpsom\SW12 345",
       "salutation": "Dear Ikenberry Camploongo,",
       "letterTitle": "DECISION NOT TO RECALL",
       "section1": "I am writing to you because you have breached your licence conditions in such a way that your risk is assessed as increased.\n\nThis breach has been discussed with a Probation manager and a decision has been made that you will not be recalled to prison. This letter explains this decision. If you have any questions, please contact me.\n\nReason for breaching licence\n\nRationale for no recall\n\nProgress made so far detail\n\nFuture expectations detail\n\nI hope our conversation and\/or this letter has helped to clarify what is required of you going forward and that we can continue to work together to enable you to successfully complete your licence period.\n\nYour next appointment is by telephone on:",
@@ -157,7 +157,7 @@ private fun expectedCreateRecommendationResponse(recommendationId: String) = """
         {
           "noFixedAbode": false,
           "town": "Epsom",
-          "postcode": "SW16 1AF",
+          "postcode": "SW12 345",
           "line2": "",
           "line1": "99 Oxford Road"
         }
@@ -367,7 +367,7 @@ private fun updateRecommendationRequest() = """
             "subCatCode": "NST14",
             "title": "Disclosure of information",
             "details": "Notify your supervising officer of any intimate relationships",
-            "note": "Persons wife is Joan Smyth"
+            "note": "Persons wife is Jane Bloggs"
           }
         ]
       }
@@ -390,10 +390,10 @@ private fun updateRecommendationRequest() = """
       ]
     },
     "localPoliceContact": {
-      "contactName": "Thomas Magnum",
-      "phoneNumber": "555-0100",
-      "faxNumber": "555-0199",
-      "emailAddress": "thomas.magnum@gmail.com"
+      "contactName": "John Doe",
+      "phoneNumber": "01234567890",
+      "faxNumber": "09876543210",
+      "emailAddress": "john.doe@gmail.com"
     },
     "vulnerabilities": {
       "selected": [
@@ -453,7 +453,7 @@ private fun updateRecommendationRequest() = """
     },
     "isMainAddressWherePersonCanBeFound": {
       "selected": false,
-      "details": "123 Acacia Avenue, Birmingham, B23 1AV"
+      "details": "123 Oak Avenue, Birmingham, B23 1AV"
     },
     "whyConsideredRecall": {
       "selected": "RISK_INCREASED",

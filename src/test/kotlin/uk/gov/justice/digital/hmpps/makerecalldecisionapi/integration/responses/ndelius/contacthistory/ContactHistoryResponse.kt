@@ -4,9 +4,9 @@ fun deliusContactHistoryResponse() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun deliusContactHistoryResponse() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "contacts": [
@@ -28,7 +28,7 @@ fun deliusContactHistoryResponse() = """
         "description": "Registration Review",
         "systemGenerated": true
       },
-      "notes": "Comment added by John Smith on 05/05/2022",
+      "notes": "Comment added by Joe Bloggs on 05/05/2022",
       "documents": [
         {
           "id": "f2943b31-2250-41ab-a04d-004e27a97add",

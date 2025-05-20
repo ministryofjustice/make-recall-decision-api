@@ -47,7 +47,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       PpudSearchRequest(
         croNumber = croNumber,
         nomsId = nomsId,
-        familyName = "Smith",
+        familyName = "Bloggs",
         dateOfBirth = LocalDate.of(2023, 1, 1),
       ),
     ).block()
@@ -78,14 +78,14 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       croNumber = "A/2342",
       nomsId = "A897",
       prisonNumber = "123",
-      firstNames = "Spuddy",
-      familyName = "Spiffens",
+      firstNames = "Joe",
+      familyName = "Bloggs",
       indexOffence = "bad language",
       ethnicity = "W",
       gender = "M",
       mappaLevel = "",
       custodyType = "Determinate",
-      establishment = "The Kyln",
+      establishment = "HMP Brixton",
       isInCustody = true,
       dateOfBirth = LocalDate.of(2004, 1, 1),
       dateOfSentence = LocalDate.of(2004, 1, 2),
@@ -110,15 +110,15 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       croNumber = "A/2342",
       nomsId = "A897",
       prisonNumber = "123",
-      firstNames = "Spuddy",
-      familyName = "Spiffens",
+      firstNames = "Joe",
+      familyName = "Bloggs",
       ethnicity = "W",
       gender = "M",
       isInCustody = true,
       dateOfBirth = LocalDate.of(2004, 1, 1),
       additionalAddresses = listOf(),
       address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
-      establishment = "The Kyln",
+      establishment = "HMP Brixton",
     )
 
     ppudAutomationUpdateOffenderApiMatchResponse(offenderId, ppudUpdateOffenderRequest)
@@ -147,7 +147,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceLength = SentenceLength(1, 1, 1),
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
-      sentencedUnder = "Duress",
+      sentencedUnder = "Legislation 123",
     )
 
     ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
@@ -173,7 +173,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceLength = SentenceLength(1, 1, 1),
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
-      sentencedUnder = "Duress",
+      sentencedUnder = "Legislation 123",
     )
 
     ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
@@ -198,8 +198,8 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       offenderId,
       sentenceId,
       PpudUpdateOffenceRequest(
-        indexOffence = "some dastardly deed",
-        indexOffenceComment = "some dastardly deed's comments",
+        indexOffence = "Index offence",
+        indexOffenceComment = "Index offence comment",
         dateOfIndexOffence = LocalDate.of(2016, 1, 1),
       ),
     ).block()
@@ -221,7 +221,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       offenderId,
       sentenceId,
       PpudUpdateOffenceRequest(
-        indexOffence = "some dastardly deed",
+        indexOffence = "Index offence",
         indexOffenceComment = null,
         dateOfIndexOffence = LocalDate.of(2016, 1, 1),
       ),
@@ -256,7 +256,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         ),
       ),
       releasedFrom = "Hull",
-      releasedUnder = "Duress",
+      releasedUnder = "Legislation 123",
     )
 
     ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, id)

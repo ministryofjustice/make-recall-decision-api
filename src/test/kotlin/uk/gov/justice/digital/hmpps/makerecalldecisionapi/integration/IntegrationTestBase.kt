@@ -421,7 +421,7 @@ abstract class IntegrationTestBase {
     crn: String,
     delaySeconds: Long = 0,
     district: String? = "Sheffield City Centre",
-    firstName: String? = "John",
+    firstName: String? = "Joe",
   ) {
     val personalDetailsRequest =
       request().withPath("/case-summary/$crn/personal-details")
@@ -500,7 +500,7 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(request).respond(response().withStatusCode(404))
   }
 
-  protected fun recommendationModelResponse(crn: String, delaySeconds: Long = 0, firstName: String = "John") {
+  protected fun recommendationModelResponse(crn: String, delaySeconds: Long = 0, firstName: String = "Joe") {
     val request =
       request().withPath("/case-summary/$crn/recommendation-model")
 
@@ -678,8 +678,8 @@ abstract class IntegrationTestBase {
 
   protected fun findByCrnSuccess(
     crn: String = "X123456",
-    firstName: String = "Pontius",
-    surname: String = "Pilate",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
     dateOfBirth: String = "2000-11-09",
     delaySeconds: Long = 0,
   ) {

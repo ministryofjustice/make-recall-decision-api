@@ -1,7 +1,7 @@
 {
   "status": 400,
   "errorCode": 1234,
-  "userMessage": "big problems in paradise",
-  "developerMessage": "reticulating splines are splining lyrically",
-  "moreInfo": "nuts!!!!"
+  "userMessage": "user error message",
+  "developerMessage": "developer error message",
+  "moreInfo": "an error has occurred"
 }

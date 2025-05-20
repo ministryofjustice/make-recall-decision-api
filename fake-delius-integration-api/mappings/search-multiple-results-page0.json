@@ -4,10 +4,10 @@
     "url": "/case-summary/search?page=0&size=20",
     "bodyPatterns": [
       {
-        "matchesJsonPath": "[?($.surname =~ /o'connor/i)]"
+        "matchesJsonPath": "[?($.surname =~ /o'bloggs/i)]"
       },
       {
-        "matchesJsonPath": "[?($.forename =~ /john/i)]"
+        "matchesJsonPath": "[?($.forename =~ /joe/i)]"
       }
     ]
   },

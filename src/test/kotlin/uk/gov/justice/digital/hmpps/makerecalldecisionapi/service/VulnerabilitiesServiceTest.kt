@@ -44,7 +44,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(vulnerabilities.suicide?.risk).isEqualTo("Yes")
       assertThat(vulnerabilities.suicide?.previous).isEqualTo("Yes")
       assertThat(vulnerabilities.suicide?.previousConcernsText).isEqualTo("Previous risk of suicide concerns due to ...")
