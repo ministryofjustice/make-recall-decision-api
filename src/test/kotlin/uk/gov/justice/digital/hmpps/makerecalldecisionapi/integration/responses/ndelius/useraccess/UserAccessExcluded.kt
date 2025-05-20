@@ -4,6 +4,6 @@ fun userAccessExcludedResponse() = """
 {
     "userRestricted": false,
     "userExcluded": true,
-    "exclusionMessage": "You are excluded from viewing this offender record. Please contact OM John Smith"
+    "exclusionMessage": "You are excluded from viewing this offender record. Please contact OM Joe Bloggs"
 }
 """.trimIndent()

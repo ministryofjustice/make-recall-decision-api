@@ -125,7 +125,7 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
           "subCatCode": "NST14",
           "title": "Disclosure of information",
           "details": "Notify your supervising officer of any intimate relationships",
-          "note": "Persons wife is Joan Smyth"
+          "note": "Persons wife is Jane Bloggs"
         }
       ]
     }
@@ -148,10 +148,10 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "localPoliceContact": {
-    "contactName": "Thomas Magnum",
-    "phoneNumber": "555-0100",
-    "faxNumber": "555-0199",
-    "emailAddress": "thomas.magnum@gmail.com"
+    "contactName": "John Doe",
+    "phoneNumber": "01234567890",
+    "faxNumber": "09876543210",
+    "emailAddress": "john.doe@gmail.com"
   },
   "vulnerabilities": {
     "selected": [

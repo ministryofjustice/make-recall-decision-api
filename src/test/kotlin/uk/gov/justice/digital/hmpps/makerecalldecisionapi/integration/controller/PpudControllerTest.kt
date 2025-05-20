@@ -54,7 +54,7 @@ class PpudControllerTest : IntegrationTestBase() {
       val requestBody = "{" +
         "\"croNumber\": null, " +
         "\"nomsId\": \"A1234AB\", " +
-        "\"familyName\": \"Teal\", " +
+        "\"familyName\": \"Bloggs\", " +
         "\"dateOfBirth\": \"2000-01-01\"" +
         "}"
 
@@ -70,7 +70,7 @@ class PpudControllerTest : IntegrationTestBase() {
       val requestBody = "{" +
         "\"croNumber\": \"123456/12A\", " +
         "\"nomsId\": null, " +
-        "\"familyName\": \"Teal\", " +
+        "\"familyName\": \"Bloggs\", " +
         "\"dateOfBirth\": \"2000-01-01\"" +
         "}"
 
@@ -105,14 +105,14 @@ class PpudControllerTest : IntegrationTestBase() {
       croNumber = "A/2342",
       nomsId = "A897",
       prisonNumber = "123",
-      firstNames = "Spuddy",
-      familyName = "Spiffens",
+      firstNames = "Joe",
+      familyName = "Bloggs",
       indexOffence = "bad language",
       ethnicity = "W",
       gender = "M",
       mappaLevel = "",
       custodyType = "Determinate",
-      establishment = "The Kyln",
+      establishment = "HMP Brixton",
       isInCustody = true,
       dateOfBirth = LocalDate.of(2004, 1, 1),
       dateOfSentence = LocalDate.of(2004, 1, 2),
@@ -151,8 +151,8 @@ class PpudControllerTest : IntegrationTestBase() {
       croNumber = "A/2342",
       nomsId = "A897",
       prisonNumber = "123",
-      firstNames = "Spuddy",
-      familyName = "Spiffens",
+      firstNames = "Joe",
+      familyName = "Bloggs",
       ethnicity = "W",
       gender = "M",
       isInCustody = true,
@@ -165,7 +165,7 @@ class PpudControllerTest : IntegrationTestBase() {
         postcode = "",
         phoneNumber = "",
       ),
-      establishment = "The Kyln",
+      establishment = "HMP Brixton",
     )
     ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {
@@ -200,7 +200,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
-      sentencedUnder = "Duress",
+      sentencedUnder = "Legislation 123",
     )
     ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, "12345678")
     runTest {
@@ -223,7 +223,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
-      sentencedUnder = "Duress",
+      sentencedUnder = "Legislation 123",
     )
     ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
     runTest {
@@ -240,8 +240,8 @@ class PpudControllerTest : IntegrationTestBase() {
         "123",
         "456",
         PpudUpdateOffenceRequest(
-          indexOffence = "some dastardly deed",
-          indexOffenceComment = "some dastardly deed's comments",
+          indexOffence = "Index offence",
+          indexOffenceComment = "Index offence comments",
           dateOfIndexOffence = LocalDate.of(2016, 1, 1),
         ),
       )
@@ -272,7 +272,7 @@ class PpudControllerTest : IntegrationTestBase() {
         ),
       ),
       releasedFrom = "Hull",
-      releasedUnder = "Duress",
+      releasedUnder = "Legislation 123",
     )
     ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, "12345678")
     runTest {

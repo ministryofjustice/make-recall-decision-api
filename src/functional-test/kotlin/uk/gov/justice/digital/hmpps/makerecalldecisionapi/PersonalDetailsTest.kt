@@ -44,7 +44,7 @@ fun personalDetailsExpectation() = """
             "line1": "99 Oxford Road",
             "line2": "",
             "town": "Epsom",
-            "postcode": "SW16 1AF",
+            "postcode": "SW12 345",
             "noFixedAbode": false
         }
     ],

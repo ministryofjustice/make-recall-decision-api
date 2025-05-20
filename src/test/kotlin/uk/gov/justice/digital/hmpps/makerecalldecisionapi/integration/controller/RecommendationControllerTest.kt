@@ -57,8 +57,8 @@ class RecommendationControllerTest : IntegrationTestBase() {
     response
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
-      .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+      .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("Joe Michael Bloggs")
+      .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
       .jsonPath("$.personalDetailsOverview.dateOfBirth")
       .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
       .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -198,9 +198,9 @@ class RecommendationControllerTest : IntegrationTestBase() {
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
 
     assertThat(response.get("ppudRecordPresent")).isEqualTo(null)
-    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
+    assertThat(personOnProbation.get("name")).isEqualTo("Joe Bloggs")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
-    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Caucasian")
     assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
     assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
     assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
@@ -212,7 +212,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
     assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
     assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
     assertThat(address.get("town")).isEqualTo("Sheffield")
-    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("postcode")).isEqualTo("S12 345")
     assertThat(address.get("noFixedAbode")).isEqualTo(false)
   }
 
@@ -232,9 +232,9 @@ class RecommendationControllerTest : IntegrationTestBase() {
     assertThat(response.get("id")).isEqualTo(createdRecommendationId)
     assertThat(response.get("status")).isEqualTo("RECALL_CONSIDERED")
     val personOnProbation = JSONObject(response.get("personOnProbation").toString())
-    assertThat(personOnProbation.get("name")).isEqualTo("John Smith")
+    assertThat(personOnProbation.get("name")).isEqualTo("Joe Bloggs")
     assertThat(personOnProbation.get("gender")).isEqualTo("Male")
-    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Ainu")
+    assertThat(personOnProbation.get("ethnicity")).isEqualTo("Caucasian")
     assertThat(personOnProbation.get("primaryLanguage")).isEqualTo("English")
     assertThat(personOnProbation.get("dateOfBirth")).isEqualTo("1982-10-24")
     assertThat(personOnProbation.get("mostRecentPrisonerNumber")).isEqualTo("G12345")
@@ -246,7 +246,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
     assertThat(address.get("line1")).isEqualTo("HMPPS Digital Studio 33 Scotland Street")
     assertThat(address.get("line2")).isEqualTo("Sheffield City Centre")
     assertThat(address.get("town")).isEqualTo("Sheffield")
-    assertThat(address.get("postcode")).isEqualTo("S3 7BS")
+    assertThat(address.get("postcode")).isEqualTo("S12 345")
     assertThat(address.get("noFixedAbode")).isEqualTo(false)
     val recallConsideredList = JSONArray(response.get("recallConsideredList").toString())
     val recallConsidered = JSONObject(recallConsideredList.get(0).toString())
@@ -486,7 +486,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //    personalDetailsResponseOneTimeOnly(crn)
 //    oasysAssessmentsResponse(crn)
 //    deleteAndCreateRecommendation()
-//    recommendationModelResponse(crn = crn, delaySeconds = 0L, firstName = "Arthur")
+//    recommendationModelResponse(crn = crn, delaySeconds = 0L, firstName = "Joe")
 //    roSHSummaryResponse(crn)
 //    updateRecommendation(updateRecommendationRequest(), "previousReleases, previousRecalls, mappa, indexOffenceDetails, convictionDetail, personOnProbation, riskOfSeriousHarm")
 //    updateRecommendation(secondUpdateRecommendationRequest())
@@ -519,7 +519,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.isThisAnEmergencyRecall").isEqualTo(true)
 //      .jsonPath("$.isExtendedSentence").isEqualTo(true)
 //      .jsonPath("$.isIndeterminateSentence").isEqualTo(true)
-//      .jsonPath("$.indexOffenceDetails").isEqualTo("Juicy offence details.")
+//      .jsonPath("$.indexOffenceDetails").isEqualTo("Offence details.")
 //      .jsonPath("$.activeCustodialConvictionCount").isEqualTo(1)
 //      .jsonPath("$.hasVictimsInContactScheme.selected").isEqualTo("YES")
 //      .jsonPath("$.hasVictimsInContactScheme.allOptions[0].value").isEqualTo("YES")
@@ -529,7 +529,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.hasVictimsInContactScheme.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
 //      .jsonPath("$.hasVictimsInContactScheme.allOptions[2].text").isEqualTo("N/A")
 //      .jsonPath("$.dateVloInformed").isEqualTo("2022-08-01")
-//      .jsonPath("$.personOnProbation.name").isEqualTo("Arthur Smith")
+//      .jsonPath("$.personOnProbation.name").isEqualTo("Joe Bloggs")
 //      .jsonPath("$.personOnProbation.gender").isEqualTo("Male")
 //      .jsonPath("$.personOnProbation.primaryLanguage").isEqualTo("English")
 //      .jsonPath("$.personOnProbation.hasBeenReviewed").isEqualTo(true)
@@ -564,7 +564,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[0].subCatCode").isEqualTo("NST14")
 //      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].title").isEqualTo("Disclosure of information")
 //      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].details").isEqualTo("Notify your supervising officer of any intimate relationships")
-//      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].note").isEqualTo("Persons wife is Joan Smyth")
+//      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].note").isEqualTo("Persons wife is Jane Bloggs")
 //      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].mainCatCode").isEqualTo("NLC5")
 //      .jsonPath("$.licenceConditionsBreached.additionalLicenceConditions.allOptions[0].subCatCode").isEqualTo("NST14")
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.selected").isEqualTo("YES")
@@ -574,10 +574,10 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[1].value").isEqualTo("NO")
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].text").isEqualTo("N/A")
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
-//      .jsonPath("$.localPoliceContact.contactName").isEqualTo("Thomas Magnum")
-//      .jsonPath("$.localPoliceContact.phoneNumber").isEqualTo("555-0100")
-//      .jsonPath("$.localPoliceContact.faxNumber").isEqualTo("555-0199")
-//      .jsonPath("$.localPoliceContact.emailAddress").isEqualTo("thomas.magnum@gmail.com")
+//      .jsonPath("$.localPoliceContact.contactName").isEqualTo("John Doe")
+//      .jsonPath("$.localPoliceContact.phoneNumber").isEqualTo("01234567890")
+//      .jsonPath("$.localPoliceContact.faxNumber").isEqualTo("09876543210")
+//      .jsonPath("$.localPoliceContact.emailAddress").isEqualTo("john.doe@gmail.com")
 //      .jsonPath("$.vulnerabilities.selected[0].value").isEqualTo("RISK_OF_SUICIDE_OR_SELF_HARM")
 //      .jsonPath("$.vulnerabilities.selected[0].details").isEqualTo("Risk of suicide")
 //      .jsonPath("$.vulnerabilities.selected[1].value").isEqualTo("RELATIONSHIP_BREAKDOWN")
@@ -616,7 +616,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.indeterminateOrExtendedSentenceDetails.allOptions[2].text").isEqualTo("Out of touch")
 //      .jsonPath("$.indeterminateOrExtendedSentenceDetails.allOptions[2].value").isEqualTo("OUT_OF_TOUCH")
 //      .jsonPath("$.isMainAddressWherePersonCanBeFound.selected").isEqualTo(false)
-//      .jsonPath("$.isMainAddressWherePersonCanBeFound.details").isEqualTo("123 Acacia Avenue, Birmingham, B23 1AV")
+//      .jsonPath("$.isMainAddressWherePersonCanBeFound.details").isEqualTo("123 Oak Avenue, Birmingham, B23 1AV")
 //      .jsonPath("$.whyConsideredRecall.selected").isEqualTo("RISK_INCREASED")
 //      .jsonPath("$.whyConsideredRecall.allOptions[0].value").isEqualTo("RISK_INCREASED")
 //      .jsonPath("$.whyConsideredRecall.allOptions[0].text").isEqualTo("Your risk is assessed as increased")
@@ -791,7 +791,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .expectStatus().isOk,
     )
 
-    assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Smith_J_A12345.docx")
+    assertThat(response.get("fileName")).isEqualTo("No_Recall_" + nowDate() + "_Bloggs_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrn(crn)
@@ -802,7 +802,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
     )
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.line2, equalTo("Sheffield City Centre"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.town, equalTo("Sheffield"))
-    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S3 7BS"))
+    assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.postcode, equalTo("S12 345"))
     assertThat(result[0].data.personOnProbation?.addresses?.get(0)?.noFixedAbode, equalTo(false))
 
     assertNotNull(result[0].data.lastDntrLetterADownloadDateTime)
@@ -835,10 +835,10 @@ class RecommendationControllerTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .jsonPath("$.letterContent.letterAddress")
-      .isEqualTo("John Smith\nHMPPS Digital Studio 33 Scotland Street\nSheffield City Centre\nSheffield\nS3 7BS")
+      .isEqualTo("Joe Bloggs\nHMPPS Digital Studio 33 Scotland Street\nSheffield City Centre\nSheffield\nS12 345")
       .jsonPath("$.letterContent.letterDate")
       .isEqualTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-      .jsonPath("$.letterContent.salutation").isEqualTo("Dear John Smith,")
+      .jsonPath("$.letterContent.salutation").isEqualTo("Dear Joe Bloggs,")
       .jsonPath("$.letterContent.letterTitle").isEqualTo("DECISION NOT TO RECALL")
       .jsonPath("$.letterContent.section1").isEqualTo(
         "I am writing to you because you have breached your licence conditions in such a way that .\n\n" +
@@ -889,7 +889,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .expectStatus().isOk,
     )
 
-    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
+    assertThat(response.get("fileName")).isEqualTo("NAT_Recall_Part_A_" + nowDate() + "_Bloggs_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrn(crn)
@@ -929,7 +929,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .expectStatus().isOk,
     )
 
-    assertThat(response.get("fileName")).isEqualTo("Preview_NAT_Recall_Part_A_" + nowDate() + "_Smith_J_A12345.docx")
+    assertThat(response.get("fileName")).isEqualTo("Preview_NAT_Recall_Part_A_" + nowDate() + "_Bloggs_J_A12345.docx")
     assertNotNull(response.get("fileContents"))
 
     val result = repository.findByCrn(crn)
@@ -986,8 +986,8 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("John Homer Bart Smith")
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.fullName").isEqualTo("Joe Michael Bloggs")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -1070,7 +1070,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage")
-        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }
@@ -1092,7 +1092,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage")
-        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }
@@ -1158,7 +1158,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
         .jsonPath("$.userAccessResponse.exclusionMessage")
-        .isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .isEqualTo("You are excluded from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
     }
   }

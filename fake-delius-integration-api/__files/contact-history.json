@@ -12,7 +12,7 @@
   "contacts": [
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
       "startDateTime": "2022-06-03T08:00:00+01:00",
       "type": {
         "code": "ERGR",
@@ -22,7 +22,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nTransfer Reason: Automatic Transfer\nTransfer Date: 05/05/2022",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 14:53\nTransfer Reason: Automatic Transfer\nTransfer Date: 05/05/2022",
       "startDateTime": "2022-05-05T00:00:00+01:00",
       "type": {
         "code": "EPOMAT",
@@ -32,7 +32,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nNew Details:\nResponsible Officer Type: Prison Offender Manager\nResponsible Officer: Unallocated (All Staff, Unallocated)\nStart Date: 05/05/2022 14:53:22\nAllocation Reason: Automatic Transfer",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 14:53\nNew Details:\nResponsible Officer Type: Prison Offender Manager\nResponsible Officer: Unallocated (All Staff, Unallocated)\nStart Date: 05/05/2022 14:53:22\nAllocation Reason: Automatic Transfer",
       "startDateTime": "2022-05-05T00:00:00+01:00",
       "type": {
         "code": "ROC",
@@ -63,7 +63,7 @@
     {
       "description": "sent letter for licence compliance",
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 19:01\nMr Edwin said in our regular meeting that he'd had to go into a pub to charge his phone behind the bar and didn't drink anything. Didn't represent an increase in risk so sending licence compliance letter",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 19:01\nMr Edwin said in our regular meeting that he'd had to go into a pub to charge his phone behind the bar and didn't drink anything. Didn't represent an increase in risk so sending licence compliance letter",
       "sensitive": false,
       "startDateTime": "2022-04-05T14:02:00+01:00",
       "type": {
@@ -74,7 +74,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 06/05/2022 at 13:11\nspoke to SPO about Charles Edwin, recommended against recall because CE was in pub but did not drink anything.",
+      "notes": "Comment added by André Bloggs on 06/05/2022 at 13:11\nspoke to SPO about Charles Edwin, recommended against recall because CE was in pub but did not drink anything.",
       "sensitive": false,
       "startDateTime": "2022-04-05T13:15:00+01:00",
       "type": {
@@ -95,7 +95,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nNext Review Date: 03/06/2022 08:00:00\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 17:45\nType: Public Protection - MAPPA\nNext Review Date: 03/06/2022 08:00:00\nLevel: MAPPA Level 3\nCategory: MAPPA Cat 3\nNotes: Please Note - Category 3 offenders require multi-agency management at Level 2 or 3 and should not be recorded at Level 1.",
       "startDateTime": "2022-03-03T00:00:00Z",
       "type": {
         "code": "ERGN",
@@ -105,7 +105,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 18:52\nCustodial Status: Sentenced - In Custody\nCustodial Establishment: Wakefield (HMP)\nLocation Change Date: Tue Mar 01 00:00:00 GMT 2022",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 18:52\nCustodial Status: Sentenced - In Custody\nCustodial Establishment: Wakefield (HMP)\nLocation Change Date: Tue Mar 01 00:00:00 GMT 2022",
       "startDateTime": "2022-03-01T00:00:00Z",
       "type": {
         "code": "ETCP",
@@ -115,7 +115,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 18:52\nRelease Type: Adult Licence",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 18:52\nRelease Type: Adult Licence",
       "startDateTime": "2022-03-01T00:00:00Z",
       "type": {
         "code": "EREL",
@@ -125,7 +125,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nOrder: ORA Adult Custody (not PSS)\nLength: 36 Months",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 14:53\nOrder: ORA Adult Custody (not PSS)\nLength: 36 Months",
       "startDateTime": "2021-10-01T00:00:00+01:00",
       "type": {
         "code": "ECOM",
@@ -135,7 +135,7 @@
     },
     {
       "documents": [],
-      "notes": "Comment added by André Petheram on 05/05/2022 at 14:53\nMain Offence: Assaults occasioning actual bodily harm - 00806 (x1) on 01/07/2021\nCourt: Wood Green Crown Court\nAppearance Type: Sentence\nOutcome: ORA Adult Custody (not PSS)",
+      "notes": "Comment added by André Bloggs on 05/05/2022 at 14:53\nMain Offence: Assaults occasioning actual bodily harm - 00806 (x1) on 01/07/2021\nCourt: Wood Green Crown Court\nAppearance Type: Sentence\nOutcome: ORA Adult Custody (not PSS)",
       "startDateTime": "2021-10-01T00:00:00+01:00",
       "type": {
         "code": "EAPP",

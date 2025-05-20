@@ -3,7 +3,7 @@
     "name": {
       "forename": "Harry",
       "middleName": "Tom",
-      "surname": "Smith"
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X098092",
@@ -38,7 +38,7 @@
     "noFixedAbode": false,
     "buildingName": null,
     "addressNumber": "3764",
-    "streetName": "Elvis Presley Boulevard",
+    "streetName": "Oak Boulevard",
     "district": "Memphis",
     "town": "Tennessee",
     "postcode": "12345"

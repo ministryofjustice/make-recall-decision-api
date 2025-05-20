@@ -36,12 +36,12 @@ class PrisonApiControllerTest : IntegrationTestBase() {
   fun `retrieves offender details`() {
     runTest {
       val nomsId = "A123456"
-      val locationDescription = "Leeds, clearly Leeds"
+      val locationDescription = "Leeds"
       val facialImageId = "1234"
-      val agencyId = "KLN"
+      val agencyId = "BRX"
       prisonApiOffenderMatchResponse(nomsId, locationDescription, facialImageId, agencyId)
       prisonApiImageResponse(facialImageId, "data")
-      val agencyDescription = "The Kyln"
+      val agencyDescription = "HMP Brixton"
       mockPrisonApiAgencyResponse(agencyId, agency(description = agencyDescription))
 
       val response = convertResponseToJSONObject(

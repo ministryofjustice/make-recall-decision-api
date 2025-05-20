@@ -44,8 +44,8 @@ class SupportingDocumentServiceTest {
         mimetype = "word",
         filename = "word.docx",
         created = created,
-        createdBy = "daman",
-        createdByUserFullName = "Inspector Morris",
+        createdBy = "user1",
+        createdByUserFullName = "Inspector Bloggs",
         uploadedBy = null,
         uploadedByUserFullName = null,
         type = "PPUDPartA",
@@ -60,8 +60,8 @@ class SupportingDocumentServiceTest {
       mimetype = "word",
       filename = "word.docx",
       created = created,
-      createdBy = "daman",
-      createdByUserFullName = "Inspector Morris",
+      createdBy = "user1",
+      createdByUserFullName = "Inspector Bloggs",
       data = "VGhlIGhpbGxzIGFyZSBhbGl2ZSB3aXRoIHRoZXQgc291bmQgb2YgbXVzaWM=",
       flags = FeatureFlags(),
     )
@@ -81,11 +81,11 @@ class SupportingDocumentServiceTest {
     assertThat(entity.mimetype).isEqualTo("word")
     assertThat(entity.filename).isEqualTo("word.docx")
     assertThat(entity.created).isEqualTo(created)
-    assertThat(entity.createdBy).isEqualTo("daman")
-    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.createdBy).isEqualTo("user1")
+    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Bloggs")
     assertThat(entity.uploaded).isEqualTo(created)
-    assertThat(entity.uploadedBy).isEqualTo("daman")
-    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.uploadedBy).isEqualTo("user1")
+    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Bloggs")
     assertThat(entity.documentUuid).isEqualTo(documentUuid)
   }
 
@@ -103,14 +103,14 @@ class SupportingDocumentServiceTest {
           id = 1,
           recommendationId = 123,
           title = "title",
-          createdBy = "daman",
-          createdByUserFullName = "Inspector Morris",
+          createdBy = "user1",
+          createdByUserFullName = "Inspector Bloggs",
           created = created,
           filename = "word.docx",
           type = "PPUDPartA",
           mimetype = "word",
-          uploadedBy = "daman",
-          uploadedByUserFullName = "Inspector Morris",
+          uploadedBy = "user1",
+          uploadedByUserFullName = "Inspector Bloggs",
           uploaded = created,
         ),
       ),
@@ -127,11 +127,11 @@ class SupportingDocumentServiceTest {
 
     assertThat(entity.filename).isEqualTo("word.docx")
     assertThat(entity.created).isEqualTo(created)
-    assertThat(entity.createdBy).isEqualTo("daman")
-    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.createdBy).isEqualTo("user1")
+    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Bloggs")
     assertThat(entity.uploaded).isEqualTo(created)
-    assertThat(entity.uploadedBy).isEqualTo("daman")
-    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.uploadedBy).isEqualTo("user1")
+    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Bloggs")
   }
 
   @Test
@@ -154,14 +154,14 @@ class SupportingDocumentServiceTest {
           documentUuid = documentUuid,
           recommendationId = 123,
           title = "title",
-          createdBy = "daman",
-          createdByUserFullName = "Inspector Morris",
+          createdBy = "user1",
+          createdByUserFullName = "Inspector Bloggs",
           created = created,
           filename = "word.docx",
           type = "PPUDPartA",
           mimetype = "word",
-          uploadedBy = "daman",
-          uploadedByUserFullName = "Inspector Morris",
+          uploadedBy = "user1",
+          uploadedByUserFullName = "Inspector Bloggs",
           uploaded = created,
         ),
       ),
@@ -171,8 +171,8 @@ class SupportingDocumentServiceTest {
       123,
       mimetype = "word2",
       title = "title",
-      uploadedBy = "daman2",
-      uploadedByUserFullName = "Inspector Morris2",
+      uploadedBy = "user12",
+      uploadedByUserFullName = "Inspector Bloggs2",
       uploaded = created,
       data = "VGhlIGhpbGxzIGFyZSBhbGl2ZSB3aXRoIHRoZXQgc291bmQgb2YgbXVzaWM=",
       filename = "word.docx",
@@ -190,11 +190,11 @@ class SupportingDocumentServiceTest {
     assertThat(entity.mimetype).isEqualTo("word2")
     assertThat(entity.filename).isEqualTo("word.docx")
     assertThat(entity.created).isEqualTo(created)
-    assertThat(entity.createdBy).isEqualTo("daman")
-    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.createdBy).isEqualTo("user1")
+    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Bloggs")
     assertThat(entity.uploaded).isEqualTo(created)
-    assertThat(entity.uploadedBy).isEqualTo("daman2")
-    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
+    assertThat(entity.uploadedBy).isEqualTo("user12")
+    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Bloggs2")
   }
 
   @Test
@@ -210,14 +210,14 @@ class SupportingDocumentServiceTest {
           id = 1,
           recommendationId = 123,
           title = "title",
-          createdBy = "daman",
-          createdByUserFullName = "Inspector Morris",
+          createdBy = "user1",
+          createdByUserFullName = "Inspector Bloggs",
           created = created,
           filename = "word.docx",
           type = "PPUDPartA",
           mimetype = "word",
-          uploadedBy = "daman",
-          uploadedByUserFullName = "Inspector Morris",
+          uploadedBy = "user1",
+          uploadedByUserFullName = "Inspector Bloggs",
           uploaded = created,
           documentUuid = UUID.fromString("61fa04ae-1046-4a63-8249-b04f42620d07"),
         ),
@@ -228,8 +228,8 @@ class SupportingDocumentServiceTest {
       123,
       mimetype = null,
       title = "title 2",
-      uploadedBy = "daman2",
-      uploadedByUserFullName = "Inspector Morris2",
+      uploadedBy = "user12",
+      uploadedByUserFullName = "Inspector Bloggs2",
       uploaded = created,
       data = null,
       filename = null,
@@ -248,11 +248,11 @@ class SupportingDocumentServiceTest {
     assertThat(entity.mimetype).isEqualTo("word")
     assertThat(entity.filename).isEqualTo("word.docx")
     assertThat(entity.created).isEqualTo(created)
-    assertThat(entity.createdBy).isEqualTo("daman")
-    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Morris")
+    assertThat(entity.createdBy).isEqualTo("user1")
+    assertThat(entity.createdByUserFullName).isEqualTo("Inspector Bloggs")
     assertThat(entity.uploaded).isEqualTo(created)
-    assertThat(entity.uploadedBy).isEqualTo("daman2")
-    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Morris2")
+    assertThat(entity.uploadedBy).isEqualTo("user12")
+    assertThat(entity.uploadedByUserFullName).isEqualTo("Inspector Bloggs2")
     assertThat(entity.data).isNull()
   }
 
@@ -263,7 +263,7 @@ class SupportingDocumentServiceTest {
     val client = Mockito.mock(DocumentManagementClient::class.java)
 
     given(client.downloadFileAsByteArray(Mockito.any(), Mockito.any()))
-      .willReturn(Mono.just("The hills are alive with thet sound of music".encodeToByteArray()))
+      .willReturn(Mono.just("Document contents".encodeToByteArray()))
 
     val created = DateTimeHelper.utcNowDateTimeString()
 
@@ -273,16 +273,16 @@ class SupportingDocumentServiceTest {
           id = 1,
           recommendationId = 123,
           title = "title",
-          createdBy = "daman",
-          createdByUserFullName = "Inspector Morris",
+          createdBy = "user1",
+          createdByUserFullName = "Inspector Bloggs",
           created = created,
           filename = "word.docx",
           type = "PPUDPartA",
           mimetype = "word",
-          uploadedBy = "daman",
-          uploadedByUserFullName = "Inspector Morris",
+          uploadedBy = "user1",
+          uploadedByUserFullName = "Inspector Bloggs",
           uploaded = created,
-          data = "The hills are alive with thet sound of music".encodeToByteArray(),
+          data = "Document contents".encodeToByteArray(),
         ),
       ),
     )
@@ -292,6 +292,6 @@ class SupportingDocumentServiceTest {
     assertThat(entity.recommendationId).isEqualTo(123)
     assertThat(entity.type).isEqualTo("PPUDPartA")
     assertThat(entity.filename).isEqualTo("word.docx")
-    assertThat(entity.data).isEqualTo("VGhlIGhpbGxzIGFyZSBhbGl2ZSB3aXRoIHRoZXQgc291bmQgb2YgbXVzaWM=")
+    assertThat(entity.data).isEqualTo("RG9jdW1lbnQgY29udGVudHM=")
   }
 }

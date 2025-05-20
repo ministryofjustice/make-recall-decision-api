@@ -120,7 +120,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(riskOfSeriousHarm.overallRisk).isEqualTo("HIGH")
       assertThat(riskOfSeriousHarm.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
       assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPublic).isEqualTo("HIGH")
@@ -194,7 +194,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(shouldBeTrueBecauseNoLaterCompleteAssessmentExists).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(true)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(response?.offenceDescription).isEqualTo("Offence details.")
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -243,7 +243,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(false)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(response?.offenceDescription).isEqualTo("Offence details.")
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -288,7 +288,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(false)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(response?.offenceDescription).isEqualTo("Offence details.")
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -335,7 +335,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(shouldBeFalseBecauseLaterCompleteAssessmentExists).isEqualTo(false)
       assertThat(response?.offencesMatch).isEqualTo(false)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(response?.offenceDescription).isEqualTo("Offence details.")
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -380,7 +380,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(response?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(response?.offencesMatch).isEqualTo(false)
-      assertThat(response?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(response?.offenceDescription).isEqualTo("Offence details.")
       then(arnApiClient).should().getAssessments(crn)
     }
   }
@@ -519,7 +519,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age)
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(mappa).isEqualTo(null)
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)

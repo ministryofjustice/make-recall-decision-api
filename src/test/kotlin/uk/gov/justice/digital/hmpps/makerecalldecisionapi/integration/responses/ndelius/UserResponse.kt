@@ -6,9 +6,9 @@ fun userResponse(username: String, email: String) = """
   "email": "$email",
   "staffCode": "TEST01",
   "name": {
-    "forename": "John",
+    "forename": "Joe",
     "middleName": null,
-    "surname": "Smith"
+    "surname": "Bloggs"
   }
 }
 """.trimIndent()

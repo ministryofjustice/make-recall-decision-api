@@ -26,7 +26,7 @@ class PrisonApiClientTest : IntegrationTestBase() {
     // given
     val nomsId = "12345"
 
-    prisonApiOffenderMatchResponse(nomsId, "Outside - released from Leeds", "1234", "KLN")
+    prisonApiOffenderMatchResponse(nomsId, "Outside - released from Leeds", "1234", "LDS")
 
     // when
     val actual = prisonApiClient.retrieveOffender(nomsId).block()

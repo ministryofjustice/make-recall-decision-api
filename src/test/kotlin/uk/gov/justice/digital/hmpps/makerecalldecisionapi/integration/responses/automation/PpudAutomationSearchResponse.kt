@@ -7,8 +7,8 @@ fun ppudAutomationSearchResponse(nomsId: String, croNumber: String) = """
       "id": "4F6666656E64657269643D313731383138G725H664",
       "croNumber": "$croNumber",
       "nomsId": "$nomsId",
-      "firstNames": "John",
-      "familyName": "Teal",
+      "firstNames": "Joe",
+      "familyName": "Bloggs",
       "dateOfBirth": "2000-01-01"
     }
   ]

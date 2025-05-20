@@ -64,8 +64,8 @@ class ArnApiClientTest : IntegrationTestBase() {
       offenceDetails = listOf(
         AssessmentOffenceDetail(
           type = "NOT_CURRENT",
-          offenceCode = "88",
-          offenceSubCode = "88",
+          offenceCode = "56",
+          offenceSubCode = "78",
           offenceDate = "2022-04-24T20:39:47",
         ),
         AssessmentOffenceDetail(
@@ -84,7 +84,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       laterPartCompUnsignedAssessmentExists = false,
       laterPartCompSignedAssessmentExists = false,
       laterCompleteAssessmentExists = false,
-      offence = "Juicy offence details.",
+      offence = "Offence details.",
       keyConsiderationsCurrentSituation = null,
       furtherConsiderationsCurrentSituation = null,
       supervision = null,
@@ -111,7 +111,7 @@ class ArnApiClientTest : IntegrationTestBase() {
       laterPartCompUnsignedAssessmentExists = false,
       laterPartCompSignedAssessmentExists = false,
       laterCompleteAssessmentExists = false,
-      offence = "Not so juicy offence details.",
+      offence = "Different offence details.",
       keyConsiderationsCurrentSituation = null,
       furtherConsiderationsCurrentSituation = null,
       supervision = null,

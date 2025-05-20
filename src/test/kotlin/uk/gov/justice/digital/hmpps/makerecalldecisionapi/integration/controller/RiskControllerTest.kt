@@ -52,7 +52,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -90,7 +90,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -123,7 +123,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -156,7 +156,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -186,7 +186,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -239,7 +239,7 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.isSentToDelius").isEqualTo(false)
-        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("John Smith")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("Joe Bloggs")
         .jsonPath("$.activeRecommendation.managerRecallDecision.createdDate").isEqualTo("2023-01-01T15:00:08.000Z")
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
@@ -265,7 +265,7 @@ class RiskControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth")
         .isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
@@ -379,7 +379,7 @@ class RiskControllerTest(
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.isSentToDelius").isEqualTo(false)
-        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("John Smith")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("Joe Bloggs")
         .jsonPath("$.activeRecommendation.managerRecallDecision.createdDate").isEqualTo("2023-01-01T15:00:08.000Z")
         .jsonPath("$.assessmentStatus").isEqualTo("COMPLETE")
     }
@@ -428,7 +428,7 @@ class RiskControllerTest(
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(true)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(false)
         .jsonPath("$.userAccessResponse.restrictionMessage")
-        .isEqualTo("You are restricted from viewing this offender record. Please contact OM John Smith")
+        .isEqualTo("You are restricted from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.exclusionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
         .jsonPath("$.mappa").isEqualTo(null)

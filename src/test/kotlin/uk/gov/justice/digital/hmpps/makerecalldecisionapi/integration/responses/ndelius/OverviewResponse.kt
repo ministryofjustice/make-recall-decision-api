@@ -4,9 +4,9 @@ fun overviewResponse() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun overviewResponse() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],
@@ -52,9 +52,9 @@ fun overviewResponseNonCustodial() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -65,7 +65,7 @@ fun overviewResponseNonCustodial() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],
@@ -99,9 +99,9 @@ fun overviewResponseNoConvictions() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -112,7 +112,7 @@ fun overviewResponseNoConvictions() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],

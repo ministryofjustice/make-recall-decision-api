@@ -4,9 +4,9 @@ fun licenceResponseMultipleConvictions() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun licenceResponseMultipleConvictions() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "activeConvictions": [

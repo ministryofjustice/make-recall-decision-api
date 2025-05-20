@@ -1,12 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius
 
-fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstName: String? = "John", nomisId: String? = "A1234CR") = """
+fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstName: String? = "Joe", nomisId: String? = "A1234CR") = """
 {
   "personalDetails": {
     "name": {
       "forename": "$firstName",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstNa
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "mainAddress": {
@@ -27,15 +27,15 @@ fun personalDetailsResponse(district: String? = "Sheffield City Centre", firstNa
     "district": "$district",
     "town": "Sheffield",
     "county": "South Yorkshire",
-    "postcode": "S3 7BS",
+    "postcode": "S12 345",
     "noFixedAbode": false
   },
   "communityManager": {
     "staffCode": "AN001A",
     "name": {
-      "forename": "Sheila",
+      "forename": "Jane",
       "middleName": "Linda",
-      "surname": "Hancock"
+      "surname": "Bloggs"
     },
     "provider": {
       "code": "N01",

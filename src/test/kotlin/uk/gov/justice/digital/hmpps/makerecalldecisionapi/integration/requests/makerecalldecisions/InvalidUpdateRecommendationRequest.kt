@@ -153,7 +153,7 @@ fun invalidUpdateRecommendationRequest(status: Status = Status.DRAFT) = """
           "subCatCode": "NST14",
           "title": "Disclosure of information",
           "details": "Notify your supervising officer of any intimate relationships",
-          "note": "Persons wife is Joan Smyth"
+          "note": "Persons wife is Jane Bloggs"
         }
       ]
     }
@@ -176,10 +176,10 @@ fun invalidUpdateRecommendationRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "localPoliceContact": {
-    "contactName": "Thomas Magnum",
-    "phoneNumber": "555-0100",
-    "faxNumber": "555-0199",
-    "emailAddress": "thomas.magnum@gmail.com"
+    "contactName": "John Doe",
+    "phoneNumber": "01234567890",
+    "faxNumber": "09876543210",
+    "emailAddress": "john.doe@gmail.com"
   },
   "vulnerabilities": {
     "selected": [
@@ -239,7 +239,7 @@ fun invalidUpdateRecommendationRequest(status: Status = Status.DRAFT) = """
   },
   "isMainAddressWherePersonCanBeFound": {
     "selected": false,
-    "details": "123 Acacia Avenue, Birmingham, B23 1AV"
+    "details": "123 Oak Avenue, Birmingham, B23 1AV"
   },
   "whyConsideredRecall": {
     "selected": "RISK_INCREASED",

@@ -34,7 +34,7 @@ class VulnerabilitiesControllerTest(
         .exchange()
         .expectStatus().isOk
         .expectBody()
-        .jsonPath("$.personalDetailsOverview.name").isEqualTo("John Smith")
+        .jsonPath("$.personalDetailsOverview.name").isEqualTo("Joe Bloggs")
         .jsonPath("$.personalDetailsOverview.dateOfBirth").isEqualTo(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .jsonPath("$.personalDetailsOverview.age").isEqualTo(Period.between(dateOfBirth, LocalDate.now()).years)
         .jsonPath("$.personalDetailsOverview.gender").isEqualTo("Male")
@@ -82,7 +82,7 @@ class VulnerabilitiesControllerTest(
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].value").isEqualTo("RECALL")
         .jsonPath("$.activeRecommendation.managerRecallDecision.allOptions[0].text").isEqualTo("Recall")
         .jsonPath("$.activeRecommendation.managerRecallDecision.isSentToDelius").isEqualTo(false)
-        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("John Smith")
+        .jsonPath("$.activeRecommendation.managerRecallDecision.createdBy").isEqualTo("Joe Bloggs")
         .jsonPath("$.activeRecommendation.managerRecallDecision.createdDate").isEqualTo("2023-01-01T15:00:08.000Z")
     }
   }
@@ -100,7 +100,7 @@ class VulnerabilitiesControllerTest(
         .expectBody()
         .jsonPath("$.userAccessResponse.userRestricted").isEqualTo(false)
         .jsonPath("$.userAccessResponse.userExcluded").isEqualTo(true)
-        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM John Smith")
+        .jsonPath("$.userAccessResponse.exclusionMessage").isEqualTo("You are excluded from viewing this offender record. Please contact OM Joe Bloggs")
         .jsonPath("$.userAccessResponse.restrictionMessage").isEmpty
         .jsonPath("$.personalDetailsOverview").isEmpty
     }

@@ -7,8 +7,8 @@ fun licenceMatchResponse(nomisId: String, crn: String, licenceStatus: String? = 
     "licenceType": "AP",
     "licenceStatus": "$licenceStatus",
     "nomisId": "$nomisId",
-    "surname": "Smith",
-    "forename": "Brian",
+    "surname": "Bloggs",
+    "forename": "Joe",
     "prisonCode": "MDI",
     "prisonDescription": "Moorland (HMP)",
     "probationAreaCode": "N01",
@@ -23,7 +23,7 @@ fun licenceMatchResponse(nomisId: String, crn: String, licenceStatus: String? = 
     "actualReleaseDate": "2022-10-19",
     "crn": "$crn",
     "dateOfBirth": "1987-10-19",
-    "comUsername": "jsmith",
+    "comUsername": "jdoe",
     "bookingId": 773722,
     "dateCreated": "2022-10-19T16:13:29.274Z"
   }

@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "get-offender-movements-Harry-Smith.json",
+    "bodyFileName": "get-offender-movements-Harry-Bloggs.json",
     "headers": {
       "Content-Type": "application/json"
     }

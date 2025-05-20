@@ -58,7 +58,7 @@ internal class PrisonerApiServiceTest {
     val nomsId = "AB234A"
 
     val response = Offender(
-      agencyId = "KLN",
+      agencyId = "BRX",
       facialImageId = 1,
     )
 
@@ -68,7 +68,7 @@ internal class PrisonerApiServiceTest {
       },
     )
 
-    val expectedAgencyDescription = "The Kyln"
+    val expectedAgencyDescription = "HMP Brixton"
     given(prisonApiClient.retrieveAgency(response.agencyId!!)).willReturn(
       Mono.fromCallable {
         Agency(description = expectedAgencyDescription)
@@ -127,7 +127,7 @@ internal class PrisonerApiServiceTest {
     val nomsId = "AB234A"
 
     val response = Offender(
-      agencyId = "KLN",
+      agencyId = "BRX",
       facialImageId = 1,
     )
 
@@ -468,7 +468,7 @@ internal class PrisonerApiServiceTest {
     given(prisonApiClient.retrieveAgency("A1234")).willReturn(
       Mono.fromCallable {
         Agency(
-          longDescription = "Hogwarts",
+          longDescription = "Prison A1234",
         )
       },
     )
@@ -479,11 +479,11 @@ internal class PrisonerApiServiceTest {
           locationDescription = "",
           bookingNo = "",
           facialImageId = 0,
-          firstName = "Robert",
+          firstName = "Joe",
           middleName = "A",
-          lastName = "Buchanan",
+          lastName = "Bloggs",
           dateOfBirth = LocalDate.now().minusYears(45),
-          agencyId = "KLN",
+          agencyId = "BRX",
           status = "",
           physicalAttributes = PhysicalAttributes(gender = "M", ethnicity = "Caucasian"),
           identifiers = listOf(),
@@ -498,7 +498,7 @@ internal class PrisonerApiServiceTest {
 
     assertThat(result[0].courtDescription).isEqualTo("DEF")
     assertThat(result[0].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
-    assertThat(result[0].releasingPrison).isEqualTo("Hogwarts")
+    assertThat(result[0].releasingPrison).isEqualTo("Prison A1234")
     assertThat(result[0].licenceExpiryDate).isEqualTo(LocalDate.now())
   }
 

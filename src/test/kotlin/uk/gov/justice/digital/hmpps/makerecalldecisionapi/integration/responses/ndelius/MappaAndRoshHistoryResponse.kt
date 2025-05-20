@@ -4,9 +4,9 @@ fun deliusMappaAndRoshHistoryResponse(mappaLevel: Int = 1, mappaCategory: Int = 
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -17,7 +17,7 @@ fun deliusMappaAndRoshHistoryResponse(mappaLevel: Int = 1, mappaCategory: Int = 
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "mappa": {
@@ -41,9 +41,9 @@ fun deliusRoshHistoryOnlyResponse(mappaLevel: Int = 1, mappaCategory: Int = 0) =
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -54,7 +54,7 @@ fun deliusRoshHistoryOnlyResponse(mappaLevel: Int = 1, mappaCategory: Int = 0) =
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "roshHistory": [
@@ -73,9 +73,9 @@ fun deliusNoMappaOrRoshHistoryResponse() = """
 {
   "personalDetails": {
     "name": {
-      "forename": "John",
-      "middleName": "Homer Bart",
-      "surname": "Smith"
+      "forename": "Joe",
+      "middleName": "Michael",
+      "surname": "Bloggs"
     },
     "identifiers": {
       "crn": "X000001",
@@ -86,7 +86,7 @@ fun deliusNoMappaOrRoshHistoryResponse() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Ainu",
+    "ethnicity": "Caucasian",
     "primaryLanguage": "English"
   },
   "roshHistory": []

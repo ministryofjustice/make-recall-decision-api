@@ -19,7 +19,7 @@ class DeleteRecommendationRationaleControllerTest : IntegrationTestBase() {
     updateRecommendation()
     createOrUpdateRecommendationStatus(
       activate = listOf("REC_DELETED"),
-      subject = "prince herbert",
+      subject = "Joe Bloggs",
     )
     softDeleteRecommendation()
 
@@ -51,7 +51,7 @@ class DeleteRecommendationRationaleControllerTest : IntegrationTestBase() {
     // given
     createRecommendation()
     updateRecommendation()
-    createOrUpdateRecommendationStatus(activate = listOf("REC_DELETED"), subject = "prince herbert")
+    createOrUpdateRecommendationStatus(activate = listOf("REC_DELETED"), subject = "Joe Bloggs")
 
     // when
     val response = convertResponseToJSONObject(
@@ -63,10 +63,11 @@ class DeleteRecommendationRationaleControllerTest : IntegrationTestBase() {
     )
 
     // then
+    // the JWT builder we use for the tests lowercases the subject for the 'name' field, so we expect it lowercased here
     assertThat(response.get("notes")).isEqualTo(
-      "prince herbert said:\n" +
-        "My wonderful rationale for deleting the recommendation\n" +
-        "View the case summary for John Smith: environment-host/cases/A12345/overview",
+      "joe bloggs said:\n" +
+        "My rationale for deleting the recommendation\n" +
+        "View the case summary for Joe Bloggs: environment-host/cases/A12345/overview",
     )
     assertThat(response.get("sensitive")).isEqualTo(false)
   }
