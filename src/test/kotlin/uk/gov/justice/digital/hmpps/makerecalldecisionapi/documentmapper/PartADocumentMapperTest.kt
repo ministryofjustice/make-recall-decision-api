@@ -452,7 +452,7 @@ class PartADocumentMapperTest {
           ),
           standardLicenceConditions = null,
         ),
-        additionalLicenceConditionsText = "Send me a kiss by wire, Honey my hearts on fire",
+        additionalLicenceConditionsText = "Not to drink any alcohol",
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -465,7 +465,7 @@ class PartADocumentMapperTest {
         .append("Note: note1")
         .append(System.lineSeparator())
         .append(System.lineSeparator())
-        .append("Send me a kiss by wire, Honey my hearts on fire")
+        .append("Not to drink any alcohol")
       assertThat(result.additionalConditionsBreached).isEqualTo(expectedResult.toString())
     }
   }
@@ -494,12 +494,12 @@ class PartADocumentMapperTest {
             allOptions = listOf(LicenceConditionOption("5", "five"), LicenceConditionOption("6", "six")),
           ),
         ),
-        additionalLicenceConditionsText = "Hello my honey, hello my sweetheart, hello my ragtime gal",
+        additionalLicenceConditionsText = "Not to drink any alcohol",
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.additionalConditionsBreached).isEqualTo("one\n\ntwo\n\nfive\n\nsix\n\nHello my honey, hello my sweetheart, hello my ragtime gal")
+      assertThat(result.additionalConditionsBreached).isEqualTo("one\n\ntwo\n\nfive\n\nsix\n\nNot to drink any alcohol")
     }
   }
 
@@ -994,12 +994,12 @@ class PartADocumentMapperTest {
         crn = "ABC123",
         mainAddressWherePersonCanBeFound = SelectedWithDetails(
           selected = false,
-          details = "123 Acacia Avenue, Birmingham, B23 1AV",
+          details = "123 Oak Avenue, Birmingham, B23 1AV",
         ),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.otherPossibleAddresses).isEqualTo("Police can find this person at: 123 Acacia Avenue, Birmingham, B23 1AV")
+      assertThat(result.otherPossibleAddresses).isEqualTo("Police can find this person at: 123 Oak Avenue, Birmingham, B23 1AV")
     }
   }
 
@@ -1265,9 +1265,9 @@ class PartADocumentMapperTest {
         region = "Incorrect region",
         localDeliveryUnit = "Incorrect LDU",
         whoCompletedPartA = WhoCompletedPartA(
-          name = "Bruce Wayne",
+          name = "Joe Bloggs",
           telephone = "0123456789",
-          email = "bw@example.com",
+          email = "jb@example.com",
           region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 1",
         ),
@@ -1279,9 +1279,9 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
-      assertThat(result.completedBy.name).isEqualTo("Bruce Wayne")
+      assertThat(result.completedBy.name).isEqualTo("Joe Bloggs")
       assertThat(result.completedBy.telephone).isEqualTo("0123456789")
-      assertThat(result.completedBy.email).isEqualTo("bw@example.com")
+      assertThat(result.completedBy.email).isEqualTo("jb@example.com")
       assertThat(result.completedBy.region).isEqualTo("Region Name")
       assertThat(result.completedBy.localDeliveryUnit).isEqualTo("Delivery Unit 1")
     }
@@ -1300,9 +1300,9 @@ class PartADocumentMapperTest {
           isPersonProbationPractitionerForOffender = false,
         ),
         practitionerForPartA = PractitionerForPartA(
-          name = "Clark Kent",
+          name = "Joe Bloggs",
           telephone = "0123456789",
-          email = "ck@example.com",
+          email = "jb@example.com",
           region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 2",
         ),
@@ -1310,9 +1310,9 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
-      assertThat(result.supervisingPractitioner.name).isEqualTo("Clark Kent")
+      assertThat(result.supervisingPractitioner.name).isEqualTo("Joe Bloggs")
       assertThat(result.supervisingPractitioner.telephone).isEqualTo("0123456789")
-      assertThat(result.supervisingPractitioner.email).isEqualTo("ck@example.com")
+      assertThat(result.supervisingPractitioner.email).isEqualTo("jb@example.com")
       assertThat(result.supervisingPractitioner.region).isEqualTo("Region Name")
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo("Delivery Unit 2")
     }
@@ -1329,9 +1329,9 @@ class PartADocumentMapperTest {
           isPersonProbationPractitionerForOffender = true,
         ),
         practitionerForPartA = PractitionerForPartA(
-          name = "Clark Kent",
+          name = "Joe Bloggs",
           telephone = "0123456789",
-          email = "ck@example.com",
+          email = "jb@example.com",
           region = "RegionCode",
           localDeliveryUnit = "Delivery Unit 2",
         ),
@@ -1406,7 +1406,7 @@ class PartADocumentMapperTest {
   fun `metadata mapped`() {
     runTest {
       given(regionService.getRegionName(null))
-        .willReturn("Henry Richarlison")
+        .willReturn("Joe Bloggs")
       val recommendation = RecommendationResponse(
         id = 1,
         crn = "ABC123",
@@ -1431,8 +1431,8 @@ class PartADocumentMapperTest {
     spoCounterSignEmail = "john-the-spo@bla.com",
     countersignSpoName = "Spo Name",
     countersignAcoName = "Aco Name",
-    userNamePartACompletedBy = "Henry Richarlison",
-    userEmailPartACompletedBy = "Henry.Richarlison@test.com",
+    userNamePartACompletedBy = "Joe Bloggs",
+    userEmailPartACompletedBy = "Joe.Bloggs@test.com",
     countersignAcoDateTime = DateTimeHelper.dateTimeWithDaylightSavingFromString(
       LocalDateTime.now(ZoneId.of("UTC")).toString(),
     ),

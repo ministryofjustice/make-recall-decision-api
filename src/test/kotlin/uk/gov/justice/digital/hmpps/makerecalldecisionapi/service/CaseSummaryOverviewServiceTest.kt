@@ -69,7 +69,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(convictions.size).isEqualTo(1)
       assertThat(convictions[0].additionalOffences.size).isEqualTo(1)
       assertThat(convictions[0].mainOffence.description).isEqualTo("Robbery (other than armed robbery)")
@@ -87,7 +87,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(assessments?.lastUpdatedDate).isEqualTo("2022-08-26T15:00:08.000Z")
       assertThat(assessments?.offenceDataFromLatestCompleteAssessment).isEqualTo(true)
       assertThat(assessments?.offencesMatch).isEqualTo(true)
-      assertThat(assessments?.offenceDescription).isEqualTo("Juicy offence details.")
+      assertThat(assessments?.offenceDescription).isEqualTo("Offence details.")
       assertThat(response.lastRelease?.releaseDate).isEqualTo("2017-09-15")
       then(deliusClient).should().getOverview(crn)
     }
@@ -143,7 +143,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(convictionsShouldBeEmpty).isEmpty()
       assertThat(riskFlagsShouldBeEmpty).isEmpty()
       assertThat(response.lastRelease?.releaseDate).isEqualTo("2017-09-15")
@@ -200,7 +200,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves case summary with optional fields missing`() {
     runTest {
-      val crn = "my wonderful crn"
+      val crn = "CRN1234"
       given(arnApiClient.getAssessments(anyString())).willReturn(
         Mono.fromCallable {
           AssessmentsResponse(
@@ -274,7 +274,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       assertThat(personalDetails.age).isEqualTo(age)
       assertThat(personalDetails.gender).isEqualTo("Male")
       assertThat(personalDetails.dateOfBirth).isEqualTo(dateOfBirth)
-      assertThat(personalDetails.name).isEqualTo("John Smith")
+      assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(convictions).isEmpty()
       assertThat(riskFlags).isEmpty()
       assertThat(assessments?.lastUpdatedDate).isEqualTo(null)

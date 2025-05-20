@@ -18,7 +18,7 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
   fun `checks user access happy path`() {
     runTest {
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(noAccessLimitations())
-      val crn = "my wonderful crn"
+      val crn = "CRN1234"
 
       val userAccessResponse = userAccessValidator.checkUserAccess(crn, "username")
 
@@ -30,7 +30,7 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
   @Test
   fun `checks user access unhappy path - excluded`() {
     runTest {
-      val crn = "my wonderful crn"
+      val crn = "CRN1234"
 
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
 
@@ -45,7 +45,7 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
   @Test
   fun `checks user access unhappy path when user not found`() {
     runTest {
-      val crn = "my wonderful crn"
+      val crn = "CRN1234"
       given(deliusClient.getUserAccess(username, crn)).willThrow(PersonNotFoundException("Not found"))
 
       val userAccessResponse = userAccessValidator.checkUserAccess(crn)
@@ -61,7 +61,7 @@ internal class UserAccessValidatorTest : ServiceTestBase() {
   @Test
   fun `checks user access unhappy path when restricted`() {
     runTest {
-      val crn = "my wonderful crn"
+      val crn = "CRN1234"
       given(deliusClient.getUserAccess(username, crn)).willReturn(restrictedAccess())
 
       val userAccessResponse = userAccessValidator.checkUserAccess(crn)

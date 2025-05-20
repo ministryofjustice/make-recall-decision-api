@@ -15,11 +15,11 @@ class PersonOnProbationConverterTest {
 
   @Test
   fun convertsCorrectly() {
-    val firstName = "Jim"
-    val surname = "Long"
-    val middleNames = "Short"
+    val firstName = "Joe"
+    val surname = "Michael"
+    val middleNames = "Bloggs"
     val personOnProbation = PersonOnProbation(
-      name = "Jimmyyyy",
+      name = "Joseph",
       firstName = firstName,
       surname = surname,
       middleNames = middleNames,

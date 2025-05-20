@@ -28,7 +28,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
@@ -69,7 +69,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
@@ -115,7 +115,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
@@ -162,7 +162,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
@@ -217,7 +217,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
@@ -262,7 +262,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
         name = Name(
           forename = "Harry",
           middleName = null,
-          surname = "Smith",
+          surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
         identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(

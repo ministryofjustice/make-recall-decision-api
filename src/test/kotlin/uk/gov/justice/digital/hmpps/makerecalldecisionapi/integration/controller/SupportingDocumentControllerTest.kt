@@ -27,7 +27,7 @@ class SupportingDocumentControllerTest(
 
     val recommendationId = "123"
 
-    val data = "While I pondered, weak and weary"
+    val data = "Document data"
 
     val response = uploadDocument(recommendationId, data)
 
@@ -40,7 +40,7 @@ class SupportingDocumentControllerTest(
   @Test
   fun `retrieve supporting documents`() {
     val created = DateTimeHelper.utcNowDateTimeString()
-    documentManagementApiDownloadResponse("Once upon a midnight dreary")
+    documentManagementApiDownloadResponse("Downloaded response")
 
     recommendationSupportingDocumentRepository.deleteAll()
     recommendationSupportingDocumentRepository.save(
@@ -51,11 +51,11 @@ class SupportingDocumentControllerTest(
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
-        createdByUserFullName = "Da Man",
-        createdBy = "daman",
+        createdByUserFullName = "User 1",
+        createdBy = "user1",
         uploaded = created,
-        uploadedBy = "daman",
-        uploadedByUserFullName = "Da Man",
+        uploadedBy = "user2",
+        uploadedByUserFullName = "User 2",
       ),
     )
 
@@ -83,11 +83,11 @@ class SupportingDocumentControllerTest(
     val doc = JSONObject(response.get(0).toString())
 
     assertThat(doc.get("recommendationId")).isEqualTo(123)
-    assertThat(doc.get("createdBy")).isEqualTo("daman")
-    assertThat(doc.get("createdByUserFullName")).isEqualTo("Da Man")
+    assertThat(doc.get("createdBy")).isEqualTo("user1")
+    assertThat(doc.get("createdByUserFullName")).isEqualTo("User 1")
     assertThat(doc.get("created")).isEqualTo(created)
-    assertThat(doc.get("uploadedBy")).isEqualTo("daman")
-    assertThat(doc.get("uploadedByUserFullName")).isEqualTo("Da Man")
+    assertThat(doc.get("uploadedBy")).isEqualTo("user2")
+    assertThat(doc.get("uploadedByUserFullName")).isEqualTo("User 2")
     assertThat(doc.get("uploaded")).isEqualTo(created)
     assertThat(doc.get("filename")).isEqualTo("doc.docx")
     assertThat(doc.get("type")).isEqualTo("PPUDPartA")
@@ -96,7 +96,7 @@ class SupportingDocumentControllerTest(
   @Test
   fun `retrieve supporting document`() {
     val created = DateTimeHelper.utcNowDateTimeString()
-    documentManagementApiDownloadResponse("Once upon a midnight dreary")
+    documentManagementApiDownloadResponse("Downloaded response")
 
     recommendationSupportingDocumentRepository.deleteAll()
     val result = recommendationSupportingDocumentRepository.save(
@@ -107,11 +107,11 @@ class SupportingDocumentControllerTest(
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
-        createdByUserFullName = "Da Man",
-        createdBy = "daman",
+        createdByUserFullName = "User 1",
+        createdBy = "user1",
         uploaded = created,
-        uploadedBy = "daman",
-        uploadedByUserFullName = "Da Man",
+        uploadedBy = "user2",
+        uploadedByUserFullName = "User 2",
       ),
     )
 
@@ -137,7 +137,7 @@ class SupportingDocumentControllerTest(
     assertThat(response.get("recommendationId")).isEqualTo(123)
     assertThat(response.get("filename")).isEqualTo("doc.docx")
     assertThat(response.get("type")).isEqualTo("PPUDPartA")
-    assertThat(response.get("data")).isEqualTo(base64("Once upon a midnight dreary"))
+    assertThat(response.get("data")).isEqualTo(base64("Downloaded response"))
     assertThat(response.get("id")).isNotNull()
   }
 
@@ -157,15 +157,15 @@ class SupportingDocumentControllerTest(
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
-        createdByUserFullName = "Da Man",
-        createdBy = "daman",
+        createdByUserFullName = "User 1",
+        createdBy = "user1",
         uploaded = created,
-        uploadedBy = "daman",
-        uploadedByUserFullName = "Da Man",
+        uploadedBy = "user2",
+        uploadedByUserFullName = "User 2",
       ),
     )
 
-    val newData = base64("While I pondered, weak and weary")
+    val newData = base64("New document data")
 
     webTestClient.patch()
       .uri("/recommendations/123/documents/" + saved.id)
@@ -203,11 +203,11 @@ class SupportingDocumentControllerTest(
         type = "PPUDPartA",
         filename = "doc.docx",
         created = created,
-        createdByUserFullName = "Da Man",
-        createdBy = "daman",
+        createdByUserFullName = "User ",
+        createdBy = "user1",
         uploaded = created,
-        uploadedBy = "daman",
-        uploadedByUserFullName = "Da Man",
+        uploadedBy = "user2",
+        uploadedByUserFullName = "User 2",
       ),
     )
 
@@ -305,7 +305,7 @@ class SupportingDocumentControllerTest(
   @Test
   fun `gateway timeout 503 given on Document Management API timeout for create endpoint`() {
     runTest {
-      val data = "While I pondered, weak and weary"
+      val data = "Document data"
       val recommendationId = "123"
       documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
       webTestClient.post()

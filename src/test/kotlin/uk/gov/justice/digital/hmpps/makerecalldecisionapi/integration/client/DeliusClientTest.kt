@@ -18,9 +18,9 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by crn`() {
-    findByCrnSuccess(surname = "Smith")
+    findByCrnSuccess(surname = "Bloggs")
     val response = deliusClient.findByCrn("X123456")
-    assertThat(response?.name?.surname).isEqualTo("Smith")
+    assertThat(response?.name?.surname).isEqualTo("Bloggs")
   }
 
   @Test
@@ -39,8 +39,8 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by name returns no results`() {
-    findByNameNoResults(firstName = "Joe", surname = "Smith")
-    val response = deliusClient.findByName("Joe", "Smith", 0, 1)
+    findByNameNoResults(firstName = "Joe", surname = "Bloggs")
+    val response = deliusClient.findByName("Joe", "Bloggs", 0, 1)
     assertThat(response.content.size).isEqualTo(0)
   }
 
@@ -67,7 +67,7 @@ class DeliusClientTest : IntegrationTestBase() {
   fun `retries on http error`() {
     personalDetailsSuccessAfterRetry("X123456")
     val personalDetails = deliusClient.getPersonalDetails("X123456")
-    assertThat(personalDetails.personalDetails.name.surname).isEqualTo("Smith")
+    assertThat(personalDetails.personalDetails.name.surname).isEqualTo("Bloggs")
   }
 
   @Test

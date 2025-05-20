@@ -177,7 +177,7 @@ internal abstract class ServiceTestBase {
         offenceDate = "2022-08-26T12:00:00.000",
       ),
     ),
-    offence = "Juicy offence details.",
+    offence = "Offence details.",
     laterCompleteAssessmentExists = false,
     laterPartCompSignedAssessmentExists = false,
     laterPartCompUnsignedAssessmentExists = false,
@@ -265,16 +265,16 @@ internal abstract class ServiceTestBase {
 
   fun personDetailsResponse() = PersonDetailsResponse(
     personalDetailsOverview = PersonalDetailsOverview(
-      fullName = "John Homer Bart Smith",
-      name = "John Smith",
-      firstName = "John",
-      middleNames = "Homer Bart",
-      surname = "Smith",
+      fullName = "Joe Bloggs",
+      name = "Joe Bloggs",
+      firstName = "Joe",
+      middleNames = "Michael",
+      surname = "Bloggs",
       age = null,
       crn = null,
       dateOfBirth = LocalDate.parse("1982-10-24"),
       gender = "Male",
-      ethnicity = "Ainu",
+      ethnicity = "White",
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
@@ -291,7 +291,7 @@ internal abstract class ServiceTestBase {
       ),
     ),
     offenderManager = OffenderManager(
-      name = "John Smith",
+      name = "Joe Bloggs",
       phoneNumber = "01234567654",
       email = "tester@test.com",
       probationTeam = ProbationTeam(code = "001", label = "Label", localDeliveryUnitDescription = "LDU description"),
@@ -300,13 +300,13 @@ internal abstract class ServiceTestBase {
   )
 
   protected fun deliusPersonalDetailsResponse(
-    forename: String = "John",
-    middleName: String? = "Homer Bart",
-    surname: String = "Smith",
-    ethnicity: String? = "Ainu",
+    forename: String = "Joe",
+    middleName: String? = "Michael",
+    surname: String = "Bloggs",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
     address: Address? = Address(
-      postcode = "S3 7BS",
+      postcode = "S12 345",
       district = "Sheffield City Centre",
       addressNumber = "32",
       buildingName = "HMPPS Digital Studio",
@@ -325,9 +325,9 @@ internal abstract class ServiceTestBase {
       ),
       staffCode = "C01T123",
       name = Name(
-        forename = "Sheila",
+        forename = "Jane",
         middleName = "Linda",
-        surname = "Hancock",
+        surname = "Bloggs",
       ),
       provider = Manager.Provider(
         code = "N01",
@@ -444,10 +444,10 @@ internal abstract class ServiceTestBase {
   )
 
   protected fun deliusOverviewResponse(
-    forename: String = "John",
-    middleName: String? = "Homer Bart",
-    surname: String = "Smith",
-    ethnicity: String? = "Ainu",
+    forename: String = "Joe",
+    middleName: String? = "Michael",
+    surname: String = "Bloggs",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
     registerFlags: List<String> = listOf("Victim contact"),
     activeConvictions: List<DeliusClient.Conviction> = listOf(nonCustodialConviction()),
@@ -510,10 +510,10 @@ internal abstract class ServiceTestBase {
         emptyList(),
       ),
     ),
-    forename: String = "John",
-    middleName: String? = "Homer Bart",
-    surname: String = "Smith",
-    ethnicity: String? = "Ainu",
+    forename: String = "Joe",
+    middleName: String? = "Michael",
+    surname: String = "Bloggs",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = LicenceConditions(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -548,10 +548,10 @@ internal abstract class ServiceTestBase {
         startDate = LocalDate.parse("2021-01-30"),
       ),
     ),
-    forename: String = "John",
-    middleName: String? = "Homer Bart",
-    surname: String = "Smith",
-    ethnicity: String? = "Ainu",
+    forename: String = "Joe",
+    middleName: String? = "Michael",
+    surname: String = "Bloggs",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = MappaAndRoshHistory(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -685,10 +685,10 @@ internal abstract class ServiceTestBase {
       level = 1,
       startDate = LocalDate.parse("2021-02-10"),
     ),
-    forename: String = "John",
-    middleName: String? = "Homer Bart",
-    surname: String = "Smith",
-    ethnicity: String? = "Ainu",
+    forename: String = "Joe",
+    middleName: String? = "Michael",
+    surname: String = "Bloggs",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = RecommendationModel(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -921,21 +921,21 @@ internal abstract class ServiceTestBase {
     val dateOfBirth = LocalDate.parse("1982-10-24")
 
     return PersonalDetailsOverview(
-      name = "John Smith",
-      firstName = "John",
-      surname = "Smith",
+      name = "Joe Bloggs",
+      firstName = "Joe",
+      surname = "Bloggs",
       dateOfBirth = dateOfBirth,
       age = dateOfBirth.until(LocalDate.now()).years,
       gender = "Male",
       crn = "12345",
-      ethnicity = "Ainu",
-      middleNames = "Homer Bart",
+      ethnicity = "White",
+      middleNames = "Michael",
       croNumber = "123456/04A",
       mostRecentPrisonerNumber = "G12345",
       nomsNumber = "A1234CR",
       pncNumber = "2004/0712343H",
       primaryLanguage = "English",
-      fullName = "John Homer Bart Smith",
+      fullName = "Joe Michael Bloggs",
     )
   }
 

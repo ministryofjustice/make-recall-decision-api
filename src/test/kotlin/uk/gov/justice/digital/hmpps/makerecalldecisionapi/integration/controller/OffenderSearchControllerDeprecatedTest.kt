@@ -19,8 +19,8 @@ class OffenderSearchControllerDeprecatedTest : IntegrationTestBase() {
   fun `backward compatible endpoint retrieves simple case summary details using crn`() {
     runTest {
       val crn = "X123456"
-      val firstName = "Pontius"
-      val lastName = "Pilate"
+      val firstName = "Joe"
+      val lastName = "Bloggs"
       val dateOfBirth = "2000-11-30"
       findByCrnSuccess(crn, firstName, lastName, dateOfBirth)
       webTestClient.get()
