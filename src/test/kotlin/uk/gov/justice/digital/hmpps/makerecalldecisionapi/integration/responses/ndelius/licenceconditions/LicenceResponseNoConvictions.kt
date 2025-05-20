@@ -17,7 +17,7 @@ fun licenceResponseNoConvictions() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "activeConvictions": []

@@ -17,7 +17,7 @@ fun overviewResponse() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],
@@ -65,7 +65,7 @@ fun overviewResponseNonCustodial() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],
@@ -112,7 +112,7 @@ fun overviewResponseNoConvictions() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "registerFlags": ["Victim contact"],

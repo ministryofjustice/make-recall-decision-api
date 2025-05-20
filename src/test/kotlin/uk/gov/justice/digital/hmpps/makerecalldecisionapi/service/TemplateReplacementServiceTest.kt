@@ -234,7 +234,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["gender"]).isEqualTo("Male")
       assertThat(result["name"]).isEqualTo("Jane Bloggs")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
-      assertThat(result["ethnicity"]).isEqualTo("Caucasian")
+      assertThat(result["ethnicity"]).isEqualTo("White")
       assertThat(result["primary_language"]).isEqualTo("English")
       assertThat(result["cro_number"]).isEqualTo("123456/04A")
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
@@ -472,7 +472,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       firstName = "Henry",
       middleNames = "Joseph",
       surname = "Bloggs",
-      ethnicity = "Caucasian",
+      ethnicity = "White",
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
@@ -743,7 +743,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       dateOfBirth = null,
       status = "INACTIVE IN",
       gender = "Male",
-      ethnicity = "caucasian",
+      ethnicity = "white",
       cro = "123X",
       pnc = "4545",
     ),
@@ -846,7 +846,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ),
       gender = "Male",
       name = "Jane Bloggs",
-      ethnicity = "Caucasian",
+      ethnicity = "White",
       primaryLanguage = "English",
       dateOfBirth = parse("1982-10-24"),
       croNumber = "123456/04A",

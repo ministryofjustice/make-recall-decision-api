@@ -17,7 +17,7 @@ fun deliusMappaAndRoshHistoryResponse(mappaLevel: Int = 1, mappaCategory: Int = 
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "mappa": {
@@ -54,7 +54,7 @@ fun deliusRoshHistoryOnlyResponse(mappaLevel: Int = 1, mappaCategory: Int = 0) =
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "roshHistory": [
@@ -86,7 +86,7 @@ fun deliusNoMappaOrRoshHistoryResponse() = """
     },
     "dateOfBirth": "1982-10-24",
     "gender": "Male",
-    "ethnicity": "Caucasian",
+    "ethnicity": "White",
     "primaryLanguage": "English"
   },
   "roshHistory": []

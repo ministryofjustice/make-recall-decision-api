@@ -216,7 +216,7 @@ class MrdTestDataBuilder {
           ),
           status = "Active",
           youngOffender = "No",
-          ethnicity = "Caucasian",
+          ethnicity = "White",
         ),
       ),
     )

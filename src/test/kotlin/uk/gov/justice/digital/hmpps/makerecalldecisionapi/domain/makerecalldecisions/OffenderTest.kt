@@ -20,7 +20,7 @@ class OffenderTest {
       agencyId = "BRX",
       facialImageId = 321,
       locationDescription = "Outside - released from Leeds",
-      physicalAttributes = PhysicalAttributes("Male", "Caucasian"),
+      physicalAttributes = PhysicalAttributes("Male", "White"),
       identifiers = listOf(Identifier("CRO", "croVal"), Identifier("PNC", "pncVal")),
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15")),
     )
@@ -36,7 +36,7 @@ class OffenderTest {
       agencyId = "BRX",
       facialImageId = 321,
       locationDescription = "Outside - released from Leeds",
-      ethnicity = "Caucasian",
+      ethnicity = "White",
       gender = "Male",
       cro = "croVal",
       pnc = "pncVal",

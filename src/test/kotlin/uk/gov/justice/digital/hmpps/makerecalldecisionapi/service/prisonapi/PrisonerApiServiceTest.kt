@@ -485,7 +485,7 @@ internal class PrisonerApiServiceTest {
           dateOfBirth = LocalDate.now().minusYears(45),
           agencyId = "BRX",
           status = "",
-          physicalAttributes = PhysicalAttributes(gender = "M", ethnicity = "Caucasian"),
+          physicalAttributes = PhysicalAttributes(gender = "M", ethnicity = "White"),
           identifiers = listOf(),
           sentenceDetail = SentenceDetail(licenceExpiryDate = LocalDate.now()),
         )

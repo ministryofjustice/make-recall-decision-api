@@ -274,7 +274,7 @@ internal abstract class ServiceTestBase {
       crn = null,
       dateOfBirth = LocalDate.parse("1982-10-24"),
       gender = "Male",
-      ethnicity = "Caucasian",
+      ethnicity = "White",
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       mostRecentPrisonerNumber = "G12345",
@@ -303,7 +303,7 @@ internal abstract class ServiceTestBase {
     forename: String = "Joe",
     middleName: String? = "Michael",
     surname: String = "Bloggs",
-    ethnicity: String? = "Caucasian",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
     address: Address? = Address(
       postcode = "S12 345",
@@ -447,7 +447,7 @@ internal abstract class ServiceTestBase {
     forename: String = "Joe",
     middleName: String? = "Michael",
     surname: String = "Bloggs",
-    ethnicity: String? = "Caucasian",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
     registerFlags: List<String> = listOf("Victim contact"),
     activeConvictions: List<DeliusClient.Conviction> = listOf(nonCustodialConviction()),
@@ -513,7 +513,7 @@ internal abstract class ServiceTestBase {
     forename: String = "Joe",
     middleName: String? = "Michael",
     surname: String = "Bloggs",
-    ethnicity: String? = "Caucasian",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = LicenceConditions(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -551,7 +551,7 @@ internal abstract class ServiceTestBase {
     forename: String = "Joe",
     middleName: String? = "Michael",
     surname: String = "Bloggs",
-    ethnicity: String? = "Caucasian",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = MappaAndRoshHistory(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -688,7 +688,7 @@ internal abstract class ServiceTestBase {
     forename: String = "Joe",
     middleName: String? = "Michael",
     surname: String = "Bloggs",
-    ethnicity: String? = "Caucasian",
+    ethnicity: String? = "White",
     primaryLanguage: String? = "English",
   ) = RecommendationModel(
     personalDetails = DeliusClient.PersonalDetailsOverview(
@@ -928,7 +928,7 @@ internal abstract class ServiceTestBase {
       age = dateOfBirth.until(LocalDate.now()).years,
       gender = "Male",
       crn = "12345",
-      ethnicity = "Caucasian",
+      ethnicity = "White",
       middleNames = "Michael",
       croNumber = "123456/04A",
       mostRecentPrisonerNumber = "G12345",
