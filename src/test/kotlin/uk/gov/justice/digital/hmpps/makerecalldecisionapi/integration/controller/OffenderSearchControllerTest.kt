@@ -50,7 +50,7 @@ class OffenderSearchControllerTest(
       findByNameSuccess(crn = crn, firstName = firstName, surname = lastName, dateOfBirth = dateOfBirth)
       val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
       webTestClient.post()
-        .uri("/paged-search?page=0&pageSize=1")
+        .uri("/paged-search?page=1&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .body(fromValue(requestBody))
         .exchange()
@@ -69,10 +69,10 @@ class OffenderSearchControllerTest(
       val crn = "A123456"
       val firstName = "test"
       val lastName = "test"
-      val page = Random.Default.nextInt(0, 20)
+      val page = Random.Default.nextInt(1, 19)
       val pageSize = Random.Default.nextInt(1, 10)
-      val totalNumberOfPages = Random.Default.nextInt(page + 1, 20 + 1)
-      findByNameSuccess(crn, firstName, lastName, pageNumber = page, pageSize = pageSize, totalPages = totalNumberOfPages)
+      val totalNumberOfPages = Random.Default.nextInt(page, 20)
+      findByNameSuccess(crn, firstName, lastName, pageNumber = page - 1, pageSize = pageSize, totalPages = totalNumberOfPages)
       val requestBody = OffenderSearchRequest(firstName = firstName, lastName = lastName)
       webTestClient.post()
         .uri("/paged-search?page=$page&pageSize=$pageSize")
