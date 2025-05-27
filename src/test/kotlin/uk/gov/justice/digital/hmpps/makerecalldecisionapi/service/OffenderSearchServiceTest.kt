@@ -26,13 +26,12 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   private lateinit var offenderSearch: OffenderSearchService
 
   private var page = 0
-
   private var pageSize = 0
 
   @BeforeEach
   fun setup() {
     offenderSearch = OffenderSearchService(deliusClient, userAccessValidator)
-    page = Random.Default.nextInt(0, 10)
+    page = Random.Default.nextInt(1, 10)
     pageSize = Random.Default.nextInt(1, 10)
   }
 
@@ -59,7 +58,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         deliusClient.findByName(
           firstName = nonExistentFirstName,
           surname = nonExistentSurname,
-          page = page,
+          page = page - 1,
           pageSize = pageSize,
         ),
       ).willReturn(CasePage(emptyList(), PagedModel.PageMetadata(0, 0, 0, 0)))
@@ -75,7 +74,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       then(deliusClient).should().findByName(
         firstName = nonExistentFirstName,
         surname = nonExistentSurname,
-        page = page,
+        page = page - 1,
         pageSize = pageSize,
       )
     }
@@ -85,7 +84,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `returns search results when searching by CRN`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
-        .willReturn(buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize).content[0])
+        .willReturn(buildSearchPeople1ResultClientResponse(page = page - 1, pageSize = pageSize).content[0])
       given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
@@ -109,10 +108,10 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         deliusClient.findByName(
           firstName = firstName,
           surname = lastName,
-          page = page,
+          page = page - 1,
           pageSize = pageSize,
         ),
-      ).willReturn(buildSearchPeople1ResultClientResponse(page = page, pageSize = pageSize))
+      ).willReturn(buildSearchPeople1ResultClientResponse(page = page - 1, pageSize = pageSize))
       given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
       val response = offenderSearch.search(firstName = firstName, lastName = lastName, page = page, pageSize = pageSize)
@@ -126,7 +125,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
       then(deliusClient).should().findByName(
         firstName = firstName,
         surname = lastName,
-        page = page,
+        page = page - 1,
         pageSize = pageSize,
       )
     }
@@ -142,12 +141,12 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
         deliusClient.findByName(
           firstName = firstName,
           surname = lastName,
-          page = page,
+          page = page - 1,
           pageSize = pageSize,
         ),
       ).willReturn(
         buildSearchPeople1ResultClientResponse(
-          page = page,
+          page = page - 1,
           pageSize = pageSize,
           totalPages = totalPages,
         ),
