@@ -26,11 +26,11 @@ internal class OffenderSearchService(
       )
     } ?: OffenderSearchResponse()
   } else if (firstName != null && lastName != null) {
-    deliusClient.findByName(firstName, lastName, page, pageSize).let {
+    deliusClient.findByName(firstName, lastName, page - 1, pageSize).let {
       OffenderSearchResponse(
         results = it.content.map { it.toOffenderSearchOffender() },
         paging = Paging(
-          page = it.page.number.toInt(),
+          page = it.page.number.toInt() + 1,
           pageSize = it.page.size.toInt(),
           totalNumberOfPages = it.page.totalPages.toInt(),
         ),
