@@ -24,14 +24,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `excluded records won't be returned`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",
@@ -65,14 +65,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `single active document for ppcs`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",
@@ -111,14 +111,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `do not return results for active recommendation if already been booked`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",
@@ -158,14 +158,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `consider active recommendation only for ppcs search`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",
@@ -213,14 +213,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `do not return results for active recommendation that has not been passed to ppcs`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",
@@ -258,14 +258,14 @@ internal class PpcsServiceTest : ServiceTestBase() {
   @Test
   fun `do not return results for deleted recommendation`() {
     given(deliusClient.findByCrn("X90902")).willReturn(
-      DeliusClient.PersonalDetailsOverview(
+      DeliusClient.SearchByCRNResponse(
         name = Name(
           forename = "Harry",
           middleName = null,
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.now(),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+        identifiers = DeliusClient.Identifiers(
           crn = "X90902",
           nomsNumber = "12345L",
           croNumber = "123/XYZ",

@@ -41,7 +41,7 @@ class DeliusClient(
     parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
   ).body!!
 
-  fun findByCrn(crn: String) = get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
+  fun findByCrn(crn: String) = get<SearchByCRNResponse>("/case-summary/$crn") { Mono.empty() }?.body
 
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
@@ -163,6 +163,27 @@ class DeliusClient(
     val sentenceExpiryDate: LocalDate?,
   )
 
+  data class Identifiers(
+    val crn: String,
+    val pncNumber: String? = null,
+    val croNumber: String? = null,
+    val nomsNumber: String? = null,
+    val bookingNumber: String? = null,
+  )
+
+  data class SearchByCRNResponse(
+    val name: Name?,
+    val identifiers: Identifiers?,
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    val dateOfBirth: LocalDate?,
+    val gender: String?,
+    val ethnicity: String?,
+    val primaryLanguage: String?,
+
+    val status: Int? = null,
+    val message: String? = null
+  )
+
   data class PersonalDetailsOverview(
     val name: Name,
     val identifiers: Identifiers,
@@ -171,15 +192,7 @@ class DeliusClient(
     val gender: String,
     val ethnicity: String?,
     val primaryLanguage: String?,
-  ) {
-    data class Identifiers(
-      val crn: String,
-      val pncNumber: String?,
-      val croNumber: String?,
-      val nomsNumber: String?,
-      val bookingNumber: String?,
-    )
-  }
+  )
 
   data class FindByNameRequest(
     val forename: String,
@@ -391,4 +404,17 @@ fun DeliusClient.Address?.toAddresses() = listOfNotNull(
 private fun isNoFixedAbode(it: DeliusClient.Address): Boolean {
   val postcodeUppercaseNoWhiteSpace = it.postcode?.filter { !it.isWhitespace() }?.uppercase()
   return postcodeUppercaseNoWhiteSpace == "NF11NF" || it.noFixedAbode == true
+}
+
+fun DeliusClient.SearchByCRNResponse.toPersonalDetailsOverview(crn: String): DeliusClient.PersonalDetailsOverview {
+  this.let {
+    return DeliusClient.PersonalDetailsOverview(
+      name = this.name ?: DeliusClient.Name("", "", ""),
+      identifiers = this.identifiers ?: DeliusClient.Identifiers(crn),
+      dateOfBirth = this.dateOfBirth ?: LocalDate.MIN,
+      gender = this.gender ?: "",
+      this.ethnicity ?: "",
+      primaryLanguage = this.primaryLanguage ?: ""
+    )
+  }
 }

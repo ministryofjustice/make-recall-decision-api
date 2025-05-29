@@ -21,12 +21,24 @@ class DeliusClientTest : IntegrationTestBase() {
     findByCrnSuccess(surname = "Bloggs")
     val response = deliusClient.findByCrn("X123456")
     assertThat(response?.name?.surname).isEqualTo("Bloggs")
+
+    assertThat(response?.status).isNull()
+    assertThat(response?.message).isNull()
   }
 
   @Test
-  fun `find by crn returns null when not found`() {
+  fun `find by crn returns a 404 status response when not found`() {
+    findByCrnNotFound("X123456")
     val response = deliusClient.findByCrn("X123456")
-    assertThat(response).isNull()
+    assertThat(response?.status).isEqualTo(404)
+    assertThat(response?.message).isNotEmpty()
+
+    assertThat(response?.name).isNull()
+    assertThat(response?.identifiers).isNull()
+    assertThat(response?.dateOfBirth).isNull()
+    assertThat(response?.gender).isNull()
+    assertThat(response?.ethnicity).isNull()
+    assertThat(response?.primaryLanguage).isNull()
   }
 
   @Test

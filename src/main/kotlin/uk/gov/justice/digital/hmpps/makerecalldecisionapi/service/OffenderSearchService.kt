@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.toPersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchResponse
@@ -21,7 +22,7 @@ internal class OffenderSearchService(
   ): OffenderSearchResponse = if (crn != null) {
     deliusClient.findByCrn(crn)?.let {
       OffenderSearchResponse(
-        results = listOf(it.toOffenderSearchOffender()),
+        results = listOf(it.toPersonalDetailsOverview(crn).toOffenderSearchOffender()),
         paging = Paging(page = 1, pageSize = pageSize, totalNumberOfPages = 1),
       )
     } ?: OffenderSearchResponse()

@@ -84,7 +84,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `returns search results when searching by CRN`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
-        .willReturn(buildSearchPeople1ResultClientResponse(page = page - 1, pageSize = pageSize).content[0])
+        .willReturn(buildSearchByCRNResponse())
       given(deliusClient.getUserAccess(username, crn)).willReturn(noAccessLimitations())
 
       val response = offenderSearch.search(crn, page = page, pageSize = pageSize)
@@ -165,7 +165,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `given access is restricted then set user access fields`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
-        .willReturn(buildSearchPeople1ResultClientResponse().content[0])
+        .willReturn(buildSearchByCRNResponse())
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(restrictedAccess())
 
@@ -182,7 +182,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
   fun `given user is excluded then set user access fields`() {
     runTest {
       given(deliusClient.findByCrn(crn = crn))
-        .willReturn(buildSearchPeople1ResultClientResponse().content[0])
+        .willReturn(buildSearchByCRNResponse())
 
       given(deliusClient.getUserAccess(username, crn)).willReturn(excludedAccess())
 
@@ -222,7 +222,7 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
           surname = "Bloggs",
         ),
         dateOfBirth = LocalDate.parse("1982-10-24"),
-        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(crn = crn, null, null, null, null),
+        identifiers = DeliusClient.Identifiers(crn = crn, null, null, null, null),
         gender = "Male",
         ethnicity = null,
         primaryLanguage = null,
@@ -230,4 +230,21 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     ),
     page = PagedModel.PageMetadata(pageSize.toLong(), page.toLong(), 1, totalPages.toLong()),
   )
+
+  private fun buildSearchByCRNResponse() =
+    DeliusClient.SearchByCRNResponse(
+      name = Name(
+        forename = "Joe",
+        middleName = null,
+        surname = "Bloggs",
+      ),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      identifiers = DeliusClient.Identifiers(crn = crn, null, null, null, null),
+      gender = "Male",
+      ethnicity = null,
+      primaryLanguage = null,
+      status = null,
+      message = null
+    )
+
 }

@@ -65,6 +65,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusNoMappaOrRoshHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRecommendationModelResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByCrnNotFoundResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByCrnResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByNameResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
@@ -92,6 +93,7 @@ import java.nio.file.Paths
 import java.sql.DriverManager
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
+import kotlin.Long
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
 @AutoConfigureWebTestClient(timeout = "36000")
@@ -687,6 +689,17 @@ abstract class IntegrationTestBase {
       response().withContentType(APPLICATION_JSON)
         .withBody(findByCrnResponse(crn, firstName, surname, dateOfBirth))
         .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun findByCrnNotFound(
+    crn: String = "X123456",
+    delaySeconds: Long = 0
+  ) {
+    deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(findByCrnNotFoundResponse(crn))
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
