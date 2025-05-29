@@ -694,12 +694,12 @@ abstract class IntegrationTestBase {
 
   protected fun findByCrnNotFound(
     crn: String = "X123456",
-    delaySeconds: Long = 0
+    delaySeconds: Long = 0,
   ) {
     deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(findByCrnNotFoundResponse(crn))
-        .withDelay(Delay.seconds(delaySeconds))
+        .withDelay(Delay.seconds(delaySeconds)),
     )
   }
 

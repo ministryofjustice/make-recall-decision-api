@@ -181,7 +181,7 @@ class DeliusClient(
     val primaryLanguage: String?,
 
     val status: Int? = null,
-    val message: String? = null
+    val message: String? = null,
   )
 
   data class PersonalDetailsOverview(
@@ -414,7 +414,7 @@ fun DeliusClient.SearchByCRNResponse.toPersonalDetailsOverview(crn: String): Del
       dateOfBirth = this.dateOfBirth ?: LocalDate.MIN,
       gender = this.gender ?: "",
       this.ethnicity ?: "",
-      primaryLanguage = this.primaryLanguage ?: ""
+      primaryLanguage = this.primaryLanguage ?: "",
     )
   }
 }

@@ -21,7 +21,7 @@ fun findByCrnResponse(
 """.trimIndent()
 
 fun findByCrnNotFoundResponse(
-  crn: String = "X123456"
+  crn: String = "X123456",
 ) = """
 {
   "status": 404,

@@ -231,20 +231,18 @@ internal class OffenderSearchServiceTest : ServiceTestBase() {
     page = PagedModel.PageMetadata(pageSize.toLong(), page.toLong(), 1, totalPages.toLong()),
   )
 
-  private fun buildSearchByCRNResponse() =
-    DeliusClient.SearchByCRNResponse(
-      name = Name(
-        forename = "Joe",
-        middleName = null,
-        surname = "Bloggs",
-      ),
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      identifiers = DeliusClient.Identifiers(crn = crn, null, null, null, null),
-      gender = "Male",
-      ethnicity = null,
-      primaryLanguage = null,
-      status = null,
-      message = null
-    )
-
+  private fun buildSearchByCRNResponse() = DeliusClient.SearchByCRNResponse(
+    name = Name(
+      forename = "Joe",
+      middleName = null,
+      surname = "Bloggs",
+    ),
+    dateOfBirth = LocalDate.parse("1982-10-24"),
+    identifiers = DeliusClient.Identifiers(crn = crn, null, null, null, null),
+    gender = "Male",
+    ethnicity = null,
+    primaryLanguage = null,
+    status = null,
+    message = null,
+  )
 }
