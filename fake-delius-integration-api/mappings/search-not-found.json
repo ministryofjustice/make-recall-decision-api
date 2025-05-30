@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/case-summary/X123456"
+  },
+  "response": {
+    "status": 400,
+    "bodyFileName": "search-not-found.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
