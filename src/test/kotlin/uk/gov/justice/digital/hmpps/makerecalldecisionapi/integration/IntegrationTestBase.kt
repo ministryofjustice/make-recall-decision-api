@@ -700,7 +700,7 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
       response().withContentType(APPLICATION_JSON)
         .withStatusCode(404)
-        .withDelay(Delay.seconds(delaySeconds)),
+        .withDelay(Delay.seconds(delaySeconds))
     )
   }
 
