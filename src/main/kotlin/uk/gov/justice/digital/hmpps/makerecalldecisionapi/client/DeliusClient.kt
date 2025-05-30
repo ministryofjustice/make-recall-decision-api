@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.micrometer.core.instrument.Counter
 import org.apache.commons.lang3.StringUtils.normalizeSpace
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
@@ -46,8 +45,7 @@ class DeliusClient(
   fun findByCrn(crn: String): PersonalDetailsOverview? {
     val response = try {
       get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
-    }
-    catch (_: WebClientResponseException.NotFound) {
+    } catch (_: WebClientResponseException.NotFound) {
       null
     }
     return response
