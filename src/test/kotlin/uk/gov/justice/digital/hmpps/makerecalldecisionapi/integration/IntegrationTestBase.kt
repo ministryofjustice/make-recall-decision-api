@@ -690,6 +690,20 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun findByCrnNotFound(
+    crn: String = "X123456",
+    firstName: String = "Joe",
+    surname: String = "Bloggs",
+    dateOfBirth: String = "2000-11-09",
+    delaySeconds: Long = 0,
+  ) {
+    deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withStatusCode(404)
+        .withDelay(Delay.seconds(delaySeconds))
+    )
+  }
+
   protected fun findByNameSuccess(
     crn: String = "Y654321",
     firstName: String = "Joe",
