@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.data.web.PagedModel.PageMetadata
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
@@ -42,14 +43,7 @@ class DeliusClient(
     parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
   ).body!!
 
-  fun findByCrn(crn: String): PersonalDetailsOverview? {
-    val response = try {
-      get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
-    } catch (_: WebClientResponseException.NotFound) {
-      null
-    }
-    return response
-  }
+  fun findByCrn(crn: String): PersonalDetailsOverview? = getIfFound<PersonalDetailsOverview>("/case-summary/$crn")?.body
 
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
@@ -109,6 +103,25 @@ class DeliusClient(
         { notFoundExceptionFunction("No details available for endpoint: $endpoint") },
       )
       .toEntity(T::class.java)
+      .timeout(Duration.ofSeconds(nDeliusTimeout))
+      .doOnError { handleTimeoutException(it, endpoint) }
+      .withRetry()
+    log.info(normalizeSpace("Returning $endpoint details"))
+    return getValueAndHandleWrappedException(result)
+  }
+
+  private inline fun <reified T : Any> getIfFound(
+    endpoint: String,
+    parameters: Map<String, List<Any>> = emptyMap(),
+  ): ResponseEntity<T>? {
+    log.info(normalizeSpace("About to call $endpoint"))
+    val result = webClient.get()
+      .uri {
+        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+      }
+      .retrieve()
+      .toEntity(T::class.java)
+      .onErrorResume(WebClientResponseException::class.java) { ex -> if (ex.statusCode == HttpStatusCode.valueOf(404)) Mono.empty() else Mono.error(ex) }
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
       .withRetry()
