@@ -4,7 +4,7 @@
     "urlPath": "/case-summary/X123456"
   },
   "response": {
-    "status": 400,
+    "status": 404,
     "bodyFileName": "search-not-found.json",
     "headers": {
       "Content-Type": "application/json"
