@@ -19,3 +19,12 @@ fun findByCrnResponse(
   }
 }
 """.trimIndent()
+
+fun findByCrnResponseNotFound(
+  crn: String? = "X123456",
+) = """
+{
+  "status": 404,
+  "message": "Person with crn of $crn not found"
+}
+""".trimIndent()

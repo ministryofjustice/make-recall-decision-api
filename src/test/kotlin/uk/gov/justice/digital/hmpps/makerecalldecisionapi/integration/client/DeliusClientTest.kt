@@ -3,6 +3,10 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.client
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.mockserver.model.Delay
+import org.mockserver.model.HttpRequest.request
+import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -28,6 +32,19 @@ class DeliusClientTest : IntegrationTestBase() {
     findByCrnNotFound(crn = "X654321")
     val response = deliusClient.findByCrn("X654321")
     assertThat(response).isNull()
+  }
+
+  @Test
+  fun `find by crn - A failure other than a not found throws`() {
+    val throwCrn = "X098765"
+    deliusIntegration.`when`(request().withPath("/case-summary/$throwCrn")).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withStatusCode(401)
+        .withDelay(Delay.seconds(0)),
+    )
+    assertThatThrownBy {
+      deliusClient.findByCrn(throwCrn)
+    }.isInstanceOf(WebClientResponseException::class.java)
   }
 
   @Test

@@ -42,9 +42,6 @@ class DeliusClient(
     parameters = mapOf("page" to listOf(page), "size" to listOf(pageSize)),
   ).body!!
 
-<<<<<<< HEAD
-  fun findByCrn(crn: String) = get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
-=======
   fun findByCrn(crn: String): PersonalDetailsOverview? {
     val response = try {
       get<PersonalDetailsOverview>("/case-summary/$crn") { Mono.empty() }?.body
@@ -53,7 +50,6 @@ class DeliusClient(
     }
     return response
   }
->>>>>>> 8bf3663c (Lint format)
 
   fun getPersonalDetails(crn: String): PersonalDetails = getBody("/case-summary/$crn/personal-details")
 
