@@ -66,6 +66,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRecommendationModelResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.deliusRoshHistoryOnlyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByCrnResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByCrnResponseNotFound
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.findByNameResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.licenceconditions.licenceResponseMultipleConvictions
@@ -700,6 +701,7 @@ abstract class IntegrationTestBase {
     deliusIntegration.`when`(request().withPath("/case-summary/$crn")).respond(
       response().withContentType(APPLICATION_JSON)
         .withStatusCode(404)
+        .withBody(findByCrnResponseNotFound(crn))
         .withDelay(Delay.seconds(delaySeconds)),
     )
   }
