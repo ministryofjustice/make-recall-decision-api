@@ -25,7 +25,8 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by crn returns null when not found`() {
-    val response = deliusClient.findByCrn("X123456")
+    findByCrnNotFound(crn = "X654321")
+    val response = deliusClient.findByCrn("X654321")
     assertThat(response).isNull()
   }
 
