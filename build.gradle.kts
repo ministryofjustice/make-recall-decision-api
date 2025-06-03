@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.1.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.2.0"
   kotlin("jvm") version "2.0.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -36,7 +36,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:3.4.1")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
-  implementation("org.springframework:spring-context:6.2.7") // Address CVE-2025-22233 until dependencies pulling it in are updated
   implementation("io.micrometer:micrometer-registry-prometheus:1.14.3")
   implementation("io.opentelemetry:opentelemetry-api:1.46.0")
   implementation("joda-time:joda-time:2.13.0")
@@ -58,7 +57,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
   implementation("io.sentry:sentry-logback:7.20.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
