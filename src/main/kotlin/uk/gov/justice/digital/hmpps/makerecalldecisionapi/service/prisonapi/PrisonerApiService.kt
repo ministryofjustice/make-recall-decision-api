@@ -99,7 +99,7 @@ internal class PrisonerApiService(
           currentIndex = it
           currentInSequence = null
         } else {
-          if(currentInSequence == null) {
+          if (currentInSequence == null) {
             currentInSequence = mutableMapOf()
           }
           val currentList = currentInSequence[it.consecutiveToSequence] ?: mutableListOf()
