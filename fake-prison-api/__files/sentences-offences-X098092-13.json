@@ -35,7 +35,7 @@
         "offenceStartDate": "2020-06-12",
         "offenceStatute": "TN51",
         "offenceCode": "TN51010",
-        "offenceDescription": "(13-1-A) Give aid and comfort to the Sovereign's enemies outside his / her realm",
+        "offenceDescription": "Give aid and comfort to the Sovereign's enemies outside his / her realm",
         "indicators": [
           "99"
         ]
@@ -71,7 +71,7 @@
         "offenceStartDate": "2020-06-12",
         "offenceStatute": "CS06",
         "offenceCode": "CS06128",
-        "offenceDescription": "(13-2-F) Fail to have ready for delivery certificate of shares / debentures / debenture stock within 2 months of allotment",
+        "offenceDescription": "Fail to have ready for delivery certificate of shares / debentures / debenture stock within 2 months of allotment",
         "indicators": []
       },
       {
@@ -79,7 +79,7 @@
         "offenceStartDate": "2018-02-10",
         "offenceStatute": "TH68",
         "offenceCode": "TH68047C",
-        "offenceDescription": "(13-2-G) Conspire to commit aggravated burglary with intent - dwelling",
+        "offenceDescription": "Conspire to commit aggravated burglary with intent - dwelling",
         "indicators": [
           "SCH15/CJIB/L",
           "PCSC/SDS+",
@@ -91,7 +91,7 @@
         "offenceStartDate": "2019-10-24",
         "offenceStatute": "FI68",
         "offenceCode": "FI68080",
-        "offenceDescription": "(13-2-H) Have a firearm with intent to resist arrest",
+        "offenceDescription": "Have a firearm with intent to resist arrest",
         "indicators": [
           "99",
           "ERS",
@@ -134,7 +134,7 @@
         "offenceStartDate": "2000-01-01",
         "offenceStatute": "GM00",
         "offenceCode": "GM00030",
-        "offenceDescription": "(13-3-I) Permit an animal to be taken into / upon a Greater Manchester Metrolink vehicle / station without authority",
+        "offenceDescription": "Permit an animal to be taken into / upon a Greater Manchester Metrolink vehicle / station without authority",
         "indicators": []
       }
     ]
@@ -160,7 +160,7 @@
         "offenceStartDate": "1899-01-01",
         "offenceStatute": "SA96",
         "offenceCode": "SA96036",
-        "offenceDescription": "(13-4-J) Attack / assault / batter a member of the public",
+        "offenceDescription": "Attack / assault / batter a member of the public",
         "indicators": []
       }
     ]

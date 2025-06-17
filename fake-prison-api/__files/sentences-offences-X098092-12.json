@@ -28,7 +28,7 @@
         "offenceStartDate": "2018-01-31",
         "offenceStatute": "DD91",
         "offenceCode": "DD91011",
-        "offenceDescription": "(12-1-A) Abandon a fighting dog",
+        "offenceDescription": "Abandon a fighting dog",
         "indicators": [
           "99"
         ]
@@ -38,7 +38,7 @@
         "offenceStartDate": "2018-12-21",
         "offenceStatute": "AN16",
         "offenceCode": "AN16252",
-        "offenceDescription": "(12-1-B) Act as member of flight crew of aircraft without holding appropriate licence",
+        "offenceDescription": "Act as member of flight crew of aircraft without holding appropriate licence",
         "indicators": [
           "99"
         ]
@@ -74,7 +74,7 @@
         "offenceStartDate": "2019-02-25",
         "offenceStatute": "TH68",
         "offenceCode": "TH68058",
-        "offenceDescription": "(12-2-C) Abstract / use without authority electricity",
+        "offenceDescription": "Abstract / use without authority electricity",
         "indicators": [
           "52"
         ]
@@ -84,7 +84,7 @@
         "offenceStartDate": "2018-12-21",
         "offenceStatute": "HT04",
         "offenceCode": "OC01234",
-        "offenceDescription": "(12-C-D) Generic Offence 01234",
+        "offenceDescription": "Generic Offence 01234",
         "indicators": [
           "99"
         ]
@@ -120,7 +120,7 @@
         "offenceStartDate": "2019-02-25",
         "offenceStatute": "TH68",
         "offenceCode": "TH68058",
-        "offenceDescription": "(12-3-Z) Abstract / use without authority electricity",
+        "offenceDescription": "Abstract / use without authority electricity",
         "indicators": [
           "52"
         ]
