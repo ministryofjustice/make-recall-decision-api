@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
@@ -341,22 +342,22 @@ internal class PrisonerApiServiceTest {
 
     assertThat(result.size).isEqualTo(5)
 
-    assertThat(result[0].courtDescription).isEqualTo("ABC")
-    assertThat(result[0].sentenceEndDate).isNull()
+    assertThat(result[0].indexSentence.courtDescription).isEqualTo("ABC")
+    assertThat(result[0].indexSentence.sentenceEndDate).isNull()
 
     // expect results to be ordered by sentence end date and then court description.
-    assertThat(result[1].bookingId).isEqualTo(123)
-    assertThat(result[1].courtDescription).isEqualTo("ABC")
-    assertThat(result[1].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(5))
+    assertThat(result[1].indexSentence.bookingId).isEqualTo(123)
+    assertThat(result[1].indexSentence.courtDescription).isEqualTo("ABC")
+    assertThat(result[1].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(5))
 
-    assertThat(result[2].courtDescription).isEqualTo("ABC")
-    assertThat(result[2].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+    assertThat(result[2].indexSentence.courtDescription).isEqualTo("ABC")
+    assertThat(result[2].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
 
-    assertThat(result[3].courtDescription).isEqualTo("DEF")
-    assertThat(result[3].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+    assertThat(result[3].indexSentence.courtDescription).isEqualTo("DEF")
+    assertThat(result[3].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
 
-    assertThat(result[4].courtDescription).isEqualTo("ABC")
-    assertThat(result[4].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
+    assertThat(result[4].indexSentence.courtDescription).isEqualTo("ABC")
+    assertThat(result[4].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(1))
   }
 
   @Test
@@ -394,7 +395,7 @@ internal class PrisonerApiServiceTest {
 
     val result = prisonerApiService.retrieveOffences(nomsId)
 
-    val offences = result.get(0).offences
+    val offences = result.get(0).indexSentence.offences
     assertThat(offences[0].offenceDescription).isEqualTo("ABC")
     assertThat(offences[1].offenceDescription).isEqualTo("DEF")
     assertThat(offences[2].offenceDescription).isEqualTo("GHI")
@@ -453,10 +454,10 @@ internal class PrisonerApiServiceTest {
 
     val result = prisonerApiService.retrieveOffences(nomsId)
 
-    val offences = result[0].offences
+    val offences = result[0].indexSentence.offences
     assertThat(offences.size).isGreaterThan(0)
     assertThat(offences[0].offenceDescription).isEqualTo("ABC")
-    assertThat(result[0].releasingPrison).isNull()
+    assertThat(result[0].indexSentence.releasingPrison).isNull()
   }
 
   @Test
@@ -530,101 +531,232 @@ internal class PrisonerApiServiceTest {
 
     assertThat(result.size).isEqualTo(1)
 
-    assertThat(result[0].courtDescription).isEqualTo("DEF")
-    assertThat(result[0].sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
-    assertThat(result[0].releasingPrison).isEqualTo("Prison A1234")
-    assertThat(result[0].licenceExpiryDate).isEqualTo(LocalDate.now())
+    assertThat(result[0].indexSentence.courtDescription).isEqualTo("DEF")
+    assertThat(result[0].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
+    assertThat(result[0].indexSentence.releasingPrison).isEqualTo("Prison A1234")
+    assertThat(result[0].indexSentence.licenceExpiryDate).isEqualTo(LocalDate.now())
   }
 
   @Test
-  fun `Retrieve offences - Given sequence consecutive sentence line data, consecutive groups are correctly calculated`() {
+  fun `Retrieve offences - Given a series of sentences, sentence sequences are correctly calculated with consecutive and concurrent sentence`() {
     val nomsId = "A1234"
 
     val prisonTimelineResponse = mock(PrisonTimelineResponse::class.java)
     given(prisonTimelineResponse.prisonPeriod).willReturn(
-      listOf(PrisonPeriod(bookingId = 123)),
+      listOf(PrisonPeriod(bookingId = defaultBookingId), PrisonPeriod(bookingId = alternativeBookingId)),
     )
     given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
       Mono.fromCallable { prisonTimelineResponse },
     )
 
-    // expected consecutive groups: [1, 2, 8], [3, 4], [6, 7]
-    // This gives us consecutive groups (between 2 and 3), a skip (between 4 and 6)
-    // and a jump back to an existing group (from 2 to 8)
-    val expectedConsecutiveGroupA = listOf(1, 2, 8)
-    val expectedConsecutiveGroupB = listOf(3, 4)
-    val expectedConsecutiveGroupC = listOf(6, 7)
-    val expectedSentences = listOf(
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 1,
-        consecutiveToSequence = null,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 2,
-        consecutiveToSequence = 1,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 3,
-        consecutiveToSequence = null,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 4,
-        consecutiveToSequence = 3,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 5,
-        consecutiveToSequence = null,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 6,
-        consecutiveToSequence = null,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 7,
-        consecutiveToSequence = 6,
-      ),
-      Sentence(
-        bookingId = 123,
-        sentenceSequence = 8,
-        consecutiveToSequence = 2,
-      ),
+    given(prisonApiClient.retrieveSentencesAndOffences(defaultBookingId)).willReturn(
+      Mono.fromCallable { sentencesForSequencesFirst },
     )
-    given(prisonApiClient.retrieveSentencesAndOffences(123)).willReturn(
-      Mono.fromCallable { expectedSentences },
+    given(prisonApiClient.retrieveSentencesAndOffences(alternativeBookingId)).willReturn(
+      Mono.fromCallable { sentencesForSequencesSecond },
     )
 
     given(prisonApiClient.retrieveOffender(any())).willReturn(
-      Mono.fromCallable {
-        mock(Offender::class.java)
-      },
+      Mono.fromCallable { mock(Offender::class.java) },
     )
 
     val result = prisonerApiService.retrieveOffences(nomsId)
 
-    assert(result.size == expectedSentences.size)
-    val setA = listOf(result[0], result[1], result[7])
-    val setB = listOf(result[2], result[3])
-    val setC = listOf(result[5], result[6])
-    val setNone = listOf(result[4])
+    assertThat(result).hasSize(7)
 
-    fun assertForGroup(consecutiveSentences: List<Sentence>, expectedConsecutiveGroup: List<Int>) {
-      consecutiveSentences.forEach { sentence ->
-        assertThat(sentence.consecutiveGroup).isEqualTo(expectedConsecutiveGroup)
-      }
-    }
+    assertThat(result[0]).isEqualTo(expectedSentenceSequenceA)
+    assertThat(result[1]).isEqualTo(expectedSentenceSequenceB)
+    assertThat(result[2]).isEqualTo(expectedSentenceSequenceC)
+    assertThat(result[3]).isEqualTo(expectedSentenceSequenceD)
+    assertThat(result[4]).isEqualTo(expectedSentenceSequenceE)
 
-    assertForGroup(setA, expectedConsecutiveGroupA)
-    assertForGroup(setB, expectedConsecutiveGroupB)
-    assertForGroup(setC, expectedConsecutiveGroupC)
-    assertForGroup(setNone, listOf())
+    assertThat(result[5]).isEqualTo(expectedSentenceSequenceF)
+    assertThat(result[6]).isEqualTo(expectedSentenceSequenceG)
   }
 
   //endregion
+
+  // region Test Data -
+  val defaultBookingId = 123
+  val alternativeBookingId = 987
+
+  /* This set of sentences is to produce the following SentenceSequences of increasing complexity
+   * - { indexSentence: 0, sentencesInSequence: null } Single sentence
+   * - { indexSentence: 1, sentencesInSequence: {1=[2]} } Sentence with single consecutive
+   * - { indexSentence: 3, sentencesInSequence: {3=[4], 4=[5]} } Sentence with multiple consecutive
+   * - { indexSentence: 6, sentencesInSequence: {6=[7, 8]} } Sentence with single concurrent consecutive set
+   * - { indexSentence: 9, sentencesInSequence: {9=[10, 11], 10=[12, 13]} } Sentence with multiple concurrent consecutive sets
+   */
+  val sentencesForSequencesFirst = listOf(
+    Sentence(
+      bookingId = defaultBookingId,
+      sentenceSequence = 0,
+      consecutiveToSequence = null,
+      courtDescription = "First Booking Court",
+    ),
+    Sentence(
+      bookingId = defaultBookingId,
+      sentenceSequence = 1,
+      consecutiveToSequence = null,
+    ),
+    Sentence(
+      bookingId = defaultBookingId,
+      sentenceSequence = 2,
+      consecutiveToSequence = 1,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 3,
+      consecutiveToSequence = null,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 4,
+      consecutiveToSequence = 3,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 5,
+      consecutiveToSequence = 4,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 6,
+      consecutiveToSequence = null,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 7,
+      consecutiveToSequence = 6,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 8,
+      consecutiveToSequence = 6,
+    ),
+
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 9,
+      consecutiveToSequence = null,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 10,
+      consecutiveToSequence = 9,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 11,
+      consecutiveToSequence = 9,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 12,
+      consecutiveToSequence = 10,
+    ),
+    Sentence(
+      defaultBookingId,
+      sentenceSequence = 13,
+      consecutiveToSequence = 10,
+    ),
+  )
+
+  // sentenceSequence 0: stand alone
+  val expectedSentenceSequenceA = SentenceSequence(
+    indexSentence = sentencesForSequencesFirst[0],
+    sentencesInSequence = null,
+  )
+
+  // sentenceSequence 1, 2: sentence with a single consecutive
+  val expectedSentenceSequenceB = SentenceSequence(
+    indexSentence = sentencesForSequencesFirst[1],
+    sentencesInSequence = mapOf(
+      sentencesForSequencesFirst[1].sentenceSequence!! to listOf(sentencesForSequencesFirst[2]),
+    ),
+  )
+
+  // sentenceSequence 3, 4, 5: sentence with a single consecutive followed by a single consecutive
+  val expectedSentenceSequenceC = SentenceSequence(
+    indexSentence = sentencesForSequencesFirst[3],
+    sentencesInSequence = mapOf(
+      sentencesForSequencesFirst[3].sentenceSequence!! to listOf(sentencesForSequencesFirst[4]),
+      sentencesForSequencesFirst[4].sentenceSequence!! to listOf(sentencesForSequencesFirst[5]),
+    ),
+  )
+
+  // sentenceSequence 6, 7, 8: sentence with a consecutively concurrents
+  val expectedSentenceSequenceD = SentenceSequence(
+    indexSentence = sentencesForSequencesFirst[6],
+    sentencesInSequence = mapOf(
+      sentencesForSequencesFirst[6].sentenceSequence!! to listOf(sentencesForSequencesFirst[7], sentencesForSequencesFirst[8]),
+    ),
+  )
+
+  // sentenceSequence 9, 10, 11: sentence with multiple concurrents consecutive to each other
+  val expectedSentenceSequenceE = SentenceSequence(
+    indexSentence = sentencesForSequencesFirst[9],
+    sentencesInSequence = mapOf(
+      sentencesForSequencesFirst[9].sentenceSequence!! to listOf(sentencesForSequencesFirst[10], sentencesForSequencesFirst[11]),
+      sentencesForSequencesFirst[10].sentenceSequence!! to listOf(sentencesForSequencesFirst[12], sentencesForSequencesFirst[13]),
+    ),
+  )
+
+  /*
+   * A supplementary set of sentences to produce further complex
+   * test cases against sentenceForSequencesFirst
+   * - { indexSentence: 0, sentencesInSequence: null } Same sentence sequence as previous booking, but should appear differently
+   * - { indexSentence 21: sentencesInSequence: {21=[22, 23], 22=[24, 25]} These will be delivered out of order
+   */
+  val sentencesForSequencesSecond = listOf(
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 0,
+      consecutiveToSequence = null,
+      courtDescription = "Second Booking Court",
+    ),
+
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 25,
+      consecutiveToSequence = 22,
+    ),
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 22,
+      consecutiveToSequence = 21,
+    ),
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 21,
+      consecutiveToSequence = null,
+    ),
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 23,
+      consecutiveToSequence = 21,
+    ),
+    Sentence(
+      bookingId = alternativeBookingId,
+      sentenceSequence = 24,
+      consecutiveToSequence = 22,
+    ),
+  )
+
+  // sentenceSequence 0: stand alone, same sentence sequence as previous but unique booking
+  val expectedSentenceSequenceF = SentenceSequence(
+    indexSentence = sentencesForSequencesSecond[0],
+    sentencesInSequence = null,
+  )
+
+  // sentenceSequence: 21, 22, 23, 24, 25: delivered out of order but handled
+  val expectedSentenceSequenceG = SentenceSequence(
+    indexSentence = sentencesForSequencesSecond[3],
+    sentencesInSequence = mapOf(
+      sentencesForSequencesSecond[3].sentenceSequence!! to listOf(sentencesForSequencesSecond[2], sentencesForSequencesSecond[4]),
+      sentencesForSequencesSecond[2].sentenceSequence!! to listOf(sentencesForSequencesSecond[5], sentencesForSequencesSecond[1]),
+    ),
+  )
+
+  // endregion
 }

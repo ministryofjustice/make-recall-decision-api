@@ -4,6 +4,7 @@
     "sentenceSequence": 1,
     "lineSequence": 1,
     "caseSequence": 1,
+    "consecutiveToSequence": null,
     "courtDescription": "Amersham Crown Court",
     "sentenceStatus": "I",
     "sentenceCategory": "2003",
@@ -27,7 +28,7 @@
         "offenceStartDate": "2018-01-31",
         "offenceStatute": "DD91",
         "offenceCode": "DD91011",
-        "offenceDescription": "Abandon a fighting dog",
+        "offenceDescription": "(12-1-A) Abandon a fighting dog",
         "indicators": [
           "99"
         ]
@@ -37,7 +38,7 @@
         "offenceStartDate": "2018-12-21",
         "offenceStatute": "AN16",
         "offenceCode": "AN16252",
-        "offenceDescription": "Act as member of flight crew of aircraft without holding appropriate licence",
+        "offenceDescription": "(12-1-B) Act as member of flight crew of aircraft without holding appropriate licence",
         "indicators": [
           "99"
         ]
@@ -49,6 +50,7 @@
     "sentenceSequence": 2,
     "lineSequence": 2,
     "caseSequence": 1,
+    "consecutiveToSequence": 1,
     "courtDescription": "Amersham Crown Court",
     "sentenceStatus": "I",
     "sentenceCategory": "2003",
@@ -72,7 +74,7 @@
         "offenceStartDate": "2019-02-25",
         "offenceStatute": "TH68",
         "offenceCode": "TH68058",
-        "offenceDescription": "Abstract / use without authority electricity",
+        "offenceDescription": "(12-2-C) Abstract / use without authority electricity",
         "indicators": [
           "52"
         ]
@@ -82,9 +84,45 @@
         "offenceStartDate": "2018-12-21",
         "offenceStatute": "HT04",
         "offenceCode": "OC01234",
-        "offenceDescription": "Generic Offence 01234",
+        "offenceDescription": "(12-C-D) Generic Offence 01234",
         "indicators": [
           "99"
+        ]
+      }
+    ]
+  },
+  {
+    "bookingId": 12,
+    "sentenceSequence": 3,
+    "lineSequence": 3,
+    "caseSequence": 1,
+    "consecutiveToSequence": null,
+    "courtDescription": "Amersham Crown Court",
+    "sentenceStatus": "I",
+    "sentenceCategory": "2003",
+    "sentenceCalculationType": "EPP",
+    "sentenceTypeDescription": "Extended Sent Public Protection CJA 03",
+    "sentenceDate": "2019-02-01",
+    "sentenceStartDate": "2020-02-01",
+    "sentenceEndDate": "2028-01-31",
+    "terms": [
+      {
+        "years": 8,
+        "months": 6,
+        "weeks": 3,
+        "days": 2,
+        "code": "IMP"
+      }
+    ],
+    "offences": [
+      {
+        "offenderChargeId": 3934355,
+        "offenceStartDate": "2019-02-25",
+        "offenceStatute": "TH68",
+        "offenceCode": "TH68058",
+        "offenceDescription": "(12-3-Z) Abstract / use without authority electricity",
+        "indicators": [
+          "52"
         ]
       }
     ]
