@@ -2,5 +2,5 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 data class SentenceSequence(
   val indexSentence: Sentence,
-  val sentencesInSequence: Map<Int, List<Sentence>>? = null,
+  val sentencesInSequence: MutableMap<Int, List<Sentence>>? = null,
 )

@@ -59,6 +59,24 @@ internal class PrisonerApiService(
     return response!!
   }
 
+  /**
+   * Sort sentences by first the sentence end date and the by court if there are any with the same date
+   */
+  private val sentenceSort: Comparator<Sentence> = compareBy<Sentence> { it.sentenceEndDate }.thenByDescending { it.courtDescription }
+
+  /**
+   * Sort sentence sequences by sorting their index sentences by sentenceSort
+   */
+  private val sentenceSequenceSort: Comparator<SentenceSequence> = Comparator<SentenceSequence> { a: SentenceSequence, b: SentenceSequence -> sentenceSort.compare(a.indexSentence, b.indexSentence) }
+
+  /**
+   * Retrieve all sequences of sentences and their offences for a nomsId
+   * @param nomsId The id in NOMS to retrieve all sentences/offences for
+   * @return A series of SentenceSequences. These represent the sequence of consecutive sentences.
+   * These will be sorted by the index sentence's end date whilst the subsequence sentences in the sequences
+   * will be sorted first into consecutive groups using their consecutive to value and then again by end date
+   * and court
+   */
   fun retrieveOffences(nomsId: String): List<SentenceSequence> = getValueAndHandleWrappedException(
     prisonApiClient.retrievePrisonTimelines(nomsId),
   )!!.prisonPeriod
@@ -85,35 +103,53 @@ internal class PrisonerApiService(
         )
       }
         .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
-        .sortedBy { it.sentenceSequence }
 
-      // Sequencing happens here
-      val sequenceList: MutableList<SentenceSequence> = mutableListOf()
-      var currentIndex: Sentence? = null
-      var currentInSequence: MutableMap<Int, MutableList<Sentence>>? = null
-      sentencesForBooking.forEach {
-        if (it.consecutiveToSequence == null) {
-          if (currentIndex != null) {
-            sequenceList.add(SentenceSequence(currentIndex, currentInSequence))
-          }
-          currentIndex = it
-          currentInSequence = null
-        } else {
-          if (currentInSequence == null) {
-            currentInSequence = mutableMapOf()
-          }
-          val currentList = currentInSequence[it.consecutiveToSequence] ?: mutableListOf()
-          currentList.add(it)
-          currentInSequence[it.consecutiveToSequence] = currentList
+      // Sentences that have no consecutiveToSequence value will be the index of a sentence sequence
+      // even if it is the only sentence in that that sequence (i.e. has no consecutive)
+      val indexSentences = sentencesForBooking.filter { it.consecutiveToSequence === null }
+      // Any sentence that is not an index must be a consecutive/concurrent
+      val consecutiveSequences = sentencesForBooking.filter { it.consecutiveToSequence !== null }
+
+      // Build a list of sequence, using the map key to reference the sentenceSequence of the index
+      // sentence for more immediate reference as it will be used frequently
+      val sentenceSequenceMap: MutableMap<Int, SentenceSequence> = mutableMapOf()
+      // Every index sentence will start a sequence so map a sequence for each index sentence
+      indexSentences.forEach {
+        if (it.sentenceSequence != null) {
+          sentenceSequenceMap[it.sentenceSequence] = SentenceSequence(it)
         }
       }
-      if (currentIndex != null) {
-        sequenceList.add(SentenceSequence(currentIndex, currentInSequence))
+
+      // Group all consecutive by consecutiveToSequence, creating concurrent groups of sentence with the same
+      // Sort by key so we know we don't have to double back through the data
+      val groupedByConsecutiveToSequence = consecutiveSequences.groupBy { it.consecutiveToSequence!! }.toSortedMap()
+      // For every consecutiveToSequence (which we know already contains any concurrent for that consecutiveToSequence
+      groupedByConsecutiveToSequence.forEach { (consecutiveTo, sentences) ->
+        // If the group is consecutive to an index sentence...
+        if (sentenceSequenceMap.keys.contains(consecutiveTo)) {
+          val sequence = sentenceSequenceMap[consecutiveTo]!!
+          // ...create a new sentencesInSequence map as this must be the first in the chain...
+          sentenceSequenceMap[consecutiveTo] = SentenceSequence(sequence.indexSentence, mutableMapOf(consecutiveTo to sentences.sortedWith(sentenceSort)))
+        }
+        // ...else...
+        else {
+          sentenceSequenceMap.forEach { (key, sentenceSequence) ->
+            // ...find the SentenceSequence that contains the consecutiveTo we are looking for...
+            if (sentenceSequence.sentencesInSequence?.values?.flatMap { x -> x }
+                ?.any { s -> s.sentenceSequence == consecutiveTo } ?: false
+            ) {
+              // ...and add it to the map, sorting them as we do
+              sentenceSequence.sentencesInSequence[consecutiveTo] = sentences.sortedWith(sentenceSort)
+            }
+          }
+        }
       }
-      sequenceList
+
+      // We don't need the map that references the index sentence's sequence so return all values as a list
+      sentenceSequenceMap.values
     }
-    .sortedByDescending { it.indexSentence.sentenceEndDate ?: LocalDate.MAX }
-    .sortedByDescending { it.indexSentence.sentenceDate }
+    // Sort the SentenceSequences as required
+    .sortedWith(sentenceSequenceSort)
 
   fun getOffenderMovements(nomsId: String): List<OffenderMovement> {
     log.info("Searching for offender movements for offender with NOMIS ID $nomsId")
