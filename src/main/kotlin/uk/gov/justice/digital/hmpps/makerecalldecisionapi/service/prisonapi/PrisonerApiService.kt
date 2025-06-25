@@ -115,6 +115,8 @@ internal class PrisonerApiService(
       val sentenceSequenceMap: MutableMap<Int, SentenceSequence> = mutableMapOf()
       // Every index sentence will start a sequence so map a sequence for each index sentence
       indexSentences.forEach {
+        // Should never be null as it make the sentence invalid, however the API contract is nullable
+        // (as are all fields) and so we must defend against this until that may change
         if (it.sentenceSequence != null) {
           sentenceSequenceMap[it.sentenceSequence] = SentenceSequence(it)
         }
