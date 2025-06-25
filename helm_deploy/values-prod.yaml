@@ -22,6 +22,7 @@ generic-service:
     enabled: true
     timeout: 10800
     schedule: "30 7 * * 1-5"
+
     namespace_secrets:
       make-recall-decision-api-database:
         DB_NAME: "name"
@@ -33,6 +34,8 @@ generic-service:
         DB_USER_PREPROD: "username"
         DB_PASS_PREPROD: "password"
         DB_HOST_PREPROD: "host"
+    env:
+      FORCE_RUN: true
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-prod
