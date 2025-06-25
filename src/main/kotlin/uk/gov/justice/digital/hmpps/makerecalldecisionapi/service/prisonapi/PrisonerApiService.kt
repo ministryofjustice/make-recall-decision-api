@@ -126,8 +126,8 @@ internal class PrisonerApiService(
       // For every consecutiveToSequence (which we know already contains any concurrent for that consecutiveToSequence
       groupedByConsecutiveToSequence.forEach { (consecutiveTo, sentences) ->
         // If the group is consecutive to an index sentence...
-        if (sentenceSequenceMap.keys.contains(consecutiveTo)) {
-          val sequence = sentenceSequenceMap[consecutiveTo]!!
+        if (sentenceSequenceMap.containsKey(consecutiveTo)) {
+          val sequence = sentenceSequenceMap.getValue(consecutiveTo)
           // ...create a new sentencesInSequence map as this must be the first in the chain...
           sentenceSequenceMap[consecutiveTo] = SentenceSequence(sequence.indexSentence, mutableMapOf(consecutiveTo to sentences.sortedWith(sentenceSort)))
         }
