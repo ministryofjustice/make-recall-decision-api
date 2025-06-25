@@ -62,12 +62,12 @@ internal class PrisonerApiService(
   /**
    * Sort sentences by first the sentence end date and the by court if there are any with the same date
    */
-  private val sentenceSort: Comparator<Sentence> = compareBy<Sentence> { it.sentenceEndDate }.thenByDescending { it.courtDescription }
+  private val sentenceSort: Comparator<Sentence> = compareByDescending<Sentence> { it.sentenceEndDate }.thenBy { it.courtDescription }
 
   /**
    * Sort sentence sequences by sorting their index sentences by sentenceSort
    */
-  private val sentenceSequenceSort: Comparator<SentenceSequence> = Comparator<SentenceSequence> { a: SentenceSequence, b: SentenceSequence -> sentenceSort.compare(a.indexSentence, b.indexSentence) }
+  private val sentenceSequenceSort: Comparator<SentenceSequence> = Comparator { a: SentenceSequence, b: SentenceSequence -> sentenceSort.compare(a.indexSentence, b.indexSentence) }
 
   /**
    * Retrieve all sequences of sentences and their offences for a nomsId

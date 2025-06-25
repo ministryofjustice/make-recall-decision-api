@@ -502,6 +502,7 @@ internal class PrisonerApiServiceTest {
   val alternativeBookingId = 987
   val defaultBookingCourt = "First Booking Court"
   val alternativeBookingCourt = "Second Booking Court"
+  val testDate = LocalDate.now()
 
   /* This set of sentences is to produce the following SentenceSequences of increasing complexity
    * - { indexSentence: 0, sentencesInSequence: null } Single sentence
@@ -516,12 +517,14 @@ internal class PrisonerApiServiceTest {
       sentenceSequence = 0,
       consecutiveToSequence = null,
       courtDescription = defaultBookingCourt,
+      sentenceEndDate = testDate.plusDays(100),
     ),
     Sentence(
       bookingId = defaultBookingId,
       sentenceSequence = 1,
       consecutiveToSequence = null,
       courtDescription = defaultBookingCourt,
+      sentenceEndDate = testDate.plusDays(99),
     ),
     Sentence(
       bookingId = defaultBookingId,
@@ -534,6 +537,7 @@ internal class PrisonerApiServiceTest {
       sentenceSequence = 3,
       consecutiveToSequence = null,
       courtDescription = defaultBookingCourt,
+      sentenceEndDate = testDate.plusDays(98),
     ),
     Sentence(
       defaultBookingId,
@@ -552,6 +556,7 @@ internal class PrisonerApiServiceTest {
       sentenceSequence = 6,
       consecutiveToSequence = null,
       courtDescription = defaultBookingCourt,
+      sentenceEndDate = testDate.plusDays(97),
     ),
     Sentence(
       defaultBookingId,
@@ -571,6 +576,7 @@ internal class PrisonerApiServiceTest {
       sentenceSequence = 9,
       consecutiveToSequence = null,
       courtDescription = defaultBookingCourt,
+      sentenceEndDate = testDate.plusDays(96),
     ),
     Sentence(
       defaultBookingId,
@@ -588,14 +594,14 @@ internal class PrisonerApiServiceTest {
       defaultBookingId,
       sentenceSequence = 13,
       consecutiveToSequence = 10,
-      sentenceEndDate = LocalDate.now(),
+      sentenceEndDate = testDate,
       courtDescription = alternativeBookingCourt,
     ),
     Sentence(
       defaultBookingId,
       sentenceSequence = 12,
       consecutiveToSequence = 10,
-      sentenceEndDate = LocalDate.now(),
+      sentenceEndDate = testDate,
       courtDescription = defaultBookingCourt,
     ),
     Sentence(
@@ -643,7 +649,7 @@ internal class PrisonerApiServiceTest {
     indexSentence = sentencesForSequencesFirst[9],
     sentencesInSequence = mutableMapOf(
       sentencesForSequencesFirst[9].sentenceSequence!! to listOf(sentencesForSequencesFirst[10], sentencesForSequencesFirst[11]),
-      sentencesForSequencesFirst[10].sentenceSequence!! to listOf(sentencesForSequencesFirst[12], sentencesForSequencesFirst[13]),
+      sentencesForSequencesFirst[10].sentenceSequence!! to listOf(sentencesForSequencesFirst[13], sentencesForSequencesFirst[12]),
     ),
   )
 
@@ -660,14 +666,14 @@ internal class PrisonerApiServiceTest {
       sentenceSequence = 0,
       consecutiveToSequence = null,
       courtDescription = "Second Booking Court",
-      sentenceEndDate = LocalDate.now().plusDays(100),
+      sentenceEndDate = testDate.plusDays(1),
     ),
 
     Sentence(
       bookingId = alternativeBookingId,
       sentenceSequence = 25,
       consecutiveToSequence = 22,
-      sentenceEndDate = LocalDate.now().plusDays(100),
+      sentenceEndDate = testDate.plusDays(1),
     ),
     Sentence(
       bookingId = alternativeBookingId,
@@ -678,7 +684,7 @@ internal class PrisonerApiServiceTest {
       bookingId = alternativeBookingId,
       sentenceSequence = 21,
       consecutiveToSequence = null,
-      sentenceEndDate = LocalDate.now().plusDays(10),
+      sentenceEndDate = testDate.plusDays(10),
     ),
     Sentence(
       bookingId = alternativeBookingId,
@@ -689,7 +695,7 @@ internal class PrisonerApiServiceTest {
       bookingId = alternativeBookingId,
       sentenceSequence = 24,
       consecutiveToSequence = 22,
-      sentenceEndDate = LocalDate.now().plusDays(10),
+      sentenceEndDate = testDate.plusDays(10),
     ),
   )
 
