@@ -38,14 +38,14 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
   implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
   implementation("io.opentelemetry:opentelemetry-api:1.51.0")
-  implementation("joda-time:joda-time:2.13.0")
+  implementation("joda-time:joda-time:2.14.0")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
     implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
-    implementation("org.apache.poi:poi-ooxml:5.4.0") // Address CVE-2025-31672 present in 5.2.2
+    implementation("org.apache.poi:poi-ooxml:5.4.1") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -57,19 +57,19 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
   implementation("io.sentry:sentry-logback:7.20.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.2.2")
-  implementation("org.json:json:20240303")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.10.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.6")
+  implementation("org.json:json:20250517")
 
-  implementation("com.google.code.gson:gson:2.11.0")
+  implementation("com.google.code.gson:gson:2.13.1")
 
-  testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
+  testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
@@ -82,7 +82,7 @@ dependencies {
   testImplementation("io.rest-assured:json-path")
   testImplementation("io.rest-assured:xml-path")
 
-  testImplementation("org.wiremock:wiremock-standalone:3.12.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.13.1")
 }
 
 java {
