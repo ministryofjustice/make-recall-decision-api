@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.14.3")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
   implementation("io.opentelemetry:opentelemetry-api:1.46.0")
   implementation("joda-time:joda-time:2.13.0")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
