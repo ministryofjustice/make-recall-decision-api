@@ -39,6 +39,8 @@ generic-service:
 
 generic-prometheus-alerts:
   alertSeverity: make-recall-decision-prod
+  # Requires 15 health 500s in 5 minutes
+  ingress5xxHealthEndpointThreshold: 0.05
 
 gotenberg:
   alertSeverity: make-recall-decision-prod
