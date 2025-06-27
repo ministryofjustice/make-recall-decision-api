@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.0"
   kotlin("jvm") version "2.1.21"
@@ -93,8 +95,8 @@ java {
 
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "21"
+    compilerOptions {
+      jvmTarget = JvmTarget.fromTarget("21")
     }
   }
 }
@@ -124,7 +126,7 @@ sourceSets {
   }
 }
 
-task<Test>("functional-test-light") {
+tasks.register<Test>("functional-test-light") {
   description = "Runs the functional test, will require start-local-development.sh " +
     "and docker compose-postgres.yml to be started manually"
   group = "verification"
