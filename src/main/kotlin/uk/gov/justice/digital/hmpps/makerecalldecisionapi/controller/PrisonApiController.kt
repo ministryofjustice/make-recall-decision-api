@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonOffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 
@@ -34,7 +34,7 @@ internal class PrisonApiController(
   @Operation(summary = "Returns a list of prison sentences.")
   suspend fun retrieveSentences(
     @RequestBody request: PrisonSentencesRequest,
-  ): List<Sentence> = prisonerApiService.retrieveOffences(request.nomsId)
+  ): List<SentenceSequence> = prisonerApiService.retrieveOffences(request.nomsId)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION_PPCS')")
   @GetMapping("/offenders/{nomisId}/movements")
