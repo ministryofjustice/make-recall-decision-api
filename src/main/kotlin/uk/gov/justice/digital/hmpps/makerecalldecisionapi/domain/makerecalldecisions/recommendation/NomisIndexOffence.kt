@@ -9,6 +9,7 @@ data class NomisIndexOffence(
 )
 
 data class OfferedOffence(
+  val consecutiveCount: Int? = null,
   val offenderChargeId: Int? = null,
   val offenceCode: String? = null,
   val offenceStatute: String? = null,
