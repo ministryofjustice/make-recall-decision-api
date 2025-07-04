@@ -73,7 +73,7 @@ dependencies {
   // brings in a newer version of spring-boot with the fixes (it's already bringing the latest
   // version of spring-boot, 3.5.0, but that doesn't have the fixes)
   implementation("org.springframework:spring-web:6.2.8") // Address CVE-2025-41234
-  implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.42") // Address CVE-2025-49125 & CVE-2025-48988
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.9") // Address CVE-2025-49125 & CVE-2025-48988
 
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
