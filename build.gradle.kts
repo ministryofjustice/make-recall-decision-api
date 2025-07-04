@@ -65,7 +65,7 @@ dependencies {
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.2.2")
-  implementation("org.json:json:20240303")
+  implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.11.0")
 
