@@ -17,11 +17,9 @@ internal fun ppudDetailsResponse(
   offender: OffenderDetails = offenderDetails(),
 ) = PpudDetailsResponse(offender)
 
-internal fun PpudDetailsResponse.toJson() =
-  json(toJsonString())
+internal fun PpudDetailsResponse.toJson() = json(toJsonString())
 
-internal fun PpudDetailsResponse.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun PpudDetailsResponse.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 internal fun offenderDetails(
   id: String = randomString(),
@@ -57,11 +55,9 @@ internal fun offenderDetails(
   youngOffender,
 )
 
-internal fun OffenderDetails.toJson() =
-  json(toJsonString())
+internal fun OffenderDetails.toJson() = json(toJsonString())
 
-internal fun OffenderDetails.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun OffenderDetails.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 internal fun sentenceDetails(
   id: String? = randomString(),
@@ -89,22 +85,18 @@ internal fun sentenceDetails(
   sentencingCourt,
 )
 
-internal fun SentenceDetails.toJson() =
-  json(toJsonString())
+internal fun SentenceDetails.toJson() = json(toJsonString())
 
-internal fun SentenceDetails.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun SentenceDetails.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 internal fun offenceDetails(
   indexOffence: String? = randomString(),
   dateOfIndexOffence: String? = randomString(),
 ) = OffenceDetails(indexOffence, dateOfIndexOffence)
 
-internal fun OffenceDetails.toJson() =
-  json(toJsonString())
+internal fun OffenceDetails.toJson() = json(toJsonString())
 
-internal fun OffenceDetails.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun OffenceDetails.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 internal fun sentenceLength(
   partYears: Int? = randomInt(),
@@ -112,8 +104,6 @@ internal fun sentenceLength(
   partDays: Int? = randomInt(),
 ) = SentenceLength(partYears, partMonths, partDays)
 
-internal fun SentenceLength.toJson() =
-  json(toJsonString())
+internal fun SentenceLength.toJson() = json(toJsonString())
 
-internal fun SentenceLength.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun SentenceLength.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
