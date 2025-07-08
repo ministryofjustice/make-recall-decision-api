@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,8 +31,7 @@ import javax.sql.DataSource
 )
 class HealthCheckTest : IntegrationTestBase() {
 
-  @Autowired
-  private lateinit var ppudAutomationResponseMocker: PpudAutomationResponseMocker
+  private val ppudAutomationResponseMocker: PpudAutomationResponseMocker = PpudAutomationResponseMocker()
 
   @BeforeEach
   override fun startUpServer() {

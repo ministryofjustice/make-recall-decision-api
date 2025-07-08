@@ -53,8 +53,7 @@ class PpudControllerTest : IntegrationTestBase() {
   @Autowired
   private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
 
-  @Autowired
-  private lateinit var ppudAutomationResponseMocker: PpudAutomationResponseMocker
+  private val ppudAutomationResponseMocker: PpudAutomationResponseMocker = PpudAutomationResponseMocker()
 
   @BeforeEach
   override fun startUpServer() {
