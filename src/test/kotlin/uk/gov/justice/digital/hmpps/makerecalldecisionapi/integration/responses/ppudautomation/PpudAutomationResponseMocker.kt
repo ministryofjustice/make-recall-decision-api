@@ -8,7 +8,6 @@ import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import org.mockserver.model.MediaType.APPLICATION_JSON
-import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
@@ -25,10 +24,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationUpdateReleaseResponse
 
-@Service
 class PpudAutomationResponseMocker {
 
-  val ppudAutomationApi: ClientAndServer = startClientAndServer(8099)
+  private var ppudAutomationApi: ClientAndServer = startClientAndServer(8099)
   private val gson: Gson = Gson()
 
   fun startUpServer() {
@@ -40,7 +38,13 @@ class PpudAutomationResponseMocker {
   }
 
   fun tearDownServer() {
-    ppudAutomationApi.stop()
+    // The stop method should only return once the server and client are fully stopped, but when running the full test
+    // suite we're getting issues between tests trying to start a mock server on the same port. Since the default JUnit
+    // behaviour is not to run test classes in parallel, this suggests the stop method is returning too early. It seems
+    // we aren't the only ones seeing this behaviour: https://github.com/mock-server/mockserver/issues/1097
+    do {
+      ppudAutomationApi.stop()
+    } while (!ppudAutomationApi.hasStopped())
   }
 
   fun setUpSuccessfulHealthCheck() {
