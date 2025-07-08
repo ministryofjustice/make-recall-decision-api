@@ -40,8 +40,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
   @Autowired
   private lateinit var ppudAutomationApiClient: PpudAutomationApiClient
 
-  @Autowired
-  private lateinit var ppudAutomationResponseMocker: PpudAutomationResponseMocker
+  private val ppudAutomationResponseMocker: PpudAutomationResponseMocker = PpudAutomationResponseMocker()
 
   @BeforeEach
   override fun startUpServer() {
