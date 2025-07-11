@@ -397,6 +397,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
       assertThat(get("indexOffence")).isEqualTo(bookRecallToPpud.indexOffence)
       assertThat(get("indexOffenceComment")).isEqualTo(bookRecallToPpud.indexOffenceComment)
       assertThat(get("ppudSentenceId")).isEqualTo(bookRecallToPpud.ppudSentenceId)
+      assertThat(get("ppudSentenceData")).isEqualTo(bookRecallToPpud.ppudSentenceData)
       assertThat(get("mappaLevel")).isEqualTo(bookRecallToPpud.mappaLevel)
       assertThat(get("policeForce")).isEqualTo(bookRecallToPpud.policeForce)
       assertThat(get("probationArea")).isEqualTo(bookRecallToPpud.probationArea)
