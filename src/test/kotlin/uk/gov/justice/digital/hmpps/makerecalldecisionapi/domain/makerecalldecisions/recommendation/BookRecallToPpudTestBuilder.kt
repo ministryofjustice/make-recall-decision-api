@@ -21,7 +21,7 @@ internal fun bookRecallToPpud(
     offenceDescription = randomString(),
     releaseDate = randomLocalDate(),
     sentencingCourt = randomString(),
-    dateOfSentence = randomLocalDate()
+    dateOfSentence = randomLocalDate(),
   ),
   mappaLevel: String? = randomString(),
   policeForce: String? = randomString(),
