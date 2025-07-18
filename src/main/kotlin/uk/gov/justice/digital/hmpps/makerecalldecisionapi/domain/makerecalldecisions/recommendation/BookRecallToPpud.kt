@@ -14,7 +14,7 @@ data class BookRecallToPpud(
   val indexOffence: String? = null,
   val indexOffenceComment: String? = null,
   val ppudSentenceId: String? = null,
-  val ppudSentenceData: IndeterminateSentenceData? = null,
+  val ppudIndeterminateSentenceData: IndeterminateSentenceData? = null,
   val mappaLevel: String? = null,
   val policeForce: String? = null,
   val probationArea: String? = null,
