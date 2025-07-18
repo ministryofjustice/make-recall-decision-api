@@ -396,7 +396,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
       assertThat(get("releasingPrison")).isEqualTo(bookRecallToPpud.releasingPrison)
       assertThat(get("indexOffence")).isEqualTo(bookRecallToPpud.indexOffence)
       assertThat(get("indexOffenceComment")).isEqualTo(bookRecallToPpud.indexOffenceComment)
-      assertThat(get("ppudIndeterminateSentenceId")).isEqualTo(bookRecallToPpud.ppudIndeterminateSentenceId)
+      assertThat(get("ppudSentenceId")).isEqualTo(bookRecallToPpud.ppudSentenceId)
       val ppudSentenceData = bookRecallToPpudAfterUpdate.getJSONObject("ppudIndeterminateSentenceData")
       assertThat(ppudSentenceData.get("offenceDescription")).isEqualTo(bookRecallToPpud.ppudIndeterminateSentenceData?.offenceDescription)
       assertThat(ppudSentenceData.get("releaseDate")).isEqualTo(bookRecallToPpud.ppudIndeterminateSentenceData?.releaseDate.toString())
