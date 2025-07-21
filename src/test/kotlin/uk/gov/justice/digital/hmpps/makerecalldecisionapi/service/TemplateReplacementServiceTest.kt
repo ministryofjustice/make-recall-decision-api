@@ -212,7 +212,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["phone_number"]).isEqualTo("01234567890")
       assertThat(result["fax_number"]).isEqualTo("09876543210")
       assertThat(result["email_address"]).isEqualTo("john.doe@gmail.com")
-      // TODO: check has_vulnerabilities
+      assertThat(result["has_vulnerabilities"]).isEqualTo("Yes")
       assertThat(result["gender"]).isEqualTo("Male")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
       assertThat(result["name"]).isEqualTo("Jane Bloggs")
@@ -315,7 +315,23 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
 
-      // TODO: check vulnerabilities mappings
+      assertThat(result["risk_of_suicide_or_self_harm"]).isEqualTo("\nRisk of suicide or self harm:\nRisk of suicide\n")
+      assertThat(result["relationship_breakdown"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["not_known"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["none"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["domestic_abuse"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["drug_or_alcohol_use"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["bullying_others"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["being_bullied_by_others"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["being_at_risk_of_serious_harm_from_others"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["adult_or_child_safeguarding_concerns"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["mental_health_concerns"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["physical_health_concerns"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["medication_taken_including_compliance_with_medication"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["bereavement_issues"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["learning_difficulties"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["physical_disabilities"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["cultural_or_language_differences"]).isEqualTo(EMPTY_STRING)
     }
   }
 
