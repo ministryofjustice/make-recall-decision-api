@@ -27,6 +27,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -56,6 +58,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateRetrievalService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
@@ -119,9 +122,13 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var subjectAccessRequestService: SubjectAccessRequestService
 
-  private lateinit var partADocumentMapper: PartADocumentMapper
+  protected lateinit var partADocumentMapper: PartADocumentMapper
 
-  private lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+  protected lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
+
+  private lateinit var templateRetrievalService: TemplateRetrievalService
+
+  private val documentTemplateConfiguration: DocumentTemplateConfiguration = documentTemplateConfiguration()
 
   protected val crn = "12345"
 
@@ -134,8 +141,9 @@ internal abstract class ServiceTestBase {
     partADocumentMapper = PartADocumentMapper(mockRegionService)
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(deliusClient)
+    templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
     templateReplacementService =
-      TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper)
+      TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper, templateRetrievalService)
     documentService = DocumentService(deliusClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(

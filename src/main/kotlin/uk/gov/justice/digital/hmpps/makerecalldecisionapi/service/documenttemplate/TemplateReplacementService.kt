@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate
 
 import com.deepoove.poi.XWPFTemplate
-import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
@@ -48,6 +47,7 @@ import java.time.format.DateTimeFormatter
 internal class TemplateReplacementService(
   val partADocumentMapper: PartADocumentMapper,
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper,
+  val templateRetrievalService: TemplateRetrievalService,
 ) {
 
   suspend fun generateDocFromRecommendation(
@@ -63,7 +63,8 @@ internal class TemplateReplacementService(
         decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
       }
 
-    val template = XWPFTemplate.compile(ClassPathResource(documentType.fileName).inputStream)
+    val templateClassPathResource = templateRetrievalService.loadDocumentTemplate(documentType)
+    val template = XWPFTemplate.compile(templateClassPathResource.inputStream)
 
 //    template.xwpfDocument.headerFooterPolicy.createWatermark("PREVIEW")
 //    styleWatermark(template.xwpfDocument.headerFooterPolicy.getHeader(XWPFHeaderFooterPolicy.DEFAULT))
@@ -169,7 +170,9 @@ internal class TemplateReplacementService(
       "supervising_practitioner_email" to documentData.supervisingPractitioner.email,
       "supervising_practitioner_region" to documentData.supervisingPractitioner.region,
       "supervising_practitioner_local_delivery_unit" to documentData.supervisingPractitioner.localDeliveryUnit,
-      "supervising_practitioner_ppcs_query_emails" to documentData.supervisingPractitioner.ppcsQueryEmails.joinToString("; "),
+      "supervising_practitioner_ppcs_query_emails" to documentData.supervisingPractitioner.ppcsQueryEmails.joinToString(
+        "; ",
+      ),
       "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
       "date_of_decision" to documentData.dateOfDecision,
       "time_of_decision" to documentData.timeOfDecision,

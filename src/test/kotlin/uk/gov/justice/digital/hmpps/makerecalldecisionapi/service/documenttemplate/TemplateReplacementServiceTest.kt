@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.verify
+import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
@@ -97,47 +99,80 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @Mock
   private lateinit var decisionNotToRecallLetterDocumentMapperMocked: DecisionNotToRecallLetterDocumentMapper
 
+  @Mock
+  private lateinit var templateRetrievalService: TemplateRetrievalService
+
   @ParameterizedTest
   @CsvSource(
-    "PART_A_DOCUMENT",
-    "PREVIEW_PART_A_DOCUMENT",
+    "PART_A_DOCUMENT, NAT Recall Part A London Template - obtained 231114.docx",
+    "PREVIEW_PART_A_DOCUMENT, Preview NAT Recall Part A London Template - obtained 231114.docx",
   )
-  fun `given recommendation data is disabled then build the document`(documentType: DocumentType) {
+  fun `given recommendation data is disabled then build the document`(
+    documentType: DocumentType,
+    templateName: String,
+  ) {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
       given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
       given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
+      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
+
+      verify(templateRetrievalService).loadDocumentTemplate(documentType)
     }
   }
 
   @Test
   fun `given recommendation data is disabled then build the dntr document`() {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
+      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)).willReturn(ClassPathResource("DNTR Template.docx"))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
+
+      verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)
     }
   }
 
   @ParameterizedTest
   @CsvSource(
-    "PART_A_DOCUMENT",
-    "PREVIEW_PART_A_DOCUMENT",
+    "PART_A_DOCUMENT, NAT Recall Part A London Template - obtained 231114.docx",
+    "PREVIEW_PART_A_DOCUMENT, Preview NAT Recall Part A London Template - obtained 231114.docx",
   )
-  fun `given recommendation data then build the document`(documentType: DocumentType) {
+  fun `given recommendation data then build the document`(documentType: DocumentType, templateName: String) {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
       given(mockRegionService.getRegionName("RegionCode1"))
         .willReturn("Region Name 1")
       given(mockRegionService.getRegionName("RegionCode2"))
         .willReturn("Region Name 2")
+      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
+
+      verify(templateRetrievalService).loadDocumentTemplate(documentType)
     }
   }
 
@@ -162,6 +197,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val letterContent = TemplateReplacementService(
         partADocumentMapperMocked,
         decisionNotToRecallLetterDocumentMapperMocked,
+        templateRetrievalService,
       ).generateLetterContentForPreviewFromRecommendation(recommendation)
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")

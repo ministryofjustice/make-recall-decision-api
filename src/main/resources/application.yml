@@ -227,3 +227,14 @@ spring:
     activate:
       on-profile: default
 ---
+
+document-template:
+  part-a-template-settings[0].start-date-time: "2025-01-10T15:58"
+  part-a-template-settings[0].template-name: "NAT Recall Part A London Template - obtained 231114.docx"
+
+  part-a-preview-template-settings[0].start-date-time: "2025-01-10T15:58"
+  part-a-preview-template-settings[0].template-name: "Preview NAT Recall Part A London Template - obtained 231114.docx"
+
+  dntr-template-settings[0].start-date-time: "2025-01-31T14:00"
+  dntr-template-settings[0].template-name: "DNTR Template.docx"
+
