@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate
 
 import com.deepoove.poi.XWPFTemplate
 import org.springframework.core.io.ClassPathResource
@@ -102,6 +102,7 @@ internal class TemplateReplacementService(
     )
   }
 
+  // TODO MRD-2785: outsource conversion
   fun mappingsForTemplate(documentData: DocumentData): HashMap<String, String?> {
     val mappings = hashMapOf(
       "custody_status" to documentData.custodyStatus?.value,
