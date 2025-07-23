@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateSetting
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Service
 class TemplateRetrievalService(
@@ -27,7 +27,7 @@ class TemplateRetrievalService(
   }
 
   private fun selectCurrentTemplateSettings(templateSettingsList: List<DocumentTemplateSetting>): DocumentTemplateSetting {
-    val currentDateTime = LocalDateTime.now()
+    val currentDateTime = ZonedDateTime.now()
 
     return templateSettingsList.filter { it.startDateTime.isBefore(currentDateTime) }.maxByOrNull { it.startDateTime }!!
   }

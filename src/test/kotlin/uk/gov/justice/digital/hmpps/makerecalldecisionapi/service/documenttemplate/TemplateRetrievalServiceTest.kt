@@ -8,14 +8,14 @@ import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @ExtendWith(MockitoExtension::class)
 class TemplateRetrievalServiceTest {
 
   private lateinit var templateRetrievalService: TemplateRetrievalService
 
-  private val currentDateTime: LocalDateTime = LocalDateTime.now()
+  private val currentDateTime: ZonedDateTime = ZonedDateTime.now()
   private val pastDocumentTemplateSetting = documentTemplateSettings(startDateTime = currentDateTime.minusMonths(2))
   private val currentDocumentTemplateSetting =
     documentTemplateSettings(startDateTime = currentDateTime.minusDays(2))

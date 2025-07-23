@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
-import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomZonedDateTime
+import java.time.ZonedDateTime
 
 internal fun documentTemplateConfiguration(
   partATemplateSettings: List<DocumentTemplateSetting> = List(2, { documentTemplateSettings() }),
@@ -11,6 +11,6 @@ internal fun documentTemplateConfiguration(
 ) = DocumentTemplateConfiguration(partATemplateSettings, partAPreviewTemplateSettings, dntrTemplateSettings)
 
 internal fun documentTemplateSettings(
-  startDateTime: LocalDateTime = randomLocalDateTime(),
+  startDateTime: ZonedDateTime = randomZonedDateTime(),
   templateName: String = randomString(),
 ) = DocumentTemplateSetting(startDateTime, templateName)
