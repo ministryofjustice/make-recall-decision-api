@@ -52,8 +52,6 @@ fun randomLocalDateTime(): LocalDateTime {
 /**
  * Produces a random date and time between 1970-01-01T00:00:00 and 2150-12-31T23:59:59
  */
-fun randomZonedDateTime(): ZonedDateTime {
-  return ZonedDateTime.ofLocal(randomLocalDateTime(), ZoneId.of("UTC"), ZoneOffset.UTC)
-}
+fun randomZonedDateTime(): ZonedDateTime = ZonedDateTime.ofLocal(randomLocalDateTime(), ZoneId.of("UTC"), ZoneOffset.UTC)
 
 inline fun <reified E : Enum<E>> randomEnum(): E = enumValues<E>()[Random.Default.nextInt(0, enumValues<E>().size)]
