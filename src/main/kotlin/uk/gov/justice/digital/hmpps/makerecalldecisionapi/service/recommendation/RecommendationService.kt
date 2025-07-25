@@ -62,8 +62,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.MrdEventsEmitter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PersonDetailsService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.StaticRecommendationDataWrapper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessValidator
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService

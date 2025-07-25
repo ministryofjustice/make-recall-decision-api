@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate
 
 import com.deepoove.poi.XWPFTemplate
 import java.io.ByteArrayOutputStream

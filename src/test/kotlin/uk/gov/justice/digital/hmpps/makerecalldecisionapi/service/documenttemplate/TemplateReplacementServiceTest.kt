@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.verify
+import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
@@ -77,13 +79,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions.YES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
-import java.time.LocalDate.now
-import java.time.LocalDate.parse
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.stream.Stream
@@ -98,47 +99,80 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
   @Mock
   private lateinit var decisionNotToRecallLetterDocumentMapperMocked: DecisionNotToRecallLetterDocumentMapper
 
+  @Mock
+  private lateinit var templateRetrievalService: TemplateRetrievalService
+
   @ParameterizedTest
   @CsvSource(
-    "PART_A_DOCUMENT",
-    "PREVIEW_PART_A_DOCUMENT",
+    "PART_A_DOCUMENT, NAT Recall Part A London Template - obtained 231114.docx",
+    "PREVIEW_PART_A_DOCUMENT, Preview NAT Recall Part A London Template - obtained 231114.docx",
   )
-  fun `given recommendation data is disabled then build the document`(documentType: DocumentType) {
+  fun `given recommendation data is disabled then build the document`(
+    documentType: DocumentType,
+    templateName: String,
+  ) {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
       given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
       given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
+      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
+
+      verify(templateRetrievalService).loadDocumentTemplate(documentType)
     }
   }
 
   @Test
   fun `given recommendation data is disabled then build the dntr document`() {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
+      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)).willReturn(ClassPathResource("DNTR Template.docx"))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
+
+      verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)
     }
   }
 
   @ParameterizedTest
   @CsvSource(
-    "PART_A_DOCUMENT",
-    "PREVIEW_PART_A_DOCUMENT",
+    "PART_A_DOCUMENT, NAT Recall Part A London Template - obtained 231114.docx",
+    "PREVIEW_PART_A_DOCUMENT, Preview NAT Recall Part A London Template - obtained 231114.docx",
   )
-  fun `given recommendation data then build the document`(documentType: DocumentType) {
+  fun `given recommendation data then build the document`(documentType: DocumentType, templateName: String) {
     runTest {
+      templateReplacementService =
+        TemplateReplacementService(
+          partADocumentMapper,
+          decisionNotToRecallLetterDocumentMapper,
+          templateRetrievalService,
+        )
       given(mockRegionService.getRegionName("RegionCode1"))
         .willReturn("Region Name 1")
       given(mockRegionService.getRegionName("RegionCode2"))
         .willReturn("Region Name 2")
+      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
+
+      verify(templateRetrievalService).loadDocumentTemplate(documentType)
     }
   }
 
@@ -163,10 +197,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val letterContent = TemplateReplacementService(
         partADocumentMapperMocked,
         decisionNotToRecallLetterDocumentMapperMocked,
+        templateRetrievalService,
       ).generateLetterContentForPreviewFromRecommendation(recommendation)
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")
-      assertThat(letterContent.letterDate).isEqualTo(DateTimeHelper.convertLocalDateToDateWithSlashes(now()))
+      assertThat(letterContent.letterDate)
+        .isEqualTo(DateTimeHelper.Helper.convertLocalDateToDateWithSlashes(LocalDate.now()))
       assertThat(letterContent.salutation).isEqualTo("Dear Joe Bloggs")
       assertThat(letterContent.letterTitle).isEqualTo("Decision not to recall")
       assertThat(letterContent.section1).isEqualTo("Section 1")
@@ -187,10 +223,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
 
       // then
       assertThat(result.size).isEqualTo(140)
-      assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
-      assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
-      assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
-      assertThat(result["is_under_18"]).isEqualTo("No")
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -198,44 +230,34 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
       assertThat(result["what_led_to_recall"]).isEqualTo("Increasingly violent behaviour")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
-      assertThat(result["is_extended_sentence"]).isEqualTo("Yes")
+      assertThat(result["is_under_18"]).isEqualTo("No")
+      assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
+      assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
+      assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
       assertThat(result["indeterminate_sentence_type"]).isEqualTo("Yes - Lifer")
+      assertThat(result["is_extended_sentence"]).isEqualTo("Yes")
       assertThat(result["date_vlo_informed"]).isEqualTo("1 September 2022")
-      assertThat(result["warning_letter_details"]).isEqualTo("We sent a warning letter on 27th July 2022")
-      assertThat(result["drug_testing_details"]).isEqualTo("drugs test passed")
-      assertThat(result["increased_frequency_details"]).isEqualTo("increased frequency")
-      assertThat(result["extra_licence_conditions_details"]).isEqualTo("licence conditions added")
-      assertThat(result["referral_to_other_teams_details"]).isEqualTo("referral to other team")
-      assertThat(result["referral_to_approved_premises_details"]).isEqualTo("referred to approved premises")
-      assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo("referred to partner agency")
-      assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
       assertThat(result["has_arrest_issues"]).isEqualTo("Yes")
       assertThat(result["has_arrest_issues_details"]).isEqualTo("Arrest issue details")
       assertThat(result["has_contraband_risk"]).isEqualTo("Yes")
       assertThat(result["has_contraband_risk_details"]).isEqualTo("Contraband risk details")
-      assertThat(result["other_name_known_by"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["contact_details_changed"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["spo_countersign_complete"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["aco_countersign_complete"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["officer_visit_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["address_approved_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["additional_conditions_breached"]).isEqualTo("These are the additional conditions breached")
+      assertThat(result["additional_conditions_breached"])
+        .isEqualTo("These are the additional conditions breached")
       assertThat(result["is_under_integrated_offender_management"]).isEqualTo("Yes")
       assertThat(result["contact_name"]).isEqualTo("John Doe")
       assertThat(result["phone_number"]).isEqualTo("01234567890")
       assertThat(result["fax_number"]).isEqualTo("09876543210")
       assertThat(result["email_address"]).isEqualTo("john.doe@gmail.com")
+      assertThat(result["has_vulnerabilities"]).isEqualTo("Yes")
       assertThat(result["gender"]).isEqualTo("Male")
-      assertThat(result["name"]).isEqualTo("Jane Bloggs")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
+      assertThat(result["name"]).isEqualTo("Jane Bloggs")
       assertThat(result["ethnicity"]).isEqualTo("White")
       assertThat(result["primary_language"]).isEqualTo("English")
+      assertThat(result["last_recorded_address"])
+        .isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
+      assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
       assertThat(result["cro_number"]).isEqualTo("123456/04A")
       assertThat(result["pnc_number"]).isEqualTo("2004/0712343H")
       assertThat(result["crn"]).isEqualTo("X123456")
@@ -251,29 +273,37 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["extended_term"]).isEqualTo("20 days")
       assertThat(result["mappa_level"]).isEqualTo("Level 1")
       assertThat(result["mappa_category"]).isEqualTo("Category 1")
-      assertThat(result["last_recorded_address"]).isEqualTo("Address line 1, Address line 2, My town, TS1 1ST")
-      assertThat(result["no_fixed_abode"]).isEqualTo(EMPTY_STRING)
       assertThat(result["completed_by_name"]).isEqualTo("Henry Bloggs")
       assertThat(result["completed_by_telephone"]).isEqualTo(EMPTY_STRING)
       assertThat(result["completed_by_email"]).isEqualTo("Henry.Bloggs@test.com")
       assertThat(result["completed_by_region"]).isEqualTo("NPS London")
       assertThat(result["completed_by_local_delivery_unit"]).isEqualTo("All NPS London")
-      assertThat(result["completed_by_ppcs_query_emails"]).isEqualTo("query1@example.com; query2@example.com")
+      assertThat(result["completed_by_ppcs_query_emails"])
+        .isEqualTo("query1@example.com; query2@example.com")
       assertThat(result["supervising_practitioner_name"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["supervising_practitioner_telephone"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_practitioner_telephone"])
+        .isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_email"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["supervising_practitioner_region"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["supervising_practitioner_local_delivery_unit"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["supervising_practitioner_ppcs_query_emails"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["revocation_order_recipients"]).isEqualTo("revocation1@example.com; revocation2@example.com")
+      assertThat(result["supervising_practitioner_region"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_practitioner_local_delivery_unit"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["supervising_practitioner_ppcs_query_emails"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["revocation_order_recipients"])
+        .isEqualTo("revocation1@example.com; revocation2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
       assertThat(result["time_of_decision"]).isEqualTo("08:26")
       assertThat(result["index_offence_details"]).isEqualTo("Offence details")
-      assertThat(result["fixed_term_additional_licence_conditions"]).isEqualTo("This is an additional licence condition")
+      assertThat(result["fixed_term_additional_licence_conditions"])
+        .isEqualTo("This is an additional licence condition")
       assertThat(result["behaviour_similar_to_index_offence"]).isEqualTo("behavior similar to index offence")
-      assertThat(result["behaviour_similar_to_index_offence_present"]).isEqualTo(YES.partADisplayValue)
-      assertThat(result["behaviour_leading_to_sexual_or_violent_offence"]).isEqualTo("behaviour leading to sexual or violent offence")
-      assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"]).isEqualTo(YES.partADisplayValue)
+      assertThat(result["behaviour_similar_to_index_offence_present"])
+        .isEqualTo(YES.partADisplayValue)
+      assertThat(result["behaviour_leading_to_sexual_or_violent_offence"])
+        .isEqualTo("behaviour leading to sexual or violent offence")
+      assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"])
+        .isEqualTo(YES.partADisplayValue)
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
       assertThat(result["other_possible_addresses"]).isEqualTo("123 Oak Avenue, Birmingham, B23 1AV")
@@ -294,21 +324,67 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["risk_to_known_adult"]).isEqualTo("Medium")
       assertThat(result["risk_to_staff"]).isEqualTo("Low")
       assertThat(result["risk_to_prisoners"]).isEqualTo("N/A")
+      assertThat(result["countersign_aco_email"]).isEqualTo("jane-the-aco@bla.com")
       assertThat(result["countersign_spo_name"]).isEqualTo("Spo Name")
       assertThat(result["countersign_spo_telephone"]).isEqualTo("12345678")
       assertThat(result["countersign_spo_date"]).isEqualTo("11/05/2023")
       assertThat(result["countersign_spo_time"]).isEqualTo("11:03")
+
       assertThat(result["countersign_spo_exposition"]).isEqualTo("Spo comments on case")
+      assertThat(result["spo_countersign_complete"]).isEqualTo(TICK_CHARACTER)
       assertThat(result["countersign_spo_email"]).isEqualTo("john-the-spo@bla.com")
-      assertThat(result["countersign_aco_email"]).isEqualTo("jane-the-aco@bla.com")
       assertThat(result["countersign_aco_name"]).isEqualTo("Aco Name")
       assertThat(result["countersign_aco_telephone"]).isEqualTo("87654321")
       assertThat(result["countersign_aco_date"]).isEqualTo("12/05/2023")
       assertThat(result["countersign_aco_time"]).isEqualTo("12:03")
       assertThat(result["countersign_aco_exposition"]).isEqualTo("Aco comments on case")
+      assertThat(result["aco_countersign_complete"]).isEqualTo(TICK_CHARACTER)
+
       assertThat(result["release_under_ecsl"]).isEqualTo("Yes")
       assertThat(result["date_of_release"]).isEqualTo("2013-01-01")
       assertThat(result["conditional_release_date"]).isEqualTo("2014-02-02")
+
+      assertThat(result["warning_letter_details"]).isEqualTo("We sent a warning letter on 27th July 2022")
+      assertThat(result["drug_testing_details"]).isEqualTo("drugs test passed")
+      assertThat(result["increased_frequency_details"]).isEqualTo("increased frequency")
+      assertThat(result["extra_licence_conditions_details"]).isEqualTo("licence conditions added")
+      assertThat(result["referral_to_approved_premises_details"]).isEqualTo("referred to approved premises")
+      assertThat(result["referral_to_other_teams_details"]).isEqualTo("referral to other team")
+      assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo("referred to partner agency")
+      assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
+
+      assertThat(result["other_name_known_by"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["contact_details_changed"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["officer_visit_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["address_approved_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
+
+      assertThat(result["risk_of_suicide_or_self_harm"])
+        .isEqualTo("\nRisk of suicide or self harm:\nRisk of suicide\n")
+      assertThat(result["relationship_breakdown"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["not_known"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["none"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["domestic_abuse"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["drug_or_alcohol_use"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["bullying_others"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["being_bullied_by_others"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["being_at_risk_of_serious_harm_from_others"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["adult_or_child_safeguarding_concerns"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["mental_health_concerns"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["physical_health_concerns"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["medication_taken_including_compliance_with_medication"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["bereavement_issues"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["learning_difficulties"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["physical_disabilities"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["cultural_or_language_differences"])
+        .isEqualTo(EMPTY_STRING)
     }
   }
 
@@ -405,11 +481,16 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["warning_letter_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["drug_testing_details"]).isEqualTo(EMPTY_STRING)
       assertThat(result["increased_frequency_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["extra_licence_conditions_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["referral_to_other_teams_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["referral_to_approved_premises_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["alternative_to_recall_other_details"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["extra_licence_conditions_details"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_other_teams_details"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_approved_premises_details"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["referral_to_partnership_agencies_details"])
+        .isEqualTo(EMPTY_STRING)
+      assertThat(result["alternative_to_recall_other_details"])
+        .isEqualTo(EMPTY_STRING)
       assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_STRING)
       assertThat(result["spo_countersign_complete"]).isEqualTo(EMPTY_STRING)
@@ -468,7 +549,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     isExtendedSentence = false,
     personOnProbation = PersonOnProbation(
       gender = "Male",
-      dateOfBirth = parse("1982-10-24"),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
       firstName = "Henry",
       middleNames = "Joseph",
       surname = "Bloggs",
@@ -494,7 +575,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       selected = IndeterminateSentenceTypeOptions.LIFE,
       allOptions = null,
     ),
-    dateVloInformed = now(),
+    dateVloInformed = LocalDate.now(),
     alternativesToRecallTried = AlternativesToRecallTried(
       selected = listOf(
         ValueWithDetails(
@@ -565,7 +646,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           value = BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS.name,
           details = "At risk of serious harm",
         ),
-        ValueWithDetails(value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name, details = "Safeguarding concerns"),
+        ValueWithDetails(
+          value = ADULT_OR_CHILD_SAFEGUARDING_CONCERNS.name,
+          details = "Safeguarding concerns",
+        ),
         ValueWithDetails(value = MENTAL_HEALTH_CONCERNS.name, details = "Depression and anxiety"),
         ValueWithDetails(value = PHYSICAL_HEALTH_CONCERNS.name, details = "Asthma"),
         ValueWithDetails(
@@ -575,10 +659,16 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         ValueWithDetails(value = BEREAVEMENT_ISSUES.name, details = "Death in family"),
         ValueWithDetails(value = LEARNING_DIFFICULTIES.name, details = "ASD"),
         ValueWithDetails(value = PHYSICAL_DISABILITIES.name, details = "Leg injury"),
-        ValueWithDetails(value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name, details = "Religious fundamentalist"),
+        ValueWithDetails(
+          value = CULTURAL_OR_LANGUAGE_DIFFERENCES.name,
+          details = "Religious fundamentalist",
+        ),
       ),
       allOptions = listOf(
-        TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+        TextValueOption(
+          value = RISK_OF_SUICIDE_OR_SELF_HARM.name,
+          text = "Risk of suicide or self harm",
+        ),
         TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
         TextValueOption(value = NOT_KNOWN.name, text = "Not known"),
         TextValueOption(value = NONE.name, text = "None"),
@@ -611,13 +701,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     ),
     convictionDetail = ConvictionDetail(
       indexOffenceDescription = "Armed robbery",
-      dateOfOriginalOffence = parse("2022-09-01"),
-      dateOfSentence = parse("2022-09-05"),
+      dateOfOriginalOffence = LocalDate.parse("2022-09-01"),
+      dateOfSentence = LocalDate.parse("2022-09-05"),
       lengthOfSentence = 6,
       lengthOfSentenceUnits = "days",
       sentenceDescription = "Extended Determinate Sentence",
-      licenceExpiryDate = parse("2022-09-06"),
-      sentenceExpiryDate = parse("2022-09-07"),
+      licenceExpiryDate = LocalDate.parse("2022-09-06"),
+      sentenceExpiryDate = LocalDate.parse("2022-09-07"),
       sentenceSecondLength = 20,
       sentenceSecondLengthUnits = "days",
     ),
@@ -697,15 +787,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       probationPhoneNumber = "01238282838",
     ),
     previousReleases = PreviousReleases(
-      lastReleaseDate = parse("2022-09-06"),
+      lastReleaseDate = LocalDate.parse("2022-09-06"),
       lastReleasingPrisonOrCustodialEstablishment = "Holloway",
       hasBeenReleasedPreviously = true,
-      previousReleaseDates = listOf(parse("2022-06-01"), parse("2022-01-01")),
+      previousReleaseDates = listOf(LocalDate.parse("2022-06-01"), LocalDate.parse("2022-01-01")),
     ),
     previousRecalls = PreviousRecalls(
-      lastRecallDate = parse("2022-02-26"),
+      lastRecallDate = LocalDate.parse("2022-02-26"),
       hasBeenRecalledPreviously = true,
-      previousRecallDates = listOf(parse("2021-01-01")),
+      previousRecallDates = listOf(LocalDate.parse("2021-01-01")),
     ),
     currentRoshForPartA = RoshData(
       riskToChildren = RoshDataScore.VERY_HIGH,
@@ -756,8 +846,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     countersignAcoName = "Aco Name",
     userNamePartACompletedBy = "Henry Bloggs",
     userEmailPartACompletedBy = "Henry.Bloggs@test.com",
-    countersignAcoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
-    countersignSpoDateTime = dateTimeWithDaylightSavingFromString(LocalDateTime.now(ZoneId.of("UTC")).toString()),
+    countersignAcoDateTime = DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString(
+      LocalDateTime.now(ZoneId.of("UTC")).toString(),
+    ),
+    countersignSpoDateTime = DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString(
+      LocalDateTime.now(ZoneId.of("UTC")).toString(),
+    ),
     userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London")),
   )
 
@@ -838,9 +932,17 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         emailAddress = "john.doe@gmail.com",
       ),
       vulnerabilities = VulnerabilitiesRecommendation(
-        selected = listOf(ValueWithDetails(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, details = "Risk of suicide")),
+        selected = listOf(
+          ValueWithDetails(
+            value = RISK_OF_SUICIDE_OR_SELF_HARM.name,
+            details = "Risk of suicide",
+          ),
+        ),
         allOptions = listOf(
-          TextValueOption(value = RISK_OF_SUICIDE_OR_SELF_HARM.name, text = "Risk of suicide or self harm"),
+          TextValueOption(
+            value = RISK_OF_SUICIDE_OR_SELF_HARM.name,
+            text = "Risk of suicide or self harm",
+          ),
           TextValueOption(value = RELATIONSHIP_BREAKDOWN.name, text = "Relationship breakdown"),
         ),
       ),
@@ -848,7 +950,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       name = "Jane Bloggs",
       ethnicity = "White",
       primaryLanguage = "English",
-      dateOfBirth = parse("1982-10-24"),
+      dateOfBirth = LocalDate.parse("1982-10-24"),
       croNumber = "123456/04A",
       pncNumber = "2004/0712343H",
       crn = "X123456",
