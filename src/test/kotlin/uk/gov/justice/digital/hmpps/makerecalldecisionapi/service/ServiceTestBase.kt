@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.Priso
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -66,6 +67,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 internal abstract class ServiceTestBase {
 
@@ -128,7 +130,23 @@ internal abstract class ServiceTestBase {
 
   private lateinit var templateRetrievalService: TemplateRetrievalService
 
-  private val documentTemplateConfiguration: DocumentTemplateConfiguration = documentTemplateConfiguration()
+  // We set this up in order for the 'generate Part A document with missing recommendation data required to build
+  // filename' test in RecommendationServiceTest to pass for now. However, that unit test should be mocking the
+  // templateRetrievalService (which consumes this configuration), something out of scope of the changes currently being
+  // made. This should be addressed by untangling the unit tests from ServiceTestBase so that they only test the class
+  // they're meant to test and leave integration between classes to integration tests
+  private val documentTemplateConfiguration: DocumentTemplateConfiguration = documentTemplateConfiguration(
+    partATemplateSettings = listOf(
+      documentTemplateSettings(
+        ZonedDateTime.now().minusMonths(1),
+        "NAT Recall Part A London Template - obtained 231114.docx",
+      ),
+      documentTemplateSettings(
+        ZonedDateTime.now().plusMonths(1),
+        "NAT Recall Part A London Template - obtained 231114.docx",
+      ),
+    ),
+  )
 
   protected val crn = "12345"
 
