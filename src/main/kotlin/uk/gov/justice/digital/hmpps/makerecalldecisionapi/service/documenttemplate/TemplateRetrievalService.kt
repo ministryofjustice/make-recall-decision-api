@@ -26,12 +26,11 @@ class TemplateRetrievalService(
     return ClassPathResource(currentTemplateSettings.templateName)
   }
 
-  private fun selectTemplateSettingsList(documentType: DocumentType): List<DocumentTemplateSetting> =
-    when (documentType) {
-      DocumentType.PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
-      DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partAPreviewTemplateSettings
-      DocumentType.DNTR_DOCUMENT -> documentTemplateConfig.dntrTemplateSettings
-    }
+  private fun selectTemplateSettingsList(documentType: DocumentType): List<DocumentTemplateSetting> = when (documentType) {
+    DocumentType.PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
+    DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partAPreviewTemplateSettings
+    DocumentType.DNTR_DOCUMENT -> documentTemplateConfig.dntrTemplateSettings
+  }
 
   private fun selectCurrentTemplateSettings(templateSettingsList: List<DocumentTemplateSetting>): DocumentTemplateSetting {
     val currentDateTime = ZonedDateTime.now()

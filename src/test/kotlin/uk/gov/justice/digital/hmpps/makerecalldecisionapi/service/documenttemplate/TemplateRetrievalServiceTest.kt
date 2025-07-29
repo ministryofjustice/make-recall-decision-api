@@ -56,7 +56,7 @@ class TemplateRetrievalServiceTest {
 
   private fun testLoadDocumentTemplate(
     documentTemplateConfiguration: DocumentTemplateConfiguration,
-    documentType: DocumentType
+    documentType: DocumentType,
   ) {
     // given
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
