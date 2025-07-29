@@ -17,6 +17,7 @@ class TemplateRetrievalService(
     val templateSettingsList = selectTemplateSettingsList(documentType)
     val currentTemplateSettings = selectCurrentTemplateSettings(templateSettingsList)
 
+
     return ClassPathResource(currentTemplateSettings.templateName)
   }
 

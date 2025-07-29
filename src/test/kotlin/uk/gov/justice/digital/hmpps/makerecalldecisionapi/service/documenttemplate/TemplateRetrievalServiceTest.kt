@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.io.ClassPathResource
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
@@ -27,50 +28,39 @@ class TemplateRetrievalServiceTest {
 
   @Test
   fun `retrieves correct Part A template`() {
-    // given
     val documentTemplateConfiguration = documentTemplateConfiguration(
       partATemplateSettings = documentTemplateSettingsList,
     )
-    templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
-
-    val expectedClassPathResource = ClassPathResource(currentDocumentTemplateSetting.templateName)
-
-    // when
-    val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(DocumentType.PART_A_DOCUMENT)
-
-    // then
-    assertThat(actualClassPathResource).isEqualTo(expectedClassPathResource)
+    testLoadDocumentTemplate(documentTemplateConfiguration, DocumentType.PART_A_DOCUMENT)
   }
 
   @Test
   fun `retrieves correct Preview Part A template`() {
-    // given
     val documentTemplateConfiguration = documentTemplateConfiguration(
       partAPreviewTemplateSettings = documentTemplateSettingsList,
     )
-    templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
-
-    val expectedClassPathResource = ClassPathResource(currentDocumentTemplateSetting.templateName)
-
-    // when
-    val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(DocumentType.PREVIEW_PART_A_DOCUMENT)
-
-    // then
-    assertThat(actualClassPathResource).isEqualTo(expectedClassPathResource)
+    testLoadDocumentTemplate(documentTemplateConfiguration, DocumentType.PREVIEW_PART_A_DOCUMENT)
   }
 
   @Test
   fun `retrieves correct DNTR template`() {
-    // given
     val documentTemplateConfiguration = documentTemplateConfiguration(
       dntrTemplateSettings = documentTemplateSettingsList,
     )
+    testLoadDocumentTemplate(documentTemplateConfiguration, DocumentType.DNTR_DOCUMENT)
+  }
+
+  private fun testLoadDocumentTemplate(
+    documentTemplateConfiguration: DocumentTemplateConfiguration,
+    documentType: DocumentType
+  ) {
+    // given
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
 
     val expectedClassPathResource = ClassPathResource(currentDocumentTemplateSetting.templateName)
 
     // when
-    val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)
+    val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(documentType)
 
     // then
     assertThat(actualClassPathResource).isEqualTo(expectedClassPathResource)
