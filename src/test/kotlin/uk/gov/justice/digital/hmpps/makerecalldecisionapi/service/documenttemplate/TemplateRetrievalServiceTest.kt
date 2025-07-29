@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate
 
+import ch.qos.logback.classic.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -9,12 +10,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
 import java.time.ZonedDateTime
 
 @ExtendWith(MockitoExtension::class)
 class TemplateRetrievalServiceTest {
 
   private lateinit var templateRetrievalService: TemplateRetrievalService
+
+  private val logAppender = findLogAppender(TemplateRetrievalService::class.java)
 
   private val currentDateTime: ZonedDateTime = ZonedDateTime.now()
   private val pastDocumentTemplateSetting = documentTemplateSettings(startDateTime = currentDateTime.minusMonths(2))
@@ -57,12 +61,20 @@ class TemplateRetrievalServiceTest {
     // given
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
 
-    val expectedClassPathResource = ClassPathResource(currentDocumentTemplateSetting.templateName)
+    val expectedTemplateName = currentDocumentTemplateSetting.templateName
+    val expectedClassPathResource = ClassPathResource(expectedTemplateName)
 
     // when
     val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(documentType)
 
     // then
     assertThat(actualClassPathResource).isEqualTo(expectedClassPathResource)
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(1)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("Retrieving ${documentType.name} template: $expectedTemplateName")
+      }
+    }
   }
 }
