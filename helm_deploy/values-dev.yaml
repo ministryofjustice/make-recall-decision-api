@@ -20,6 +20,15 @@ generic-service:
     MRD_URL: https://make-recall-decision-dev.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk
     HOUSEKEEPING_SENDDOMAINEVENTS: true
+    # we cannot override a single item in a list - the whole list is replaced, so we define the whole thing again
+    PARTATEMPLATESETTINGS_0_STARTDATETIME: "2025-01-10T15:58Z"
+    PARTATEMPLATESETTINGS_0_TEMPLATENAME: "NAT Recall Part A London Template - obtained 231114.docx"
+    PARTATEMPLATESETTINGS_1_STARTDATETIME: "2025-07-30T11:00Z"
+    PARTATEMPLATESETTINGS_1_TEMPLATENAME: "NAT Recall Part A London Template - obtained 231114 - v2025-07-29.docx"
+    PARTAPREVIEWTEMPLATESETTINGS_0_STARTDATETIME: "2025-01-10T15:58Z"
+    PARTAPREVIEWTEMPLATESETTINGS_0_TEMPLATENAME: "Preview NAT Recall Part A London Template - obtained 231114.docx"
+    PARTAPREVIEWTEMPLATESETTINGS_1_STARTDATETIME: "2025-07-30T11:00Z"
+    PARTAPREVIEWTEMPLATESETTINGS_1_TEMPLATENAME: "Preview NAT Recall Part A London Template - obtained 231114 - v2025-07-29.docx"
 
   scheduledDowntime:
     enabled: true
