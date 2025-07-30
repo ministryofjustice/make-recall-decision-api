@@ -3,7 +3,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.random.Random
 
@@ -46,5 +48,10 @@ fun randomLocalDateTime(): LocalDateTime {
   val randomSecond: Long = Random.Default.nextLong(minSecond, maxSecond)
   return LocalDateTime.ofEpochSecond(randomSecond, 0, ZoneOffset.UTC)
 }
+
+/**
+ * Produces a random date and time between 1970-01-01T00:00:00 and 2150-12-31T23:59:59
+ */
+fun randomZonedDateTime(): ZonedDateTime = ZonedDateTime.ofLocal(randomLocalDateTime(), ZoneId.of("UTC"), ZoneOffset.UTC)
 
 inline fun <reified E : Enum<E>> randomEnum(): E = enumValues<E>()[Random.Default.nextInt(0, enumValues<E>().size)]

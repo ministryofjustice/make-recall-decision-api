@@ -79,7 +79,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.MrdEventsEmitter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.TemplateReplacementService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationServiceTest.MockitoHelper.anyObject
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
