@@ -736,6 +736,12 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isMappaLevelAbove1 = updateRecommendationRequest.isMappaLevelAbove1,
             isSentence12MonthsOrOver = updateRecommendationRequest.isSentence12MonthsOrOver,
             hasBeenConvictedOfSeriousOffence = updateRecommendationRequest.hasBeenConvictedOfSeriousOffence,
+            isSentence48MonthsOrOver = updateRecommendationRequest.isSentence48MonthsOrOver,
+            isMappaCategory4 = updateRecommendationRequest.isMappaCategory4,
+            isMappaLevel2Or3 = updateRecommendationRequest.isMappaLevel2Or3,
+            isRecalledOnNewChargedOffence = updateRecommendationRequest.isRecalledOnNewChargedOffence,
+            isServingFTSentenceForTerroristOffence = updateRecommendationRequest.isServingFTSentenceForTerroristOffence,
+            hasBeenChargedWithTerroristOrStateThreatOffence = updateRecommendationRequest.hasBeenChargedWithTerroristOrStateThreatOffence,
           ),
         )
 

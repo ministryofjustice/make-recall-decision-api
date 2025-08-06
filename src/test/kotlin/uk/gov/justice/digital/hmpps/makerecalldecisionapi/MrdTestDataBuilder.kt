@@ -307,6 +307,12 @@ class MrdTestDataBuilder {
       isSentence12MonthsOrOver = false,
       isMappaLevelAbove1 = false,
       hasBeenConvictedOfSeriousOffence = false,
+      isSentence48MonthsOrOver = false,
+      isMappaCategory4 = false,
+      isMappaLevel2Or3 = false,
+      isRecalledOnNewChargedOffence = false,
+      isServingFTSentenceForTerroristOffence = false,
+      hasBeenChargedWithTerroristOrStateThreatOffence = false,
     )
 
     private fun personOnProbation(personOnProbation: PersonOnProbation?): PersonOnProbation? = personOnProbation?.copy(

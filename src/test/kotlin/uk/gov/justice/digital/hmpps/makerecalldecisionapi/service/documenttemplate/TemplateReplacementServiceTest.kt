@@ -222,7 +222,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(140)
+      assertThat(result.size).isEqualTo(146)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -234,6 +234,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
       assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
       assertThat(result["is_charged_with_serious_offence"]).isEqualTo("No")
+      assertThat(result["is_sentence_48_months_or_over"]).isEqualTo("No")
+      assertThat(result["is_mappa_category_4"]).isEqualTo("No")
+      assertThat(result["is_mappa_level_2_or_3"]).isEqualTo("No")
+      assertThat(result["is_recalled_on_new_charged_offence"]).isEqualTo("No")
+      assertThat(result["is_serving_ft_sentence_for_terrorist_offence"]).isEqualTo("No")
+      assertThat(result["has_been_charged_with_terrorist_or_state_threat_offence"]).isEqualTo("No")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
       assertThat(result["indeterminate_sentence_type"]).isEqualTo("Yes - Lifer")
       assertThat(result["is_extended_sentence"]).isEqualTo("Yes")
@@ -889,6 +895,12 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isUnder18 = "No",
       isMappaAboveLevel1 = "Yes",
       isChargedWithSeriousOffence = "No",
+      isSentence48MonthsOrOver = "No",
+      isMappaCategory4 = "No",
+      isMappaLevel2Or3 = "No",
+      isRecalledOnNewChargedOffence = "No",
+      isServingFTSentenceForTerroristOffence = "No",
+      hasBeenChargedWithTerroristOrStateThreatOffence = "No",
       salutation = "Dear Duncan Bloggs",
       letterTitle = "DECISION NOT TO RECALL",
       letterDate = "27/09/2022",

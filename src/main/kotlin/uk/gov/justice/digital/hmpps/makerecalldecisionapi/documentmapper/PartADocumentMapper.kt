@@ -93,7 +93,30 @@ internal class PartADocumentMapper(
         recommendation.hasBeenConvictedOfSeriousOffence,
         recommendation,
       ),
-
+      isSentence48MonthsOrOver = generateExclusionCriteriaAnswer(
+        recommendation.isSentence48MonthsOrOver,
+        recommendation,
+      ),
+      isMappaCategory4 = generateExclusionCriteriaAnswer(
+        recommendation.isMappaCategory4,
+        recommendation,
+      ),
+      isMappaLevel2Or3 = generateExclusionCriteriaAnswer(
+        recommendation.isMappaLevel2Or3,
+        recommendation,
+      ),
+      isRecalledOnNewChargedOffence = generateExclusionCriteriaAnswer(
+        recommendation.isRecalledOnNewChargedOffence,
+        recommendation,
+      ),
+      isServingFTSentenceForTerroristOffence = generateExclusionCriteriaAnswer(
+        recommendation.isServingFTSentenceForTerroristOffence,
+        recommendation,
+      ),
+      hasBeenChargedWithTerroristOrStateThreatOffence = generateExclusionCriteriaAnswer(
+        recommendation.hasBeenChargedWithTerroristOrStateThreatOffence,
+        recommendation,
+      ),
       isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,

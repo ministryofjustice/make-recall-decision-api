@@ -96,5 +96,11 @@ class RecommendationConverter(
     isSentence12MonthsOrOver = recommendationEntity.data.isSentence12MonthsOrOver,
     isMappaLevelAbove1 = recommendationEntity.data.isMappaLevelAbove1,
     hasBeenConvictedOfSeriousOffence = recommendationEntity.data.hasBeenConvictedOfSeriousOffence,
+    isSentence48MonthsOrOver = recommendationEntity.data.isSentence48MonthsOrOver,
+    isMappaCategory4 = recommendationEntity.data.isMappaCategory4,
+    isMappaLevel2Or3 = recommendationEntity.data.isMappaLevel2Or3,
+    isRecalledOnNewChargedOffence = recommendationEntity.data.isRecalledOnNewChargedOffence,
+    isServingFTSentenceForTerroristOffence = recommendationEntity.data.isServingFTSentenceForTerroristOffence,
+    hasBeenChargedWithTerroristOrStateThreatOffence = recommendationEntity.data.hasBeenChargedWithTerroristOrStateThreatOffence,
   )
 }
