@@ -96,6 +96,12 @@ data class RecommendationResponse(
   var isSentence12MonthsOrOver: Boolean? = null,
   var isMappaLevelAbove1: Boolean? = null,
   var hasBeenConvictedOfSeriousOffence: Boolean? = null,
+  var isSentence48MonthsOrOver: Boolean? = null,
+  var isMappaCategory4: Boolean? = null,
+  var isMappaLevel2Or3: Boolean? = null,
+  var isRecalledOnNewChargedOffence: Boolean? = null,
+  var isServingFTSentenceForTerroristOffence: Boolean? = null,
+  var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
