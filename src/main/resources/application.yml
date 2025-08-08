@@ -233,11 +233,15 @@ document-template:
   part-a-template-settings[0].template-name: "NAT Recall Part A London Template - obtained 231114.docx"
   part-a-template-settings[1].start-date-time: "2025-07-30T23:00Z" # 2025-07-31 00:00 in BST
   part-a-template-settings[1].template-name: "NAT Recall Part A London Template - obtained 231114 - v2025-07-29.docx"
+  part-a-template-settings[2].start-date-time: "2025-08-07T23:00Z" # 2025-08-08 00:00 in BST
+  part-a-template-settings[2].template-name: "NAT Recall Part A London Template - obtained 231114 - v2025-08-07.docx"
 
   part-a-preview-template-settings[0].start-date-time: "2025-01-10T15:58Z"
   part-a-preview-template-settings[0].template-name: "Preview NAT Recall Part A London Template - obtained 231114.docx"
   part-a-preview-template-settings[1].start-date-time: "2025-07-30T23:00Z" # 2025-07-31 00:00 in BST
   part-a-preview-template-settings[1].template-name: "Preview NAT Recall Part A London Template - obtained 231114 - v2025-07-29.docx"
+  part-a-preview-template-settings[2].start-date-time: "2025-08-07T23:00Z" # 2025-08-08 00:00 in BST
+  part-a-preview-template-settings[2].template-name: "Preview NAT Recall Part A London Template - obtained 231114 - v2025-08-07.docx"
 
   dntr-template-settings[0].start-date-time: "2025-01-31T14:00Z"
   dntr-template-settings[0].template-name: "DNTR Template.docx"
