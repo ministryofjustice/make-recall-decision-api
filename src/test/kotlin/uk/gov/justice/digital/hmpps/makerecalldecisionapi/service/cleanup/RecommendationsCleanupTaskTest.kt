@@ -8,6 +8,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.given
 import org.mockito.kotlin.verify
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -15,7 +16,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
@@ -51,25 +51,26 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(presentRecommendationId, missingRecommendationId)
 
     // and
-    Mockito.`when`(recommendationStatusRepository.findStaleRecommendations(any())).thenReturn(openRecommendationIds)
+    given(recommendationStatusRepository.findStaleRecommendations(any())).willReturn(openRecommendationIds)
     val crn = randomString()
     val username = randomString()
-    Mockito.`when`(
+    given(
       recommendationRepository.findById(presentRecommendationId),
-    ).thenReturn(
+    ).willReturn(
       Optional.of(
         RecommendationEntity(
           presentRecommendationId,
           RecommendationModel(crn = crn, createdBy = username),
-          deleted = false
-        )
-      ))
+          deleted = false,
+        ),
+      ),
+    )
 
     // when
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
+    verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
 
     with(logAppender.list) {
       assertThat(size).isEqualTo(2)
@@ -96,13 +97,13 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(1L)
 
     // and
-    Mockito.`when`(recommendationStatusRepository.findStaleRecommendations(any())).thenReturn(openRecommendationIds)
+    given(recommendationStatusRepository.findStaleRecommendations(any())).willReturn(openRecommendationIds)
 
     // when
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    Mockito.verify(recommendationService, Mockito.never()).sendSystemDeleteRecommendationEvent(any(), any())
+    verify(recommendationService, Mockito.never()).sendSystemDeleteRecommendationEvent(any(), any())
   }
 
   @Test
@@ -118,9 +119,9 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(1L)
 
     // and
-    Mockito.`when`(
+    given(
       recommendationStatusRepository.findStaleRecommendations(thresholdDate),
-    ).thenReturn(openRecommendationIds)
+    ).willReturn(openRecommendationIds)
 
     // when
     recommendationsCleanupTask.softDeleteOldRecommendations()
