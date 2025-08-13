@@ -15,6 +15,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 import java.util.Optional
 
@@ -43,18 +46,20 @@ class RecommendationsCleanupTaskTest {
       true,
     )
     // given
-    val openRecommendationIds = listOf(1L)
+    val presentRecommendationId = randomLong()
+    val missingRecommendationId = randomLong()
+    val openRecommendationIds = listOf(presentRecommendationId, missingRecommendationId)
 
     // and
     Mockito.`when`(recommendationStatusRepository.findStaleRecommendations(any())).thenReturn(openRecommendationIds)
-    val crn = "mycrn"
-    val username = "Bob"
+    val crn = randomString()
+    val username = randomString()
     Mockito.`when`(
-      recommendationRepository.findById(any()),
+      recommendationRepository.findById(presentRecommendationId),
     ).thenReturn(
       Optional.of(
         RecommendationEntity(
-          1L,
+          presentRecommendationId,
           RecommendationModel(crn = crn, createdBy = username),
           deleted = false
         )
@@ -67,10 +72,14 @@ class RecommendationsCleanupTaskTest {
     Mockito.verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
 
     with(logAppender.list) {
-      assertThat(size).isEqualTo(1)
+      assertThat(size).isEqualTo(2)
       with(get(0)) {
         assertThat(level).isEqualTo(Level.INFO)
         assertThat(message).isEqualTo("System delete domain event sent for crn::'$crn' username::'$username")
+      }
+      with(get(1)) {
+        assertThat(level).isEqualTo(Level.ERROR)
+        assertThat(message).isEqualTo("Recommendation not found for id $missingRecommendationId")
       }
     }
   }
