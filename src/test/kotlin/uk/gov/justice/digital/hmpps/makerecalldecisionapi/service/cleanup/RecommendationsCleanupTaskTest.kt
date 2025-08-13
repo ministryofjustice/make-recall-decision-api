@@ -5,10 +5,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.given
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
@@ -51,7 +51,8 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(presentRecommendationId, missingRecommendationId)
 
     // and
-    given(recommendationStatusRepository.findStaleRecommendations(any())).willReturn(openRecommendationIds)
+    val thresholdDate = LocalDate.now().minusDays(21)
+    given(recommendationStatusRepository.findStaleRecommendations(thresholdDate)).willReturn(openRecommendationIds)
     val crn = randomString()
     val username = randomString()
     given(
@@ -70,7 +71,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    verify(recommendationService).sendSystemDeleteRecommendationEvent(any(), any())
+    verify(recommendationService).sendSystemDeleteRecommendationEvent(crn, username)
 
     with(logAppender.list) {
       assertThat(size).isEqualTo(2)
@@ -97,13 +98,14 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(1L)
 
     // and
-    given(recommendationStatusRepository.findStaleRecommendations(any())).willReturn(openRecommendationIds)
+    val thresholdDate = LocalDate.now().minusDays(21)
+    given(recommendationStatusRepository.findStaleRecommendations(thresholdDate)).willReturn(openRecommendationIds)
 
     // when
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    verify(recommendationService, Mockito.never()).sendSystemDeleteRecommendationEvent(any(), any())
+    verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
   }
 
   @Test
@@ -127,7 +129,6 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    verify(recommendationStatusRepository).findStaleRecommendations(thresholdDate)
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
   }
 }
