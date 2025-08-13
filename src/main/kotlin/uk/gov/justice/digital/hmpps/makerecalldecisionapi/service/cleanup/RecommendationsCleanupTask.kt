@@ -1,11 +1,11 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Isolation.SERIALIZABLE
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -32,7 +32,7 @@ internal class RecommendationsCleanupTask(
     initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10*60, 60*60) }",
     fixedRateString = "#{T(java.util.concurrent.TimeUnit).HOURS.toSeconds(24)}",
   )
-  @Transactional(isolation = SERIALIZABLE)
+  @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteOldRecommendations() {
     val thresholdDate = LocalDate.now().minusDays(21)
     val openRecommendationIds = recommendationStatusRepository.findStaleRecommendations(thresholdDate)
@@ -44,7 +44,7 @@ internal class RecommendationsCleanupTask(
           {
             recommendationService.sendSystemDeleteRecommendationEvent(
               it.data.crn,
-              it.data.createdBy ?: MrdTextConstants.EMPTY_STRING,
+              it.data.createdBy ?: MrdTextConstants.Constants.EMPTY_STRING,
             )
             log.info("System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}")
             sendAppInsightsEvent(it)
