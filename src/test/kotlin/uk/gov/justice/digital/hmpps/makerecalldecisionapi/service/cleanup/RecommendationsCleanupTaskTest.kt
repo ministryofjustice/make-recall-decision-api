@@ -87,7 +87,7 @@ class RecommendationsCleanupTaskTest {
   }
 
   @Test
-  fun `softDeleteOldRecommendations without domain events`() {
+  fun `domain-deactivated service deletes stale recommendations without sending out domain events`() {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
@@ -105,30 +105,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
-    verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
-  }
-
-  @Test
-  fun `softDeleteOldRecommendations deletes old open recommendations`() {
-    recommendationsCleanupTask = RecommendationsCleanupTask(
-      recommendationRepository,
-      recommendationStatusRepository,
-      recommendationService,
-      false,
-    )
-    // given
-    val thresholdDate = LocalDate.now().minusDays(21)
-    val openRecommendationIds = listOf(1L)
-
-    // and
-    given(
-      recommendationStatusRepository.findStaleRecommendations(thresholdDate),
-    ).willReturn(openRecommendationIds)
-
-    // when
-    recommendationsCleanupTask.softDeleteOldRecommendations()
-
-    // then
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
+    verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
   }
 }
