@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 @Repository
 interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
@@ -46,4 +47,12 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   @Modifying
   @Query(value = "UPDATE recommendations SET deleted=true WHERE id IN (:ids)", nativeQuery = true)
   fun softDeleteByIds(@Param("ids") ids: List<Long>)
+
+  @Query(
+    value = """
+      SELECT id
+      FROM RecommendationEntity
+    """,
+  )
+  fun findRecommendationsNotYetDownloaded(@Param("thresholdDate") thresholdDate: ZonedDateTime): List<Long>
 }

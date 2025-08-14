@@ -85,6 +85,8 @@ dependencies {
   testImplementation("io.rest-assured:xml-path")
 
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
+
+  testImplementation("org.testcontainers:postgresql:1.21.3")
 }
 
 java {
