@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.4"
-  kotlin("jvm") version "2.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.6"
+  kotlin("jvm") version "2.2.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.2.0"
+  kotlin("plugin.jpa") version "2.2.10"
   id("org.sonarqube") version "6.2.0.5505"
-  kotlin("plugin.spring") version "2.2.0"
-  kotlin("plugin.serialization") version "2.2.0"
+  kotlin("plugin.spring") version "2.2.10"
+  kotlin("plugin.serialization") version "2.2.10"
 }
 
 jacoco.toolVersion = "0.8.11"
@@ -28,7 +28,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.7")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.5.0")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -38,26 +38,26 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.51.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.15.3")
+  implementation("io.opentelemetry:opentelemetry-api:1.53.0")
   implementation("joda-time:joda-time:2.14.0")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.commons:commons-compress:1.28.0") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
     implementation("org.apache.poi:poi-ooxml:5.4.1") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  implementation("org.flywaydb:flyway-core:11.1.1")
-  implementation("org.flywaydb:flyway-database-postgresql:11.1.1")
+  implementation("org.flywaydb:flyway-core:11.11.1")
+  implementation("org.flywaydb:flyway-database-postgresql:11.11.1")
   implementation("org.postgresql:postgresql:42.7.7")
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
-  implementation("io.sentry:sentry-logback:7.20.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.22.6")
+  implementation("io.sentry:sentry-logback:7.22.6")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
@@ -65,8 +65,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.10.1")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.6")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.10.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.10")
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.1")
@@ -76,7 +76,7 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
-  testImplementation("io.jsonwebtoken:jjwt:0.12.6")
+  testImplementation("io.jsonwebtoken:jjwt:0.12.7")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
