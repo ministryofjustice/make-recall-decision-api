@@ -19,6 +19,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppend
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -38,7 +40,7 @@ class RecommendationsCleanupTaskTest {
   private lateinit var recommendationsCleanupTask: RecommendationsCleanupTask
 
   @Test
-  fun `domain-activated service deletes stale recommendations and sends out the relevant domain events`() {
+  fun `domain-event-activated service deletes stale recommendations and sends out the relevant domain events`() {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
@@ -71,6 +73,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask.softDeleteOldRecommendations()
 
     // then
+    verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
     verify(recommendationService).sendSystemDeleteRecommendationEvent(crn, username)
 
     with(logAppender.list) {
@@ -87,7 +90,7 @@ class RecommendationsCleanupTaskTest {
   }
 
   @Test
-  fun `domain-deactivated service deletes stale recommendations without sending out domain events`() {
+  fun `domain-event-deactivated service deletes stale recommendations without sending out domain events`() {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
@@ -107,5 +110,94 @@ class RecommendationsCleanupTaskTest {
     // then
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
     verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
+  }
+
+  @Test
+  fun `domain-event-activated FTR48 clean-up task deletes ongoing recommendations and sends out the relevant domain events`() {
+    recommendationsCleanupTask = RecommendationsCleanupTask(
+      recommendationRepository,
+      recommendationStatusRepository,
+      recommendationService,
+      true,
+    )
+
+    // given
+    val presentRecommendationId = randomLong()
+    val missingRecommendationId = randomLong()
+    val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
+    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
+    given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)).willReturn(
+      idsOfActiveRecommendationsNotYetDownloaded,
+    )
+
+    val crn = randomString()
+    val username = randomString()
+    given(
+      recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded),
+    ).willReturn(
+      listOf(
+        RecommendationEntity(
+          presentRecommendationId,
+          RecommendationModel(crn = crn, createdBy = username),
+          deleted = false,
+        ),
+      ),
+    )
+
+    // when
+    recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
+
+    // then
+    verify(recommendationRepository).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
+    verify(recommendationService).sendSystemDeleteRecommendationEvent(crn, username)
+
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(2)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo(
+          "The recommendations with the following IDs were soft deleted, as they were" +
+            " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
+        )
+      }
+      with(get(1)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("System delete domain event sent for crn::'$crn' username::'$username")
+      }
+    }
+  }
+
+  @Test
+  fun `domain-event-deactivated FTR48 clean-up task deletes ongoing recommendations without sending out domain events`() {
+    recommendationsCleanupTask = RecommendationsCleanupTask(
+      recommendationRepository,
+      recommendationStatusRepository,
+      recommendationService,
+      false,
+    )
+
+    // given
+    val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
+    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
+    given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)).willReturn(
+      idsOfActiveRecommendationsNotYetDownloaded,
+    )
+
+    // when
+    recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
+
+    // then
+    verify(recommendationRepository).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
+
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(1)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo(
+          "The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded:" +
+            " $idsOfActiveRecommendationsNotYetDownloaded",
+        )
+      }
+    }
   }
 }

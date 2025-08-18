@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -41,14 +43,7 @@ internal class RecommendationsCleanupTask(
       if (sendDomainEvents) {
         val openRecommendation = recommendationRepository.findById(openRecommendationId)
         openRecommendation.ifPresentOrElse(
-          {
-            recommendationService.sendSystemDeleteRecommendationEvent(
-              it.data.crn,
-              it.data.createdBy ?: MrdTextConstants.Constants.EMPTY_STRING,
-            )
-            log.info("System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}")
-            sendAppInsightsEvent(it)
-          },
+          this::sendDeletionEvents,
           {
             val message = "Recommendation not found for id $openRecommendationId"
             log.error(message, RecommendationNotFoundException(message))
@@ -56,6 +51,30 @@ internal class RecommendationsCleanupTask(
         )
       }
     }
+  }
+
+  @Transactional(isolation = Isolation.SERIALIZABLE)
+  fun softDeleteActiveRecommendationsNotYetDownloaded() {
+    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
+    val idsOfActiveRecommendationsNotYetDownloaded =
+      recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)
+    recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
+    log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded")
+
+    if (sendDomainEvents) {
+      val activeRecommendationsNotYetDownloaded =
+        recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded)
+      activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
+    }
+  }
+
+  private fun sendDeletionEvents(recommendation: RecommendationEntity) {
+    recommendationService.sendSystemDeleteRecommendationEvent(
+      recommendation.data.crn,
+      recommendation.data.createdBy ?: MrdTextConstants.Constants.EMPTY_STRING,
+    )
+    log.info("System delete domain event sent for crn::'${recommendation.data.crn}' username::'${recommendation.data.createdBy}")
+    sendAppInsightsEvent(recommendation)
   }
 
   private fun sendAppInsightsEvent(it: RecommendationEntity) {
