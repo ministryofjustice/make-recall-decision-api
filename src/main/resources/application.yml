@@ -245,3 +245,6 @@ document-template:
 
   dntr-template-settings[0].start-date-time: "2025-01-31T14:00Z"
   dntr-template-settings[0].template-name: "DNTR Template.docx"
+
+clean-up:
+  ftr48-cron: "0 0 * 2 9 ?"  # every hour on 2nd September each year

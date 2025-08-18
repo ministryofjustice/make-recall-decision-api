@@ -53,6 +53,7 @@ internal class RecommendationsCleanupTask(
     }
   }
 
+  @Scheduled(cron = "\${clean-up.ftr48-cron}", zone = "Europe/London")
   @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
     val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
