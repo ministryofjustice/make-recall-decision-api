@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -7,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.cleanup.CleanUpConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -14,14 +17,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Service
 internal class RecommendationsCleanupTask(
   @Lazy private val recommendationRepository: RecommendationRepository,
   @Lazy private val recommendationStatusRepository: RecommendationStatusRepository,
+  private val cleanUpConfiguration: CleanUpConfiguration,
   private val recommendationService: RecommendationService,
   @Value("\${housekeeping.sendDomainEvents}") private val sendDomainEvents: Boolean = false,
 ) {
@@ -53,12 +55,19 @@ internal class RecommendationsCleanupTask(
     }
   }
 
-  @Scheduled(cron = "\${clean-up.ftr48-cron}", zone = "Europe/London")
+  @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
+  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "10m", lockAtMostFor = "15m") // TODO test these values in pre-prod
   @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
-    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
+    log.info("FTR48 clean-up task started")
+    LockAssert.assertLocked()
+
+    if (LocalDate.now().year != 2025) {
+      log.warn("FTR48 clean-up task is still running, but it is no longer 2025!")
+    }
+
     val idsOfActiveRecommendationsNotYetDownloaded =
-      recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)
+      recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
     log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded")
 
@@ -67,6 +76,8 @@ internal class RecommendationsCleanupTask(
         recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded)
       activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
     }
+
+    log.info("FTR48 clean-up task ended")
   }
 
   private fun sendDeletionEvents(recommendation: RecommendationEntity) {

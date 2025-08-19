@@ -71,6 +71,9 @@ dependencies {
 
   implementation("com.google.code.gson:gson:2.13.1")
 
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.2")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.9.2")
+
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")

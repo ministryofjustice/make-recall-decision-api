@@ -1,15 +1,20 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
 import ch.qos.logback.classic.Level
+import net.javacrumbs.shedlock.core.LockAssert
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.inOrder
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.given
 import org.mockito.kotlin.never
+import org.mockito.kotlin.then
 import org.mockito.kotlin.verify
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.cleanup.cleanUpConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -19,8 +24,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppend
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -44,6 +47,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
+      cleanUpConfiguration(),
       recommendationService,
       true,
     )
@@ -94,6 +98,7 @@ class RecommendationsCleanupTaskTest {
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
+      cleanUpConfiguration(),
       recommendationService,
       false,
     )
@@ -114,89 +119,98 @@ class RecommendationsCleanupTaskTest {
 
   @Test
   fun `domain-event-activated FTR48 clean-up task deletes ongoing recommendations and sends out the relevant domain events`() {
+    val cleanUpConfiguration = cleanUpConfiguration()
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
+      cleanUpConfiguration,
       recommendationService,
       true,
     )
 
     // given
-    val presentRecommendationId = randomLong()
-    val missingRecommendationId = randomLong()
-    val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
-    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
-    given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)).willReturn(
-      idsOfActiveRecommendationsNotYetDownloaded,
-    )
+    val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
+    lockAssertMock.use {
+      val presentRecommendationId = randomLong()
+      val missingRecommendationId = randomLong()
+      val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
+      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)).willReturn(
+        idsOfActiveRecommendationsNotYetDownloaded,
+      )
 
-    val crn = randomString()
-    val username = randomString()
-    given(
-      recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded),
-    ).willReturn(
-      listOf(
-        RecommendationEntity(
-          presentRecommendationId,
-          RecommendationModel(crn = crn, createdBy = username),
-          deleted = false,
+      val crn = randomString()
+      val username = randomString()
+      given(
+        recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded),
+      ).willReturn(
+        listOf(
+          RecommendationEntity(
+            presentRecommendationId,
+            RecommendationModel(crn = crn, createdBy = username),
+            deleted = false,
+          ),
         ),
-      ),
-    )
+      )
 
-    // when
-    recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
+      // when
+      recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
 
-    // then
-    verify(recommendationRepository).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
-    verify(recommendationService).sendSystemDeleteRecommendationEvent(crn, username)
+      // then
+      val inOrder = inOrder(LockAssert::class.java, recommendationRepository, recommendationService)
+      inOrder.verify(it, LockAssert::assertLocked)
+      then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
+      then(recommendationService).should(inOrder).sendSystemDeleteRecommendationEvent(crn, username)
 
-    with(logAppender.list) {
-      assertThat(size).isEqualTo(2)
-      with(get(0)) {
-        assertThat(level).isEqualTo(Level.INFO)
-        assertThat(message).isEqualTo(
-          "The recommendations with the following IDs were soft deleted, as they were" +
-            " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
-        )
-      }
-      with(get(1)) {
-        assertThat(level).isEqualTo(Level.INFO)
-        assertThat(message).isEqualTo("System delete domain event sent for crn::'$crn' username::'$username")
+      val expectedInfoMessages = listOf(
+        "FTR48 clean-up task started",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
+        "System delete domain event sent for crn::'$crn' username::'$username",
+        "FTR48 clean-up task ended",
+      )
+      with(logAppender.list) {
+        this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }
+        assertThat(this.map { it.message }).containsExactlyElementsOf(expectedInfoMessages)
       }
     }
   }
 
   @Test
   fun `domain-event-deactivated FTR48 clean-up task deletes ongoing recommendations without sending out domain events`() {
+    val cleanUpConfiguration = cleanUpConfiguration()
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
+      cleanUpConfiguration,
       recommendationService,
       false,
     )
 
     // given
-    val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
-    val thresholdDate = ZonedDateTime.of(2025, 9, 2, 0, 0, 0, 0, ZoneId.of("Europe/London"))
-    given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdDate)).willReturn(
-      idsOfActiveRecommendationsNotYetDownloaded,
-    )
+    val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
+    lockAssertMock.use {
+      val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
+      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)).willReturn(
+        idsOfActiveRecommendationsNotYetDownloaded,
+      )
 
-    // when
-    recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
+      // when
+      recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
 
-    // then
-    verify(recommendationRepository).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
+      // then
+      val inOrder = inOrder(LockAssert::class.java, recommendationRepository)
+      inOrder.verify(it, LockAssert::assertLocked)
+      then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
 
-    with(logAppender.list) {
-      assertThat(size).isEqualTo(1)
-      with(get(0)) {
-        assertThat(level).isEqualTo(Level.INFO)
-        assertThat(message).isEqualTo(
-          "The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded:" +
-            " $idsOfActiveRecommendationsNotYetDownloaded",
-        )
+      val expectedInfoMessages = listOf(
+        "FTR48 clean-up task started",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
+        "FTR48 clean-up task ended",
+      )
+      with(logAppender.list) {
+        this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }
+        assertThat(this.map { it.message }).containsExactlyElementsOf(expectedInfoMessages)
       }
     }
   }
