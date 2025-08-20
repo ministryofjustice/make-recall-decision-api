@@ -56,7 +56,7 @@ internal class RecommendationsCleanupTask(
   }
 
   @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
-  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m") // TODO test these values in pre-prod
+  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
   @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
     log.info("FTR48 clean-up task started")
