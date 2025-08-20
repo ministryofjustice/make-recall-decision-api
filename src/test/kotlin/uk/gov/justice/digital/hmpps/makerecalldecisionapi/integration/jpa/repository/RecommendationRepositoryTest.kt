@@ -79,9 +79,7 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
     )
   }
 
-  private fun createRecommendationWithActivePreThresholdStatus(recommendationStatus: RecommendationStatus): RecommendationEntity {
-    return createRecommendationWithActiveStatus(recommendationStatus, thresholdDatetime.minusDays(2))
-  }
+  private fun createRecommendationWithActivePreThresholdStatus(recommendationStatus: RecommendationStatus): RecommendationEntity = createRecommendationWithActiveStatus(recommendationStatus, thresholdDatetime.minusDays(2))
 
   private fun createRecommendationWithActiveStatus(
     recommendationStatus: RecommendationStatus,
@@ -98,9 +96,7 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
     return recommendation
   }
 
-  private fun createDefaultActiveRecommendation(): RecommendationEntity {
-    return createDefaultRecommendation(false, false)
-  }
+  private fun createDefaultActiveRecommendation(): RecommendationEntity = createDefaultRecommendation(false, false)
 
   private fun createDefaultRecommendation(
     dataDeletedFlag: Boolean,

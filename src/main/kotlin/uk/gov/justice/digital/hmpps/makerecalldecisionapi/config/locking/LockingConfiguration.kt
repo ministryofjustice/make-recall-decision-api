@@ -7,17 +7,14 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
-
 @Configuration
 class LockingConfiguration {
 
   @Bean
-  fun lockProvider(dataSource: DataSource): LockProvider {
-    return JdbcTemplateLockProvider(
-      JdbcTemplateLockProvider.Configuration.builder()
-        .withJdbcTemplate(JdbcTemplate(dataSource))
-        .usingDbTime()
-        .build(),
-    )
-  }
+  fun lockProvider(dataSource: DataSource): LockProvider = JdbcTemplateLockProvider(
+    JdbcTemplateLockProvider.Configuration.builder()
+      .withJdbcTemplate(JdbcTemplate(dataSource))
+      .usingDbTime()
+      .build(),
+  )
 }
