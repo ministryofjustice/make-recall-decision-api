@@ -15,6 +15,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.then
 import org.mockito.kotlin.verify
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.cleanup.cleanUpConfiguration
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.cleanup.recurrentCleanUpConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
@@ -44,10 +45,15 @@ class RecommendationsCleanupTaskTest {
 
   @Test
   fun `domain-event-activated service deletes stale recommendations and sends out the relevant domain events`() {
+    val cleanUpConfiguration = cleanUpConfiguration(
+      recurrent = recurrentCleanUpConfiguration(
+        lookBackInDays = randomLong().mod(100L), // we restrict this to prevent exceeding epoch values later on
+      ),
+    )
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
-      cleanUpConfiguration(),
+      cleanUpConfiguration,
       recommendationService,
       true,
     )
@@ -57,7 +63,7 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(presentRecommendationId, missingRecommendationId)
 
     // and
-    val thresholdDate = LocalDate.now().minusDays(21)
+    val thresholdDate = LocalDate.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays)
     given(recommendationStatusRepository.findStaleRecommendations(thresholdDate)).willReturn(openRecommendationIds)
     val crn = randomString()
     val username = randomString()
@@ -95,10 +101,15 @@ class RecommendationsCleanupTaskTest {
 
   @Test
   fun `domain-event-deactivated service deletes stale recommendations without sending out domain events`() {
+    val cleanUpConfiguration = cleanUpConfiguration(
+      recurrent = recurrentCleanUpConfiguration(
+        lookBackInDays = randomLong().mod(100L), // we restrict this to prevent exceeding epoch values later on
+      ),
+    )
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
-      cleanUpConfiguration(),
+      cleanUpConfiguration,
       recommendationService,
       false,
     )
@@ -106,7 +117,7 @@ class RecommendationsCleanupTaskTest {
     val openRecommendationIds = listOf(1L)
 
     // and
-    val thresholdDate = LocalDate.now().minusDays(21)
+    val thresholdDate = LocalDate.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays)
     given(recommendationStatusRepository.findStaleRecommendations(thresholdDate)).willReturn(openRecommendationIds)
 
     // when
@@ -119,7 +130,11 @@ class RecommendationsCleanupTaskTest {
 
   @Test
   fun `domain-event-activated FTR48 clean-up task deletes ongoing recommendations and sends out the relevant domain events`() {
-    val cleanUpConfiguration = cleanUpConfiguration()
+    val cleanUpConfiguration = cleanUpConfiguration(
+      recurrent = recurrentCleanUpConfiguration(
+        lookBackInDays = randomLong().mod(100L), // we restrict this to prevent exceeding epoch values later on
+      ),
+    )
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
@@ -134,7 +149,12 @@ class RecommendationsCleanupTaskTest {
       val presentRecommendationId = randomLong()
       val missingRecommendationId = randomLong()
       val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
-      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)).willReturn(
+      given(
+        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
+          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+          cleanUpConfiguration.ftr48.thresholdDateTime,
+        ),
+      ).willReturn(
         idsOfActiveRecommendationsNotYetDownloaded,
       )
 
@@ -177,7 +197,11 @@ class RecommendationsCleanupTaskTest {
 
   @Test
   fun `domain-event-deactivated FTR48 clean-up task deletes ongoing recommendations without sending out domain events`() {
-    val cleanUpConfiguration = cleanUpConfiguration()
+    val cleanUpConfiguration = cleanUpConfiguration(
+      recurrent = recurrentCleanUpConfiguration(
+        lookBackInDays = randomLong().mod(100L), // we restrict this to prevent exceeding epoch values later on
+      ),
+    )
     recommendationsCleanupTask = RecommendationsCleanupTask(
       recommendationRepository,
       recommendationStatusRepository,
@@ -190,7 +214,12 @@ class RecommendationsCleanupTaskTest {
     val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
     lockAssertMock.use {
       val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
-      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)).willReturn(
+      given(
+        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
+          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+          cleanUpConfiguration.ftr48.thresholdDateTime,
+        ),
+      ).willReturn(
         idsOfActiveRecommendationsNotYetDownloaded,
       )
 

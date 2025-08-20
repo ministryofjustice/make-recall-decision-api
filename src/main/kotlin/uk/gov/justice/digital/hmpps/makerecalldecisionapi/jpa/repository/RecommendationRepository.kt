@@ -56,10 +56,13 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
           WHERE name IN ('REC_CLOSED', 'REC_DELETED', 'DELETED', 'PP_DOCUMENT_CREATED')
       )
       AND deleted is not true
-      AND (data ->> 'createdDate')::timestamp <= :thresholdDate
+      AND (data ->> 'createdDate')::timestamp BETWEEN :thresholdStartDate AND :thresholdEndDate
       AND (data ->> 'deleted')::boolean is not true
     """,
     nativeQuery = true, // JPQL doesn't support accessing JSON fields, so we need to write a native query
   )
-  fun findActiveRecommendationsNotYetDownloaded(@Param("thresholdDate") thresholdDate: ZonedDateTime): List<Long>
+  fun findActiveRecommendationsNotYetDownloaded(
+    @Param("thresholdStartDate") thresholdStartDate: ZonedDateTime,
+    @Param("thresholdEndDate") thresholdEndDate: ZonedDateTime,
+  ): List<Long>
 }

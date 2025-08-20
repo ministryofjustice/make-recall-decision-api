@@ -34,7 +34,8 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
     createRecommendationsExpectedToRemainUntouched()
 
     // when
-    val actualRecommendationIds = repository.findActiveRecommendationsNotYetDownloaded(thresholdDatetime)
+    val actualRecommendationIds =
+      repository.findActiveRecommendationsNotYetDownloaded(thresholdDatetime.minusDays(21), thresholdDatetime)
 
     // then
     assertThat(actualRecommendationIds).containsExactlyInAnyOrderElementsOf(expectedRecommendationIds)
@@ -47,7 +48,10 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
   }
 
   private fun createRecommendationsExpectedToRemainUntouched() {
-    // recommendation created after the threshold date
+    // recommendation created before the threshold start date
+    createDefaultRecommendation(false, false, thresholdDatetime.minusDays(30))
+
+    // recommendation created after the threshold end date
     createDefaultRecommendation(false, false, thresholdDatetime.plusDays(2))
 
     // recommendation with REC_CLOSED status

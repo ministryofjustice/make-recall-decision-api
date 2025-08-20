@@ -6,7 +6,12 @@ import java.time.ZonedDateTime
 
 @ConfigurationProperties(prefix = "clean-up")
 data class CleanUpConfiguration(
+  val recurrent: RecurrentCleanUpConfiguration,
   val ftr48: FTR48CleanUpConfiguration,
+)
+
+data class RecurrentCleanUpConfiguration(
+  val lookBackInDays: Long,
 )
 
 data class FTR48CleanUpConfiguration(

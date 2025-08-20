@@ -38,7 +38,7 @@ internal class RecommendationsCleanupTask(
   )
   @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteOldRecommendations() {
-    val thresholdDate = LocalDate.now().minusDays(21)
+    val thresholdDate = LocalDate.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays)
     val openRecommendationIds = recommendationStatusRepository.findStaleRecommendations(thresholdDate)
     recommendationRepository.softDeleteByIds(openRecommendationIds)
     openRecommendationIds.forEach { openRecommendationId ->
@@ -56,7 +56,7 @@ internal class RecommendationsCleanupTask(
   }
 
   @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
-  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "10m", lockAtMostFor = "15m") // TODO test these values in pre-prod
+  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m") // TODO test these values in pre-prod
   @Transactional(isolation = Isolation.SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
     log.info("FTR48 clean-up task started")
@@ -67,7 +67,10 @@ internal class RecommendationsCleanupTask(
     }
 
     val idsOfActiveRecommendationsNotYetDownloaded =
-      recommendationRepository.findActiveRecommendationsNotYetDownloaded(cleanUpConfiguration.ftr48.thresholdDateTime)
+      recommendationRepository.findActiveRecommendationsNotYetDownloaded(
+        cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+        cleanUpConfiguration.ftr48.thresholdDateTime,
+      )
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
     log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded")
 

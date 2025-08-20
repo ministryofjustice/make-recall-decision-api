@@ -247,6 +247,8 @@ document-template:
   dntr-template-settings[0].template-name: "DNTR Template.docx"
 
 clean-up:
+  recurrent:
+    look-back-in-days: 21
   ftr48:
     threshold-date-time: "2025-09-01T23:00Z" # 2025-09-02 00:00 in BST
     cron: "0 0 * 2 9 ?"  # every hour on 2nd September each year

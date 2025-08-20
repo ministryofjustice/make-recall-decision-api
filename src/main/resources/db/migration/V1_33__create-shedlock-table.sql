@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS shedlock;
+
 -- Taken from the shedlock README tutorial
 CREATE TABLE shedlock
 (
