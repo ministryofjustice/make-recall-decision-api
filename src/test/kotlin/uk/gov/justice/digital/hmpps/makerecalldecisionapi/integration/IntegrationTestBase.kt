@@ -187,6 +187,7 @@ abstract class IntegrationTestBase {
         "V1_30__PPUD_USERS_TABLE_ADD_PPUD_USER_NAME_COL.sql",
         "V1_31__create-NOMIS_TO_PPUD_ESTABLISHMENT_MAPPING-table.sql",
         "V1_32__insert-establishment-mappings.sql",
+        "V1_33__create-shedlock-table.sql",
       )
 
       val currentDirectory = File(".").absoluteFile.parentFile
