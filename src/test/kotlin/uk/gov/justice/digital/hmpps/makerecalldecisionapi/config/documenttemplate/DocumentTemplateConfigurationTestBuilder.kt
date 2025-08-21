@@ -13,4 +13,5 @@ internal fun documentTemplateConfiguration(
 internal fun documentTemplateSettings(
   startDateTime: ZonedDateTime = randomZonedDateTime(),
   templateName: String = randomString(),
-) = DocumentTemplateSetting(startDateTime, templateName)
+  templatePath: String = randomString(),
+) = DocumentTemplateSetting(startDateTime, templateName, templatePath)
