@@ -66,9 +66,15 @@ internal class RecommendationsCleanupTask(
       log.warn("FTR48 clean-up task is still running, but it is no longer 2025!")
     }
 
+    // We have a startDate and set it to endDate.minusDays(lookBackInDays - 1) for two reasons:
+    //  1. To avoid deleting older recommendations that would be selected by the query but shouldn't be deleted, as they
+    //     were created when the workflows worked differently.
+    //  2. To avoid any overlap with the recurrent clean-up task. Otherwise, the tasks might try to update the same
+    //      recommendation and clash (or succeed and both end up sending out the same domain event, which could be a
+    //      problem).
     val idsOfActiveRecommendationsNotYetDownloaded =
       recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-        cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+        cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
         cleanUpConfiguration.ftr48.thresholdDateTime,
       )
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)

@@ -151,7 +151,7 @@ class RecommendationsCleanupTaskTest {
       val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
           cleanUpConfiguration.ftr48.thresholdDateTime,
         ),
       ).willReturn(
@@ -216,7 +216,7 @@ class RecommendationsCleanupTaskTest {
       val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays),
+          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
           cleanUpConfiguration.ftr48.thresholdDateTime,
         ),
       ).willReturn(
