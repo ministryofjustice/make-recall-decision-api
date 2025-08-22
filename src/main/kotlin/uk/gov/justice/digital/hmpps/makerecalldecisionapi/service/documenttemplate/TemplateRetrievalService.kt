@@ -37,7 +37,7 @@ class TemplateRetrievalService(
   }
 
   private fun selectTemplateSettings(templateSettingsList: List<DocumentTemplateSetting>, documentType: DocumentType, ppDocumentCreated: LocalDateTime?): DocumentTemplateSetting {
-    val currentDateTime = ZonedDateTime.now()
+    val currentDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
     val zonedCreatedDate = if (ppDocumentCreated !== null) ZonedDateTime.ofLocal(ppDocumentCreated, ZoneId.of("UTC"), ZoneOffset.UTC) else null
     val templateTargetDate =
       if (zonedCreatedDate === null) {
@@ -57,6 +57,14 @@ class TemplateRetrievalService(
       DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/${settings.templateName}/Preview Part A Template.docx"
       DocumentType.DNTR_DOCUMENT -> "dntr/${settings.templateName}/DNTR Template.docx"
     }
+
+    println(" Current date: $currentDateTime")
+    println("Document date: $ppDocumentCreated")
+    println("   Zoned date: $zonedCreatedDate")
+    println("template target date: $templateTargetDate")
+    println("settings list: $templateSettingsList")
+    println("settings: $settings")
+    println("template path: $templatePath")
 
     return DocumentTemplateSetting(startDateTime = settings.startDateTime, templateName = settings.templateName, templatePath = "templates/$templatePath")
   }

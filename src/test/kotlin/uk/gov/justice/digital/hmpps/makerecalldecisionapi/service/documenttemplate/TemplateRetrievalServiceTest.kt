@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
-import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -25,7 +25,7 @@ class TemplateRetrievalServiceTest {
 
   private val logAppender = findLogAppender(TemplateRetrievalService::class.java)
 
-  private val currentDateTime: ZonedDateTime = ZonedDateTime.now()
+  private val currentDateTime: ZonedDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
   private val pastDateTime = currentDateTime.minusMonths(2)
   private val presentDateTime = currentDateTime.minusDays(2)
   private val futureDateTime = currentDateTime.plusMonths(2)
@@ -42,20 +42,18 @@ class TemplateRetrievalServiceTest {
     partAPreviewTemplateSettings = defaultSettingList,
     dntrTemplateSettings = defaultSettingList,
   )
-
   private val noDocumentsTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = listOf(),
     partAPreviewTemplateSettings = listOf(),
     dntrTemplateSettings = listOf(),
   )
-
   private val futureOnlyDocumentsTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = listOf(futureDocumentTemplateSetting),
     partAPreviewTemplateSettings = listOf(futureDocumentTemplateSetting),
     dntrTemplateSettings = listOf(futureDocumentTemplateSetting),
   )
 
-  val noExistingDocument: LocalDateTime? = null
+  val noExistingDocument: ZonedDateTime? = null
 
   @Nested
   @DisplayName("Part A Documents")
@@ -75,7 +73,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         futureOnlyDocumentsTemplateConfiguration,
         DocumentType.PART_A_DOCUMENT,
-        currentDateTime.toLocalDateTime(),
+        currentDateTime,
         defaultDocumentTemplateSetting,
         true,
       )
@@ -96,7 +94,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PART_A_DOCUMENT,
-        presentDateTime.toLocalDateTime(),
+        presentDateTime,
         currentDocumentTemplateSetting,
       )
     }
@@ -106,7 +104,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PART_A_DOCUMENT,
-        pastDateTime.toLocalDateTime(),
+        pastDateTime,
         pastDocumentTemplateSetting,
       )
     }
@@ -118,7 +116,7 @@ class TemplateRetrievalServiceTest {
           partATemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
         ),
         DocumentType.PART_A_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -129,7 +127,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PART_A_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -154,7 +152,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         futureOnlyDocumentsTemplateConfiguration,
         DocumentType.PREVIEW_PART_A_DOCUMENT,
-        currentDateTime.toLocalDateTime(),
+        currentDateTime,
         defaultDocumentTemplateSetting,
         true,
       )
@@ -175,7 +173,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PREVIEW_PART_A_DOCUMENT,
-        presentDateTime.toLocalDateTime(),
+        presentDateTime,
         currentDocumentTemplateSetting,
       )
     }
@@ -185,7 +183,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PREVIEW_PART_A_DOCUMENT,
-        pastDateTime.toLocalDateTime(),
+        pastDateTime,
         pastDocumentTemplateSetting,
       )
     }
@@ -197,7 +195,7 @@ class TemplateRetrievalServiceTest {
           partAPreviewTemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
         ),
         DocumentType.PREVIEW_PART_A_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -208,7 +206,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.PREVIEW_PART_A_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -233,7 +231,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         futureOnlyDocumentsTemplateConfiguration,
         DocumentType.DNTR_DOCUMENT,
-        currentDateTime.toLocalDateTime(),
+        currentDateTime,
         defaultDocumentTemplateSetting,
         true,
       )
@@ -254,7 +252,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.DNTR_DOCUMENT,
-        presentDateTime.toLocalDateTime(),
+        presentDateTime,
         currentDocumentTemplateSetting,
       )
     }
@@ -264,7 +262,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.DNTR_DOCUMENT,
-        pastDateTime.toLocalDateTime(),
+        pastDateTime,
         pastDocumentTemplateSetting,
       )
     }
@@ -276,7 +274,7 @@ class TemplateRetrievalServiceTest {
           dntrTemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
         ),
         DocumentType.DNTR_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -287,7 +285,7 @@ class TemplateRetrievalServiceTest {
       testLoadDocumentTemplate(
         documentTemplateConfiguration,
         DocumentType.DNTR_DOCUMENT,
-        futureDateTime.toLocalDateTime(),
+        futureDateTime,
         currentDocumentTemplateSetting,
         true,
       )
@@ -297,7 +295,7 @@ class TemplateRetrievalServiceTest {
   private fun testLoadDocumentTemplate(
     documentTemplateConfiguration: DocumentTemplateConfiguration,
     documentType: DocumentType,
-    documentCreated: LocalDateTime?,
+    documentCreated: ZonedDateTime?,
     expectedSettings: DocumentTemplateSetting,
     expectFutureWarning: Boolean = false,
   ) {
@@ -310,11 +308,12 @@ class TemplateRetrievalServiceTest {
       DocumentType.DNTR_DOCUMENT -> "dntr/${expectedSettings.templateName}/DNTR Template.docx"
     }
     val expectedClassPathResource = ClassPathResource("templates/$expectedTemplatePath")
+    val createdDateLocal = documentCreated?.toLocalDateTime()?.plusHours(1)
 
     // when
     val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(
       documentType,
-      RecommendationMetaData(partADocumentCreated = documentCreated),
+      RecommendationMetaData(partADocumentCreated = createdDateLocal),
     )
 
     // then
@@ -328,7 +327,7 @@ class TemplateRetrievalServiceTest {
       if (expectFutureWarning) {
         with(get(0)) {
           assertThat(level).isEqualTo(Level.ERROR)
-          assertThat(message).startsWith("Recommendation identified with future created date: ${documentCreated}Z[UTC] - Current date/time: ")
+          assertThat(message).startsWith("Recommendation identified with future created date: ${createdDateLocal}Z[UTC] - Current date/time: ")
         }
       }
     }
