@@ -995,6 +995,7 @@ data class RecommendationMetaData(
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
   var userPartACompletedByDateTime: LocalDateTime? = null,
+  var partADocumentCreated: LocalDateTime? = null,
 )
 
 private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
@@ -1015,6 +1016,9 @@ private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
       this.userNamePartACompletedBy = it.createdByUserFullName
       this.userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
       this.userEmailPartACompletedBy = it.emailAddress
+    }
+    if (it.name.equals("PP_DOCUMENT_CREATED")) {
+      this.partADocumentCreated = dateTimeWithDaylightSavingFromString(utcDateTimeString = it.created)
     }
   }
   return this
