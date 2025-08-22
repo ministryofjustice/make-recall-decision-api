@@ -146,9 +146,7 @@ class RecommendationsCleanupTaskTest {
     // given
     val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
     lockAssertMock.use {
-      val presentRecommendationId = randomLong()
-      val missingRecommendationId = randomLong()
-      val idsOfActiveRecommendationsNotYetDownloaded = listOf(presentRecommendationId, missingRecommendationId)
+      val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
           cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
@@ -158,18 +156,18 @@ class RecommendationsCleanupTaskTest {
         idsOfActiveRecommendationsNotYetDownloaded,
       )
 
-      val crn = randomString()
-      val username = randomString()
-      given(
-        recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded),
-      ).willReturn(
-        listOf(
+      val activeRecommendationsNotYetDownloaded = List(
+        43,
+        {
           RecommendationEntity(
-            presentRecommendationId,
-            RecommendationModel(crn = crn, createdBy = username),
+            randomLong(),
+            RecommendationModel(crn = randomString(), createdBy = randomString()),
             deleted = false,
-          ),
-        ),
+          )
+        },
+      )
+      given(recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded)).willReturn(
+        activeRecommendationsNotYetDownloaded,
       )
 
       // when
@@ -179,15 +177,26 @@ class RecommendationsCleanupTaskTest {
       val inOrder = inOrder(LockAssert::class.java, recommendationRepository, recommendationService)
       inOrder.verify(it, LockAssert::assertLocked)
       then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
-      then(recommendationService).should(inOrder).sendSystemDeleteRecommendationEvent(crn, username)
+      activeRecommendationsNotYetDownloaded.forEach {
+        then(recommendationService).should(inOrder)
+          .sendSystemDeleteRecommendationEvent(it.data.crn, it.data.createdBy!!)
+      }
 
-      val expectedInfoMessages = listOf(
-        "FTR48 clean-up task started",
+      val startUpMessage = listOf("FTR48 clean-up task started")
+      val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
-          " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
-        "System delete domain event sent for crn::'$crn' username::'$username",
-        "FTR48 clean-up task ended",
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(20, 40)}",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(40, 43)}",
       )
+      val deletionDomainEventMessages = activeRecommendationsNotYetDownloaded.map {
+        "System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}"
+      }
+      val endMessage = listOf("FTR48 clean-up task ended")
+      val expectedInfoMessages =
+        startUpMessage + deletedRecommendationIdMessages + deletionDomainEventMessages + endMessage
       with(logAppender.list) {
         this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }
         assertThat(this.map { it.message }).containsExactlyElementsOf(expectedInfoMessages)
@@ -213,7 +222,7 @@ class RecommendationsCleanupTaskTest {
     // given
     val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
     lockAssertMock.use {
-      val idsOfActiveRecommendationsNotYetDownloaded = listOf(randomLong(), randomLong())
+      val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
           cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
@@ -231,12 +240,17 @@ class RecommendationsCleanupTaskTest {
       inOrder.verify(it, LockAssert::assertLocked)
       then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
 
-      val expectedInfoMessages = listOf(
-        "FTR48 clean-up task started",
+      val startUpMessage = listOf("FTR48 clean-up task started")
+      val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
-          " active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded",
-        "FTR48 clean-up task ended",
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(20, 40)}",
+        "The recommendations with the following IDs were soft deleted, as they were" +
+          " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(40, 43)}",
       )
+      val endMessage = listOf("FTR48 clean-up task ended")
+      val expectedInfoMessages = startUpMessage + deletedRecommendationIdMessages + endMessage
       with(logAppender.list) {
         this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }
         assertThat(this.map { it.message }).containsExactlyElementsOf(expectedInfoMessages)

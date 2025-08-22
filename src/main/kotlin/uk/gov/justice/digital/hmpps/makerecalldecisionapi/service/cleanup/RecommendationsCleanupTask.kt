@@ -29,6 +29,8 @@ internal class RecommendationsCleanupTask(
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+
+    private val RECOMMENDATION_ID_LOGGING_CHUNK_SIZE = 20
   }
 
   @Scheduled(
@@ -78,7 +80,9 @@ internal class RecommendationsCleanupTask(
         cleanUpConfiguration.ftr48.thresholdDateTime,
       )
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
-    log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $idsOfActiveRecommendationsNotYetDownloaded")
+    idsOfActiveRecommendationsNotYetDownloaded.chunked(RECOMMENDATION_ID_LOGGING_CHUNK_SIZE).forEach { subListOfIds ->
+      log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $subListOfIds")
+    }
 
     if (sendDomainEvents) {
       val activeRecommendationsNotYetDownloaded =
