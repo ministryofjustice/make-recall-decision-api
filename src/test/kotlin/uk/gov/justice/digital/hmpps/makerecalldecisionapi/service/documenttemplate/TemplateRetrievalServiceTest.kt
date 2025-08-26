@@ -4,8 +4,9 @@ import ch.qos.logback.classic.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
@@ -26,294 +27,230 @@ class TemplateRetrievalServiceTest {
   private val logAppender = findLogAppender(TemplateRetrievalService::class.java)
 
   private val currentDateTime: ZonedDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
-  private val pastDateTime = currentDateTime.minusMonths(2)
-  private val presentDateTime = currentDateTime.minusDays(2)
-  private val futureDateTime = currentDateTime.plusMonths(2)
-  private val pastDocumentTemplateSetting = documentTemplateSettings(startDateTime = pastDateTime, "past")
-  private val currentDocumentTemplateSetting = documentTemplateSettings(startDateTime = presentDateTime, "present")
-  private val futureDocumentTemplateSetting = documentTemplateSettings(startDateTime = futureDateTime, "future")
-  private val defaultDocumentTemplateSetting = DocumentTemplateSetting(startDateTime = futureDateTime, "default")
+  private val pastDate = currentDateTime.minusMonths(2)
+  private val presentDate = currentDateTime.minusDays(2)
+  private val futureDate = currentDateTime.plusMonths(2)
+
+  private val noExistingCreated: ZonedDateTime? = null
+
+  // The document needs to be created after the date a timm  period starts as an equal time fall into the previous timeframe
+  private val pastDocumentCreated = pastDate.plusDays(1)
+  private val presentDocumentCreated = presentDate.plusDays(1)
+  private val futureDocumentCreated = futureDate.plusDays(1)
+
+  private val defaultDocumentTemplateSetting = DocumentTemplateSetting(startDateTime = futureDate, "default")
+  private val pastDocumentTemplateSetting = documentTemplateSettings(startDateTime = pastDate, "past")
+  private val presentDocumentTemplateSetting = documentTemplateSettings(startDateTime = presentDate, "present")
+  private val futureDocumentTemplateSetting = documentTemplateSettings(startDateTime = futureDate, "future")
 
   private val defaultSettingList =
-    listOf(currentDocumentTemplateSetting, futureDocumentTemplateSetting, pastDocumentTemplateSetting)
+    listOf(presentDocumentTemplateSetting, futureDocumentTemplateSetting, pastDocumentTemplateSetting)
 
   private val documentTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = defaultSettingList,
-    partAPreviewTemplateSettings = defaultSettingList,
     dntrTemplateSettings = defaultSettingList,
   )
   private val noDocumentsTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = listOf(),
-    partAPreviewTemplateSettings = listOf(),
     dntrTemplateSettings = listOf(),
+  )
+  private val noFutureDocumentsTemplateConfiguration = documentTemplateConfiguration(
+    partATemplateSettings = listOf(pastDocumentTemplateSetting, presentDocumentTemplateSetting),
+    dntrTemplateSettings = listOf(pastDocumentTemplateSetting, presentDocumentTemplateSetting),
   )
   private val futureOnlyDocumentsTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = listOf(futureDocumentTemplateSetting),
-    partAPreviewTemplateSettings = listOf(futureDocumentTemplateSetting),
     dntrTemplateSettings = listOf(futureDocumentTemplateSetting),
   )
 
-  val noExistingDocument: ZonedDateTime? = null
-
   @Nested
-  @DisplayName("Part A Documents")
-  inner class PartADocument {
-    @Test
-    fun `retrieves the default Part A template when no settings provided`() {
+  @DisplayName("when no document template config provided")
+  inner class RetrieveDefaultNoSettings {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has not been created before then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
         noDocumentsTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        noExistingDocument,
-        defaultDocumentTemplateSetting,
+        documentType,
+        noExistingCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves the default Part A template when only configured setting is in the future`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document created in the past then the default template is retrieved`(documentType: DocumentType) {
       testLoadDocumentTemplate(
-        futureOnlyDocumentsTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        currentDateTime,
-        defaultDocumentTemplateSetting,
-        true,
+        noDocumentsTemplateConfiguration,
+        documentType,
+        pastDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves correct Part A template - document created for the first time`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has created in the present then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        noExistingDocument,
-        currentDocumentTemplateSetting,
+        noDocumentsTemplateConfiguration,
+        documentType,
+        presentDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves correct Part A template - document created against current template`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has created in the future then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        presentDateTime,
-        currentDocumentTemplateSetting,
-      )
-    }
-
-    @Test
-    fun `retrieves correct Part A template - document created against past template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        pastDateTime,
-        pastDocumentTemplateSetting,
-      )
-    }
-
-    @Test
-    fun `retrieves correct Part A template - document created against future date still resolves to current when there is no future template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration(
-          partATemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
-        ),
-        DocumentType.PART_A_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
-        true,
-      )
-    }
-
-    @Test
-    fun `retrieves correct Part A template - document created against future date still resolves to current`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PART_A_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
+        noDocumentsTemplateConfiguration,
+        documentType,
+        futureDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
         true,
       )
     }
   }
 
   @Nested
-  @DisplayName("Preview Part A Documents")
-  inner class PreviewDocuments {
-    @Test
-    fun `retrieves the default Preview Part A template when no settings provided`() {
-      testLoadDocumentTemplate(
-        noDocumentsTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        noExistingDocument,
-        defaultDocumentTemplateSetting,
-      )
-    }
-
-    @Test
-    fun `retrieves the default Preview Part A template when only configured setting is in the future`() {
+  @DisplayName("when the only document template config is in the future")
+  inner class RetrieveDefaultFutureOnly {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has not been created before then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
         futureOnlyDocumentsTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        currentDateTime,
-        defaultDocumentTemplateSetting,
-        true,
+        documentType,
+        noExistingCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves correct Preview Part A template - document created for the first time`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document created in the past then the default template is retrieved`(documentType: DocumentType) {
       testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        noExistingDocument,
-        currentDocumentTemplateSetting,
+        futureOnlyDocumentsTemplateConfiguration,
+        documentType,
+        pastDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves correct Preview Part A template - document created against current template`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has created in the present then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        presentDateTime,
-        currentDocumentTemplateSetting,
+        futureOnlyDocumentsTemplateConfiguration,
+        documentType,
+        presentDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
       )
     }
 
-    @Test
-    fun `retrieves correct Preview Part A template - document created against past template`() {
+    @ParameterizedTest
+    @EnumSource
+    fun `and the document has created in the future then the default template is retrieved`(
+      documentType: DocumentType,
+    ) {
       testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        pastDateTime,
-        pastDocumentTemplateSetting,
-      )
-    }
-
-    @Test
-    fun `retrieves correct Preview Part A template - document created against future date still resolves to current when there is no future template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration(
-          partAPreviewTemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
-        ),
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
-        true,
-      )
-    }
-
-    @Test
-    fun `retrieves correct Preview Part A template - document created against future date still resolves to current`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.PREVIEW_PART_A_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
+        futureOnlyDocumentsTemplateConfiguration,
+        documentType,
+        futureDocumentCreated,
+        defaultDocumentTemplateSetting.templateName,
         true,
       )
     }
   }
 
-  @Nested
-  @DisplayName("Decision Not To Recall Documents")
-  inner class DNTRDocuments {
-    @Test
-    fun `retrieves the default DNTR template when no settings provided`() {
-      testLoadDocumentTemplate(
-        noDocumentsTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        noExistingDocument,
-        defaultDocumentTemplateSetting,
-      )
-    }
+  @ParameterizedTest
+  @EnumSource
+  fun `retrieves correct past template - document created in a past time frame`(documentType: DocumentType) {
+    testLoadDocumentTemplate(
+      documentTemplateConfiguration,
+      documentType,
+      pastDocumentCreated,
+      pastDocumentTemplateSetting.templateName,
+    )
+  }
 
-    @Test
-    fun `retrieves the default DNTR template when only configured setting is in the future`() {
-      testLoadDocumentTemplate(
-        futureOnlyDocumentsTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        currentDateTime,
-        defaultDocumentTemplateSetting,
-        true,
-      )
-    }
+  @ParameterizedTest
+  @EnumSource
+  fun `retrieves correct current template - document created for the first time`(documentType: DocumentType) {
+    testLoadDocumentTemplate(
+      documentTemplateConfiguration,
+      documentType,
+      noExistingCreated,
+      presentDocumentTemplateSetting.templateName,
+    )
+  }
 
-    @Test
-    fun `retrieves correct DNTR template - document created for the first time`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        noExistingDocument,
-        currentDocumentTemplateSetting,
-      )
-    }
+  @ParameterizedTest
+  @EnumSource
+  fun `retrieves correct current template - document created within the current time frame`(documentType: DocumentType) {
+    testLoadDocumentTemplate(
+      documentTemplateConfiguration,
+      documentType,
+      presentDocumentCreated,
+      presentDocumentTemplateSetting.templateName,
+    )
+  }
 
-    @Test
-    fun `retrieves correct DNTR template - document created against current template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        presentDateTime,
-        currentDocumentTemplateSetting,
-      )
-    }
+  @ParameterizedTest
+  @EnumSource
+  fun `retrieves correct Part A template - document created against future date still resolves to current`(documentType: DocumentType) {
+    testLoadDocumentTemplate(
+      documentTemplateConfiguration,
+      documentType,
+      futureDocumentCreated,
+      presentDocumentTemplateSetting.templateName,
+      true,
+    )
+  }
 
-    @Test
-    fun `retrieves correct DNTR template - document created against past template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        pastDateTime,
-        pastDocumentTemplateSetting,
-      )
-    }
-
-    @Test
-    fun `retrieves correct DNTR template - document created against future date still resolves to current when there is no future template`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration(
-          dntrTemplateSettings = listOf(pastDocumentTemplateSetting, currentDocumentTemplateSetting),
-        ),
-        DocumentType.DNTR_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
-        true,
-      )
-    }
-
-    @Test
-    fun `retrieves correct DNTR template - document created against future date still resolves to current`() {
-      testLoadDocumentTemplate(
-        documentTemplateConfiguration,
-        DocumentType.DNTR_DOCUMENT,
-        futureDateTime,
-        currentDocumentTemplateSetting,
-        true,
-      )
-    }
+  @ParameterizedTest
+  @EnumSource
+  fun `retrieves correct current template - document created against future date still resolves to current when there is no future template`(documentType: DocumentType) {
+    testLoadDocumentTemplate(
+      noFutureDocumentsTemplateConfiguration,
+      documentType,
+      futureDocumentCreated,
+      presentDocumentTemplateSetting.templateName,
+      true,
+    )
   }
 
   private fun testLoadDocumentTemplate(
     documentTemplateConfiguration: DocumentTemplateConfiguration,
     documentType: DocumentType,
     documentCreated: ZonedDateTime?,
-    expectedSettings: DocumentTemplateSetting,
+    expectedTemplate: String,
     expectFutureWarning: Boolean = false,
   ) {
     // given
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
 
     val expectedTemplatePath = when (documentType) {
-      DocumentType.PART_A_DOCUMENT -> "partA/${expectedSettings.templateName}/Part A Template.docx"
-      DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/${expectedSettings.templateName}/Preview Part A Template.docx"
-      DocumentType.DNTR_DOCUMENT -> "dntr/${expectedSettings.templateName}/DNTR Template.docx"
+      DocumentType.PART_A_DOCUMENT -> "partA/$expectedTemplate/Part A Template.docx"
+      DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/$expectedTemplate/Preview Part A Template.docx"
+      DocumentType.DNTR_DOCUMENT -> "dntr/$expectedTemplate/DNTR Template.docx"
     }
     val expectedClassPathResource = ClassPathResource("templates/$expectedTemplatePath")
-    val createdDateLocal = documentCreated?.toLocalDateTime()?.plusHours(1)
 
     // when
     val actualClassPathResource = templateRetrievalService.loadDocumentTemplate(
       documentType,
-      RecommendationMetaData(partADocumentCreated = createdDateLocal),
+      RecommendationMetaData(partADocumentCreated = documentCreated),
     )
 
     // then
@@ -322,12 +259,12 @@ class TemplateRetrievalServiceTest {
       assertThat(size).isEqualTo(if (expectFutureWarning) 2 else 1)
       with(get(if (expectFutureWarning) 1 else 0)) {
         assertThat(level).isEqualTo(Level.INFO)
-        assertThat(message).isEqualTo("Retrieving ${documentType.name} - template name: ${expectedSettings.templateName} - resolved path: templates/$expectedTemplatePath")
+        assertThat(message).isEqualTo("Retrieving ${documentType.name} - template name: $expectedTemplate - resolved path: templates/$expectedTemplatePath")
       }
       if (expectFutureWarning) {
         with(get(0)) {
           assertThat(level).isEqualTo(Level.ERROR)
-          assertThat(message).startsWith("Recommendation identified with future created date: ${createdDateLocal}Z[UTC] - Current date/time: ")
+          assertThat(message).startsWith("Recommendation identified with future created date: $documentCreated - Current date/time: ")
         }
       }
     }

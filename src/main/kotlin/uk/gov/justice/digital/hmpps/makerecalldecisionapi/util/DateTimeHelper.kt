@@ -26,14 +26,16 @@ class DateTimeHelper {
       return formatter.print(DateTime(DateTimeZone.UTC)).toString()
     }
 
-    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime = if (utcDateTimeString.isNullOrBlank()) {
-      LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime = dateTimeUTCZonedFromString(utcDateTimeString).toLocalDateTime()
+
+    fun dateTimeUTCZonedFromString(utcDateTimeString: String?): ZonedDateTime = if (utcDateTimeString.isNullOrBlank()) {
+      ZonedDateTime.of(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), ZoneId.of("UTC"))
     } else {
       val utcZonedDateTime = ZonedDateTime.of(
         LocalDateTime.parse(utcDateTimeString.replace("Z", MrdTextConstants.EMPTY_STRING)),
         ZoneId.of("UTC"),
       )
-      utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
+      utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London"))
     }
 
     fun localNowDateTime(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)

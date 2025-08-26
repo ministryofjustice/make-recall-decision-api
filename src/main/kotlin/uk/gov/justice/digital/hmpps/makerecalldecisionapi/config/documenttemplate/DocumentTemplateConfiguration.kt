@@ -13,7 +13,6 @@ import java.time.ZonedDateTime
 @ConfigurationProperties(prefix = "document-template")
 data class DocumentTemplateConfiguration(
   val partATemplateSettings: List<DocumentTemplateSetting> = listOf(),
-  val partAPreviewTemplateSettings: List<DocumentTemplateSetting> = listOf(),
   val dntrTemplateSettings: List<DocumentTemplateSetting> = listOf(),
 )
 
@@ -21,5 +20,4 @@ data class DocumentTemplateSetting(
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mmZ")
   val startDateTime: ZonedDateTime,
   val templateName: String,
-  val templatePath: String? = null,
 )

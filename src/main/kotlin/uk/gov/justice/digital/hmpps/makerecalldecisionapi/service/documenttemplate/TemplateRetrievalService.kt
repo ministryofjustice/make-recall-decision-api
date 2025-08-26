@@ -8,9 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateSetting
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 @Service
@@ -24,48 +22,39 @@ class TemplateRetrievalService(
 
   fun loadDocumentTemplate(documentType: DocumentType, recommendationMetaData: RecommendationMetaData): ClassPathResource {
     val templateSettingsList = selectTemplateSettingsList(documentType)
-    val templateSettings = selectTemplateSettings(templateSettingsList, documentType, recommendationMetaData.partADocumentCreated)
+    val templatePath = selectTemplatePath(templateSettingsList, documentType, recommendationMetaData.partADocumentCreated)
 
-    log.info("Retrieving ${documentType.name} - template name: ${templateSettings.templateName} - resolved path: ${templateSettings.templatePath}")
-    return ClassPathResource(templateSettings.templatePath!!)
+    return ClassPathResource(templatePath)
   }
 
   private fun selectTemplateSettingsList(documentType: DocumentType): List<DocumentTemplateSetting> = when (documentType) {
     DocumentType.PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
-    DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partAPreviewTemplateSettings
+    DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
     DocumentType.DNTR_DOCUMENT -> documentTemplateConfig.dntrTemplateSettings
   }
 
-  private fun selectTemplateSettings(templateSettingsList: List<DocumentTemplateSetting>, documentType: DocumentType, ppDocumentCreated: LocalDateTime?): DocumentTemplateSetting {
+  private fun selectTemplatePath(templateSettingsList: List<DocumentTemplateSetting>, documentType: DocumentType, ppDocumentCreated: ZonedDateTime?): String {
     val currentDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
-    val zonedCreatedDate = if (ppDocumentCreated !== null) ZonedDateTime.ofLocal(ppDocumentCreated, ZoneId.of("UTC"), ZoneOffset.UTC) else null
     val templateTargetDate =
-      if (zonedCreatedDate === null) {
+      if (ppDocumentCreated === null) {
         currentDateTime
-      } else if (zonedCreatedDate > currentDateTime) {
-        log.error("Recommendation identified with future created date: $zonedCreatedDate - Current date/time: $currentDateTime")
+      } else if (ppDocumentCreated > currentDateTime) {
+        log.error("Recommendation identified with future created date: $ppDocumentCreated - Current date/time: $currentDateTime")
         currentDateTime
       } else {
-        zonedCreatedDate
+        ppDocumentCreated
       }
 
-    val settings = templateSettingsList.filter { it.startDateTime.isBefore(templateTargetDate) }.maxByOrNull { it.startDateTime }
-      ?: DocumentTemplateSetting(startDateTime = currentDateTime, templateName = "default", templatePath = "")
+    val templateName = templateSettingsList.filter { it.startDateTime.isBefore(templateTargetDate) }.maxByOrNull { it.startDateTime }?.templateName ?: "default"
 
-    val templatePath = when (documentType) {
-      DocumentType.PART_A_DOCUMENT -> "partA/${settings.templateName}/Part A Template.docx"
-      DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/${settings.templateName}/Preview Part A Template.docx"
-      DocumentType.DNTR_DOCUMENT -> "dntr/${settings.templateName}/DNTR Template.docx"
-    }
+    val templatePath = "templates/${
+      when (documentType) {
+        DocumentType.PART_A_DOCUMENT -> "partA/$templateName/Part A Template.docx"
+        DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/$templateName/Preview Part A Template.docx"
+        DocumentType.DNTR_DOCUMENT -> "dntr/$templateName/DNTR Template.docx"
+      }}"
 
-    println(" Current date: $currentDateTime")
-    println("Document date: $ppDocumentCreated")
-    println("   Zoned date: $zonedCreatedDate")
-    println("template target date: $templateTargetDate")
-    println("settings list: $templateSettingsList")
-    println("settings: $settings")
-    println("template path: $templatePath")
-
-    return DocumentTemplateSetting(startDateTime = settings.startDateTime, templateName = settings.templateName, templatePath = "templates/$templatePath")
+    log.info("Retrieving ${documentType.name} - template name: $templateName - resolved path: $templatePath")
+    return templatePath
   }
 }
