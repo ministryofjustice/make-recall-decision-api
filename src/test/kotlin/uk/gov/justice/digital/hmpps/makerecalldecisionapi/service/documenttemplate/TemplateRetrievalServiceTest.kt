@@ -92,7 +92,7 @@ class TemplateRetrievalServiceTest {
 
     @ParameterizedTest
     @EnumSource
-    fun `and the document has created in the present then the default template is retrieved`(
+    fun `and the document has been created in the present then the default template is retrieved`(
       documentType: DocumentType,
     ) {
       testLoadDocumentTemplate(
@@ -147,7 +147,7 @@ class TemplateRetrievalServiceTest {
 
     @ParameterizedTest
     @EnumSource
-    fun `and the document has created in the present then the default template is retrieved`(
+    fun `and the document has been created in the present then the default template is retrieved`(
       documentType: DocumentType,
     ) {
       testLoadDocumentTemplate(

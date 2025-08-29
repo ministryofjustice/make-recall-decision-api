@@ -230,13 +230,8 @@ spring:
 
 document-template:
   # Any setting not specified or occurring only in the future will default to the 'default' template name
-  # part-a-template-settings[x].start-date-time/template-name # Settings for Part A templates
-  # part-a-preview-template-settings[x].start-date-time/template-name # Settings for Part A Preview templates
-  # dntr-template-settings[x].start-date-time/template-name # Settings for DNTR templates
   part-a-template-settings[0].start-date-time: "2025-09-01T23:00Z" #2025-09-02T00:00Z in BST
   part-a-template-settings[0].template-name: "2025-09-02 - FTR48 Phase 1"
-  part-a-preview-template-settings[0].start-date-time: "2025-09-01T23:00Z" #2025-09-02T00:00Z in BST
-  part-a-preview-template-settings[0].template-name: "2025-09-02 - FTR48 Phase 1"
 
 clean-up:
   recurrent:
