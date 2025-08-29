@@ -26,16 +26,23 @@ class DateTimeHelper {
       return formatter.print(DateTime(DateTimeZone.UTC)).toString()
     }
 
-    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime = dateTimeUTCZonedFromString(utcDateTimeString).toLocalDateTime()
+    fun dateTimeWithDaylightSavingFromString(utcDateTimeString: String?): LocalDateTime = dateTimeUTCZonedFromString(utcDateTimeString).withZoneSameInstant(ZoneId.of("Europe/London")).toLocalDateTime()
 
     fun dateTimeUTCZonedFromString(utcDateTimeString: String?): ZonedDateTime = if (utcDateTimeString.isNullOrBlank()) {
       ZonedDateTime.of(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), ZoneId.of("UTC"))
+        .minusHours(1)
     } else {
       val utcZonedDateTime = ZonedDateTime.of(
         LocalDateTime.parse(utcDateTimeString.replace("Z", MrdTextConstants.EMPTY_STRING)),
         ZoneId.of("UTC"),
+        // Currently, changing from a UTC Date for a Europe/London date results in an offset of +01:00
+        // due to the British Standard Time experiment of 1968 - 1971
+        // As this method is new we are not concerned with the default not being 1970-01-01T00:00 but this is the
+        // expected default for dateTimeWithDaylightSavingFromString above which now uses this method.
+        // As such we have decided to account for the offest here until we can fully determine the impact
+        // of changing the default value for that method call
       )
-      utcZonedDateTime.withZoneSameInstant(ZoneId.of("Europe/London"))
+      utcZonedDateTime
     }
 
     fun localNowDateTime(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)

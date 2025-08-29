@@ -18,9 +18,6 @@ generic-service:
     MRD_URL: https://make-recall-decision-preprod.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api-preprod.hmpps.service.justice.gov.uk
     HOUSEKEEPING_SENDDOMAINEVENTS: true
-    # we cannot override a single item in a list - the whole list is replaced, so we define the whole thing again
-    DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_0_STARTDATETIME: "2025-09-01T23:00Z" # 2025-09-02T00:00Z in BST, bring forward dev for testing
-    DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_0_TEMPLATENAME: "2025-09-02 - FTR48 Phase 1"
 
   scheduledDowntime:
     enabled: true
