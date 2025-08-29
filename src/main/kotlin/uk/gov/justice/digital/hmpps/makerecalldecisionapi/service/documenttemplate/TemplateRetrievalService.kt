@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateSetting
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @Service
@@ -18,23 +20,41 @@ class TemplateRetrievalService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun loadDocumentTemplate(documentType: DocumentType): ClassPathResource {
+  fun loadDocumentTemplate(documentType: DocumentType, recommendationMetaData: RecommendationMetaData): ClassPathResource {
     val templateSettingsList = selectTemplateSettingsList(documentType)
-    val currentTemplateSettings = selectCurrentTemplateSettings(templateSettingsList)
+    val templatePath = selectTemplatePath(templateSettingsList, documentType, recommendationMetaData.partADocumentCreated)
 
-    log.info("Retrieving ${documentType.name} template: ${currentTemplateSettings.templateName}")
-    return ClassPathResource(currentTemplateSettings.templateName)
+    return ClassPathResource(templatePath)
   }
 
   private fun selectTemplateSettingsList(documentType: DocumentType): List<DocumentTemplateSetting> = when (documentType) {
     DocumentType.PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
-    DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partAPreviewTemplateSettings
+    DocumentType.PREVIEW_PART_A_DOCUMENT -> documentTemplateConfig.partATemplateSettings
     DocumentType.DNTR_DOCUMENT -> documentTemplateConfig.dntrTemplateSettings
   }
 
-  private fun selectCurrentTemplateSettings(templateSettingsList: List<DocumentTemplateSetting>): DocumentTemplateSetting {
-    val currentDateTime = ZonedDateTime.now()
+  private fun selectTemplatePath(templateSettingsList: List<DocumentTemplateSetting>, documentType: DocumentType, ppDocumentCreated: ZonedDateTime?): String {
+    val currentDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
+    val templateTargetDate =
+      if (ppDocumentCreated === null) {
+        currentDateTime
+      } else if (ppDocumentCreated > currentDateTime) {
+        log.error("Recommendation identified with future created date: $ppDocumentCreated - Current date/time: $currentDateTime")
+        currentDateTime
+      } else {
+        ppDocumentCreated
+      }
 
-    return templateSettingsList.filter { it.startDateTime.isBefore(currentDateTime) }.maxByOrNull { it.startDateTime }!!
+    val templateName = templateSettingsList.filter { it.startDateTime.isBefore(templateTargetDate) }.maxByOrNull { it.startDateTime }?.templateName ?: "default"
+
+    val templatePath = "templates/${
+      when (documentType) {
+        DocumentType.PART_A_DOCUMENT -> "partA/$templateName/Part A Template.docx"
+        DocumentType.PREVIEW_PART_A_DOCUMENT -> "partA/$templateName/Preview Part A Template.docx"
+        DocumentType.DNTR_DOCUMENT -> "dntr/$templateName/DNTR Template.docx"
+      }}"
+
+    log.info("Retrieving ${documentType.name} - template name: $templateName - resolved path: $templatePath")
+    return templatePath
   }
 }

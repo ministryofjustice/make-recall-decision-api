@@ -12,9 +12,8 @@ import java.time.ZonedDateTime
  */
 @ConfigurationProperties(prefix = "document-template")
 data class DocumentTemplateConfiguration(
-  val partATemplateSettings: List<DocumentTemplateSetting>,
-  val partAPreviewTemplateSettings: List<DocumentTemplateSetting>,
-  val dntrTemplateSettings: List<DocumentTemplateSetting>,
+  val partATemplateSettings: List<DocumentTemplateSetting> = listOf(),
+  val dntrTemplateSettings: List<DocumentTemplateSetting> = listOf(),
 )
 
 data class DocumentTemplateSetting(
