@@ -63,7 +63,7 @@ internal class TemplateReplacementService(
         decisionNotToRecallLetterDocumentMapper.mapRecommendationDataToDocumentData(recommendation)
       }
 
-    val templateClassPathResource = templateRetrievalService.loadDocumentTemplate(documentType)
+    val templateClassPathResource = templateRetrievalService.loadDocumentTemplate(documentType, metaData)
     val template = XWPFTemplate.compile(templateClassPathResource.inputStream)
 
 //    template.xwpfDocument.headerFooterPolicy.createWatermark("PREVIEW")

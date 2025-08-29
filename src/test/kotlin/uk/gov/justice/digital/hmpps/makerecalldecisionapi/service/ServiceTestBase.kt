@@ -138,12 +138,8 @@ internal abstract class ServiceTestBase {
   private val documentTemplateConfiguration: DocumentTemplateConfiguration = documentTemplateConfiguration(
     partATemplateSettings = listOf(
       documentTemplateSettings(
-        ZonedDateTime.now().minusMonths(1),
-        "NAT Recall Part A London Template - obtained 231114.docx",
-      ),
-      documentTemplateSettings(
         ZonedDateTime.now().plusMonths(1),
-        "NAT Recall Part A London Template - obtained 231114.docx",
+        "2025-09-02 - FTR48 Phase 1",
       ),
     ),
   )

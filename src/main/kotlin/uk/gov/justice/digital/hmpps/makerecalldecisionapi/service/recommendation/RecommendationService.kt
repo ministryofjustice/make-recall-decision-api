@@ -67,6 +67,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttempla
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeUTCZonedFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.dateTimeWithDaylightSavingFromString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.localNowDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
@@ -75,6 +76,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.jvm.optionals.getOrNull
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.RecommendationModel as DeliusRecommendationModel
 
@@ -995,6 +997,7 @@ data class RecommendationMetaData(
   var userNamePartACompletedBy: String? = null,
   var userEmailPartACompletedBy: String? = null,
   var userPartACompletedByDateTime: LocalDateTime? = null,
+  var partADocumentCreated: ZonedDateTime? = null,
 )
 
 private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
@@ -1015,6 +1018,9 @@ private fun RecommendationMetaData.fromFetchRecommendationsStatusResponse(
       this.userNamePartACompletedBy = it.createdByUserFullName
       this.userPartACompletedByDateTime = LocalDateTime.now(ZoneId.of("Europe/London"))
       this.userEmailPartACompletedBy = it.emailAddress
+    }
+    if (it.name.equals("PP_DOCUMENT_CREATED")) {
+      this.partADocumentCreated = dateTimeUTCZonedFromString(utcDateTimeString = it.created)
     }
   }
   return this

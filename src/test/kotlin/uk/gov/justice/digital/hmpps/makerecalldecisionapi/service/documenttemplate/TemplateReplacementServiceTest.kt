@@ -118,15 +118,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
         )
-      given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
-      given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
-      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
+      given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
+      given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
+      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(ClassPathResource(templateName))
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
 
-      verify(templateRetrievalService).loadDocumentTemplate(documentType)
+      verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
     }
   }
 
@@ -139,13 +139,13 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
         )
-      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)).willReturn(ClassPathResource("DNTR Template.docx"))
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
+      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)).willReturn(ClassPathResource("DNTR Template.docx"))
       templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
 
-      verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT)
+      verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)
     }
   }
 
@@ -162,17 +162,17 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
         )
+      val featureFlags = FeatureFlags()
+      val recommendation = createRecommendationResponse(featureFlags)
+      val metadata = createRecommendationMetaData()
       given(mockRegionService.getRegionName("RegionCode1"))
         .willReturn("Region Name 1")
       given(mockRegionService.getRegionName("RegionCode2"))
         .willReturn("Region Name 2")
-      given(templateRetrievalService.loadDocumentTemplate(documentType)).willReturn(ClassPathResource(templateName))
-      val featureFlags = FeatureFlags()
-      val recommendation = createRecommendationResponse(featureFlags)
-      val metadata = createRecommendationMetaData()
+      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(ClassPathResource(templateName))
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
 
-      verify(templateRetrievalService).loadDocumentTemplate(documentType)
+      verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
     }
   }
 
