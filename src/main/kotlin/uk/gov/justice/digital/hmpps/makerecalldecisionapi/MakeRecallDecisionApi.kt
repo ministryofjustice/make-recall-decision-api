@@ -1,14 +1,14 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
-import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.annotation.EnableScheduling
 
+// shedlock to be enabled when roll-outs required a single task run - e.g. see MRD-2804
+// @EnableSchedulerLock(defaultLockAtMostFor = "PT10M")
 @EnableScheduling
-@EnableSchedulerLock(defaultLockAtMostFor = "PT10M") // TODO is this a good default? Make sure we've set a specific max in the task
 @EnableRetry
 @ConfigurationPropertiesScan
 @SpringBootApplication
