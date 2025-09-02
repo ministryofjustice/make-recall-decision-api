@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppend
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -147,14 +148,11 @@ class RecommendationsCleanupTaskTest {
     val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
     lockAssertMock.use {
       val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
-      given(
-        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
-          cleanUpConfiguration.ftr48.thresholdDateTime,
-        ),
-      ).willReturn(
-        idsOfActiveRecommendationsNotYetDownloaded,
-      )
+      // TODO update the threshold values below based on config for your roll-out
+      val thresholdStartDate = ZonedDateTime.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
+      val thresholdEndDate = ZonedDateTime.now()
+      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate))
+        .willReturn(idsOfActiveRecommendationsNotYetDownloaded)
 
       val activeRecommendationsNotYetDownloaded = List(
         43,
@@ -223,14 +221,11 @@ class RecommendationsCleanupTaskTest {
     val lockAssertMock = Mockito.mockStatic(LockAssert::class.java)
     lockAssertMock.use {
       val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
-      given(
-        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
-          cleanUpConfiguration.ftr48.thresholdDateTime,
-        ),
-      ).willReturn(
-        idsOfActiveRecommendationsNotYetDownloaded,
-      )
+      // TODO update the threshold values below based on config for your roll-out
+      val thresholdStartDate = ZonedDateTime.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
+      val thresholdEndDate = ZonedDateTime.now()
+      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate))
+        .willReturn(idsOfActiveRecommendationsNotYetDownloaded)
 
       // when
       recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
