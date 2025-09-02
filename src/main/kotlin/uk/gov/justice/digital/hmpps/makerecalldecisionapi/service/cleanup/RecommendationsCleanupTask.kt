@@ -1,13 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
 import net.javacrumbs.shedlock.core.LockAssert
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Isolation.SERIALIZABLE
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.cleanup.CleanUpConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationNotFoundException
@@ -17,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -38,7 +38,7 @@ internal class RecommendationsCleanupTask(
     initialDelayString = "#{ T(java.util.concurrent.ThreadLocalRandom).current().nextInt(10*60, 60*60) }",
     fixedRateString = "#{T(java.util.concurrent.TimeUnit).HOURS.toSeconds(24)}",
   )
-  @Transactional(isolation = Isolation.SERIALIZABLE)
+  @Transactional(isolation = SERIALIZABLE)
   fun softDeleteOldRecommendations() {
     val thresholdDate = LocalDate.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays)
     val openRecommendationIds = recommendationStatusRepository.findStaleRecommendations(thresholdDate)
@@ -57,15 +57,22 @@ internal class RecommendationsCleanupTask(
     }
   }
 
-  @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
-  @SchedulerLock(name = "ftr48CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
-  @Transactional(isolation = Isolation.SERIALIZABLE)
+  /**
+   * Deletes ongoing recommendations, i.e. those created but not downloaded before the configured date and time.
+   *
+   * <p>Originally written for the FTR48 roll-out, where policy required recalls issued after midnight on 2nd September BST
+   * to ask different recall suitability questions, the function has not been removed, as it is likely to be re-used in
+   * similar policy changes in the future.
+   */
+//  @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
+//  @SchedulerLock(name = "nameIndicatingRelevantRollOut", lockAtLeastFor = "1m", lockAtMostFor = "15m")
+  @Transactional(isolation = SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
-    log.info("FTR48 clean-up task started")
+    log.info("<project/roll-out name> clean-up task started")
     LockAssert.assertLocked()
 
-    if (LocalDate.now().year != 2025) {
-      log.warn("FTR48 clean-up task is still running, but it is no longer 2025!")
+    if (LocalDate.now().year != LocalDate.now().year) {
+      log.warn("<project/roll-out name> clean-up task is still running, but it is no longer <project/roll-out year>!")
     }
 
     // We have a startDate and set it to endDate.minusDays(lookBackInDays - 1) for two reasons:
@@ -74,11 +81,11 @@ internal class RecommendationsCleanupTask(
     //  2. To avoid any overlap with the recurrent clean-up task. Otherwise, the tasks might try to update the same
     //      recommendation and clash (or succeed and both end up sending out the same domain event, which could be a
     //      problem).
+    // TODO update the threshold values below based on config for your roll-out
+    val thresholdStartDate = ZonedDateTime.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
+    val thresholdEndDate = ZonedDateTime.now()
     val idsOfActiveRecommendationsNotYetDownloaded =
-      recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-        cleanUpConfiguration.ftr48.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
-        cleanUpConfiguration.ftr48.thresholdDateTime,
-      )
+      recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate)
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
     idsOfActiveRecommendationsNotYetDownloaded.chunked(RECOMMENDATION_ID_LOGGING_CHUNK_SIZE).forEach { subListOfIds ->
       log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $subListOfIds")
@@ -90,7 +97,7 @@ internal class RecommendationsCleanupTask(
       activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
     }
 
-    log.info("FTR48 clean-up task ended")
+    log.info("<project/roll-out name> clean-up task ended")
   }
 
   private fun sendDeletionEvents(recommendation: RecommendationEntity) {
