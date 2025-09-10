@@ -18,6 +18,7 @@ generic-service:
     MRD_URL: https://make-recall-decision-preprod.hmpps.service.justice.gov.uk
     MRD_API_URL: https://make-recall-decision-api-preprod.hmpps.service.justice.gov.uk
     HOUSEKEEPING_SENDDOMAINEVENTS: true
+    ENVIRONMENT_NAME: preprod
 
   scheduledDowntime:
     enabled: true

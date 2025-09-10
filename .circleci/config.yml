@@ -282,21 +282,10 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-      #      - e2e_test:
-      #          name: e2e_test_preprod
-      #          environment: preprod
-      #          context:
-      #            - make-recall-decision-circleci-auth
-      #            - hmpps-common-vars
-      #          requires:
-      #            - deploy_preprod
-      #          <<: *slack-fail-post-step
-
       - request-prod-approval:
           type: approval
           requires:
             - deploy_preprod
-      #           - e2e_test_preprod
       - hmpps/deploy_env:
           name: deploy_prod
           env: "prod"
@@ -318,42 +307,3 @@ workflows:
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
-
-  security:
-    triggers:
-      - schedule:
-          cron: "48 6 * * 1-5"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - hmpps/gradle_owasp_dependency_check:
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-          context:
-            - hmpps-common-vars
-          jdk_tag: "21.0"
-      - hmpps/trivy_latest_scan:
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-          context:
-            - hmpps-common-vars
-      - hmpps/veracode_pipeline_scan:
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-          context:
-            - veracode-credentials
-            - hmpps-common-vars
-
-  security-weekly:
-    triggers:
-      - schedule:
-          cron: "45 11 * * 3"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - hmpps/veracode_policy_scan:
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-          context:
-            - veracode-credentials
-            - hmpps-common-vars
