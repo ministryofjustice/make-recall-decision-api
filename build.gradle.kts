@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.4"
-  kotlin("jvm") version "2.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.0.1"
+  kotlin("jvm") version "2.2.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.2.0"
+  kotlin("plugin.jpa") version "2.2.10"
   id("org.sonarqube") version "6.2.0.5505"
-  kotlin("plugin.spring") version "2.2.0"
-  kotlin("plugin.serialization") version "2.2.0"
+  kotlin("plugin.spring") version "2.2.10"
+  kotlin("plugin.serialization") version "2.2.10"
 }
 
 jacoco.toolVersion = "0.8.11"
