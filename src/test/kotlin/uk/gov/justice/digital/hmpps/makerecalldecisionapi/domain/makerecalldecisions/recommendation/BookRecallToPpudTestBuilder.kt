@@ -19,6 +19,7 @@ internal fun bookRecallToPpud(
   ppudSentenceId: String? = randomString(),
   ppudSentenceData: IndeterminateSentenceData? = IndeterminateSentenceData(
     offenceDescription = randomString(),
+    offenceDescriptionComment = randomString(),
     releaseDate = randomLocalDate(),
     sentencingCourt = randomString(),
     dateOfSentence = randomLocalDate(),
