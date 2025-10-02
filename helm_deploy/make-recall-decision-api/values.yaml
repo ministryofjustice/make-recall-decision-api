@@ -5,7 +5,7 @@ generic-service:
   replicaCount: 4
 
   image:
-    repository: quay.io/hmpps/make-recall-decision-api
+    repository: ghcr.io/ministryofjustice/make-recall-decision-api
     tag: app_version # override at deployment time
     port: 8080
 
@@ -35,7 +35,6 @@ generic-service:
     JAVA_OPTS: "-Xmx512m"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "default"
-    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SENTRY_DSN: https://d51aaaaf56b547b8b0582ed0af80bdb7@o345774.ingest.sentry.io/6361157
     GOTENBERG_ENDPOINT_URL: http://make-recall-decision-api-gotenberg
@@ -62,6 +61,8 @@ generic-service:
     elasticache-redis:
       SPRING_DATA_REDIS_HOST: "primary_endpoint_address"
       SPRING_DATA_REDIS_PASSWORD: "auth_token"
+    application-insights:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
 
   allowlist:
     north_shields_user: 194.33.192.1/24

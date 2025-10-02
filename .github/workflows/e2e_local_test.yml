@@ -1,0 +1,72 @@
+name: Run e2e checks locally
+
+on: workflow_call
+permissions:
+  contents: read
+
+jobs:
+  validate-e2e-local:
+    name: Run e2e checks locally
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out e2e service on the main branch
+        uses: actions/checkout@v4
+        with:
+          repository: 'ministryofjustice/make-recall-decision-e2e-tests'
+      - name: Check out API service on the relevant branch
+        uses: actions/checkout@v4
+      - name: Check out UI service on the main branch
+        uses: actions/checkout@v4
+        with:
+          repository: 'ministryofjustice/make-recall-decision-ui'
+      - name: Start components
+        working-directory: make-recall-decision-ui
+        run: ./scripts/start-services-for-e2e-tests.sh -p
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: make-recall-decision-e2e-tests
+          spec: 'e2e_tests/features/**/*.feature'
+          browser: 'chrome'
+          record: 'false'
+          config-file: 'e2e_tests/cypress.config.ts'
+        # we set the env variables this way rather than through the with.env parameter so we can have them
+        # in multiple lines. In order for cypress to pick them up, they need to start with CYPRESS_, hence
+        # them all having cypress_ below (GHA uppercases them)
+        env:
+          cypress_tags: 'not @E2E and not @smoke'
+          cypress_username_po: ${{ secrets.local_CYPRESS_USERNAME_PO }}
+          cypress_password_po: $${{ secrets.local_CYPRESS_PASSWORD_PO }}
+          cypress_username_spo: ${{ secrets.local_CYPRESS_USERNAME_SPO }}
+          cypress_password_spo: $${{ secrets.local_CYPRESS_PASSWORD_SPO }}
+          cypress_username_aco: ${{ secrets.local_CYPRESS_USERNAME_ACO }}
+          cypress_password_aco: $${{ secrets.local_CYPRESS_PASSWORD_ACO }}
+          cypress_username_ppcs: ${{ secrets.local_CYPRESS_USERNAME_PPCS }}
+          cypress_password_ppcs: $${{ secrets.local_CYPRESS_PASSWORD_PPCS }}
+          cypress_api_client_id: ${{ secrets.local_CYPRESS_API_CLIENT_ID }}
+          cypress_api_client_secret: ${{ secrets.local_CYPRESS_API_CLIENT_SECRET }}
+          cypress_make_recall_decision_api_url: ${{ secrets.local_CYPRESS_MAKE_RECALL_DECISION_API_URL }}
+          cypress_hmpps_auth_external_url: ${{ secrets.local_CYPRESS_HMPPS_AUTH_EXTERNAL_URL }}
+      - name: Run e2e tests
+        working-directory: make-recall-decision-e2e-tests
+        run: |
+          npm ci --no-audit
+          shopt -s globstar
+          
+          SPECS=$(circleci tests glob "e2e_tests/features/**/*.feature" | circleci tests split --split-by=timings --show-counts)
+          echo "Running feature file(s): $SPECS"
+          
+          set +e
+          
+          npx cypress run \
+            --env HMPPS_AUTH_EXTERNAL_URL=${local_CYPRESS_HMPPS_AUTH_EXTERNAL_URL} \
+            --config-file e2e_tests/cypress.config.ts \
+            --browser chrome \
+            --record false \
+            --spec $SPECS
+          
+          export E2E_RESULT=$?
+          node scripts/fix-junit-reports.js
+          
+          set -e
+          exit $E2E_RESULT

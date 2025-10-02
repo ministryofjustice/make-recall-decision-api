@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: runner
-          image: quay.io/hmpps/browser-testing-github-actions-runner:latest # Built from https://github.com/ministryofjustice/browser-testing-github-actions-runner
+          image: ghcr.io/ministryofjustice/browser-testing-github-actions-runner:latest # Built from https://github.com/ministryofjustice/browser-testing-github-actions-runner
           securityContext:
             runAsUser: 1001 # 'runner' user
           env:
