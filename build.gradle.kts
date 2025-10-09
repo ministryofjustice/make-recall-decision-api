@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.2"
   kotlin("jvm") version "2.2.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -12,8 +12,6 @@ plugins {
 }
 
 jacoco.toolVersion = "0.8.11"
-// OWASP fix https://mojdt.slack.com/archives/C69NWE339/p1734943189790819
-ext["logback.version"] = "1.5.14"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
