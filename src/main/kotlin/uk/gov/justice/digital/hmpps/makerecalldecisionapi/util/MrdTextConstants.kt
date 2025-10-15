@@ -12,6 +12,9 @@ class MrdTextConstants {
     const val SCORE_NOT_APPLICABLE = "NOT_APPLICABLE"
     const val TICK_CHARACTER = 0x2713.toChar().toString()
     const val NO_NAME_AVAILABLE = "No name available"
+    const val HAS_VULNERABILITIES = "Yes, has vulnerabilities or needs"
+    const val HAS_NO_VULNERABILITIES = "No concerns about vulnerabilities or needs"
+    const val UNKNOWN_VULNERABILITIES = "Do not know about vulnerabilities or needs"
 
     // We use a very early date to avoid incorrect orderings of entities with null date times.
     // We deliberately don't use LocalDateTime.MIN, as that produces a negative year and there

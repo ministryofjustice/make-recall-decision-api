@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.MENTAL_HEALTH_CONCERNS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NONE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NOT_KNOWN
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.NONE_OR_NOT_KNOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_DISABILITIES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.PHYSICAL_HEALTH_CONCERNS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
@@ -40,6 +41,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.HAS_VULNERABILITIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.HAS_NO_VULNERABILITIES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.UNKNOWN_VULNERABILITIES
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -141,7 +145,7 @@ internal class TemplateReplacementService(
       "phone_number" to documentData.localPoliceContact?.phoneNumber,
       "fax_number" to documentData.localPoliceContact?.faxNumber,
       "email_address" to documentData.localPoliceContact?.emailAddress,
-      "has_vulnerabilities" to if (hasVulnerabilities(documentData.vulnerabilities)) YES else NO,
+      "has_vulnerabilities" to hasVulnerabilities(documentData.vulnerabilities),
       "gender" to documentData.gender,
       "date_of_birth" to documentData.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       "name" to documentData.name,
@@ -236,7 +240,14 @@ internal class TemplateReplacementService(
     return mappings
   }
 
-  private fun hasVulnerabilities(vulnerabilities: VulnerabilitiesRecommendation?) = vulnerabilities?.selected?.isNotEmpty() == true && !vulnerabilities.selected.any { it.value == NONE.name || it.value == NOT_KNOWN.name }
+  private fun hasVulnerabilities(vulnerabilities: VulnerabilitiesRecommendation?): String {
+    val selected = vulnerabilities?.selected ?: emptyList()
+    return when {
+      selected.isEmpty() || selected.any { it.value == NOT_KNOWN.name } -> UNKNOWN_VULNERABILITIES
+      selected.any { it.value == NONE.name } -> HAS_NO_VULNERABILITIES
+      else -> HAS_VULNERABILITIES
+    }
+  }
 
   private fun convertToSelectedAlternativesMap(selectedAlternatives: List<ValueWithDetails>?): HashMap<String, String> {
     val selectedAlternativesMap = selectedAlternatives?.associate { it.value to it.details } ?: emptyMap()
@@ -334,10 +345,10 @@ internal class TemplateReplacementService(
     vulnerability: String?,
     vulnerabilities: VulnerabilitiesRecommendation?,
   ): String {
-    val selectedVulnerabilities = vulnerabilities?.selected?.map { it.value }
+    val selectedVulnerabilities = vulnerabilities?.selected?.filter{ it.value != NONE.name && it.value != NOT_KNOWN.name }?.map { it.value }
     val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
     val detailsMap = vulnerabilities?.selected?.associate {
-      if (it.value == NOT_KNOWN.name || it.value == NONE.name) {
+      if (it.value == NOT_KNOWN.name || it.value == NONE.name || it.value == NONE_OR_NOT_KNOWN.name) {
         it.value to EMPTY_STRING
       } else {
         it.value to it.details
