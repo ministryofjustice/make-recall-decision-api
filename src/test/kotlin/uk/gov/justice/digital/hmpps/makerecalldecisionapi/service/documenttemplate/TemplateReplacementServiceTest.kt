@@ -255,7 +255,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["phone_number"]).isEqualTo("01234567890")
       assertThat(result["fax_number"]).isEqualTo("09876543210")
       assertThat(result["email_address"]).isEqualTo("john.doe@gmail.com")
-      assertThat(result["has_vulnerabilities"]).isEqualTo("Yes")
+      assertThat(result["has_vulnerabilities"]).isEqualTo("Yes, has vulnerabilities or needs")
       assertThat(result["gender"]).isEqualTo("Male")
       assertThat(result["date_of_birth"]).isEqualTo("24/10/1982")
       assertThat(result["name"]).isEqualTo("Jane Bloggs")
