@@ -23,6 +23,8 @@ generic-service:
     # we cannot override a single item in a list - the whole list is replaced, so we define the whole thing again
     DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_0_STARTDATETIME: "2025-08-20T23:00Z" # 2025-08-21T00:00Z in BST, bring forward dev for testing
     DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_0_TEMPLATENAME: "2025-09-02 - FTR48 Phase 1"
+    DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_1_STARTDATETIME: "2025-10-01T23:00Z"
+    DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_1_TEMPLATENAME: "2026-11-01 - Risk to self"
     ENVIRONMENT_NAME: dev
 
   scheduledDowntime:

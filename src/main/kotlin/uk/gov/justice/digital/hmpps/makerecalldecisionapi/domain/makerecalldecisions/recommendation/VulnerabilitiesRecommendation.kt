@@ -9,7 +9,6 @@ data class VulnerabilitiesRecommendation(
 
 enum class VulnerabilityOptions {
   RISK_OF_SUICIDE_OR_SELF_HARM,
-  NONE_OR_NOT_KNOWN,
   NOT_KNOWN,
   NONE,
   RELATIONSHIP_BREAKDOWN,
