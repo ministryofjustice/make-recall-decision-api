@@ -1,7 +1,3 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:make_recall_decision}?sslmode=verify-full
-
 offender:
   search:
     endpoint:
