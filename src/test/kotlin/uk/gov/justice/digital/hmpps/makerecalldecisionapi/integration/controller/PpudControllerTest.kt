@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -16,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
@@ -27,14 +30,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation.PpudAutomationResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.PpudUserMappingRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationSupportingDocumentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Suppress("SameParameterValue")
 @ActiveProfiles("test")
@@ -47,9 +53,24 @@ class PpudControllerTest : IntegrationTestBase() {
   @Autowired
   private lateinit var recommendationDocumentRepository: RecommendationSupportingDocumentRepository
 
+  private val ppudAutomationResponseMocker: PpudAutomationResponseMocker = PpudAutomationResponseMocker()
+
+  @BeforeEach
+  override fun startUpServer() {
+    super.startUpServer()
+    ppudAutomationResponseMocker.startUpServer()
+    ppudAutomationResponseMocker.setUpSuccessfulHealthCheck()
+  }
+
+  @AfterAll
+  override fun tearDownServer() {
+    super.tearDownServer()
+    ppudAutomationResponseMocker.tearDownServer()
+  }
+
   @Test
   fun `given request including null CRO Number when search is called then any matching results are returned`() {
-    ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
+    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
     runTest {
       val requestBody = "{" +
         "\"croNumber\": null, " +
@@ -65,7 +86,7 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `given request including null NOMIS ID when search is called then any matching results are returned`() {
-    ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
+    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
     runTest {
       val requestBody = "{" +
         "\"croNumber\": \"123456/12A\", " +
@@ -81,14 +102,18 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `given details request`() {
-    ppudAutomationDetailsMatchResponse("12345678")
+    val ppudDetailsResponse: PpudDetailsResponse = ppudDetailsResponse()
+
+    ppudAutomationResponseMocker.ppudAutomationDetailsMatchResponse(ppudDetailsResponse)
 
     runTest {
       webTestClient.post()
-        .uri("/ppud/details/12345678")
+        .uri("/ppud/details/${ppudDetailsResponse.offender.id}")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
         .expectStatus().isOk
+        .expectBody()
+        .json(ppudDetailsResponse.toJsonString())
     }
   }
 
@@ -125,7 +150,7 @@ class PpudControllerTest : IntegrationTestBase() {
         phoneNumber = "",
       ),
     )
-    ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
       postToCreateOffender(ppudCreateOffenderRequest)
         .expectStatus().isOk
@@ -138,7 +163,7 @@ class PpudControllerTest : IntegrationTestBase() {
       croNumber = null,
       nomsId = null,
     )
-    ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
       postToCreateOffender(ppudCreateOffenderRequest.toJsonString())
         .expectStatus().isOk
@@ -167,7 +192,7 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
       establishment = "HMP Brixton",
     )
-    ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {
       putToUpdateOffender("12345678", ppudUpdateOffenderRequest)
         .expectStatus().isOk
@@ -180,7 +205,7 @@ class PpudControllerTest : IntegrationTestBase() {
       croNumber = null,
       nomsId = null,
     )
-    ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenderApiMatchResponse("12345678", ppudUpdateOffenderRequest)
     runTest {
       putToUpdateOffender("12345678", ppudUpdateOffenderRequest.toJsonString())
         .expectStatus().isOk
@@ -202,7 +227,11 @@ class PpudControllerTest : IntegrationTestBase() {
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
     )
-    ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, "12345678")
+    ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(
+      offenderId,
+      createSentenceRequest,
+      "12345678",
+    )
     runTest {
       postToCreateSentence(offenderId, createSentenceRequest)
         .expectStatus().isOk
@@ -225,7 +254,11 @@ class PpudControllerTest : IntegrationTestBase() {
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
     )
-    ppudAutomationUpdateSentenceApiMatchResponse(offenderId, sentenceId, updateSentenceRequest)
+    ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(
+      offenderId,
+      sentenceId,
+      updateSentenceRequest,
+    )
     runTest {
       putToUpdateSentence(offenderId, sentenceId, updateSentenceRequest)
         .expectStatus().isOk
@@ -234,7 +267,7 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud update offence`() {
-    ppudAutomationUpdateOffenceApiMatchResponse("123", "456")
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenceApiMatchResponse("123", "456")
     runTest {
       putToUpdateOffence(
         "123",
@@ -274,7 +307,12 @@ class PpudControllerTest : IntegrationTestBase() {
       releasedFrom = "Hull",
       releasedUnder = "Legislation 123",
     )
-    ppudAutomationUpdateReleaseApiMatchResponse(offenderId, sentenceId, updateReleaseRequest, "12345678")
+    ppudAutomationResponseMocker.ppudAutomationUpdateReleaseApiMatchResponse(
+      offenderId,
+      sentenceId,
+      updateReleaseRequest,
+      "12345678",
+    )
     runTest {
       postToUpdateRelease(offenderId, sentenceId, updateReleaseRequest)
         .expectStatus().isOk
@@ -292,7 +330,7 @@ class PpudControllerTest : IntegrationTestBase() {
         ppudUserName = "UName",
       ),
     )
-    ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
+    ppudAutomationResponseMocker.ppudAutomationCreateRecallApiMatchResponse("123", "456", "12345678")
     runTest {
       postToCreateRecall(
         "123",
@@ -343,7 +381,7 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
     )
 
-    ppudAutomationUploadMandatoryDocumentApiMatchResponse("123")
+    ppudAutomationResponseMocker.ppudAutomationUploadMandatoryDocumentApiMatchResponse("123")
     runTest {
       putToUploadMandatoryDocument(
         "123",
@@ -387,7 +425,7 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
     )
 
-    ppudAutomationUploadAdditionalDocumentApiMatchResponse("123")
+    ppudAutomationResponseMocker.ppudAutomationUploadAdditionalDocumentApiMatchResponse("123")
     runTest {
       putToUploadAdditionalDocument(
         "123",
@@ -401,7 +439,7 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create minute`() {
-    ppudAutomationCreateMinuteApiMatchResponse("123")
+    ppudAutomationResponseMocker.ppudAutomationCreateMinuteApiMatchResponse("123")
     runTest {
       putToCreateMinute(
         "123",
@@ -421,7 +459,11 @@ class PpudControllerTest : IntegrationTestBase() {
     val searchReq = PpudUserSearchRequest(fullName, userName)
     val teamName = "TeamName"
 
-    ppudAutomationSearchActiveUsersApiMatchResponse(searchReq.fullName!!, searchReq.userName!!, teamName)
+    ppudAutomationResponseMocker.ppudAutomationSearchActiveUsersApiMatchResponse(
+      searchReq.fullName!!,
+      searchReq.userName!!,
+      teamName,
+    )
 
     runTest {
       val response = postToSearchActiveUsers(
@@ -544,7 +586,7 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `reference list`() {
-    ppudAutomationReferenceListApiMatchResponse("custody-type")
+    ppudAutomationResponseMocker.ppudAutomationReferenceListApiMatchResponse("custody-type")
     runTest {
       referenceList("custody-type").expectStatus().isOk
     }
