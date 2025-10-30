@@ -29,10 +29,9 @@ class SubjectAccessRequestService(
         content = SubjectAccessRequestResponse(
           crn = crn,
           recommendations = recommendations
-            .map { rec -> rec.data }
             .map { rec ->
-              rec.copy(
-                cvlLicenceConditionsBreached = rec.cvlLicenceConditionsBreached?.let {
+              rec.data.copy(
+                cvlLicenceConditionsBreached = rec.data.cvlLicenceConditionsBreached?.let {
                   transformLicenceConditions(it)
                 },
               )

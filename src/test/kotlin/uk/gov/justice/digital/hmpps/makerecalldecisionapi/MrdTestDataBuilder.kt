@@ -489,6 +489,16 @@ class MrdTestDataBuilder {
       ),
     )
 
+    private const val ADDITIONAL_LICENCE_CODE = "123e4567-e89b-12d3-a456-426614174000"
+    private const val BESPOKE_LICENCE_CODE = "223e4567-e89b-12d3-a456-426614174000"
+
+    /**
+     * Builds a set of licence conditions that have been breached
+     *
+     * @param useTransformedSelected
+     *  -  If false (default), returns the uuid for the breached conditions
+     *  -  If true, returns the description of the breached conditions
+     */
     fun buildCvlLicenceConditionsBreached(
       useTransformedSelected: Boolean = false,
     ): CvlLicenceConditionsBreached {
@@ -499,31 +509,45 @@ class MrdTestDataBuilder {
       }
 
       val selectedAdditional = if (useTransformedSelected) {
-        listOf("No Offence")
+        listOf("Some Additional Licence Condition")
       } else {
-        listOf(SelectedStandardLicenceConditions.NO_OFFENCE.cvlCode)
+        listOf(ADDITIONAL_LICENCE_CODE)
       }
 
-      val goodBehaviourOption = LicenceConditionOption(
+      val selectedBespoke = if (useTransformedSelected) {
+        listOf("Some Bespoke Licence Condition")
+      } else {
+        listOf(BESPOKE_LICENCE_CODE)
+      }
+
+      val standardLicenceConditionOption = LicenceConditionOption(
         code = SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode,
         text = "They had good behaviour",
       )
 
-      val noOffenceOption = LicenceConditionOption(
-        code = SelectedStandardLicenceConditions.NO_OFFENCE.cvlCode,
-        text = "No Offence",
+      val additionalLicenceConditionOption = LicenceConditionOption(
+        code = ADDITIONAL_LICENCE_CODE,
+        text = "Some Additional Licence Condition",
+      )
+
+      val bespokeLicenceConditionOption = LicenceConditionOption(
+        code = BESPOKE_LICENCE_CODE,
+        text = "Some Bespoke Licence Condition",
       )
 
       return CvlLicenceConditionsBreached(
         standardLicenceConditions = LicenceConditionSection(
           selected = selectedStandard,
-          allOptions = listOf(goodBehaviourOption),
+          allOptions = listOf(standardLicenceConditionOption),
         ),
         additionalLicenceConditions = LicenceConditionSection(
           selected = selectedAdditional,
-          allOptions = listOf(noOffenceOption),
+          allOptions = listOf(additionalLicenceConditionOption),
         ),
-        bespokeLicenceConditions = null,
+        bespokeLicenceConditions = LicenceConditionSection(
+          selected = selectedBespoke,
+          allOptions = listOf(bespokeLicenceConditionOption),
+        ),
       )
     }
 
