@@ -12,12 +12,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CvlLicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HowWillAppointmentHappen
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
@@ -485,6 +488,44 @@ class MrdTestDataBuilder {
         ),
       ),
     )
+
+    fun buildCvlLicenceConditionsBreached(
+      useTransformedSelected: Boolean = false,
+    ): CvlLicenceConditionsBreached {
+      val selectedStandard = if (useTransformedSelected) {
+        listOf("They had good behaviour")
+      } else {
+        listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode)
+      }
+
+      val selectedAdditional = if (useTransformedSelected) {
+        listOf("No Offence")
+      } else {
+        listOf(SelectedStandardLicenceConditions.NO_OFFENCE.cvlCode)
+      }
+
+      val goodBehaviourOption = LicenceConditionOption(
+        code = SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode,
+        text = "They had good behaviour",
+      )
+
+      val noOffenceOption = LicenceConditionOption(
+        code = SelectedStandardLicenceConditions.NO_OFFENCE.cvlCode,
+        text = "No Offence",
+      )
+
+      return CvlLicenceConditionsBreached(
+        standardLicenceConditions = LicenceConditionSection(
+          selected = selectedStandard,
+          allOptions = listOf(goodBehaviourOption),
+        ),
+        additionalLicenceConditions = LicenceConditionSection(
+          selected = selectedAdditional,
+          allOptions = listOf(noOffenceOption),
+        ),
+        bespokeLicenceConditions = null,
+      )
+    }
 
     private fun localPoliceContact(): LocalPoliceContact = LocalPoliceContact(
       contactName = "John Doe",
