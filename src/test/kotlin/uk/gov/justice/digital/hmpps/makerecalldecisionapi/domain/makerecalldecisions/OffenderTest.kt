@@ -164,7 +164,7 @@ class OffenderTest {
       gender = null,
       cro = null,
       pnc = "pncVal",
-      releaseDate = null,
+      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     val result = offenderInput.toPrisonOffender()
@@ -205,7 +205,7 @@ class OffenderTest {
       gender = null,
       cro = "croVal",
       pnc = null,
-      releaseDate = null,
+      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     val result = offenderInput.toPrisonOffender()
