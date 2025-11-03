@@ -12,12 +12,15 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CvlLicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HowWillAppointmentHappen
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateSentenceTypeOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LocalPoliceContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
@@ -485,6 +488,68 @@ class MrdTestDataBuilder {
         ),
       ),
     )
+
+    private const val ADDITIONAL_LICENCE_CODE = "123e4567-e89b-12d3-a456-426614174000"
+    private const val BESPOKE_LICENCE_CODE = "223e4567-e89b-12d3-a456-426614174000"
+
+    /**
+     * Builds a set of licence conditions that have been breached
+     *
+     * @param useTransformedSelected
+     *  -  If false (default), returns the uuid for the breached conditions
+     *  -  If true, returns the description of the breached conditions
+     */
+    fun buildCvlLicenceConditionsBreached(
+      useTransformedSelected: Boolean = false,
+    ): CvlLicenceConditionsBreached {
+      val selectedStandard = if (useTransformedSelected) {
+        listOf("They had good behaviour")
+      } else {
+        listOf(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode)
+      }
+
+      val selectedAdditional = if (useTransformedSelected) {
+        listOf("Some Additional Licence Condition")
+      } else {
+        listOf(ADDITIONAL_LICENCE_CODE)
+      }
+
+      val selectedBespoke = if (useTransformedSelected) {
+        listOf("Some Bespoke Licence Condition")
+      } else {
+        listOf(BESPOKE_LICENCE_CODE)
+      }
+
+      val standardLicenceConditionOption = LicenceConditionOption(
+        code = SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.cvlCode,
+        text = "They had good behaviour",
+      )
+
+      val additionalLicenceConditionOption = LicenceConditionOption(
+        code = ADDITIONAL_LICENCE_CODE,
+        text = "Some Additional Licence Condition",
+      )
+
+      val bespokeLicenceConditionOption = LicenceConditionOption(
+        code = BESPOKE_LICENCE_CODE,
+        text = "Some Bespoke Licence Condition",
+      )
+
+      return CvlLicenceConditionsBreached(
+        standardLicenceConditions = LicenceConditionSection(
+          selected = selectedStandard,
+          allOptions = listOf(standardLicenceConditionOption),
+        ),
+        additionalLicenceConditions = LicenceConditionSection(
+          selected = selectedAdditional,
+          allOptions = listOf(additionalLicenceConditionOption),
+        ),
+        bespokeLicenceConditions = LicenceConditionSection(
+          selected = selectedBespoke,
+          allOptions = listOf(bespokeLicenceConditionOption),
+        ),
+      )
+    }
 
     private fun localPoliceContact(): LocalPoliceContact = LocalPoliceContact(
       contactName = "John Doe",
