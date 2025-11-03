@@ -33,9 +33,9 @@ data class BookRecallToPpud(
 )
 
 data class IndeterminateSentenceData(
-  val offenceDescription: String,
+  val offenceDescription: String?,
   val offenceDescriptionComment: String? = null,
-  val releaseDate: LocalDate,
-  val sentencingCourt: String,
+  val releaseDate: LocalDate?,
+  val sentencingCourt: String?,
   val dateOfSentence: LocalDate,
 )
