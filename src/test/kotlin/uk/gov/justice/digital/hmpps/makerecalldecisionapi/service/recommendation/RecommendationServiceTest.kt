@@ -45,6 +45,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
@@ -178,7 +179,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         agencyId = "BRX",
         facialImageId = null,
         locationDescription = "Outside - released from Leeds",
-        releaseDate = LocalDate.parse("2025-01-01"),
+        sentenceDetail = SentenceDetail(releaseDate = LocalDate.parse("2025-01-01")),
       )
       org.mockito.kotlin.given(prisonApiClient.retrieveOffender("A1234CR")).willReturn(
         Mono.fromCallable {

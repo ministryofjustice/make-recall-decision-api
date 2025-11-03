@@ -23,7 +23,6 @@ class OffenderTest {
       physicalAttributes = PhysicalAttributes("Male", "White"),
       identifiers = listOf(Identifier("CRO", "croVal"), Identifier("PNC", "pncVal")),
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15"), LocalDate.parse("2025-01-01")),
-      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     var prisonOffenderOutput = PrisonOffender(
@@ -64,7 +63,6 @@ class OffenderTest {
       physicalAttributes = null,
       identifiers = listOf(Identifier("CRO", "croVal"), Identifier("PNC", "pncVal")),
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15"), LocalDate.parse("2025-01-01")),
-      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     var prisonOffenderOutput = PrisonOffender(
@@ -105,7 +103,6 @@ class OffenderTest {
       physicalAttributes = null,
       identifiers = null,
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15"), LocalDate.parse("2025-01-01")),
-      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     var prisonOffenderOutput = PrisonOffender(
@@ -146,7 +143,6 @@ class OffenderTest {
       physicalAttributes = null,
       identifiers = listOf(Identifier("NOTCRO", "croVal"), Identifier("PNC", "pncVal")),
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15"), LocalDate.parse("2025-01-01")),
-      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     var prisonOffenderOutput = PrisonOffender(
@@ -187,7 +183,6 @@ class OffenderTest {
       physicalAttributes = null,
       identifiers = listOf(Identifier("CRO", "croVal"), Identifier("notPNC", "pncVal")),
       sentenceDetail = SentenceDetail(LocalDate.parse("2000-03-15"), LocalDate.parse("2025-01-01")),
-      releaseDate = LocalDate.parse("2025-01-01"),
     )
 
     var prisonOffenderOutput = PrisonOffender(

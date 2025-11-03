@@ -18,7 +18,6 @@ data class Offender(
   val identifiers: List<Identifier>? = null,
   var image: String? = null,
   val sentenceDetail: SentenceDetail? = null,
-  val releaseDate: LocalDate? = null,
 )
 
 fun Offender.toPrisonOffender(): PrisonOffender = PrisonOffender(
