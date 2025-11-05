@@ -14,7 +14,7 @@ generic-service:
     DELIUS_INTEGRATION_ENDPOINT_URL: https://make-recall-decisions-and-delius-dev.hmpps.service.justice.gov.uk
     ARN_API_ENDPOINT_URL: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
     # CVL 'dev' endpoint isn't in sync with test Delius, and the CVL team advised to switch to 'test2' endpoint which actually talks to probation services
-    CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-test2.hmpps.service.justice.gov.uk
+    CVL_API_ENDPOINT_URL: https://create-and-vary-a-licence-api-test2.hmpps.service.justice.gov.uk
     DOCUMENT_MANAGEMENT_API_ENDPOINT_URL: https://document-api-dev.hmpps.service.justice.gov.uk
     PPUD_AUTOMATION_API_ENDPOINT_URL: https://hmpps-ppud-automation-api-dev.hmpps.service.justice.gov.uk
     PRISON_API_ENDPOINT_URL: https://prison-api-dev.prison.service.justice.gov.uk
