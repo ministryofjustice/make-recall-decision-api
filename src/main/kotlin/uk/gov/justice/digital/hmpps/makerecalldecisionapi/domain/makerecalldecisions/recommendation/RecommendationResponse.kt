@@ -162,6 +162,7 @@ data class PrisonOffender(
   var cro: String? = null,
   var pnc: String? = null,
   var image: String? = null,
+  var releaseDate: LocalDate? = null,
 )
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {

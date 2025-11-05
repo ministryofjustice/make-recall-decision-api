@@ -161,6 +161,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             agencyId = "BRX",
             facialImageId = null,
             locationDescription = "Outside - released from Leeds",
+            releaseDate = LocalDate.parse("2025-01-01"),
           ),
         ),
       )
