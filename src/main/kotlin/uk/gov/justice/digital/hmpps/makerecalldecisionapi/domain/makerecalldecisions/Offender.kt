@@ -36,6 +36,7 @@ fun Offender.toPrisonOffender(): PrisonOffender = PrisonOffender(
   ethnicity = this.physicalAttributes?.ethnicity,
   cro = this.identifiers?.find { id -> id.type == "CRO" }?.value,
   pnc = this.identifiers?.find { id -> id.type == "PNC" }?.value,
+  releaseDate = this.sentenceDetail?.releaseDate,
 )
 
 data class PhysicalAttributes(
@@ -50,4 +51,5 @@ data class Identifier(
 
 data class SentenceDetail(
   val licenceExpiryDate: LocalDate? = null,
+  val releaseDate: LocalDate? = null,
 )
