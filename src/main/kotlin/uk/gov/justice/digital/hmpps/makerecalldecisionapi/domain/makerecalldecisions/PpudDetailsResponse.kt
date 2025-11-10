@@ -29,6 +29,7 @@ data class SentenceDetails(
   val custodyType: String?,
   val mappaLevel: String?,
   val licenceExpiryDate: String?,
+  val tariffExpiryDate: String?,
   val offence: OffenceDetails?,
   val releaseDate: String?,
   val sentenceLength: SentenceLength?,

@@ -103,7 +103,7 @@
           "dateOfIndexOffence": "1990-04-20"
         },
         "releaseDate": "2025-09-20",
-        "sentenceExpiryDate": "2025-09-20",
+        "tariffExpiryDate": "2025-09-20",
         "sentenceLength": {
           "partYears": 25,
           "partMonths": 5,
@@ -120,7 +120,7 @@
           "dateOfIndexOffence": "2012-06-06"
         },
         "releaseDate": "2015-12-31",
-        "sentenceExpiryDate": "2015-12-31",
+        "tariffExpiryDate": "2015-12-31",
         "sentenceLength": {
           "partYears": 2,
           "partMonths": 0,
@@ -137,7 +137,7 @@
           "dateOfIndexOffence": "2006-01-25"
         },
         "releaseDate": "2007-02-01",
-        "sentenceExpiryDate": "2007-02-01",
+        "tariffExpiryDate": "2007-02-01",
         "sentenceLength": {
           "partYears": 1,
           "partMonths": 0,
@@ -154,7 +154,7 @@
           "dateOfIndexOffence": "2014-04-20"
         },
         "releaseDate": "2015-04-05",
-        "sentenceExpiryDate": "2015-04-05",
+        "tariffExpiryDate": "2015-04-05",
         "sentenceLength": {
           "partYears": 0,
           "partMonths": 11,
@@ -171,7 +171,7 @@
           "dateOfIndexOffence": "2002-01-01"
         },
         "releaseDate": "2005-09-13",
-        "sentenceExpiryDate": "2005-09-13",
+        "tariffExpiryDate": "2005-09-13",
         "sentenceLength": {
           "partYears": 1,
           "partMonths": 1,
@@ -188,7 +188,7 @@
           "dateOfIndexOffence": "2019-10-31"
         },
         "releaseDate": "2045-09-13",
-        "sentenceExpiryDate": "2045-09-13",
+        "tariffExpiryDate": "2045-09-13",
         "sentenceLength": {
           "partYears": 25,
           "partMonths": 10,

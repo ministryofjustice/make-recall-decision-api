@@ -207,6 +207,7 @@ class MrdTestDataBuilder {
               custodyType = "Extended",
               mappaLevel = "Level 1",
               licenceExpiryDate = "2006-08-14",
+              tariffExpiryDate = "2006-08-14",
               offence = PpudOffence(
                 indexOffence = "123",
                 dateOfIndexOffence = "2007-08-14",
