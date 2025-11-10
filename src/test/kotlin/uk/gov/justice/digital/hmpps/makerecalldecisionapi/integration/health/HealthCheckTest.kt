@@ -1,14 +1,14 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.health
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.mockserver.model.HttpError
 import org.mockserver.model.HttpRequest.request
-import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.HttpStatusCode
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,6 +18,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation.PpudAutomationResponseMocker
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 import javax.sql.DataSource
@@ -29,6 +30,21 @@ import javax.sql.DataSource
   properties = ["management.server.port=9999", "server.port=9999"],
 )
 class HealthCheckTest : IntegrationTestBase() {
+
+  private val ppudAutomationResponseMocker: PpudAutomationResponseMocker = PpudAutomationResponseMocker()
+
+  @BeforeEach
+  override fun startUpServer() {
+    super.startUpServer()
+    ppudAutomationResponseMocker.startUpServer()
+    ppudAutomationResponseMocker.setUpSuccessfulHealthCheck()
+  }
+
+  @AfterAll
+  override fun tearDownServer() {
+    super.tearDownServer()
+    ppudAutomationResponseMocker.tearDownServer()
+  }
 
   @Test
   @Order(1)
@@ -86,8 +102,8 @@ class HealthCheckTest : IntegrationTestBase() {
     gotenbergMock.clear(request().withPath("/health"))
     gotenbergMock.`when`(request().withPath("/health")).error(HttpError.error())
 
-    ppudAutomationApi.clear(request().withPath("/health/ping"))
-    ppudAutomationApi.`when`(request().withPath("/health/ping")).error(HttpError.error())
+    ppudAutomationResponseMocker.resetServer()
+    ppudAutomationResponseMocker.setUpFailingHealthCheck()
 
     healthCheckIsUpWith(
       "/health",
@@ -101,9 +117,8 @@ class HealthCheckTest : IntegrationTestBase() {
 
   @Test
   fun `Health page reports OK if PPUD Automation is the only component failing`() {
-    ppudAutomationApi.clear(request().withPath("/health/ping"))
-    ppudAutomationApi.`when`(request().withPath("/health/ping"))
-      .respond(response().withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code()))
+    ppudAutomationResponseMocker.resetServer()
+    ppudAutomationResponseMocker.setUpFailingHealthCheck()
 
     healthCheckIsUpWith(
       "/health",

@@ -6,12 +6,12 @@ data class PpudCreateOrUpdateSentenceRequest(
   val custodyType: String,
   val dateOfSentence: LocalDate,
   val licenceExpiryDate: LocalDate?,
-  val mappaLevel: String,
+  val mappaLevel: String?,
   val releaseDate: LocalDate?,
   val sentenceLength: SentenceLength?,
-  val espCustodialPeriod: PpudYearMonth? = null,
-  val espExtendedPeriod: PpudYearMonth? = null,
-  val sentenceExpiryDate: LocalDate? = null,
+  val espCustodialPeriod: PpudYearMonth? = null, // never set in UI - should we remove it and all associated code?
+  val espExtendedPeriod: PpudYearMonth? = null, // never set in UI - should we remove it and all associated code?
+  val sentenceExpiryDate: LocalDate?,
   val sentencingCourt: String = "",
-  val sentencedUnder: String,
+  val sentencedUnder: String?,
 )

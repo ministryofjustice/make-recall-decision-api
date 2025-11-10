@@ -31,6 +31,7 @@ data class PpudSentence(
   val custodyType: String,
   val mappaLevel: String?,
   val licenceExpiryDate: String?,
+  val tariffExpiryDate: String?,
   val offence: PpudOffence?,
   val releaseDate: String?,
   // deprecated
