@@ -25,7 +25,6 @@ services:
       - POSTGRES_DBNAME=make_recall_decision
       - POSTGRES_USERNAME=mrd_user
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_OPTIONS=${POSTGRES_OPTIONS:-sslmode=verify-full}
       - SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379

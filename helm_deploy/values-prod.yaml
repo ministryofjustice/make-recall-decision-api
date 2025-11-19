@@ -18,7 +18,6 @@ generic-service:
     MRD_API_URL: https://make-recall-decision-api.hmpps.service.justice.gov.uk
     HOUSEKEEPING_SENDDOMAINEVENTS: true
     ENVIRONMENT_NAME: prod
-    POSTGRES_OPTIONS: sslmode=disable
 
   postgresDatabaseRestore:
     enabled: true
