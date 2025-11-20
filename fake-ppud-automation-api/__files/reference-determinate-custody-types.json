@@ -2,9 +2,9 @@
   "values": [
     "Determinate",
     "EDS",
-    "EDS (non-parole)",
     "EPP",
     "SOPC",
+    "SDOPC",
     "DCR"
   ]
 }
