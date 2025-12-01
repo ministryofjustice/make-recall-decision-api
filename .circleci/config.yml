@@ -77,7 +77,8 @@ jobs:
         -Dorg.gradle.workers.max=1
     resource_class: xlarge
     steps:
-      - checkout
+      - checkout:
+          method: full # needed for sonar scan to pick up all files
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
