@@ -6,5 +6,5 @@ data class PpudCreateOrUpdateReleaseRequest(
   val dateOfRelease: LocalDate,
   val postRelease: PpudUpdatePostRelease = PpudUpdatePostRelease(),
   val releasedFrom: String,
-  val releasedUnder: String,
+  val releasedUnder: String?,
 )
