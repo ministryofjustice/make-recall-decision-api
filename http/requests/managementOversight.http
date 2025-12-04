@@ -1,0 +1,3 @@
+### Provides notes on case for Delius
+GET {{host}}/managementOversight/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}

@@ -1,0 +1,211 @@
+### Calls PPUD Automation service for a search
+POST {{host}}/ppud/details/{{ppudOffenderId}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Calls PPUD Automation service to create an offender
+POST {{host}}/ppud/offender
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+    "address": {},
+    "additionalAddresses": [],
+    "croNumber": "",
+    "custodyType": "",
+    "establishment": "",
+    "dateOfBirth": "",
+    "dateOfSentence": "",
+    "ethnicity": "",
+    "firstNames": "",
+    "familyName": "",
+    "gender": "",
+    "indexOffence": "",
+    "isInCustody": false,
+    "mappaLevel": "",
+    "nomsId": "",
+    "prisonNumber": ""
+}
+
+### Calls PPUD Automation service to update an offender.
+PUT {{host}}/ppud/offender/{{offenderId}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "address": {},
+  "additionalAddresses": [],
+  "dateOfBirth": "",
+  "ethnicity": "",
+  "familyName": "",
+  "firstNames": "",
+  "gender": "",
+  "isInCustody": false,
+  "prisonNumber": "",
+  "establishment": "",
+  "croNumber": "",
+  "nomsId": ""
+}
+
+### Calls PPUD Automation service to create a recall
+POST {{host}}/ppud/offender/{{offenderId}}/release/{{releaseId}}/recall
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "decisionDateTime": "",
+  "isExtendedSentence": false,
+  "isInCustody": false,
+  "mappaLevel": "",
+  "policeForce": "",
+  "probationArea": "",
+  "receivedDateTime": "",
+  "riskOfContrabandDetails": ""
+}
+
+### Calls PPUD Automation service to update a sentence.
+POST {{host}}/ppud/offender/{{offenderId}}/sentence
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "custodyType": "",
+  "dateOfSentence": "",
+  "licenceExpiryDate": "",
+  "mappaLevel": "",
+  "releaseDate": "",
+  "sentenceLength": {},
+  "espCustodialPeriod": {
+    "years": 0,
+    "months": 0
+  },
+  "espExtendedPeriod": {
+    "years": 0,
+    "months": 0
+  },
+  "sentenceExpiryDate": "",
+  "sentencingCourt": "",
+  "sentencedUnder": ""
+}
+
+### Calls PPUD Automation service to update a sentence.
+PUT {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "custodyType": "",
+  "dateOfSentence": "",
+  "licenceExpiryDate": "",
+  "mappaLevel": "",
+  "releaseDate": "",
+  "sentenceLength": {},
+  "espCustodialPeriod": {
+    "years": 0,
+    "months": 0
+  },
+  "espExtendedPeriod": {
+    "years": 0,
+    "months": 0
+  },
+  "sentenceExpiryDate": "",
+  "sentencingCourt": "",
+  "sentencedUnder": ""
+}
+
+
+### Calls PPUD Automation service to update an offence.
+PUT {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}/offence
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "indexOffence": "",
+  "indexOffenceComment": "",
+  "dateOfIndexOffence": ""
+}
+
+### Calls PPUD Automation service to update a release
+POST {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}/release
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "dateOfRelease": "",
+  "postRelease": {
+    "assistantChiefOfficer": {
+      "name": "",
+      "faxEmail": ""
+    },
+    "offenderManager": {
+      "name": "",
+      "faxEmail": "",
+      "telephone": ""
+    },
+    "probationService": "",
+    "spoc": {
+      "name": "",
+      "faxEmail": ""
+    }
+  },
+  "releasedFrom": "",
+  "releasedUnder": ""
+}
+
+### Calls PPUD Automation service to create a minute
+PUT {{host}}/ppud/recall/{{recallId}}/minutes
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "subject": "",
+  "text": ""
+}
+
+### Calls PPUD Automation service to upload a additional file to ppud
+PUT {{host}}/ppud/recall/{{recallId}}/upload-additional-document
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "id": 0
+}
+
+### Calls PPUD Automation service to upload a mandatory file to ppud
+PUT {{host}}/ppud/recall/{{recallId}}/upload-mandatory-document
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "id": 0,
+  "category": ""
+}
+
+### Calls PPUD Automation service to retrieve reference list
+POST {{host}}/ppud/reference/{{ppudReferenceName}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{}
+
+
+### Calls PPUD Automation service for a search
+POST {{host}}/ppud/search
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "croNumber": "",
+  "nomsId": "",
+  "familyName": "Smith",
+  "dateOfBirth": ""
+}
+
+### Calls PPUD Automation service to search for active users
+POST {{host}}/ppud/user/search
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "fullName": "",
+  "userName": ""
+}

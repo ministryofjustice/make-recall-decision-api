@@ -1,0 +1,8 @@
+### PPCS Search for an offender
+POST {{host}}/ppcs-search
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "crn": "{{crn}}"
+}

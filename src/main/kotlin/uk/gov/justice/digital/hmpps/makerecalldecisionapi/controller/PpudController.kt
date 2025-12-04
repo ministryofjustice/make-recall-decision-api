@@ -82,7 +82,7 @@ internal class PpudController(
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PostMapping("/ppud/offender/{offenderId}/sentence")
-  @Operation(summary = "Calls PPUD Automation service to update a sentence.")
+  @Operation(summary = "Calls PPUD Automation service to create a sentence.")
   suspend fun createSentence(
     @PathVariable(required = true) offenderId: String,
     @RequestBody request: PpudCreateOrUpdateSentenceRequest,

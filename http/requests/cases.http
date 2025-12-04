@@ -1,0 +1,47 @@
+### Get case risk vulnerabilities
+GET {{host}}/cases/{{crn}}/vulnerabilities
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get a specific document
+GET {{host}}/cases/{{crn}}/documents/{{documentId}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get an overview of the case details
+GET {{host}}/cases/{{crn}}/overview
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get case summary risk information
+GET {{host}}/cases/{{crn}}/risk
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get an overview of the person details
+GET {{host}}/cases/{{crn}}/personal-details
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case
+GET {{host}}/cases/{{crn}}/licence-conditions
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case from CVL
+GET {{host}}/cases/{{crn}}/licence-conditions-cvl
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case
+GET {{host}}/cases/{{crn}}/licence-conditions/v2
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get all details of a case contact history
+GET {{host}}/cases/{{crn}}/contact-history?query={{$random.alphanumeric(8)}}&from={{$random.alphanumeric(8)}}&to={{$random.alphanumeric(8)}}&type={{$placeholder}}&includeSystemGenerated=false
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get latest active recommendation for case
+GET {{host}}/cases/{{crn}}/active
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get latest complete recommendation overview for case
+GET {{host}}/cases/{{crn}}/last-completed
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get all recommendations for case
+GET {{host}}/cases/{{crn}}/recommendations
+Authorization: Bearer {{$auth.token("token")}}
