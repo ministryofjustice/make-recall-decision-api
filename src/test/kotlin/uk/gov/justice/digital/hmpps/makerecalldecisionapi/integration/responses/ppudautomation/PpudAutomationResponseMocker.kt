@@ -165,7 +165,7 @@ class PpudAutomationResponseMocker {
     sentenceId: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
+    val request = request().withPath("/offender/$offenderId/sentence/$sentenceId/offence")
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)
@@ -196,7 +196,7 @@ class PpudAutomationResponseMocker {
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/release/" + releaseId + "/recall")
+    val request = request().withPath("/offender/$offenderId/release/$releaseId/recall")
 
     ppudAutomationApi.`when`(request).respond(
       response().withContentType(APPLICATION_JSON)

@@ -44,6 +44,7 @@ data class PpudSentence(
 data class PpudOffence(
   val indexOffence: String?,
   val dateOfIndexOffence: String?,
+  val offenceComment: String?,
 )
 
 // deprecated

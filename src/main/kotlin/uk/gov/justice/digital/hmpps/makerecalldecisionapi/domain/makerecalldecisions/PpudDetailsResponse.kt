@@ -39,6 +39,7 @@ data class SentenceDetails(
 data class OffenceDetails(
   val indexOffence: String?,
   val dateOfIndexOffence: String?,
+  val offenceComment: String?,
 )
 
 data class SentenceLength(
