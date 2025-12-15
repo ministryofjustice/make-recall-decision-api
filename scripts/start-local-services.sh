@@ -74,7 +74,7 @@ popd
 pushd "${UI_DIR}"
 printf "\n\nBuilding/starting UI components...\n\n"
 docker compose up -d --scale=${UI_NAME}=0
-npm install
+npm run setup
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
 
