@@ -252,6 +252,8 @@ workflows:
           sentry_project: make-recall-decision-api
           sentry_environment: DEV
           sentry_create_release: true
+          environment:
+            SENTRY_CLI_VERSION: 2.58.4 # last known working version for current server version
           requires:
             - deploy_dev
           context:
@@ -282,6 +284,8 @@ workflows:
           sentry_project: make-recall-decision-api
           sentry_environment: PRE-PROD
           sentry_create_release: true
+          environment:
+            SENTRY_CLI_VERSION: 2.58.4 # last known working version for current server version
           requires:
             - deploy_preprod
           context:
@@ -307,6 +311,8 @@ workflows:
           sentry_project: make-recall-decision-api
           sentry_environment: PROD
           sentry_create_release: true
+          environment:
+            SENTRY_CLI_VERSION: 2.58.4 # last known working version for current server version
           requires:
             - deploy_prod
           context:
