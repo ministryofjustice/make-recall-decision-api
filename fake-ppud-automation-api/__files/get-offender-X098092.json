@@ -100,6 +100,7 @@
         "custodyType": "IPP",
         "offence": {
           "indexOffence": "An additional punishable offence",
+          "indexOffenceComment": "A comment on the offence commited by the person on probation.",
           "dateOfIndexOffence": "1990-04-20"
         },
         "releaseDate": "2025-09-20",
@@ -117,6 +118,7 @@
         "custodyType": "DPP",
         "offence": {
           "indexOffence": "One more punishable offence",
+          "indexOffenceComment": "A long comment on the offence commited by the person on probation, long enough that it should wrap around on the screen.",
           "dateOfIndexOffence": "2012-06-06"
         },
         "releaseDate": "2015-12-31",
