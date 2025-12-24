@@ -305,7 +305,7 @@ internal class PrisonerApiServiceTest {
       },
     )
 
-    given(prisonApiClient.retrieveOffender(any())).willReturn(
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
       Mono.fromCallable { mock(Offender::class.java) },
     )
 
@@ -316,6 +316,11 @@ internal class PrisonerApiServiceTest {
     assertThat(offences[1].offenceDescription).isEqualTo("DEF")
     assertThat(offences[2].offenceDescription).isEqualTo("GHI")
     assertThat(offences[3].offenceDescription).isEqualTo("NMO")
+
+    // Mockito checks there are no unused stubs by default, but it doesn't
+    // check the number of calls each stub receives, so we verify this
+    // explicitly (verify checks a stub was called exactly once by default).
+    verify(prisonApiClient).retrieveOffender(nomsId)
   }
 
   @Test
@@ -363,7 +368,7 @@ internal class PrisonerApiServiceTest {
 
     val offenderResponse = mock(Offender::class.java)
 
-    given(prisonApiClient.retrieveOffender(any())).willReturn(
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
       Mono.fromCallable {
         offenderResponse
       },
@@ -375,6 +380,11 @@ internal class PrisonerApiServiceTest {
     assertThat(offences.size).isGreaterThan(0)
     assertThat(offences[0].offenceDescription).isEqualTo("ABC")
     assertThat(result[0].indexSentence.releasingPrison).isNull()
+
+    // Mockito checks there are no unused stubs by default, but it doesn't
+    // check the number of calls each stub receives, so we verify this
+    // explicitly (verify checks a stub was called exactly once by default).
+    verify(prisonApiClient).retrieveOffender(nomsId)
   }
 
   @Test
@@ -453,6 +463,11 @@ internal class PrisonerApiServiceTest {
     assertThat(result[0].indexSentence.sentenceDate).isEqualTo(LocalDate.now().minusMonths(3).plusDays(2))
     assertThat(result[0].indexSentence.releasingPrison).isEqualTo("Prison A1234")
     assertThat(result[0].indexSentence.licenceExpiryDate).isEqualTo(LocalDate.now())
+
+    // Mockito checks there are no unused stubs by default, but it doesn't
+    // check the number of calls each stub receives, so we verify this
+    // explicitly (verify checks a stub was called exactly once by default).
+    verify(prisonApiClient).retrieveOffender(nomsId)
   }
 
   @Test
@@ -477,7 +492,7 @@ internal class PrisonerApiServiceTest {
       Mono.fromCallable { sentencesForSequencesSecond },
     )
 
-    given(prisonApiClient.retrieveOffender(any())).willReturn(
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
       Mono.fromCallable { mock(Offender::class.java) },
     )
 
@@ -493,6 +508,11 @@ internal class PrisonerApiServiceTest {
 
     assertThat(result[5]).isEqualTo(expectedSentenceSequenceF)
     assertThat(result[6]).isEqualTo(expectedSentenceSequenceG)
+
+    // Mockito checks there are no unused stubs by default, but it doesn't
+    // check the number of calls each stub receives, so we verify this
+    // explicitly (verify checks a stub was called exactly once by default).
+    verify(prisonApiClient).retrieveOffender(nomsId)
   }
 
   //endregion
