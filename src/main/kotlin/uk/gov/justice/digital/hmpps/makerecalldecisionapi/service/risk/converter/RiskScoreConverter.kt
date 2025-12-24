@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
@@ -19,6 +20,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDateTime
 
+// TODO see (and answer) questions in RIskScoreResponse.kt and RiskResponse.kt before changing this class
+
 @Service
 class RiskScoreConverter {
 
@@ -30,10 +33,9 @@ class RiskScoreConverter {
   /**
    * Convert a list of RiskScoreResponses to a PredictorScores object
    */
-  fun convert(riskScoreResponses: List<RiskScoreResponse>): PredictorScores {
+  fun convert(riskScoreResponses: List<AssessmentScores>): PredictorScores {
     val historicalScores = riskScoreResponses
-      .sortedBy { it.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
-      .reversed()
+      .sortedByDescending { it.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
     val latestScore = historicalScores.firstOrNull()
     return PredictorScores(
       current = latestScore?.let { convert(it) },
@@ -44,7 +46,7 @@ class RiskScoreConverter {
   /**
    * Convert a RiskScoreResponse to a PredictorScore object
    */
-  fun convert(riskScoreResponse: RiskScoreResponse): PredictorScore? {
+  fun convert(riskScoreResponse: AssessmentScores): PredictorScore? {
     val scores = createScores(riskScoreResponse)
     return if (scores?.ogp == null &&
       scores?.ogrs == null &&
@@ -68,7 +70,7 @@ class RiskScoreConverter {
     null
   }
 
-  private fun createScores(riskScoreResponse: RiskScoreResponse): Scores? {
+  private fun createScores(riskScoreResponse: AssessmentScores): Scores? {
     val ospdc = buildLevelWithScore(
       riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
       riskScoreResponse.sexualPredictorScore?.ospDirectContactPercentageScore,
@@ -128,7 +130,7 @@ class RiskScoreConverter {
     )
   }
 
-  private fun rsrLevelWithScore(riskScoreResponse: RiskScoreResponse?): LevelWithScore? {
+  private fun rsrLevelWithScore(riskScoreResponse: AssessmentScores?): LevelWithScore? {
     val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
     return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) {
       null

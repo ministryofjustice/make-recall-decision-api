@@ -1,13 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspdcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiicScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 
 fun allRiskScoresResponse() = """
 [
@@ -17,7 +11,7 @@ fun allRiskScoresResponse() = """
     "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "${OgrsScoreLevel.HIGH}"
+      "scoreLevel": "${FourLevelRiskScoreLevel.HIGH}"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -25,7 +19,7 @@ fun allRiskScoresResponse() = """
       "ovpTotalWeightedScore": 0,
       "oneYear": 0,
       "twoYears": 0,
-      "ovpRisk": "${OvpScoreLevel.HIGH}"
+      "ovpRisk": "${FourLevelRiskScoreLevel.HIGH}"
     },
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
@@ -33,20 +27,20 @@ fun allRiskScoresResponse() = """
       "ogpTotalWeightedScore": 0,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "${OgpScoreLevel.HIGH}"
+      "ogpRisk": "${FourLevelRiskScoreLevel.HIGH}"
     },
     "riskOfSeriousRecidivismScore": {
       "percentageScore": 0,
       "staticOrDynamic": "STATIC",
       "source": "ASSESSMENTS_API",
       "algorithmVersion": "string",
-      "scoreLevel": "${RsrScoreLevel.HIGH}"
+      "scoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}"
     },
     "sexualPredictorScore": {
       "ospIndecentPercentageScore": 0,
       "ospContactPercentageScore": 0,
-      "ospIndecentScoreLevel": "${OspiScoreLevel.HIGH}",
-      "ospContactScoreLevel": "${OspcScoreLevel.HIGH}"
+      "ospIndecentScoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}",
+      "ospContactScoreLevel": "${FourLevelRiskScoreLevel.HIGH}"
     }
   },
   {
@@ -55,7 +49,7 @@ fun allRiskScoresResponse() = """
     "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "${OgrsScoreLevel.LOW}"
+      "scoreLevel": "${FourLevelRiskScoreLevel.LOW}"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -63,7 +57,7 @@ fun allRiskScoresResponse() = """
       "ovpTotalWeightedScore": 0,
       "oneYear": 0,
       "twoYears": 0,
-      "ovpRisk": "${OvpScoreLevel.LOW}"
+      "ovpRisk": "${FourLevelRiskScoreLevel.LOW}"
     },
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
@@ -71,20 +65,20 @@ fun allRiskScoresResponse() = """
       "ogpTotalWeightedScore": 12,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "${OgpScoreLevel.LOW}"
+      "ogpRisk": "${FourLevelRiskScoreLevel.LOW}"
     },
     "riskOfSeriousRecidivismScore": {
       "percentageScore": 23,
       "staticOrDynamic": "STATIC",
       "source": "ASSESSMENTS_API",
       "algorithmVersion": "string",
-      "scoreLevel": "${RsrScoreLevel.HIGH}"
+      "scoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}"
     },
     "sexualPredictorScore": {
       "ospIndirectImagePercentageScore": 5,
       "ospDirectContactPercentageScore": 3.45,
-      "ospIndirectImageScoreLevel": "${OspiicScoreLevel.MEDIUM}",
-      "ospDirectContactScoreLevel": "${OspdcScoreLevel.LOW}"
+      "ospIndirectImageScoreLevel": "${ThreeLevelRiskScoreLevel.MEDIUM}",
+      "ospDirectContactScoreLevel": "${FourLevelRiskScoreLevel.LOW}"
     }
   }
 ]

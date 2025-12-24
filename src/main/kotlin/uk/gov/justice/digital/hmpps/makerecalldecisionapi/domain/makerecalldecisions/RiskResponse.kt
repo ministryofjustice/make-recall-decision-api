@@ -48,12 +48,15 @@ data class PredictorScores(
   val historical: List<PredictorScore?>?,
 )
 
+// TODO what do we want this to look like? All the fields within Scores?
+//      Two fields, scoresV1 and scoresV2? Something else?
 data class PredictorScore(
   val date: String?,
   val scores: Scores?,
 )
 
 data class Scores(
+  // V1 assessment scores
   @JsonProperty("RSR")
   val rsr: LevelWithScore?,
   @JsonProperty("OSPC")
@@ -70,6 +73,14 @@ data class Scores(
   val ogp: LevelWithTwoYearScores?,
   @JsonProperty("OVP")
   val ovp: LevelWithTwoYearScores?,
+
+  // V2 assessment scores
+  val allReoffendingPredictor: StaticOrDynamicPredictor?,
+  val violentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val directContactSexualReoffendingPredictor: Predictor?,
+  val indirectImageContactSexualReoffendingPredictor: Predictor?,
+  val combinedSeriousReoffendingPredictor: CombinedPredictor?,
 )
 
 data class LevelWithScore(
@@ -84,6 +95,36 @@ data class LevelWithTwoYearScores(
   val oneYear: String?,
   val twoYears: String?,
 )
+
+data class Predictor(
+  val score: Int,
+  val band: FourBandRiskScoreBand,
+)
+
+data class StaticOrDynamicPredictor(
+  val score: Int,
+  val band: FourBandRiskScoreBand,
+  val staticOrDynamic: StaticOrDynamic,
+)
+
+data class CombinedPredictor(
+  val score: Int,
+  val band: FourBandRiskScoreBand,
+  val staticOrDynamic: StaticOrDynamic,
+  val algorithmVersion: String,
+)
+
+enum class StaticOrDynamic {
+  STATIC,
+  DYNAMIC,
+}
+
+enum class FourBandRiskScoreBand {
+  LOW,
+  MEDIUM,
+  HIGH,
+  VERY_HIGH,
+}
 
 data class RoshSummary(
   val natureOfRisk: String? = null,

@@ -6,31 +6,28 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentStatus
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspdcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiicScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OutputV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryRiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
@@ -129,77 +126,85 @@ class ArnApiClientTest : IntegrationTestBase() {
     allRiskScoresResponse(crn)
 
     // and
-    val expected = listOf<RiskScoreResponse>(
-      RiskScoreResponse(
+    val expected = listOf<AssessmentScores>(
+      AssessmentScoresV1(
         completedDate = "2021-06-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(
-          ogpStaticWeightedScore = "0",
-          ogpDynamicWeightedScore = "0",
-          ogpTotalWeightedScore = "0",
-          ogpRisk = OgpScoreLevel.HIGH.toString(),
-          ogp1Year = "0",
-          ogp2Year = "0",
-        ),
-        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-          percentageScore = "0",
-          scoreLevel = RsrScoreLevel.HIGH.toString(),
-        ),
-        sexualPredictorScore = SexualPredictorScore(
-          ospIndecentPercentageScore = "0",
-          ospContactPercentageScore = "0",
-          ospIndecentScoreLevel = OspiScoreLevel.HIGH.toString(),
-          ospContactScoreLevel = OspcScoreLevel.HIGH.toString(),
-          ospIndirectImagePercentageScore = null,
-          ospDirectContactPercentageScore = null,
-          ospIndirectImageScoreLevel = null,
-          ospDirectContactScoreLevel = null,
-        ),
-        groupReconvictionScore = GroupReconvictionScore(
-          oneYear = "0",
-          twoYears = "0",
-          scoreLevel = OgrsScoreLevel.HIGH.toString(),
-        ),
-        violencePredictorScore = ViolencePredictorScore(
-          ovpStaticWeightedScore = "0",
-          ovpDynamicWeightedScore = "0",
-          ovpTotalWeightedScore = "0",
-          ovpRisk = OvpScoreLevel.HIGH.toString(),
-          oneYear = "0",
-          twoYears = "0",
+        status = AssessmentStatus.COMPLETE,
+        outputVersion = "1",
+        output = OutputV1(
+          generalPredictorScore = GeneralPredictorScore(
+            ogpStaticWeightedScore = 0,
+            ogpDynamicWeightedScore = 0,
+            ogpTotalWeightedScore = 0,
+            ogpRisk = FourLevelRiskScoreLevel.HIGH,
+            ogp1Year = 0,
+            ogp2Year = 0,
+          ),
+          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+            percentageScore = 0,
+            scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
+          ),
+          sexualPredictorScore = SexualPredictorScore(
+            ospIndecentPercentageScore = 0,
+            ospContactPercentageScore = 0,
+            ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.HIGH,
+            ospContactScoreLevel = FourLevelRiskScoreLevel.HIGH,
+            ospIndirectImagePercentageScore = 0, // null, // TODO are nulls allowed or not? Where they ever? presumably they
+            ospDirectContactPercentageScore = 0, // null, // were, as we're only meant to get either OSP/C & OSP/I or OSP/DC & OSP/II ones
+            ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM, // null,
+            ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW, // null,
+          ),
+          groupReconvictionScore = GroupReconvictionScore(
+            oneYear = 0,
+            twoYears = 0,
+            scoreLevel = FourLevelRiskScoreLevel.HIGH,
+          ),
+          violencePredictorScore = ViolencePredictorScore(
+            ovpStaticWeightedScore = 0,
+            ovpDynamicWeightedScore = 0,
+            ovpTotalWeightedScore = 0,
+            ovpRisk = FourLevelRiskScoreLevel.HIGH,
+            oneYear = 0,
+            twoYears = 0,
+          ),
         ),
       ),
-      RiskScoreResponse(
+      AssessmentScoresV1(
         completedDate = "2022-04-16T11:40:54.243",
-        generalPredictorScore = GeneralPredictorScore(
-          ogpStaticWeightedScore = "0",
-          ogpDynamicWeightedScore = "0",
-          ogpTotalWeightedScore = "12",
-          ogpRisk = OgpScoreLevel.LOW.toString(),
-          ogp1Year = "0",
-          ogp2Year = "0",
-        ),
-        riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-          percentageScore = "23",
-          scoreLevel = RsrScoreLevel.HIGH.toString(),
-        ),
-        sexualPredictorScore = SexualPredictorScore(
-          ospIndecentPercentageScore = null,
-          ospContactPercentageScore = null,
-          ospIndecentScoreLevel = null,
-          ospContactScoreLevel = null,
-          ospIndirectImagePercentageScore = "5",
-          ospDirectContactPercentageScore = "3.45",
-          ospIndirectImageScoreLevel = OspiicScoreLevel.MEDIUM.toString(),
-          ospDirectContactScoreLevel = OspdcScoreLevel.LOW.toString(),
-        ),
-        groupReconvictionScore = GroupReconvictionScore(oneYear = "0", twoYears = "0", scoreLevel = OgrsScoreLevel.LOW.toString()),
-        violencePredictorScore = ViolencePredictorScore(
-          ovpStaticWeightedScore = "0",
-          ovpDynamicWeightedScore = "0",
-          ovpTotalWeightedScore = "0",
-          ovpRisk = OvpScoreLevel.LOW.toString(),
-          oneYear = "0",
-          twoYears = "0",
+        status = AssessmentStatus.COMPLETE,
+        outputVersion = "1",
+        output = OutputV1(
+          generalPredictorScore = GeneralPredictorScore(
+            ogpStaticWeightedScore = 0,
+            ogpDynamicWeightedScore = 0,
+            ogpTotalWeightedScore = 12,
+            ogpRisk = FourLevelRiskScoreLevel.LOW,
+            ogp1Year = 0,
+            ogp2Year = 0,
+          ),
+          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
+            percentageScore = 23,
+            scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
+          ),
+          sexualPredictorScore = SexualPredictorScore(
+            ospIndecentPercentageScore = 0, // null, // TODO are nulls allowed or not? Where they ever? presumably they
+            ospContactPercentageScore = 0, // null,  // were, as we're only meant to get either OSP/C & OSP/I or OSP/DC & OSP/II ones
+            ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM,
+            ospContactScoreLevel = FourLevelRiskScoreLevel.LOW,
+            ospIndirectImagePercentageScore = 5,
+            ospDirectContactPercentageScore = 3,
+            ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM,
+            ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW,
+          ),
+          groupReconvictionScore = GroupReconvictionScore(oneYear = 0, twoYears = 0, scoreLevel = FourLevelRiskScoreLevel.LOW),
+          violencePredictorScore = ViolencePredictorScore(
+            ovpStaticWeightedScore = 0,
+            ovpDynamicWeightedScore = 0,
+            ovpTotalWeightedScore = 0,
+            ovpRisk = FourLevelRiskScoreLevel.LOW,
+            oneYear = 0,
+            twoYears = 0,
+          ),
         ),
       ),
     )

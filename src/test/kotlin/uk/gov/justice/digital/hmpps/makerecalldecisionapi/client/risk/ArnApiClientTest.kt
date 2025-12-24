@@ -18,8 +18,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
@@ -50,9 +50,9 @@ class ArnApiClientTest {
 
   @Test
   fun `retrieves risk scores`() {
-    val singleResponse = riskScoreResponse()
-    val responseList = listOf(singleResponse)
-    val responseTypeObject = object : ParameterizedTypeReference<List<RiskScoreResponse>>() {}
+    val singleAssessmentScore = assessmentScores()
+    val responseList = listOf(singleAssessmentScore)
+    val responseTypeObject = object : ParameterizedTypeReference<List<AssessmentScores>>() {}
     val riskValueName = "risk scores"
 
     retrievesRiskValues(riskValueName, responseList, responseTypeObject)
@@ -61,7 +61,7 @@ class ArnApiClientTest {
   @Test
   fun `handles timeout exceptions raised when retrieving risk scores`() {
     val crn = randomString()
-    val uri = "/risks/crn/$crn/predictors/all"
+    val uri = "/risks/predictors/all/crn/$crn"
     val riskScoreCall = { arnApiClient.getRiskScores(crn) }
 
     handlesTimeoutExceptionWhenRetrievingValues(uri, "risk scores", riskScoreCall)
@@ -74,7 +74,7 @@ class ArnApiClientTest {
   ) {
     val crn = randomString()
 
-    val responseSpec = mockWebClientCall("/risks/crn/$crn/predictors/all")
+    val responseSpec = mockWebClientCall("/risks/predictors/all/crn/$crn")
     whenever(responseSpec.bodyToMono(eq(responseTypeObject))).thenReturn(
       Mono.just(responseList),
     )
@@ -101,7 +101,7 @@ class ArnApiClientTest {
     arnEndpointCall: Supplier<Mono<*>>,
   ) {
     val responseSpec = mockWebClientCall(uri)
-    val responseType = object : ParameterizedTypeReference<List<RiskScoreResponse>>() {}
+    val responseType = object : ParameterizedTypeReference<List<AssessmentScores>>() {}
     whenever(responseSpec.bodyToMono(eq(responseType))).thenReturn(
       Mono.never(),
     )
