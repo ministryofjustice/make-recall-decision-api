@@ -535,8 +535,8 @@ internal class PrisonerApiServiceTest {
     val prisonTimelineResponse = mock(PrisonTimelineResponse::class.java)
     given(prisonTimelineResponse.prisonPeriod).willReturn(
       listOf(
-        prisonPeriod(bookingId = defaultBookingId),
-        prisonPeriod(bookingId = alternativeBookingId),
+        PrisonPeriod(bookingId = defaultBookingId),
+        PrisonPeriod(bookingId = alternativeBookingId),
       ),
     )
     given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
