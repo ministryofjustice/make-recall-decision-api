@@ -99,9 +99,11 @@ internal class PrisonerApiService(
           }
         }
 
-        val sentencesForBooking =
-          prisonApiClient.retrieveSentencesAndOffences(prisonPeriod.bookingId).block()!!.map { sentenceAndOffences ->
+        val sentencesAndOffences = prisonApiClient.retrieveSentencesAndOffences(prisonPeriod.bookingId).block()!!
 
+        val sentencesForBooking = sentencesAndOffences
+          .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
+          .map { sentenceAndOffences ->
             sentenceAndOffences.copy(
               releaseDate = movement?.dateOutOfPrison,
               releasingPrison = prisonDescription,
@@ -109,7 +111,6 @@ internal class PrisonerApiService(
               offences = sentenceAndOffences.offences.sortedBy { it.offenceDescription },
             )
           }
-            .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
 
         // Sentences that have no consecutiveToSequence value will be the index of a sentence sequence
         // even if it is the only sentence in that that sequence (i.e. has no consecutive)
