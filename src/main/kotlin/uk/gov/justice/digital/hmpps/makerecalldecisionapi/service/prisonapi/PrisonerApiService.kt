@@ -85,20 +85,22 @@ internal class PrisonerApiService(
     return getValueAndHandleWrappedException(
       prisonApiClient.retrievePrisonTimelines(nomsId),
     )!!.prisonPeriod
-      .flatMap { t ->
+      .flatMap { prisonPeriod ->
+        val lastDateOutOfPrison =
+          prisonPeriod.movementDates.map { it.dateOutOfPrison }.filter { it != null }
+            .maxWithOrNull(Comparator.naturalOrder())
+        val movement = prisonPeriod.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
+        val prisonDescription = movement?.releaseFromPrisonId?.let {
+          try {
+            prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
+          } catch (notFoundEx: NotFoundException) {
+            log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
+            null
+          }
+        }
+
         val sentencesForBooking =
-          prisonApiClient.retrieveSentencesAndOffences(t.bookingId).block()!!.map { sentenceAndOffences ->
-            val lastDateOutOfPrison =
-              t.movementDates.map { it.dateOutOfPrison }.filter { it != null }.maxWithOrNull(Comparator.naturalOrder())
-            val movement = t.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
-            val prisonDescription = movement?.releaseFromPrisonId?.let {
-              try {
-                prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
-              } catch (notFoundEx: NotFoundException) {
-                log.info("Agency with id ${movement.releaseFromPrisonId} not found: ${notFoundEx.message}")
-                null
-              }
-            }
+          prisonApiClient.retrieveSentencesAndOffences(prisonPeriod.bookingId).block()!!.map { sentenceAndOffences ->
 
             sentenceAndOffences.copy(
               releaseDate = movement?.dateOutOfPrison,

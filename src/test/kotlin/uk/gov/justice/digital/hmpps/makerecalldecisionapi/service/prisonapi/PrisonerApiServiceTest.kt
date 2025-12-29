@@ -32,6 +32,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonPeriod
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonTimelineResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
@@ -328,12 +333,13 @@ internal class PrisonerApiServiceTest {
     val nomsId = "AB234A"
 
     val prisonTimelineResponse = mock(PrisonTimelineResponse::class.java)
+    val releaseFromPrisonId = "MDI"
     given(prisonTimelineResponse.prisonPeriod).willReturn(
       listOf(
         PrisonPeriod(
           bookingId = 123,
           movementDates = listOf(
-            Movement(releaseFromPrisonId = "MDI"),
+            Movement(releaseFromPrisonId = releaseFromPrisonId),
           ),
         ),
       ),
@@ -363,7 +369,7 @@ internal class PrisonerApiServiceTest {
       },
     )
 
-    given(prisonApiClient.retrieveAgency("MDI"))
+    given(prisonApiClient.retrieveAgency(releaseFromPrisonId))
       .willThrow(NotFoundException("Prison api returned agency not found for agency id MDI"))
 
     val offenderResponse = mock(Offender::class.java)
@@ -385,6 +391,7 @@ internal class PrisonerApiServiceTest {
     // check the number of calls each stub receives, so we verify this
     // explicitly (verify checks a stub was called exactly once by default).
     verify(prisonApiClient).retrieveOffender(nomsId)
+    verify(prisonApiClient).retrieveAgency(releaseFromPrisonId)
   }
 
   @Test
@@ -393,6 +400,7 @@ internal class PrisonerApiServiceTest {
     val referenceDate = LocalDateTime.now()
 
     val prisonTimelineResponse = mock(PrisonTimelineResponse::class.java)
+    val lastPrisonReleasedFromId = "A1234"
     given(prisonTimelineResponse.prisonPeriod).willReturn(
       listOf(
         PrisonPeriod(
@@ -404,7 +412,7 @@ internal class PrisonerApiServiceTest {
             ),
             Movement(
               dateOutOfPrison = referenceDate.minusDays(4),
-              releaseFromPrisonId = "A1234",
+              releaseFromPrisonId = lastPrisonReleasedFromId,
             ),
           ),
         ),
@@ -428,7 +436,7 @@ internal class PrisonerApiServiceTest {
       },
     )
 
-    given(prisonApiClient.retrieveAgency("A1234")).willReturn(
+    given(prisonApiClient.retrieveAgency(lastPrisonReleasedFromId)).willReturn(
       Mono.fromCallable {
         Agency(
           longDescription = "Prison A1234",
@@ -468,6 +476,57 @@ internal class PrisonerApiServiceTest {
     // check the number of calls each stub receives, so we verify this
     // explicitly (verify checks a stub was called exactly once by default).
     verify(prisonApiClient).retrieveOffender(nomsId)
+    verify(prisonApiClient).retrieveAgency(lastPrisonReleasedFromId)
+  }
+
+
+  @Test
+  fun `Retrieve offences - retrieve prison details once per period`() {
+    val nomsId = "A1234"
+
+    given(prisonApiClient.retrieveOffender(nomsId)).willReturn(
+      Mono.fromCallable { offender() },
+    )
+
+    val lastPrisonReleasedFromId = randomString()
+    val secondLastPrisonReleasedFromId = randomString()
+    val prisonTimelineResponse = prisonTimelineResponse(
+      prisonPeriod =
+        listOf(
+          prisonPeriod(
+            bookingId = defaultBookingId,
+            movementDates = listOf(Movement(releaseFromPrisonId = lastPrisonReleasedFromId)),
+          ),
+          prisonPeriod(
+            bookingId = alternativeBookingId,
+            movementDates = listOf(Movement(releaseFromPrisonId = secondLastPrisonReleasedFromId)),
+          ),
+        ),
+    )
+
+    given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
+      Mono.fromCallable { prisonTimelineResponse },
+    )
+    given(prisonApiClient.retrieveSentencesAndOffences(defaultBookingId)).willReturn(
+      Mono.fromCallable { listOf(sentence(), sentence(), sentence()) },
+    )
+    given(prisonApiClient.retrieveSentencesAndOffences(alternativeBookingId)).willReturn(
+      Mono.fromCallable { listOf(sentence(), sentence(), sentence()) },
+    )
+    given(prisonApiClient.retrieveAgency(lastPrisonReleasedFromId)).willReturn(
+      Mono.fromCallable { agency() },
+    )
+    given(prisonApiClient.retrieveAgency(secondLastPrisonReleasedFromId)).willReturn(
+      Mono.fromCallable { agency() },
+    )
+
+    prisonerApiService.retrieveOffences(nomsId)
+
+    // Mockito checks there are no unused stubs by default, but it doesn't
+    // check the number of calls each stub receives, so we verify this
+    // explicitly (verify checks a stub was called exactly once by default).
+    verify(prisonApiClient).retrieveAgency(lastPrisonReleasedFromId)
+    verify(prisonApiClient).retrieveAgency(secondLastPrisonReleasedFromId)
   }
 
   @Test
@@ -477,8 +536,8 @@ internal class PrisonerApiServiceTest {
     val prisonTimelineResponse = mock(PrisonTimelineResponse::class.java)
     given(prisonTimelineResponse.prisonPeriod).willReturn(
       listOf(
-        PrisonPeriod(bookingId = defaultBookingId),
-        PrisonPeriod(bookingId = alternativeBookingId),
+        prisonPeriod(bookingId = defaultBookingId),
+        prisonPeriod(bookingId = alternativeBookingId),
       ),
     )
     given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
@@ -660,7 +719,10 @@ internal class PrisonerApiServiceTest {
   val expectedSentenceSequenceD = SentenceSequence(
     indexSentence = sentencesForSequencesFirst[6],
     sentencesInSequence = mutableMapOf(
-      sentencesForSequencesFirst[6].sentenceSequence!! to listOf(sentencesForSequencesFirst[7], sentencesForSequencesFirst[8]),
+      sentencesForSequencesFirst[6].sentenceSequence!! to listOf(
+        sentencesForSequencesFirst[7],
+        sentencesForSequencesFirst[8],
+      ),
     ),
   )
 
@@ -668,8 +730,14 @@ internal class PrisonerApiServiceTest {
   val expectedSentenceSequenceE = SentenceSequence(
     indexSentence = sentencesForSequencesFirst[9],
     sentencesInSequence = mutableMapOf(
-      sentencesForSequencesFirst[9].sentenceSequence!! to listOf(sentencesForSequencesFirst[10], sentencesForSequencesFirst[11]),
-      sentencesForSequencesFirst[10].sentenceSequence!! to listOf(sentencesForSequencesFirst[13], sentencesForSequencesFirst[12]),
+      sentencesForSequencesFirst[9].sentenceSequence!! to listOf(
+        sentencesForSequencesFirst[10],
+        sentencesForSequencesFirst[11],
+      ),
+      sentencesForSequencesFirst[10].sentenceSequence!! to listOf(
+        sentencesForSequencesFirst[13],
+        sentencesForSequencesFirst[12],
+      ),
     ),
   )
 
@@ -724,8 +792,14 @@ internal class PrisonerApiServiceTest {
   val expectedSentenceSequenceF = SentenceSequence(
     indexSentence = sentencesForSequencesSecond[3],
     sentencesInSequence = mutableMapOf(
-      sentencesForSequencesSecond[3].sentenceSequence!! to listOf(sentencesForSequencesSecond[2], sentencesForSequencesSecond[4]),
-      sentencesForSequencesSecond[2].sentenceSequence!! to listOf(sentencesForSequencesSecond[5], sentencesForSequencesSecond[1]),
+      sentencesForSequencesSecond[3].sentenceSequence!! to listOf(
+        sentencesForSequencesSecond[2],
+        sentencesForSequencesSecond[4],
+      ),
+      sentencesForSequencesSecond[2].sentenceSequence!! to listOf(
+        sentencesForSequencesSecond[5],
+        sentencesForSequencesSecond[1],
+      ),
     ),
   )
 
