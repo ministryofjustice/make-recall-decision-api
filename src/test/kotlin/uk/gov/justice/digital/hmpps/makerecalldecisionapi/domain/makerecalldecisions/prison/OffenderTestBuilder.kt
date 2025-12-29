@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Identifier
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PhysicalAttributes
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate

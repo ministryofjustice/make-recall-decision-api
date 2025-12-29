@@ -22,17 +22,17 @@ import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Movement
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PhysicalAttributes
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonPeriod
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Movement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.PhysicalAttributes
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.PrisonPeriod
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.PrisonTimelineResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.SentenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.SentenceOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonPeriod
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonTimelineResponse
@@ -479,7 +479,6 @@ internal class PrisonerApiServiceTest {
     verify(prisonApiClient).retrieveAgency(lastPrisonReleasedFromId)
   }
 
-
   @Test
   fun `Retrieve offences - retrieve prison details once per period`() {
     val nomsId = "A1234"
@@ -492,16 +491,16 @@ internal class PrisonerApiServiceTest {
     val secondLastPrisonReleasedFromId = randomString()
     val prisonTimelineResponse = prisonTimelineResponse(
       prisonPeriod =
-        listOf(
-          prisonPeriod(
-            bookingId = defaultBookingId,
-            movementDates = listOf(Movement(releaseFromPrisonId = lastPrisonReleasedFromId)),
-          ),
-          prisonPeriod(
-            bookingId = alternativeBookingId,
-            movementDates = listOf(Movement(releaseFromPrisonId = secondLastPrisonReleasedFromId)),
-          ),
+      listOf(
+        prisonPeriod(
+          bookingId = defaultBookingId,
+          movementDates = listOf(Movement(releaseFromPrisonId = lastPrisonReleasedFromId)),
         ),
+        prisonPeriod(
+          bookingId = alternativeBookingId,
+          movementDates = listOf(Movement(releaseFromPrisonId = secondLastPrisonReleasedFromId)),
+        ),
+      ),
     )
 
     given(prisonApiClient.retrievePrisonTimelines(nomsId)).willReturn(
