@@ -8,14 +8,74 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentenceOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.sentenceSequence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomFutureLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
+import java.time.LocalDate
 
 internal class OffenceConverterTest {
 
   val offenceConverter = OffenceConverter()
+
+  @Test
+  fun `convert empty prison periods returns empty sentences`() {
+    // when
+    val actualSentences = offenceConverter.convert(
+      offender(),
+      emptyList(),
+    )
+
+    // then
+    assertThat(actualSentences).isEmpty()
+  }
+
+  @Test
+  fun `sentences with past end dates are excluded`() {
+    // when
+    val actualSentences = offenceConverter.convert(
+      offender(),
+      listOf(
+        PrisonPeriodInfo(
+          randomString(),
+          randomLocalDateTime(),
+          listOf(
+            sentence(
+              consecutiveToSequence = null, // make this the index sentence
+              sentenceEndDate = LocalDate.now().minusDays(1),
+            ),
+          ),
+        ),
+      ),
+    )
+
+    // then
+    assertThat(actualSentences).isEmpty()
+  }
+
+  @Test
+  fun `no index sentence results in no sentences`() {
+    // when
+    val actualSentences = offenceConverter.convert(
+      offender(),
+      listOf(
+        PrisonPeriodInfo(
+          randomString(),
+          randomLocalDateTime(),
+          listOf(
+            sentence(
+              consecutiveToSequence = 1, // not an index sentence
+              sentenceEndDate = randomFutureLocalDate(),
+            ),
+          ),
+        ),
+      ),
+    )
+
+    // then
+    assertThat(actualSentences).isEmpty()
+  }
 
   @Test
   fun `converted offences are sorted`() {
@@ -76,13 +136,71 @@ internal class OffenceConverterTest {
   }
 
   @Test
-  fun `converted sentences have additional details`() {
+  fun `converted sentences have prison period details aligned`() {
     // given
     val licenceExpiryDate = randomLocalDate()
-    val prisonDescription = randomString()
-    val sentence = sentence(
-      consecutiveToSequence = null, // make this the index sentence
-      sentenceEndDate = randomFutureLocalDate(),
+    val firstPeriodPrisonDescription = randomString()
+    val firstPeriodLastDateOutOfPrison = randomLocalDateTime()
+    val firstPrisonPeriodSentences = listOf(
+      sentence(
+        consecutiveToSequence = null, // make this the index sentence
+        sentenceSequence = 1,
+        sentenceEndDate = LocalDate.now().plusDays(7), // ensures doing minusDays(1) below also leads to future date
+      ),
+      sentence(
+        consecutiveToSequence = 1,
+        sentenceSequence = 2,
+        sentenceEndDate = randomFutureLocalDate(),
+      ),
+    )
+    val secondPeriodPrisonDescription = randomString()
+    val secondPeriodLastDateOutOfPrison = randomLocalDateTime()
+    val secondPrisonPeriodSentences = listOf(
+      sentence(
+        consecutiveToSequence = null, // make this the index sentence
+        sentenceSequence = 1,
+        sentenceEndDate = firstPrisonPeriodSentences[0].sentenceEndDate!!.minusDays(1),
+      ),
+      sentence(
+        consecutiveToSequence = 1,
+        sentenceSequence = 2,
+        sentenceEndDate = randomFutureLocalDate(),
+      ),
+    )
+
+    val expectedSentenceSequence = listOf(
+      sentenceSequence(
+        indexSentence = firstPrisonPeriodSentences[0].copy(
+          releaseDate = firstPeriodLastDateOutOfPrison,
+          releasingPrison = firstPeriodPrisonDescription,
+          licenceExpiryDate = licenceExpiryDate,
+        ),
+        sentencesInSequence = mutableMapOf(
+          1 to listOf(
+            firstPrisonPeriodSentences[1].copy(
+              releaseDate = firstPeriodLastDateOutOfPrison,
+              releasingPrison = firstPeriodPrisonDescription,
+              licenceExpiryDate = licenceExpiryDate,
+            ),
+          ),
+        ),
+      ),
+      sentenceSequence(
+        indexSentence = secondPrisonPeriodSentences[0].copy(
+          releaseDate = secondPeriodLastDateOutOfPrison,
+          releasingPrison = secondPeriodPrisonDescription,
+          licenceExpiryDate = licenceExpiryDate,
+        ),
+        sentencesInSequence = mutableMapOf(
+          1 to listOf(
+            secondPrisonPeriodSentences[1].copy(
+              releaseDate = secondPeriodLastDateOutOfPrison,
+              releasingPrison = secondPeriodPrisonDescription,
+              licenceExpiryDate = licenceExpiryDate,
+            ),
+          ),
+        ),
+      ),
     )
 
     // when
@@ -92,20 +210,20 @@ internal class OffenceConverterTest {
       ),
       listOf(
         PrisonPeriodInfo(
-          prisonDescription,
-          randomLocalDateTime(),
-          listOf(sentence),
+          firstPeriodPrisonDescription,
+          firstPeriodLastDateOutOfPrison,
+          firstPrisonPeriodSentences,
+        ),
+        PrisonPeriodInfo(
+          secondPeriodPrisonDescription,
+          secondPeriodLastDateOutOfPrison,
+          secondPrisonPeriodSentences,
         ),
       ),
     )
 
     // then
-    assertThat(actualSentences.size).isEqualTo(1)
-
-    assertThat(actualSentences[0].indexSentence.courtDescription).isEqualTo(sentence.courtDescription)
-    assertThat(actualSentences[0].indexSentence.sentenceDate).isEqualTo(sentence.sentenceDate)
-    assertThat(actualSentences[0].indexSentence.releasingPrison).isEqualTo(prisonDescription)
-    assertThat(actualSentences[0].indexSentence.licenceExpiryDate).isEqualTo(licenceExpiryDate)
+    assertThat(actualSentences).isEqualTo(expectedSentenceSequence)
   }
 
   @Test
@@ -384,5 +502,4 @@ internal class OffenceConverterTest {
     // then
     assertThat(actualSentences).containsExactlyElementsOf(expectedSentenceSequences)
   }
-
 }
