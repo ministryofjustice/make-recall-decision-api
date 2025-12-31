@@ -211,6 +211,7 @@ class MrdTestDataBuilder {
               offence = PpudOffence(
                 indexOffence = "123",
                 dateOfIndexOffence = "2007-08-14",
+                indexOffenceComment = "Some offence comment",
               ),
               releaseDate = "2027-08-14",
               releases = emptyList(),
