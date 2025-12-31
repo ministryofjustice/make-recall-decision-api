@@ -31,6 +31,7 @@
         "mappaLevel": "Level 2 – Local Inter-Agency Management",
         "offence": {
           "indexOffence": "Attack / assault / batter a member of the public",
+          "indexOffenceComment": "A comment on the offence commited by the person on probation.",
           "dateOfIndexOffence": "2008-06-12"
         },
         "releaseDate": "2005-05-12",
@@ -100,7 +101,7 @@
         "custodyType": "IPP",
         "offence": {
           "indexOffence": "Give aid and comfort to the Sovereign's enemies outside his / her realm",
-          "offenceComment": "A comment on the offence commited by the person on probation.",
+          "indexOffenceComment": "A comment on the offence commited by the person on probation.",
           "dateOfIndexOffence": "1990-04-20"
         },
         "releaseDate": "2025-09-20",
@@ -118,7 +119,7 @@
         "custodyType": "DPP",
         "offence": {
           "indexOffence": "Abstract / use without authority electricity",
-          "offenceComment": "A long comment on the offence commited by the person on probation, long enough that it should wrap around on the screen.",
+          "indexOffenceComment": "A long comment on the offence commited by the person on probation, long enough that it should wrap around on the screen.",
           "dateOfIndexOffence": "2012-06-06"
         },
         "releaseDate": "2015-12-31",

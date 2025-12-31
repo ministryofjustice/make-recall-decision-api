@@ -92,8 +92,8 @@ internal fun SentenceDetails.toJsonString(): String = ResourceLoader.CustomMappe
 internal fun offenceDetails(
   indexOffence: String? = randomString(),
   dateOfIndexOffence: String? = randomString(),
-  offenceComment: String? = randomString(),
-) = OffenceDetails(indexOffence, dateOfIndexOffence, offenceComment)
+  indexOffenceComment: String? = randomString(),
+) = OffenceDetails(indexOffence, dateOfIndexOffence, indexOffenceComment)
 
 internal fun OffenceDetails.toJson() = json(toJsonString())
 
