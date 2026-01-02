@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -34,6 +35,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Fi
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJson
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.helper.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.config.TestConfig
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.recommendationStatusRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
@@ -84,6 +86,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Import(TestConfig::class)
 @ActiveProfiles("test")
 @FlywayTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

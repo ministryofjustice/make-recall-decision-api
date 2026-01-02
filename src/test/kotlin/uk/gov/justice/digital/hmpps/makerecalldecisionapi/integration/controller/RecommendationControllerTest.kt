@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controlle
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.flipt.client.FliptClient
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -12,6 +13,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -19,6 +21,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.bookRecallToPpud
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.config.TestConfig.Companion.mockPartATemplateVersionFlag
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.createPartARequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.documentRequestQuery
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.invalidUpdateRecommendationRequest
@@ -31,6 +34,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.updateRecommendationRequestWithClearedValues
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.nowDate
 import java.time.LocalDate
 import java.time.Period
@@ -41,6 +45,9 @@ import java.util.UUID
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
 class RecommendationControllerTest : IntegrationTestBase() {
+
+  @Autowired
+  private lateinit var fliptApiClient: FliptClient
 
   @Test
   fun `get latest complete recommendation overview`() {
@@ -875,6 +882,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     personalDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
+    mockPartATemplateVersionFlag(fliptApiClient)
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -915,6 +923,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
     deleteAndCreateRecommendation()
     personalDetailsResponseOneTimeOnly(crn)
     updateRecommendation(updateRecommendationRequest())
+    mockPartATemplateVersionFlag(fliptApiClient)
 
     val response = convertResponseToJSONObject(
       webTestClient.post()
@@ -942,6 +951,41 @@ class RecommendationControllerTest : IntegrationTestBase() {
     assertNull(result[0].data.userEmailPartACompletedBy)
     assertNull(result[0].data.lastPartADownloadDateTime)
     assertThat(result[0].data.status, equalTo(Status.DRAFT))
+  }
+
+  @Test
+  fun `raises exception if document template not found`() {
+    oasysAssessmentsResponse(crn)
+    userAccessAllowed(crn)
+    userResponse("some_user", "test@digital.justice.gov.uk")
+    personalDetailsResponseOneTimeOnly(crn)
+    licenceConditionsResponse(crn, 2500614567)
+    personalDetailsResponseOneTimeOnly(crn)
+    deleteAndCreateRecommendation()
+    personalDetailsResponseOneTimeOnly(crn)
+    updateRecommendation(updateRecommendationRequest())
+    val variantKey = randomString()
+    mockPartATemplateVersionFlag(fliptApiClient, variantKey)
+
+    webTestClient.post()
+      .uri("/recommendations/$createdRecommendationId/part-a")
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        BodyInserters.fromValue(createPartARequest()),
+      )
+      .headers {
+        (
+          listOf(
+            it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")),
+          )
+          )
+      }
+      .exchange()
+      .expectStatus().is5xxServerError
+      .expectBody()
+      .jsonPath("$.status").isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value())
+      .jsonPath("$.userMessage").isEqualTo("Document template not found")
+      .jsonPath("$.developerMessage").isEqualTo("No Part A template version found for variant key: $variantKey")
   }
 
   @Test
