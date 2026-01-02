@@ -238,3 +238,6 @@ document-template:
 clean-up:
   recurrent:
     look-back-in-days: 21
+
+flipt:
+  default-flag-value: true
