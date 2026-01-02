@@ -63,6 +63,9 @@ generic-service:
       SPRING_DATA_REDIS_PASSWORD: "auth_token"
     make-recall-decision-api-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    pic-flipt:
+      FLIPT_URL: "URL"
+      FLIPT_TOKEN: "API_KEY"
 
   allowlist:
     north_shields_user: 194.33.192.1/24
