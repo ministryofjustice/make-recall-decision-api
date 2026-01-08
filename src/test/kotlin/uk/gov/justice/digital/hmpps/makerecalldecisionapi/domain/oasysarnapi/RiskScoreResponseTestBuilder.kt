@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDouble
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
@@ -28,7 +29,7 @@ fun assessmentScores(
 }
 
 fun assessmentScoresV1(
-  completedDate: String = randomLocalDateTime().toString(),
+  completedDate: String? = randomLocalDateTime().toString(),
   status: AssessmentStatus = randomEnum<AssessmentStatus>(),
   output: OutputV1 = outputV1(),
 ): AssessmentScoresV1 = AssessmentScoresV1(
@@ -53,9 +54,9 @@ fun outputV1(
 )
 
 fun groupReconvictionScore(
-  oneYear: Int = randomInt(),
-  twoYears: Int = randomInt(),
-  scoreLevel: FourLevelRiskScoreLevel = randomEnum<FourLevelRiskScoreLevel>(),
+  oneYear: Int? = randomInt(),
+  twoYears: Int? = randomInt(),
+  scoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GroupReconvictionScore = GroupReconvictionScore(
   oneYear,
   twoYears,
@@ -63,12 +64,12 @@ fun groupReconvictionScore(
 )
 
 fun violencePredictorScore(
-  ovpStaticWeightedScore: Int = randomInt(),
-  ovpDynamicWeightedScore: Int = randomInt(),
-  ovpTotalWeightedScore: Int = randomInt(),
-  oneYear: Int = randomInt(),
-  twoYears: Int = randomInt(),
-  ovpRisk: FourLevelRiskScoreLevel = randomEnum<FourLevelRiskScoreLevel>(),
+  ovpStaticWeightedScore: Double = randomDouble(),
+  ovpDynamicWeightedScore: Double = randomDouble(),
+  ovpTotalWeightedScore: Double = randomDouble(),
+  oneYear: Int? = randomInt(),
+  twoYears: Int? = randomInt(),
+  ovpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): ViolencePredictorScore = ViolencePredictorScore(
   ovpStaticWeightedScore,
   ovpDynamicWeightedScore,
@@ -79,12 +80,12 @@ fun violencePredictorScore(
 )
 
 fun generalPredictorScore(
-  ogpStaticWeightedScore: Int = randomInt(),
-  ogpDynamicWeightedScore: Int = randomInt(),
-  ogpTotalWeightedScore: Int = randomInt(),
-  ogp1Year: Int = randomInt(),
-  ogp2Year: Int = randomInt(),
-  ogpRisk: FourLevelRiskScoreLevel = randomEnum<FourLevelRiskScoreLevel>(),
+  ogpStaticWeightedScore: Double? = randomDouble(),
+  ogpDynamicWeightedScore: Double? = randomDouble(),
+  ogpTotalWeightedScore: Double? = randomDouble(),
+  ogp1Year: Int? = randomInt(),
+  ogp2Year: Int? = randomInt(),
+  ogpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GeneralPredictorScore = GeneralPredictorScore(
   ogpStaticWeightedScore,
   ogpDynamicWeightedScore,
@@ -95,22 +96,22 @@ fun generalPredictorScore(
 )
 
 fun riskOfSeriousRecidivismScore(
-  percentageScore: Int = randomInt(),
-  scoreLevel: ThreeLevelRiskScoreLevel = randomEnum<ThreeLevelRiskScoreLevel>(),
+  percentageScore: Double? = randomDouble(),
+  scoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
 ): RiskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
   percentageScore,
   scoreLevel,
 )
 
 fun sexualPredictorScore(
-  ospIndecentPercentageScore: Int = randomInt(),
-  ospContactPercentageScore: Int = randomInt(),
-  ospIndecentScoreLevel: ThreeLevelRiskScoreLevel = randomEnum<ThreeLevelRiskScoreLevel>(),
-  ospContactScoreLevel: FourLevelRiskScoreLevel = randomEnum<FourLevelRiskScoreLevel>(),
-  ospIndirectImagePercentageScore: Int = randomInt(),
-  ospDirectContactPercentageScore: Int = randomInt(),
-  ospIndirectImageScoreLevel: ThreeLevelRiskScoreLevel = randomEnum<ThreeLevelRiskScoreLevel>(),
-  ospDirectContactScoreLevel: FourLevelRiskScoreLevel = randomEnum<FourLevelRiskScoreLevel>(),
+  ospIndecentPercentageScore: Double? = randomDouble(),
+  ospContactPercentageScore: Double? = randomDouble(),
+  ospIndecentScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
+  ospContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
+  ospIndirectImagePercentageScore: Double? = randomDouble(),
+  ospDirectContactPercentageScore: Double? = randomDouble(),
+  ospIndirectImageScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
+  ospDirectContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): SexualPredictorScore = SexualPredictorScore(
   ospIndecentPercentageScore,
   ospContactPercentageScore,
@@ -150,7 +151,7 @@ fun outputV2(
 )
 
 fun predictor(
-  score: Int = randomInt(),
+  score: Double = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
 ): Predictor = Predictor(
   score,
@@ -158,7 +159,7 @@ fun predictor(
 )
 
 fun staticOrDynamicPredictor(
-  score: Int = randomInt(),
+  score: Double = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
 ): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
@@ -168,7 +169,7 @@ fun staticOrDynamicPredictor(
 )
 
 fun combinedPredictor(
-  score: Int = randomInt(),
+  score: Double = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
   algorithmVersion: String = randomString(),

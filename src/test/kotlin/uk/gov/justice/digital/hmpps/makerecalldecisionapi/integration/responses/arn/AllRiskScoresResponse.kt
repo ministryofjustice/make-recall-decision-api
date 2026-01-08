@@ -1,17 +1,16 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
-
 fun allRiskScoresResponse() = """
 [
 {
     "completedDate": "2021-06-16T11:40:54.243",
-    "assessmentStatus": "COMPLETE",
-    "groupReconvictionScore": {
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "${FourLevelRiskScoreLevel.HIGH}"
+      "scoreLevel": "LOW"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -19,45 +18,7 @@ fun allRiskScoresResponse() = """
       "ovpTotalWeightedScore": 0,
       "oneYear": 0,
       "twoYears": 0,
-      "ovpRisk": "${FourLevelRiskScoreLevel.HIGH}"
-    },
-    "generalPredictorScore": {
-      "ogpStaticWeightedScore": 0,
-      "ogpDynamicWeightedScore": 0,
-      "ogpTotalWeightedScore": 0,
-      "ogp1Year": 0,
-      "ogp2Year": 0,
-      "ogpRisk": "${FourLevelRiskScoreLevel.HIGH}"
-    },
-    "riskOfSeriousRecidivismScore": {
-      "percentageScore": 0,
-      "staticOrDynamic": "STATIC",
-      "source": "ASSESSMENTS_API",
-      "algorithmVersion": "string",
-      "scoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}"
-    },
-    "sexualPredictorScore": {
-      "ospIndecentPercentageScore": 0,
-      "ospContactPercentageScore": 0,
-      "ospIndecentScoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}",
-      "ospContactScoreLevel": "${FourLevelRiskScoreLevel.HIGH}"
-    }
-  },
-  {
-    "completedDate": "2022-04-16T11:40:54.243",
-    "assessmentStatus": "COMPLETE",
-    "groupReconvictionScore": {
-      "oneYear": 0,
-      "twoYears": 0,
-      "scoreLevel": "${FourLevelRiskScoreLevel.LOW}"
-    },
-    "violencePredictorScore": {
-      "ovpStaticWeightedScore": 0,
-      "ovpDynamicWeightedScore": 0,
-      "ovpTotalWeightedScore": 0,
-      "oneYear": 0,
-      "twoYears": 0,
-      "ovpRisk": "${FourLevelRiskScoreLevel.LOW}"
+      "ovpRisk": "LOW"
     },
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
@@ -65,20 +26,57 @@ fun allRiskScoresResponse() = """
       "ogpTotalWeightedScore": 12,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "${FourLevelRiskScoreLevel.LOW}"
+      "ogpRisk": "LOW"
     },
     "riskOfSeriousRecidivismScore": {
       "percentageScore": 23,
       "staticOrDynamic": "STATIC",
       "source": "ASSESSMENTS_API",
       "algorithmVersion": "string",
-      "scoreLevel": "${ThreeLevelRiskScoreLevel.HIGH}"
+      "scoreLevel": "HIGH"
     },
     "sexualPredictorScore": {
       "ospIndirectImagePercentageScore": 5,
       "ospDirectContactPercentageScore": 3.45,
-      "ospIndirectImageScoreLevel": "${ThreeLevelRiskScoreLevel.MEDIUM}",
-      "ospDirectContactScoreLevel": "${FourLevelRiskScoreLevel.LOW}"
+      "ospIndirectImageScoreLevel":	"MEDIUM",
+      "ospDirectContactScoreLevel":	"LOW"
+      }
+    }
+  },
+  {
+    "completedDate": "2020-04-16T11:40:54.243",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "allReoffendingPredictor": {
+        "score": 12.5,
+        "band": "MEDIUM",
+        "staticOrDynamic": "STATIC"
+      },
+      "violentReoffendingPredictor": {
+        "score": 8.0,
+        "band": "LOW",
+        "staticOrDynamic": "DYNAMIC"
+      },
+      "seriousViolentReoffendingPredictor": {
+        "score": 15.2,
+        "band": "HIGH",
+        "staticOrDynamic": "STATIC"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 6.3,
+        "band": "LOW"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 9.8,
+        "band": "MEDIUM"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "score": 18.7,
+        "band": "VERY_HIGH",
+        "staticOrDynamic": "DYNAMIC",
+        "algorithmVersion": "v2.1.0"
+      }
     }
   }
 ]

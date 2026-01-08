@@ -6,17 +6,22 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV1
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV2
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OutputV1
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OutputV2
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Predictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
@@ -27,6 +32,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskToSelfResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
@@ -133,77 +140,75 @@ class ArnApiClientTest : IntegrationTestBase() {
         outputVersion = "1",
         output = OutputV1(
           generalPredictorScore = GeneralPredictorScore(
-            ogpStaticWeightedScore = 0,
-            ogpDynamicWeightedScore = 0,
-            ogpTotalWeightedScore = 0,
-            ogpRisk = FourLevelRiskScoreLevel.HIGH,
-            ogp1Year = 0,
-            ogp2Year = 0,
-          ),
-          riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-            percentageScore = 0,
-            scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
-          ),
-          sexualPredictorScore = SexualPredictorScore(
-            ospIndecentPercentageScore = 0,
-            ospContactPercentageScore = 0,
-            ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.HIGH,
-            ospContactScoreLevel = FourLevelRiskScoreLevel.HIGH,
-            ospIndirectImagePercentageScore = 0, // null, // TODO are nulls allowed or not? Where they ever? presumably they
-            ospDirectContactPercentageScore = 0, // null, // were, as we're only meant to get either OSP/C & OSP/I or OSP/DC & OSP/II ones
-            ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM, // null,
-            ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW, // null,
-          ),
-          groupReconvictionScore = GroupReconvictionScore(
-            oneYear = 0,
-            twoYears = 0,
-            scoreLevel = FourLevelRiskScoreLevel.HIGH,
-          ),
-          violencePredictorScore = ViolencePredictorScore(
-            ovpStaticWeightedScore = 0,
-            ovpDynamicWeightedScore = 0,
-            ovpTotalWeightedScore = 0,
-            ovpRisk = FourLevelRiskScoreLevel.HIGH,
-            oneYear = 0,
-            twoYears = 0,
-          ),
-        ),
-      ),
-      AssessmentScoresV1(
-        completedDate = "2022-04-16T11:40:54.243",
-        status = AssessmentStatus.COMPLETE,
-        outputVersion = "1",
-        output = OutputV1(
-          generalPredictorScore = GeneralPredictorScore(
-            ogpStaticWeightedScore = 0,
-            ogpDynamicWeightedScore = 0,
-            ogpTotalWeightedScore = 12,
+            ogpStaticWeightedScore = 0.0,
+            ogpDynamicWeightedScore = 0.0,
+            ogpTotalWeightedScore = 12.0,
             ogpRisk = FourLevelRiskScoreLevel.LOW,
             ogp1Year = 0,
             ogp2Year = 0,
           ),
           riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
-            percentageScore = 23,
+            percentageScore = 23.0,
             scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
           ),
           sexualPredictorScore = SexualPredictorScore(
-            ospIndecentPercentageScore = 0, // null, // TODO are nulls allowed or not? Where they ever? presumably they
-            ospContactPercentageScore = 0, // null,  // were, as we're only meant to get either OSP/C & OSP/I or OSP/DC & OSP/II ones
-            ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM,
-            ospContactScoreLevel = FourLevelRiskScoreLevel.LOW,
-            ospIndirectImagePercentageScore = 5,
-            ospDirectContactPercentageScore = 3,
+            ospIndecentPercentageScore = null,
+            ospContactPercentageScore = null,
+            ospIndecentScoreLevel = null,
+            ospContactScoreLevel = null,
+            ospIndirectImagePercentageScore = 5.0,
+            ospDirectContactPercentageScore = 3.45,
             ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.MEDIUM,
             ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW,
           ),
-          groupReconvictionScore = GroupReconvictionScore(oneYear = 0, twoYears = 0, scoreLevel = FourLevelRiskScoreLevel.LOW),
+          groupReconvictionScore = GroupReconvictionScore(
+            oneYear = 0,
+            twoYears = 0,
+            scoreLevel = FourLevelRiskScoreLevel.LOW,
+          ),
           violencePredictorScore = ViolencePredictorScore(
-            ovpStaticWeightedScore = 0,
-            ovpDynamicWeightedScore = 0,
-            ovpTotalWeightedScore = 0,
+            ovpStaticWeightedScore = 0.0,
+            ovpDynamicWeightedScore = 0.0,
+            ovpTotalWeightedScore = 0.0,
             ovpRisk = FourLevelRiskScoreLevel.LOW,
             oneYear = 0,
             twoYears = 0,
+          ),
+        ),
+      ),
+      AssessmentScoresV2(
+        completedDate = "2020-04-16T11:40:54.243",
+        status = AssessmentStatus.COMPLETE,
+        outputVersion = "2",
+        output = OutputV2(
+          allReoffendingPredictor = StaticOrDynamicPredictor(
+            score = 12.5,
+            band = FourBandRiskScoreBand.MEDIUM,
+            staticOrDynamic = StaticOrDynamic.STATIC,
+          ),
+          violentReoffendingPredictor = StaticOrDynamicPredictor(
+            score = 8.0,
+            band = FourBandRiskScoreBand.LOW,
+            staticOrDynamic = StaticOrDynamic.DYNAMIC,
+          ),
+          seriousViolentReoffendingPredictor = StaticOrDynamicPredictor(
+            score = 15.2,
+            band = FourBandRiskScoreBand.HIGH,
+            staticOrDynamic = StaticOrDynamic.STATIC,
+          ),
+          directContactSexualReoffendingPredictor = Predictor(
+            score = 6.3,
+            band = FourBandRiskScoreBand.LOW,
+          ),
+          indirectImageContactSexualReoffendingPredictor = Predictor(
+            score = 9.8,
+            band = FourBandRiskScoreBand.MEDIUM,
+          ),
+          combinedSeriousReoffendingPredictor = CombinedPredictor(
+            score = 18.7,
+            band = FourBandRiskScoreBand.VERY_HIGH,
+            staticOrDynamic = StaticOrDynamic.DYNAMIC,
+            algorithmVersion = "v2.1.0",
           ),
         ),
       ),

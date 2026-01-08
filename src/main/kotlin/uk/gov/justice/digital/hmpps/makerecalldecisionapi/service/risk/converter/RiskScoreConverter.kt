@@ -7,7 +7,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV1
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
@@ -33,8 +34,8 @@ class RiskScoreConverter {
   /**
    * Convert a list of RiskScoreResponses to a PredictorScores object
    */
-  fun convert(riskScoreResponses: List<AssessmentScores>): PredictorScores {
-    val historicalScores = riskScoreResponses
+  fun convert(assessmentScores: List<AssessmentScores>): PredictorScores {
+    val historicalScores = assessmentScores
       .sortedByDescending { it.completedDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
     val latestScore = historicalScores.firstOrNull()
     return PredictorScores(
@@ -46,23 +47,27 @@ class RiskScoreConverter {
   /**
    * Convert a RiskScoreResponse to a PredictorScore object
    */
-  fun convert(riskScoreResponse: AssessmentScores): PredictorScore? {
-    val scores = createScores(riskScoreResponse)
-    return if (scores?.ogp == null &&
-      scores?.ogrs == null &&
-      scores?.ovp == null &&
-      scores?.rsr == null &&
-      scores?.ospc == null &&
-      scores?.ospi == null
-    ) {
-      null
-    } else {
-      PredictorScore(
-        date = convertDateTimeStringToDateString(riskScoreResponse.completedDate),
-        scores = scores,
-      )
-    }
+  fun convert(assessmentScores: AssessmentScores): PredictorScore? {
+    val scores = createScores(assessmentScores)
+    val date = convertDateTimeStringToDateString(assessmentScores.completedDate)
+
+    // V1 rule: all V1 fields empty → null
+    if (assessmentScores is AssessmentScoresV1 && scores?.isEmptyV1() == true) return null
+
+    if (scores == null && date == null) return null
+
+    return PredictorScore(
+      date = date,
+      scores = scores,
+    )
   }
+
+  private fun Scores.isEmptyV1(): Boolean = ogrs == null &&
+    ogp == null &&
+    ovp == null &&
+    rsr == null &&
+    ospc == null &&
+    ospi == null
 
   private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {
     LocalDateTime.parse(dateTime).toLocalDate().toString()
@@ -70,77 +75,133 @@ class RiskScoreConverter {
     null
   }
 
-  private fun createScores(riskScoreResponse: AssessmentScores): Scores? {
+  private fun createScores(assessmentScores: AssessmentScores): Scores? = when (assessmentScores) {
+    is AssessmentScoresV1 -> createScoresFromV1(assessmentScores)
+    is AssessmentScoresV2 -> createScoresFromV2(assessmentScores)
+  }
+
+  private fun createScoresFromV2(v2: AssessmentScoresV2): Scores? {
+    val o = v2.output ?: return null
+
+    return Scores(
+      // V1 fields
+      rsr = null,
+      ospc = null,
+      ospi = null,
+      ospdc = null,
+      ospiic = null,
+      ogrs = null,
+      ogp = null,
+      ovp = null,
+
+      // V2 fields
+      allReoffendingPredictor = o.allReoffendingPredictor,
+      violentReoffendingPredictor = o.violentReoffendingPredictor,
+      seriousViolentReoffendingPredictor = o.seriousViolentReoffendingPredictor,
+      directContactSexualReoffendingPredictor = o.directContactSexualReoffendingPredictor,
+      indirectImageContactSexualReoffendingPredictor = o.indirectImageContactSexualReoffendingPredictor,
+      combinedSeriousReoffendingPredictor = o.combinedSeriousReoffendingPredictor,
+    )
+  }
+
+  private fun createScoresFromV1(v1: AssessmentScoresV1): Scores? {
+    val output = v1.output ?: return null
+
+    val sexual = output.sexualPredictorScore
+    val ogr = output.groupReconvictionScore
+    val ogp = output.generalPredictorScore
+    val ovp = output.violencePredictorScore
+
     val ospdc = buildLevelWithScore(
-      riskScoreResponse.sexualPredictorScore?.ospDirectContactScoreLevel,
-      riskScoreResponse.sexualPredictorScore?.ospDirectContactPercentageScore,
+      sexual?.ospDirectContactScoreLevel?.name,
+      sexual?.ospDirectContactPercentageScore?.toString(),
       OSPDC.printName,
     )
+
     val ospiic = buildLevelWithScore(
-      riskScoreResponse.sexualPredictorScore?.ospIndirectImageScoreLevel,
-      riskScoreResponse.sexualPredictorScore?.ospIndirectImagePercentageScore,
+      sexual?.ospIndirectImageScoreLevel?.name,
+      sexual?.ospIndirectImagePercentageScore?.toString(),
       OSPIIC.printName,
     )
 
     val ospc =
-      if (ospdc != null) {
-        null
-      } else {
+      if (ospdc == null) {
         buildLevelWithScore(
-          riskScoreResponse.sexualPredictorScore?.ospContactScoreLevel,
-          riskScoreResponse.sexualPredictorScore?.ospContactPercentageScore,
+          sexual?.ospContactScoreLevel?.name,
+          sexual?.ospContactPercentageScore?.toString(),
           OSPC.printName,
         )
-      }
-    val ospi =
-      if (ospiic != null) {
-        null
       } else {
+        null
+      }
+
+    val ospi =
+      if (ospiic == null) {
         buildLevelWithScore(
-          riskScoreResponse.sexualPredictorScore?.ospIndecentScoreLevel,
-          riskScoreResponse.sexualPredictorScore?.ospIndecentPercentageScore,
+          sexual?.ospIndecentScoreLevel?.name,
+          sexual?.ospIndecentPercentageScore?.toString(),
           OSPI.printName,
         )
+      } else {
+        null
       }
 
     return Scores(
-      rsr = rsrLevelWithScore(riskScoreResponse),
+      rsr = rsrLevelWithScore(v1),
+
       ospc = ospc,
       ospi = ospi,
       ospdc = ospdc,
       ospiic = ospiic,
+
       ogrs = buildTwoYearScore(
-        riskScoreResponse.groupReconvictionScore?.scoreLevel,
-        riskScoreResponse.groupReconvictionScore?.oneYear,
-        riskScoreResponse.groupReconvictionScore?.twoYears,
+        ogr?.scoreLevel?.name,
+        ogr?.oneYear?.toString(),
+        ogr?.twoYears?.toString(),
         OGRS.printName,
       ),
+
       ogp = buildTwoYearScore(
-        riskScoreResponse.generalPredictorScore?.ogpRisk,
-        riskScoreResponse.generalPredictorScore?.ogp1Year,
-        riskScoreResponse.generalPredictorScore?.ogp2Year,
+        ogp?.ogpRisk?.name,
+        ogp?.ogp1Year?.toString(),
+        ogp?.ogp2Year?.toString(),
         OGP.printName,
       ),
+
       ovp = buildTwoYearScore(
-        riskScoreResponse.violencePredictorScore?.ovpRisk,
-        riskScoreResponse.violencePredictorScore?.oneYear,
-        riskScoreResponse.violencePredictorScore?.twoYears,
+        ovp?.ovpRisk?.name,
+        ovp?.oneYear?.toString(),
+        ovp?.twoYears?.toString(),
         OVP.printName,
       ),
+
+      // V2 fields
+      allReoffendingPredictor = null,
+      violentReoffendingPredictor = null,
+      seriousViolentReoffendingPredictor = null,
+      directContactSexualReoffendingPredictor = null,
+      indirectImageContactSexualReoffendingPredictor = null,
+      combinedSeriousReoffendingPredictor = null,
     )
   }
 
-  private fun rsrLevelWithScore(riskScoreResponse: AssessmentScores?): LevelWithScore? {
-    val rsrScore = riskScoreResponse?.riskOfSeriousRecidivismScore
-    return if (rsrScore?.scoreLevel == null && rsrScore?.percentageScore == null) {
-      null
-    } else {
-      LevelWithScore(
-        level = rsrScore.scoreLevel,
-        score = rsrScore.percentageScore,
-        type = RSR.printName,
-      )
+  private fun rsrLevelWithScore(
+    assessmentScores: AssessmentScores?,
+  ): LevelWithScore? {
+    val rsr = (assessmentScores as? AssessmentScoresV1)
+      ?.output
+      ?.riskOfSeriousRecidivismScore
+      ?: return null
+
+    if (rsr.scoreLevel == null && rsr.percentageScore == null) {
+      return null
     }
+
+    return LevelWithScore(
+      level = rsr.scoreLevel?.name,
+      score = rsr.percentageScore?.toString(),
+      type = RSR.printName,
+    )
   }
 
   private fun buildLevelWithScore(
@@ -149,8 +210,9 @@ class RiskScoreConverter {
     type: String?,
   ): LevelWithScore? {
     val scoreIsNull = level == null && percentageScore == null
+    // TODO: level can never be SCORE_NOT_APPLICABLE anymore ???
     val notApplicableWithZeroPercentScorePresent =
-      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0"
+      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0.0"
     val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
     return if (noScore) {
       null

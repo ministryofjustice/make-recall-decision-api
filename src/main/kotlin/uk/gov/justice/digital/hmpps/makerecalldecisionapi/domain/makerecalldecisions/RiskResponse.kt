@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Predictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import java.time.LocalDate
 
@@ -94,24 +97,6 @@ data class LevelWithTwoYearScores(
   val type: String?,
   val oneYear: String?,
   val twoYears: String?,
-)
-
-data class Predictor(
-  val score: Int,
-  val band: FourBandRiskScoreBand,
-)
-
-data class StaticOrDynamicPredictor(
-  val score: Int,
-  val band: FourBandRiskScoreBand,
-  val staticOrDynamic: StaticOrDynamic,
-)
-
-data class CombinedPredictor(
-  val score: Int,
-  val band: FourBandRiskScoreBand,
-  val staticOrDynamic: StaticOrDynamic,
-  val algorithmVersion: String,
 )
 
 enum class StaticOrDynamic {
