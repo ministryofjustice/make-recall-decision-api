@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 //      https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/5962203966/OGRS4+ARNS+API+Change+Specification#Kotlin-%26-Jackson-Polymorphic-Parsing-Example
 //      but it's unclear if the types are OK this way or if some of them are nullable or what. Our existing code
 //      (corresponding to OutputV1, basically) had everything as nullable and handled things accordingly. It also
-//      defined some values as doubles where the example uses ints. We need to hear back from the ARNS team on this
+//      defined some values as doubles where the example uses Doubles. We need to hear back from the ARNS team on this
 
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
@@ -54,25 +54,25 @@ data class GroupReconvictionScore(
 )
 
 data class ViolencePredictorScore(
-  val ovpStaticWeightedScore: Int?,
-  val ovpDynamicWeightedScore: Int?,
-  val ovpTotalWeightedScore: Int?,
+  val ovpStaticWeightedScore: Double?,
+  val ovpDynamicWeightedScore: Double?,
+  val ovpTotalWeightedScore: Double?,
   val oneYear: Int?,
   val twoYears: Int?,
   val ovpRisk: FourLevelRiskScoreLevel?,
 )
 
 data class GeneralPredictorScore(
-  val ogpStaticWeightedScore: Int?,
-  val ogpDynamicWeightedScore: Int?,
-  val ogpTotalWeightedScore: Int?,
+  val ogpStaticWeightedScore: Double?,
+  val ogpDynamicWeightedScore: Double?,
+  val ogpTotalWeightedScore: Double?,
   val ogp1Year: Int?,
   val ogp2Year: Int?,
   val ogpRisk: FourLevelRiskScoreLevel?,
 )
 
 data class RiskOfSeriousRecidivismScore(
-  val percentageScore: Int?,
+  val percentageScore: Double?,
   // The 3 fields commented out below weren't there before these changes. Probably
   // OK to leave them out, since we don't seem to be using them anywhere (should we?)
 //  val staticOrDynamic: StaticOrDynamic,
@@ -82,12 +82,12 @@ data class RiskOfSeriousRecidivismScore(
 )
 
 data class SexualPredictorScore(
-  val ospIndecentPercentageScore: Int?,
-  val ospContactPercentageScore: Int?,
+  val ospIndecentPercentageScore: Double?,
+  val ospContactPercentageScore: Double?,
   val ospIndecentScoreLevel: ThreeLevelRiskScoreLevel?,
   val ospContactScoreLevel: FourLevelRiskScoreLevel?,
-  val ospIndirectImagePercentageScore: Int?,
-  val ospDirectContactPercentageScore: Int?,
+  val ospIndirectImagePercentageScore: Double?,
+  val ospDirectContactPercentageScore: Double?,
   val ospIndirectImageScoreLevel: ThreeLevelRiskScoreLevel?,
   val ospDirectContactScoreLevel: FourLevelRiskScoreLevel?,
 )
@@ -102,18 +102,18 @@ data class OutputV2(
 )
 
 data class Predictor(
-  val score: Int?,
+  val score: Double?,
   val band: FourBandRiskScoreBand?,
 )
 
 data class StaticOrDynamicPredictor(
-  val score: Int?,
+  val score: Double?,
   val band: FourBandRiskScoreBand?,
   val staticOrDynamic: StaticOrDynamic?,
 )
 
 data class CombinedPredictor(
-  val score: Int?,
+  val score: Double?,
   val band: FourBandRiskScoreBand?,
   val staticOrDynamic: StaticOrDynamic?,
   val algorithmVersion: String?,
