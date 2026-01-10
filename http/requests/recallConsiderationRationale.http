@@ -1,0 +1,3 @@
+### Provides recall consideration rationale for Delius
+GET {{host}}/recallConsiderationRationale/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}

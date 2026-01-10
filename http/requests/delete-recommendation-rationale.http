@@ -1,0 +1,3 @@
+### Provides notes on rationale for deleting recommendation for Delius
+GET {{host}}/delete-recommendation-rationale/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}
