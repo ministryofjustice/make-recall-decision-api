@@ -427,7 +427,7 @@ internal class RiskServiceTest : ServiceTestBase() {
         date = "2018-09-12",
         scores = Scores(
           rsr = LevelWithScore(
-            score = "10",
+            score = 10.0,
             level = ThreeLevelRiskScoreLevel.MEDIUM.toString(),
             type = RSR.printName,
           ),

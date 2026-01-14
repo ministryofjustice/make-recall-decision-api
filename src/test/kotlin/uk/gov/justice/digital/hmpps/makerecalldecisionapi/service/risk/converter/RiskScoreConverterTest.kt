@@ -315,7 +315,7 @@ class RiskScoreConverterTest {
         rsr = LevelWithScore(
           level = riskOfSeriousRecidivismScore?.scoreLevel.toString(),
           type = RSR.printName,
-          score = riskOfSeriousRecidivismScore?.percentageScore.toString(),
+          score = riskOfSeriousRecidivismScore?.percentageScore,
         ),
         ospc = ospc,
         ospi = ospi,

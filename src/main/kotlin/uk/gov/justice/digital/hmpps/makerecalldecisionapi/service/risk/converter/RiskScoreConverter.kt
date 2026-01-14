@@ -121,13 +121,13 @@ class RiskScoreConverter {
 
     val ospdc = buildLevelWithScore(
       sexual?.ospDirectContactScoreLevel?.name,
-      sexual?.ospDirectContactPercentageScore?.toString(),
+      sexual?.ospDirectContactPercentageScore,
       OSPDC.printName,
     )
 
     val ospiic = buildLevelWithScore(
       sexual?.ospIndirectImageScoreLevel?.name,
-      sexual?.ospIndirectImagePercentageScore?.toString(),
+      sexual?.ospIndirectImagePercentageScore,
       OSPIIC.printName,
     )
 
@@ -135,7 +135,7 @@ class RiskScoreConverter {
       if (ospdc == null) {
         buildLevelWithScore(
           sexual?.ospContactScoreLevel?.name,
-          sexual?.ospContactPercentageScore?.toString(),
+          sexual?.ospContactPercentageScore,
           OSPC.printName,
         )
       } else {
@@ -146,7 +146,7 @@ class RiskScoreConverter {
       if (ospiic == null) {
         buildLevelWithScore(
           sexual?.ospIndecentScoreLevel?.name,
-          sexual?.ospIndecentPercentageScore?.toString(),
+          sexual?.ospIndecentPercentageScore,
           OSPI.printName,
         )
       } else {
@@ -206,20 +206,20 @@ class RiskScoreConverter {
 
     return LevelWithScore(
       level = rsr.scoreLevel?.name,
-      score = rsr.percentageScore?.toString(),
+      score = rsr.percentageScore,
       type = RSR.printName,
     )
   }
 
   private fun buildLevelWithScore(
     level: String?,
-    percentageScore: String?,
+    percentageScore: Double?,
     type: String?,
   ): LevelWithScore? {
     val scoreIsNull = level == null && percentageScore == null
     // TODO: level can never be SCORE_NOT_APPLICABLE anymore ???
     val notApplicableWithZeroPercentScorePresent =
-      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == "0.0"
+      level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == 0.0
     val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
     return if (noScore) {
       null

@@ -86,7 +86,7 @@ data class Scores(
 data class LevelWithScore(
   val level: String?,
   val type: String?,
-  val score: String?,
+  val score: Double?,
 )
 
 data class LevelWithTwoYearScores(
