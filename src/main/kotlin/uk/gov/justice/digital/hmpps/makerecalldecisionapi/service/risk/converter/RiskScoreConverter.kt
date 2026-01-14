@@ -46,16 +46,14 @@ class RiskScoreConverter {
    * Convert a RiskScoreResponse to a PredictorScore object
    */
   fun convert(assessmentScores: AssessmentScores): PredictorScore? {
-    val scores = createScores(assessmentScores)
-    val date = convertDateTimeStringToDateString(assessmentScores.completedDate)
+    val scores = createScores(assessmentScores) ?: return null
 
-    // V1 rule: all V1 fields empty → null
     if (assessmentScores is AssessmentScoresV1 && allV1FieldsAreNull(scores)) return null
 
-    if (scores == null && date == null) return null
+    if (assessmentScores is AssessmentScoresV2 && allV2FieldsAreNull(scores)) return null
 
     return PredictorScore(
-      date = date,
+      date = convertDateTimeStringToDateString(assessmentScores.completedDate),
       scores = scores,
     )
   }
@@ -67,6 +65,15 @@ class RiskScoreConverter {
     scores?.rsr,
     scores?.ospc,
     scores?.ospi,
+  ).all { it == null }
+
+  private fun allV2FieldsAreNull(scores: Scores?): Boolean = listOf(
+    scores?.allReoffendingPredictor,
+    scores?.violentReoffendingPredictor,
+    scores?.seriousViolentReoffendingPredictor,
+    scores?.directContactSexualReoffendingPredictor,
+    scores?.indirectImageContactSexualReoffendingPredictor,
+    scores?.combinedSeriousReoffendingPredictor,
   ).all { it == null }
 
   private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {

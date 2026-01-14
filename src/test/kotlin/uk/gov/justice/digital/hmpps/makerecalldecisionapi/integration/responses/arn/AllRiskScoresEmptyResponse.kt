@@ -15,15 +15,16 @@ fun allRiskScoresEmptyResponse() = """
     }
   },
    {
-    "completedDate": "2020-06-16T11:40:54.243",
+    "completedDate": "2020-06-17T11:40:54.243",
     "status": "COMPLETE",
-    "outputVersion": "1",
+    "outputVersion": "2",
     "output": {
-      "groupReconvictionScore": null,
-      "violencePredictorScore": null,
-      "generalPredictorScore": null,
-      "riskOfSeriousRecidivismScore": null,
-      "sexualPredictorScore": null
+      "allReoffendingPredictor": null,
+      "violentReoffendingPredictor": null,
+      "seriousViolentReoffendingPredictor": null,
+      "directContactSexualReoffendingPredictor": null,
+      "indirectImageContactSexualReoffendingPredictor": null,
+      "combinedSeriousReoffendingPredictor": null
     }
   }
 ]
