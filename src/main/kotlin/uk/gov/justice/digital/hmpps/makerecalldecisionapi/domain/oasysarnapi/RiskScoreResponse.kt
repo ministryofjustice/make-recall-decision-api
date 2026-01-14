@@ -3,12 +3,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
-// TODO this is based on the JSON deserialisation example given in
-//      https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/5962203966/OGRS4+ARNS+API+Change+Specification#Kotlin-%26-Jackson-Polymorphic-Parsing-Example
-//      but it's unclear if the types are OK this way or if some of them are nullable or what. Our existing code
-//      (corresponding to OutputV1, basically) had everything as nullable and handled things accordingly. It also
-//      defined some values as doubles where the example uses Doubles. We need to hear back from the ARNS team on this
-
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
   include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -96,14 +90,9 @@ data class OutputV2(
   val allReoffendingPredictor: StaticOrDynamicPredictor?,
   val violentReoffendingPredictor: StaticOrDynamicPredictor?,
   val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
-  val directContactSexualReoffendingPredictor: Predictor?,
-  val indirectImageContactSexualReoffendingPredictor: Predictor?,
+  val directContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
+  val indirectImageContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
   val combinedSeriousReoffendingPredictor: CombinedPredictor?,
-)
-
-data class Predictor(
-  val score: Double?,
-  val band: FourBandRiskScoreBand?,
 )
 
 data class StaticOrDynamicPredictor(

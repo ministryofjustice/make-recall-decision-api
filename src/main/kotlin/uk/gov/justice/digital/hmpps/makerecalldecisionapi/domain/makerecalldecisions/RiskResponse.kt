@@ -6,7 +6,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Us
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Predictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import java.time.LocalDate
@@ -51,8 +50,6 @@ data class PredictorScores(
   val historical: List<PredictorScore?>?,
 )
 
-// TODO what do we want this to look like? All the fields within Scores?
-//      Two fields, scoresV1 and scoresV2? Something else?
 data class PredictorScore(
   val date: String?,
   val scores: Scores?,
@@ -81,8 +78,8 @@ data class Scores(
   val allReoffendingPredictor: StaticOrDynamicPredictor?,
   val violentReoffendingPredictor: StaticOrDynamicPredictor?,
   val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
-  val directContactSexualReoffendingPredictor: Predictor?,
-  val indirectImageContactSexualReoffendingPredictor: Predictor?,
+  val directContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
+  val indirectImageContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
   val combinedSeriousReoffendingPredictor: CombinedPredictor?,
 )
 
@@ -98,18 +95,6 @@ data class LevelWithTwoYearScores(
   val oneYear: String?,
   val twoYears: String?,
 )
-
-enum class StaticOrDynamic {
-  STATIC,
-  DYNAMIC,
-}
-
-enum class FourBandRiskScoreBand {
-  LOW,
-  MEDIUM,
-  HIGH,
-  VERY_HIGH,
-}
 
 data class RoshSummary(
   val natureOfRisk: String? = null,

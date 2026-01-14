@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Predictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
@@ -402,17 +401,19 @@ class RiskScoreConverterTest {
 
         directContactSexualReoffendingPredictor =
         output?.directContactSexualReoffendingPredictor?.let {
-          Predictor(
-            score = it.score ?: 0.0,
-            band = it.band ?: FourBandRiskScoreBand.LOW,
+          StaticOrDynamicPredictor(
+            score = it.score,
+            band = it.band,
+            staticOrDynamic = it.staticOrDynamic,
           )
         },
 
         indirectImageContactSexualReoffendingPredictor =
         output?.indirectImageContactSexualReoffendingPredictor?.let {
-          Predictor(
-            score = it.score ?: 0.0,
-            band = it.band ?: FourBandRiskScoreBand.LOW,
+          StaticOrDynamicPredictor(
+            score = it.score,
+            band = it.band,
+            staticOrDynamic = it.staticOrDynamic,
           )
         },
 

@@ -138,8 +138,8 @@ fun outputV2(
   allReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
   violentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
   seriousViolentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
-  directContactSexualReoffendingPredictor: Predictor = predictor(),
-  indirectImageContactSexualReoffendingPredictor: Predictor = predictor(),
+  directContactSexualReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  indirectImageContactSexualReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
   combinedSeriousReoffendingPredictor: CombinedPredictor = combinedPredictor(),
 ): OutputV2 = OutputV2(
   allReoffendingPredictor,
@@ -148,14 +148,6 @@ fun outputV2(
   directContactSexualReoffendingPredictor,
   indirectImageContactSexualReoffendingPredictor,
   combinedSeriousReoffendingPredictor,
-)
-
-fun predictor(
-  score: Double = randomDouble(),
-  band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
-): Predictor = Predictor(
-  score,
-  band,
 )
 
 fun staticOrDynamicPredictor(

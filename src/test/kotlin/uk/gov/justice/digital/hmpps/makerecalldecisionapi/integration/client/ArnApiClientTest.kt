@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Gro
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OutputV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OutputV2
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Predictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskOfSeriousRecidivismScore
@@ -196,13 +195,15 @@ class ArnApiClientTest : IntegrationTestBase() {
             band = FourBandRiskScoreBand.HIGH,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          directContactSexualReoffendingPredictor = Predictor(
+          directContactSexualReoffendingPredictor = StaticOrDynamicPredictor(
             score = 6.3,
             band = FourBandRiskScoreBand.LOW,
+            StaticOrDynamic.STATIC,
           ),
-          indirectImageContactSexualReoffendingPredictor = Predictor(
+          indirectImageContactSexualReoffendingPredictor = StaticOrDynamicPredictor(
             score = 9.8,
             band = FourBandRiskScoreBand.MEDIUM,
+            StaticOrDynamic.STATIC,
           ),
           combinedSeriousReoffendingPredictor = CombinedPredictor(
             score = 18.7,

@@ -65,11 +65,13 @@ fun allRiskScoresResponse() = """
       },
       "directContactSexualReoffendingPredictor": {
         "score": 6.3,
-        "band": "LOW"
+        "band": "LOW",
+        "staticOrDynamic": "STATIC"
       },
       "indirectImageContactSexualReoffendingPredictor": {
         "score": 9.8,
-        "band": "MEDIUM"
+        "band": "MEDIUM",
+        "staticOrDynamic": "STATIC"
       },
       "combinedSeriousReoffendingPredictor": {
         "score": 18.7,
