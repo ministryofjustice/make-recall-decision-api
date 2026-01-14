@@ -42,8 +42,8 @@ data class OutputV1(
 )
 
 data class GroupReconvictionScore(
-  val oneYear: Int?,
-  val twoYears: Int?,
+  val oneYear: Double?,
+  val twoYears: Double?,
   val scoreLevel: FourLevelRiskScoreLevel?,
 )
 
@@ -51,8 +51,8 @@ data class ViolencePredictorScore(
   val ovpStaticWeightedScore: Double?,
   val ovpDynamicWeightedScore: Double?,
   val ovpTotalWeightedScore: Double?,
-  val oneYear: Int?,
-  val twoYears: Int?,
+  val oneYear: Double?,
+  val twoYears: Double?,
   val ovpRisk: FourLevelRiskScoreLevel?,
 )
 
@@ -60,8 +60,8 @@ data class GeneralPredictorScore(
   val ogpStaticWeightedScore: Double?,
   val ogpDynamicWeightedScore: Double?,
   val ogpTotalWeightedScore: Double?,
-  val ogp1Year: Int?,
-  val ogp2Year: Int?,
+  val ogp1Year: Double?,
+  val ogp2Year: Double?,
   val ogpRisk: FourLevelRiskScoreLevel?,
 )
 

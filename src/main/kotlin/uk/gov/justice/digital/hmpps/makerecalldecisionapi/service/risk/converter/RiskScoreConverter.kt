@@ -21,8 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 import java.time.LocalDateTime
 
-// TODO see (and answer) questions in RIskScoreResponse.kt and RiskResponse.kt before changing this class
-
 @Service
 class RiskScoreConverter {
 
@@ -52,7 +50,7 @@ class RiskScoreConverter {
     val date = convertDateTimeStringToDateString(assessmentScores.completedDate)
 
     // V1 rule: all V1 fields empty → null
-    if (assessmentScores is AssessmentScoresV1 && scores?.isEmptyV1() == true) return null
+    if (assessmentScores is AssessmentScoresV1 && allV1FieldsAreNull(scores)) return null
 
     if (scores == null && date == null) return null
 
@@ -62,12 +60,14 @@ class RiskScoreConverter {
     )
   }
 
-  private fun Scores.isEmptyV1(): Boolean = ogrs == null &&
-    ogp == null &&
-    ovp == null &&
-    rsr == null &&
-    ospc == null &&
-    ospi == null
+  private fun allV1FieldsAreNull(scores: Scores?): Boolean = listOf(
+    scores?.ogrs,
+    scores?.ogp,
+    scores?.ovp,
+    scores?.rsr,
+    scores?.ospc,
+    scores?.ospi,
+  ).all { it == null }
 
   private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {
     LocalDateTime.parse(dateTime).toLocalDate().toString()
@@ -81,7 +81,7 @@ class RiskScoreConverter {
   }
 
   private fun createScoresFromV2(v2: AssessmentScoresV2): Scores? {
-    val o = v2.output ?: return null
+    val outputV2 = v2.output ?: return null
 
     return Scores(
       // V1 fields
@@ -95,12 +95,12 @@ class RiskScoreConverter {
       ovp = null,
 
       // V2 fields
-      allReoffendingPredictor = o.allReoffendingPredictor,
-      violentReoffendingPredictor = o.violentReoffendingPredictor,
-      seriousViolentReoffendingPredictor = o.seriousViolentReoffendingPredictor,
-      directContactSexualReoffendingPredictor = o.directContactSexualReoffendingPredictor,
-      indirectImageContactSexualReoffendingPredictor = o.indirectImageContactSexualReoffendingPredictor,
-      combinedSeriousReoffendingPredictor = o.combinedSeriousReoffendingPredictor,
+      allReoffendingPredictor = outputV2.allReoffendingPredictor,
+      violentReoffendingPredictor = outputV2.violentReoffendingPredictor,
+      seriousViolentReoffendingPredictor = outputV2.seriousViolentReoffendingPredictor,
+      directContactSexualReoffendingPredictor = outputV2.directContactSexualReoffendingPredictor,
+      indirectImageContactSexualReoffendingPredictor = outputV2.indirectImageContactSexualReoffendingPredictor,
+      combinedSeriousReoffendingPredictor = outputV2.combinedSeriousReoffendingPredictor,
     )
   }
 
@@ -186,9 +186,9 @@ class RiskScoreConverter {
   }
 
   private fun rsrLevelWithScore(
-    assessmentScores: AssessmentScores?,
+    assessmentScores: AssessmentScoresV1?,
   ): LevelWithScore? {
-    val rsr = (assessmentScores as? AssessmentScoresV1)
+    val rsr = assessmentScores
       ?.output
       ?.riskOfSeriousRecidivismScore
       ?: return null

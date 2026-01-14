@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDouble
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
@@ -54,8 +53,8 @@ fun outputV1(
 )
 
 fun groupReconvictionScore(
-  oneYear: Int? = randomInt(),
-  twoYears: Int? = randomInt(),
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
   scoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GroupReconvictionScore = GroupReconvictionScore(
   oneYear,
@@ -67,8 +66,8 @@ fun violencePredictorScore(
   ovpStaticWeightedScore: Double = randomDouble(),
   ovpDynamicWeightedScore: Double = randomDouble(),
   ovpTotalWeightedScore: Double = randomDouble(),
-  oneYear: Int? = randomInt(),
-  twoYears: Int? = randomInt(),
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
   ovpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): ViolencePredictorScore = ViolencePredictorScore(
   ovpStaticWeightedScore,
@@ -83,8 +82,8 @@ fun generalPredictorScore(
   ogpStaticWeightedScore: Double? = randomDouble(),
   ogpDynamicWeightedScore: Double? = randomDouble(),
   ogpTotalWeightedScore: Double? = randomDouble(),
-  ogp1Year: Int? = randomInt(),
-  ogp2Year: Int? = randomInt(),
+  ogp1Year: Double? = randomDouble(),
+  ogp2Year: Double? = randomDouble(),
   ogpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GeneralPredictorScore = GeneralPredictorScore(
   ogpStaticWeightedScore,

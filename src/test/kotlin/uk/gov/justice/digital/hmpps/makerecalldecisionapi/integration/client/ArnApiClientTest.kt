@@ -143,8 +143,8 @@ class ArnApiClientTest : IntegrationTestBase() {
             ogpDynamicWeightedScore = 0.0,
             ogpTotalWeightedScore = 12.0,
             ogpRisk = FourLevelRiskScoreLevel.LOW,
-            ogp1Year = 0,
-            ogp2Year = 0,
+            ogp1Year = 0.0,
+            ogp2Year = 0.0,
           ),
           riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
             percentageScore = 23.0,
@@ -161,8 +161,8 @@ class ArnApiClientTest : IntegrationTestBase() {
             ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW,
           ),
           groupReconvictionScore = GroupReconvictionScore(
-            oneYear = 0,
-            twoYears = 0,
+            oneYear = 0.0,
+            twoYears = 0.0,
             scoreLevel = FourLevelRiskScoreLevel.LOW,
           ),
           violencePredictorScore = ViolencePredictorScore(
@@ -170,8 +170,8 @@ class ArnApiClientTest : IntegrationTestBase() {
             ovpDynamicWeightedScore = 0.0,
             ovpTotalWeightedScore = 0.0,
             ovpRisk = FourLevelRiskScoreLevel.LOW,
-            oneYear = 0,
-            twoYears = 0,
+            oneYear = 0.0,
+            twoYears = 0.0,
           ),
         ),
       ),
