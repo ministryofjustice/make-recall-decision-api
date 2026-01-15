@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
@@ -22,7 +21,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScoresV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.generalPredictorScore
@@ -118,12 +116,12 @@ class RiskScoreConverterTest {
         sexualPredictorScore = sexualPredictorScore(
           ospIndecentPercentageScore = 0.0,
           ospContactPercentageScore = 0.0,
-          ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.LOW,
-          ospContactScoreLevel = FourLevelRiskScoreLevel.LOW,
+          ospIndecentScoreLevel = null,
+          ospContactScoreLevel = null,
           ospDirectContactPercentageScore = 0.0,
-          ospDirectContactScoreLevel = FourLevelRiskScoreLevel.LOW,
+          ospDirectContactScoreLevel = null,
           ospIndirectImagePercentageScore = 0.0,
-          ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.LOW,
+          ospIndirectImageScoreLevel = null,
         ),
       ),
     )
