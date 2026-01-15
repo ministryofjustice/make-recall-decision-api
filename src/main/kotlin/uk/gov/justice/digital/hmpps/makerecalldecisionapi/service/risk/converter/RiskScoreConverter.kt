@@ -65,6 +65,8 @@ class RiskScoreConverter {
     scores?.rsr,
     scores?.ospc,
     scores?.ospi,
+    scores?.ospdc,
+    scores?.ospiic,
   ).all { it == null }
 
   private fun allV2FieldsAreNull(scores: Scores?): Boolean = listOf(

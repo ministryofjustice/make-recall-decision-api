@@ -6,13 +6,18 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -298,23 +303,25 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.OGRS").doesNotExist()
         // V2 fields
         .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.score").isEqualTo(12.5)
-        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.band").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.MEDIUM)
+        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.score").isEqualTo(8.0)
-        .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.band").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.staticOrDynamic").isEqualTo("DYNAMIC")
+        .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
+        .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.score").isEqualTo(15.2)
-        .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.band").isEqualTo("HIGH")
-        .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.HIGH)
+        .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.score").isEqualTo(6.3)
-        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.band").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
+        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
-        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
+          ThreeBandRiskScoreBand.MEDIUM,
+        )
+        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
-        .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.band").isEqualTo("VERY_HIGH")
-        .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo("DYNAMIC")
+        .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.VERY_HIGH)
+        .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.algorithmVersion").isEqualTo("v2.1.0")
         // Historic[0] should be same as current (2023-06-16)
         .jsonPath("$.predictorScores.historical[0].date").isEqualTo("2023-06-16")
@@ -329,70 +336,90 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OGRS").doesNotExist()
         // V2 fields
         .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.score").isEqualTo(12.5)
-        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.band").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.MEDIUM)
+        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.staticOrDynamic").isEqualTo(
+          StaticOrDynamic.STATIC,
+        )
         .jsonPath("$.predictorScores.historical[0].scores.violentReoffendingPredictor.score").isEqualTo(8.0)
-        .jsonPath("$.predictorScores.historical[0].scores.violentReoffendingPredictor.band").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.violentReoffendingPredictor.staticOrDynamic").isEqualTo("DYNAMIC")
+        .jsonPath("$.predictorScores.historical[0].scores.violentReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
+        .jsonPath("$.predictorScores.historical[0].scores.violentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.score").isEqualTo(15.2)
-        .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.band").isEqualTo("HIGH")
-        .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.HIGH)
+        .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.score").isEqualTo(6.3)
-        .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.band").isEqualTo("LOW")
-        .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
+        .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
-        .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo("MEDIUM")
-        .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo("STATIC")
+        .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
+          ThreeBandRiskScoreBand.MEDIUM,
+        )
+        .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
-        .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.band").isEqualTo("VERY_HIGH")
-        .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo("DYNAMIC")
+        .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.band").isEqualTo(
+          FourBandRiskScoreBand.VERY_HIGH,
+        )
+        .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.algorithmVersion").isEqualTo("v2.1.0")
-        // Historic[1] should ve V1 with 2022-06-16
+        // Historic[1] should be V1 with 2022-06-16
         .jsonPath("$.predictorScores.historical[1].date").isEqualTo("2022-06-16")
         .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo(RSR.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
         .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(23.0)
         .jsonPath("$.predictorScores.historical[1].scores.OGP.type").isEqualTo(OGP.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OGP.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OGP.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[1].scores.OGP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OGP.twoYears").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OVP.type").isEqualTo(OVP.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OVP.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OVP.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[1].scores.OVP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OVP.twoYears").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OSPDC.type").isEqualTo(OSPDC.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OSPDC.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OSPDC.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[1].scores.OSPIIC.type").isEqualTo(OSPIIC.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OSPIIC.level").isEqualTo(ThreeLevelRiskScoreLevel.MEDIUM.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OSPIIC.level").isEqualTo(ThreeLevelRiskScoreLevel.MEDIUM)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo(OGRS.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.twoYears").isEqualTo(0.0)
         // V2 fields must NOT exist
         .jsonPath("$.predictorScores.historical[1].scores.allReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.violentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.seriousViolentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.directContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
         .jsonPath("$.predictorScores.historical[1].scores.combinedSeriousReoffendingPredictor").doesNotExist()
         // Historic[2] should ve V1 with 2021-06-16
         .jsonPath("$.predictorScores.historical[2].date").isEqualTo("2021-06-16")
         .jsonPath("$.predictorScores.historical[2].scores.RSR.type").isEqualTo(RSR.printName)
-        .jsonPath("$.predictorScores.historical[2].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH.toString())
+        .jsonPath("$.predictorScores.historical[2].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
         .jsonPath("$.predictorScores.historical[2].scores.RSR.score").isEqualTo(23.0)
         .jsonPath("$.predictorScores.historical[2].scores.OGP.type").isEqualTo(OGP.printName)
-        .jsonPath("$.predictorScores.historical[2].scores.OGP.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[2].scores.OGP.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[2].scores.OGP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[2].scores.OGP.twoYears").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[2].scores.OVP.type").isEqualTo(OVP.printName)
-        .jsonPath("$.predictorScores.historical[2].scores.OVP.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[2].scores.OVP.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[2].scores.OVP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[2].scores.OVP.twoYears").isEqualTo(0.0)
-        .jsonPath("$.predictorScores.historical[2].scores.OSPDC").doesNotExist()
-        .jsonPath("$.predictorScores.historical[2].scores.OSPIIC").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.OSPI.type").isEqualTo(OSPI.printName)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPI.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPI.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPC.type").isEqualTo(OSPC.printName)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPC.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPC.score").isEqualTo(null)
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.type").isEqualTo(OGRS.printName)
-        .jsonPath("$.predictorScores.historical[2].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
+        .jsonPath("$.predictorScores.historical[2].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.twoYears").isEqualTo(0.0)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPDC").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.OSPIIC").doesNotExist()
         // V2 fields must NOT exist
-        .jsonPath("$.predictorScores.historical[2].scores.allReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[2].scores.combinedSeriousReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.allReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.violentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.seriousViolentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.directContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.combinedSeriousReoffendingPredictor").doesNotExist()
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")

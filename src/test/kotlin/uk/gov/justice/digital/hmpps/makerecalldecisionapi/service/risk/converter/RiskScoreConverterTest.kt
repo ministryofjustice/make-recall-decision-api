@@ -93,6 +93,10 @@ class RiskScoreConverterTest {
     val riskScoreResponse = riskScore.copy(
       output = riskScore.output?.copy(
         sexualPredictorScore = sexualPredictorScore(
+          ospDirectContactScoreLevel = null,
+          ospDirectContactPercentageScore = null,
+          ospIndirectImageScoreLevel = null,
+          ospIndirectImagePercentageScore = null,
           ospContactPercentageScore = 0.0,
           ospContactScoreLevel = FourLevelRiskScoreLevel.NOT_APPLICABLE,
           ospIndecentPercentageScore = 0.0,
