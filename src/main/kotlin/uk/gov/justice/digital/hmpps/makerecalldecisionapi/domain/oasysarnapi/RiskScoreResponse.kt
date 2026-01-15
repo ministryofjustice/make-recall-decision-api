@@ -123,12 +123,14 @@ enum class FourLevelRiskScoreLevel {
   MEDIUM,
   HIGH,
   VERY_HIGH,
+  NOT_APPLICABLE,
 }
 
 enum class ThreeLevelRiskScoreLevel {
   LOW,
   MEDIUM,
   HIGH,
+  NOT_APPLICABLE,
 }
 
 enum class FourBandRiskScoreBand {

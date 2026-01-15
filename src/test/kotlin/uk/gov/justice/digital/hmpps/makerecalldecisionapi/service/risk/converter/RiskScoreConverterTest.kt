@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScoresV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.generalPredictorScore
@@ -90,14 +92,10 @@ class RiskScoreConverterTest {
     val riskScoreResponse = riskScore.copy(
       output = riskScore.output?.copy(
         sexualPredictorScore = sexualPredictorScore(
-          ospIndecentPercentageScore = 0.0,
           ospContactPercentageScore = 0.0,
-          ospIndecentScoreLevel = null,
-          ospContactScoreLevel = null,
-          ospDirectContactPercentageScore = 0.0,
-          ospDirectContactScoreLevel = null,
-          ospIndirectImagePercentageScore = 0.0,
-          ospIndirectImageScoreLevel = null,
+          ospContactScoreLevel = FourLevelRiskScoreLevel.NOT_APPLICABLE,
+          ospIndecentPercentageScore = 0.0,
+          ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.NOT_APPLICABLE,
         ),
       ),
     )
@@ -114,14 +112,14 @@ class RiskScoreConverterTest {
     val riskScoreResponse = riskScore.copy(
       output = riskScore.output?.copy(
         sexualPredictorScore = sexualPredictorScore(
-          ospIndecentPercentageScore = 0.0,
-          ospContactPercentageScore = 0.0,
+          ospIndecentPercentageScore = null,
+          ospContactPercentageScore = null,
           ospIndecentScoreLevel = null,
           ospContactScoreLevel = null,
           ospDirectContactPercentageScore = 0.0,
-          ospDirectContactScoreLevel = null,
+          ospDirectContactScoreLevel = FourLevelRiskScoreLevel.NOT_APPLICABLE,
           ospIndirectImagePercentageScore = 0.0,
-          ospIndirectImageScoreLevel = null,
+          ospIndirectImageScoreLevel = ThreeLevelRiskScoreLevel.NOT_APPLICABLE,
         ),
       ),
     )

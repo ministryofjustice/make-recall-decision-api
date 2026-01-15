@@ -217,7 +217,6 @@ class RiskScoreConverter {
     type: String?,
   ): LevelWithScore? {
     val scoreIsNull = level == null && percentageScore == null
-    // TODO: level can never be SCORE_NOT_APPLICABLE anymore ???
     val notApplicableWithZeroPercentScorePresent =
       level.equals(SCORE_NOT_APPLICABLE, ignoreCase = true) && percentageScore == 0.0
     val noScore = scoreIsNull || notApplicableWithZeroPercentScorePresent
