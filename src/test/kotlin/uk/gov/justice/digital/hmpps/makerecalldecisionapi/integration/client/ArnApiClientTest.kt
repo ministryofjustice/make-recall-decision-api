@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandStaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
@@ -31,9 +32,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.threeBandStaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
@@ -221,29 +223,29 @@ class ArnApiClientTest : IntegrationTestBase() {
         status = AssessmentStatus.COMPLETE,
         outputVersion = "2",
         output = OutputV2(
-          allReoffendingPredictor = StaticOrDynamicPredictor(
+          allReoffendingPredictor = FourBandStaticOrDynamicPredictor(
             score = 12.5,
             band = FourBandRiskScoreBand.MEDIUM,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          violentReoffendingPredictor = StaticOrDynamicPredictor(
+          violentReoffendingPredictor = FourBandStaticOrDynamicPredictor(
             score = 8.0,
             band = FourBandRiskScoreBand.LOW,
             staticOrDynamic = StaticOrDynamic.DYNAMIC,
           ),
-          seriousViolentReoffendingPredictor = StaticOrDynamicPredictor(
+          seriousViolentReoffendingPredictor = FourBandStaticOrDynamicPredictor(
             score = 15.2,
             band = FourBandRiskScoreBand.HIGH,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          directContactSexualReoffendingPredictor = StaticOrDynamicPredictor(
+          directContactSexualReoffendingPredictor = FourBandStaticOrDynamicPredictor(
             score = 6.3,
             band = FourBandRiskScoreBand.LOW,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          indirectImageContactSexualReoffendingPredictor = StaticOrDynamicPredictor(
+          indirectImageContactSexualReoffendingPredictor = threeBandStaticOrDynamicPredictor(
             score = 9.8,
-            band = FourBandRiskScoreBand.MEDIUM,
+            band = ThreeBandRiskScoreBand.MEDIUM,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
           combinedSeriousReoffendingPredictor = CombinedPredictor(

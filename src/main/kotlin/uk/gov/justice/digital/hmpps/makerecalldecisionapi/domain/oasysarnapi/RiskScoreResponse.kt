@@ -87,15 +87,21 @@ data class SexualPredictorScore(
 )
 
 data class OutputV2(
-  val allReoffendingPredictor: StaticOrDynamicPredictor?,
-  val violentReoffendingPredictor: StaticOrDynamicPredictor?,
-  val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
-  val directContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
-  val indirectImageContactSexualReoffendingPredictor: StaticOrDynamicPredictor?,
+  val allReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
+  val violentReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
+  val seriousViolentReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
+  val directContactSexualReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
+  val indirectImageContactSexualReoffendingPredictor: ThreeBandStaticOrDynamicPredictor?,
   val combinedSeriousReoffendingPredictor: CombinedPredictor?,
 )
 
-data class StaticOrDynamicPredictor(
+data class ThreeBandStaticOrDynamicPredictor(
+  val score: Double?,
+  val band: ThreeBandRiskScoreBand?,
+  val staticOrDynamic: StaticOrDynamic?,
+)
+
+data class FourBandStaticOrDynamicPredictor(
   val score: Double?,
   val band: FourBandRiskScoreBand?,
   val staticOrDynamic: StaticOrDynamic?,

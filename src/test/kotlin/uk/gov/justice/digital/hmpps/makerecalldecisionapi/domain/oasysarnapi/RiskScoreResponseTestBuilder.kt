@@ -134,11 +134,11 @@ fun assessmentScoresV2(
 )
 
 fun outputV2(
-  allReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
-  violentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
-  seriousViolentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
-  directContactSexualReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
-  indirectImageContactSexualReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  allReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
+  violentReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
+  seriousViolentReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
+  directContactSexualReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
+  indirectImageContactSexualReoffendingPredictor: ThreeBandStaticOrDynamicPredictor = threeBandStaticOrDynamicPredictor(),
   combinedSeriousReoffendingPredictor: CombinedPredictor = combinedPredictor(),
 ): OutputV2 = OutputV2(
   allReoffendingPredictor,
@@ -149,11 +149,21 @@ fun outputV2(
   combinedSeriousReoffendingPredictor,
 )
 
-fun staticOrDynamicPredictor(
+fun fourBandStaticOrDynamicPredictor(
   score: Double = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
-): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
+): FourBandStaticOrDynamicPredictor = FourBandStaticOrDynamicPredictor(
+  score,
+  band,
+  staticOrDynamic,
+)
+
+fun threeBandStaticOrDynamicPredictor(
+  score: Double = randomDouble(),
+  band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
+  staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
+): ThreeBandStaticOrDynamicPredictor = ThreeBandStaticOrDynamicPredictor(
   score,
   band,
   staticOrDynamic,
