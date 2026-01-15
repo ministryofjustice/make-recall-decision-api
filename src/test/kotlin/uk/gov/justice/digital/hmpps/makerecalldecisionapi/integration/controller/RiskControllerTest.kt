@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
@@ -297,7 +298,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.OVP.type").isEqualTo(OVP.printName)
         .jsonPath("$.predictorScores.current.scores.OVP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.current.scores.OVP.twoYears").isEqualTo(0.0)
-        .jsonPath("$.predictorScores.current.scores.OSPDC.type").isEqualTo("OSP/DC")
+        .jsonPath("$.predictorScores.current.scores.OSPDC.type").isEqualTo(OSPDC.printName)
         .jsonPath("$.predictorScores.current.scores.OSPDC.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
         .jsonPath("$.predictorScores.current.scores.OSPDC.score").isEqualTo(null)
         .jsonPath("$.predictorScores.current.scores.OSPIIC.type").isEqualTo(OSPIIC.printName)
@@ -309,6 +310,13 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
         .jsonPath("$.predictorScores.current.scores.OGRS.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.current.scores.OGRS.twoYears").isEqualTo(0.0)
+        // V2 fields should be null with V1 response
+        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor").doesNotExist()
         // HISTORICAL[0]: current V1 (2021-06-16)
         .jsonPath("$.predictorScores.historical[0].date").isEqualTo("2021-06-16")
         .jsonPath("$.predictorScores.historical[0].scores.RSR.type").isEqualTo(RSR.printName)
@@ -322,7 +330,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OVP.type").isEqualTo(OVP.printName)
         .jsonPath("$.predictorScores.historical[0].scores.OVP.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[0].scores.OVP.twoYears").isEqualTo(0.0)
-        .jsonPath("$.predictorScores.historical[0].scores.OSPDC.type").isEqualTo("OSP/DC")
+        .jsonPath("$.predictorScores.historical[0].scores.OSPDC.type").isEqualTo(OSPDC.printName)
         .jsonPath("$.predictorScores.historical[0].scores.OSPDC.level").isEqualTo(FourLevelRiskScoreLevel.LOW.toString())
         .jsonPath("$.predictorScores.historical[0].scores.OSPDC.score").isEqualTo(null)
         .jsonPath("$.predictorScores.historical[0].scores.OSPIIC.type").isEqualTo(OSPIIC.printName)

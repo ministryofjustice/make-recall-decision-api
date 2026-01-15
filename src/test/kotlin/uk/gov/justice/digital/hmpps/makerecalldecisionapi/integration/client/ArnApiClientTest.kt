@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV1
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScoresV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentStatus
@@ -132,7 +131,7 @@ class ArnApiClientTest : IntegrationTestBase() {
     allRiskScoresResponse(crn)
 
     // and
-    val expected = listOf<AssessmentScores>(
+    val expected = listOf(
       AssessmentScoresV1(
         completedDate = "2021-06-16T11:40:54.243",
         status = AssessmentStatus.COMPLETE,
