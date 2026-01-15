@@ -23,7 +23,7 @@ fun allRiskScoresResponse() = """
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
       "ogpDynamicWeightedScore": 0,
-      "ogpTotalWeightedScore": 12,
+      "ogpTotalWeightedScore": 0,
       "ogp1Year": 0,
       "ogp2Year": 0,
       "ogpRisk": "LOW"
@@ -36,8 +36,8 @@ fun allRiskScoresResponse() = """
       "scoreLevel": "HIGH"
     },
     "sexualPredictorScore": {
-      "ospIndirectImagePercentageScore": 5,
-      "ospDirectContactPercentageScore": 3.45,
+      "ospIndirectImagePercentageScore": 0,
+      "ospDirectContactPercentageScore": 0,
       "ospIndirectImageScoreLevel":	"MEDIUM",
       "ospDirectContactScoreLevel":	"LOW"
       }
