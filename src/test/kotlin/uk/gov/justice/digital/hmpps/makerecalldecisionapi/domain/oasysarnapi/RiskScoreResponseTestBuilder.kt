@@ -134,11 +134,11 @@ fun assessmentScoresV2(
 )
 
 fun outputV2(
-  allReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
-  violentReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
-  seriousViolentReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
-  directContactSexualReoffendingPredictor: FourBandStaticOrDynamicPredictor = fourBandStaticOrDynamicPredictor(),
-  indirectImageContactSexualReoffendingPredictor: ThreeBandStaticOrDynamicPredictor = threeBandStaticOrDynamicPredictor(),
+  allReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  violentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  seriousViolentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  directContactSexualReoffendingPredictor: FourBandPredictor = fourPredictor(),
+  indirectImageContactSexualReoffendingPredictor: ThreeBandPredictor = threePredictor(),
   combinedSeriousReoffendingPredictor: CombinedPredictor = combinedPredictor(),
 ): OutputV2 = OutputV2(
   allReoffendingPredictor,
@@ -149,24 +149,30 @@ fun outputV2(
   combinedSeriousReoffendingPredictor,
 )
 
-fun fourBandStaticOrDynamicPredictor(
+fun staticOrDynamicPredictor(
   score: Double = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
-): FourBandStaticOrDynamicPredictor = FourBandStaticOrDynamicPredictor(
+): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
   score,
   band,
   staticOrDynamic,
 )
 
-fun threeBandStaticOrDynamicPredictor(
+fun fourPredictor(
   score: Double = randomDouble(),
-  band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
-  staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
-): ThreeBandStaticOrDynamicPredictor = ThreeBandStaticOrDynamicPredictor(
+  band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
+): FourBandPredictor = FourBandPredictor(
   score,
   band,
-  staticOrDynamic,
+)
+
+fun threePredictor(
+  score: Double = randomDouble(),
+  band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
+): ThreeBandPredictor = ThreeBandPredictor(
+  score,
+  band,
 )
 
 fun combinedPredictor(

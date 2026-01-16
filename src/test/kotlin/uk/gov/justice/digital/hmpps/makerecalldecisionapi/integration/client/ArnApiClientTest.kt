@@ -13,8 +13,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandRiskScoreBand
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandStaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GeneralPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.GroupReconvictionScore
@@ -32,10 +32,11 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskVulnerabilityTypeResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.SexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandRiskScoreBand
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ViolencePredictorScore
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.threeBandStaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
@@ -223,30 +224,28 @@ class ArnApiClientTest : IntegrationTestBase() {
         status = AssessmentStatus.COMPLETE,
         outputVersion = "2",
         output = OutputV2(
-          allReoffendingPredictor = FourBandStaticOrDynamicPredictor(
+          allReoffendingPredictor = StaticOrDynamicPredictor(
             score = 12.5,
             band = FourBandRiskScoreBand.MEDIUM,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          violentReoffendingPredictor = FourBandStaticOrDynamicPredictor(
+          violentReoffendingPredictor = StaticOrDynamicPredictor(
             score = 8.0,
             band = FourBandRiskScoreBand.LOW,
             staticOrDynamic = StaticOrDynamic.DYNAMIC,
           ),
-          seriousViolentReoffendingPredictor = FourBandStaticOrDynamicPredictor(
+          seriousViolentReoffendingPredictor = StaticOrDynamicPredictor(
             score = 15.2,
             band = FourBandRiskScoreBand.HIGH,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          directContactSexualReoffendingPredictor = FourBandStaticOrDynamicPredictor(
+          directContactSexualReoffendingPredictor = FourBandPredictor(
             score = 6.3,
             band = FourBandRiskScoreBand.LOW,
-            staticOrDynamic = StaticOrDynamic.STATIC,
           ),
-          indirectImageContactSexualReoffendingPredictor = threeBandStaticOrDynamicPredictor(
+          indirectImageContactSexualReoffendingPredictor = ThreeBandPredictor(
             score = 9.8,
             band = ThreeBandRiskScoreBand.MEDIUM,
-            staticOrDynamic = StaticOrDynamic.STATIC,
           ),
           combinedSeriousReoffendingPredictor = CombinedPredictor(
             score = 18.7,

@@ -87,21 +87,27 @@ data class SexualPredictorScore(
 )
 
 data class OutputV2(
-  val allReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
-  val violentReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
-  val seriousViolentReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
-  val directContactSexualReoffendingPredictor: FourBandStaticOrDynamicPredictor?,
-  val indirectImageContactSexualReoffendingPredictor: ThreeBandStaticOrDynamicPredictor?,
+  val allReoffendingPredictor: StaticOrDynamicPredictor?,
+  val violentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val directContactSexualReoffendingPredictor: FourBandPredictor?,
+  // ARNS has four band for iicsr for consistency across their codebase, even though its three-band predictor,
+  // so any response with a VERY_HIGH band for iicsr should result in an error
+  val indirectImageContactSexualReoffendingPredictor: ThreeBandPredictor?,
   val combinedSeriousReoffendingPredictor: CombinedPredictor?,
 )
 
-data class ThreeBandStaticOrDynamicPredictor(
+data class ThreeBandPredictor(
   val score: Double?,
   val band: ThreeBandRiskScoreBand?,
-  val staticOrDynamic: StaticOrDynamic?,
 )
 
-data class FourBandStaticOrDynamicPredictor(
+data class FourBandPredictor(
+  val score: Double?,
+  val band: FourBandRiskScoreBand?,
+)
+
+data class StaticOrDynamicPredictor(
   val score: Double?,
   val band: FourBandRiskScoreBand?,
   val staticOrDynamic: StaticOrDynamic?,

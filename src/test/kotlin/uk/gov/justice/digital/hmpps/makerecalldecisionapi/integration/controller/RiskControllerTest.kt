@@ -313,12 +313,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.score").isEqualTo(6.3)
         .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
-        .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
         .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
           ThreeBandRiskScoreBand.MEDIUM,
         )
-        .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.VERY_HIGH)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
@@ -348,12 +346,10 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.seriousViolentReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.score").isEqualTo(6.3)
         .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
-        .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
         .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
           ThreeBandRiskScoreBand.MEDIUM,
         )
-        .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.band").isEqualTo(
           FourBandRiskScoreBand.VERY_HIGH,
