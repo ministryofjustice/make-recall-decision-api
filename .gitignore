@@ -75,3 +75,5 @@ helm_deploy/make-recall-decision-api/charts
 #MacOS
 .DS_Store
 .env
+
+.kotlin/

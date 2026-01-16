@@ -381,6 +381,8 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.twoYears").isEqualTo(0.0)
+        .jsonPath("$.predictorScores.historical[1].scores.OSPC").doesNotExist()
+        .jsonPath("$.predictorScores.historical[1].scores.OSPI").doesNotExist()
         // V2 fields must NOT exist
         .jsonPath("$.predictorScores.historical[1].scores.allReoffendingPredictor").doesNotExist()
         .jsonPath("$.predictorScores.historical[1].scores.violentReoffendingPredictor").doesNotExist()
@@ -414,12 +416,12 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[2].scores.OSPDC").doesNotExist()
         .jsonPath("$.predictorScores.historical[2].scores.OSPIIC").doesNotExist()
         // V2 fields must NOT exist
-        .jsonPath("$.predictorScores.historical[1].scores.allReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[1].scores.violentReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[1].scores.seriousViolentReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[1].scores.directContactSexualReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[1].scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
-        .jsonPath("$.predictorScores.historical[1].scores.combinedSeriousReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.allReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.violentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.seriousViolentReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.directContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
+        .jsonPath("$.predictorScores.historical[2].scores.combinedSeriousReoffendingPredictor").doesNotExist()
         .jsonPath("$.activeRecommendation.recommendationId").isEqualTo(createdRecommendationId)
         .jsonPath("$.activeRecommendation.lastModifiedDate").isNotEmpty
         .jsonPath("$.activeRecommendation.lastModifiedBy").isEqualTo("SOME_USER")
