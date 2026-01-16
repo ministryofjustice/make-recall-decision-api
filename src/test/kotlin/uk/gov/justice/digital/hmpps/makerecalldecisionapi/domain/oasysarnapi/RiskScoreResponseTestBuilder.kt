@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDouble
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
 /**
  * Helper functions for generating instances of classes related to
@@ -11,55 +11,106 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDa
  * values. Intended for use in unit tests.
  */
 
-fun riskScoreResponse(
+fun assessmentScores(
+  completedDate: String = randomLocalDateTime().toString(),
+  status: AssessmentStatus = randomEnum<AssessmentStatus>(),
+  version: String = listOf("1", "2").random(),
+): AssessmentScores = if (version == "1") {
+  assessmentScoresV1(
+    completedDate = completedDate,
+    status = status,
+  )
+} else {
+  assessmentScoresV2(
+    completedDate = completedDate,
+    status = status,
+  )
+}
+
+fun assessmentScoresV1(
   completedDate: String? = randomLocalDateTime().toString(),
-  generalPredictorScore: GeneralPredictorScore? = generalPredictorScore(),
-  riskOfSeriousRecidivismScore: RiskOfSeriousRecidivismScore? = riskOfSeriousRecidivismScore(),
-  sexualPredictorScore: SexualPredictorScore? = sexualPredictorScore(),
-  groupReconvictionScore: GroupReconvictionScore? = groupReconvictionScore(),
-  violencePredictorScore: ViolencePredictorScore? = violencePredictorScore(),
-): RiskScoreResponse = RiskScoreResponse(
+  status: AssessmentStatus = randomEnum<AssessmentStatus>(),
+  output: OutputV1 = outputV1(),
+): AssessmentScoresV1 = AssessmentScoresV1(
   completedDate,
+  status,
+  "1",
+  output,
+)
+
+fun outputV1(
+  generalPredictorScore: GeneralPredictorScore = generalPredictorScore(),
+  riskOfSeriousRecidivismScore: RiskOfSeriousRecidivismScore = riskOfSeriousRecidivismScore(),
+  sexualPredictorScore: SexualPredictorScore = sexualPredictorScore(),
+  groupReconvictionScore: GroupReconvictionScore = groupReconvictionScore(),
+  violencePredictorScore: ViolencePredictorScore = violencePredictorScore(),
+): OutputV1 = OutputV1(
+  groupReconvictionScore,
+  violencePredictorScore,
   generalPredictorScore,
   riskOfSeriousRecidivismScore,
   sexualPredictorScore,
-  groupReconvictionScore,
-  violencePredictorScore,
+)
+
+fun groupReconvictionScore(
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
+  scoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
+): GroupReconvictionScore = GroupReconvictionScore(
+  oneYear,
+  twoYears,
+  scoreLevel,
+)
+
+fun violencePredictorScore(
+  ovpStaticWeightedScore: Double = randomDouble(),
+  ovpDynamicWeightedScore: Double = randomDouble(),
+  ovpTotalWeightedScore: Double = randomDouble(),
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
+  ovpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
+): ViolencePredictorScore = ViolencePredictorScore(
+  ovpStaticWeightedScore,
+  ovpDynamicWeightedScore,
+  ovpTotalWeightedScore,
+  oneYear,
+  twoYears,
+  ovpRisk,
 )
 
 fun generalPredictorScore(
-  ogpStaticWeightedScore: String? = randomDouble().toString(),
-  ogpDynamicWeightedScore: String? = randomDouble().toString(),
-  ogpTotalWeightedScore: String? = randomDouble().toString(),
-  ogpRisk: String? = randomEnum<OgpScoreLevel>().toString(),
-  ogp1Year: String? = randomInt().toString(),
-  ogp2Year: String? = randomInt().toString(),
+  ogpStaticWeightedScore: Double? = randomDouble(),
+  ogpDynamicWeightedScore: Double? = randomDouble(),
+  ogpTotalWeightedScore: Double? = randomDouble(),
+  ogp1Year: Double? = randomDouble(),
+  ogp2Year: Double? = randomDouble(),
+  ogpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GeneralPredictorScore = GeneralPredictorScore(
   ogpStaticWeightedScore,
   ogpDynamicWeightedScore,
   ogpTotalWeightedScore,
-  ogpRisk,
   ogp1Year,
   ogp2Year,
+  ogpRisk,
 )
 
 fun riskOfSeriousRecidivismScore(
-  percentageScore: String? = randomDouble().toString(),
-  scoreLevel: String? = randomEnum<RsrScoreLevel>().toString(),
+  percentageScore: Double? = randomDouble(),
+  scoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
 ): RiskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
   percentageScore,
   scoreLevel,
 )
 
 fun sexualPredictorScore(
-  ospIndecentPercentageScore: String? = randomDouble().toString(),
-  ospContactPercentageScore: String? = randomDouble().toString(),
-  ospIndecentScoreLevel: String? = randomEnum<OspiScoreLevel>().toString(),
-  ospContactScoreLevel: String? = randomEnum<OspcScoreLevel>().toString(),
-  ospIndirectImagePercentageScore: String? = randomDouble().toString(),
-  ospDirectContactPercentageScore: String? = randomDouble().toString(),
-  ospIndirectImageScoreLevel: String? = randomEnum<OspiicScoreLevel>().toString(),
-  ospDirectContactScoreLevel: String? = randomEnum<OspdcScoreLevel>().toString(),
+  ospIndecentPercentageScore: Double? = randomDouble(),
+  ospContactPercentageScore: Double? = randomDouble(),
+  ospIndecentScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
+  ospContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
+  ospIndirectImagePercentageScore: Double? = randomDouble(),
+  ospDirectContactPercentageScore: Double? = randomDouble(),
+  ospIndirectImageScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
+  ospDirectContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): SexualPredictorScore = SexualPredictorScore(
   ospIndecentPercentageScore,
   ospContactPercentageScore,
@@ -71,28 +122,67 @@ fun sexualPredictorScore(
   ospDirectContactScoreLevel,
 )
 
-fun groupReconvictionScore(
-  oneYear: String? = randomInt().toString(),
-  twoYears: String? = randomInt().toString(),
-  scoreLevel: String? = randomEnum<OgrsScoreLevel>().toString(),
-): GroupReconvictionScore = GroupReconvictionScore(
-  oneYear,
-  twoYears,
-  scoreLevel,
+fun assessmentScoresV2(
+  completedDate: String = randomLocalDateTime().toString(),
+  status: AssessmentStatus = randomEnum<AssessmentStatus>(),
+  output: OutputV2 = outputV2(),
+): AssessmentScoresV2 = AssessmentScoresV2(
+  completedDate,
+  status,
+  "2",
+  output,
 )
 
-fun violencePredictorScore(
-  ovpStaticWeightedScore: String? = randomDouble().toString(),
-  ovpDynamicWeightedScore: String? = randomDouble().toString(),
-  ovpTotalWeightedScore: String? = randomDouble().toString(),
-  oneYear: String? = randomInt().toString(),
-  twoYears: String? = randomInt().toString(),
-  ovpRisk: String? = randomEnum<OvpScoreLevel>().toString(),
-): ViolencePredictorScore = ViolencePredictorScore(
-  ovpStaticWeightedScore,
-  ovpDynamicWeightedScore,
-  ovpTotalWeightedScore,
-  oneYear,
-  twoYears,
-  ovpRisk,
+fun outputV2(
+  allReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  violentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  seriousViolentReoffendingPredictor: StaticOrDynamicPredictor = staticOrDynamicPredictor(),
+  directContactSexualReoffendingPredictor: FourBandPredictor = fourPredictor(),
+  indirectImageContactSexualReoffendingPredictor: ThreeBandPredictor = threePredictor(),
+  combinedSeriousReoffendingPredictor: CombinedPredictor = combinedPredictor(),
+): OutputV2 = OutputV2(
+  allReoffendingPredictor,
+  violentReoffendingPredictor,
+  seriousViolentReoffendingPredictor,
+  directContactSexualReoffendingPredictor,
+  indirectImageContactSexualReoffendingPredictor,
+  combinedSeriousReoffendingPredictor,
+)
+
+fun staticOrDynamicPredictor(
+  score: Double = randomDouble(),
+  band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
+  staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
+): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
+  score,
+  band,
+  staticOrDynamic,
+)
+
+fun fourPredictor(
+  score: Double = randomDouble(),
+  band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
+): FourBandPredictor = FourBandPredictor(
+  score,
+  band,
+)
+
+fun threePredictor(
+  score: Double = randomDouble(),
+  band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
+): ThreeBandPredictor = ThreeBandPredictor(
+  score,
+  band,
+)
+
+fun combinedPredictor(
+  score: Double = randomDouble(),
+  band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
+  staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
+  algorithmVersion: String = randomString(),
+): CombinedPredictor = CombinedPredictor(
+  score,
+  band,
+  staticOrDynamic,
+  algorithmVersion,
 )
