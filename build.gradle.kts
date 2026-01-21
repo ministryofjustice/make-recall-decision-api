@@ -50,6 +50,9 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+  // Temporary fix to address CVE-2025-68161 until we upgrade to spring-boot 4 or a 3.5.x with the fix is released
+  implementation("org.apache.logging.log4j:log4j-api:2.25.3")
+
   implementation("org.flywaydb:flyway-core:11.1.1")
   implementation("org.flywaydb:flyway-database-postgresql:11.1.1")
   implementation("org.postgresql:postgresql:42.7.7")
