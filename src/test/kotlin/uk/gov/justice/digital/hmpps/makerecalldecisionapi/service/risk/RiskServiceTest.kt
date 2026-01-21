@@ -29,8 +29,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
@@ -78,13 +78,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(deliusMappaAndRoshHistoryResponse())
       given(arnApiClient.getRiskSummary(crn))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(current = null, historical = null)
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       given(arnApiClient.getAssessments(crn))
         .willReturn(
@@ -135,12 +135,12 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
       assertThat(mappa.lastUpdatedDate).isEqualTo("2021-02-10")
-      assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
-      assertThat(response.roshSummary?.natureOfRisk).isEqualTo("The nature of the risk is X")
-      assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
-      assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
-      assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
-      assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
+      assertThat(response.roshSummary.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
+      assertThat(response.roshSummary.natureOfRisk).isEqualTo("The nature of the risk is X")
+      assertThat(response.roshSummary.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
+      assertThat(response.roshSummary.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
+      assertThat(response.roshSummary.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
+      assertThat(response.roshSummary.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
@@ -159,7 +159,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(Mono.fromCallable { listOf(riskScoreResponse()) })
+        .willReturn(Mono.fromCallable { listOf(assessmentScores()) })
       given(arnApiClient.getAssessments(anyString()))
         .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
 
@@ -390,13 +390,13 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with null predictor score field`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(null, null, emptyList())
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -418,17 +418,17 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with null scores except rsr`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val predictorScoreWithRsrScoreOnly = PredictorScore(
         date = "2018-09-12",
         scores = Scores(
           rsr = LevelWithScore(
-            score = "10",
-            level = RsrScoreLevel.MEDIUM.toString(),
+            score = 10.0,
+            level = ThreeLevelRiskScoreLevel.MEDIUM.toString(),
             type = RSR.printName,
           ),
           ospc = null,
@@ -438,13 +438,19 @@ internal class RiskServiceTest : ServiceTestBase() {
           ogrs = null,
           ogp = null,
           ovp = null,
+          allReoffendingPredictor = null,
+          violentReoffendingPredictor = null,
+          seriousViolentReoffendingPredictor = null,
+          directContactSexualReoffendingPredictor = null,
+          indirectImageContactSexualReoffendingPredictor = null,
+          combinedSeriousReoffendingPredictor = null,
         ),
       )
       val expectedPredictorScores = PredictorScores(
         current = predictorScoreWithRsrScoreOnly,
         historical = listOf(predictorScoreWithRsrScoreOnly),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -465,16 +471,16 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with empty OSPC risk score values`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(
         current = null,
         historical = emptyList(),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -495,16 +501,16 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with optional fields missing`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(
         current = null,
         historical = emptyList(),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
