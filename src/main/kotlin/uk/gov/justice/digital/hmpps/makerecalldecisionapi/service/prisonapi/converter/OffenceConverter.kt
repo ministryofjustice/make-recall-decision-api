@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.SentenceCalculationDates
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -24,10 +25,18 @@ internal class OffenceConverter {
     offender: Offender?,
     prisonPeriodInfo: PrisonPeriodInfo,
   ): List<SentenceSequence> {
+    val periodSentenceEndDate = prisonPeriodInfo.sentenceCalculationDates.sentenceExpiryOverrideDate
+      ?: prisonPeriodInfo.sentenceCalculationDates.sentenceExpiryCalculatedDate
+    if (periodSentenceEndDate == null || periodSentenceEndDate.isBefore(LocalDate.now())) {
+      return emptyList()
+    }
+
     val sentencesForBooking = prisonPeriodInfo.sentencesAndOffences
-      .filter { it.sentenceEndDate == null || !it.sentenceEndDate.isBefore(LocalDate.now()) }
       .map { sentenceAndOffences ->
         sentenceAndOffences.copy(
+          // sentence end dates are now calculated (by the Calculate Release Dates team)
+          // for "the entire sentence calculation envelope", hence our overriding here.
+          sentenceEndDate = periodSentenceEndDate,
           releaseDate = prisonPeriodInfo.lastDateOutOfPrison,
           releasingPrison = prisonPeriodInfo.prisonDescription,
           licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
@@ -86,7 +95,12 @@ internal class OffenceConverter {
   }
 
   /**
-   * Sort sentences by first the sentence end date and the by court if there are any with the same date
+   * Sort sentences by first the sentence end date and the by court if there are any with the same date.
+   *
+   * Note that sentences within the same period all have the same end date (we override them to make it so
+   * during the conversion), but this comparator is also used in the sentence sequence sorter below, where
+   * index sentences from different sequences are compared. In the incredibly unlikely case this ever
+   * becomes a performance issue, we can be more granular about the comparisons, but this is simpler for now.
    */
   private val sentenceSort: Comparator<Sentence> =
     compareByDescending<Sentence> { it.sentenceEndDate }.thenBy { it.courtDescription }
@@ -100,6 +114,7 @@ internal class OffenceConverter {
 
 internal data class PrisonPeriodInfo(
   val prisonDescription: String?,
+  val sentenceCalculationDates: SentenceCalculationDates,
   val lastDateOutOfPrison: LocalDateTime?,
   val sentencesAndOffences: List<Sentence>,
 )

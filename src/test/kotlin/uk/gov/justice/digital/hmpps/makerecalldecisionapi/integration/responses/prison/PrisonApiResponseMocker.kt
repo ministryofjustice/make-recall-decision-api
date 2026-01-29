@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.PrisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.PrisonApiOffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.SentenceCalculationDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ResponseMocker
 
 internal class PrisonApiResponseMocker : ResponseMocker {
@@ -54,13 +55,25 @@ internal class PrisonApiResponseMocker : ResponseMocker {
   }
 
   fun mockRetrieveSentencesAndOffencesResponse(
-    bookingId: Long,
+    bookingId: Int,
     sentences: List<Sentence>,
     delaySeconds: Long = 0,
   ) {
     mockResponse(
       path = "/api/offender-sentences/booking/$bookingId/sentences-and-offences",
       responseBody = sentences,
+      delaySeconds = delaySeconds,
+    )
+  }
+
+  fun mockBookingSentenceDetailsResponse(
+    bookingId: Int,
+    sentenceCalculationDates: SentenceCalculationDates,
+    delaySeconds: Long = 0,
+  ) {
+    mockResponse(
+      path = "/api/bookings/$bookingId/sentenceDetail",
+      responseBody = sentenceCalculationDates,
       delaySeconds = delaySeconds,
     )
   }

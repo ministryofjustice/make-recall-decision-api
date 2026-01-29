@@ -92,8 +92,11 @@ internal class PrisonerApiService(
 
         val sentencesAndOffences = prisonApiClient.retrieveSentencesAndOffences(prisonPeriod.bookingId).block()!!
 
+        val sentenceCalculationDates = prisonApiClient.bookingSentenceDetails(prisonPeriod.bookingId).block()!!
+
         PrisonPeriodInfo(
           prisonDescription,
+          sentenceCalculationDates,
           lastDateOutOfPrison,
           sentencesAndOffences,
         )

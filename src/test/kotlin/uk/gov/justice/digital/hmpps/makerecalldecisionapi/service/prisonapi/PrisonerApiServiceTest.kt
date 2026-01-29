@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.sentenceSequence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.sentenceCalculationDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenceConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
@@ -305,6 +306,15 @@ internal class PrisonerApiServiceTest {
       Mono.fromCallable { sentencesAndOffencesForSecondPeriod },
     )
 
+    val sentenceCalculationDatesForFirstPeriod = sentenceCalculationDates()
+    given(prisonApiClient.bookingSentenceDetails(firstPrisonPeriod.bookingId)).willReturn(
+      Mono.fromCallable { sentenceCalculationDatesForFirstPeriod },
+    )
+    val sentenceCalculationDatesForSecondPeriod = sentenceCalculationDates()
+    given(prisonApiClient.bookingSentenceDetails(secondPrisonPeriod.bookingId)).willReturn(
+      Mono.fromCallable { sentenceCalculationDatesForSecondPeriod },
+    )
+
     val prisonForFirstPeriod = agency()
     given(prisonApiClient.retrieveAgency(lastPrisonReleasedFromIdForFirstPeriod)).willReturn(
       Mono.fromCallable { prisonForFirstPeriod },
@@ -321,11 +331,13 @@ internal class PrisonerApiServiceTest {
         listOf(
           PrisonPeriodInfo(
             prisonDescription = prisonForFirstPeriod.longDescription,
+            sentenceCalculationDatesForFirstPeriod,
             lastDateOutOfPrison = firstPrisonPeriod.movementDates[0].dateOutOfPrison,
             sentencesAndOffences = sentencesAndOffencesForFirstPeriod,
           ),
           PrisonPeriodInfo(
             prisonDescription = prisonForSecondPeriod.longDescription,
+            sentenceCalculationDatesForSecondPeriod,
             lastDateOutOfPrison = secondPrisonPeriod.movementDates[0].dateOutOfPrison,
             sentencesAndOffences = sentencesAndOffencesForSecondPeriod,
           ),
@@ -372,6 +384,11 @@ internal class PrisonerApiServiceTest {
       Mono.fromCallable { sentencesAndOffences },
     )
 
+    val sentenceCalculationDates = sentenceCalculationDates()
+    given(prisonApiClient.bookingSentenceDetails(prisonPeriod.bookingId)).willReturn(
+      Mono.fromCallable { sentenceCalculationDates },
+    )
+
     val notFoundErrorMessage = "Prison api returned agency not found for agency id $lastPrisonReleasedFromId"
     given(prisonApiClient.retrieveAgency(lastPrisonReleasedFromId))
       .willThrow(NotFoundException(notFoundErrorMessage))
@@ -383,6 +400,7 @@ internal class PrisonerApiServiceTest {
         listOf(
           PrisonPeriodInfo(
             prisonDescription = null,
+            sentenceCalculationDates,
             lastDateOutOfPrison = prisonPeriod.movementDates[0].dateOutOfPrison,
             sentencesAndOffences = sentencesAndOffences,
           ),

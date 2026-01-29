@@ -13,12 +13,22 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.assertMovementsAreEqual
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceSequence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.movement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonPeriod
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonTimelineResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.sentenceCalculationDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.PrisonApiResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
+import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -59,6 +69,139 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       )
       assertThat(response.get("locationDescription")).isEqualTo(locationDescription)
       assertThat(response.get("agencyDescription")).isEqualTo(agencyDescription)
+    }
+  }
+
+  @Test
+  fun `retrieves prison sentence`() {
+    runTest {
+      // given
+      val now = LocalDateTime.now()
+
+      val nomisId = randomString()
+
+      val offender = offender(nomsId)
+      prisonApiResponseMocker.mockRetrieveOffenderResponse(nomisId, offender)
+
+      val agency = agency()
+      val agencyId = agency.agencyId!!
+      prisonApiResponseMocker.mockRetrieveAgencyResponse(agencyId, agency)
+
+      val firstPrisonPeriod = prisonPeriod(
+        movementDates = listOf(
+          movement(dateOutOfPrison = now.minusMonths(27)),
+          movement(dateOutOfPrison = now.minusMonths(24)),
+          movement(dateOutOfPrison = now.minusMonths(22), releaseFromPrisonId = agencyId),
+        ),
+      )
+      val secondPrisonPeriod = prisonPeriod(
+        movementDates = listOf(
+          movement(dateOutOfPrison = now.minusMonths(7)),
+          movement(dateOutOfPrison = now.minusMonths(4)),
+          movement(dateOutOfPrison = now.minusMonths(2), releaseFromPrisonId = agencyId),
+        ),
+      )
+      val prisonPeriods = listOf(firstPrisonPeriod, secondPrisonPeriod)
+      prisonApiResponseMocker.mockRetrievePrisonTimelinesResponse(
+        nomisId,
+        prisonTimelineResponse(prisonPeriod = prisonPeriods),
+      )
+
+      val firstPeriodSentences = listOf(
+        sentence(
+          bookingId = firstPrisonPeriod.bookingId,
+          sentenceSequence = 0,
+          consecutiveToSequence = null,
+        ),
+        sentence(
+          bookingId = firstPrisonPeriod.bookingId,
+          sentenceSequence = 1,
+          consecutiveToSequence = 0,
+        ),
+      )
+      prisonApiResponseMocker.mockRetrieveSentencesAndOffencesResponse(
+        firstPrisonPeriod.bookingId,
+        firstPeriodSentences,
+      )
+      val secondPeriodSentences = listOf(
+        sentence(
+          bookingId = secondPrisonPeriod.bookingId,
+          sentenceSequence = 0,
+          consecutiveToSequence = null,
+        ),
+        sentence(
+          bookingId = secondPrisonPeriod.bookingId,
+          sentenceSequence = 1,
+          consecutiveToSequence = 0,
+        ),
+      )
+      prisonApiResponseMocker.mockRetrieveSentencesAndOffencesResponse(
+        secondPrisonPeriod.bookingId,
+        secondPeriodSentences,
+      )
+
+      val firstPeriodSentenceExpiryDate = now.plusMonths(5).toLocalDate()
+      prisonApiResponseMocker.mockBookingSentenceDetailsResponse(
+        firstPrisonPeriod.bookingId,
+        sentenceCalculationDates(sentenceExpiryOverrideDate = firstPeriodSentenceExpiryDate),
+      )
+      val secondPeriodSentenceExpiryDate = now.plusMonths(2).toLocalDate()
+      prisonApiResponseMocker.mockBookingSentenceDetailsResponse(
+        secondPrisonPeriod.bookingId,
+        sentenceCalculationDates(sentenceExpiryOverrideDate = secondPeriodSentenceExpiryDate),
+      )
+
+      val overriddenFirstPeriodSentences = firstPeriodSentences.map {
+        it.copy(
+          sentenceEndDate = firstPeriodSentenceExpiryDate,
+          releaseDate = firstPrisonPeriod.movementDates.last().dateOutOfPrison,
+          releasingPrison = agency.longDescription,
+          licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
+          offences = it.offences.sortedBy { it.offenceDescription },
+        )
+      }
+      val overriddenSecondPeriodSentences = secondPeriodSentences.map {
+        it.copy(
+          sentenceEndDate = secondPeriodSentenceExpiryDate,
+          releaseDate = secondPrisonPeriod.movementDates.last().dateOutOfPrison,
+          releasingPrison = agency.longDescription,
+          licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
+          offences = it.offences.sortedBy { it.offenceDescription },
+        )
+      }
+      val expectedSentenceSequences = listOf(
+        SentenceSequence(
+          overriddenFirstPeriodSentences[0],
+          sentencesInSequence = mutableMapOf(
+            0 to listOf(overriddenFirstPeriodSentences[1]),
+          ),
+        ),
+        SentenceSequence(
+          overriddenSecondPeriodSentences[0],
+          sentencesInSequence = mutableMapOf(
+            0 to listOf(overriddenSecondPeriodSentences[1]),
+          ),
+        ),
+      )
+
+      // when
+      val response = convertResponseToJSONArray(
+        webTestClient.post()
+          .uri("/prison-sentences")
+          .contentType(MediaType.APPLICATION_JSON)
+          .body(BodyInserters.fromValue(PrisonSentencesRequest(nomisId)))
+          .headers {
+            (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))))
+          }
+          .exchange()
+          .expectStatus().isOk,
+      )
+
+      // then
+      val jacksonTypeReference: TypeReference<List<SentenceSequence>> =
+        object : TypeReference<List<SentenceSequence>>() {}
+      val sentenceSequences = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
+      assertThat(sentenceSequences).usingRecursiveComparison().isEqualTo(expectedSentenceSequences)
     }
   }
 
