@@ -5,9 +5,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockserver.model.HttpRequest.request
-import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.MediaType
@@ -15,15 +12,13 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.assertMovementsAreEqual
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.OffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.agency
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.PrisonApiResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
-import java.util.concurrent.TimeUnit.SECONDS
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -31,6 +26,11 @@ class PrisonApiControllerTest : IntegrationTestBase() {
 
   @Value("\${prison.client.timeout}")
   var prisonTimeout: Long = 0
+
+  // TODO use default constructor (and remove non-default one from PrisonApiResponseMocker) once we
+  //      move the prisonApi val out of IntegrationTestBase as part of breaking up the latter so it
+  //      is no longer a god class. This will also require calling the start-up and tear-down methods
+  private val prisonApiResponseMocker: PrisonApiResponseMocker = PrisonApiResponseMocker(prisonApi)
 
   @Test
   fun `retrieves offender details`() {
@@ -69,7 +69,7 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       val nomsId = "A123456"
       val prisonApiMovements =
         listOf(prisonApiOffenderMovement(), prisonApiOffenderMovement(), prisonApiOffenderMovement())
-      mockPrisonApiOffenderMovementsResponse(nomsId, prisonApiMovements)
+      prisonApiResponseMocker.mockRetrieveOffenderMovementsResponse(nomsId, prisonApiMovements)
 
       // when
       val response = convertResponseToJSONArray(
@@ -121,7 +121,7 @@ class PrisonApiControllerTest : IntegrationTestBase() {
         userMessage = "Client timeout: $timeoutMessage",
         developerMessage = timeoutMessage,
       )
-      mockPrisonApiOffenderMovementsTimeout(nomsId)
+      prisonApiResponseMocker.mockRetrieveOffenderMovementsTimeout(nomsId, prisonTimeout)
 
       // when
       val response = convertResponseToJSONObject(
@@ -140,29 +140,5 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       val actualErrorResponse = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
       assertThat(actualErrorResponse).isEqualTo(expectedErrorResponse)
     }
-  }
-
-  private fun mockPrisonApiOffenderMovementsResponse(
-    nomsId: String,
-    movements: List<PrisonApiOffenderMovement>,
-  ) {
-    val request = request().withPath("/api/movements/offender/$nomsId")
-
-    prisonApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(movements.joinToString(",", "[", "]") { it.toJsonString() }),
-    )
-  }
-
-  private fun mockPrisonApiOffenderMovementsTimeout(
-    nomsId: String,
-  ) {
-    val request = request().withPath("/api/movements/offender/$nomsId")
-
-    prisonApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody("[]")
-        .withDelay(SECONDS, prisonTimeout * 3),
-    )
   }
 }
