@@ -1,0 +1,3 @@
+### Gets all NOMIS to PPUD establishment mappings (PPCS)
+GET {{host}}/establishment-mappings
+Authorization: Bearer {{$auth.token("token")}}

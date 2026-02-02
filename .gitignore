@@ -18,6 +18,7 @@ cmake-build-debug/
 # IntelliJ
 out/
 *.iml
+http-client.private.env.json
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -74,3 +75,4 @@ helm_deploy/make-recall-decision-api/charts
 
 #MacOS
 .DS_Store
+
