@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domai
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.OffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.movement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.offender
@@ -151,23 +152,62 @@ class PrisonApiControllerTest : IntegrationTestBase() {
         sentenceCalculationDates(sentenceExpiryOverrideDate = secondPeriodSentenceExpiryDate),
       )
 
-      val overriddenFirstPeriodSentences = firstPeriodSentences.map {
-        it.copy(
+      val convertToExpectedSentence = { sentence: Sentence ->
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentence(
+          bookingId = sentence.bookingId,
+          sentenceSequence = sentence.sentenceSequence,
+          lineSequence = sentence.lineSequence,
+          consecutiveToSequence = sentence.consecutiveToSequence,
+          caseSequence = sentence.caseSequence,
+          courtDescription = sentence.courtDescription,
+          sentenceStatus = sentence.sentenceStatus,
+          sentenceCategory = sentence.sentenceCategory,
+          sentenceCalculationType = sentence.sentenceCalculationType,
+          sentenceTypeDescription = sentence.sentenceTypeDescription,
+          sentenceDate = sentence.sentenceDate,
+          sentenceStartDate = sentence.sentenceStartDate,
+          sentenceSequenceExpiryDate = sentence.sentenceEndDate,
+          terms = sentence.terms.map {
+            uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.term(
+              years = it.years,
+              months = it.months,
+              weeks = it.weeks,
+              days = it.days,
+              code = it.code,
+            )
+          },
+          offences = sentence.offences.map {
+            uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentenceOffence(
+              offenderChargeId = it.offenderChargeId,
+              offenceStartDate = it.offenceStartDate,
+              offenceStatute = it.offenceStatute,
+              offenceCode = it.offenceCode,
+              offenceDescription = it.offenceDescription,
+              indicators = it.indicators,
+            )
+          },
+          releaseDate = sentence.releaseDate,
+          releasingPrison = sentence.releasingPrison,
+          licenceExpiryDate = sentence.licenceExpiryDate,
+        )
+      }
+      val overriddenFirstPeriodSentences = firstPeriodSentences.map { sentence: Sentence ->
+        sentence.copy(
           sentenceEndDate = firstPeriodSentenceExpiryDate,
           releaseDate = firstPrisonPeriod.movementDates.last().dateOutOfPrison,
           releasingPrison = agency.longDescription,
           licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
-          offences = it.offences.sortedBy { it.offenceDescription },
-        )
+          offences = sentence.offences.sortedBy { it.offenceDescription },
+        ).let { convertToExpectedSentence(it) }
       }
-      val overriddenSecondPeriodSentences = secondPeriodSentences.map {
-        it.copy(
+      val overriddenSecondPeriodSentences = secondPeriodSentences.map { sentence: Sentence ->
+        sentence.copy(
           sentenceEndDate = secondPeriodSentenceExpiryDate,
           releaseDate = secondPrisonPeriod.movementDates.last().dateOutOfPrison,
           releasingPrison = agency.longDescription,
           licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
-          offences = it.offences.sortedBy { it.offenceDescription },
-        )
+          offences = sentence.offences.sortedBy { it.offenceDescription },
+        ).let { convertToExpectedSentence(it) }
       }
       val expectedSentenceSequences = listOf(
         SentenceSequence(

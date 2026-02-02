@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomPastLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal class OffenceConverterTest {
 
@@ -164,11 +165,11 @@ internal class OffenceConverterTest {
     )
 
     // then
-    assertThat(actualSentences[0].indexSentence.sentenceEndDate).isEqualTo(overrideEndDate)
+    assertThat(actualSentences[0].indexSentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
     actualSentences.forEach { sentenceSequence ->
-      assertThat(sentenceSequence.indexSentence.sentenceEndDate).isEqualTo(overrideEndDate)
+      assertThat(sentenceSequence.indexSentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
       sentenceSequence.sentencesInSequence?.values?.flatten()?.forEach { sentence ->
-        assertThat(sentence.sentenceEndDate).isEqualTo(overrideEndDate)
+        assertThat(sentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
       }
     }
   }
@@ -197,11 +198,11 @@ internal class OffenceConverterTest {
     )
 
     // then
-    assertThat(actualSentences[0].indexSentence.sentenceEndDate).isEqualTo(calculatedDate)
+    assertThat(actualSentences[0].indexSentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
     actualSentences.forEach { sentenceSequence ->
-      assertThat(sentenceSequence.indexSentence.sentenceEndDate).isEqualTo(calculatedDate)
+      assertThat(sentenceSequence.indexSentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
       sentenceSequence.sentencesInSequence?.values?.flatten()?.forEach { sentence ->
-        assertThat(sentence.sentenceEndDate).isEqualTo(calculatedDate)
+        assertThat(sentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
       }
     }
   }
@@ -240,39 +241,88 @@ internal class OffenceConverterTest {
       ),
     )
 
+    val convertToExpectedSentence = {
+        sentence: Sentence,
+        sentenceSequenceExpiryDate: LocalDate,
+        releaseDate: LocalDateTime?,
+        releasingPrison: String,
+        licenceExpiryDate: LocalDate,
+      ->
+      uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentence(
+        bookingId = sentence.bookingId,
+        sentenceSequence = sentence.sentenceSequence,
+        lineSequence = sentence.lineSequence,
+        consecutiveToSequence = sentence.consecutiveToSequence,
+        caseSequence = sentence.caseSequence,
+        courtDescription = sentence.courtDescription,
+        sentenceStatus = sentence.sentenceStatus,
+        sentenceCategory = sentence.sentenceCategory,
+        sentenceCalculationType = sentence.sentenceCalculationType,
+        sentenceTypeDescription = sentence.sentenceTypeDescription,
+        sentenceDate = sentence.sentenceDate,
+        sentenceStartDate = sentence.sentenceStartDate,
+        sentenceSequenceExpiryDate = sentenceSequenceExpiryDate,
+        terms = sentence.terms.map {
+          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.term(
+            years = it.years,
+            months = it.months,
+            weeks = it.weeks,
+            days = it.days,
+            code = it.code,
+          )
+        },
+        offences = sentence.offences.map {
+          uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentenceOffence(
+            offenderChargeId = it.offenderChargeId,
+            offenceStartDate = it.offenceStartDate,
+            offenceStatute = it.offenceStatute,
+            offenceCode = it.offenceCode,
+            offenceDescription = it.offenceDescription,
+            indicators = it.indicators,
+          )
+        },
+        releaseDate = releaseDate,
+        releasingPrison = releasingPrison,
+        licenceExpiryDate = licenceExpiryDate,
+      )
+    }
     val expectedSentenceSequence = listOf(
       sentenceSequence(
-        indexSentence = firstPrisonPeriodSentences[0].copy(
-          sentenceEndDate = firstPeriodSentenceEndDate,
-          releaseDate = firstPeriodLastDateOutOfPrison,
-          releasingPrison = firstPeriodPrisonDescription,
-          licenceExpiryDate = licenceExpiryDate,
+        indexSentence = convertToExpectedSentence(
+          firstPrisonPeriodSentences[0],
+          firstPeriodSentenceEndDate,
+          firstPeriodLastDateOutOfPrison,
+          firstPeriodPrisonDescription,
+          licenceExpiryDate,
         ),
         sentencesInSequence = mutableMapOf(
           1 to listOf(
-            firstPrisonPeriodSentences[1].copy(
-              sentenceEndDate = firstPeriodSentenceEndDate,
-              releaseDate = firstPeriodLastDateOutOfPrison,
-              releasingPrison = firstPeriodPrisonDescription,
-              licenceExpiryDate = licenceExpiryDate,
+            convertToExpectedSentence(
+              firstPrisonPeriodSentences[1],
+              firstPeriodSentenceEndDate,
+              firstPeriodLastDateOutOfPrison,
+              firstPeriodPrisonDescription,
+              licenceExpiryDate,
             ),
           ),
         ),
       ),
       sentenceSequence(
-        indexSentence = secondPrisonPeriodSentences[0].copy(
-          sentenceEndDate = secondPeriodSentenceEndDate,
-          releaseDate = secondPeriodLastDateOutOfPrison,
-          releasingPrison = secondPeriodPrisonDescription,
-          licenceExpiryDate = licenceExpiryDate,
+        indexSentence = convertToExpectedSentence(
+          secondPrisonPeriodSentences[0],
+          secondPeriodSentenceEndDate,
+          secondPeriodLastDateOutOfPrison,
+          secondPeriodPrisonDescription,
+          licenceExpiryDate,
         ),
         sentencesInSequence = mutableMapOf(
           1 to listOf(
-            secondPrisonPeriodSentences[1].copy(
-              sentenceEndDate = secondPeriodSentenceEndDate,
-              releaseDate = secondPeriodLastDateOutOfPrison,
-              releasingPrison = secondPeriodPrisonDescription,
-              licenceExpiryDate = licenceExpiryDate,
+            convertToExpectedSentence(
+              secondPrisonPeriodSentences[1],
+              secondPeriodSentenceEndDate,
+              secondPeriodLastDateOutOfPrison,
+              secondPeriodPrisonDescription,
+              licenceExpiryDate,
             ),
           ),
         ),
@@ -349,129 +399,155 @@ internal class OffenceConverterTest {
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 3,
         consecutiveToSequence = null,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 4,
         consecutiveToSequence = 3,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 5,
         consecutiveToSequence = 4,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 6,
         consecutiveToSequence = null,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 7,
         consecutiveToSequence = 6,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 8,
         consecutiveToSequence = 6,
         courtDescription = defaultBookingCourt,
       ),
 
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 9,
         consecutiveToSequence = null,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 10,
         consecutiveToSequence = 9,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 11,
         consecutiveToSequence = 9,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 13,
         consecutiveToSequence = 10,
         courtDescription = alternativeBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 12,
         consecutiveToSequence = 10,
         courtDescription = defaultBookingCourt,
       ),
       Sentence(
-        defaultBookingId,
+        bookingId = defaultBookingId,
         sentenceSequence = 14,
         consecutiveToSequence = 5,
         courtDescription = defaultBookingCourt,
       ),
     )
 
-    val adjustForFirstPeriod =
-      { sentence: Sentence -> sentence.copy(sentenceEndDate = firstPeriodSentenceEndDate) }
+    val responseSentenceForFirstPeriod =
+      { sentence: Sentence ->
+        // we only use a subset, as that's what is used above to initialise the sentences (plus the
+        // sentenceSequenceExpiryDate field relevant to what we're testing)
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
+          bookingId = sentence.bookingId,
+          sentenceSequence = sentence.sentenceSequence,
+          consecutiveToSequence = sentence.consecutiveToSequence,
+          courtDescription = sentence.courtDescription,
+          sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+        )
+      }
 
     // sentenceSequence 0: stand alone
     val expectedSentenceSequenceA = SentenceSequence(
-      indexSentence = adjustForFirstPeriod(sentencesForSequencesFirst[0]),
+      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[0]),
       sentencesInSequence = null,
     )
 
     // sentenceSequence 1, 2: sentence with a single consecutive
     val expectedSentenceSequenceB = SentenceSequence(
-      indexSentence = adjustForFirstPeriod(sentencesForSequencesFirst[1]),
+      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[1]),
       sentencesInSequence = mutableMapOf(
-        sentencesForSequencesFirst[1].sentenceSequence!! to listOf(adjustForFirstPeriod(sentencesForSequencesFirst[2])),
+        sentencesForSequencesFirst[1].sentenceSequence!! to listOf(
+          responseSentenceForFirstPeriod(
+            sentencesForSequencesFirst[2],
+          ),
+        ),
       ),
     )
 
     // sentenceSequence 3, 4, 5: sentence with a single consecutive followed by a single consecutive
     val expectedSentenceSequenceC = SentenceSequence(
-      indexSentence = adjustForFirstPeriod(sentencesForSequencesFirst[3]),
+      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[3]),
       sentencesInSequence = mutableMapOf(
-        sentencesForSequencesFirst[3].sentenceSequence!! to listOf(adjustForFirstPeriod(sentencesForSequencesFirst[4])),
-        sentencesForSequencesFirst[4].sentenceSequence!! to listOf(adjustForFirstPeriod(sentencesForSequencesFirst[5])),
-        sentencesForSequencesFirst[5].sentenceSequence!! to listOf(adjustForFirstPeriod(sentencesForSequencesFirst[14])),
+        sentencesForSequencesFirst[3].sentenceSequence!! to listOf(
+          responseSentenceForFirstPeriod(
+            sentencesForSequencesFirst[4],
+          ),
+        ),
+        sentencesForSequencesFirst[4].sentenceSequence!! to listOf(
+          responseSentenceForFirstPeriod(
+            sentencesForSequencesFirst[5],
+          ),
+        ),
+        sentencesForSequencesFirst[5].sentenceSequence!! to listOf(
+          responseSentenceForFirstPeriod(
+            sentencesForSequencesFirst[14],
+          ),
+        ),
       ),
     )
 
     // sentenceSequence 6, 7, 8: sentence with a consecutively concurrents
     val expectedSentenceSequenceD = SentenceSequence(
-      indexSentence = adjustForFirstPeriod(sentencesForSequencesFirst[6]),
+      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[6]),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[6].sentenceSequence!! to listOf(
-          adjustForFirstPeriod(sentencesForSequencesFirst[7]),
-          adjustForFirstPeriod(sentencesForSequencesFirst[8]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[7]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[8]),
         ),
       ),
     )
 
     // sentenceSequence 9, 10, 11: sentence with multiple concurrents consecutive to each other
     val expectedSentenceSequenceE = SentenceSequence(
-      indexSentence = adjustForFirstPeriod(sentencesForSequencesFirst[9]),
+      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[9]),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[9].sentenceSequence!! to listOf(
-          adjustForFirstPeriod(sentencesForSequencesFirst[10]),
-          adjustForFirstPeriod(sentencesForSequencesFirst[11]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[10]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[11]),
         ),
         sentencesForSequencesFirst[10].sentenceSequence!! to listOf(
-          adjustForFirstPeriod(sentencesForSequencesFirst[13]),
-          adjustForFirstPeriod(sentencesForSequencesFirst[12]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[13]),
+          responseSentenceForFirstPeriod(sentencesForSequencesFirst[12]),
         ),
       ),
     )
@@ -521,21 +597,31 @@ internal class OffenceConverterTest {
       ),
     )
 
-    val adjustForSecondPeriod =
-      { sentence: Sentence -> sentence.copy(sentenceEndDate = secondPeriodSentenceEndDate) }
+    val responseSentenceForSecondPeriod =
+      { sentence: Sentence ->
+        // we only use a subset, as that's what is used above to initialise the sentences (plus the
+        // sentenceSequenceExpiryDate field relevant to what we're testing)
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
+          bookingId = sentence.bookingId,
+          sentenceSequence = sentence.sentenceSequence,
+          consecutiveToSequence = sentence.consecutiveToSequence,
+          courtDescription = sentence.courtDescription,
+          sentenceSequenceExpiryDate = secondPeriodSentenceEndDate,
+        )
+      }
 
     // sentenceSequence: 21, 22, 23, 24, 25: delivered out of order but handled
     // Expect to be sorted after index 0 due to end date
     val expectedSentenceSequenceF = SentenceSequence(
-      indexSentence = adjustForSecondPeriod(sentencesForSequencesSecond[3]),
+      indexSentence = responseSentenceForSecondPeriod(sentencesForSequencesSecond[3]),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesSecond[3].sentenceSequence!! to listOf(
-          adjustForSecondPeriod(sentencesForSequencesSecond[2]),
-          adjustForSecondPeriod(sentencesForSequencesSecond[4]),
+          responseSentenceForSecondPeriod(sentencesForSequencesSecond[2]),
+          responseSentenceForSecondPeriod(sentencesForSequencesSecond[4]),
         ),
         sentencesForSequencesSecond[2].sentenceSequence!! to listOf(
-          adjustForSecondPeriod(sentencesForSequencesSecond[5]),
-          adjustForSecondPeriod(sentencesForSequencesSecond[1]),
+          responseSentenceForSecondPeriod(sentencesForSequencesSecond[5]),
+          responseSentenceForSecondPeriod(sentencesForSequencesSecond[1]),
         ),
       ),
     )
@@ -543,7 +629,7 @@ internal class OffenceConverterTest {
     // sentenceSequence 0: stand alone, same sentence sequence as previous but unique booking
     // Expect to be sorted after before 21 due to end date
     val expectedSentenceSequenceG = SentenceSequence(
-      indexSentence = adjustForSecondPeriod(sentencesForSequencesSecond[0]),
+      indexSentence = responseSentenceForSecondPeriod(sentencesForSequencesSecond[0]),
       sentencesInSequence = null,
     )
 

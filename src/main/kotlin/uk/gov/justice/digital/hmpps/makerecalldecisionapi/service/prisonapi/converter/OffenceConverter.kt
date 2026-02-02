@@ -3,7 +3,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.con
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.SentenceOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.SentenceSequence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Term
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.SentenceCalculationDates
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,16 +34,8 @@ internal class OffenceConverter {
     }
 
     val sentencesForBooking = prisonPeriodInfo.sentencesAndOffences
-      .map { sentenceAndOffences ->
-        sentenceAndOffences.copy(
-          // sentence end dates are now calculated (by the Calculate Release Dates team)
-          // for "the entire sentence calculation envelope", hence our overriding here.
-          sentenceEndDate = periodSentenceEndDate,
-          releaseDate = prisonPeriodInfo.lastDateOutOfPrison,
-          releasingPrison = prisonPeriodInfo.prisonDescription,
-          licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
-          offences = sentenceAndOffences.offences.sortedBy { it.offenceDescription },
-        )
+      .map {
+        convert(it, periodSentenceEndDate, prisonPeriodInfo, offender)
       }
 
     // Sentences that have no consecutiveToSequence value will be the index of a sentence sequence
@@ -94,16 +88,61 @@ internal class OffenceConverter {
     return sentenceSequenceMap.values.toList()
   }
 
+  private fun convert(
+    sentence: Sentence,
+    periodSentenceEndDate: LocalDate,
+    prisonPeriodInfo: PrisonPeriodInfo,
+    offender: Offender?,
+  ): uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
+    bookingId = sentence.bookingId,
+    sentenceSequence = sentence.sentenceSequence,
+    lineSequence = sentence.lineSequence,
+    consecutiveToSequence = sentence.consecutiveToSequence,
+    caseSequence = sentence.caseSequence,
+    courtDescription = sentence.courtDescription,
+    sentenceStatus = sentence.sentenceStatus,
+    sentenceCategory = sentence.sentenceCategory,
+    sentenceCalculationType = sentence.sentenceCalculationType,
+    sentenceTypeDescription = sentence.sentenceTypeDescription,
+    sentenceDate = sentence.sentenceDate,
+    sentenceStartDate = sentence.sentenceStartDate,
+    // sentence end dates are now calculated (by the Calculate Release Dates team)
+    // for "the entire sentence calculation envelope", hence our overriding here.
+    sentenceSequenceExpiryDate = periodSentenceEndDate,
+    terms = sentence.terms.map {
+      Term(
+        years = it.years,
+        months = it.months,
+        weeks = it.weeks,
+        days = it.days,
+        code = it.code,
+      )
+    },
+    releaseDate = prisonPeriodInfo.lastDateOutOfPrison,
+    releasingPrison = prisonPeriodInfo.prisonDescription,
+    licenceExpiryDate = offender?.sentenceDetail?.licenceExpiryDate,
+    offences = sentence.offences.map {
+      SentenceOffence(
+        offenderChargeId = it.offenderChargeId,
+        offenceStartDate = it.offenceStartDate,
+        offenceStatute = it.offenceStatute,
+        offenceCode = it.offenceCode,
+        offenceDescription = it.offenceDescription,
+        indicators = it.indicators,
+      )
+    }.sortedBy { it.offenceDescription },
+  )
+
   /**
-   * Sort sentences by first the sentence end date and the by court if there are any with the same date.
+   * Sort sentences by first the sentence sequence expiry date and then by court if there are any with the same date.
    *
-   * Note that sentences within the same period all have the same end date (we override them to make it so
+   * Note that sentences within the same period all have the same sequence expiry date (we override them to make it so
    * during the conversion), but this comparator is also used in the sentence sequence sorter below, where
    * index sentences from different sequences are compared. In the incredibly unlikely case this ever
    * becomes a performance issue, we can be more granular about the comparisons, but this is simpler for now.
    */
-  private val sentenceSort: Comparator<Sentence> =
-    compareByDescending<Sentence> { it.sentenceEndDate }.thenBy { it.courtDescription }
+  private val sentenceSort: Comparator<uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence> =
+    compareByDescending<uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence> { it.sentenceSequenceExpiryDate }.thenBy { it.courtDescription }
 
   /**
    * Sort sentence sequences by sorting their index sentences by sentenceSort
