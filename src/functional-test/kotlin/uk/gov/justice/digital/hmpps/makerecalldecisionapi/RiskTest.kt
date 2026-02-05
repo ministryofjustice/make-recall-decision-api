@@ -3,18 +3,14 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 
 class RiskTest : FunctionalTest() {
 
@@ -82,34 +78,34 @@ fun riskExpectation() = """
       "scores": {
         "RSR": {
           "score": "4.12",
-          "level": "${RsrScoreLevel.MEDIUM}",
+          "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
           "type": ${RSR.printName}
         },
         "OSPC": {
           "score": null,
-          "level": "${OspcScoreLevel.MEDIUM}",
+          "level": "${FourLevelRiskScoreLevel.MEDIUM}",
           "type": ${OSPC.printName}
         },
         "OSPI": {
           "score": null,
-          "level": "${OspiScoreLevel.MEDIUM}",
+          "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
           "type": ${OSPI.printName}
         },
         "OVP": {
           "oneYear": "12",
-          "level": "${OvpScoreLevel.LOW}",
+          "level": "${FourLevelRiskScoreLevel.LOW}",
           "twoYears": "21",
           "type": ${OVP.printName}
         },
         "OGP": {
           "oneYear": "5",
-          "level": "${OgpScoreLevel.LOW}",
+          "level": "${FourLevelRiskScoreLevel.LOW}",
           "twoYears": "8",
           "type": ${OGP.printName}
         },
         "OGRS": {
           "oneYear": "6",
-          "level": "${OgrsScoreLevel.LOW}",
+          "level": "${FourLevelRiskScoreLevel.LOW}",
           "twoYears": "12",
           "type": ${OGRS.printName}
         }
@@ -117,38 +113,76 @@ fun riskExpectation() = """
     },
     "historical": [
       {
-        "date": "2022-07-27",
+        "date": "2025-12-24",
         "scores": {
           "RSR": {
             "score": "4.12",
-            "level": "${RsrScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${RSR.printName}
           },
           "OSPC": {
             "score": null,
-            "level": "${OspcScoreLevel.MEDIUM}",
+            "level": "${FourLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPC.printName}
           },
           "OSPI": {
             "score": null,
-            "level": "${OspiScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPI.printName}
           },
           "OVP": {
             "oneYear": "12",
-            "level": "${OvpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "21",
             "type": ${OVP.printName}
           },
           "OGP": {
             "oneYear": "5",
-            "level": "${OgpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "8",
             "type": ${OGP.printName}
           },
           "OGRS": {
             "oneYear": "6",
-            "level": "${OgrsScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
+            "twoYears": "12",
+            "type": ${OGRS.printName}
+          }
+        }
+      },
+      {
+        "date": "2022-07-27",
+        "scores": {
+          "RSR": {
+            "score": "4.12",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
+            "type": ${RSR.printName}
+          },
+          "OSPC": {
+            "score": null,
+            "level": "${FourLevelRiskScoreLevel.MEDIUM}",
+            "type": ${OSPC.printName}
+          },
+          "OSPI": {
+            "score": null,
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
+            "type": ${OSPI.printName}
+          },
+          "OVP": {
+            "oneYear": "12",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
+            "twoYears": "21",
+            "type": ${OVP.printName}
+          },
+          "OGP": {
+            "oneYear": "5",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
+            "twoYears": "8",
+            "type": ${OGP.printName}
+          },
+          "OGRS": {
+            "oneYear": "6",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "12",
             "type": ${OGRS.printName}
           }
@@ -159,34 +193,34 @@ fun riskExpectation() = """
         "scores": {
           "RSR": {
             "score": "4.12",
-            "level": "${RsrScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${RSR.printName}
           },
           "OSPC": {
             "score": null,
-            "level": "${OspcScoreLevel.MEDIUM}",
+            "level": "${FourLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPC.printName}
           },
           "OSPI": {
             "score": null,
-            "level": "${OspiScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPI.printName}
           },
           "OVP": {
             "oneYear": "12",
-            "level": "${OvpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "21",
             "type": ${OVP.printName}
           },
           "OGP": {
             "oneYear": "5",
-            "level": "${OgpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "8",
             "type": ${OGP.printName}
           },
           "OGRS": {
             "oneYear": "6",
-            "level": "${OgrsScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "12",
             "type": ${OGRS.printName}
           }
@@ -197,34 +231,34 @@ fun riskExpectation() = """
         "scores": {
           "RSR": {
             "score": "4.12",
-            "level": "${RsrScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${RSR.printName}
           },
           "OSPC": {
             "score": null,
-            "level": "${OspcScoreLevel.MEDIUM}",
+            "level": "${FourLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPC.printName}
           },
           "OSPI": {
             "score": null,
-            "level": "${OspiScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPI.printName}
           },
           "OVP": {
             "oneYear": "12",
-            "level": "${OvpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "21",
             "type": ${OVP.printName}
           },
           "OGP": {
             "oneYear": "5",
-            "level": "${OgpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "8",
             "type": ${OGP.printName}
           },
           "OGRS": {
             "oneYear": "6",
-            "level": "${OgrsScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "12",
             "type": ${OGRS.printName}
           }
@@ -235,34 +269,34 @@ fun riskExpectation() = """
         "scores": {
           "RSR": {
             "score": "4.12",
-            "level": "${RsrScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${RSR.printName}
           },
           "OSPC": {
             "score": null,
-            "level": "${OspcScoreLevel.MEDIUM}",
+            "level": "${FourLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPC.printName}
           },
           "OSPI": {
             "score": null,
-            "level": "${OspiScoreLevel.MEDIUM}",
+            "level": "${ThreeLevelRiskScoreLevel.MEDIUM}",
             "type": ${OSPI.printName}
           },
           "OVP": {
             "oneYear": "12",
-            "level": "${OvpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "21",
             "type": ${OVP.printName}
           },
           "OGP": {
             "oneYear": "5",
-            "level": "${OgpScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "8",
             "type": ${OGP.printName}
           },
           "OGRS": {
             "oneYear": "6",
-            "level": "${OgrsScoreLevel.LOW}",
+            "level": "${FourLevelRiskScoreLevel.LOW}",
             "twoYears": "12",
             "type": ${OGRS.printName}
           }
@@ -273,7 +307,7 @@ fun riskExpectation() = """
         "scores": {
           "RSR": {
             "score": "0.32",
-            "level": "${RsrScoreLevel.LOW}",
+            "level": "${ThreeLevelRiskScoreLevel.LOW}",
             "type": ${RSR.printName}
           },
           "OSPC": null,
