@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import java.time.LocalDate
 
@@ -54,6 +58,7 @@ data class PredictorScore(
 )
 
 data class Scores(
+  // V1 assessment scores
   @JsonProperty("RSR")
   val rsr: LevelWithScore?,
   @JsonProperty("OSPC")
@@ -70,12 +75,20 @@ data class Scores(
   val ogp: LevelWithTwoYearScores?,
   @JsonProperty("OVP")
   val ovp: LevelWithTwoYearScores?,
+
+  // V2 assessment scores
+  val allReoffendingPredictor: StaticOrDynamicPredictor?,
+  val violentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val seriousViolentReoffendingPredictor: StaticOrDynamicPredictor?,
+  val directContactSexualReoffendingPredictor: FourBandPredictor?,
+  val indirectImageContactSexualReoffendingPredictor: ThreeBandPredictor?,
+  val combinedSeriousReoffendingPredictor: CombinedPredictor?,
 )
 
 data class LevelWithScore(
   val level: String?,
   val type: String?,
-  val score: String?,
+  val score: Double?,
 )
 
 data class LevelWithTwoYearScores(

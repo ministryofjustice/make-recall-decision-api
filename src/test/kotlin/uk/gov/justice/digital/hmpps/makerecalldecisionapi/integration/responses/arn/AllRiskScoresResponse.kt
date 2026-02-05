@@ -1,23 +1,20 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OgrsScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspdcScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OspiicScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OvpScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
-
+// There are 3 risk scores in the response,
+// 1st one with date 2021-06-16T11:40:54.243 is V1 response for sexualPredictorScore with OSPC & OSPIC scores
+// 2nd one with date 2022-06-16T11:40:54.243 is V1 response for sexualPredictorScore with OSPDC & OSPIIC scores
+// 3rd one with date 2023-06-16T11:40:54.243 is V2 response
 fun allRiskScoresResponse() = """
 [
 {
     "completedDate": "2021-06-16T11:40:54.243",
-    "assessmentStatus": "COMPLETE",
-    "groupReconvictionScore": {
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "${OgrsScoreLevel.HIGH}"
+      "scoreLevel": "LOW"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -25,7 +22,7 @@ fun allRiskScoresResponse() = """
       "ovpTotalWeightedScore": 0,
       "oneYear": 0,
       "twoYears": 0,
-      "ovpRisk": "${OvpScoreLevel.HIGH}"
+      "ovpRisk": "LOW"
     },
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
@@ -33,29 +30,32 @@ fun allRiskScoresResponse() = """
       "ogpTotalWeightedScore": 0,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "${OgpScoreLevel.HIGH}"
+      "ogpRisk": "LOW"
     },
     "riskOfSeriousRecidivismScore": {
-      "percentageScore": 0,
+      "percentageScore": 23,
       "staticOrDynamic": "STATIC",
       "source": "ASSESSMENTS_API",
       "algorithmVersion": "string",
-      "scoreLevel": "${RsrScoreLevel.HIGH}"
+      "scoreLevel": "HIGH"
     },
     "sexualPredictorScore": {
       "ospIndecentPercentageScore": 0,
       "ospContactPercentageScore": 0,
-      "ospIndecentScoreLevel": "${OspiScoreLevel.HIGH}",
-      "ospContactScoreLevel": "${OspcScoreLevel.HIGH}"
+      "ospIndecentScoreLevel": "HIGH",
+      "ospContactScoreLevel": "HIGH"
+      }
     }
   },
   {
-    "completedDate": "2022-04-16T11:40:54.243",
-    "assessmentStatus": "COMPLETE",
-    "groupReconvictionScore": {
+    "completedDate": "2022-06-16T11:40:54.243",
+    "status": "COMPLETE",
+    "outputVersion": "1",
+    "output": {
+      "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "${OgrsScoreLevel.LOW}"
+      "scoreLevel": "LOW"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -63,28 +63,67 @@ fun allRiskScoresResponse() = """
       "ovpTotalWeightedScore": 0,
       "oneYear": 0,
       "twoYears": 0,
-      "ovpRisk": "${OvpScoreLevel.LOW}"
+      "ovpRisk": "LOW"
     },
     "generalPredictorScore": {
       "ogpStaticWeightedScore": 0,
       "ogpDynamicWeightedScore": 0,
-      "ogpTotalWeightedScore": 12,
+      "ogpTotalWeightedScore": 0,
       "ogp1Year": 0,
       "ogp2Year": 0,
-      "ogpRisk": "${OgpScoreLevel.LOW}"
+      "ogpRisk": "LOW"
     },
     "riskOfSeriousRecidivismScore": {
       "percentageScore": 23,
       "staticOrDynamic": "STATIC",
       "source": "ASSESSMENTS_API",
       "algorithmVersion": "string",
-      "scoreLevel": "${RsrScoreLevel.HIGH}"
+      "scoreLevel": "HIGH"
     },
     "sexualPredictorScore": {
-      "ospIndirectImagePercentageScore": 5,
-      "ospDirectContactPercentageScore": 3.45,
-      "ospIndirectImageScoreLevel": "${OspiicScoreLevel.MEDIUM}",
-      "ospDirectContactScoreLevel": "${OspdcScoreLevel.LOW}"
+      "ospIndirectImagePercentageScore": 0,
+      "ospDirectContactPercentageScore": 0,
+      "ospIndirectImageScoreLevel":	"MEDIUM",
+      "ospDirectContactScoreLevel":	"LOW"
+      }
+    }
+  },
+  {
+    "completedDate": "2023-06-16T11:40:54.243",
+    "status": "COMPLETE",
+    "outputVersion": "2",
+    "output": {
+      "allReoffendingPredictor": {
+        "score": 12.5,
+        "band": "MEDIUM",
+        "staticOrDynamic": "STATIC"
+      },
+      "violentReoffendingPredictor": {
+        "score": 8.0,
+        "band": "LOW",
+        "staticOrDynamic": "DYNAMIC"
+      },
+      "seriousViolentReoffendingPredictor": {
+        "score": 15.2,
+        "band": "HIGH",
+        "staticOrDynamic": "STATIC"
+      },
+      "directContactSexualReoffendingPredictor": {
+        "score": 6.3,
+        "band": "LOW",
+        "staticOrDynamic": "STATIC"
+      },
+      "indirectImageContactSexualReoffendingPredictor": {
+        "score": 9.8,
+        "band": "MEDIUM",
+        "staticOrDynamic": "STATIC"
+      },
+      "combinedSeriousReoffendingPredictor": {
+        "score": 18.7,
+        "band": "VERY_HIGH",
+        "staticOrDynamic": "DYNAMIC",
+        "algorithmVersion": "v2.1.0"
+      }
     }
   }
 ]

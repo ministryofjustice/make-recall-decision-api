@@ -336,7 +336,7 @@ abstract class IntegrationTestBase {
 
   protected fun allRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds)),
@@ -345,7 +345,7 @@ abstract class IntegrationTestBase {
 
   protected fun allRiskScoresEmptyResponse(crn: String) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresEmptyResponse()),
@@ -377,7 +377,7 @@ abstract class IntegrationTestBase {
 
   protected fun noRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
       response().withStatusCode(404),
@@ -386,7 +386,7 @@ abstract class IntegrationTestBase {
 
   protected fun failedRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withStatusCode(500),
