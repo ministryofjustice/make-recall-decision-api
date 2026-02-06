@@ -19,7 +19,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
-import java.time.LocalDateTime
 
 @Service
 class RiskScoreConverter {
@@ -53,7 +52,7 @@ class RiskScoreConverter {
     if (assessmentScores is AssessmentScoresV2 && allV2FieldsAreNull(scores)) return null
 
     return PredictorScore(
-      date = convertDateTimeStringToDateString(assessmentScores.completedDate),
+      date = assessmentScores.completedDate,
       scores = scores,
     )
   }
@@ -77,12 +76,6 @@ class RiskScoreConverter {
     scores?.indirectImageContactSexualReoffendingPredictor,
     scores?.combinedSeriousReoffendingPredictor,
   ).all { it == null }
-
-  private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {
-    LocalDateTime.parse(dateTime).toLocalDate().toString()
-  } else {
-    null
-  }
 
   private fun createScores(assessmentScores: AssessmentScores): Scores? = when (assessmentScores) {
     is AssessmentScoresV1 -> createScoresFromV1(assessmentScores)
