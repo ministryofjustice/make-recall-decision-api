@@ -78,12 +78,6 @@ class RiskScoreConverter {
     scores?.combinedSeriousReoffendingPredictor,
   ).all { it == null }
 
-  private fun convertDateTimeStringToDateString(dateTime: String?): String? = if (dateTime != null) {
-    LocalDateTime.parse(dateTime).toLocalDate().toString()
-  } else {
-    null
-  }
-
   private fun createScores(assessmentScores: AssessmentScores): Scores? = when (assessmentScores) {
     is AssessmentScoresV1 -> createScoresFromV1(assessmentScores)
     is AssessmentScoresV2 -> createScoresFromV2(assessmentScores)
