@@ -34,7 +34,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.sexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.violencePredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
-import java.time.LocalDateTime
 
 class RiskScoreConverterTest {
 
@@ -312,7 +311,7 @@ class RiskScoreConverterTest {
     }
 
     return PredictorScore(
-      date = riskScoreResponse.completedDate?.let { LocalDateTime.parse(it).toLocalDate().toString() },
+      date = riskScoreResponse.completedDate,
       scores = Scores(
         rsr = LevelWithScore(
           level = riskOfSeriousRecidivismScore?.scoreLevel.toString(),
@@ -357,8 +356,7 @@ class RiskScoreConverterTest {
     val output = riskScoreResponse.output
 
     return PredictorScore(
-      date = riskScoreResponse.completedDate
-        ?.let { LocalDateTime.parse(it).toLocalDate().toString() },
+      date = riskScoreResponse.completedDate,
 
       scores = Scores(
         // V1 fields (all null for V2)
