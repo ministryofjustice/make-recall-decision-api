@@ -291,7 +291,7 @@ class RiskControllerTest(
         .jsonPath("$.roshSummary.riskImminence").isEqualTo("the risk is imminent and more probably in X situation")
         .jsonPath("$.predictorScores.error").isEqualTo(EMPTY_STRING)
         // predictorScores CURRENT: always V2 (2023-06-16)
-        .jsonPath("$.predictorScores.current.date").isEqualTo("2023-06-16")
+        .jsonPath("$.predictorScores.current.date").isEqualTo("2023-06-16T11:40:54.243")
         // V1 fields must NOT exist
         .jsonPath("$.predictorScores.current.scores.RSR").doesNotExist()
         .jsonPath("$.predictorScores.current.scores.OGP").doesNotExist()
@@ -322,7 +322,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.algorithmVersion").isEqualTo("v2.1.0")
         // Historic[0] should be same as current (2023-06-16)
-        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("2023-06-16")
+        .jsonPath("$.predictorScores.historical[0].date").isEqualTo("2023-06-16T11:40:54.243")
         // V1 fields must NOT exist
         .jsonPath("$.predictorScores.historical[0].scores.RSR").doesNotExist()
         .jsonPath("$.predictorScores.historical[0].scores.OGP").doesNotExist()
@@ -357,7 +357,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.DYNAMIC)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.algorithmVersion").isEqualTo("v2.1.0")
         // Historic[1] should be V1 with 2022-06-16
-        .jsonPath("$.predictorScores.historical[1].date").isEqualTo("2022-06-16")
+        .jsonPath("$.predictorScores.historical[1].date").isEqualTo("2022-06-16T11:40:54.243")
         .jsonPath("$.predictorScores.historical[1].scores.RSR.type").isEqualTo(RSR.printName)
         .jsonPath("$.predictorScores.historical[1].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
         .jsonPath("$.predictorScores.historical[1].scores.RSR.score").isEqualTo(23.0)
@@ -387,7 +387,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[1].scores.indirectImageContactSexualReoffendingPredictor").doesNotExist()
         .jsonPath("$.predictorScores.historical[1].scores.combinedSeriousReoffendingPredictor").doesNotExist()
         // Historic[2] should ve V1 with 2021-06-16
-        .jsonPath("$.predictorScores.historical[2].date").isEqualTo("2021-06-16")
+        .jsonPath("$.predictorScores.historical[2].date").isEqualTo("2021-06-16T11:40:54.243")
         .jsonPath("$.predictorScores.historical[2].scores.RSR.type").isEqualTo(RSR.printName)
         .jsonPath("$.predictorScores.historical[2].scores.RSR.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
         .jsonPath("$.predictorScores.historical[2].scores.RSR.score").isEqualTo(23.0)

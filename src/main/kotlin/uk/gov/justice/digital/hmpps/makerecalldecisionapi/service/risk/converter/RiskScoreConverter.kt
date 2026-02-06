@@ -53,7 +53,7 @@ class RiskScoreConverter {
     if (assessmentScores is AssessmentScoresV2 && allV2FieldsAreNull(scores)) return null
 
     return PredictorScore(
-      date = convertDateTimeStringToDateString(assessmentScores.completedDate),
+      date = assessmentScores.completedDate,
       scores = scores,
     )
   }
