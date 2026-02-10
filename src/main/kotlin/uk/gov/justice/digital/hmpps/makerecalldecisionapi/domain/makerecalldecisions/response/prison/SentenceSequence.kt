@@ -23,8 +23,9 @@ data class Sentence(
   val sentenceTypeDescription: String? = null,
   val sentenceDate: LocalDate? = null,
   val sentenceStartDate: LocalDate? = null,
-  // We don't provide a sentence end date, as NOMIS & Calculate Release Date don't provide an accurate
-  // one. Only the expiry/end date for the sequence the sentence is a part of is useful to the users
+  // we only provide sentenceEndDate if the sentence is the only one in
+  // its sequence, where it is the same as the sentenceSequenceExpiryDate
+  val sentenceEndDate: LocalDate? = null,
   val sentenceSequenceExpiryDate: LocalDate? = null,
   val terms: List<Term> = listOf(),
   val offences: List<SentenceOffence> = listOf(),

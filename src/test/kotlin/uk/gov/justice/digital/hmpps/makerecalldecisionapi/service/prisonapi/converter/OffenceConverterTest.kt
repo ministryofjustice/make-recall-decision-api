@@ -165,12 +165,12 @@ internal class OffenceConverterTest {
     )
 
     // then
+    assertThat(actualSentences).hasSize(1)
+    assertThat(actualSentences[0].indexSentence.sentenceEndDate).isEqualTo(overrideEndDate)
     assertThat(actualSentences[0].indexSentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
-    actualSentences.forEach { sentenceSequence ->
-      assertThat(sentenceSequence.indexSentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
-      sentenceSequence.sentencesInSequence?.values?.flatten()?.forEach { sentence ->
-        assertThat(sentence.sentenceSequenceExpiryDate).isEqualTo(overrideEndDate)
-      }
+    actualSentences[0].sentencesInSequence?.values?.flatten()?.forEach { sentence ->
+      assertThat(sentence.sentenceEndDate).isNull()
+      assertThat(sentence.sentenceSequenceExpiryDate).isNull()
     }
   }
 
@@ -198,12 +198,12 @@ internal class OffenceConverterTest {
     )
 
     // then
+    assertThat(actualSentences).hasSize(1)
+    assertThat(actualSentences[0].indexSentence.sentenceEndDate).isEqualTo(calculatedDate)
     assertThat(actualSentences[0].indexSentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
-    actualSentences.forEach { sentenceSequence ->
-      assertThat(sentenceSequence.indexSentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
-      sentenceSequence.sentencesInSequence?.values?.flatten()?.forEach { sentence ->
-        assertThat(sentence.sentenceSequenceExpiryDate).isEqualTo(calculatedDate)
-      }
+    actualSentences[0].sentencesInSequence?.values?.flatten()?.forEach { sentence ->
+      assertThat(sentence.sentenceEndDate).isNull()
+      assertThat(sentence.sentenceSequenceExpiryDate).isNull()
     }
   }
 
@@ -223,7 +223,6 @@ internal class OffenceConverterTest {
       sentence(
         consecutiveToSequence = 1,
         sentenceSequence = 2,
-        sentenceEndDate = randomFutureLocalDate(),
       ),
     )
     val secondPeriodPrisonDescription = randomString()
@@ -237,13 +236,12 @@ internal class OffenceConverterTest {
       sentence(
         consecutiveToSequence = 1,
         sentenceSequence = 2,
-        sentenceEndDate = randomFutureLocalDate(),
       ),
     )
 
-    val convertToExpectedSentence = {
+    val convertToExpectedResponseSentence = {
         sentence: Sentence,
-        sentenceSequenceExpiryDate: LocalDate,
+        sentenceSequenceExpiryDate: LocalDate?,
         releaseDate: LocalDateTime?,
         releasingPrison: String,
         licenceExpiryDate: LocalDate,
@@ -261,6 +259,7 @@ internal class OffenceConverterTest {
         sentenceTypeDescription = sentence.sentenceTypeDescription,
         sentenceDate = sentence.sentenceDate,
         sentenceStartDate = sentence.sentenceStartDate,
+        sentenceEndDate = null, // as all expected sequences have more than one sentence
         sentenceSequenceExpiryDate = sentenceSequenceExpiryDate,
         terms = sentence.terms.map {
           uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.term(
@@ -288,7 +287,7 @@ internal class OffenceConverterTest {
     }
     val expectedSentenceSequence = listOf(
       sentenceSequence(
-        indexSentence = convertToExpectedSentence(
+        indexSentence = convertToExpectedResponseSentence(
           firstPrisonPeriodSentences[0],
           firstPeriodSentenceEndDate,
           firstPeriodLastDateOutOfPrison,
@@ -297,9 +296,9 @@ internal class OffenceConverterTest {
         ),
         sentencesInSequence = mutableMapOf(
           1 to listOf(
-            convertToExpectedSentence(
+            convertToExpectedResponseSentence(
               firstPrisonPeriodSentences[1],
-              firstPeriodSentenceEndDate,
+              null,
               firstPeriodLastDateOutOfPrison,
               firstPeriodPrisonDescription,
               licenceExpiryDate,
@@ -308,7 +307,7 @@ internal class OffenceConverterTest {
         ),
       ),
       sentenceSequence(
-        indexSentence = convertToExpectedSentence(
+        indexSentence = convertToExpectedResponseSentence(
           secondPrisonPeriodSentences[0],
           secondPeriodSentenceEndDate,
           secondPeriodLastDateOutOfPrison,
@@ -317,9 +316,9 @@ internal class OffenceConverterTest {
         ),
         sentencesInSequence = mutableMapOf(
           1 to listOf(
-            convertToExpectedSentence(
+            convertToExpectedResponseSentence(
               secondPrisonPeriodSentences[1],
-              secondPeriodSentenceEndDate,
+              null,
               secondPeriodLastDateOutOfPrison,
               secondPeriodPrisonDescription,
               licenceExpiryDate,
@@ -473,31 +472,34 @@ internal class OffenceConverterTest {
       ),
     )
 
-    val responseSentenceForFirstPeriod =
+    val convertToExpectedResponseSentence =
       { sentence: Sentence ->
-        // we only use a subset, as that's what is used above to initialise the sentences (plus the
-        // sentenceSequenceExpiryDate field relevant to what we're testing)
+        // we only use a subset, as that's what is used above to initialise the sentences
         uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
           bookingId = sentence.bookingId,
           sentenceSequence = sentence.sentenceSequence,
           consecutiveToSequence = sentence.consecutiveToSequence,
           courtDescription = sentence.courtDescription,
-          sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
         )
       }
 
     // sentenceSequence 0: stand alone
     val expectedSentenceSequenceA = SentenceSequence(
-      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[0]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesFirst[0]).copy(
+        sentenceEndDate = firstPeriodSentenceEndDate,
+        sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+      ),
       sentencesInSequence = null,
     )
 
     // sentenceSequence 1, 2: sentence with a single consecutive
     val expectedSentenceSequenceB = SentenceSequence(
-      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[1]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesFirst[1]).copy(
+        sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+      ),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[1].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(
+          convertToExpectedResponseSentence(
             sentencesForSequencesFirst[2],
           ),
         ),
@@ -506,20 +508,22 @@ internal class OffenceConverterTest {
 
     // sentenceSequence 3, 4, 5: sentence with a single consecutive followed by a single consecutive
     val expectedSentenceSequenceC = SentenceSequence(
-      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[3]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesFirst[3]).copy(
+        sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+      ),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[3].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(
+          convertToExpectedResponseSentence(
             sentencesForSequencesFirst[4],
           ),
         ),
         sentencesForSequencesFirst[4].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(
+          convertToExpectedResponseSentence(
             sentencesForSequencesFirst[5],
           ),
         ),
         sentencesForSequencesFirst[5].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(
+          convertToExpectedResponseSentence(
             sentencesForSequencesFirst[14],
           ),
         ),
@@ -528,26 +532,30 @@ internal class OffenceConverterTest {
 
     // sentenceSequence 6, 7, 8: sentence with a consecutively concurrents
     val expectedSentenceSequenceD = SentenceSequence(
-      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[6]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesFirst[6]).copy(
+        sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+      ),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[6].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[7]),
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[8]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[7]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[8]),
         ),
       ),
     )
 
     // sentenceSequence 9, 10, 11: sentence with multiple concurrents consecutive to each other
     val expectedSentenceSequenceE = SentenceSequence(
-      indexSentence = responseSentenceForFirstPeriod(sentencesForSequencesFirst[9]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesFirst[9]).copy(
+        sentenceSequenceExpiryDate = firstPeriodSentenceEndDate,
+      ),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesFirst[9].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[10]),
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[11]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[10]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[11]),
         ),
         sentencesForSequencesFirst[10].sentenceSequence!! to listOf(
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[13]),
-          responseSentenceForFirstPeriod(sentencesForSequencesFirst[12]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[13]),
+          convertToExpectedResponseSentence(sentencesForSequencesFirst[12]),
         ),
       ),
     )
@@ -597,31 +605,20 @@ internal class OffenceConverterTest {
       ),
     )
 
-    val responseSentenceForSecondPeriod =
-      { sentence: Sentence ->
-        // we only use a subset, as that's what is used above to initialise the sentences (plus the
-        // sentenceSequenceExpiryDate field relevant to what we're testing)
-        uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
-          bookingId = sentence.bookingId,
-          sentenceSequence = sentence.sentenceSequence,
-          consecutiveToSequence = sentence.consecutiveToSequence,
-          courtDescription = sentence.courtDescription,
-          sentenceSequenceExpiryDate = secondPeriodSentenceEndDate,
-        )
-      }
-
     // sentenceSequence: 21, 22, 23, 24, 25: delivered out of order but handled
     // Expect to be sorted after index 0 due to end date
     val expectedSentenceSequenceF = SentenceSequence(
-      indexSentence = responseSentenceForSecondPeriod(sentencesForSequencesSecond[3]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesSecond[3]).copy(
+        sentenceSequenceExpiryDate = secondPeriodSentenceEndDate,
+      ),
       sentencesInSequence = mutableMapOf(
         sentencesForSequencesSecond[3].sentenceSequence!! to listOf(
-          responseSentenceForSecondPeriod(sentencesForSequencesSecond[2]),
-          responseSentenceForSecondPeriod(sentencesForSequencesSecond[4]),
+          convertToExpectedResponseSentence(sentencesForSequencesSecond[2]),
+          convertToExpectedResponseSentence(sentencesForSequencesSecond[4]),
         ),
         sentencesForSequencesSecond[2].sentenceSequence!! to listOf(
-          responseSentenceForSecondPeriod(sentencesForSequencesSecond[5]),
-          responseSentenceForSecondPeriod(sentencesForSequencesSecond[1]),
+          convertToExpectedResponseSentence(sentencesForSequencesSecond[5]),
+          convertToExpectedResponseSentence(sentencesForSequencesSecond[1]),
         ),
       ),
     )
@@ -629,7 +626,10 @@ internal class OffenceConverterTest {
     // sentenceSequence 0: stand alone, same sentence sequence as previous but unique booking
     // Expect to be sorted after before 21 due to end date
     val expectedSentenceSequenceG = SentenceSequence(
-      indexSentence = responseSentenceForSecondPeriod(sentencesForSequencesSecond[0]),
+      indexSentence = convertToExpectedResponseSentence(sentencesForSequencesSecond[0]).copy(
+        sentenceEndDate = secondPeriodSentenceEndDate,
+        sentenceSequenceExpiryDate = secondPeriodSentenceEndDate,
+      ),
       sentencesInSequence = null,
     )
 

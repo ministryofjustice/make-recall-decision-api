@@ -166,7 +166,8 @@ class PrisonApiControllerTest : IntegrationTestBase() {
           sentenceTypeDescription = sentence.sentenceTypeDescription,
           sentenceDate = sentence.sentenceDate,
           sentenceStartDate = sentence.sentenceStartDate,
-          sentenceSequenceExpiryDate = sentence.sentenceEndDate,
+          sentenceEndDate = null, // as all expected sequences have more than one sentence
+          sentenceSequenceExpiryDate = null, // set further down, as only expected in index sentences
           terms = sentence.terms.map {
             uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.term(
               years = it.years,
@@ -193,7 +194,6 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       }
       val overriddenFirstPeriodSentences = firstPeriodSentences.map { sentence: Sentence ->
         sentence.copy(
-          sentenceEndDate = firstPeriodSentenceExpiryDate,
           releaseDate = firstPrisonPeriod.movementDates.last().dateOutOfPrison,
           releasingPrison = agency.longDescription,
           licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
@@ -202,7 +202,6 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       }
       val overriddenSecondPeriodSentences = secondPeriodSentences.map { sentence: Sentence ->
         sentence.copy(
-          sentenceEndDate = secondPeriodSentenceExpiryDate,
           releaseDate = secondPrisonPeriod.movementDates.last().dateOutOfPrison,
           releasingPrison = agency.longDescription,
           licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
@@ -211,13 +210,17 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       }
       val expectedSentenceSequences = listOf(
         SentenceSequence(
-          overriddenFirstPeriodSentences[0],
+          overriddenFirstPeriodSentences[0].copy(
+            sentenceSequenceExpiryDate = firstPeriodSentenceExpiryDate,
+          ),
           sentencesInSequence = mutableMapOf(
             0 to listOf(overriddenFirstPeriodSentences[1]),
           ),
         ),
         SentenceSequence(
-          overriddenSecondPeriodSentences[0],
+          overriddenSecondPeriodSentences[0].copy(
+            sentenceSequenceExpiryDate = secondPeriodSentenceExpiryDate,
+          ),
           sentencesInSequence = mutableMapOf(
             0 to listOf(overriddenSecondPeriodSentences[1]),
           ),

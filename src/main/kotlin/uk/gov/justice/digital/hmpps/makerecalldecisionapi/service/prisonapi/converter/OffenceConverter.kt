@@ -35,7 +35,7 @@ internal class OffenceConverter {
 
     val sentencesForBooking = prisonPeriodInfo.sentencesAndOffences
       .map {
-        convert(it, periodSentenceEndDate, prisonPeriodInfo, offender)
+        convert(it, prisonPeriodInfo, offender)
       }
 
     // Sentences that have no consecutiveToSequence value will be the index of a sentence sequence
@@ -85,12 +85,13 @@ internal class OffenceConverter {
     }
 
     // We don't need the map that references the index sentence's sequence so return all values as a list
-    return sentenceSequenceMap.values.toList()
+    return sentenceSequenceMap.values.map {
+      addExpiryDatesToIndexSentence(it, periodSentenceEndDate)
+    }.toList()
   }
 
   private fun convert(
     sentence: Sentence,
-    periodSentenceEndDate: LocalDate,
     prisonPeriodInfo: PrisonPeriodInfo,
     offender: Offender?,
   ): uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence = uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.Sentence(
@@ -106,9 +107,6 @@ internal class OffenceConverter {
     sentenceTypeDescription = sentence.sentenceTypeDescription,
     sentenceDate = sentence.sentenceDate,
     sentenceStartDate = sentence.sentenceStartDate,
-    // sentence end dates are now calculated (by the Calculate Release Dates team)
-    // for "the entire sentence calculation envelope", hence our overriding here.
-    sentenceSequenceExpiryDate = periodSentenceEndDate,
     terms = sentence.terms.map {
       Term(
         years = it.years,
@@ -132,6 +130,28 @@ internal class OffenceConverter {
       )
     }.sortedBy { it.offenceDescription },
   )
+
+  private fun addExpiryDatesToIndexSentence(
+    sentenceSequence: SentenceSequence,
+    periodSentenceEndDate: LocalDate,
+  ): SentenceSequence {
+    // For single-sentence sequences, we want to also fill in the
+    // sentence end date, as it is the same as the sequence expiry date
+    if (sentenceSequence.sentencesInSequence == null) {
+      return sentenceSequence.copy(
+        indexSentence = sentenceSequence.indexSentence.copy(
+          sentenceEndDate = periodSentenceEndDate,
+          sentenceSequenceExpiryDate = periodSentenceEndDate,
+        ),
+      )
+    } else {
+      return sentenceSequence.copy(
+        indexSentence = sentenceSequence.indexSentence.copy(
+          sentenceSequenceExpiryDate = periodSentenceEndDate,
+        ),
+      )
+    }
+  }
 
   /**
    * Sort sentences by first the sentence sequence expiry date and then by court if there are any with the same date.
