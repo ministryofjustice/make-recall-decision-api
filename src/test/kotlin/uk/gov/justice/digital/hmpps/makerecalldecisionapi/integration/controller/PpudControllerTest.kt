@@ -12,9 +12,11 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.CreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentCategory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudAddress
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudContactWithTelephone
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
@@ -22,6 +24,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdatePostRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
@@ -31,7 +36,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudUpdateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation.PpudAutomationResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
@@ -70,14 +78,10 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `given request including null CRO Number when search is called then any matching results are returned`() {
-    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
+    val ppudSearchRequest = ppudSearchRequest(croNumber = null)
+    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse(ppudSearchRequest, ppudSearchResponse())
     runTest {
-      val requestBody = "{" +
-        "\"croNumber\": null, " +
-        "\"nomsId\": \"A1234AB\", " +
-        "\"familyName\": \"Bloggs\", " +
-        "\"dateOfBirth\": \"2000-01-01\"" +
-        "}"
+      val requestBody = toJsonString(ppudSearchRequest)
 
       postToSearch(requestBody)
         .expectStatus().isOk
@@ -86,14 +90,10 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `given request including null NOMIS ID when search is called then any matching results are returned`() {
-    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse("A1234AB", "123456/12A")
+    val ppudSearchRequest = ppudSearchRequest(nomsId = null)
+    ppudAutomationResponseMocker.ppudAutomationSearchApiMatchResponse(ppudSearchRequest, ppudSearchResponse())
     runTest {
-      val requestBody = "{" +
-        "\"croNumber\": \"123456/12A\", " +
-        "\"nomsId\": null, " +
-        "\"familyName\": \"Bloggs\", " +
-        "\"dateOfBirth\": \"2000-01-01\"" +
-        "}"
+      val requestBody = toJsonString(ppudSearchRequest)
 
       postToSearch(requestBody)
         .expectStatus().isOk
@@ -267,16 +267,17 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud update offence`() {
-    ppudAutomationResponseMocker.ppudAutomationUpdateOffenceApiMatchResponse("123", "456")
+    val ppudUpdateOffenderRequest = PpudUpdateOffenceRequest(
+      indexOffence = "Index offence",
+      indexOffenceComment = "Index offence comments",
+      dateOfIndexOffence = LocalDate.of(2016, 1, 1),
+    )
+    ppudAutomationResponseMocker.ppudAutomationUpdateOffenceApiMatchResponse("123", "456", ppudUpdateOffenderRequest)
     runTest {
       putToUpdateOffence(
         "123",
         "456",
-        PpudUpdateOffenceRequest(
-          indexOffence = "Index offence",
-          indexOffenceComment = "Index offence comments",
-          dateOfIndexOffence = LocalDate.of(2016, 1, 1),
-        ),
+        ppudUpdateOffenderRequest,
       )
         .expectStatus().isOk
     }
@@ -381,7 +382,18 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
     )
 
-    ppudAutomationResponseMocker.ppudAutomationUploadMandatoryDocumentApiMatchResponse("123")
+    val ppudUploadMandatoryDocumentRequest = PpudUploadMandatoryDocumentRequest(
+      documentId = documentId,
+      category = DocumentCategory.PartA,
+      owningCaseworker = PpudUser(
+        fullName = "User Name",
+        teamName = "Team 1",
+      ),
+    )
+    ppudAutomationResponseMocker.ppudAutomationUploadMandatoryDocumentApiMatchResponse(
+      "123",
+      ppudUploadMandatoryDocumentRequest,
+    )
     runTest {
       putToUploadMandatoryDocument(
         "123",
@@ -425,7 +437,15 @@ class PpudControllerTest : IntegrationTestBase() {
       ),
     )
 
-    ppudAutomationResponseMocker.ppudAutomationUploadAdditionalDocumentApiMatchResponse("123")
+    val ppudUploadAdditionalDocumentRequest = PpudUploadAdditionalDocumentRequest(
+      documentId = documentId,
+      title = "some title",
+      owningCaseworker = PpudUser("User Name", "Team 1"),
+    )
+    ppudAutomationResponseMocker.ppudAutomationUploadAdditionalDocumentApiMatchResponse(
+      "123",
+      ppudUploadAdditionalDocumentRequest,
+    )
     runTest {
       putToUploadAdditionalDocument(
         "123",
@@ -439,13 +459,17 @@ class PpudControllerTest : IntegrationTestBase() {
 
   @Test
   fun `ppud create minute`() {
-    ppudAutomationResponseMocker.ppudAutomationCreateMinuteApiMatchResponse("123")
+    val ppudCreateMinuteRequest = PpudCreateMinuteRequest(
+      subject = "subject",
+      text = "text",
+    )
+    ppudAutomationResponseMocker.ppudAutomationCreateMinuteApiMatchResponse("123", ppudCreateMinuteRequest)
     runTest {
       putToCreateMinute(
         "123",
         CreateMinuteRequest(
-          subject = "subject",
-          text = "text",
+          subject = ppudCreateMinuteRequest.subject,
+          text = ppudCreateMinuteRequest.text,
         ),
       )
         .expectStatus().isOk
@@ -460,8 +484,8 @@ class PpudControllerTest : IntegrationTestBase() {
     val teamName = "TeamName"
 
     ppudAutomationResponseMocker.ppudAutomationSearchActiveUsersApiMatchResponse(
+      searchReq,
       searchReq.fullName!!,
-      searchReq.userName!!,
       teamName,
     )
 
