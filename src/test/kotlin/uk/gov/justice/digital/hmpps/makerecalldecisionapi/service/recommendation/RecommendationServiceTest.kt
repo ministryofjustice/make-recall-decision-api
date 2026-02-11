@@ -71,6 +71,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RecommendationUpdateException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UpdateExceptionTypes.RECOMMENDATION_UPDATE_FAILED
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.UserAccessException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.config.TestConfig.Companion.mockPartATemplateVersionFlag
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
@@ -2521,6 +2522,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   @Test
   fun `generate Part A document with missing recommendation data required to build filename`() {
     runTest {
+      mockPartATemplateVersionFlag(fliptClient)
       recommendationService = RecommendationService(
         recommendationRepository,
         recommendationStatusRepository,

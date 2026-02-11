@@ -72,6 +72,8 @@ dependencies {
 
   implementation("com.google.code.gson:gson:2.13.1")
 
+  implementation("io.flipt:flipt-client-java:1.2.1")
+
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.2")

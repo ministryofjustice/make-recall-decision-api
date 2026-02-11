@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
+import io.flipt.client.FliptClient
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.BDDMockito.anyString
 import org.mockito.Mock
@@ -27,9 +28,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.UserAccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.PrisonApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -60,6 +58,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationStatusRepository
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateRetrievalService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateVersionRetrievalService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlagService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
@@ -67,7 +67,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.RiskService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 internal abstract class ServiceTestBase {
 
@@ -104,6 +104,9 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var offenderMovementConverter: OffenderMovementConverter
 
+  @Mock
+  protected lateinit var fliptClient: FliptClient
+
   protected lateinit var personDetailsService: PersonDetailsService
 
   protected lateinit var createAndVaryALicenceService: CreateAndVaryALicenceService
@@ -128,21 +131,13 @@ internal abstract class ServiceTestBase {
 
   protected lateinit var decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper
 
+  private lateinit var featureFlagService: FeatureFlagService
+
+  private lateinit var templateVersionRetrievalService: TemplateVersionRetrievalService
+
   private lateinit var templateRetrievalService: TemplateRetrievalService
 
-  // We set this up in order for the 'generate Part A document with missing recommendation data required to build
-  // filename' test in RecommendationServiceTest to pass for now. However, that unit test should be mocking the
-  // templateRetrievalService (which consumes this configuration), something out of scope of the changes currently being
-  // made. This should be addressed by untangling the unit tests from ServiceTestBase so that they only test the class
-  // they're meant to test and leave integration between classes to integration tests
-  private val documentTemplateConfiguration: DocumentTemplateConfiguration = documentTemplateConfiguration(
-    partATemplateSettings = listOf(
-      documentTemplateSettings(
-        ZonedDateTime.now().plusMonths(1),
-        "2025-09-02 - FTR48 Phase 1",
-      ),
-    ),
-  )
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
   protected val crn = "12345"
 
@@ -155,7 +150,9 @@ internal abstract class ServiceTestBase {
     partADocumentMapper = PartADocumentMapper(mockRegionService)
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
     userAccessValidator = UserAccessValidator(deliusClient)
-    templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
+    featureFlagService = FeatureFlagService(fliptClient)
+    templateVersionRetrievalService = TemplateVersionRetrievalService(featureFlagService, dateTimeFormatter)
+    templateRetrievalService = TemplateRetrievalService(templateVersionRetrievalService)
     templateReplacementService =
       TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper, templateRetrievalService)
     documentService = DocumentService(deliusClient, userAccessValidator)
