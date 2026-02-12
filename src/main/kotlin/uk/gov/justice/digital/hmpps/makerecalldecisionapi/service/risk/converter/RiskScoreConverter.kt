@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.orNullIfEmpty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 
@@ -97,13 +98,12 @@ class RiskScoreConverter {
       ogp = null,
       ovp = null,
 
-      // V2 fields
-      allReoffendingPredictor = outputV2.allReoffendingPredictor,
-      violentReoffendingPredictor = outputV2.violentReoffendingPredictor,
-      seriousViolentReoffendingPredictor = outputV2.seriousViolentReoffendingPredictor,
-      directContactSexualReoffendingPredictor = outputV2.directContactSexualReoffendingPredictor,
-      indirectImageContactSexualReoffendingPredictor = outputV2.indirectImageContactSexualReoffendingPredictor,
-      combinedSeriousReoffendingPredictor = outputV2.combinedSeriousReoffendingPredictor,
+      allReoffendingPredictor = outputV2.allReoffendingPredictor.orNullIfEmpty(),
+      violentReoffendingPredictor = outputV2.violentReoffendingPredictor.orNullIfEmpty(),
+      seriousViolentReoffendingPredictor = outputV2.seriousViolentReoffendingPredictor.orNullIfEmpty(),
+      directContactSexualReoffendingPredictor = outputV2.directContactSexualReoffendingPredictor.orNullIfEmpty(),
+      indirectImageContactSexualReoffendingPredictor = outputV2.indirectImageContactSexualReoffendingPredictor.orNullIfEmpty(),
+      combinedSeriousReoffendingPredictor = outputV2.combinedSeriousReoffendingPredictor.orNullIfEmpty(),
     )
   }
 

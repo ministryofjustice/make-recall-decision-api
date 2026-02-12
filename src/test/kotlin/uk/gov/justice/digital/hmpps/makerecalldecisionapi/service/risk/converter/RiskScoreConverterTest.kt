@@ -327,20 +327,20 @@ class RiskScoreConverterTest {
         ogrs = LevelWithTwoYearScores(
           level = groupReconvictionScore?.scoreLevel.toString(),
           type = OGRS.printName,
-          oneYear = groupReconvictionScore?.oneYear.toString(),
-          twoYears = groupReconvictionScore?.twoYears.toString(),
+          oneYear = groupReconvictionScore?.oneYear?.toString(),
+          twoYears = groupReconvictionScore?.twoYears?.toString(),
         ),
         ogp = LevelWithTwoYearScores(
           level = generalPredictorScore?.ogpRisk.toString(),
           type = OGP.printName,
-          oneYear = generalPredictorScore?.ogp1Year.toString(),
-          twoYears = generalPredictorScore?.ogp2Year.toString(),
+          oneYear = generalPredictorScore?.ogp1Year?.toString(),
+          twoYears = generalPredictorScore?.ogp2Year?.toString(),
         ),
         ovp = LevelWithTwoYearScores(
           level = violencePredictorScore?.ovpRisk.toString(),
           type = OVP.printName,
-          oneYear = violencePredictorScore?.oneYear.toString(),
-          twoYears = violencePredictorScore?.twoYears.toString(),
+          oneYear = violencePredictorScore?.oneYear?.toString(),
+          twoYears = violencePredictorScore?.twoYears?.toString(),
         ),
         null,
         null,
@@ -420,7 +420,7 @@ class RiskScoreConverterTest {
         combinedSeriousReoffendingPredictor =
         output?.combinedSeriousReoffendingPredictor?.let {
           CombinedPredictor(
-            score = it.score ?: 0.0,
+            score = it.score,
             band = it.band ?: FourBandRiskScoreBand.LOW,
             staticOrDynamic = it.staticOrDynamic ?: StaticOrDynamic.STATIC,
             algorithmVersion = it.algorithmVersion ?: "unknown",

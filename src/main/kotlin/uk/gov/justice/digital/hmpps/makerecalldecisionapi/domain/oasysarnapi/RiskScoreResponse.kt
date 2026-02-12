@@ -99,10 +99,18 @@ data class ThreeBandPredictor(
   val band: ThreeBandRiskScoreBand?,
 )
 
+fun ThreeBandPredictor?.orNullIfEmpty() =
+  if (this?.score != null || this?.band != null) this else null
+
+
 data class FourBandPredictor(
   val score: Double?,
   val band: FourBandRiskScoreBand?,
 )
+
+fun FourBandPredictor?.orNullIfEmpty() =
+  if (this?.score != null || this?.band != null) this else null
+
 
 data class StaticOrDynamicPredictor(
   val score: Double?,
@@ -110,12 +118,19 @@ data class StaticOrDynamicPredictor(
   val staticOrDynamic: StaticOrDynamic?,
 )
 
+fun StaticOrDynamicPredictor?.orNullIfEmpty() =
+  if (this?.score != null || this?.band != null) this else null
+
+
 data class CombinedPredictor(
   val score: Double?,
   val band: FourBandRiskScoreBand?,
   val staticOrDynamic: StaticOrDynamic?,
   val algorithmVersion: String?,
 )
+
+fun CombinedPredictor?.orNullIfEmpty() =
+  if (this?.score != null || this?.band != null) this else null
 
 enum class StaticOrDynamic {
   STATIC,
