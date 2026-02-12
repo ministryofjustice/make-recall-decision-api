@@ -15,12 +15,10 @@ fun randomInt(): Int = Random.Default.nextInt()
 
 fun randomLong(): Long = Random.Default.nextLong()
 
-fun randomDoubleOrNull(nullChance: Double = 0.5): Double? {
-  return if (Random.Default.nextDouble() < nullChance) {
-    null
-  } else {
-    Random.Default.nextDouble()
-  }
+fun randomDoubleOrNull(nullChance: Double = 0.5): Double? = if (Random.Default.nextDouble() < nullChance) {
+  null
+} else {
+  Random.Default.nextDouble()
 }
 fun randomBoolean(): Boolean = Random.Default.nextBoolean()
 
