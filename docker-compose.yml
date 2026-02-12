@@ -30,7 +30,7 @@ services:
       - SPRING_DATA_REDIS_PORT=6379
 
   gotenberg:
-    image: gotenberg/gotenberg:8.0.3
+    image: gotenberg/gotenberg:8.26.0
     networks:
       - hmpps
     container_name: gotenberg
