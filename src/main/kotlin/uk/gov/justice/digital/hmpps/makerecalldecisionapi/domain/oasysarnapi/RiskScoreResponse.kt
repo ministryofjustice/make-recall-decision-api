@@ -150,10 +150,12 @@ enum class FourBandRiskScoreBand {
   MEDIUM,
   HIGH,
   VERY_HIGH,
+  NOT_APPLICABLE,
 }
 
 enum class ThreeBandRiskScoreBand {
   LOW,
   MEDIUM,
   HIGH,
+  NOT_APPLICABLE,
 }

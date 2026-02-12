@@ -43,7 +43,7 @@ fun allRiskScoresResponse() = """
       "ospIndecentPercentageScore": 0,
       "ospContactPercentageScore": 0,
       "ospIndecentScoreLevel": "HIGH",
-      "ospContactScoreLevel": "HIGH"
+      "ospContactScoreLevel": "NOT_APPLICABLE"
       }
     }
   },
@@ -55,7 +55,7 @@ fun allRiskScoresResponse() = """
       "groupReconvictionScore": {
       "oneYear": 0,
       "twoYears": 0,
-      "scoreLevel": "LOW"
+      "scoreLevel": "NOT_APPLICABLE"
     },
     "violencePredictorScore": {
       "ovpStaticWeightedScore": 0,
@@ -95,7 +95,7 @@ fun allRiskScoresResponse() = """
     "output": {
       "allReoffendingPredictor": {
         "score": 12.5,
-        "band": "MEDIUM",
+        "band": "NOT_APPLICABLE",
         "staticOrDynamic": "STATIC"
       },
       "violentReoffendingPredictor": {
@@ -115,7 +115,7 @@ fun allRiskScoresResponse() = """
       },
       "indirectImageContactSexualReoffendingPredictor": {
         "score": 9.8,
-        "band": "MEDIUM",
+        "band": "NOT_APPLICABLE",
         "staticOrDynamic": "STATIC"
       },
       "combinedSeriousReoffendingPredictor": {
