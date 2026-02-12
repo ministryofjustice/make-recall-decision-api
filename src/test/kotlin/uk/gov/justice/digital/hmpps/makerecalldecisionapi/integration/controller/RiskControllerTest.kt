@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Fou
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OGRS
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPDC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPI
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
@@ -303,7 +302,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.OGRS").doesNotExist()
         // V2 fields
         .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.score").isEqualTo(12.5)
-        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.MEDIUM)
+        .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.NOT_APPLICABLE)
         .jsonPath("$.predictorScores.current.scores.allReoffendingPredictor.staticOrDynamic").isEqualTo(StaticOrDynamic.STATIC)
         .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.score").isEqualTo(8.0)
         .jsonPath("$.predictorScores.current.scores.violentReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
@@ -315,7 +314,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.current.scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
         .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
         .jsonPath("$.predictorScores.current.scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
-          ThreeBandRiskScoreBand.MEDIUM,
+          ThreeBandRiskScoreBand.NOT_APPLICABLE,
         )
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
         .jsonPath("$.predictorScores.current.scores.combinedSeriousReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.VERY_HIGH)
@@ -334,7 +333,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.OGRS").doesNotExist()
         // V2 fields
         .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.score").isEqualTo(12.5)
-        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.MEDIUM)
+        .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.NOT_APPLICABLE)
         .jsonPath("$.predictorScores.historical[0].scores.allReoffendingPredictor.staticOrDynamic").isEqualTo(
           StaticOrDynamic.STATIC,
         )
@@ -348,7 +347,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[0].scores.directContactSexualReoffendingPredictor.band").isEqualTo(FourBandRiskScoreBand.LOW)
         .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.score").isEqualTo(9.8)
         .jsonPath("$.predictorScores.historical[0].scores.indirectImageContactSexualReoffendingPredictor.band").isEqualTo(
-          ThreeBandRiskScoreBand.MEDIUM,
+          ThreeBandRiskScoreBand.NOT_APPLICABLE,
         )
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.score").isEqualTo(18.7)
         .jsonPath("$.predictorScores.historical[0].scores.combinedSeriousReoffendingPredictor.band").isEqualTo(
@@ -374,7 +373,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[1].scores.OSPIIC.type").isEqualTo(OSPIIC.printName)
         .jsonPath("$.predictorScores.historical[1].scores.OSPIIC.level").isEqualTo(ThreeLevelRiskScoreLevel.MEDIUM)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.type").isEqualTo(OGRS.printName)
-        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
+        .jsonPath("$.predictorScores.historical[1].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.NOT_APPLICABLE)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.oneYear").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OGRS.twoYears").isEqualTo(0.0)
         .jsonPath("$.predictorScores.historical[1].scores.OSPC").doesNotExist()
@@ -402,9 +401,7 @@ class RiskControllerTest(
         .jsonPath("$.predictorScores.historical[2].scores.OSPI.type").isEqualTo(OSPI.printName)
         .jsonPath("$.predictorScores.historical[2].scores.OSPI.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
         .jsonPath("$.predictorScores.historical[2].scores.OSPI.score").isEqualTo(null)
-        .jsonPath("$.predictorScores.historical[2].scores.OSPC.type").isEqualTo(OSPC.printName)
-        .jsonPath("$.predictorScores.historical[2].scores.OSPC.level").isEqualTo(ThreeLevelRiskScoreLevel.HIGH)
-        .jsonPath("$.predictorScores.historical[2].scores.OSPC.score").isEqualTo(null)
+        .jsonPath("$.predictorScores.historical[2].scores.OSPC").doesNotExist()
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.type").isEqualTo(OGRS.printName)
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.level").isEqualTo(FourLevelRiskScoreLevel.LOW)
         .jsonPath("$.predictorScores.historical[2].scores.OGRS.oneYear").isEqualTo(0.0)

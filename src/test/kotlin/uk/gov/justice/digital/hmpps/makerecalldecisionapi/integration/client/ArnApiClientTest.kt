@@ -169,7 +169,7 @@ class ArnApiClientTest : IntegrationTestBase() {
             ospIndecentPercentageScore = 0.0,
             ospContactPercentageScore = 0.0,
             ospIndecentScoreLevel = ThreeLevelRiskScoreLevel.HIGH,
-            ospContactScoreLevel = FourLevelRiskScoreLevel.HIGH,
+            ospContactScoreLevel = FourLevelRiskScoreLevel.NOT_APPLICABLE,
             ospIndirectImagePercentageScore = null,
             ospDirectContactPercentageScore = null,
             ospIndirectImageScoreLevel = null,
@@ -185,7 +185,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           groupReconvictionScore = GroupReconvictionScore(
             oneYear = 0.0,
             twoYears = 0.0,
-            scoreLevel = FourLevelRiskScoreLevel.LOW,
+            scoreLevel = FourLevelRiskScoreLevel.NOT_APPLICABLE,
           ),
           violencePredictorScore = ViolencePredictorScore(
             ovpStaticWeightedScore = 0.0,
@@ -226,7 +226,7 @@ class ArnApiClientTest : IntegrationTestBase() {
         output = OutputV2(
           allReoffendingPredictor = StaticOrDynamicPredictor(
             score = 12.5,
-            band = FourBandRiskScoreBand.MEDIUM,
+            band = FourBandRiskScoreBand.NOT_APPLICABLE,
             staticOrDynamic = StaticOrDynamic.STATIC,
           ),
           violentReoffendingPredictor = StaticOrDynamicPredictor(
@@ -245,7 +245,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           ),
           indirectImageContactSexualReoffendingPredictor = ThreeBandPredictor(
             score = 9.8,
-            band = ThreeBandRiskScoreBand.MEDIUM,
+            band = ThreeBandRiskScoreBand.NOT_APPLICABLE,
           ),
           combinedSeriousReoffendingPredictor = CombinedPredictor(
             score = 18.7,
