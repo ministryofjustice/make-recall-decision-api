@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converte
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithStaticOrDynamicScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
@@ -313,10 +314,11 @@ class RiskScoreConverterTest {
     return PredictorScore(
       date = riskScoreResponse.completedDate,
       scores = Scores(
-        rsr = LevelWithScore(
+        rsr = LevelWithStaticOrDynamicScore(
           level = riskOfSeriousRecidivismScore?.scoreLevel.toString(),
           type = RSR.printName,
           score = riskOfSeriousRecidivismScore?.percentageScore,
+          staticOrDynamic = riskOfSeriousRecidivismScore?.staticOrDynamic,
         ),
         ospc = ospc,
         ospi = ospi,

@@ -66,12 +66,9 @@ data class GeneralPredictorScore(
 )
 
 data class RiskOfSeriousRecidivismScore(
+  // ARNS also provide source and algorithmVersion fields, but they've told us they can be ignored
   val percentageScore: Double?,
-  // The 3 fields commented out below weren't there before these changes. Probably
-  // OK to leave them out, since we don't seem to be using them anywhere (should we?)
-//  val staticOrDynamic: StaticOrDynamic,
-//  val source: String,
-//  val algorithmVersion: String,
+  val staticOrDynamic: StaticOrDynamic?,
   val scoreLevel: ThreeLevelRiskScoreLevel?,
 )
 
