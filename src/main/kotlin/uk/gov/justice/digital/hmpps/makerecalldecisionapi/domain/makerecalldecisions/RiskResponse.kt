@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.CombinedPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.FourBandPredictor
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
@@ -60,7 +61,7 @@ data class PredictorScore(
 data class Scores(
   // V1 assessment scores
   @JsonProperty("RSR")
-  val rsr: LevelWithScore?,
+  val rsr: LevelWithStaticOrDynamicScore?,
   @JsonProperty("OSPC")
   val ospc: LevelWithScore?,
   @JsonProperty("OSPI")
@@ -89,6 +90,13 @@ data class LevelWithScore(
   val level: String?,
   val type: String?,
   val score: Double?,
+)
+
+data class LevelWithStaticOrDynamicScore(
+  val level: String?,
+  val type: String?,
+  val score: Double?,
+  val staticOrDynamic: StaticOrDynamic?,
 )
 
 data class LevelWithTwoYearScores(

@@ -163,6 +163,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           ),
           riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
             percentageScore = 23.0,
+            staticOrDynamic = StaticOrDynamic.STATIC,
             scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
           ),
           sexualPredictorScore = SexualPredictorScore(
@@ -205,6 +206,7 @@ class ArnApiClientTest : IntegrationTestBase() {
           ),
           riskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
             percentageScore = 23.0,
+            staticOrDynamic = StaticOrDynamic.STATIC,
             scoreLevel = ThreeLevelRiskScoreLevel.HIGH,
           ),
           sexualPredictorScore = SexualPredictorScore(
