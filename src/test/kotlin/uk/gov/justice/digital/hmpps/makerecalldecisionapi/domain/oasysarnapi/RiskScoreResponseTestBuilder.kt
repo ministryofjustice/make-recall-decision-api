@@ -96,9 +96,11 @@ fun generalPredictorScore(
 
 fun riskOfSeriousRecidivismScore(
   percentageScore: Double? = randomDouble(),
+  staticOrDynamic: StaticOrDynamic? = randomEnum<StaticOrDynamic>(),
   scoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
 ): RiskOfSeriousRecidivismScore = RiskOfSeriousRecidivismScore(
   percentageScore,
+  staticOrDynamic,
   scoreLevel,
 )
 

@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converte
 
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithStaticOrDynamicScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithTwoYearScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
@@ -189,7 +190,7 @@ class RiskScoreConverter {
 
   private fun rsrLevelWithScore(
     assessmentScores: AssessmentScoresV1?,
-  ): LevelWithScore? {
+  ): LevelWithStaticOrDynamicScore? {
     val rsr = assessmentScores
       ?.output
       ?.riskOfSeriousRecidivismScore
@@ -199,10 +200,11 @@ class RiskScoreConverter {
       return null
     }
 
-    return LevelWithScore(
+    return LevelWithStaticOrDynamicScore(
       level = rsr.scoreLevel?.name,
       score = rsr.percentageScore,
       type = RSR.printName,
+      staticOrDynamic = rsr.staticOrDynamic,
     )
   }
 
