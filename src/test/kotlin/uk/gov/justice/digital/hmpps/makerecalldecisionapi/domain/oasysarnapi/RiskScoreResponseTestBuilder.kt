@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDoubleOrNull
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomDouble
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
@@ -53,8 +53,8 @@ fun outputV1(
 )
 
 fun groupReconvictionScore(
-  oneYear: Double? = randomDoubleOrNull(),
-  twoYears: Double? = randomDoubleOrNull(),
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
   scoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GroupReconvictionScore = GroupReconvictionScore(
   oneYear,
@@ -63,11 +63,11 @@ fun groupReconvictionScore(
 )
 
 fun violencePredictorScore(
-  ovpStaticWeightedScore: Double? = randomDoubleOrNull(),
-  ovpDynamicWeightedScore: Double? = randomDoubleOrNull(),
-  ovpTotalWeightedScore: Double? = randomDoubleOrNull(),
-  oneYear: Double? = randomDoubleOrNull(),
-  twoYears: Double? = randomDoubleOrNull(),
+  ovpStaticWeightedScore: Double? = randomDouble(),
+  ovpDynamicWeightedScore: Double? = randomDouble(),
+  ovpTotalWeightedScore: Double? = randomDouble(),
+  oneYear: Double? = randomDouble(),
+  twoYears: Double? = randomDouble(),
   ovpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): ViolencePredictorScore = ViolencePredictorScore(
   ovpStaticWeightedScore,
@@ -79,11 +79,11 @@ fun violencePredictorScore(
 )
 
 fun generalPredictorScore(
-  ogpStaticWeightedScore: Double? = randomDoubleOrNull(),
-  ogpDynamicWeightedScore: Double? = randomDoubleOrNull(),
-  ogpTotalWeightedScore: Double? = randomDoubleOrNull(),
-  ogp1Year: Double? = randomDoubleOrNull(),
-  ogp2Year: Double? = randomDoubleOrNull(),
+  ogpStaticWeightedScore: Double? = randomDouble(),
+  ogpDynamicWeightedScore: Double? = randomDouble(),
+  ogpTotalWeightedScore: Double? = randomDouble(),
+  ogp1Year: Double? = randomDouble(),
+  ogp2Year: Double? = randomDouble(),
   ogpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): GeneralPredictorScore = GeneralPredictorScore(
   ogpStaticWeightedScore,
@@ -105,12 +105,12 @@ fun riskOfSeriousRecidivismScore(
 )
 
 fun sexualPredictorScore(
-  ospIndecentPercentageScore: Double? = randomDoubleOrNull(),
-  ospContactPercentageScore: Double? = randomDoubleOrNull(),
+  ospIndecentPercentageScore: Double? = randomDouble(),
+  ospContactPercentageScore: Double? = randomDouble(),
   ospIndecentScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
   ospContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
-  ospIndirectImagePercentageScore: Double? = randomDoubleOrNull(),
-  ospDirectContactPercentageScore: Double? = randomDoubleOrNull(),
+  ospIndirectImagePercentageScore: Double? = randomDouble(),
+  ospDirectContactPercentageScore: Double? = randomDouble(),
   ospIndirectImageScoreLevel: ThreeLevelRiskScoreLevel? = randomEnum<ThreeLevelRiskScoreLevel>(),
   ospDirectContactScoreLevel: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
 ): SexualPredictorScore = SexualPredictorScore(
@@ -152,7 +152,7 @@ fun outputV2(
 )
 
 fun staticOrDynamicPredictor(
-  score: Double? = randomDoubleOrNull(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
 ): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
@@ -162,7 +162,7 @@ fun staticOrDynamicPredictor(
 )
 
 fun fourPredictor(
-  score: Double? = randomDoubleOrNull(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
 ): FourBandPredictor = FourBandPredictor(
   score,
@@ -170,7 +170,7 @@ fun fourPredictor(
 )
 
 fun threePredictor(
-  score: Double? = randomDoubleOrNull(),
+  score: Double? = randomDouble(),
   band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
 ): ThreeBandPredictor = ThreeBandPredictor(
   score,
@@ -178,7 +178,7 @@ fun threePredictor(
 )
 
 fun combinedPredictor(
-  score: Double? = randomDoubleOrNull(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
   algorithmVersion: String = randomString(),

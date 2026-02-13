@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OSPIIC
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.OVP
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.orNullIfEmpty
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.DEFAULT_DATE_TIME_FOR_NULL_VALUE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.SCORE_NOT_APPLICABLE
 
@@ -98,14 +97,45 @@ class RiskScoreConverter {
       ogp = null,
       ovp = null,
 
-      allReoffendingPredictor = outputV2.allReoffendingPredictor.orNullIfEmpty(),
-      violentReoffendingPredictor = outputV2.violentReoffendingPredictor.orNullIfEmpty(),
-      seriousViolentReoffendingPredictor = outputV2.seriousViolentReoffendingPredictor.orNullIfEmpty(),
-      directContactSexualReoffendingPredictor = outputV2.directContactSexualReoffendingPredictor.orNullIfEmpty(),
-      indirectImageContactSexualReoffendingPredictor = outputV2.indirectImageContactSexualReoffendingPredictor.orNullIfEmpty(),
-      combinedSeriousReoffendingPredictor = outputV2.combinedSeriousReoffendingPredictor.orNullIfEmpty(),
+      // V2 fields
+      allReoffendingPredictor = includeIfNotEmpty(
+        outputV2.allReoffendingPredictor,
+        outputV2.allReoffendingPredictor?.score,
+        outputV2.allReoffendingPredictor?.band,
+      ),
+      violentReoffendingPredictor = includeIfNotEmpty(
+        outputV2.violentReoffendingPredictor,
+        outputV2.violentReoffendingPredictor?.score,
+        outputV2.violentReoffendingPredictor?.band,
+      ),
+      seriousViolentReoffendingPredictor = includeIfNotEmpty(
+        outputV2.seriousViolentReoffendingPredictor,
+        outputV2.seriousViolentReoffendingPredictor?.score,
+        outputV2.seriousViolentReoffendingPredictor?.band,
+      ),
+      directContactSexualReoffendingPredictor = includeIfNotEmpty(
+        outputV2.directContactSexualReoffendingPredictor,
+        outputV2.directContactSexualReoffendingPredictor?.score,
+        outputV2.directContactSexualReoffendingPredictor?.band,
+      ),
+      indirectImageContactSexualReoffendingPredictor = includeIfNotEmpty(
+        outputV2.indirectImageContactSexualReoffendingPredictor,
+        outputV2.indirectImageContactSexualReoffendingPredictor?.score,
+        outputV2.indirectImageContactSexualReoffendingPredictor?.band,
+      ),
+      combinedSeriousReoffendingPredictor = includeIfNotEmpty(
+        outputV2.combinedSeriousReoffendingPredictor,
+        outputV2.combinedSeriousReoffendingPredictor?.score,
+        outputV2.combinedSeriousReoffendingPredictor?.band,
+      ),
     )
   }
+
+  fun <T> includeIfNotEmpty(
+    predictor: T?,
+    score: Double?,
+    band: Any?,
+  ): T? = if (score != null || band != null) predictor else null
 
   private fun createScoresFromV1(v1: AssessmentScoresV1): Scores? {
     val output = v1.output ?: return null
