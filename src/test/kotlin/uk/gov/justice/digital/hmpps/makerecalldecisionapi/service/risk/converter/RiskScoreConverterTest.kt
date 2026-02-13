@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ass
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.generalPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.groupReconvictionScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.outputV1
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.outputV2
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskOfSeriousRecidivismScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.sexualPredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.violencePredictorScore
@@ -266,6 +267,18 @@ class RiskScoreConverterTest {
     assertThat(actualPredictorScore).isEqualTo(expectedPredictorScore)
   }
 
+  @Test
+  fun `converts RiskScoreResponses with outputVersion 2 with null fields`() {
+    val output = outputV2(allReoffendingPredictor = StaticOrDynamicPredictor(null, null, null))
+    val assessmentScoresV2 = assessmentScoresV2(output = output)
+    val expectedPredictorScore = expectedPredictorScoreFrom(assessmentScoresV2)
+
+    val actualPredictorScore =
+      converter.convert(assessmentScoresV2)
+
+    assertThat(actualPredictorScore).isEqualTo(expectedPredictorScore)
+  }
+
   private fun expectedPredictorScoreFrom(riskScoreResponse: AssessmentScoresV1): PredictorScore {
     val sexualPredictorScore = riskScoreResponse.output?.sexualPredictorScore
     val riskOfSeriousRecidivismScore = riskScoreResponse.output?.riskOfSeriousRecidivismScore
@@ -327,20 +340,20 @@ class RiskScoreConverterTest {
         ogrs = LevelWithTwoYearScores(
           level = groupReconvictionScore?.scoreLevel.toString(),
           type = OGRS.printName,
-          oneYear = groupReconvictionScore?.oneYear.toString(),
-          twoYears = groupReconvictionScore?.twoYears.toString(),
+          oneYear = groupReconvictionScore?.oneYear?.toString(),
+          twoYears = groupReconvictionScore?.twoYears?.toString(),
         ),
         ogp = LevelWithTwoYearScores(
           level = generalPredictorScore?.ogpRisk.toString(),
           type = OGP.printName,
-          oneYear = generalPredictorScore?.ogp1Year.toString(),
-          twoYears = generalPredictorScore?.ogp2Year.toString(),
+          oneYear = generalPredictorScore?.ogp1Year?.toString(),
+          twoYears = generalPredictorScore?.ogp2Year?.toString(),
         ),
         ovp = LevelWithTwoYearScores(
           level = violencePredictorScore?.ovpRisk.toString(),
           type = OVP.printName,
-          oneYear = violencePredictorScore?.oneYear.toString(),
-          twoYears = violencePredictorScore?.twoYears.toString(),
+          oneYear = violencePredictorScore?.oneYear?.toString(),
+          twoYears = violencePredictorScore?.twoYears?.toString(),
         ),
         null,
         null,
@@ -375,60 +388,90 @@ class RiskScoreConverterTest {
         // V2 fields
         // ─────────────────────────────
         allReoffendingPredictor =
-        output?.allReoffendingPredictor?.let {
-          StaticOrDynamicPredictor(
-            score = it.score,
-            band = it.band,
-            staticOrDynamic = it.staticOrDynamic,
-          )
-        },
+        includeIfNotEmpty(
+          output?.allReoffendingPredictor?.let {
+            StaticOrDynamicPredictor(
+              score = it.score,
+              band = it.band,
+              staticOrDynamic = it.staticOrDynamic,
+            )
+          },
+          output?.allReoffendingPredictor?.score,
+          output?.allReoffendingPredictor?.band,
+        ),
 
         violentReoffendingPredictor =
-        output?.violentReoffendingPredictor?.let {
-          StaticOrDynamicPredictor(
-            score = it.score,
-            band = it.band,
-            staticOrDynamic = it.staticOrDynamic,
-          )
-        },
+        includeIfNotEmpty(
+          output?.violentReoffendingPredictor?.let {
+            StaticOrDynamicPredictor(
+              score = it.score,
+              band = it.band,
+              staticOrDynamic = it.staticOrDynamic,
+            )
+          },
+          output?.violentReoffendingPredictor?.score,
+          output?.violentReoffendingPredictor?.band,
+        ),
 
         seriousViolentReoffendingPredictor =
-        output?.seriousViolentReoffendingPredictor?.let {
-          StaticOrDynamicPredictor(
-            score = it.score,
-            band = it.band,
-            staticOrDynamic = it.staticOrDynamic,
-          )
-        },
+        includeIfNotEmpty(
+          output?.seriousViolentReoffendingPredictor?.let {
+            StaticOrDynamicPredictor(
+              score = it.score,
+              band = it.band,
+              staticOrDynamic = it.staticOrDynamic,
+            )
+          },
+          output?.seriousViolentReoffendingPredictor?.score,
+          output?.seriousViolentReoffendingPredictor?.band,
+        ),
 
         directContactSexualReoffendingPredictor =
-        output?.directContactSexualReoffendingPredictor?.let {
-          FourBandPredictor(
-            score = it.score,
-            band = it.band,
-          )
-        },
+        includeIfNotEmpty(
+          output?.directContactSexualReoffendingPredictor?.let {
+            FourBandPredictor(
+              score = it.score,
+              band = it.band,
+            )
+          },
+          output?.directContactSexualReoffendingPredictor?.score,
+          output?.directContactSexualReoffendingPredictor?.band,
+        ),
 
         indirectImageContactSexualReoffendingPredictor =
-        output?.indirectImageContactSexualReoffendingPredictor?.let {
-          ThreeBandPredictor(
-            score = it.score,
-            band = it.band,
-          )
-        },
+        includeIfNotEmpty(
+          output?.indirectImageContactSexualReoffendingPredictor?.let {
+            ThreeBandPredictor(
+              score = it.score,
+              band = it.band,
+            )
+          },
+          output?.indirectImageContactSexualReoffendingPredictor?.score,
+          output?.indirectImageContactSexualReoffendingPredictor?.band,
+        ),
 
         combinedSeriousReoffendingPredictor =
-        output?.combinedSeriousReoffendingPredictor?.let {
-          CombinedPredictor(
-            score = it.score ?: 0.0,
-            band = it.band ?: FourBandRiskScoreBand.LOW,
-            staticOrDynamic = it.staticOrDynamic ?: StaticOrDynamic.STATIC,
-            algorithmVersion = it.algorithmVersion ?: "unknown",
-          )
-        },
+        includeIfNotEmpty(
+          output?.combinedSeriousReoffendingPredictor?.let {
+            CombinedPredictor(
+              score = it.score,
+              band = it.band ?: FourBandRiskScoreBand.LOW,
+              staticOrDynamic = it.staticOrDynamic ?: StaticOrDynamic.STATIC,
+              algorithmVersion = it.algorithmVersion ?: "unknown",
+            )
+          },
+          output?.combinedSeriousReoffendingPredictor?.score,
+          output?.combinedSeriousReoffendingPredictor?.band,
+        ),
       ),
     )
   }
+
+  private fun <T> includeIfNotEmpty(
+    predictor: T?,
+    score: Double?,
+    band: Any?,
+  ): T? = if (score != null || band != null) predictor else null
 
   private fun riskScoreResponseWithNullScoreFields() = assessmentScoresV1(
     output = outputV1(

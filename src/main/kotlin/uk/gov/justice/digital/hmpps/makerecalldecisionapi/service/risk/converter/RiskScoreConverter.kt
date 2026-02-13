@@ -98,14 +98,44 @@ class RiskScoreConverter {
       ovp = null,
 
       // V2 fields
-      allReoffendingPredictor = outputV2.allReoffendingPredictor,
-      violentReoffendingPredictor = outputV2.violentReoffendingPredictor,
-      seriousViolentReoffendingPredictor = outputV2.seriousViolentReoffendingPredictor,
-      directContactSexualReoffendingPredictor = outputV2.directContactSexualReoffendingPredictor,
-      indirectImageContactSexualReoffendingPredictor = outputV2.indirectImageContactSexualReoffendingPredictor,
-      combinedSeriousReoffendingPredictor = outputV2.combinedSeriousReoffendingPredictor,
+      allReoffendingPredictor = includeIfNotEmpty(
+        outputV2.allReoffendingPredictor,
+        outputV2.allReoffendingPredictor?.score,
+        outputV2.allReoffendingPredictor?.band,
+      ),
+      violentReoffendingPredictor = includeIfNotEmpty(
+        outputV2.violentReoffendingPredictor,
+        outputV2.violentReoffendingPredictor?.score,
+        outputV2.violentReoffendingPredictor?.band,
+      ),
+      seriousViolentReoffendingPredictor = includeIfNotEmpty(
+        outputV2.seriousViolentReoffendingPredictor,
+        outputV2.seriousViolentReoffendingPredictor?.score,
+        outputV2.seriousViolentReoffendingPredictor?.band,
+      ),
+      directContactSexualReoffendingPredictor = includeIfNotEmpty(
+        outputV2.directContactSexualReoffendingPredictor,
+        outputV2.directContactSexualReoffendingPredictor?.score,
+        outputV2.directContactSexualReoffendingPredictor?.band,
+      ),
+      indirectImageContactSexualReoffendingPredictor = includeIfNotEmpty(
+        outputV2.indirectImageContactSexualReoffendingPredictor,
+        outputV2.indirectImageContactSexualReoffendingPredictor?.score,
+        outputV2.indirectImageContactSexualReoffendingPredictor?.band,
+      ),
+      combinedSeriousReoffendingPredictor = includeIfNotEmpty(
+        outputV2.combinedSeriousReoffendingPredictor,
+        outputV2.combinedSeriousReoffendingPredictor?.score,
+        outputV2.combinedSeriousReoffendingPredictor?.band,
+      ),
     )
   }
+
+  fun <T> includeIfNotEmpty(
+    predictor: T?,
+    score: Double?,
+    band: Any?,
+  ): T? = if (score != null || band != null) predictor else null
 
   private fun createScoresFromV1(v1: AssessmentScoresV1): Scores? {
     val output = v1.output ?: return null
