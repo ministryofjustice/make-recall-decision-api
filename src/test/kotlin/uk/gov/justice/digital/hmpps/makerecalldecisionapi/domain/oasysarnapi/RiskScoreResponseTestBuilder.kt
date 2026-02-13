@@ -63,9 +63,9 @@ fun groupReconvictionScore(
 )
 
 fun violencePredictorScore(
-  ovpStaticWeightedScore: Double = randomDouble(),
-  ovpDynamicWeightedScore: Double = randomDouble(),
-  ovpTotalWeightedScore: Double = randomDouble(),
+  ovpStaticWeightedScore: Double? = randomDouble(),
+  ovpDynamicWeightedScore: Double? = randomDouble(),
+  ovpTotalWeightedScore: Double? = randomDouble(),
   oneYear: Double? = randomDouble(),
   twoYears: Double? = randomDouble(),
   ovpRisk: FourLevelRiskScoreLevel? = randomEnum<FourLevelRiskScoreLevel>(),
@@ -152,7 +152,7 @@ fun outputV2(
 )
 
 fun staticOrDynamicPredictor(
-  score: Double = randomDouble(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
 ): StaticOrDynamicPredictor = StaticOrDynamicPredictor(
@@ -162,7 +162,7 @@ fun staticOrDynamicPredictor(
 )
 
 fun fourPredictor(
-  score: Double = randomDouble(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
 ): FourBandPredictor = FourBandPredictor(
   score,
@@ -170,7 +170,7 @@ fun fourPredictor(
 )
 
 fun threePredictor(
-  score: Double = randomDouble(),
+  score: Double? = randomDouble(),
   band: ThreeBandRiskScoreBand = randomEnum<ThreeBandRiskScoreBand>(),
 ): ThreeBandPredictor = ThreeBandPredictor(
   score,
@@ -178,7 +178,7 @@ fun threePredictor(
 )
 
 fun combinedPredictor(
-  score: Double = randomDouble(),
+  score: Double? = randomDouble(),
   band: FourBandRiskScoreBand = randomEnum<FourBandRiskScoreBand>(),
   staticOrDynamic: StaticOrDynamic = randomEnum<StaticOrDynamic>(),
   algorithmVersion: String = randomString(),
