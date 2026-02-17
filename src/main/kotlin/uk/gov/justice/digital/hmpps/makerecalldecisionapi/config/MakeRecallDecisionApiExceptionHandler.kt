@@ -18,6 +18,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentTemplateNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoCompletedRecommendationFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NoDeletedRecommendationRationaleException
@@ -269,11 +270,25 @@ class MakeRecallDecisionApiExceptionHandler {
   fun handleAccessDeniedException(e: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
     log.error("Access denied", e)
     return ResponseEntity
-      .status(HttpStatus.FORBIDDEN)
+      .status(FORBIDDEN)
       .body(
         ErrorResponse(
           status = FORBIDDEN,
           userMessage = "Access denied",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(DocumentTemplateNotFoundException::class)
+  fun handleDocumentTemplateNotFoundException(e: DocumentTemplateNotFoundException): ResponseEntity<ErrorResponse> {
+    log.error("Document template not found: {}", e.message)
+    return ResponseEntity
+      .status(INTERNAL_SERVER_ERROR)
+      .body(
+        ErrorResponse(
+          status = INTERNAL_SERVER_ERROR,
+          userMessage = "Document template not found",
           developerMessage = e.message,
         ),
       )
@@ -313,7 +328,7 @@ open class MakeRecallDecisionException(override val message: String? = null, ove
 
 // It is unclear why MakeRecallDecisionException extends Exception and not RuntimeException. Because
 // it is widely used, for now we create this runtime version and can look into this replacing the
-// above one with.
+// above one.
 // The reason for creating a runtime version is that uses of doOnError for processing react Monos
 // should be throwing runtime exceptions. It looks like they got around this back then through the
 // GetValueAndHandleWrappedException method, but I couldn't find or think of a reason why we might

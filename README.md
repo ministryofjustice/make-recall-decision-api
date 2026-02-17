@@ -19,6 +19,45 @@ There are a number of services within the backend codebase that retrieve data fr
 
 The HMPPS domain event topic allows MRD to fire 'events' that are relevant to other services. For example, when a PP starts a recommendation, the case in Delius should be updated with this information. There is a MRD-and-Delius integration service that reads these messages and creates contacts in Delius.
 
+## Feature Flags
+
+This project uses [Flipt](https://www.flipt.io/) to control the availability of certain features.
+Feature flags allow us to turn on or off and configure parts of a service in production, decoupling "releases" from "deployments".
+
+Feature flags are managed in the [Flipt dashboard](https://feature-toggles.hmpps.service.justice.gov.uk).
+You'll need to be in the `ministryofjustice` organisation to access it.
+
+To add a feature flag to your code:
+
+1. Create a new flag in
+   the [dev](https://feature-toggles-dev.hmpps.service.justice.gov.uk), [preprod](https://feature-toggles-preprod.hmpps.service.justice.gov.uk),
+   and [prod](https://feature-toggles.hmpps.service.justice.gov.uk) dashboard, within the `consider-a-recall` environment.
+2. Update your code to inject the `FeatureFlagService` service, and call `variant(<key>, <context>)`. Example:
+
+```kotlin
+@Service
+class MyService(private val featureFlagsService: FeatureFlagService) {
+    fun myMethod() {
+        val variantKey = featureFlagsService.variant("my-flag", mapOf("contextKey" to contextValue))
+        switch (variantKey) {
+            "keyA" -> behaviourA()
+            "keyB" -> behaviourB()
+            ...
+        }
+    }
+}
+```
+
+There are two configuration values for Flipt:
+* FLIPT_URL - the URL of the Flipt server
+* FLIPT_API_KEY - the API key to access Flipt
+
+They are stored as secrets in each environment, and are accessed from the Helm chart.
+
+If you're looking to add a boolean flag, see [the PPUD Automation API repo](https://github.com/ministryofjustice/hmpps-ppud-automation-api) for an example.
+
+For more information about Flipt, check out the [documentation](https://docs.flipt.io).
+
 ## Running the service locally
 
 In order to start up the service, its related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
