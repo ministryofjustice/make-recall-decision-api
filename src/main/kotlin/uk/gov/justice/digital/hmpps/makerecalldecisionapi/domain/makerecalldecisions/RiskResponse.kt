@@ -26,16 +26,13 @@ data class RiskResponse(
 
 data class RiskOfSeriousHarm(
   val overallRisk: String?,
-  val riskInCustody: RiskTo?,
-  val riskInCommunity: RiskTo?,
+  val risks: List<RiskBreakdown>,
 )
 
-data class RiskTo(
-  val riskToChildren: String?,
-  val riskToPublic: String?,
-  val riskToKnownAdult: String?,
-  val riskToStaff: String?,
-  val riskToPrisoners: String?,
+data class RiskBreakdown(
+  val riskTo: String?,
+  val community: String?,
+  val custody: String?,
 )
 
 data class Mappa(
@@ -114,5 +111,6 @@ data class RoshSummary(
   val riskImminence: String? = null,
   val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
   val lastUpdatedDate: String? = null,
+  val hasBeenCompleted: Boolean? = null,
   val error: String? = null,
 )

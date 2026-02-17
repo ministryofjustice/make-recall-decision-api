@@ -14,10 +14,10 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.AssessmentStatus.INCOMPLETE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskBreakdown
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.CodeDescriptionItem
@@ -190,18 +190,33 @@ internal class RiskService(
     return riskScoreConverter.convert(riskScoresResponses)
   }
 
-  private fun extractRiskOfSeriousHarm(riskSummaryResponse: RiskSummaryResponse?): RiskOfSeriousHarm = RiskOfSeriousHarm(
-    overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
-    riskInCustody = extractSectionFromRosh(riskSummaryResponse?.riskInCustody),
-    riskInCommunity = extractSectionFromRosh(riskSummaryResponse?.riskInCommunity),
-  )
+  private fun extractRiskOfSeriousHarm(
+    riskSummaryResponse: RiskSummaryResponse?,
+  ): RiskOfSeriousHarm {
+    val custody = riskSummaryResponse?.riskInCustody
+    val community = riskSummaryResponse?.riskInCommunity
 
-  private fun extractSectionFromRosh(riskScore: RiskScore?): RiskTo = RiskTo(
-    riskToChildren = getRiskLevel(riskScore, "children") ?: "",
-    riskToPublic = getRiskLevel(riskScore, "public") ?: "",
-    riskToKnownAdult = getRiskLevel(riskScore, "known adult") ?: "",
-    riskToStaff = getRiskLevel(riskScore, "staff") ?: "",
-    riskToPrisoners = getRiskLevel(riskScore, "prisoners") ?: "",
+    return RiskOfSeriousHarm(
+      overallRisk = riskSummaryResponse?.overallRiskLevel ?: "",
+      risks = listOf(
+        buildRiskBreakdown("Children", community, custody, "children"),
+        buildRiskBreakdown("Public", community, custody, "public"),
+        buildRiskBreakdown("Known Adult", community, custody, "known adult"),
+        buildRiskBreakdown("Staff", community, custody, "staff"),
+        buildRiskBreakdown("Prisoners", community, custody, "prisoners"),
+      ),
+    )
+  }
+
+  private fun buildRiskBreakdown(
+    label: String,
+    communityScore: RiskScore?,
+    custodyScore: RiskScore?,
+    type: String,
+  ): RiskBreakdown = RiskBreakdown(
+    riskTo = label,
+    community = getRiskLevel(communityScore, type) ?: "",
+    custody = getRiskLevel(custodyScore, type) ?: "",
   )
 
   private fun getRiskLevel(riskScore: RiskScore?, key: String): String? {
@@ -240,6 +255,7 @@ internal class RiskService(
       riskMitigationFactors = riskSummaryResponse?.riskMitigationFactors,
       riskImminence = riskSummaryResponse?.riskImminence,
       lastUpdatedDate = riskSummaryResponse?.assessedOn?.let { convertUtcDateTimeStringToIso8601Date(it) },
+      hasBeenCompleted = riskSummaryResponse?.assessedOn != null,
     )
   }
 

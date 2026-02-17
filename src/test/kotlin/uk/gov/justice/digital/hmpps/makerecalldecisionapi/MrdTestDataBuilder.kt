@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskBreakdown
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskOfSeriousHarm
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskTo
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditionOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
@@ -623,19 +623,32 @@ class MrdTestDataBuilder {
     private fun roshSummary(): RoshSummary = RoshSummary(
       riskOfSeriousHarm = RiskOfSeriousHarm(
         overallRisk = "HIGH",
-        riskInCustody = RiskTo(
-          riskToChildren = "LOW",
-          riskToPublic = "MEDIUM",
-          riskToKnownAdult = "MEDIUM",
-          riskToStaff = "LOW",
-          riskToPrisoners = "VERY_HIGH",
-        ),
-        riskInCommunity = RiskTo(
-          riskToChildren = "HIGH",
-          riskToPublic = "MEDIUM",
-          riskToKnownAdult = "MEDIUM",
-          riskToStaff = "LOW",
-          riskToPrisoners = "",
+        risks = listOf(
+          RiskBreakdown(
+            riskTo = "Children",
+            community = "HIGH",
+            custody = "LOW",
+          ),
+          RiskBreakdown(
+            riskTo = "Public",
+            community = "MEDIUM",
+            custody = "MEDIUM",
+          ),
+          RiskBreakdown(
+            riskTo = "Known Adult",
+            community = "MEDIUM",
+            custody = "MEDIUM",
+          ),
+          RiskBreakdown(
+            riskTo = "Staff",
+            community = "LOW",
+            custody = "LOW",
+          ),
+          RiskBreakdown(
+            riskTo = "Prisoners",
+            community = "",
+            custody = "VERY_HIGH",
+          ),
         ),
       ),
       lastUpdatedDate = "2023-01-12T20:39:00.000Z",

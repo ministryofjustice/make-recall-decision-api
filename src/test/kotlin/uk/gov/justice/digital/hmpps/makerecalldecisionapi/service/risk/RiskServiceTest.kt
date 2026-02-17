@@ -124,16 +124,24 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(personalDetails.dateOfBirth).isEqualTo(LocalDate.parse("1982-10-24"))
       assertThat(personalDetails.name).isEqualTo("Joe Bloggs")
       assertThat(riskOfSeriousHarm.overallRisk).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPublic).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToKnownAdult).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToStaff).isEqualTo("MEDIUM")
-      assertThat(riskOfSeriousHarm.riskInCommunity?.riskToPrisoners).isEqualTo("")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToChildren).isEqualTo("LOW")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPublic).isEqualTo("LOW")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToKnownAdult).isEqualTo("HIGH")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToStaff).isEqualTo("VERY_HIGH")
-      assertThat(riskOfSeriousHarm.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
+
+      val risks = riskOfSeriousHarm.risks
+      fun risk(label: String) = risks.firstOrNull { it.riskTo == label }
+
+      assertThat(risk("Children")?.community).isEqualTo("HIGH")
+
+      assertThat(risk("Children")?.community).isEqualTo("HIGH")
+      assertThat(risk("Public")?.community).isEqualTo("HIGH")
+      assertThat(risk("Known Adult")?.community).isEqualTo("HIGH")
+      assertThat(risk("Staff")?.community).isEqualTo("MEDIUM")
+      assertThat(risk("Prisoners")?.community).isEqualTo("")
+
+      assertThat(risk("Children")?.custody).isEqualTo("LOW")
+      assertThat(risk("Public")?.custody).isEqualTo("LOW")
+      assertThat(risk("Known Adult")?.custody).isEqualTo("HIGH")
+      assertThat(risk("Staff")?.custody).isEqualTo("VERY_HIGH")
+      assertThat(risk("Prisoners")?.custody).isEqualTo("VERY_HIGH")
+
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
       assertThat(mappa.lastUpdatedDate).isEqualTo("2021-02-10")

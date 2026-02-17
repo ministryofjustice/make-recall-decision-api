@@ -1501,20 +1501,26 @@ internal class RecommendationServiceTest : ServiceTestBase() {
 
       val recommendationEntity = recommendationCaptor.firstValue
 
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToChildren).isEqualTo("LOW")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPublic).isEqualTo("LOW")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToKnownAdult).isEqualTo("HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToStaff).isEqualTo("VERY_HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCustody?.riskToPrisoners).isEqualTo("VERY_HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToChildren).isEqualTo("HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPublic).isEqualTo("HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToKnownAdult).isEqualTo(
-        "HIGH",
-      )
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToStaff).isEqualTo("MEDIUM")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.riskInCommunity?.riskToPrisoners).isEqualTo("LOW")
-      assertThat(recommendationEntity.data.roshSummary?.riskOfSeriousHarm?.overallRisk).isEqualTo("HIGH")
-      assertThat(recommendationEntity.data.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
+      val rosh = recommendationEntity.data.roshSummary?.riskOfSeriousHarm
+      val risks = rosh?.risks ?: emptyList()
+
+      fun risk(label: String) = risks.first { it.riskTo == label }
+
+      assertThat(risk("Children").custody).isEqualTo("LOW")
+      assertThat(risk("Public").custody).isEqualTo("LOW")
+      assertThat(risk("Known Adult").custody).isEqualTo("HIGH")
+      assertThat(risk("Staff").custody).isEqualTo("VERY_HIGH")
+      assertThat(risk("Prisoners").custody).isEqualTo("VERY_HIGH")
+
+      assertThat(risk("Children").community).isEqualTo("HIGH")
+      assertThat(risk("Public").community).isEqualTo("HIGH")
+      assertThat(risk("Known Adult").community).isEqualTo("HIGH")
+      assertThat(risk("Staff").community).isEqualTo("MEDIUM")
+      assertThat(risk("Prisoners").community).isEqualTo("LOW")
+
+      assertThat(rosh?.overallRisk).isEqualTo("HIGH")
+      assertThat(recommendationEntity.data.roshSummary?.lastUpdatedDate)
+        .isEqualTo("2022-10-09T08:26:31.000Z")
     }
   }
 
