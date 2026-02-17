@@ -127,6 +127,11 @@ enum class AssessmentStatus {
   LOCKED_INCOMPLETE,
 }
 
+enum class AssessmentsTimelineEntryStatus {
+  COMPLETE,
+  OPEN,
+}
+
 enum class FourLevelRiskScoreLevel {
   LOW,
   MEDIUM,

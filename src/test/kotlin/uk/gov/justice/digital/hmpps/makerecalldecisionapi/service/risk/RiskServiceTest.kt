@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineEntryStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
@@ -33,6 +34,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Ris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineEntry
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
@@ -94,8 +97,7 @@ internal class RiskServiceTest : ServiceTestBase() {
           Mono.fromCallable {
             AssessmentsTimelineResponse(
               timeline = listOf(
-                assessmentTimelineEntry(),
-                assessmentTimelineEntry(),
+                assessmentsTimelineEntry(status = AssessmentsTimelineEntryStatus.COMPLETE),
               ),
             )
           },
@@ -158,7 +160,11 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(assessmentScores()) })
       given(arnApiClient.getAssessmentsTimeline(anyString()))
-        .willReturn(Mono.fromCallable { assessmentTimelineResponse(crn, "INCOMPLETE") })
+        .willReturn(
+          Mono.fromCallable {
+            assessmentsTimelineResponse(listOf(assessmentsTimelineEntry(status = AssessmentsTimelineEntryStatus.OPEN)))
+          },
+        )
 
       val response = riskService.getRisk(crn)
 

@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registr
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineEntryStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
@@ -91,7 +92,7 @@ internal class RiskService(
     return getAssessmentStatusFromTimelineEntry(latestAssessment?.status)
   }
 
-  suspend fun getAssessmentStatusFromTimelineEntry(assessmentStatus: String?): String = if (assessmentStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
+  suspend fun getAssessmentStatusFromTimelineEntry(assessmentStatus: AssessmentsTimelineEntryStatus?): String = if (assessmentStatus == AssessmentsTimelineEntryStatus.COMPLETE) COMPLETE.name else INCOMPLETE.name
 
   suspend fun getStatusFromSuperStatus(superStatus: String?): String = if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
 

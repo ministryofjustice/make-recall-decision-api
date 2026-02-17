@@ -1,13 +1,10 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
 data class AssessmentsTimelineResponse(
-  val timeline: List<AssessmentTimelineEntry>?,
+  val timeline: List<AssessmentsTimelineEntry>?,
 )
 
-data class AssessmentTimelineEntry(
-  val assessmentId: Long? = null,
+data class AssessmentsTimelineEntry(
   val initiationDate: String? = null,
-  val completedDate: String? = null,
-  val assessmentType: String? = null,
-  val status: String? = null,
+  val status: AssessmentsTimelineEntryStatus? = null,
 )
