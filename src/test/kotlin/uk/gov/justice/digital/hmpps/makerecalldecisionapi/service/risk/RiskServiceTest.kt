@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
@@ -88,19 +89,13 @@ internal class RiskServiceTest : ServiceTestBase() {
       val expectedPredictorScores = PredictorScores(current = null, historical = null)
       given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
-      given(arnApiClient.getAssessments(crn))
+      given(arnApiClient.getAssessmentsTimeline(crn))
         .willReturn(
           Mono.fromCallable {
-            AssessmentsResponse(
-              crn,
-              false,
-              listOf(
-                assessment(),
-                assessment().copy(dateCompleted = null),
-                assessment().copy(
-                  dateCompleted = null,
-                  initiationDate = null,
-                ),
+            AssessmentsTimelineResponse(
+              timeline = listOf(
+                assessmentTimelineEntry(),
+                assessmentTimelineEntry(),
               ),
             )
           },
@@ -146,7 +141,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -162,13 +157,13 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
         .willReturn(Mono.fromCallable { listOf(assessmentScores()) })
-      given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
+      given(arnApiClient.getAssessmentsTimeline(anyString()))
+        .willReturn(Mono.fromCallable { assessmentTimelineResponse(crn, "INCOMPLETE") })
 
       val response = riskService.getRisk(crn)
 
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
     }
   }
 
@@ -408,7 +403,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -462,7 +457,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -492,7 +487,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -534,7 +529,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -542,13 +537,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   private fun apiMocksWithAllFieldsEmpty() {
-    given(arnApiClient.getAssessments(anyString()))
+    given(arnApiClient.getAssessmentsTimeline(anyString()))
       .willReturn(
         Mono.fromCallable {
-          AssessmentsResponse(
-            crn = null,
-            limitedAccessOffender = null,
-            assessments = emptyList(),
+          AssessmentsTimelineResponse(
+            timeline = emptyList(),
           )
         },
       )

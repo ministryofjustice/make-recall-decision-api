@@ -46,7 +46,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Licence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.LicenceConditionTypeSubCat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentTimelineEntry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.OtherRisksResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
@@ -207,6 +209,15 @@ internal abstract class ServiceTestBase {
     laterSignLockAssessmentExists = false,
     laterWIPAssessmentExists = false,
     superStatus = "COMPLETE",
+  )
+
+  fun assessmentTimelineResponse(crn: String, status: String = "COMPLETE"): AssessmentsTimelineResponse = AssessmentsTimelineResponse(timeline = listOf(assessmentTimelineEntry(status)))
+
+  fun assessmentTimelineEntry(status: String = "COMPLETE") = AssessmentTimelineEntry(
+    assessmentId = 123,
+    initiationDate = "2020-06-03T11:42:01",
+    completedDate = "2020-06-03T11:42:01",
+    status = status,
   )
 
   fun riskResponse(): RiskResponse = RiskResponse(

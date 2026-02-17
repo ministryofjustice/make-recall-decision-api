@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresEmptyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.risksDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404LatestCompleteNotFoundResponse
@@ -370,6 +371,20 @@ abstract class IntegrationTestBase {
           offenceType = offenceType,
           superStatus = superStatus,
         ),
+      )
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
+  protected fun oasysAssessmentsTimelineResponse(
+    crn: String,
+    delaySeconds: Long = 0,
+  ) {
+    val assessmentsTimelineRequest = request().withPath("/assessments/timeline/crn/$crn")
+
+    oasysARNApi.`when`(assessmentsTimelineRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(
+        assessmentsTimelineResponse(),
       )
         .withDelay(Delay.seconds(delaySeconds)),
     )
