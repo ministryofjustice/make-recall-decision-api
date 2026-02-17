@@ -16,12 +16,16 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.EndpointMocker.Companion.mockGetEndpointWithFailure
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.EndpointMocker.Companion.mockGetEndpointWithSuccess
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.sentenceCalculationDates
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
 // we set a low value to prevent the timeout tests from taking too long
@@ -56,31 +60,101 @@ class PrisonApiClientTest {
   }
 
   @Test
-  fun `retrieves offender movements`() {
+  fun `retrieves booking sentence details`() {
     // given
+    val bookingId = randomInt()
+    val response = sentenceCalculationDates()
+    testSuccessCase(
+      endpoint = bookingSentenceDetails(bookingId),
+      responseJson = toJsonString(response),
+      endpointCall = { prisonApiClient.bookingSentenceDetails(bookingId) },
+      expectedResponse = response,
+    )
+  }
+
+  @Test
+  fun `handles timeout exceptions raised when retrieving booking sentence details`() {
+    // given
+    val bookingId = randomInt()
+    testTimeoutCase(
+      endpoint = bookingSentenceDetails(bookingId),
+      endpointCall = { prisonApiClient.bookingSentenceDetails(bookingId) },
+    )
+  }
+
+  @Test
+  fun `handles not found exceptions raised when retrieving booking sentence details`() {
+    // given
+    val bookingId = randomInt()
+    testNotFoundCase(
+      endpoint = bookingSentenceDetails(bookingId),
+      endpointCall = { prisonApiClient.bookingSentenceDetails(bookingId) },
+      expectedErrorMessage = "Prison API found no sentence details for booking ID $bookingId",
+    )
+  }
+
+  @Test
+  fun `retrieves offender movements`() {
     val nomsId = randomString()
     val responseList = listOf(prisonApiOffenderMovement(), prisonApiOffenderMovement())
-    mockGetEndpointWithSuccess(
-      offenderMovementsEndpoint(nomsId),
-      responseList.joinToString(",", "[", "]") { it.toJsonString() },
+    testSuccessCase(
+      endpoint = offenderMovementsEndpoint(nomsId),
+      responseJson = responseList.joinToString(",", "[", "]") { it.toJsonString() },
+      endpointCall = { prisonApiClient.retrieveOffenderMovements(nomsId) },
+      expectedResponse = responseList,
     )
-
-    // when
-    val actualResponse = prisonApiClient.retrieveOffenderMovements(nomsId)
-
-    // then
-    assertThat(actualResponse.block()).isEqualTo(responseList)
   }
 
   @Test
   fun `handles timeout exceptions raised when retrieving offender movements`() {
     // given
     val nomsId = randomString()
-    mockGetEndpointWithSuccess(offenderMovementsEndpoint(nomsId), "", (TIMEOUT_IN_SECONDS * 2).toInt())
+    testTimeoutCase(
+      endpoint = offenderMovementsEndpoint(nomsId),
+      endpointCall = { prisonApiClient.retrieveOffenderMovements(nomsId) },
+    )
+  }
+
+  @Test
+  fun `handles not found exceptions raised when retrieving offender movements`() {
+    // given
+    val nomsId = randomString()
+    testNotFoundCase(
+      endpoint = offenderMovementsEndpoint(nomsId),
+      endpointCall = { prisonApiClient.retrieveOffenderMovements(nomsId) },
+      expectedErrorMessage = "Prison API found no movements for NOMIS ID $nomsId",
+    )
+  }
+
+  private fun bookingSentenceDetails(bookingId: Int) = "/api/bookings/$bookingId/sentenceDetail"
+
+  private fun offenderMovementsEndpoint(nomsId: String) = "/api/movements/offender/$nomsId"
+
+  fun <T> testSuccessCase(endpoint: String, responseJson: String, endpointCall: () -> Mono<T>, expectedResponse: T) {
+    // given
+    mockGetEndpointWithSuccess(
+      endpoint,
+      responseJson,
+    )
+
+    // when
+    val actualResponse = endpointCall()
+
+    // then
+    assertThat(actualResponse.block()).isEqualTo(expectedResponse)
+  }
+
+  fun <T> testTimeoutCase(endpoint: String, endpointCall: () -> Mono<T>) {
+    // given
+    mockGetEndpointWithSuccess(
+      endpoint,
+      "",
+      (TIMEOUT_IN_SECONDS * 2).toInt(),
+    )
 
     // when then
     assertThatThrownBy {
-      val actualResponse = prisonApiClient.retrieveOffenderMovements(nomsId)
+      val actualResponse = endpointCall()
       actualResponse.block()
     }
       .isInstanceOf(ClientTimeoutRuntimeException::class.java)
@@ -89,20 +163,16 @@ class PrisonApiClientTest {
     verify(timeoutCounter, times(3)).increment()
   }
 
-  @Test
-  fun `handles not found exceptions raised when retrieving offender movements`() {
+  fun <T> testNotFoundCase(endpoint: String, endpointCall: () -> Mono<T>, expectedErrorMessage: String) {
     // given
-    val nomsId = randomString()
-    mockGetEndpointWithFailure(offenderMovementsEndpoint(nomsId), NOT_FOUND)
+    mockGetEndpointWithFailure(endpoint, NOT_FOUND)
 
     // when then
     assertThatThrownBy {
-      val actualResponse = prisonApiClient.retrieveOffenderMovements(nomsId)
+      val actualResponse = endpointCall()
       actualResponse.block()
     }
       .isInstanceOf(NotFoundException::class.java)
-      .hasMessage("Prison API found no movements for NOMIS ID $nomsId")
+      .hasMessage(expectedErrorMessage)
   }
-
-  private fun offenderMovementsEndpoint(nomsId: String) = "/api/movements/offender/$nomsId"
 }

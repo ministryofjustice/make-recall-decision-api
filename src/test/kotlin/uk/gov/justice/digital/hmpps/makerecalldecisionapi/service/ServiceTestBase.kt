@@ -61,6 +61,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateRetrievalService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenceConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
@@ -103,6 +104,9 @@ internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var offenderMovementConverter: OffenderMovementConverter
+
+  @Mock
+  protected lateinit var offenceConverter: OffenceConverter
 
   protected lateinit var personDetailsService: PersonDetailsService
 
@@ -164,7 +168,7 @@ internal abstract class ServiceTestBase {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
-      PrisonerApiService(prisonApiClient, offenderMovementConverter),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
       templateReplacementService,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),

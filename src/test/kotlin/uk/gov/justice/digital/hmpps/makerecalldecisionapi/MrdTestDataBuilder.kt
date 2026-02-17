@@ -172,6 +172,7 @@ class MrdTestDataBuilder {
               sentenceDate = LocalDate.now(),
               sentenceStartDate = LocalDate.now(),
               sentenceEndDate = LocalDate.now(),
+              sentenceSequenceExpiryDate = LocalDate.now(),
               bookingId = 123,
               terms = listOf(Term(4, 4, 4, 4)),
             ),

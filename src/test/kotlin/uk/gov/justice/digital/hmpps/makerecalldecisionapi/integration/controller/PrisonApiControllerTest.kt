@@ -5,25 +5,31 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockserver.model.HttpRequest.request
-import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.assertMovementsAreEqual
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.prisonApiOffenderMovement
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.agency
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonSentencesRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.OffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.movement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonPeriod
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.prisonTimelineResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.SentenceSequence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.sentenceCalculationDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.makerecalldecisions.prisonOffenderSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.PrisonApiResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
-import java.util.concurrent.TimeUnit.SECONDS
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
+import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -31,6 +37,11 @@ class PrisonApiControllerTest : IntegrationTestBase() {
 
   @Value("\${prison.client.timeout}")
   var prisonTimeout: Long = 0
+
+  // TODO use default constructor (and remove non-default one from PrisonApiResponseMocker) once we
+  //      move the prisonApi val out of IntegrationTestBase as part of breaking up the latter so it
+  //      is no longer a god class. This will also require calling the start-up and tear-down methods
+  private val prisonApiResponseMocker: PrisonApiResponseMocker = PrisonApiResponseMocker(prisonApi)
 
   @Test
   fun `retrieves offender details`() {
@@ -63,13 +74,188 @@ class PrisonApiControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `retrieves prison sentence`() {
+    runTest {
+      // given
+      val now = LocalDateTime.now()
+
+      val nomisId = randomString()
+
+      val offender = offender(nomsId)
+      prisonApiResponseMocker.mockRetrieveOffenderResponse(nomisId, offender)
+
+      val agency = agency()
+      val agencyId = agency.agencyId!!
+      prisonApiResponseMocker.mockRetrieveAgencyResponse(agencyId, agency)
+
+      val firstPrisonPeriod = prisonPeriod(
+        movementDates = listOf(
+          movement(dateOutOfPrison = now.minusMonths(27)),
+          movement(dateOutOfPrison = now.minusMonths(24)),
+          movement(dateOutOfPrison = now.minusMonths(22), releaseFromPrisonId = agencyId),
+        ),
+      )
+      val secondPrisonPeriod = prisonPeriod(
+        movementDates = listOf(
+          movement(dateOutOfPrison = now.minusMonths(7)),
+          movement(dateOutOfPrison = now.minusMonths(4)),
+          movement(dateOutOfPrison = now.minusMonths(2), releaseFromPrisonId = agencyId),
+        ),
+      )
+      val prisonPeriods = listOf(firstPrisonPeriod, secondPrisonPeriod)
+      prisonApiResponseMocker.mockRetrievePrisonTimelinesResponse(
+        nomisId,
+        prisonTimelineResponse(prisonPeriod = prisonPeriods),
+      )
+
+      val firstPeriodSentences = listOf(
+        sentence(
+          bookingId = firstPrisonPeriod.bookingId,
+          sentenceSequence = 0,
+          consecutiveToSequence = null,
+        ),
+        sentence(
+          bookingId = firstPrisonPeriod.bookingId,
+          sentenceSequence = 1,
+          consecutiveToSequence = 0,
+        ),
+      )
+      prisonApiResponseMocker.mockRetrieveSentencesAndOffencesResponse(
+        firstPrisonPeriod.bookingId,
+        firstPeriodSentences,
+      )
+      val secondPeriodSentences = listOf(
+        sentence(
+          bookingId = secondPrisonPeriod.bookingId,
+          sentenceSequence = 0,
+          consecutiveToSequence = null,
+        ),
+        sentence(
+          bookingId = secondPrisonPeriod.bookingId,
+          sentenceSequence = 1,
+          consecutiveToSequence = 0,
+        ),
+      )
+      prisonApiResponseMocker.mockRetrieveSentencesAndOffencesResponse(
+        secondPrisonPeriod.bookingId,
+        secondPeriodSentences,
+      )
+
+      val firstPeriodSentenceExpiryDate = now.plusMonths(5).toLocalDate()
+      prisonApiResponseMocker.mockBookingSentenceDetailsResponse(
+        firstPrisonPeriod.bookingId,
+        sentenceCalculationDates(sentenceExpiryOverrideDate = firstPeriodSentenceExpiryDate),
+      )
+      val secondPeriodSentenceExpiryDate = now.plusMonths(2).toLocalDate()
+      prisonApiResponseMocker.mockBookingSentenceDetailsResponse(
+        secondPrisonPeriod.bookingId,
+        sentenceCalculationDates(sentenceExpiryOverrideDate = secondPeriodSentenceExpiryDate),
+      )
+
+      val convertToExpectedSentence = { sentence: Sentence ->
+        uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentence(
+          bookingId = sentence.bookingId,
+          sentenceSequence = sentence.sentenceSequence,
+          lineSequence = sentence.lineSequence,
+          consecutiveToSequence = sentence.consecutiveToSequence,
+          caseSequence = sentence.caseSequence,
+          courtDescription = sentence.courtDescription,
+          sentenceStatus = sentence.sentenceStatus,
+          sentenceCategory = sentence.sentenceCategory,
+          sentenceCalculationType = sentence.sentenceCalculationType,
+          sentenceTypeDescription = sentence.sentenceTypeDescription,
+          sentenceDate = sentence.sentenceDate,
+          sentenceStartDate = sentence.sentenceStartDate,
+          sentenceEndDate = null, // as all expected sequences have more than one sentence
+          sentenceSequenceExpiryDate = null, // set further down, as only expected in index sentences
+          terms = sentence.terms.map {
+            uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.term(
+              years = it.years,
+              months = it.months,
+              weeks = it.weeks,
+              days = it.days,
+              code = it.code,
+            )
+          },
+          offences = sentence.offences.map {
+            uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.response.prison.sentenceOffence(
+              offenderChargeId = it.offenderChargeId,
+              offenceStartDate = it.offenceStartDate,
+              offenceStatute = it.offenceStatute,
+              offenceCode = it.offenceCode,
+              offenceDescription = it.offenceDescription,
+              indicators = it.indicators,
+            )
+          },
+          releaseDate = sentence.releaseDate,
+          releasingPrison = sentence.releasingPrison,
+          licenceExpiryDate = sentence.licenceExpiryDate,
+        )
+      }
+      val overriddenFirstPeriodSentences = firstPeriodSentences.map { sentence: Sentence ->
+        sentence.copy(
+          releaseDate = firstPrisonPeriod.movementDates.last().dateOutOfPrison,
+          releasingPrison = agency.longDescription,
+          licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
+          offences = sentence.offences.sortedBy { it.offenceDescription },
+        ).let { convertToExpectedSentence(it) }
+      }
+      val overriddenSecondPeriodSentences = secondPeriodSentences.map { sentence: Sentence ->
+        sentence.copy(
+          releaseDate = secondPrisonPeriod.movementDates.last().dateOutOfPrison,
+          releasingPrison = agency.longDescription,
+          licenceExpiryDate = offender.sentenceDetail?.licenceExpiryDate,
+          offences = sentence.offences.sortedBy { it.offenceDescription },
+        ).let { convertToExpectedSentence(it) }
+      }
+      val expectedSentenceSequences = listOf(
+        SentenceSequence(
+          overriddenFirstPeriodSentences[0].copy(
+            sentenceSequenceExpiryDate = firstPeriodSentenceExpiryDate,
+          ),
+          sentencesInSequence = mutableMapOf(
+            0 to listOf(overriddenFirstPeriodSentences[1]),
+          ),
+        ),
+        SentenceSequence(
+          overriddenSecondPeriodSentences[0].copy(
+            sentenceSequenceExpiryDate = secondPeriodSentenceExpiryDate,
+          ),
+          sentencesInSequence = mutableMapOf(
+            0 to listOf(overriddenSecondPeriodSentences[1]),
+          ),
+        ),
+      )
+
+      // when
+      val response = convertResponseToJSONArray(
+        webTestClient.post()
+          .uri("/prison-sentences")
+          .contentType(MediaType.APPLICATION_JSON)
+          .body(BodyInserters.fromValue(PrisonSentencesRequest(nomisId)))
+          .headers {
+            (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION"))))
+          }
+          .exchange()
+          .expectStatus().isOk,
+      )
+
+      // then
+      val jacksonTypeReference: TypeReference<List<SentenceSequence>> =
+        object : TypeReference<List<SentenceSequence>>() {}
+      val sentenceSequences = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
+      assertThat(sentenceSequences).usingRecursiveComparison().isEqualTo(expectedSentenceSequences)
+    }
+  }
+
+  @Test
   fun `retrieves offender movements`() {
     runTest {
       // given
       val nomsId = "A123456"
       val prisonApiMovements =
         listOf(prisonApiOffenderMovement(), prisonApiOffenderMovement(), prisonApiOffenderMovement())
-      mockPrisonApiOffenderMovementsResponse(nomsId, prisonApiMovements)
+      prisonApiResponseMocker.mockRetrieveOffenderMovementsResponse(nomsId, prisonApiMovements)
 
       // when
       val response = convertResponseToJSONArray(
@@ -121,7 +307,7 @@ class PrisonApiControllerTest : IntegrationTestBase() {
         userMessage = "Client timeout: $timeoutMessage",
         developerMessage = timeoutMessage,
       )
-      mockPrisonApiOffenderMovementsTimeout(nomsId)
+      prisonApiResponseMocker.mockRetrieveOffenderMovementsTimeout(nomsId, prisonTimeout)
 
       // when
       val response = convertResponseToJSONObject(
@@ -140,29 +326,5 @@ class PrisonApiControllerTest : IntegrationTestBase() {
       val actualErrorResponse = ResourceLoader.CustomMapper.readValue(response.toString(), jacksonTypeReference)
       assertThat(actualErrorResponse).isEqualTo(expectedErrorResponse)
     }
-  }
-
-  private fun mockPrisonApiOffenderMovementsResponse(
-    nomsId: String,
-    movements: List<PrisonApiOffenderMovement>,
-  ) {
-    val request = request().withPath("/api/movements/offender/$nomsId")
-
-    prisonApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(movements.joinToString(",", "[", "]") { it.toJsonString() }),
-    )
-  }
-
-  private fun mockPrisonApiOffenderMovementsTimeout(
-    nomsId: String,
-  ) {
-    val request = request().withPath("/api/movements/offender/$nomsId")
-
-    prisonApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody("[]")
-        .withDelay(SECONDS, prisonTimeout * 3),
-    )
   }
 }

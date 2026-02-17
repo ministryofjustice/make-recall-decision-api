@@ -8,12 +8,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Agency
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PrisonTimelineResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Agency
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.PrisonTimelineResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Sentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.PrisonApiOffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.SentenceCalculationDates
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.NotFoundException
@@ -97,6 +98,24 @@ class PrisonApiClient(
       .timeout(Duration.ofSeconds(prisonTimeout))
       .doOnError { ex ->
         handleTimeoutException(exception = ex)
+      }
+      .withRetry()
+  }
+
+  fun bookingSentenceDetails(bookingId: Int): Mono<SentenceCalculationDates> {
+    val responseType = object : ParameterizedTypeReference<SentenceCalculationDates>() {}
+    return webClient
+      .get()
+      .uri { builder -> builder.path("/api/bookings/$bookingId/sentenceDetail").build() }
+      .retrieve()
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw NotFoundException("Prison API found no sentence details for booking ID $bookingId") },
+      )
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(prisonTimeout))
+      .doOnError { ex ->
+        handleTimeoutRuntimeException(exception = ex)
       }
       .withRetry()
   }

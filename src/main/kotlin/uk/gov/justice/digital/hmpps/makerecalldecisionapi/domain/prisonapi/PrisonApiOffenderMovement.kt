@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.domain
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi
 
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -18,7 +18,10 @@ data class OfferedOffence(
   val sentenceDate: LocalDate? = null,
   val courtDescription: String? = null,
   val sentenceStartDate: LocalDate? = null,
+  // only set when sentence is the only one in its sequence (when it will be equal to sentenceSequenceExpiryDate)
   val sentenceEndDate: LocalDate? = null,
+  // the calculated (by Calculate Release Dates) expiry date for the sentence sequence associated with this offence
+  val sentenceSequenceExpiryDate: LocalDate? = null,
   val bookingId: Int? = null,
   val terms: List<Term>? = null,
   val sentenceTypeDescription: String? = null,
