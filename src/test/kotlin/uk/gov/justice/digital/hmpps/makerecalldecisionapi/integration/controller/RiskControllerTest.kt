@@ -169,6 +169,7 @@ class RiskControllerTest(
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
+      oasysAssessmentsTimelineResponse(crn)
       roSHSummaryResponse(crn)
       personalDetailsResponse(crn)
       mappaAndRoshHistoryResponse(crn)
@@ -248,6 +249,7 @@ class RiskControllerTest(
 
       userAccessAllowed(crn)
       oasysAssessmentsResponse(crn)
+      oasysAssessmentsTimelineResponse(crn)
       roSHSummaryResponse(crn)
       personalDetailsResponse(crn)
       mappaAndRoshHistoryResponse(crn)
