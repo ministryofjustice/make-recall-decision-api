@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineEntryStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
@@ -44,6 +43,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -97,7 +97,7 @@ internal class RiskServiceTest : ServiceTestBase() {
           Mono.fromCallable {
             AssessmentsTimelineResponse(
               timeline = listOf(
-                assessmentsTimelineEntry(status = AssessmentsTimelineEntryStatus.COMPLETE),
+                assessmentsTimelineEntry(status = "COMPLETE"),
               ),
             )
           },
@@ -162,7 +162,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getAssessmentsTimeline(anyString()))
         .willReturn(
           Mono.fromCallable {
-            assessmentsTimelineResponse(listOf(assessmentsTimelineEntry(status = AssessmentsTimelineEntryStatus.OPEN)))
+            assessmentsTimelineResponse(listOf(assessmentsTimelineEntry(status = randomString())))
           },
         )
 

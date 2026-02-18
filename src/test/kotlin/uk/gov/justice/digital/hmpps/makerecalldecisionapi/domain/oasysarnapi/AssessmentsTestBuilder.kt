@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 
 fun assessmentsTimelineResponse(
@@ -8,7 +7,7 @@ fun assessmentsTimelineResponse(
 ): AssessmentsTimelineResponse = AssessmentsTimelineResponse(timeline)
 
 fun assessmentsTimelineEntry(
-  status: AssessmentsTimelineEntryStatus = randomEnum<AssessmentsTimelineEntryStatus>(),
+  status: String = listOf("COMPLETE", "OPEN").random(),
 ) = AssessmentsTimelineEntry(
   initiationDate = randomLocalDateTime().toString(),
   status = status,

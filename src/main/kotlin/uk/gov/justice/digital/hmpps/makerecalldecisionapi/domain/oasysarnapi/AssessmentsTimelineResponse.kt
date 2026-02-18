@@ -6,5 +6,5 @@ data class AssessmentsTimelineResponse(
 
 data class AssessmentsTimelineEntry(
   val initiationDate: String? = null,
-  val status: AssessmentsTimelineEntryStatus? = null,
+  val status: String? = null,
 )
