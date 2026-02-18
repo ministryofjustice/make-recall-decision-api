@@ -70,19 +70,19 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.6")
   implementation("org.json:json:20250517")
 
-  implementation("com.google.code.gson:gson:2.13.1")
+  implementation("com.google.code.gson:gson:2.13.2")
 
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.2")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.9.2")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
 
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
-  testImplementation("io.jsonwebtoken:jjwt:0.12.6")
+  testImplementation("io.jsonwebtoken:jjwt:0.13.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
@@ -90,7 +90,7 @@ dependencies {
   testImplementation("io.rest-assured:json-path")
   testImplementation("io.rest-assured:xml-path")
 
-  testImplementation("org.wiremock:wiremock-standalone:3.13.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.13.2")
 }
 
 java {
