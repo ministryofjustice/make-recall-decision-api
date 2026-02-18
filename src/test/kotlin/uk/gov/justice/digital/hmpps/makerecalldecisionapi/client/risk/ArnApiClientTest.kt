@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -19,7 +20,10 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineEntry
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
@@ -64,7 +68,7 @@ class ArnApiClientTest {
     val uri = "/risks/predictors/all/crn/$crn"
     val riskScoreCall = { arnApiClient.getRiskScores(crn) }
 
-    handlesTimeoutExceptionWhenRetrievingValues(uri, "risk scores", riskScoreCall)
+    handlesTimeoutExceptionWhenRetrievingValues<AssessmentScores>(uri, "risk scores", riskScoreCall)
   }
 
   private fun <RiskValueType> retrievesRiskValues(
@@ -95,14 +99,58 @@ class ArnApiClientTest {
     }
   }
 
-  private fun handlesTimeoutExceptionWhenRetrievingValues(
+  @Test
+  fun `retrieves assessments timeline`() {
+    val assessmentsTimelineEntry = assessmentsTimelineEntry()
+    val responseList = assessmentsTimelineResponse(timeline = listOf(assessmentsTimelineEntry))
+    val responseTypeObject = object : ParameterizedTypeReference<AssessmentsTimelineResponse>() {}
+
+    retrievesAssessmentsTimeline(responseList, responseTypeObject)
+  }
+
+  @Test
+  fun `handles timeout exceptions raised when retrieving assessment timeline`() {
+    val crn = randomString()
+    val uri = "/assessments/timeline/crn/$crn"
+    val assessmentsTimelineCall = { arnApiClient.getAssessmentsTimeline(crn) }
+
+    handlesTimeoutExceptionWhenRetrievingValues<AssessmentsTimelineResponse>(uri, "assessments timeline", assessmentsTimelineCall)
+  }
+
+  private fun retrievesAssessmentsTimeline(
+    responseList: AssessmentsTimelineResponse,
+    responseTypeObject: ParameterizedTypeReference<AssessmentsTimelineResponse>,
+  ) {
+    val crn = randomString()
+
+    val responseSpec = mockWebClientCall("/assessments/timeline/crn/$crn")
+    whenever(responseSpec.bodyToMono(eq(responseTypeObject))).thenReturn(
+      Mono.just(responseList),
+    )
+
+    val actualResponse = arnApiClient.getAssessmentsTimeline(crn)
+
+    assertThat(actualResponse.block()).isEqualTo(responseList)
+    with(logAppender.list) {
+      assertThat(size).isEqualTo(2)
+      with(get(0)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("About to get assessments timeline for $crn")
+      }
+      with(get(1)) {
+        assertThat(level).isEqualTo(Level.INFO)
+        assertThat(message).isEqualTo("Returning assessments timeline for $crn")
+      }
+    }
+  }
+
+  private fun <ResponseItemType> handlesTimeoutExceptionWhenRetrievingValues(
     uri: String,
     endpointName: String,
     arnEndpointCall: Supplier<Mono<*>>,
   ) {
     val responseSpec = mockWebClientCall(uri)
-    val responseType = object : ParameterizedTypeReference<List<AssessmentScores>>() {}
-    whenever(responseSpec.bodyToMono(eq(responseType))).thenReturn(
+    whenever(responseSpec.bodyToMono(any<ParameterizedTypeReference<List<ResponseItemType>>>())).thenReturn(
       Mono.never(),
     )
 

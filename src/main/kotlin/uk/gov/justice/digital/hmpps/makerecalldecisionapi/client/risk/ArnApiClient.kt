@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
@@ -65,6 +66,27 @@ class ArnApiClient(
       }
       .withRetry()
     log.info(StringUtils.normalizeSpace("Returning assessments for $crn"))
+    return result
+  }
+
+  fun getAssessmentsTimeline(crn: String): Mono<AssessmentsTimelineResponse> {
+    val responseType = object : ParameterizedTypeReference<AssessmentsTimelineResponse>() {}
+    log.info(StringUtils.normalizeSpace("About to get assessments timeline for $crn"))
+
+    val result = webClient
+      .get()
+      .uri("/assessments/timeline/crn/$crn")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "assessments timeline",
+        )
+      }
+      .withRetry()
+    log.info(StringUtils.normalizeSpace("Returning assessments timeline for $crn"))
     return result
   }
 

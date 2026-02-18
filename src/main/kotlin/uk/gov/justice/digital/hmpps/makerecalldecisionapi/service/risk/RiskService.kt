@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.Registr
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.ndelius.RoshHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Assessment
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.UserAccessValidator
@@ -84,13 +85,13 @@ internal class RiskService(
   }
 
   suspend fun getAssessmentStatus(crn: String): String {
-    val assessmentsResponse = fetchAssessments(crn)
+    val assessmentsTimelineResponse = fetchAssessmentsTimeline(crn)
     val latestAssessment =
-      assessmentsResponse.assessments
-        ?.sortedBy { it.initiationDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
-        ?.lastOrNull()
-    return getStatusFromSuperStatus(latestAssessment?.superStatus)
+      assessmentsTimelineResponse.timeline?.maxByOrNull { it.initiationDate ?: DEFAULT_DATE_TIME_FOR_NULL_VALUE }
+    return getAssessmentStatusFromTimelineEntry(latestAssessment?.status)
   }
+
+  suspend fun getAssessmentStatusFromTimelineEntry(assessmentStatus: String?): String = if (assessmentStatus == "COMPLETE") COMPLETE.name else INCOMPLETE.name
 
   suspend fun getStatusFromSuperStatus(superStatus: String?): String = if (superStatus == COMPLETE.name) COMPLETE.name else INCOMPLETE.name
 
@@ -164,17 +165,18 @@ internal class RiskService(
 
   private fun currentOffenceCodesMatch(it: Assessment?, offence: Offence) = it?.offenceDetails?.any { ((it.offenceCode + it.offenceSubCode) == offence.code) && (it.type == "CURRENT") } == true
 
-  private fun fetchAssessments(crn: String): AssessmentsResponse {
-    val assessmentsResponse = try {
-      getValueAndHandleWrappedException(arnApiClient.getAssessments(crn))!!
+  private fun fetchAssessmentsTimeline(crn: String): AssessmentsTimelineResponse {
+    val assessmentsTimelineResponse = try {
+      getValueAndHandleWrappedException(arnApiClient.getAssessmentsTimeline(crn))!!
     } catch (e: WebClientResponseException.NotFound) {
-      log.info("No assessments available for CRN: $crn - ${e.message}")
-      AssessmentsResponse(crn = null, limitedAccessOffender = null, assessments = null)
+      log.info("No assessments timeline available for CRN: $crn - ${e.message}")
+      AssessmentsTimelineResponse(timeline = emptyList())
     } catch (e: WebClientResponseException.InternalServerError) {
-      log.info("No assessments scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
-      AssessmentsResponse(crn = null, limitedAccessOffender = null, assessments = null)
+      log.info("No assessments timeline scores available for CRN: $crn - ${e.message} :: ${e.responseBodyAsString}")
+      AssessmentsTimelineResponse(timeline = emptyList())
     }
-    return assessmentsResponse
+
+    return assessmentsTimelineResponse
   }
 
   suspend fun fetchPredictorScores(crn: String): PredictorScores {
