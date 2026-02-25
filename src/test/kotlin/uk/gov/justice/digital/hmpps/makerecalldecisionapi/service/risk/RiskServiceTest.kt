@@ -16,7 +16,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithScore
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.LevelWithStaticOrDynamicScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PredictorScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RiskManagementPlan
@@ -24,13 +24,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Scores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentOffenceDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementPlanResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScore
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreType.RSR
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RsrScoreLevel
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.riskScoreResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamic
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeLevelRiskScoreLevel
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentScores
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineEntry
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.assessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
@@ -38,6 +42,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.Pris
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.risk.converter.RiskScoreConverter
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
 
 @ExtendWith(MockitoExtension::class)
@@ -78,27 +84,20 @@ internal class RiskServiceTest : ServiceTestBase() {
         .willReturn(deliusMappaAndRoshHistoryResponse())
       given(arnApiClient.getRiskSummary(crn))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(current = null, historical = null)
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
-      given(arnApiClient.getAssessments(crn))
+      given(arnApiClient.getAssessmentsTimeline(crn))
         .willReturn(
           Mono.fromCallable {
-            AssessmentsResponse(
-              crn,
-              false,
-              listOf(
-                assessment(),
-                assessment().copy(dateCompleted = null),
-                assessment().copy(
-                  dateCompleted = null,
-                  initiationDate = null,
-                ),
+            AssessmentsTimelineResponse(
+              timeline = listOf(
+                assessmentsTimelineEntry(status = "COMPLETE"),
               ),
             )
           },
@@ -135,16 +134,16 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(mappa.level).isEqualTo(1)
       assertThat(mappa.category).isEqualTo(0)
       assertThat(mappa.lastUpdatedDate).isEqualTo("2021-02-10")
-      assertThat(response.roshSummary?.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
-      assertThat(response.roshSummary?.natureOfRisk).isEqualTo("The nature of the risk is X")
-      assertThat(response.roshSummary?.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
-      assertThat(response.roshSummary?.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
-      assertThat(response.roshSummary?.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
-      assertThat(response.roshSummary?.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
+      assertThat(response.roshSummary.lastUpdatedDate).isEqualTo("2022-10-09T08:26:31.000Z")
+      assertThat(response.roshSummary.natureOfRisk).isEqualTo("The nature of the risk is X")
+      assertThat(response.roshSummary.whoIsAtRisk).isEqualTo("X, Y and Z are at risk")
+      assertThat(response.roshSummary.riskIncreaseFactors).isEqualTo("If offender in situation X the risk can be higher")
+      assertThat(response.roshSummary.riskMitigationFactors).isEqualTo("Giving offender therapy in X will reduce the risk")
+      assertThat(response.roshSummary.riskImminence).isEqualTo("the risk is imminent and more probably in X situation")
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("COMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -159,14 +158,18 @@ internal class RiskServiceTest : ServiceTestBase() {
       given(arnApiClient.getRiskSummary(anyString()))
         .willReturn(Mono.fromCallable { riskSummaryResponse })
       given(arnApiClient.getRiskScores(anyString()))
-        .willReturn(Mono.fromCallable { listOf(riskScoreResponse()) })
-      given(arnApiClient.getAssessments(anyString()))
-        .willReturn(Mono.fromCallable { assessmentResponse(crn).copy(assessments = listOf(assessment().copy(superStatus = "BLA"))) })
+        .willReturn(Mono.fromCallable { listOf(assessmentScores()) })
+      given(arnApiClient.getAssessmentsTimeline(anyString()))
+        .willReturn(
+          Mono.fromCallable {
+            assessmentsTimelineResponse(listOf(assessmentsTimelineEntry(status = randomString())))
+          },
+        )
 
       val response = riskService.getRisk(crn)
 
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
     }
   }
 
@@ -390,13 +393,13 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with null predictor score field`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(null, null, emptyList())
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -406,7 +409,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -418,18 +421,19 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with null scores except rsr`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val predictorScoreWithRsrScoreOnly = PredictorScore(
         date = "2018-09-12",
         scores = Scores(
-          rsr = LevelWithScore(
-            score = "10",
-            level = RsrScoreLevel.MEDIUM.toString(),
+          rsr = LevelWithStaticOrDynamicScore(
+            score = 10.0,
+            level = ThreeLevelRiskScoreLevel.MEDIUM.toString(),
             type = RSR.printName,
+            staticOrDynamic = randomEnum<StaticOrDynamic>(),
           ),
           ospc = null,
           ospi = null,
@@ -438,13 +442,19 @@ internal class RiskServiceTest : ServiceTestBase() {
           ogrs = null,
           ogp = null,
           ovp = null,
+          allReoffendingPredictor = null,
+          violentReoffendingPredictor = null,
+          seriousViolentReoffendingPredictor = null,
+          directContactSexualReoffendingPredictor = null,
+          indirectImageContactSexualReoffendingPredictor = null,
+          combinedSeriousReoffendingPredictor = null,
         ),
       )
       val expectedPredictorScores = PredictorScores(
         current = predictorScoreWithRsrScoreOnly,
         historical = listOf(predictorScoreWithRsrScoreOnly),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -453,7 +463,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
       assertThat(response.roshSummary?.error).isEqualTo("MISSING_DATA")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -465,16 +475,16 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with empty OSPC risk score values`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(
         current = null,
         historical = emptyList(),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -483,7 +493,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -495,16 +505,16 @@ internal class RiskServiceTest : ServiceTestBase() {
   @Test
   fun `retrieves risk with optional fields missing`() {
     runTest {
-      val riskScoreResponses = listOf(riskScoreResponse())
+      val assessmentScores = listOf(assessmentScores())
       given(arnApiClient.getRiskScores(crn))
         .willReturn(
-          Mono.fromCallable { riskScoreResponses },
+          Mono.fromCallable { assessmentScores },
         )
       val expectedPredictorScores = PredictorScores(
         current = null,
         historical = emptyList(),
       )
-      given(riskScoreConverter.convert(riskScoreResponses))
+      given(riskScoreConverter.convert(assessmentScores))
         .willReturn(expectedPredictorScores)
       apiMocksWithAllFieldsEmpty()
 
@@ -525,7 +535,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       assertThat(response.predictorScores).isEqualTo(expectedPredictorScores)
       assertThat(response.assessmentStatus).isEqualTo("INCOMPLETE")
 
-      then(arnApiClient).should().getAssessments(crn)
+      then(arnApiClient).should().getAssessmentsTimeline(crn)
       then(arnApiClient).should().getRiskScores(crn)
       then(arnApiClient).should().getRiskSummary(crn)
       then(deliusClient).should().getMappaAndRoshHistory(crn)
@@ -533,13 +543,11 @@ internal class RiskServiceTest : ServiceTestBase() {
   }
 
   private fun apiMocksWithAllFieldsEmpty() {
-    given(arnApiClient.getAssessments(anyString()))
+    given(arnApiClient.getAssessmentsTimeline(anyString()))
       .willReturn(
         Mono.fromCallable {
-          AssessmentsResponse(
-            crn = null,
-            limitedAccessOffender = null,
-            assessments = emptyList(),
+          AssessmentsTimelineResponse(
+            timeline = emptyList(),
           )
         },
       )

@@ -1,0 +1,22 @@
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn
+
+fun assessmentsTimelineResponse() = """
+{
+  "timeline": [
+    {
+      "assessmentId": 456,
+      "initiationDate": "2026-02-16T00:00:00",
+      "completedDate": "2026-02-16T00:00:00",
+      "assessmentType": "string",
+      "status": "COMPLETE"
+    },
+    {
+      "assessmentId": 123,
+      "initiationDate": "2026-02-13T00:00:00",
+      "completedDate": "2026-02-13T00:00:00",
+      "assessmentType": "string",
+      "status": "OPEN"
+    }
+   ]
+}
+""".trimIndent()

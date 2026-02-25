@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.2.0"
-  kotlin("jvm") version "2.2.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.3.0"
+  kotlin("jvm") version "2.3.0"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.2.20"
+  kotlin("plugin.jpa") version "2.3.0"
   id("org.sonarqube") version "6.2.0.5505"
-  kotlin("plugin.spring") version "2.2.20"
-  kotlin("plugin.serialization") version "2.2.20"
+  kotlin("plugin.spring") version "2.3.0"
+  kotlin("plugin.serialization") version "2.3.0"
 }
 
 jacoco.toolVersion = "0.8.11"
@@ -49,6 +49,9 @@ dependencies {
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+  // Temporary fix to address CVE-2025-68161 until we upgrade to spring-boot 4 or a 3.5.x with the fix is released
+  implementation("org.apache.logging.log4j:log4j-api:2.25.3")
 
   implementation("org.flywaydb:flyway-core:11.1.1")
   implementation("org.flywaydb:flyway-database-postgresql:11.1.1")

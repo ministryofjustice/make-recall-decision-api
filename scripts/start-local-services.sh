@@ -61,7 +61,7 @@ if [[ "${BUILD_HMPPS_AUTH}" == "true" ]]; then
   printf "\n\nBuilding hmpps-auth\n\n"
   pushd "${AUTH_DIR}"
   git pull origin main
-  docker build . --tag quay.io/hmpps/hmpps-auth:latest
+  docker build . --tag ghcr.io/ministryofjustice/hmpps-auth:latest
   popd
 fi
 
@@ -74,7 +74,7 @@ popd
 pushd "${UI_DIR}"
 printf "\n\nBuilding/starting UI components...\n\n"
 docker compose up -d --scale=${UI_NAME}=0
-npm install
+npm run setup
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
 

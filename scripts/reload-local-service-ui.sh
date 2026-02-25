@@ -12,7 +12,7 @@ pkill npm || true
 pkill node || true
 
 pushd "${UI_DIR}"
-npm install
+npm run setup
 npm run start:dev >>"${UI_LOGFILE}" 2>&1 &
 popd
 

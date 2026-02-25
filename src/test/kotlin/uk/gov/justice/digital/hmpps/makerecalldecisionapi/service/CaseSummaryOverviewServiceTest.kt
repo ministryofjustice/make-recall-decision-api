@@ -62,8 +62,8 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val personalDetails = response.personalDetailsOverview!!
       val convictions = response.activeConvictions
       val riskFlags = response.risk!!.flags
-      val riskManagementPlan = response.risk!!.riskManagementPlan
-      val assessments = response.risk?.assessmentInfo
+      val riskManagementPlan = response.risk.riskManagementPlan
+      val assessments = response.risk.assessmentInfo
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age(deliusPersonalDetailsResponse()))

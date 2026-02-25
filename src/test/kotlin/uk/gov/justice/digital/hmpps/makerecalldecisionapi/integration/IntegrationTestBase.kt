@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresEmptyResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.allRiskScoresResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.assessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.riskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.risksDataResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.arn.roSH404LatestCompleteNotFoundResponse
@@ -336,7 +337,7 @@ abstract class IntegrationTestBase {
 
   protected fun allRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresResponse())
         .withDelay(Delay.seconds(delaySeconds)),
@@ -345,7 +346,7 @@ abstract class IntegrationTestBase {
 
   protected fun allRiskScoresEmptyResponse(crn: String) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withContentType(APPLICATION_JSON).withBody(allRiskScoresEmptyResponse()),
@@ -375,9 +376,23 @@ abstract class IntegrationTestBase {
     )
   }
 
+  protected fun oasysAssessmentsTimelineResponse(
+    crn: String,
+    delaySeconds: Long = 0,
+  ) {
+    val assessmentsTimelineRequest = request().withPath("/assessments/timeline/crn/$crn")
+
+    oasysARNApi.`when`(assessmentsTimelineRequest).respond(
+      response().withContentType(APPLICATION_JSON).withBody(
+        assessmentsTimelineResponse(),
+      )
+        .withDelay(Delay.seconds(delaySeconds)),
+    )
+  }
+
   protected fun noRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest, exactly(1)).respond(
       response().withStatusCode(404),
@@ -386,7 +401,7 @@ abstract class IntegrationTestBase {
 
   protected fun failedRiskScoresResponse(crn: String, delaySeconds: Long = 0) {
     val currentScoresRequest =
-      request().withPath("/risks/crn/$crn/predictors/all")
+      request().withPath("/risks/predictors/all/crn/$crn")
 
     oasysARNApi.`when`(currentScoresRequest).respond(
       response().withStatusCode(500),
