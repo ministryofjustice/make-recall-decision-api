@@ -16,6 +16,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonSentencesAndOffences
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.prisonTimelineResponse
 
+// This test class is set up as an integration test, but the test cases are really unit tests. A separate
+// PrisonApiClientTest exists as a unit test of the PrisonApiClient class which doesn't require  starting
+// up the entire service to test the class. We should look into adapting these tests and moving them to the
+// unit test class to speed up the test suite. If you are adding new tests for PrisonApiClient, please add them
+// to the unit test class instead. If you are modifying any of these tests, please move the ones you are touching
+// to the unit test class. If you're looking to write an integration test, you're looking for
+// PrisonApiControllerTest.
 @ActiveProfiles("test")
 class PrisonApiClientTest : IntegrationTestBase() {
   @Autowired

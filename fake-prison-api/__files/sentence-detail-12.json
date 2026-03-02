@@ -1,0 +1,4 @@
+{
+  "sentenceExpiryOverrideDate": "{{now offset='2 months' format='yyyy-MM-dd'}}",
+  "sentenceExpiryCalculatedDate": "{{now offset='3 years' format='yyyy-MM-dd'}}"
+}

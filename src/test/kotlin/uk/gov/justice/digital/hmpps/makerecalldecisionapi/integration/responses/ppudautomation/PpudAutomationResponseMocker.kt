@@ -1,79 +1,49 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation
 
-import com.google.gson.Gson
 import org.mockserver.integration.ClientAndServer
-import org.mockserver.integration.ClientAndServer.startClientAndServer
-import org.mockserver.model.Delay
-import org.mockserver.model.HttpError
-import org.mockserver.model.HttpRequest.request
-import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.MediaType.APPLICATION_JSON
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateMinuteRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateReleaseResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOrUpdateSentenceRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateRecallResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateSentenceResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreatedOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreatedOrUpdatedRelease
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreatedSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudDetailsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudReferenceListResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudSearchResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenceRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUpdateOffenderRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.toJsonBody
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJson
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toJsonString
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationBookRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateOffenderResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateRecallResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationCreateSentenceResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchActiveUsersResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationSearchResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.automation.ppudAutomationUpdateReleaseResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadAdditionalDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUploadMandatoryDocumentRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ResponseMocker
 
-class PpudAutomationResponseMocker {
+internal class PpudAutomationResponseMocker : ResponseMocker {
 
-  private var ppudAutomationApi: ClientAndServer = startClientAndServer(8099)
-  private val gson: Gson = Gson()
+  private val ppudAutomationApi: ClientAndServer = clientAndServer
 
-  fun startUpServer() {
-    resetServer()
-  }
-
-  fun resetServer() {
-    ppudAutomationApi.reset()
-  }
-
-  fun tearDownServer() {
-    // The stop method should only return once the server and client are fully stopped, but when running the full test
-    // suite we're getting issues between tests trying to start a mock server on the same port. Since the default JUnit
-    // behaviour is not to run test classes in parallel, this suggests the stop method is returning too early. It seems
-    // we aren't the only ones seeing this behaviour: https://github.com/mock-server/mockserver/issues/1097
-    do {
-      ppudAutomationApi.stop()
-    } while (!ppudAutomationApi.hasStopped())
-  }
-
-  fun setUpSuccessfulHealthCheck() {
-    ppudAutomationApi
-      .`when`(request().withPath("/health/ping"))
-      .respond(
-        response()
-          .withContentType(APPLICATION_JSON)
-          .withBody(gson.toJson(mapOf("status" to "UP"))),
-      )
-  }
-
-  fun setUpFailingHealthCheck() {
-    ppudAutomationApi
-      .`when`(request().withPath("/health/ping"))
-      .error(HttpError.error())
-  }
+  // port aligned with those specified in application-test.yml
+  constructor() : super(8099)
 
   fun ppudAutomationSearchApiMatchResponse(
-    nomsId: String,
-    croNumber: String,
+    ppudSearchRequest: PpudSearchRequest,
+    ppudSearchResponse: PpudSearchResponse,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/search")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationSearchResponse(nomsId, croNumber))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/search",
+      requestBody = ppudSearchRequest,
+      responseBody = ppudSearchResponse,
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -81,26 +51,24 @@ class PpudAutomationResponseMocker {
     ppudDetailsResponse: PpudDetailsResponse,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/${ppudDetailsResponse.offender.id}")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudDetailsResponse.toJsonString())
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/${ppudDetailsResponse.offender.id}",
+      responseBody = ppudDetailsResponse,
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationBookRecallApiMatchResponse(
     nomsId: String,
+    ppudCreateRecallRequest: PpudCreateRecallRequest,
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/$nomsId/recall")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationBookRecallResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$nomsId/recall",
+      requestBody = ppudCreateRecallRequest,
+      responseBody = PpudCreateRecallResponse(PpudCreateRecall(id)),
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -109,12 +77,11 @@ class PpudAutomationResponseMocker {
     createOffenderRequest: PpudCreateOffenderRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender").withBody(createOffenderRequest.toJsonBody())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateOffenderResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender",
+      requestBody = createOffenderRequest,
+      responseBody = PpudCreateOffenderResponse(PpudCreatedOffender(id)),
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -123,10 +90,10 @@ class PpudAutomationResponseMocker {
     updateOffenderRequest: PpudUpdateOffenderRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/$offenderId").withBody(updateOffenderRequest.toJsonBody())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId",
+      requestBody = updateOffenderRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -136,12 +103,11 @@ class PpudAutomationResponseMocker {
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/$offenderId/sentence").withBody(createSentenceRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateSentenceResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId/sentence",
+      requestBody = createSentenceRequest,
+      responseBody = PpudCreateSentenceResponse(PpudCreatedSentence(id)),
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -151,25 +117,23 @@ class PpudAutomationResponseMocker {
     updateSentenceRequest: PpudCreateOrUpdateSentenceRequest,
     delaySeconds: Long = 0,
   ) {
-    val request =
-      request().withPath("/offender/$offenderId/sentence/$sentenceId").withBody(updateSentenceRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId/sentence/$sentenceId",
+      requestBody = updateSentenceRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationUpdateOffenceApiMatchResponse(
     offenderId: String,
     sentenceId: String,
+    ppudUpdateOffenceRequest: PpudUpdateOffenceRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/sentence/" + sentenceId + "/offence")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId/sentence/$sentenceId/offence",
+      requestBody = ppudUpdateOffenceRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -180,13 +144,11 @@ class PpudAutomationResponseMocker {
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request =
-      request().withPath("/offender/$offenderId/sentence/$sentenceId/release").withBody(updateReleaseRequest.toJson())
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationUpdateReleaseResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId/sentence/$sentenceId/release",
+      requestBody = updateReleaseRequest,
+      responseBody = PpudCreateOrUpdateReleaseResponse(PpudCreatedOrUpdatedRelease(id)),
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -196,45 +158,46 @@ class PpudAutomationResponseMocker {
     id: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/offender/" + offenderId + "/release/" + releaseId + "/recall")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationCreateRecallResponse(id))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/offender/$offenderId/release/$releaseId/recall",
+      responseBody = PpudCreateRecallResponse(PpudCreateRecall(id)),
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationUploadMandatoryDocumentApiMatchResponse(
     recallId: String,
+    ppudUploadMandatoryDocumentRequest: PpudUploadMandatoryDocumentRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/recall/$recallId/mandatory-document")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/recall/$recallId/mandatory-document",
+      requestBody = ppudUploadMandatoryDocumentRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationUploadAdditionalDocumentApiMatchResponse(
     recallId: String,
+    ppudUploadAdditionalDocumentRequest: PpudUploadAdditionalDocumentRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/recall/$recallId/additional-document")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/recall/$recallId/additional-document",
+      requestBody = ppudUploadAdditionalDocumentRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationCreateMinuteApiMatchResponse(
     recallId: String,
+    ppudCreateMinuteRequest: PpudCreateMinuteRequest,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/recall/$recallId/minutes")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/recall/$recallId/minutes",
+      requestBody = ppudCreateMinuteRequest,
+      delaySeconds = delaySeconds,
     )
   }
 
@@ -242,27 +205,24 @@ class PpudAutomationResponseMocker {
     name: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/reference/$name")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody("{ \"values\": [\"one\",\"two\"] }")
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/reference/$name",
+      responseBody = PpudReferenceListResponse(listOf("one", "two")),
+      delaySeconds = delaySeconds,
     )
   }
 
   fun ppudAutomationSearchActiveUsersApiMatchResponse(
+    ppudUserSearchRequest: PpudUserSearchRequest,
     userFullName: String,
-    userName: String,
     teamName: String,
     delaySeconds: Long = 0,
   ) {
-    val request = request().withPath("/user/search")
-
-    ppudAutomationApi.`when`(request).respond(
-      response().withContentType(APPLICATION_JSON)
-        .withBody(ppudAutomationSearchActiveUsersResponse(userFullName, teamName))
-        .withDelay(Delay.seconds(delaySeconds)),
+    mockResponse(
+      path = "/user/search",
+      requestBody = ppudUserSearchRequest,
+      responseBody = PpudUserResponse(listOf(PpudUser(userFullName, teamName))),
+      delaySeconds = delaySeconds,
     )
   }
 }
