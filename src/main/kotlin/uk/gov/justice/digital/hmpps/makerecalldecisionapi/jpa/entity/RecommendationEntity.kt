@@ -214,4 +214,5 @@ enum class Status {
 data class TextValueOption(
   val value: String? = null,
   val text: String? = null,
+  val hint: String? = null,
 )

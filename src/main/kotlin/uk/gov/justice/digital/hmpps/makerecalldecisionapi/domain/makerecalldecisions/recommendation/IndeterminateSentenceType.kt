@@ -11,5 +11,6 @@ enum class IndeterminateSentenceTypeOptions(val partADisplayValue: String) {
   LIFE("Yes - Lifer"),
   IPP("Yes - IPP"),
   DPP("Yes - DPP"),
+  DHMP("Yes - DHMP"),
   NO("No"),
 }
