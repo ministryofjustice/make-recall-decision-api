@@ -1,0 +1,7 @@
+### Get current risk scores
+GET {{host}}/risks/crn/{{crn}}/predictors/all
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get risk summary
+GET {{host}}/risks/crn/{{crn}}/summary
+Authorization: Bearer {{$auth.token("token")}}
