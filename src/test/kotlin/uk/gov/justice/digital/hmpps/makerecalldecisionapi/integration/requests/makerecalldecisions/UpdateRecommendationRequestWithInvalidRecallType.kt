@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 
-fun invalidUpdateRecommendationRequest(status: Status = Status.DRAFT) = """
+fun updateRecommendationRequestWithInvalidRecallType(status: Status = Status.DRAFT) = """
 {
   "custodyStatus": {
     "selected": "YES_PRISON",
@@ -45,8 +45,7 @@ fun invalidUpdateRecommendationRequest(status: Status = Status.DRAFT) = """
   "responseToProbation": "They have not responded well",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
-  "isIndeterminateSentence": true,
-  "isExtendedSentence": true,
+  "sentenceGroup": "INDETERMINATE",
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",

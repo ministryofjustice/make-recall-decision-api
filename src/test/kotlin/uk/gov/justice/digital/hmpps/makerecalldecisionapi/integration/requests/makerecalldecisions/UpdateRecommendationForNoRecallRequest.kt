@@ -25,8 +25,7 @@ fun updateRecommendationForNoRecallRequest(status: Status = Status.DRAFT) = """
     ]
   },
   "responseToProbation": "They have not responded well",
-  "isIndeterminateSentence": false,
-  "isExtendedSentence": false,
+  "sentenceGroup": "INDETERMINATE",
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",

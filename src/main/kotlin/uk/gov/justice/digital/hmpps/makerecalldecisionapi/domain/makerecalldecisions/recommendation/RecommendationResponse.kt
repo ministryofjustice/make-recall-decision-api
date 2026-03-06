@@ -39,6 +39,7 @@ data class RecommendationResponse(
   val spoRecallRationale: String? = null,
   val spoDeleteRecommendationRationale: String? = null,
   val whatLedToRecall: String? = null,
+  val sentenceGroup: SentenceGroup? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isIndeterminateSentence: Boolean? = null,
   val isExtendedSentence: Boolean? = null,

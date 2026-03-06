@@ -713,6 +713,7 @@ internal abstract class ServiceTestBase {
     surname: String = "Bloggs",
     ethnicity: String? = "White",
     primaryLanguage: String? = "English",
+    activeCustodialConvictionDescription: String? = null,
   ) = RecommendationModel(
     personalDetails = DeliusClient.PersonalDetailsOverview(
       name = Name(forename, middleName, surname),
@@ -746,7 +747,7 @@ internal abstract class ServiceTestBase {
               secondLength = 2,
               secondLengthUnits = "Years",
               startDate = LocalDate.parse("2021-01-01"),
-              description = sentence.description,
+              description = activeCustodialConvictionDescription ?: sentence.description,
               length = sentence.length,
               lengthUnits = sentence.lengthUnits,
               isCustodial = sentence.isCustodial,
