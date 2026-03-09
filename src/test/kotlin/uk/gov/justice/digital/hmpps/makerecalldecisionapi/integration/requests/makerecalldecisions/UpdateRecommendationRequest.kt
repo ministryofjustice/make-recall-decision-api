@@ -52,8 +52,7 @@ fun updateRecommendationRequest(
   "responseToProbation": "$responseToProbation",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
-  "isIndeterminateSentence": true,
-  "isExtendedSentence": true,
+  "sentenceGroup": "INDETERMINATE",
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",

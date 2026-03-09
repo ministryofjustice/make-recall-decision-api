@@ -7,9 +7,8 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.given
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbationDto
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
 @ExtendWith(MockitoExtension::class)
@@ -23,7 +22,7 @@ class RecommendationConverterTest {
 
   @Test
   fun convertsCorrectly() {
-    val recommendationEntity = MrdTestDataBuilder.recommendationDataEntityData(randomInt().toString())
+    val recommendationEntity = recommendationEntity()
 
     val personOnProbationDto = PersonOnProbationDto(randomString())
     given(personOnProbationConverter.convert(recommendationEntity.data.personOnProbation!!))

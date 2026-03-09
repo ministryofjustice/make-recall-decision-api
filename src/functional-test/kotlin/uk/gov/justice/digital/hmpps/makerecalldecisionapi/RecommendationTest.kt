@@ -259,8 +259,7 @@ private fun updateRecommendationRequest() = """
     "responseToProbation": "They have not responded well",
     "whatLedToRecall": "Increasingly violent behaviour",
     "isThisAnEmergencyRecall": true,
-    "isIndeterminateSentence": true,
-    "isExtendedSentence": true,
+    "sentenceGroup": "INDETERMINATE",
     "activeCustodialConvictionCount": 1,
     "hasVictimsInContactScheme": {
       "selected": "YES",

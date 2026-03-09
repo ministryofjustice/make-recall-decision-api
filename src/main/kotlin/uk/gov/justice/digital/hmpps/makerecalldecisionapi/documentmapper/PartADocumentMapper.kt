@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
@@ -29,6 +28,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsExtendedSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsIndeterminateSentence
 import java.time.LocalDate
 
 @Component
@@ -74,11 +75,7 @@ internal class PartADocumentMapper(
         recommendation.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
         recommendation.custodyStatus?.details,
       ),
-      recallType = findRecallTypeToDisplay(
-        recommendation.recallType,
-        recommendation.isIndeterminateSentence,
-        recommendation.isExtendedSentence,
-      ),
+      recallType = findRecallTypeToDisplay(recommendation),
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
@@ -117,7 +114,7 @@ internal class PartADocumentMapper(
         recommendation.hasBeenChargedWithTerroristOrStateThreatOffence,
         recommendation,
       ),
-      isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
+      isExtendedSentence = convertBooleanToYesNo(recommendation.calculateIsExtendedSentence()),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
       indeterminateSentenceType = recommendation.indeterminateSentenceType?.selected?.partADisplayValue
@@ -258,27 +255,29 @@ internal class PartADocumentMapper(
     return dates
   }
 
-  private fun findRecallTypeToDisplay(
-    recallType: RecallType?,
-    isIndeterminateSentence: Boolean?,
-    isExtendedSentence: Boolean?,
-  ): ValueWithDetails = if (isIndeterminateSentence == true || isExtendedSentence == true) {
-    val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
-    ValueWithDetails(textToDisplay, textToDisplay)
-  } else {
-    val partAValue = when (recallType?.selected?.value) {
-      RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
-      RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
-      else -> null
+  private fun findRecallTypeToDisplay(recommendation: RecommendationResponse): ValueWithDetails {
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
+    if (isIndeterminateSentence == true || isExtendedSentence == true) {
+      val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
+      return ValueWithDetails(textToDisplay, textToDisplay)
+    } else {
+      val partAValue = when (recommendation.recallType?.selected?.value) {
+        RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
+        RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
+        else -> null
+      }
+      return ValueWithDetails(partAValue, recommendation.recallType?.selected?.details)
     }
-    ValueWithDetails(partAValue, recallType?.selected?.details)
   }
 
   private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationResponse): String? {
     val isStandardRecall: Boolean = recommendation.recallType?.selected?.value == RecallTypeValue.STANDARD
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
     return buildNotApplicableMessage(
-      recommendation.isIndeterminateSentence,
-      recommendation.isExtendedSentence,
+      isIndeterminateSentence,
+      isExtendedSentence,
       isStandardRecall,
     )
       ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions.details else EMPTY_STRING
@@ -310,11 +309,11 @@ internal class PartADocumentMapper(
     value: Boolean?,
     recommendation: RecommendationResponse,
   ): String {
-    val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
-    val isExtendedSentence = recommendation.isExtendedSentence == true
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
 
     return when {
-      isIndeterminateSentence || isExtendedSentence -> "N/A - indeterminate or extended sentence"
+      (isIndeterminateSentence ?: false) || (isExtendedSentence ?: false) -> "N/A - indeterminate or extended sentence"
       else -> if (value == true) {
         YES
       } else if (value == false) {

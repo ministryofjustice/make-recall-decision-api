@@ -51,6 +51,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -123,7 +124,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val metadata = createRecommendationMetaData()
       given(mockRegionService.getRegionName("RegionCode1")).willReturn("Region 1")
       given(mockRegionService.getRegionName("RegionCode2")).willReturn("Region 2")
-      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(ClassPathResource(templateName))
+      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(
+        ClassPathResource(
+          templateName,
+        ),
+      )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
 
       verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
@@ -142,7 +147,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
       val metadata = createRecommendationMetaData()
-      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)).willReturn(ClassPathResource("DNTR Template.docx"))
+      given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)).willReturn(
+        ClassPathResource("DNTR Template.docx"),
+      )
       templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
 
       verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)
@@ -169,7 +176,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         .willReturn("Region Name 1")
       given(mockRegionService.getRegionName("RegionCode2"))
         .willReturn("Region Name 2")
-      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(ClassPathResource(templateName))
+      given(templateRetrievalService.loadDocumentTemplate(documentType, metadata)).willReturn(
+        ClassPathResource(
+          templateName,
+        ),
+      )
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
 
       verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
@@ -553,6 +564,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     isMappaLevelAbove1 = true,
     hasBeenConvictedOfSeriousOffence = true,
     isExtendedSentence = false,
+    sentenceGroup = SentenceGroup.INDETERMINATE,
     personOnProbation = PersonOnProbation(
       gender = "Male",
       dateOfBirth = LocalDate.parse("1982-10-24"),

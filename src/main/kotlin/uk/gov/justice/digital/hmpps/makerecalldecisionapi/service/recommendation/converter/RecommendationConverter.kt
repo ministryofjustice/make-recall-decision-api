@@ -38,6 +38,7 @@ class RecommendationConverter(
     responseToProbation = recommendationEntity.data.responseToProbation,
     triggerLeadingToRecall = recommendationEntity.data.triggerLeadingToRecall,
     whatLedToRecall = recommendationEntity.data.whatLedToRecall,
+    sentenceGroup = recommendationEntity.data.sentenceGroup,
     isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
     isIndeterminateSentence = recommendationEntity.data.isIndeterminateSentence,
     isExtendedSentence = recommendationEntity.data.isExtendedSentence,

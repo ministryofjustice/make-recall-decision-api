@@ -48,6 +48,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Term
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
@@ -90,6 +91,7 @@ class MrdTestDataBuilder {
         isThisAnEmergencyRecall = true,
         isIndeterminateSentence = true,
         isExtendedSentence = true,
+        sentenceGroup = SentenceGroup.INDETERMINATE,
         activeCustodialConvictionCount = 1,
         hasVictimsInContactScheme = victimsInContactSchemeData(),
         indeterminateSentenceType = indeterminateSentenceType(),
@@ -275,6 +277,7 @@ class MrdTestDataBuilder {
       isThisAnEmergencyRecall = true,
       isIndeterminateSentence = true,
       isExtendedSentence = false,
+      sentenceGroup = SentenceGroup.INDETERMINATE,
       activeCustodialConvictionCount = 1,
       hasVictimsInContactScheme = victimsInContactSchemeData(),
       indeterminateSentenceType = indeterminateSentenceType(),
