@@ -45,6 +45,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
@@ -60,6 +61,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
@@ -702,6 +704,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
             isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
             isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
+            sentenceGroup = updateRecommendationRequest.sentenceGroup,
             activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
             hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
             indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
@@ -1587,6 +1590,111 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       val recommendationEntity = recommendationCaptor.firstValue
 
       assertThat(recommendationEntity.data.indexOffenceDetails).isEqualTo("Offence details.")
+    }
+  }
+
+  @ParameterizedTest(name = "update recommendation with conviction details from Delius when conviction details refresh received, isExtendedSentence={0}, sentenceGroup={1}, deliusConvictionSentenceType={2}, expectExtendedSentenceDetails={3}")
+  @CsvSource(
+    "false,, Non-extended sentence, false",
+    ", ADULT_SDS, Non-extended sentence, false",
+    "false,, Extended Determinate Sentence, true",
+    ", ADULT_SDS, Extended Determinate Sentence, true",
+    "false,, CJA - Extended Sentence, true",
+    ", ADULT_SDS, CJA - Extended Sentence, true",
+    "true,, Non-extended sentence, true",
+    ", EXTENDED, Non-extended sentence, true",
+    "true,, Extended Determinate Sentence, true",
+    ", EXTENDED, Extended Determinate Sentence, true",
+    "true,, CJA - Extended Sentence, true",
+    ", EXTENDED, CJA - Extended Sentence, true",
+  )
+  fun `update recommendation with conviction details from Delius when conviction details refresh received`(
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+    deliusConvictionSentenceType: String,
+    expectExtendedSentenceDetails: Boolean,
+  ) {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Joe", surname = "Bloggs"),
+        ),
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      val deliusRecommendationModelResponse =
+        deliusRecommendationModelResponse(activeCustodialConvictionDescription = deliusConvictionSentenceType)
+      given(deliusClient.getRecommendationModel(anyString()))
+        .willReturn(deliusRecommendationModelResponse)
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation).copy(
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("convictionDetail"),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(deliusClient).should().getRecommendationModel(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.convictionDetail)
+        .usingRecursiveComparison()
+        .isEqualTo(
+          with(deliusRecommendationModelResponse.activeCustodialConvictions[0]) {
+            ConvictionDetail(
+              mainOffence.description,
+              mainOffence.date,
+              sentence.startDate,
+              sentence.length,
+              sentence.lengthUnits,
+              sentence.description,
+              sentence.licenceExpiryDate,
+              sentence.sentenceExpiryDate,
+              sentence.secondLength,
+              sentence.secondLengthUnits,
+              if (expectExtendedSentenceDetails) "${sentence.length} ${sentence.lengthUnits}" else null,
+              if (expectExtendedSentenceDetails) "${sentence.secondLength} ${sentence.secondLengthUnits}" else null,
+              true,
+            )
+          },
+        )
     }
   }
 

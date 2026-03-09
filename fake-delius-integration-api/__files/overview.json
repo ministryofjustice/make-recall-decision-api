@@ -33,7 +33,23 @@
         "description": "Assault",
         "date": "2022-04-24"
       },
-      "additionalOffences": [],
+      "additionalOffences": [
+        {
+          "code": "5678",
+          "description": "Criminal Damage",
+          "date": "2022-04-24"
+        },
+        {
+          "code": "9012",
+          "description": "Theft",
+          "date": "2022-04-24"
+        },
+        {
+          "code": "3456",
+          "description": "Burglary",
+          "date": "2022-04-24"
+        }
+      ],
       "sentence": {
         "description": "Extended Determinate Sentence",
         "length": 2,

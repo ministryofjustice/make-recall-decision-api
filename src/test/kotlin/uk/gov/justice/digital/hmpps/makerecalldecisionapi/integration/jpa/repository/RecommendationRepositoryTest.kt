@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -28,7 +29,24 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `find all active recommendations not yet created`() {
+  fun `saves and retrieves a recommendation`() {
+    // given
+    val recommendation = recommendationEntity()
+
+    // when
+    val savedRecommendation = repository.save(recommendation)
+
+    // then
+    assertThat(savedRecommendation).usingRecursiveComparison()
+      .ignoringFields(
+        "id",
+        "data.ppudOffender.sentences.releases",
+      )
+      .isEqualTo(recommendation)
+  }
+
+  @Test
+  fun `finds all active recommendations not yet created`() {
     // given
     val expectedRecommendationIds = createRecommendationsExpectedToBeSoftDeleted()
     createRecommendationsExpectedToRemainUntouched()

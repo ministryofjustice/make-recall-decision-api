@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -92,22 +93,29 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, should map in the part A with the recall value {6} and details {7} with additional licence conditions value {8}")
+  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, sentence group {6} should map in the part A with the recall value {7} and details {8} with additional licence conditions value {9}")
   @CsvSource(
-    "STANDARD,Standard details,false,,false,false,Standard,Standard details,N/A (standard recall)",
-    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
-    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,Fixed,Fixed details,''",
-    "STANDARD,Standard details,false,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,false,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
+    "STANDARD,Standard details,false,,false,false,,Standard,Standard details,N/A (standard recall)",
+    "STANDARD,Standard details,false,,,,ADULT_SDS,Standard,Standard details,N/A (standard recall)",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,,,ADULT_SDS,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,,Fixed,Fixed details,''",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,,,ADULT_SDS,Fixed,Fixed details,''",
+    "STANDARD,Standard details,false,,true,true,,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,,,INDETERMINATE,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,true,false,,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,,,INDETERMINATE,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,false,true,,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
+    "STANDARD,Standard details,false,,,,EXTENDED,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
   )
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
     recallTypeDetails: String?,
     fixedTermAdditionalLicenceConditionsSelected: Boolean,
     fixedTermAdditionalLicenceConditionsValue: String?,
-    isIndeterminateSentence: Boolean,
-    isExtendedSentence: Boolean,
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
     partARecallTypeDisplayValue: String?,
     partARecallTypeDisplayDetails: String?,
     partAFixedTermLicenceConditionsDisplayValue: String?,
@@ -124,6 +132,7 @@ class PartADocumentMapperTest {
         ),
         isIndeterminateSentence = isIndeterminateSentence,
         isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(
           fixedTermAdditionalLicenceConditionsSelected,
           fixedTermAdditionalLicenceConditionsValue,
@@ -159,10 +168,19 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given is an extended sentence {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
+  @ParameterizedTest(name = "given extended sentence value (isExtendedSentence={0}, sentenceGroup={1}), recommendation data should map to the part A text {2}")
+  @CsvSource(
+    "true, null, Yes",
+    ", EXTENDED, Yes",
+    "false, null, No",
+    ", ADULT_SDS, No",
+    "null, null,''",
+    "null, null,''",
+    nullValues = ["null"],
+  )
   fun `given is extended sentence data then should map to the part A text`(
     isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
     partADisplayText: String?,
   ) {
     runTest {
@@ -172,6 +190,7 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -218,8 +237,9 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given extended sentence used in part A text`() {
+  @ParameterizedTest(name = "extended sentence (isExtendedSentence={0}, sentenceGroup={1}) considered in part A text")
+  @CsvSource("true,", ", EXTENDED")
+  fun `given extended sentence used in part A text`(isExtendedSentence: Boolean?, sentenceGroup: SentenceGroup?) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -227,7 +247,8 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isExtendedSentence = true,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
@@ -238,8 +259,12 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given indeterminate sentence used in part A text`() {
+  @ParameterizedTest(name = "indeterminate sentence (isIndeterminateSentence={0}, sentenceGroup={1}) considered in part A text")
+  @CsvSource("true,", ", INDETERMINATE")
+  fun `given indeterminate sentence used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -247,7 +272,8 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = true,
+        isIndeterminateSentence = isIndeterminateSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
@@ -259,8 +285,13 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given not indeterminate and not extended sentence and standard recall used in part A text`() {
+  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and standard recall considered in part A text")
+  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  fun `given not indeterminate and not extended sentence and standard recall used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -268,8 +299,9 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = false,
-        isExtendedSentence = false,
+        isIndeterminateSentence = isIndeterminateSentence,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isMappaLevelAbove1 = false,
         isUnder18 = false,
         isSentence12MonthsOrOver = false,
@@ -282,8 +314,13 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given fixed term recall used in part A text`() {
+  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and fixed-term recall considered in part A text")
+  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  fun `given fixed term recall used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -291,8 +328,9 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = false,
-        isExtendedSentence = false,
+        isIndeterminateSentence = isIndeterminateSentence,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = true,
         isMappaLevelAbove1 = true,
         isSentence12MonthsOrOver = false,
