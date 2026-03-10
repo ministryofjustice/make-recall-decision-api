@@ -81,8 +81,7 @@ fun updateRecommendationRequestWithInvalidRecallType(status: Status = Status.DRA
       },
       {
         "value": "DHMP",
-        "text": "Detention at His Majesty’s pleasure (DHMP)",
-        "hint": "Youth indeterminate sentence"
+        "text": "Detention at His Majesty’s pleasure (DHMP)"
       },
       {
         "value": "NO",

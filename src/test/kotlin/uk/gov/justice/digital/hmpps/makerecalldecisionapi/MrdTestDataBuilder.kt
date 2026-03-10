@@ -444,7 +444,7 @@ class MrdTestDataBuilder {
         TextValueOption(value = "LIFE", text = "Life sentence"),
         TextValueOption(value = "IPP", text = "Imprisonment for public protection (IPP)"),
         TextValueOption(value = "DPP", text = "Detention for public protection (DPP)"),
-        TextValueOption(value = "DHMP", text = "Detention at His Majesty’s pleasure (DHMP)", hint = "Youth indeterminate sentence"),
+        TextValueOption(value = "DHMP", text = "Detention at His Majesty’s pleasure (DHMP)"),
         TextValueOption(value = "NO", text = "No"),
       ),
     )
