@@ -361,7 +361,7 @@ class PartADocumentMapperTest {
   }
 
   @ParameterizedTest(name = "given is indeterminate sentence type field {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "NO,No")
+  @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "DHMP,Yes - DHMP", "NO,No")
   fun `given indeterminate sentence type data then should map to the part A text`(
     indeterminateSentenceType: IndeterminateSentenceTypeOptions,
     partADisplayText: String?,

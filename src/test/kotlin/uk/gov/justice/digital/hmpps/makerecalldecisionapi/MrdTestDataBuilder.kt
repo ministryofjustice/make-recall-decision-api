@@ -442,8 +442,9 @@ class MrdTestDataBuilder {
       selected = IndeterminateSentenceTypeOptions.LIFE,
       allOptions = listOf(
         TextValueOption(value = "LIFE", text = "Life sentence"),
-        TextValueOption(value = "IPP", text = "Imprisonment for Public Protection (IPP) sentence"),
-        TextValueOption(value = "DPP", text = "Detention for Public Protection (DPP) sentence"),
+        TextValueOption(value = "IPP", text = "Imprisonment for public protection (IPP)"),
+        TextValueOption(value = "DPP", text = "Detention for public protection (DPP)"),
+        TextValueOption(value = "DHMP", text = "Detention at His Majesty’s pleasure (DHMP)"),
         TextValueOption(value = "NO", text = "No"),
       ),
     )
