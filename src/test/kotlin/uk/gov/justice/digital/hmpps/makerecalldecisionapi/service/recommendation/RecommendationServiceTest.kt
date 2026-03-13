@@ -746,6 +746,15 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isRecalledOnNewChargedOffence = updateRecommendationRequest.isRecalledOnNewChargedOffence,
             isServingFTSentenceForTerroristOffence = updateRecommendationRequest.isServingFTSentenceForTerroristOffence,
             hasBeenChargedWithTerroristOrStateThreatOffence = updateRecommendationRequest.hasBeenChargedWithTerroristOrStateThreatOffence,
+            isChargedWithOffence = updateRecommendationRequest.isChargedWithOffence,
+            isServingTerroristOrNationalSecurityOffence = updateRecommendationRequest.isServingTerroristOrNationalSecurityOffence,
+            isAtRiskOfInvolvedInForeignPowerThreat = updateRecommendationRequest.isAtRiskOfInvolvedInForeignPowerThreat,
+            wasReferredToParoleBoard244ZB = updateRecommendationRequest.wasReferredToParoleBoard244ZB,
+            wasRepatriatedForMurder = updateRecommendationRequest.wasRepatriatedForMurder,
+            isServingSOPCSentence = updateRecommendationRequest.isServingSOPCSentence,
+            isServingDCRSentence = updateRecommendationRequest.isServingDCRSentence,
+            isYouthSentenceOver12Months = updateRecommendationRequest.isYouthSentenceOver12Months,
+            isYouthChargedWithSeriousOffence = updateRecommendationRequest.isYouthChargedWithSeriousOffence,
           ),
         )
 
