@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
@@ -79,6 +80,7 @@ internal class PartADocumentMapper(
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
+      isServingYouthSentence = convertBooleanToYesNo(recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS),
 
       isUnder18 = generateExclusionCriteriaAnswer(recommendation.isUnder18, recommendation),
       isSentence12MonthsOrOver = generateExclusionCriteriaAnswer(

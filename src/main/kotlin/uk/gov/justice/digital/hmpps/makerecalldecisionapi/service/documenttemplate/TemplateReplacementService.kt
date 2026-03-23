@@ -116,6 +116,7 @@ internal class TemplateReplacementService(
       "response_to_probation" to documentData.responseToProbation,
       "what_led_to_recall" to documentData.whatLedToRecall,
       "is_this_an_emergency_recall" to documentData.isThisAnEmergencyRecall,
+      "is_serving_youth_sentence" to documentData.isServingYouthSentence,
       "is_under_18" to documentData.isUnder18,
       "is_sentence_12_months_or_over" to documentData.isSentence12MonthsOrOver,
       "is_mappa_above_level_1" to documentData.isMappaAboveLevel1,

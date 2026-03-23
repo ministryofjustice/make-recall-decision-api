@@ -16,6 +16,7 @@ data class DocumentData(
   val responseToProbation: String? = null,
   val whatLedToRecall: String? = null,
   val isThisAnEmergencyRecall: String? = null,
+  val isServingYouthSentence: String? = null,
 
   val isUnder18: String? = null,
   val isSentence12MonthsOrOver: String? = null,

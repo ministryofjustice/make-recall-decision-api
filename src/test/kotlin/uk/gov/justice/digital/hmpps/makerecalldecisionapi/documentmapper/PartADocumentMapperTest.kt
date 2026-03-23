@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
@@ -165,6 +166,24 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
       assertThat(result.isThisAnEmergencyRecall).isEqualTo(partADisplayText)
+    }
+  }
+
+  @ParameterizedTest
+  @EnumSource(SentenceGroup::class)
+  fun `set isServingYouthSentence appropriately based on sentenceGroup value`(
+    sentenceGroup: SentenceGroup?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isServingYouthSentence).isEqualTo(if (sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else "No")
     }
   }
 
