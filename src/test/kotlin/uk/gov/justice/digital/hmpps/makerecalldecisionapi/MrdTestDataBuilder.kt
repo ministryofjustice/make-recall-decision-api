@@ -375,6 +375,10 @@ class MrdTestDataBuilder {
           text = "behaviour leading to sexual or violent behaviour",
         ),
         TextValueOption(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          text = "behaviour likely to result in sexual or violent behaviour",
+        ),
+        TextValueOption(
           value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
           text = "out of touch",
         ),
