@@ -233,7 +233,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(146)
+      assertThat(result.size).isEqualTo(147)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -241,6 +241,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["response_to_probation"]).isEqualTo("They have not responded well")
       assertThat(result["what_led_to_recall"]).isEqualTo("Increasingly violent behaviour")
       assertThat(result["is_this_an_emergency_recall"]).isEqualTo("Yes")
+      assertThat(result["is_serving_youth_sentence"]).isEqualTo("Yes")
       assertThat(result["is_under_18"]).isEqualTo("No")
       assertThat(result["is_sentence_12_months_or_over"]).isEqualTo("No")
       assertThat(result["is_mappa_above_level_1"]).isEqualTo("Yes")
@@ -903,6 +904,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       ),
     )
     return DocumentData(
+      isServingYouthSentence = "Yes",
       isSentence12MonthsOrOver = "No",
       isUnder18 = "No",
       isMappaAboveLevel1 = "Yes",
