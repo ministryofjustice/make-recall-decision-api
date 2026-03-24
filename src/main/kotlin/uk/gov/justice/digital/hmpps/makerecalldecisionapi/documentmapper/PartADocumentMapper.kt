@@ -116,6 +116,42 @@ internal class PartADocumentMapper(
         recommendation.hasBeenChargedWithTerroristOrStateThreatOffence,
         recommendation,
       ),
+      isChargedWithOffence = generateExclusionCriteriaAnswer(
+        recommendation.isChargedWithOffence,
+        recommendation,
+      ),
+      isServingTerroristOrNationalSecurityOffence = generateExclusionCriteriaAnswer(
+        recommendation.isServingTerroristOrNationalSecurityOffence,
+        recommendation,
+      ),
+      isAtRiskOfInvolvedInForeignPowerThreat = generateExclusionCriteriaAnswer(
+        recommendation.isAtRiskOfInvolvedInForeignPowerThreat,
+        recommendation,
+      ),
+      wasReferredToParoleBoard244ZB = generateExclusionCriteriaAnswer(
+        recommendation.wasReferredToParoleBoard244ZB,
+        recommendation,
+      ),
+      wasRepatriatedForMurder = generateExclusionCriteriaAnswer(
+        recommendation.wasRepatriatedForMurder,
+        recommendation,
+      ),
+      isServingSOPCSentence = generateExclusionCriteriaAnswer(
+        recommendation.isServingSOPCSentence,
+        recommendation,
+      ),
+      isServingDCRSentence = generateExclusionCriteriaAnswer(
+        recommendation.isServingDCRSentence,
+        recommendation,
+      ),
+      isYouthSentenceOver12Months = generateExclusionCriteriaAnswer(
+        recommendation.isYouthSentenceOver12Months,
+        recommendation,
+      ),
+      isYouthChargedWithSeriousOffence = generateExclusionCriteriaAnswer(
+        recommendation.isYouthChargedWithSeriousOffence,
+        recommendation,
+      ),
       isExtendedSentence = convertBooleanToYesNo(recommendation.calculateIsExtendedSentence()),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
