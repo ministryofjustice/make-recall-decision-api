@@ -403,20 +403,28 @@ class PartADocumentMapperTest {
   @CsvSource(
     "YOUTH_SDS, true, false, Yes",
     "YOUTH_SDS, true, true,",
+    "YOUTH_SDS, true, ,",
     "YOUTH_SDS, false, false, No",
     "YOUTH_SDS, false, true,",
+    "YOUTH_SDS, false, ,",
     "ADULT_SDS, true, false,",
     "ADULT_SDS, true, true,",
+    "ADULT_SDS, true, ,",
     "ADULT_SDS, false, false,",
     "ADULT_SDS, false, true,",
+    "ADULT_SDS, false, ,",
     "INDETERMINATE, true, false,",
     "INDETERMINATE, true, true,",
+    "INDETERMINATE, true, ,",
     "INDETERMINATE, false, false,",
     "INDETERMINATE, false, true,",
+    "INDETERMINATE, false, ,",
     "EXTENDED, true, false,",
     "EXTENDED, true, true,",
+    "EXTENDED, true, ,",
     "EXTENDED, false, false,",
     "EXTENDED, false, true,",
+    "EXTENDED, false, ,",
   )
   fun `isMappaLevel2or3AsYouthSdsUnder12Months set correctly`(
     sentenceGroup: SentenceGroup?,
@@ -431,7 +439,7 @@ class PartADocumentMapperTest {
         id = 1,
         isMappaLevel2Or3 = isMappaLevel2or3,
         sentenceGroup = sentenceGroup,
-        // isYouthSentenceOver12Months = isYouthSentenceOver12Months
+        isYouthSentenceOver12Months = isYouthSentenceOver12Months,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)

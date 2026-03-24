@@ -311,7 +311,7 @@ internal class PartADocumentMapper(
     }
   } else {
     with(recommendation.whoCompletedPartA) {
-      return PractitionerDetails(
+      PractitionerDetails(
         name = this.name ?: "",
         telephone = this.telephone ?: "",
         email = this.email ?: "",
@@ -536,13 +536,12 @@ internal class PartADocumentMapper(
    * incorrectly infer that the two criteria are met but the offender isn't MAPPA level 2 or 3, when in reality the
    * criteria just aren't met and the section of the part A where this value is set is irrelevant.
    */
-  private fun calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation: RecommendationResponse): String? {
-    // TODO uncomment the part below once suitability changes are merged and rebased
-    return if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS) { // }) && recommendation.isYouthSentenceOver12Months) {
-      convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
-    } else {
-      null
-    }
+  private fun calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS &&
+    !(recommendation.isYouthSentenceOver12Months ?: true) // if null, we want to return null
+  ) {
+    convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
+  } else {
+    null
   }
 
   /**

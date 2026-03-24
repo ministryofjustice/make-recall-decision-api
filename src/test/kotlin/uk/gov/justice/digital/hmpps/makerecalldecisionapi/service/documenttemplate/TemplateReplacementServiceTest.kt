@@ -235,7 +235,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(156)
+      assertThat(result.size).isEqualTo(164)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
