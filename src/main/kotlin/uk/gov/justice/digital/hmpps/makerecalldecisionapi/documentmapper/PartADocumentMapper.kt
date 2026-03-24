@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
@@ -55,6 +56,10 @@ internal class PartADocumentMapper(
     val (behaviourLeadingToSexualOrViolentOffencePresent, behaviourLeadingToSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(
       recommendation.indeterminateOrExtendedSentenceDetails,
       BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
+    )
+    val (behaviourLikelyToResultSexualOrViolentOffencePresent, behaviourLikelyToResultSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(
+      recommendation.indeterminateOrExtendedSentenceDetails,
+      BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
     )
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(
       recommendation.indeterminateOrExtendedSentenceDetails,
@@ -104,6 +109,9 @@ internal class PartADocumentMapper(
         recommendation.isMappaLevel2Or3,
         recommendation,
       ),
+      isMappaLevel2or3AsYouthSdsUnder12Months = calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation),
+      isMappaLevel2or3AsAdultSds = calculateIsMappaLevel2or3AsAdultSds(recommendation),
+      isMappaCategory4AsAdultSds = calculateMappaCategory4AsAdultSds(recommendation),
       isRecalledOnNewChargedOffence = generateExclusionCriteriaAnswer(
         recommendation.isRecalledOnNewChargedOffence,
         recommendation,
@@ -201,7 +209,14 @@ internal class PartADocumentMapper(
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
       completedBy = determineCompletedBy(recommendation, metadata, flags),
+      // we have separate supervisingPractitioner and probationPractitionerDetails fields because Part As pre-FTR56
+      // include the details only if the person completing the Part A isn't the practitioner (the Part A had separate
+      // sections and explicitly ask for the second one only to filled in if relevant), whereas the FTR56 version always
+      // wants the practitioner's details, for which we need the logic in determineProbationPractitionerDetails. We
+      // can't change determineSupervisingPractitioner, as we still need to support downloads of older Part As and we
+      // don't want them to fill in the practitioner section if they are the same as the whoFilledPartA one
       supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
+      probationPractitionerDetails = determineProbationPractitionerDetails(recommendation),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = decisionDate,
       timeOfDecision = decisionTime,
@@ -211,9 +226,12 @@ internal class PartADocumentMapper(
       behaviourSimilarToIndexOffencePresent = behaviourSimilarToIndexOffencePresent,
       behaviourLeadingToSexualOrViolentOffence = behaviourLeadingToSexualOrViolentOffence,
       behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
+      behaviourLikelyToResultSexualOrViolentOffence = behaviourLikelyToResultSexualOrViolentOffence,
+      behaviourLikelyToResultSexualOrViolentOffencePresent = behaviourLikelyToResultSexualOrViolentOffencePresent,
       outOfTouch = outOfTouch,
       outOfTouchPresent = outOfTouchPresent,
-      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
+      otherPossibleAddresses =
+      formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
       primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
       lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
       lastReleaseDate = buildFormattedLocalDate(lastRelease),
@@ -281,6 +299,24 @@ internal class PartADocumentMapper(
     }
   } else {
     PractitionerDetails()
+  }
+
+  private suspend fun determineProbationPractitionerDetails(recommendation: RecommendationResponse): PractitionerDetails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
+    with(recommendation.practitionerForPartA) {
+      PractitionerDetails(
+        name = this?.name ?: "",
+        telephone = this?.telephone ?: "",
+        email = this?.email ?: "",
+      )
+    }
+  } else {
+    with(recommendation.whoCompletedPartA) {
+      return PractitionerDetails(
+        name = this.name ?: "",
+        telephone = this.telephone ?: "",
+        email = this.email ?: "",
+      )
+    }
   }
 
   private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
@@ -491,5 +527,47 @@ internal class PartADocumentMapper(
       return dates.joinToString(", ") { buildFormattedLocalDate(it) }
     }
     return EMPTY_STRING
+  }
+
+  /**
+   * We want to leave the value empty for this field unless the person is serving a youth sentence of 12 months or
+   * under, in which case we want to display the Mappa level 2 or 3 value. We explicitly don't want to return "No" if
+   * either of the first two criteria (youth & sentence length) aren't met, as otherwise the reader of the Part A may
+   * incorrectly infer that the two criteria are met but the offender isn't MAPPA level 2 or 3, when in reality the
+   * criteria just aren't met and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation: RecommendationResponse): String? {
+    // TODO uncomment the part below once suitability changes are merged and rebased
+    return if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS) { // }) && recommendation.isYouthSentenceOver12Months) {
+      convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
+    } else {
+      null
+    }
+  }
+
+  /**
+   * Similar logic to calculateIsMappaLevel2or3AsYouthSdsUnder12Months - we only want to return a value for this field
+   * if the offender is serving an adult sentence, in which case we want to display the Mappa level 2 or 3 value. If the
+   * offender is serving a different type of sentence, we want to leave the field empty to avoid readers of the Part A
+   * incorrectly inferring that the offender is serving an adult sentence and isn't MAPPA level 2 or 3, when in reality
+   * they're serving a different type of sentence and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateIsMappaLevel2or3AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
+    convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
+  } else {
+    null
+  }
+
+  /**
+   * Similar logic to calculateIsMappaLevel2or3AsYouthSdsUnder12Months - we only want to return a value for this field
+   * if the offender is serving an adult sentence, in which case we want to display the Mappa category 4 value. If the
+   * offender is serving a different type of sentence, we want to leave the field empty to avoid readers of the Part A
+   * incorrectly inferring that the offender is serving an adult sentence and isn't MAPPA category 4, when in reality
+   * they're serving a different type of sentence and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateMappaCategory4AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
+    convertBooleanToYesNo(recommendation.isMappaCategory4)
+  } else {
+    null
   }
 }

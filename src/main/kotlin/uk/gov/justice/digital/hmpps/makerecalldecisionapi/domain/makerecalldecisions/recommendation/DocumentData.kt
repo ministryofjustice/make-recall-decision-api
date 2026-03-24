@@ -25,6 +25,12 @@ data class DocumentData(
   val isSentence48MonthsOrOver: String? = null,
   val isMappaCategory4: String? = null,
   val isMappaLevel2Or3: String? = null,
+  // We need the below FTR56-specific versions of the fields, as parts of the Part A should only be filled in under
+  // specific circumstances. Filling them in when not required could lead the reader to incorrectly conclude said
+  // circumstances are satisfied (e.g. that the offender is serving a sentence of less than 12 months when they're not)
+  val isMappaLevel2or3AsYouthSdsUnder12Months: String? = null,
+  val isMappaLevel2or3AsAdultSds: String? = null,
+  val isMappaCategory4AsAdultSds: String? = null,
   val isRecalledOnNewChargedOffence: String? = null,
   val isServingFTSentenceForTerroristOffence: String? = null,
   val hasBeenChargedWithTerroristOrStateThreatOffence: String? = null,
@@ -72,6 +78,7 @@ data class DocumentData(
   val noFixedAbode: String? = null,
   val completedBy: PractitionerDetails = PractitionerDetails(),
   val supervisingPractitioner: PractitionerDetails = PractitionerDetails(),
+  val probationPractitionerDetails: PractitionerDetails = PractitionerDetails(),
   val revocationOrderRecipients: List<String> = emptyList(),
   var dateOfDecision: String? = null,
   var timeOfDecision: String? = null,
@@ -81,6 +88,8 @@ data class DocumentData(
   val behaviourSimilarToIndexOffencePresent: String? = null,
   val behaviourLeadingToSexualOrViolentOffence: String? = null,
   val behaviourLeadingToSexualOrViolentOffencePresent: String? = null,
+  val behaviourLikelyToResultSexualOrViolentOffence: String? = null,
+  val behaviourLikelyToResultSexualOrViolentOffencePresent: String? = null,
   val outOfTouch: String? = null,
   val outOfTouchPresent: String? = null,
   val otherPossibleAddresses: String? = null,

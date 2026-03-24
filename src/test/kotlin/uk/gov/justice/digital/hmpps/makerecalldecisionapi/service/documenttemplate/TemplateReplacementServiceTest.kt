@@ -83,12 +83,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOp
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.CHECKED_CHECKBOX
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_CHECKBOX
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.stream.Stream
+import kotlin.String
 
 @ExtendWith(MockitoExtension::class)
 @ExperimentalCoroutinesApi
@@ -249,6 +251,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["is_sentence_48_months_or_over"]).isEqualTo("No")
       assertThat(result["is_mappa_category_4"]).isEqualTo("No")
       assertThat(result["is_mappa_level_2_or_3"]).isEqualTo("No")
+      assertThat(result["is_mappa_level_2_or_3_as_youth_sds_under_12_months"]).isEqualTo("No")
+      assertThat(result["is_mappa_level_2_or_3_as_adult_sds"]).isEqualTo("No")
+      assertThat(result["is_mappa_category_4_as_adult_sds"]).isEqualTo("No")
       assertThat(result["is_recalled_on_new_charged_offence"]).isEqualTo("No")
       assertThat(result["is_serving_ft_sentence_for_terrorist_offence"]).isEqualTo("No")
       assertThat(result["has_been_charged_with_terrorist_or_state_threat_offence"]).isEqualTo("No")
@@ -317,6 +322,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         .isEqualTo(EMPTY_STRING)
       assertThat(result["supervising_practitioner_ppcs_query_emails"])
         .isEqualTo(EMPTY_STRING)
+      assertThat(result["practitioner_name"]).isEqualTo(document.probationPractitionerDetails.name)
+      assertThat(result["practitioner_telephone"]).isEqualTo(document.probationPractitionerDetails.telephone)
+      assertThat(result["practitioner_email"]).isEqualTo(document.probationPractitionerDetails.email)
       assertThat(result["revocation_order_recipients"])
         .isEqualTo("revocation1@example.com; revocation2@example.com")
       assertThat(result["date_of_decision"]).isEqualTo("13/09/2022")
@@ -330,6 +338,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["behaviour_leading_to_sexual_or_violent_offence"])
         .isEqualTo("behaviour leading to sexual or violent offence")
       assertThat(result["behaviour_leading_to_sexual_or_violent_offence_present"])
+        .isEqualTo(YES.partADisplayValue)
+      assertThat(result["behaviour_likely_to_result_sexual_or_violent_offence"])
+        .isEqualTo("behaviour likely to result in sexual or violent offence")
+      assertThat(result["behaviour_likely_to_result_sexual_or_violent_offence_present"])
         .isEqualTo(YES.partADisplayValue)
       assertThat(result["out_of_touch"]).isEqualTo("out of touch")
       assertThat(result["out_of_touch_present"]).isEqualTo(YES.partADisplayValue)
@@ -358,14 +370,14 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["countersign_spo_time"]).isEqualTo("11:03")
 
       assertThat(result["countersign_spo_exposition"]).isEqualTo("Spo comments on case")
-      assertThat(result["spo_countersign_complete"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["spo_countersign_complete"]).isEqualTo(CHECKED_CHECKBOX)
       assertThat(result["countersign_spo_email"]).isEqualTo("john-the-spo@bla.com")
       assertThat(result["countersign_aco_name"]).isEqualTo("Aco Name")
       assertThat(result["countersign_aco_telephone"]).isEqualTo("87654321")
       assertThat(result["countersign_aco_date"]).isEqualTo("12/05/2023")
       assertThat(result["countersign_aco_time"]).isEqualTo("12:03")
       assertThat(result["countersign_aco_exposition"]).isEqualTo("Aco comments on case")
-      assertThat(result["aco_countersign_complete"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["aco_countersign_complete"]).isEqualTo(CHECKED_CHECKBOX)
 
       assertThat(result["release_under_ecsl"]).isEqualTo("Yes")
       assertThat(result["date_of_release"]).isEqualTo("2013-01-01")
@@ -380,15 +392,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["referral_to_partnership_agencies_details"]).isEqualTo("referred to partner agency")
       assertThat(result["alternative_to_recall_other_details"]).isEqualTo("alternative action")
 
-      assertThat(result["other_name_known_by"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["contact_details_changed"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["good_behaviour_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_offence_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["keep_in_touch_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["officer_visit_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["address_approved_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_work_undertaken_condition"]).isEqualTo(TICK_CHARACTER)
-      assertThat(result["no_travel_condition"]).isEqualTo(TICK_CHARACTER)
+      assertThat(result["other_name_known_by"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["contact_details_changed"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["good_behaviour_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["no_offence_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["keep_in_touch_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["officer_visit_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["address_approved_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["no_work_undertaken_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["no_travel_condition"]).isEqualTo(CHECKED_CHECKBOX)
 
       assertThat(result["risk_of_suicide_or_self_harm"])
         .isEqualTo("\nRisk of suicide or self harm:\nRisk of suicide\n")
@@ -518,15 +530,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         .isEqualTo(EMPTY_STRING)
       assertThat(result["alternative_to_recall_other_details"])
         .isEqualTo(EMPTY_STRING)
-      assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["spo_countersign_complete"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["aco_countersign_complete"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["keep_in_touch_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["officer_visit_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["address_approved_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_STRING)
-      assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_STRING)
+      assertThat(result["good_behaviour_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["no_offence_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["spo_countersign_complete"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["aco_countersign_complete"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["keep_in_touch_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["officer_visit_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["address_approved_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_CHECKBOX)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_children"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_public"]).isEqualTo(EMPTY_STRING)
@@ -758,6 +770,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           details = "behaviour leading to sexual or violent behaviour",
         ),
         ValueWithDetails(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          details = "behaviour likely to result in sexual or violent behaviour",
+        ),
+        ValueWithDetails(
           value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
           details = "out of touch",
         ),
@@ -770,6 +786,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         TextValueOption(
           value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
           text = "behaviour leading to sexual or violent behaviour",
+        ),
+        TextValueOption(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          text = "behaviour likely to result in sexual or violent behaviour",
         ),
         TextValueOption(
           value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
@@ -921,6 +941,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isSentence48MonthsOrOver = "No",
       isMappaCategory4 = "No",
       isMappaLevel2Or3 = "No",
+      isMappaLevel2or3AsYouthSdsUnder12Months = "No",
+      isMappaLevel2or3AsAdultSds = "No",
+      isMappaCategory4AsAdultSds = "No",
       isRecalledOnNewChargedOffence = "No",
       isServingFTSentenceForTerroristOffence = "No",
       hasBeenChargedWithTerroristOrStateThreatOffence = "No",
@@ -1019,6 +1042,11 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         localDeliveryUnit = "All NPS London",
         ppcsQueryEmails = listOf("query1@example.com", "query2@example.com"),
       ),
+      probationPractitionerDetails = PractitionerDetails(
+        name = "Practitioner Name",
+        email = "practitioneremail@justice.gov.uk",
+        telephone = "01234567890",
+      ),
       revocationOrderRecipients = listOf("revocation1@example.com", "revocation2@example.com"),
       dateOfDecision = "13/09/2022",
       timeOfDecision = "08:26",
@@ -1027,6 +1055,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       behaviourSimilarToIndexOffencePresent = YES.partADisplayValue,
       behaviourLeadingToSexualOrViolentOffence = "behaviour leading to sexual or violent offence",
       behaviourLeadingToSexualOrViolentOffencePresent = YES.partADisplayValue,
+      behaviourLikelyToResultSexualOrViolentOffence = "behaviour likely to result in sexual or violent offence",
+      behaviourLikelyToResultSexualOrViolentOffencePresent = YES.partADisplayValue,
       outOfTouch = "out of touch",
       outOfTouchPresent = YES.partADisplayValue,
       otherPossibleAddresses = "123 Oak Avenue, Birmingham, B23 1AV",
