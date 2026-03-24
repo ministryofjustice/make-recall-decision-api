@@ -111,7 +111,6 @@ internal class TemplateReplacementService(
   fun mappingsForTemplate(documentData: DocumentData): HashMap<String, String?> {
     val mappings = hashMapOf(
       "custody_status" to documentData.custodyStatus?.value,
-      "current_month" to LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM")),
       "custody_status_details" to documentData.custodyStatus?.details?.replace("\r\n", ", "),
       "recall_type" to documentData.recallType?.value,
       "recall_type_details" to documentData.recallType?.details,
