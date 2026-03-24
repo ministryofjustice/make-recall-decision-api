@@ -231,8 +231,8 @@ fun updateRecommendationRequest(
         "details": "Behaviour leading to sexual or violent behaviour"
       },
       {
-        "text": "Behaviour likely to result in sexual or violent behaviour",
-        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE"
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+        "details": "Behaviour likely to result in sexual or violent behaviour"
       },
       {
         "value": "OUT_OF_TOUCH",
