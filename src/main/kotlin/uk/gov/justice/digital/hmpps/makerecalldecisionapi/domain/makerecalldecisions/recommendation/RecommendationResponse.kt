@@ -126,6 +126,7 @@ data class PersonOnProbation(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
+  val ftr56MappaReviewed: Boolean? = null,
 )
 
 data class WhoCompletedPartA(
@@ -187,6 +188,7 @@ fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
     addresses = this.addresses,
     primaryLanguage = this.primaryLanguage,
     hasBeenReviewed = this.hasBeenReviewed,
+    ftr56MappaReviewed = this.ftr56MappaReviewed,
   )
 }
 
@@ -207,6 +209,7 @@ data class PersonOnProbationDto(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
+  val ftr56MappaReviewed: Boolean? = null,
 )
 
 data class ConvictionDetail(
