@@ -324,12 +324,30 @@ class PartADocumentMapperTest {
         isMappaLevelAbove1 = false,
         isUnder18 = false,
         isSentence12MonthsOrOver = false,
+        isChargedWithOffence = false,
+        isServingTerroristOrNationalSecurityOffence = false,
+        isAtRiskOfInvolvedInForeignPowerThreat = false,
+        wasReferredToParoleBoard244ZB = false,
+        wasRepatriatedForMurder = false,
+        isServingSOPCSentence = false,
+        isServingDCRSentence = false,
+        isYouthSentenceOver12Months = false,
+        isYouthChargedWithSeriousOffence = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("No")
       assertThat(result.isMappaAboveLevel1).isEqualTo("No")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedWithOffence).isEqualTo("No")
+      assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
+      assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
+      assertThat(result.wasReferredToParoleBoard244ZB).isEqualTo("No")
+      assertThat(result.wasRepatriatedForMurder).isEqualTo("No")
+      assertThat(result.isServingSOPCSentence).isEqualTo("No")
+      assertThat(result.isServingDCRSentence).isEqualTo("No")
+      assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
+      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
     }
   }
 
@@ -353,12 +371,30 @@ class PartADocumentMapperTest {
         isUnder18 = true,
         isMappaLevelAbove1 = true,
         isSentence12MonthsOrOver = false,
+        isChargedWithOffence = false,
+        isServingTerroristOrNationalSecurityOffence = false,
+        isAtRiskOfInvolvedInForeignPowerThreat = false,
+        wasReferredToParoleBoard244ZB = false,
+        wasRepatriatedForMurder = false,
+        isServingSOPCSentence = false,
+        isServingDCRSentence = false,
+        isYouthSentenceOver12Months = false,
+        isYouthChargedWithSeriousOffence = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("Yes")
       assertThat(result.isMappaAboveLevel1).isEqualTo("Yes")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedWithOffence).isEqualTo("No")
+      assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
+      assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
+      assertThat(result.wasReferredToParoleBoard244ZB).isEqualTo("No")
+      assertThat(result.wasRepatriatedForMurder).isEqualTo("No")
+      assertThat(result.isServingSOPCSentence).isEqualTo("No")
+      assertThat(result.isServingDCRSentence).isEqualTo("No")
+      assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
+      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
     }
   }
 

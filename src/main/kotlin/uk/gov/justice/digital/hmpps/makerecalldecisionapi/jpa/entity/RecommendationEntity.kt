@@ -181,6 +181,15 @@ data class RecommendationModel(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isChargedWithOffence: Boolean? = null,
+  var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
+  var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
+  var wasReferredToParoleBoard244ZB: Boolean? = null,
+  var wasRepatriatedForMurder: Boolean? = null,
+  var isServingSOPCSentence: Boolean? = null,
+  var isServingDCRSentence: Boolean? = null,
+  var isYouthSentenceOver12Months: Boolean? = null,
+  var isYouthChargedWithSeriousOffence: Boolean? = null,
   // deprecated
   var userNamePartACompletedBy: String? = null,
   // deprecated

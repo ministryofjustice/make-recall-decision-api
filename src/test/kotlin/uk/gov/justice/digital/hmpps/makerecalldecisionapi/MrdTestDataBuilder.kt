@@ -320,6 +320,15 @@ class MrdTestDataBuilder {
       isRecalledOnNewChargedOffence = false,
       isServingFTSentenceForTerroristOffence = false,
       hasBeenChargedWithTerroristOrStateThreatOffence = false,
+      isChargedWithOffence = false,
+      isServingTerroristOrNationalSecurityOffence = false,
+      isAtRiskOfInvolvedInForeignPowerThreat = false,
+      wasReferredToParoleBoard244ZB = false,
+      wasRepatriatedForMurder = false,
+      isServingSOPCSentence = false,
+      isServingDCRSentence = false,
+      isYouthSentenceOver12Months = false,
+      isYouthChargedWithSeriousOffence = false,
     )
 
     private fun personOnProbation(personOnProbation: PersonOnProbation?): PersonOnProbation? = personOnProbation?.copy(

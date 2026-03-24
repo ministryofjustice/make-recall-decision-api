@@ -233,7 +233,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(147)
+      assertThat(result.size).isEqualTo(156)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -252,6 +252,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["is_recalled_on_new_charged_offence"]).isEqualTo("No")
       assertThat(result["is_serving_ft_sentence_for_terrorist_offence"]).isEqualTo("No")
       assertThat(result["has_been_charged_with_terrorist_or_state_threat_offence"]).isEqualTo("No")
+      assertThat(result["is_charged_with_offence"]).isEqualTo("No")
+      assertThat(result["is_serving_terrorist_or_national_security_offence"]).isEqualTo("No")
+      assertThat(result["is_at_risk_of_involved_in_foreign_power_threat"]).isEqualTo("No")
+      assertThat(result["was_referred_to_parole_board_244zb"]).isEqualTo("No")
+      assertThat(result["was_repatriated_for_murder"]).isEqualTo("No")
+      assertThat(result["is_serving_sopc_sentence"]).isEqualTo("No")
+      assertThat(result["is_serving_dcr_sentence"]).isEqualTo("No")
+      assertThat(result["is_youth_sentence_over_12_months"]).isEqualTo("No")
+      assertThat(result["is_youth_charged_with_serious_offence"]).isEqualTo("No")
       assertThat(result["has_victims_in_contact_scheme"]).isEqualTo("Yes")
       assertThat(result["indeterminate_sentence_type"]).isEqualTo("Yes - Lifer")
       assertThat(result["is_extended_sentence"]).isEqualTo("Yes")
@@ -915,6 +924,15 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isRecalledOnNewChargedOffence = "No",
       isServingFTSentenceForTerroristOffence = "No",
       hasBeenChargedWithTerroristOrStateThreatOffence = "No",
+      isChargedWithOffence = "No",
+      isServingTerroristOrNationalSecurityOffence = "No",
+      isAtRiskOfInvolvedInForeignPowerThreat = "No",
+      wasReferredToParoleBoard244ZB = "No",
+      wasRepatriatedForMurder = "No",
+      isServingSOPCSentence = "No",
+      isServingDCRSentence = "No",
+      isYouthSentenceOver12Months = "No",
+      isYouthChargedWithSeriousOffence = "No",
       salutation = "Dear Duncan Bloggs",
       letterTitle = "DECISION NOT TO RECALL",
       letterDate = "27/09/2022",
