@@ -10,7 +10,6 @@ class MrdTextConstants {
     const val YES = "Yes"
     const val NOT_APPLICABLE = "N/A"
     const val SCORE_NOT_APPLICABLE = "NOT_APPLICABLE"
-    const val TICK_CHARACTER = 0x2611.toChar().toString() // 0x2713.toChar().toString()
     const val EMPTY_CHECKBOX = 0x2610.toChar().toString()
     const val CHECKED_CHECKBOX = 0x2612.toChar().toString()
     const val NO_NAME_AVAILABLE = "No name available"
