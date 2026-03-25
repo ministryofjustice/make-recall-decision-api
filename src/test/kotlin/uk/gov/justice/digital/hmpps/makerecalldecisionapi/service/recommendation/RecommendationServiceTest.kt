@@ -48,6 +48,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
@@ -856,6 +857,87 @@ internal class RecommendationServiceTest : ServiceTestBase() {
               name = "Joe Bloggs",
               hasBeenReviewed = true,
               mappa = Mappa(hasBeenReviewed = true),
+            ),
+          ),
+        )
+
+      given(recommendationRepository.save(any()))
+        .willReturn(recommendationToSave)
+
+      // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      // when
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        emptyList(),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
+  fun `updates a recommendation to the database when ftr56MappaInformation is set to true`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+        ),
+      )
+
+      // and
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest =
+        updateRecommendationRequest.copy(
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs", mappa = null),
+          hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+        )
+
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(
+              name = "Joe Bloggs",
+              hasBeenReviewed = true,
+              ftr56MappaReviewed = true,
             ),
           ),
         )
