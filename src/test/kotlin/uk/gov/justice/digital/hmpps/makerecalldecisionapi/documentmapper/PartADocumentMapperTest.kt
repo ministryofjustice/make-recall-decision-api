@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
@@ -395,6 +396,119 @@ class PartADocumentMapperTest {
       assertThat(result.isServingDCRSentence).isEqualTo("No")
       assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
       assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaLevel2or3AsYouthSdsUnder12Months set to {3} when sentence group is {0} and isMappaLevel2or3 is {1} and isYouthSentenceOver12Months is {2}")
+  @CsvSource(
+    "YOUTH_SDS, true, false, Yes",
+    "YOUTH_SDS, true, true,",
+    "YOUTH_SDS, true, ,",
+    "YOUTH_SDS, false, false, No",
+    "YOUTH_SDS, false, true,",
+    "YOUTH_SDS, false, ,",
+    "ADULT_SDS, true, false,",
+    "ADULT_SDS, true, true,",
+    "ADULT_SDS, true, ,",
+    "ADULT_SDS, false, false,",
+    "ADULT_SDS, false, true,",
+    "ADULT_SDS, false, ,",
+    "INDETERMINATE, true, false,",
+    "INDETERMINATE, true, true,",
+    "INDETERMINATE, true, ,",
+    "INDETERMINATE, false, false,",
+    "INDETERMINATE, false, true,",
+    "INDETERMINATE, false, ,",
+    "EXTENDED, true, false,",
+    "EXTENDED, true, true,",
+    "EXTENDED, true, ,",
+    "EXTENDED, false, false,",
+    "EXTENDED, false, true,",
+    "EXTENDED, false, ,",
+  )
+  fun `isMappaLevel2or3AsYouthSdsUnder12Months set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaLevel2or3: Boolean?,
+    isYouthSentenceOver12Months: Boolean?,
+    expectedIsMappaLevel2or3AsYouthSdsUnder12Months: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaLevel2Or3 = isMappaLevel2or3,
+        sentenceGroup = sentenceGroup,
+        isYouthSentenceOver12Months = isYouthSentenceOver12Months,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaLevel2or3AsYouthSdsUnder12Months).isEqualTo(
+        expectedIsMappaLevel2or3AsYouthSdsUnder12Months,
+      )
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaLevel2or3AsAdultSds set to {2} when sentence group is {0} and isMappaLevel2or3 is {1}")
+  @CsvSource(
+    "ADULT_SDS, true, Yes",
+    "ADULT_SDS, false, No",
+    "YOUTH_SDS, true,",
+    "YOUTH_SDS, false,",
+    "INDETERMINATE, true,",
+    "INDETERMINATE, false,",
+    "EXTENDED, true,",
+    "EXTENDED, false,",
+  )
+  fun `isMappaLevel2or3AsAdultSds set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaLevel2or3: Boolean?,
+    expectedIsMappaLevel2or3AsAdultSds: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaLevel2Or3 = isMappaLevel2or3,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaLevel2or3AsAdultSds).isEqualTo(expectedIsMappaLevel2or3AsAdultSds)
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaCategory4AsAdultSds set to {2} when sentence group is {0} and isMappaCategory4 is {1}")
+  @CsvSource(
+    "ADULT_SDS, true, Yes",
+    "ADULT_SDS, false, No",
+    "YOUTH_SDS, true,",
+    "YOUTH_SDS, false,",
+    "INDETERMINATE, true,",
+    "INDETERMINATE, false,",
+    "EXTENDED, true,",
+    "EXTENDED, false,",
+  )
+  fun `isMappaCategory4AsAdultSds set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaCategory4: Boolean?,
+    expectedIsMappaCategory4AsAdultSds: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaCategory4 = isMappaCategory4,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaCategory4AsAdultSds).isEqualTo(expectedIsMappaCategory4AsAdultSds)
     }
   }
 
@@ -1257,6 +1371,10 @@ class PartADocumentMapperTest {
               details = "Behaviour leading to sexual or violent behaviour",
             ),
             ValueWithDetails(
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+              details = "Behaviour likely to result in sexual or violent behaviour",
+            ),
+            ValueWithDetails(
               value = "OUT_OF_TOUCH",
               details = "Out of touch",
             ),
@@ -1271,6 +1389,10 @@ class PartADocumentMapperTest {
               value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
+              text = "Behaviour likely to result in sexual or violent behaviour",
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            ),
+            TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
             ),
@@ -1283,6 +1405,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("Some behaviour similar to index offence")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("Yes")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("Behaviour leading to sexual or violent behaviour")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("Yes")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("Behaviour likely to result in sexual or violent behaviour")
       assertThat(result.outOfTouchPresent).isEqualTo("Yes")
       assertThat(result.outOfTouch).isEqualTo("Out of touch")
     }
@@ -1308,6 +1432,10 @@ class PartADocumentMapperTest {
               value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
+              text = "Behaviour likely to result in sexual or violent behaviour",
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            ),
+            TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
             ),
@@ -1320,6 +1448,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("No")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("No")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("")
       assertThat(result.outOfTouchPresent).isEqualTo("No")
       assertThat(result.outOfTouch).isEqualTo("")
     }
@@ -1341,6 +1471,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("")
       assertThat(result.outOfTouchPresent).isEqualTo("")
       assertThat(result.outOfTouch).isEqualTo("")
     }
@@ -1437,6 +1569,44 @@ class PartADocumentMapperTest {
       assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo(EMPTY_STRING)
+    }
+  }
+
+  @ParameterizedTest(name = "probation practitioner details are included when practitioner isPersonProbationPractitionerForOffender is {0}")
+  @ValueSource(booleans = [true, false])
+  fun `probation practitioner details are always included`(isPersonProbationPractitionerForOffender: Boolean) {
+    runTest {
+      val featureFlags = FeatureFlags()
+      given(regionService.getRegionName("RegionCode"))
+        .willReturn("Region Name")
+      if (!isPersonProbationPractitionerForOffender) {
+        given(regionService.getRegionName(null))
+          .willReturn("")
+      }
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          name = "Joe Bloggs",
+          telephone = "0123456789",
+          email = "jb@example.com",
+          region = "RegionCode",
+          localDeliveryUnit = "Delivery Unit 1",
+          isPersonProbationPractitionerForOffender = isPersonProbationPractitionerForOffender,
+        ),
+        practitionerForPartA = PractitionerForPartA(
+          name = "Jane Vloggs",
+          telephone = "9876543210",
+          email = "jv@example.com",
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.probationPractitionerDetails.name)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.name else recommendation.practitionerForPartA?.name)
+      assertThat(result.probationPractitionerDetails.telephone)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.telephone else recommendation.practitionerForPartA?.telephone)
+      assertThat(result.probationPractitionerDetails.email)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.email else recommendation.practitionerForPartA?.email)
     }
   }
 
