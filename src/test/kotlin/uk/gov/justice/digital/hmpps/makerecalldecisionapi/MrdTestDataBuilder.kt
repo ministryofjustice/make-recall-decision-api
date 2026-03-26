@@ -339,6 +339,7 @@ class MrdTestDataBuilder {
         hasBeenReviewed = true,
       ),
       hasBeenReviewed = true,
+      ftr56MappaReviewed = true,
     )
 
     private fun recallConsideredData(): List<RecallConsidered> = listOf(
