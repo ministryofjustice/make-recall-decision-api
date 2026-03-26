@@ -36,6 +36,7 @@ fun personOnProbation(
   addresses: List<Address>? = listOf(address()),
   primaryLanguage: String? = randomString(),
   hasBeenReviewed: Boolean? = randomBoolean(),
+  ftr56MappaReviewed: Boolean? = randomBoolean(),
 ) = PersonOnProbation(
   name = name,
   firstName = firstName,
@@ -52,6 +53,7 @@ fun personOnProbation(
   addresses = addresses,
   primaryLanguage = primaryLanguage,
   hasBeenReviewed = hasBeenReviewed,
+  ftr56MappaReviewed = ftr56MappaReviewed,
 )
 
 fun whoCompletedPartA(

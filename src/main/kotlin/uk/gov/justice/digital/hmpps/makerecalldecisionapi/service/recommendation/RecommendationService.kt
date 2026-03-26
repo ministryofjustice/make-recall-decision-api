@@ -265,6 +265,7 @@ internal class RecommendationService(
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val requestJson = jacksonObjectMapper().readTree(jsonRequest.toString())
+
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
     val sendConsiderationRationaleToDelius = requestJson.has("sendConsiderationRationaleToDelius") &&
@@ -594,6 +595,10 @@ internal class RecommendationService(
       convictionDetail = convictionDetail?.copy(
         hasBeenReviewed = true,
       ) ?: ConvictionDetail(hasBeenReviewed = true)
+    }
+
+    if (updateRecommendationRequest.hasBeenReviewed?.ftr56MappaInformation == true) {
+      personOnProbation = personOnProbation?.copy(ftr56MappaReviewed = true) ?: PersonOnProbation(hasBeenReviewed = true)
     }
 
     return recommendationEntity.copy(

@@ -32,6 +32,7 @@ class PersonOnProbationConverter {
       addresses = personOnProbation.addresses,
       primaryLanguage = personOnProbation.primaryLanguage,
       hasBeenReviewed = personOnProbation.hasBeenReviewed,
+      ftr56MappaReviewed = personOnProbation.ftr56MappaReviewed,
     )
   }
 }
