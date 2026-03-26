@@ -27,6 +27,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
@@ -64,6 +65,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.personOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -843,9 +845,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-      updateRecommendationRequest =
-        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "Joe Bloggs", mappa = null))
+      val updateRecommendationRequest = RecommendationModel(
+        crn = existingRecommendation.data.crn,
+        hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+      )
 
       // and
       val recommendationToSave =
@@ -924,7 +927,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
       updateRecommendationRequest =
         updateRecommendationRequest.copy(
-          personOnProbation = PersonOnProbation(name = "Joe Bloggs", mappa = null),
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
           hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
         )
 
@@ -936,13 +939,18 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             crn = existingRecommendation.data.crn,
             personOnProbation = PersonOnProbation(
               name = "Joe Bloggs",
-              hasBeenReviewed = true,
               ftr56MappaReviewed = true,
             ),
           ),
         )
 
-      given(recommendationRepository.save(any()))
+      given(
+        recommendationRepository.save(
+          argThat { saved ->
+            saved.data.personOnProbation?.ftr56MappaReviewed == true
+          },
+        ),
+      )
         .willReturn(recommendationToSave)
 
       // and
