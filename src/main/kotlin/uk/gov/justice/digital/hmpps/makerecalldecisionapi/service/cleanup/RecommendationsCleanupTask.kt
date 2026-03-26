@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
 import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -16,7 +17,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -64,15 +64,15 @@ internal class RecommendationsCleanupTask(
    * to ask different recall suitability questions, the function has not been removed, as it is likely to be re-used in
    * similar policy changes in the future.
    */
-//  @Scheduled(cron = "\${clean-up.ftr48.cron}", zone = "Europe/London")
-//  @SchedulerLock(name = "nameIndicatingRelevantRollOut", lockAtLeastFor = "1m", lockAtMostFor = "15m")
+  @Scheduled(cron = "\${clean-up.ftr56.cron}", zone = "Europe/London")
+  @SchedulerLock(name = "ftr56CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
   @Transactional(isolation = SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
-    log.info("<project/roll-out name> clean-up task started")
+    log.info("FTR56 clean-up task started")
     LockAssert.assertLocked()
 
-    if (LocalDate.now().year != LocalDate.now().year) {
-      log.warn("<project/roll-out name> clean-up task is still running, but it is no longer <project/roll-out year>!")
+    if (LocalDate.now().year != 2026) {
+      log.warn("FTR56 clean-up task is still configured, but it is no longer 2026!")
     }
 
     // We have a startDate and set it to endDate.minusDays(lookBackInDays - 1) for two reasons:
@@ -82,8 +82,8 @@ internal class RecommendationsCleanupTask(
     //      recommendation and clash (or succeed and both end up sending out the same domain event, which could be a
     //      problem).
     // TODO update the threshold values below based on config for your roll-out
-    val thresholdStartDate = ZonedDateTime.now().minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
-    val thresholdEndDate = ZonedDateTime.now()
+    val thresholdStartDate = cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
+    val thresholdEndDate = cleanUpConfiguration.ftr56.thresholdDateTime
     val idsOfActiveRecommendationsNotYetDownloaded =
       recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate)
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
@@ -97,7 +97,7 @@ internal class RecommendationsCleanupTask(
       activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
     }
 
-    log.info("<project/roll-out name> clean-up task ended")
+    log.info("FTR56 clean-up task ended")
   }
 
   private fun sendDeletionEvents(recommendation: RecommendationEntity) {
