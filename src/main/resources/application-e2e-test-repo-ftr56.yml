@@ -1,0 +1,10 @@
+# this is a profile configuration file set up exclusively for the ftr56 e2e repo branch to pull in as
+# part of its integration_tests pipeline workflow. It allows us to configure that branch specifically
+# without affecting the main branch, which is used for the UI and API pipelines
+document-template:
+  part-a-template-settings[0].start-date-time: "2025-09-01T23:00Z" #2025-09-02T00:00Z in BST
+  part-a-template-settings[0].template-name: "2025-09-02 - FTR48 Phase 1"
+  part-a-template-settings[1].start-date-time: "2026-01-28T00:00Z" # Same time in GMT
+  part-a-template-settings[1].template-name: "2026-02-02 - Risk to self"
+  part-a-template-settings[2].start-date-time: "2026-01-30T23:00Z" #2026-03-31T00:00Z in BST - change locally if needed
+  part-a-template-settings[2].template-name: "2026-03-31 - FTR56"
