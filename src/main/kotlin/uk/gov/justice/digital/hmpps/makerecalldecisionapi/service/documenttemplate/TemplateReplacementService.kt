@@ -155,8 +155,6 @@ internal class TemplateReplacementService(
         ).partADisplayValue
       },
       "contact_name" to documentData.localPoliceContact?.contactName,
-      "phone_number" to documentData.localPoliceContact?.phoneNumber,
-      "fax_number" to documentData.localPoliceContact?.faxNumber,
       "email_address" to documentData.localPoliceContact?.emailAddress,
       "has_vulnerabilities" to hasVulnerabilities(documentData.vulnerabilities),
       "gender" to documentData.gender,

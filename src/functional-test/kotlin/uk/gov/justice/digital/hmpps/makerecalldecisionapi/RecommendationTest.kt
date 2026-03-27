@@ -394,8 +394,6 @@ private fun updateRecommendationRequest() = """
     },
     "localPoliceContact": {
       "contactName": "John Doe",
-      "phoneNumber": "01234567890",
-      "faxNumber": "09876543210",
       "emailAddress": "john.doe@gmail.com"
     },
     "vulnerabilities": {

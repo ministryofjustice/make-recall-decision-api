@@ -572,8 +572,6 @@ class MrdTestDataBuilder {
 
     private fun localPoliceContact(): LocalPoliceContact = LocalPoliceContact(
       contactName = "John Doe",
-      phoneNumber = "01234567890",
-      faxNumber = "09876543210",
       emailAddress = "john.doe@gmail.com",
     )
 

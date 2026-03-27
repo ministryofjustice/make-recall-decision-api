@@ -668,8 +668,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     ),
     localPoliceContact = LocalPoliceContact(
       contactName = "John Doe",
-      phoneNumber = "01234567890",
-      faxNumber = "09876543210",
       emailAddress = "john.doe@gmail.com",
     ),
     vulnerabilities = VulnerabilitiesRecommendation(
@@ -994,8 +992,6 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isUnderIntegratedOffenderManagement = "YES",
       localPoliceContact = LocalPoliceContact(
         contactName = "John Doe",
-        phoneNumber = "01234567890",
-        faxNumber = "09876543210",
         emailAddress = "john.doe@gmail.com",
       ),
       vulnerabilities = VulnerabilitiesRecommendation(
