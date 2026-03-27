@@ -184,7 +184,7 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.isServingYouthSentence).isEqualTo(if (sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else "No")
+      assertThat(result.isServingYouthSentence).isEqualTo(if (sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else EMPTY_STRING)
     }
   }
 
