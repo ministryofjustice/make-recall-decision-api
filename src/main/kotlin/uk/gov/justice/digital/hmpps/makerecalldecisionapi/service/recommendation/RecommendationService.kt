@@ -598,7 +598,7 @@ internal class RecommendationService(
     }
 
     if (updateRecommendationRequest.hasBeenReviewed?.ftr56MappaInformation == true) {
-      personOnProbation = personOnProbation?.copy(ftr56MappaReviewed = true) ?: PersonOnProbation(hasBeenReviewed = true)
+      personOnProbation = personOnProbation?.copy(ftr56MappaReviewed = true) ?: PersonOnProbation(ftr56MappaReviewed = true)
     }
 
     return recommendationEntity.copy(

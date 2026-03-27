@@ -1008,6 +1008,90 @@ internal class RecommendationServiceTest : ServiceTestBase() {
   }
 
   @Test
+  fun `updates a recommendation to the database when ftr56MappaInformation is set to true when no existing PersonOnProbation object`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+        ),
+      )
+
+      // and
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest =
+        updateRecommendationRequest.copy(
+          hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+        )
+
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(
+              ftr56MappaReviewed = true,
+            ),
+          ),
+        )
+
+      given(
+        recommendationRepository.save(
+          argThat { saved ->
+            saved.data.personOnProbation?.ftr56MappaReviewed == true
+          },
+        ),
+      )
+        .willReturn(recommendationToSave)
+
+      // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      // when
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        emptyList(),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
   fun `given invalid recall type should throw invalid request exception on an update with manager recall decision`() {
     runTest {
       val existingRecommendation = RecommendationEntity(
