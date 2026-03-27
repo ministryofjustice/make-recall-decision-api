@@ -580,8 +580,6 @@ class RecommendationControllerTest : IntegrationTestBase() {
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].text").isEqualTo("N/A")
 //      .jsonPath("$.isUnderIntegratedOffenderManagement.allOptions[2].value").isEqualTo("NOT_APPLICABLE")
 //      .jsonPath("$.localPoliceContact.contactName").isEqualTo("John Doe")
-//      .jsonPath("$.localPoliceContact.phoneNumber").isEqualTo("01234567890")
-//      .jsonPath("$.localPoliceContact.faxNumber").isEqualTo("09876543210")
 //      .jsonPath("$.localPoliceContact.emailAddress").isEqualTo("john.doe@gmail.com")
 //      .jsonPath("$.vulnerabilities.selected[0].value").isEqualTo("RISK_OF_SUICIDE_OR_SELF_HARM")
 //      .jsonPath("$.vulnerabilities.selected[0].details").isEqualTo("Risk of suicide")
