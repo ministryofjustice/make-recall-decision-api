@@ -85,7 +85,9 @@ internal class PartADocumentMapper(
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
-      isServingYouthSentence = convertBooleanToYesNo(recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS),
+      // we want the youth section to go unanswered for non-youth sentences, rather than explicitly say "No", as it
+      // might otherwise confuse readers over whether it's youth or not
+      isServingYouthSentence = if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else EMPTY_STRING,
 
       isUnder18 = generateExclusionCriteriaAnswer(recommendation.isUnder18, recommendation),
       isSentence12MonthsOrOver = generateExclusionCriteriaAnswer(
