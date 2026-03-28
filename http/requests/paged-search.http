@@ -1,0 +1,12 @@
+### Search for an offender
+POST http://localhost:8080/paged-search?
+    page={{$random.integer(100)}}&
+    pageSize={{$random.integer(100)}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "crn": "{{crn}}",
+  "firstName": "{{firstName}}",
+  "lastName": "{{lastName}}"
+}

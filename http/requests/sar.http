@@ -1,0 +1,3 @@
+### Get Subject Access Request data
+GET {{host}}/subject-access-request?prm&crn={{crn}}&fromDate&toDate
+Authorization: Bearer {{$auth.token("token")}}
