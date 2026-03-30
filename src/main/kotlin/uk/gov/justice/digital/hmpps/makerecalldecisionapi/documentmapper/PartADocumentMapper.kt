@@ -542,7 +542,7 @@ internal class PartADocumentMapper(
     !(recommendation.isYouthSentenceOver12Months ?: true) // if null, we want to return null
   ) {
     convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
-  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED){
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
     generateExclusionCriteriaAnswer(false, recommendation)
   } else {
     null
@@ -557,7 +557,7 @@ internal class PartADocumentMapper(
    */
   private fun calculateIsMappaLevel2or3AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
     convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
-  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED){
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
     generateExclusionCriteriaAnswer(false, recommendation)
   } else {
     null
@@ -572,7 +572,7 @@ internal class PartADocumentMapper(
    */
   private fun calculateMappaCategory4AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
     convertBooleanToYesNo(recommendation.isMappaCategory4)
-  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED){
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
     generateExclusionCriteriaAnswer(false, recommendation)
   } else {
     null

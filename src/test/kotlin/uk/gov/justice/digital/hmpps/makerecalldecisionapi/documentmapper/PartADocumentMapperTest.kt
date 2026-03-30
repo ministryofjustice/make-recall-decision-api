@@ -456,7 +456,7 @@ class PartADocumentMapperTest {
     "ADULT_SDS, false, No",
     "YOUTH_SDS, true,",
     "YOUTH_SDS, false,",
-    "INDETERMINATE, true,",
+    "INDETERMINATE, true,N/A - indeterminate or extended sentence",
     "INDETERMINATE, false,N/A - indeterminate or extended sentence",
     "EXTENDED, true,N/A - indeterminate or extended sentence",
     "EXTENDED, false,N/A - indeterminate or extended sentence",
