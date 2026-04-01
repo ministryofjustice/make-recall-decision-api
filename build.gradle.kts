@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.5.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.6.0"
   kotlin("jvm") version "2.3.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -61,6 +61,9 @@ dependencies {
   implementation("io.sentry:sentry-logback:7.20.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+  // Temporary fix to address CVE-2026-0540, CVE-2025-15599, should be removable once
+  // springdoc-openapi-starter-webmvc-ui above pulls later version of swagger-ui
+  implementation("org.webjars:swagger-ui:5.32.1")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -76,6 +79,28 @@ dependencies {
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
+
+  // The following pinned netty dependencies are to address CVE-2026-33871 and CVE-2026-33870. Spring Boot 3.5.13
+  // addresses this, but it is currently only a few days old, so will wait for a bit more before releasing a new HMPPS
+  // plug-in version with it and pulling it here
+  implementation("io.netty:netty-buffer:4.2.12.Final")
+  implementation("io.netty:netty-codec:4.2.12.Final")
+  implementation("io.netty:netty-codec-dns:4.2.12.Final")
+  implementation("io.netty:netty-codec-http:4.2.12.Final")
+  implementation("io.netty:netty-codec-http2:4.2.12.Final")
+  implementation("io.netty:netty-codec-socks:4.2.12.Final")
+  implementation("io.netty:netty-common:4.2.12.Final")
+  implementation("io.netty:netty-handler:4.2.12.Final")
+  implementation("io.netty:netty-handler-proxy:4.2.12.Final")
+  implementation("io.netty:netty-resolver:4.2.12.Final")
+  implementation("io.netty:netty-resolver-dns:4.2.12.Final")
+  implementation("io.netty:netty-resolver-dns-classes-macos:4.2.12.Final")
+  implementation("io.netty:netty-resolver-dns-native-macos:4.2.12.Final")
+  implementation("io.netty:netty-resolver-dns-native-macos:4.2.12.Final")
+  implementation("io.netty:netty-transport:4.2.12.Final")
+  implementation("io.netty:netty-transport-classes-epoll:4.2.12.Final")
+  implementation("io.netty:netty-transport-native-epoll:4.2.12.Final")
+  implementation("io.netty:netty-transport-native-unix-common:4.2.12.Final")
 
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
