@@ -1,0 +1,20 @@
+{
+  "name": "data-dictionary",
+  "version": "1.0.0",
+  "description": "CLI to create data dictionary from Postgres",
+  "bin": {
+    "pg-run": "data-dictionary.js"
+  },
+  "type": "commonjs",
+  "scripts": {
+    "start": "node data-dictionary.js"
+  },
+  "dependencies": {
+    "genson-js": "0.0.8",
+    "pg": "^8.11.5"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
