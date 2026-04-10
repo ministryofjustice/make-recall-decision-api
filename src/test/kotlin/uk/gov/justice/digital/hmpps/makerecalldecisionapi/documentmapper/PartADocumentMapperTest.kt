@@ -527,8 +527,8 @@ class PartADocumentMapperTest {
     "YOUTH_SDS,true,false,false,,",
     "YOUTH_SDS,false,true,true,Yes,Yes",
     "YOUTH_SDS,false,false,false,No,No",
-    "INDETERMINATE,,,,,N/A - indeterminate or extended sentence",
-    "EXTENDED,,,,,N/A - indeterminate or extended sentence",
+    "INDETERMINATE,,,,N/A - indeterminate or extended sentence,N/A - indeterminate or extended sentence",
+    "EXTENDED,,,,N/A - indeterminate or extended sentence,N/A - indeterminate or extended sentence",
   )
   fun `isYouthSentenceOver12Months `(
     sentenceGroup: SentenceGroup?,

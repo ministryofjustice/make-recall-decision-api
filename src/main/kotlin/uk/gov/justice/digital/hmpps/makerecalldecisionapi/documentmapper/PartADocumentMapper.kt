@@ -583,6 +583,8 @@ internal class PartADocumentMapper(
     !(recommendation.isYouthSentenceOver12Months ?: true)
   ) {
     convertBooleanToYesNo(recommendation.isYouthChargedWithSeriousOffence)
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
+    generateExclusionCriteriaAnswer(false, recommendation)
   } else {
     null
   }
