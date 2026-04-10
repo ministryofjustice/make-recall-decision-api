@@ -4,7 +4,8 @@
 
 [![CircleCI](https://circleci.com/gh/ministryofjustice/make-recall-decision-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/make-recall-decision-api)
 
-This is the backend service to help probation practitioners (PP) and Senior Probation Officers (SPOs) make recommendations on recall decisions.
+This is the backend service to help probation practitioners (PP) and Senior Probation Officers (SPOs) make
+recommendations on recall decisions.
 
 ## Usage
 
@@ -12,16 +13,20 @@ The primary software client for this service is the related UI [make-recall-deci
 
 ### Upstream APIs
 
-The MRD application relies on data being retrieved from a number of upstream services, including Delius, Assess Risk and Needs (ARN) and Create and Vary a Licence (CVL). 
-There are a number of services within the backend codebase that retrieve data from these upstream APIs, transform the data and then send back to the frontend.
+The MRD application relies on data being retrieved from a number of upstream services, including Delius, Assess Risk and
+Needs (ARN) and Create and Vary a Licence (CVL). There are a number of services within the backend codebase that
+retrieve data from these upstream APIs, transform the data and send it to the frontend.
 
 ### HMPPS domain event topic
 
-The HMPPS domain event topic allows MRD to fire 'events' that are relevant to other services. For example, when a PP starts a recommendation, the case in Delius should be updated with this information. There is a MRD-and-Delius integration service that reads these messages and creates contacts in Delius.
+The HMPPS domain event topic allows MRD to fire 'events' that are relevant to other services. For example, when a PP
+starts a recommendation, the case in Delius should be updated with this information. There is an MRD-and-Delius
+integration service that reads these messages and creates contacts in Delius.
 
 ## Running the service locally
 
-In order to start up the service, its related user interface ([make-recall-decision-ui]) and all their dependencies locally, run the following script:
+In order to start up the service, its related user interface ([make-recall-decision-ui]) and all their dependencies
+locally, run the following script:
 
 ```
 ./scripts/start-local-services.sh
@@ -50,7 +55,8 @@ And to stop everything, simply run the following:
 
 ### First time users
 
-The first time the service is started on your machine may result in a database error along the lines of 'mrd_user cannot be found'
+The first time the service is started on your machine may result in a database error along the lines of 'mrd_user cannot
+be found'
 
 To fix this there are a couple of things that can be tried:
 
@@ -64,11 +70,14 @@ If the above fails to work, then you will need to try and create the user and da
 
 1. Download a database client such as `pgadmin4` (will assume pgadmin is being used for the purpose of the below steps)
 
-2. Check if you can create an 'mrd_user' user within pgadmin. If an error is received saying user cannot be created then follow steps 3 and 4.
+2. Check if you can create an 'mrd_user' user within pgadmin. If an error is received saying user cannot be created then
+   follow steps 3 and 4.
 
 3. Open a terminal and enter `psql` 
 
-    3a. If `psql` produces this error: `psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  database "<name>" does not exist` then try these steps:
+    3a. If `psql` produces this error:
+        `psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  database "<name>" does not exist`
+        then try these steps:
 
     3b. `brew update`
 
@@ -84,17 +93,20 @@ If the above fails to work, then you will need to try and create the user and da
 
 5. `sudo -u {replace with the superuser username returned in step 4} psql {replace with the superuser username returned in step 4}`
 
-6. You should now be in a position to go back to pgadmin and create the `mrd_user` user role and then the `make_recall_decision` database
+6. You should now be in a position to go back to pgadmin and create the `mrd_user` user role and then the
+   `make_recall_decision` database
 
 ### Notes for M1 Mac users
 
-If you're using an M1/arm based Mac, you'll need to also have a checkout of [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) alongside your checkouts of `make-recall-decision-ui` and `make-recall-decision-api`, and pass all of the start scripts the `-a` parameter:
+If you're using an M1/arm based Mac, you'll need to also have a checkout of [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) alongside your checkouts
+of `make-recall-decision-ui` and `make-recall-decision-api`, and pass all of the start scripts the `-a` parameter:
 
 ```
 ./scripts/start-local-services.sh -a
 ```
 
-This will build the `hmpps-auth` container image locally on your machine before starting things up. This is needed as the currently released container for `hmpps-auth` does not run properly on M1 macs.
+This will build the `hmpps-auth` container image locally on your machine before starting things up. This is needed as
+the currently released container for `hmpps-auth` does not run properly on M1 macs.
 
 ## Testing
 The project uses a variety of testing levels including unit testing, integration testing and functional testing 
@@ -105,12 +117,18 @@ Functional tests hit the real external services e.g. Delius APIs
 
 ### Functional test
 
+***Functional tests are currently out of action until we decide how we want the authorisation to work.***
+
 The functional test is a black box test of the MRD API. It runs against the dev environment rather than mock services.
 
-* Add SYSTEM_CLIENT_ID, SYSTEM_CLIENT_SECRET, and USER_NAME (Dev Delius user) to your environment variables in both your bash profile, and your IntelliJ environment variables under `Edit Run Configurations`
+* Add SYSTEM_CLIENT_ID, SYSTEM_CLIENT_SECRET, and USER_NAME (Dev Delius user) to your environment variables in both your
+  bash profile, and your IntelliJ environment variables under `Edit Run Configurations`
 * Ensure Docker is running
-* To start the functional tests from the command line run the script `./scripts/run-functional-test.sh`
-* To run the test in the IDE first start `./scripts/start-local-development.sh`, `docker-compose-postgres.yml` and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
+* ~~To start the functional tests from the command line run the script `./scripts/run-functional-test.sh`~~ There
+  currently seem to be some issues with the above script (API service continues to run after the script is done), so for
+  now it's best to stick to the instructions in the next bullet point.
+* To run the test in the IDE first start `docker-compose-postgres.yml`, `./scripts/start-local-development.sh` (in that
+  order) and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
 
 ### Running Tests
 
@@ -135,9 +153,6 @@ Check style is used to ensure the codebase conforms to a coding standard.
 
 ### Swagger UI
 
-[make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
-[make-recall-decision-ui]: https://github.com/ministryofjustice/make-recall-decision-ui
-
 ### Trouble-Shooting
 
 #### BuildProperties dependency not satisfied.
@@ -148,3 +163,8 @@ No bean of type BuildProperties could be found.
 The reason this is happening is because build-info.properties is not found in the test classpath.  This file seems to be
 generated by gradle.  When spring sees the file, it makes a BuildProperties bean available.  Changing the compiler output
 path of each module to conform to gradle solves the problem.
+
+
+<!-- reference links -->
+[make-recall-decision-api]: https://github.com/ministryofjustice/make-recall-decision-api
+[make-recall-decision-ui]: https://github.com/ministryofjustice/make-recall-decision-ui
