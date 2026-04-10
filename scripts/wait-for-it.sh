@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Use this script to test if a given TCP host/port are available
+# Use this script to test if a given TCP host/port are available (taken from https://github.com/vishnubob/wait-for-it)
 
+# Gets the name of the current script file (##*/ strips everything from the path up to the last slash)
 WAITFORIT_cmdname=${0##*/}
 
 echoerr() { if [[ $WAITFORIT_QUIET -ne 1 ]]; then echo "$@" 1>&2; fi }
@@ -22,8 +23,10 @@ USAGE
     exit 1
 }
 
+# Loops infinitely until host:port is available (or is interrupted by a signal)
 wait_for()
 {
+    # Print out information on requested timeout
     if [[ $WAITFORIT_TIMEOUT -gt 0 ]]; then
         echoerr "$WAITFORIT_cmdname: waiting $WAITFORIT_TIMEOUT seconds for $WAITFORIT_HOST:$WAITFORIT_PORT"
     else
@@ -36,6 +39,8 @@ wait_for()
             nc -z $WAITFORIT_HOST $WAITFORIT_PORT
             WAITFORIT_result=$?
         else
+            # Test whether host:port is up by trying to send it an empty string
+            # and suppressing the output. Returns 0 on success, 1 on failure
             (echo -n > /dev/tcp/$WAITFORIT_HOST/$WAITFORIT_PORT) >/dev/null 2>&1
             WAITFORIT_result=$?
         fi
@@ -46,10 +51,12 @@ wait_for()
         fi
         sleep 1
     done
-    sleep 60
     return $WAITFORIT_result
 }
 
+# Call this same script recursively using the timeout command and indicating it should act as a child process, then wait
+# for it to either exit successfully or time out. The child process will use the wait_for function above to repeatedly
+# check whether host:port is ready.
 wait_for_wrapper()
 {
     # In order to support SIGINT during timeout: http://unix.stackexchange.com/a/57692
@@ -59,7 +66,10 @@ wait_for_wrapper()
         timeout $WAITFORIT_BUSYTIMEFLAG $WAITFORIT_TIMEOUT $0 --child --host=$WAITFORIT_HOST --port=$WAITFORIT_PORT --timeout=$WAITFORIT_TIMEOUT &
     fi
     WAITFORIT_PID=$!
+    # Ensure INT signals are forwarded to the child process
     trap "kill -INT -$WAITFORIT_PID" INT
+
+    # Wait for the child process to finish and check whether it timed out (result != 0) or not (result == 0)
     wait $WAITFORIT_PID
     WAITFORIT_RESULT=$?
     if [[ $WAITFORIT_RESULT -ne 0 ]]; then
@@ -142,7 +152,9 @@ WAITFORIT_STRICT=${WAITFORIT_STRICT:-0}
 WAITFORIT_CHILD=${WAITFORIT_CHILD:-0}
 WAITFORIT_QUIET=${WAITFORIT_QUIET:-0}
 
-# Check to see if timeout is from busybox?
+command -v timeout >/dev/null 2>&1 || { echo >&2 "'timeout' command required, but not installed. Aborting."; exit 1; }
+
+# Check to see if timeout is from busybox
 WAITFORIT_TIMEOUT_PATH=$(type -p timeout)
 WAITFORIT_TIMEOUT_PATH=$(realpath $WAITFORIT_TIMEOUT_PATH 2>/dev/null || readlink -f $WAITFORIT_TIMEOUT_PATH)
 
