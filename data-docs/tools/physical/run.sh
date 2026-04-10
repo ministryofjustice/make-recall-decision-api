@@ -39,6 +39,7 @@ kubectl exec "$pod_name" -- /usr/local/bin/schemaspy \
   -s "${SCHEMA}" \
   -u "${DB_USERNAME}" \
   -p "${DB_PASSWORD}" \
+  -I "(${IGNORETABLES})" \
   -norows -noviews -degree 1
 
 # Download report

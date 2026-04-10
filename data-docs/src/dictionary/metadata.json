@@ -1,0 +1,1435 @@
+{
+   "tables" : [
+      {
+         "fields" : [
+            {
+               "description" : "internal id of the recommendation",
+               "name" : "id",
+               "sar" : false,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "recommendation_id",
+               "sar" : false,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "created_by",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "Full name of the user who created the recommendation",
+               "name" : "created_by_user_full_name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "created",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "uploaded_by",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "uploaded_by_user_full_name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "uploaded",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "filename",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "type",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "mimetype",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "document_uuid",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "title",
+               "sar" : true,
+               "type" : "string"
+            }
+         ],
+         "name" : "recommendation_document"
+      },
+      {
+         "fields" : [
+            {
+               "description" : "",
+               "name" : "id",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "recommendation_id",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "created_by",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "created_by_user_full_name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "created",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "modified_by",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "modified_by_user_full_name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "modified",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "active",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "recommendation_history_id",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "email_address",
+               "sar" : true,
+               "type" : "string"
+            }
+         ],
+         "name" : "recommendation_status"
+      },
+      {
+         "fields" : [
+            {
+               "description" : "",
+               "name" : "id",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data",
+               "sar" : false,
+               "type" : "complex"
+            },
+            {
+               "description" : "",
+               "name" : "data.crn",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.region",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.status",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.deleted",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.createdBy",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.sensitive",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.recallType.selected.value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.recallType.selected.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.recallType.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.recallType.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.createdDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.error",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.whoIsAtRisk",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.natureOfRisk",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskImminence",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.lastUpdatedDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.overallRisk",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskIncreaseFactors",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.roshSummary.riskMitigationFactors",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.custodyStatus.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.custodyStatus.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.custodyStatus.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.custodyStatus.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.dateOfRelease[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.offencesMatch",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.spoRecallType",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.lastModifiedBy",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.dateVloInformed",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasArrestIssues.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasArrestIssues.selected",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.nextAppointment.probationPhoneNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.nextAppointment.dateTimeOfAppointment",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.nextAppointment.howWillAppointmentHappen.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.nextAppointment.howWillAppointmentHappen.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.nextAppointment.howWillAppointmentHappen.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.offenceAnalysis",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.ppcsQueryEmails[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousRecalls.lastRecallDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousRecalls.previousRecallDates[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousRecalls.hasBeenRecalledPreviously",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.vulnerabilities.selected[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.vulnerabilities.selected[].details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.vulnerabilities.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.vulnerabilities.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whatLedToRecall",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.extendedTerm",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.custodialTerm",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.dateOfSentence[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.hasBeenReviewed",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.lengthOfSentence",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.licenceExpiryDate[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.sentenceExpiryDate[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.sentenceDescription",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.sentenceSecondLength",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.dateOfOriginalOffence[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.lengthOfSentenceUnits",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.indexOffenceDescription",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.convictionDetail.sentenceSecondLengthUnits",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.lastModifiedDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousReleases.lastReleaseDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousReleases.previousReleaseDates[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousReleases.hasBeenReleasedPreviously",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.previousReleases.lastReleasingPrisonOrCustodialEstablishment",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.releaseUnderECSL",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasContrabandRisk.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasContrabandRisk.selected",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.localDeliveryUnit",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.mappa.level",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.mappa.category",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.mappa.hasBeenReviewed",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.mappa.lastUpdatedDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.gender",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.surname",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.addresses[].town",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.addresses[].line1",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.addresses[].line2",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.addresses[].postcode",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.addresses[].noFixedAbode",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.croNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.ethnicity",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.firstName",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.pncNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.nomsNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.dateOfBirth[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.middleNames",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.hasBeenReviewed",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.primaryLanguage",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.personOnProbation.mostRecentPrisonerNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.ppudRecordPresent",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.email",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.region",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.telephone",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.localDeliveryUnit",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whoCompletedPartA.isPersonProbationPractitionerForOffender",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.explainTheDecision",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isExtendedSentence",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.localPoliceContact.faxNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.localPoliceContact.contactName",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.localPoliceContact.phoneNumber",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.localPoliceContact.emailAddress",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reasonsForNoRecall.popThoughts",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reasonsForNoRecall.licenceBreach",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reasonsForNoRecall.popProgressMade",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reasonsForNoRecall.noRecallRationale",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reasonsForNoRecall.futureExpectations",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.spoRecallRationale",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.currentRoshForPartA.riskToStaff",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.currentRoshForPartA.riskToPublic",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.currentRoshForPartA.riskToChildren",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.currentRoshForPartA.riskToPrisoners",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.currentRoshForPartA.riskToKnownAdult",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indexOffenceDetails",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.responseToProbation",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whyConsideredRecall.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whyConsideredRecall.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.whyConsideredRecall.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.practitionerForPartA.name",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.practitionerForPartA.email",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.practitionerForPartA.region",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.practitionerForPartA.telephone",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.practitionerForPartA.localDeliveryUnit",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.createdByUserFullName",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.managerRecallDecision.selected.value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.managerRecallDecision.selected.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.managerRecallDecision.createdBy",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.managerRecallDecision.createdDate",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.managerRecallDecision.isSentToDelius",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.reviewOffenderProfile",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.conditionalReleaseDate[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.lastModifiedByUserName",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.triggerLeadingToRecall",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.countersignAcoTelephone",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.countersignSpoTelephone",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.isIndeterminateSentence",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isThisAnEmergencyRecall",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.countersignAcoExposition",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.countersignSpoExposition",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.sendSpoRationaleToDelius",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.alternativesToRecallTried.selected[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.alternativesToRecallTried.selected[].details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.alternativesToRecallTried.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.alternativesToRecallTried.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasVictimsInContactScheme.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasVictimsInContactScheme.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasVictimsInContactScheme.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateSentenceType.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateSentenceType.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateSentenceType.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.standardLicenceConditions.selected[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selected[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].note",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].title",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].subCatCode",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].mainCatCode",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].subCatCode",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].mainCatCode",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.revocationOrderRecipients[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.reviewPractitionersConcerns",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.selected",
+               "sar" : true,
+               "type" : "array"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.selected[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].code",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.selected[]",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].code",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.userNameDntrLetterCompletedBy",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.activeCustodialConvictionCount",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.lastDntrLetterADownloadDateTime[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.isMainAddressWherePersonCanBeFound.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.isMainAddressWherePersonCanBeFound.selected",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isUnderIntegratedOffenderManagement.selected",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.isUnderIntegratedOffenderManagement.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.isUnderIntegratedOffenderManagement.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.fixedTermAdditionalLicenceConditions.details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.fixedTermAdditionalLicenceConditions.selected",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.recommendationStartedDomainEventSent",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateOrExtendedSentenceDetails.selected[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateOrExtendedSentenceDetails.selected[].details",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateOrExtendedSentenceDetails.allOptions[].text",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.indeterminateOrExtendedSentenceDetails.allOptions[].value",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.offenceDataFromLatestCompleteAssessment",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.sendSpoDeleteRationaleToDelius",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.spoDeleteRecommendationRationale",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.additionalLicenceConditionsText",
+               "sar" : true,
+               "type" : "string"
+            },
+            {
+               "description" : "",
+               "name" : "data.isOver18",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.decisionDateTime[]",
+               "sar" : true,
+               "type" : "integer"
+            },
+            {
+               "description" : "",
+               "name" : "data.isMappaLevelAbove1",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isSentenceUnder12Months",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.hasBeenConvictedOfSeriousOffence",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isUnder18",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "data.isSentence12MonthsOrOver",
+               "sar" : true,
+               "type" : "boolean"
+            },
+            {
+               "description" : "",
+               "name" : "deleted",
+               "sar" : true,
+               "type" : "boolean"
+            }
+         ],
+         "name" : "recommendations"
+      }
+   ]
+}
