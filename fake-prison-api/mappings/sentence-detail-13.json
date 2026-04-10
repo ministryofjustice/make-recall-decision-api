@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/bookings/13/sentenceDetail"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "sentence-detail-13.json",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": ["response-template"]
+  }
+}
