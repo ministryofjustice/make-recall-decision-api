@@ -512,7 +512,7 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name= "isYouthChargedWithSeriousOffence is set to {4} and isMappaLevel2Or3 is set to {5} when sentence group is {0} and isYouthSentenceOver12Months is set to {1} and isMappaLevel2Or3 is set to {3}")
+  @ParameterizedTest(name = "isYouthChargedWithSeriousOffence is set to {4} and isMappaLevel2Or3 is set to {5} when sentence group is {0} and isYouthSentenceOver12Months is set to {1} and isMappaLevel2Or3 is set to {3}")
   @CsvSource(
     "ADULT_SDS,,,,,",
     "YOUTH_SDS,true,true,true,,",
@@ -538,7 +538,7 @@ class PartADocumentMapperTest {
         sentenceGroup = sentenceGroup,
         isYouthSentenceOver12Months = isYouthSentenceOver12Months,
         isYouthChargedWithSeriousOffence = isYouthChargedWithSeriousOffence,
-        isMappaLevel2Or3 = isMappaLevel2Or3
+        isMappaLevel2Or3 = isMappaLevel2Or3,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
