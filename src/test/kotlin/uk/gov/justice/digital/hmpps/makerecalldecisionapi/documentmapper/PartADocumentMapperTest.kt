@@ -348,7 +348,11 @@ class PartADocumentMapperTest {
       assertThat(result.isServingSOPCSentence).isEqualTo("No")
       assertThat(result.isServingDCRSentence).isEqualTo("No")
       assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
-      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(null)
+      if (sentenceGroup === SentenceGroup.YOUTH_SDS) {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      } else {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(null)
+      }
     }
   }
 
@@ -395,7 +399,11 @@ class PartADocumentMapperTest {
       assertThat(result.isServingSOPCSentence).isEqualTo("No")
       assertThat(result.isServingDCRSentence).isEqualTo("No")
       assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
-      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      if (sentenceGroup === SentenceGroup.YOUTH_SDS) {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      } else {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(null)
+      }
     }
   }
 
