@@ -27,6 +27,8 @@ Contact the [#consider-a-recall](https://moj.enterprise.slack.com/archives/C01D6
 - PostgreSQL database for recommendation data - configured via [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments).
 - AWS S3 for document storage - again, configured via [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments).
 - [CircleCI](https://circleci.com/) for CI/CD.
+- [gotenberg](https://gotenberg.dev/) for PDF rendering - included via a helm sub-chart. This is a leftover from earlier
+  plans to produce PDFs that is pending removal through [MRD-2708](https://dsdmoj.atlassian.net/browse/MRD-2708).
 
 ## System characteristics
 
