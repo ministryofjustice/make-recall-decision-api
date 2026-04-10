@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppend
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -149,10 +148,14 @@ class RecommendationsCleanupTaskTest {
     lockAssertMock.use {
       val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
       // TODO update the threshold values below based on config for your roll-out
-      val thresholdStartDate: ZonedDateTime = any()
-      val thresholdEndDate: ZonedDateTime = any()
-      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate))
-        .willReturn(idsOfActiveRecommendationsNotYetDownloaded)
+      given(
+        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
+          cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
+          cleanUpConfiguration.ftr56.thresholdDateTime,
+        ),
+      ).willReturn(
+        idsOfActiveRecommendationsNotYetDownloaded,
+      )
 
       val activeRecommendationsNotYetDownloaded = List(
         43,
@@ -180,7 +183,7 @@ class RecommendationsCleanupTaskTest {
           .sendSystemDeleteRecommendationEvent(it.data.crn, it.data.createdBy!!)
       }
 
-      val startUpMessage = listOf("<project/roll-out name> clean-up task started")
+      val startUpMessage = listOf("FTR56 clean-up task started")
       val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
@@ -192,7 +195,7 @@ class RecommendationsCleanupTaskTest {
       val deletionDomainEventMessages = activeRecommendationsNotYetDownloaded.map {
         "System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}"
       }
-      val endMessage = listOf("<project/roll-out name> clean-up task ended")
+      val endMessage = listOf("FTR56 clean-up task ended")
       val expectedInfoMessages =
         startUpMessage + deletedRecommendationIdMessages + deletionDomainEventMessages + endMessage
       with(logAppender.list) {
@@ -222,10 +225,14 @@ class RecommendationsCleanupTaskTest {
     lockAssertMock.use {
       val idsOfActiveRecommendationsNotYetDownloaded = List(43, { randomLong() })
       // TODO update the threshold values below based on config for your roll-out
-      val thresholdStartDate: ZonedDateTime = any()
-      val thresholdEndDate: ZonedDateTime = any()
-      given(recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate))
-        .willReturn(idsOfActiveRecommendationsNotYetDownloaded)
+      given(
+        recommendationRepository.findActiveRecommendationsNotYetDownloaded(
+          cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
+          cleanUpConfiguration.ftr56.thresholdDateTime,
+        ),
+      ).willReturn(
+        idsOfActiveRecommendationsNotYetDownloaded,
+      )
 
       // when
       recommendationsCleanupTask.softDeleteActiveRecommendationsNotYetDownloaded()
@@ -235,7 +242,7 @@ class RecommendationsCleanupTaskTest {
       inOrder.verify(it, LockAssert::assertLocked)
       then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
 
-      val startUpMessage = listOf("<project/roll-out name> clean-up task started")
+      val startUpMessage = listOf("FTR56 clean-up task started")
       val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
@@ -244,7 +251,7 @@ class RecommendationsCleanupTaskTest {
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(40, 43)}",
       )
-      val endMessage = listOf("<project/roll-out name> clean-up task ended")
+      val endMessage = listOf("FTR56 clean-up task ended")
       val expectedInfoMessages = startUpMessage + deletedRecommendationIdMessages + endMessage
       with(logAppender.list) {
         this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }

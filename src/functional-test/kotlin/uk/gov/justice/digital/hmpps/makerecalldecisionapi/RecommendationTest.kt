@@ -259,8 +259,7 @@ private fun updateRecommendationRequest() = """
     "responseToProbation": "They have not responded well",
     "whatLedToRecall": "Increasingly violent behaviour",
     "isThisAnEmergencyRecall": true,
-    "isIndeterminateSentence": true,
-    "isExtendedSentence": true,
+    "sentenceGroup": "INDETERMINATE",
     "activeCustodialConvictionCount": 1,
     "hasVictimsInContactScheme": {
       "selected": "YES",
@@ -288,11 +287,15 @@ private fun updateRecommendationRequest() = """
         },
         {
           "value": "IPP",
-          "text": "Imprisonment for Public Protection (IPP) sentence"
+          "text": "Imprisonment for public protection (IPP)"
         },
         {
           "value": "DPP",
-          "text": "Detention for Public Protection (DPP) sentence"
+          "text": "Detention for public protection (DPP)"
+        },
+        {
+          "value": "DHMP",
+          "text": "Detention at His Majesty’s pleasure (DHMP)"
         },
         {
           "value": "NO",

@@ -48,6 +48,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedAlternativeOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.Term
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
@@ -90,6 +91,7 @@ class MrdTestDataBuilder {
         isThisAnEmergencyRecall = true,
         isIndeterminateSentence = true,
         isExtendedSentence = true,
+        sentenceGroup = SentenceGroup.INDETERMINATE,
         activeCustodialConvictionCount = 1,
         hasVictimsInContactScheme = victimsInContactSchemeData(),
         indeterminateSentenceType = indeterminateSentenceType(),
@@ -276,6 +278,7 @@ class MrdTestDataBuilder {
       isThisAnEmergencyRecall = true,
       isIndeterminateSentence = true,
       isExtendedSentence = false,
+      sentenceGroup = SentenceGroup.INDETERMINATE,
       activeCustodialConvictionCount = 1,
       hasVictimsInContactScheme = victimsInContactSchemeData(),
       indeterminateSentenceType = indeterminateSentenceType(),
@@ -318,6 +321,15 @@ class MrdTestDataBuilder {
       isRecalledOnNewChargedOffence = false,
       isServingFTSentenceForTerroristOffence = false,
       hasBeenChargedWithTerroristOrStateThreatOffence = false,
+      isChargedWithOffence = false,
+      isServingTerroristOrNationalSecurityOffence = false,
+      isAtRiskOfInvolvedInForeignPowerThreat = false,
+      wasReferredToParoleBoard244ZB = false,
+      wasRepatriatedForMurder = false,
+      isServingSOPCSentence = false,
+      isServingDCRSentence = false,
+      isYouthSentenceOver12Months = false,
+      isYouthChargedWithSeriousOffence = false,
     )
 
     private fun personOnProbation(personOnProbation: PersonOnProbation?): PersonOnProbation? = personOnProbation?.copy(
@@ -328,6 +340,7 @@ class MrdTestDataBuilder {
         hasBeenReviewed = true,
       ),
       hasBeenReviewed = true,
+      ftr56MappaReviewed = true,
     )
 
     private fun recallConsideredData(): List<RecallConsidered> = listOf(
@@ -371,6 +384,10 @@ class MrdTestDataBuilder {
         TextValueOption(
           value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
           text = "behaviour leading to sexual or violent behaviour",
+        ),
+        TextValueOption(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          text = "behaviour likely to result in sexual or violent behaviour",
         ),
         TextValueOption(
           value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
@@ -440,8 +457,9 @@ class MrdTestDataBuilder {
       selected = IndeterminateSentenceTypeOptions.LIFE,
       allOptions = listOf(
         TextValueOption(value = "LIFE", text = "Life sentence"),
-        TextValueOption(value = "IPP", text = "Imprisonment for Public Protection (IPP) sentence"),
-        TextValueOption(value = "DPP", text = "Detention for Public Protection (DPP) sentence"),
+        TextValueOption(value = "IPP", text = "Imprisonment for public protection (IPP)"),
+        TextValueOption(value = "DPP", text = "Detention for public protection (DPP)"),
+        TextValueOption(value = "DHMP", text = "Detention at His Majesty’s pleasure (DHMP)"),
         TextValueOption(value = "NO", text = "No"),
       ),
     )

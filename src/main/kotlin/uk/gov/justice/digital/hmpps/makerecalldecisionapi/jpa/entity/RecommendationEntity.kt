@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
@@ -89,8 +90,11 @@ data class RecommendationModel(
   var thoughtsLeadingToRecall: String? = null,
   var triggerLeadingToRecall: String? = null,
   var whatLedToRecall: String? = null,
+  var sentenceGroup: SentenceGroup? = null,
   @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
+  // deprecated - subsumed by sentenceGroup
   @JsonProperty("isIndeterminateSentence") var isIndeterminateSentence: Boolean? = null,
+  // deprecated - subsumed by sentenceGroup
   @JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
   var activeCustodialConvictionCount: Number? = null,
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
@@ -177,6 +181,15 @@ data class RecommendationModel(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isChargedWithOffence: Boolean? = null,
+  var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
+  var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
+  var wasReferredToParoleBoard244ZB: Boolean? = null,
+  var wasRepatriatedForMurder: Boolean? = null,
+  var isServingSOPCSentence: Boolean? = null,
+  var isServingDCRSentence: Boolean? = null,
+  var isYouthSentenceOver12Months: Boolean? = null,
+  var isYouthChargedWithSeriousOffence: Boolean? = null,
   // deprecated
   var userNamePartACompletedBy: String? = null,
   // deprecated

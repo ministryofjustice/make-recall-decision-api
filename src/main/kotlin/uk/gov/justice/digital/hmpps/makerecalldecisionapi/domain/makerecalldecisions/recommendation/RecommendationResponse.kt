@@ -39,6 +39,7 @@ data class RecommendationResponse(
   val spoRecallRationale: String? = null,
   val spoDeleteRecommendationRationale: String? = null,
   val whatLedToRecall: String? = null,
+  val sentenceGroup: SentenceGroup? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isIndeterminateSentence: Boolean? = null,
   val isExtendedSentence: Boolean? = null,
@@ -102,6 +103,15 @@ data class RecommendationResponse(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isChargedWithOffence: Boolean? = null,
+  var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
+  var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
+  var wasReferredToParoleBoard244ZB: Boolean? = null,
+  var wasRepatriatedForMurder: Boolean? = null,
+  var isServingSOPCSentence: Boolean? = null,
+  var isServingDCRSentence: Boolean? = null,
+  var isYouthSentenceOver12Months: Boolean? = null,
+  var isYouthChargedWithSeriousOffence: Boolean? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
@@ -125,6 +135,7 @@ data class PersonOnProbation(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
+  val ftr56MappaReviewed: Boolean? = null,
 )
 
 data class WhoCompletedPartA(
@@ -186,6 +197,7 @@ fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
     addresses = this.addresses,
     primaryLanguage = this.primaryLanguage,
     hasBeenReviewed = this.hasBeenReviewed,
+    ftr56MappaReviewed = this.ftr56MappaReviewed,
   )
 }
 
@@ -206,6 +218,7 @@ data class PersonOnProbationDto(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
+  val ftr56MappaReviewed: Boolean? = null,
 )
 
 data class ConvictionDetail(

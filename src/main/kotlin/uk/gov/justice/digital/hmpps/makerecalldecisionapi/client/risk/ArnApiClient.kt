@@ -8,10 +8,11 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.WebClientConfiguration.Companion.withRetry
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentScores
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsTimelineResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskManagementResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskResponse
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskScoreResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.RiskSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import java.time.Duration
@@ -68,13 +69,34 @@ class ArnApiClient(
     return result
   }
 
-  fun getRiskScores(crn: String): Mono<List<RiskScoreResponse>> {
-    val responseType = object : ParameterizedTypeReference<List<RiskScoreResponse>>() {}
+  fun getAssessmentsTimeline(crn: String): Mono<AssessmentsTimelineResponse> {
+    val responseType = object : ParameterizedTypeReference<AssessmentsTimelineResponse>() {}
+    log.info(StringUtils.normalizeSpace("About to get assessments timeline for $crn"))
+
+    val result = webClient
+      .get()
+      .uri("/assessments/timeline/crn/$crn")
+      .retrieve()
+      .bodyToMono(responseType)
+      .timeout(Duration.ofSeconds(arnClientTimeout))
+      .doOnError { ex ->
+        handleTimeoutException(
+          exception = ex,
+          endPoint = "assessments timeline",
+        )
+      }
+      .withRetry()
+    log.info(StringUtils.normalizeSpace("Returning assessments timeline for $crn"))
+    return result
+  }
+
+  fun getRiskScores(crn: String): Mono<List<AssessmentScores>> {
+    val responseType = object : ParameterizedTypeReference<List<AssessmentScores>>() {}
     log.info(StringUtils.normalizeSpace("About to get risk scores for $crn"))
 
     val result = webClient
       .get()
-      .uri("/risks/crn/$crn/predictors/all")
+      .uri("/risks/predictors/all/crn/$crn")
       .retrieve()
       .bodyToMono(responseType)
       .timeout(Duration.ofSeconds(arnClientTimeout))

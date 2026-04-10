@@ -35,12 +35,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.CHECKED_CHECKBOX
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_CHECKBOX
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.HAS_NO_VULNERABILITIES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.HAS_VULNERABILITIES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_SPECIFIED
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.TICK_CHARACTER
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.UNKNOWN_VULNERABILITIES
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
 import java.time.LocalDate
@@ -116,6 +117,7 @@ internal class TemplateReplacementService(
       "response_to_probation" to documentData.responseToProbation,
       "what_led_to_recall" to documentData.whatLedToRecall,
       "is_this_an_emergency_recall" to documentData.isThisAnEmergencyRecall,
+      "is_serving_youth_sentence" to documentData.isServingYouthSentence,
       "is_under_18" to documentData.isUnder18,
       "is_sentence_12_months_or_over" to documentData.isSentence12MonthsOrOver,
       "is_mappa_above_level_1" to documentData.isMappaAboveLevel1,
@@ -123,9 +125,21 @@ internal class TemplateReplacementService(
       "is_sentence_48_months_or_over" to documentData.isSentence48MonthsOrOver,
       "is_mappa_category_4" to documentData.isMappaCategory4,
       "is_mappa_level_2_or_3" to documentData.isMappaLevel2Or3,
+      "is_mappa_level_2_or_3_as_youth_sds_under_12_months" to documentData.isMappaLevel2or3AsYouthSdsUnder12Months,
+      "is_mappa_level_2_or_3_as_adult_sds" to documentData.isMappaLevel2or3AsAdultSds,
+      "is_mappa_category_4_as_adult_sds" to documentData.isMappaCategory4AsAdultSds,
       "is_recalled_on_new_charged_offence" to documentData.isRecalledOnNewChargedOffence,
       "is_serving_ft_sentence_for_terrorist_offence" to documentData.isServingFTSentenceForTerroristOffence,
       "has_been_charged_with_terrorist_or_state_threat_offence" to documentData.hasBeenChargedWithTerroristOrStateThreatOffence,
+      "is_charged_with_offence" to documentData.isChargedWithOffence,
+      "is_serving_terrorist_or_national_security_offence" to documentData.isServingTerroristOrNationalSecurityOffence,
+      "is_at_risk_of_involved_in_foreign_power_threat" to documentData.isAtRiskOfInvolvedInForeignPowerThreat,
+      "was_referred_to_parole_board_244zb" to documentData.wasReferredToParoleBoard244ZB,
+      "was_repatriated_for_murder" to documentData.wasRepatriatedForMurder,
+      "is_serving_sopc_sentence" to documentData.isServingSOPCSentence,
+      "is_serving_dcr_sentence" to documentData.isServingDCRSentence,
+      "is_youth_sentence_over_12_months" to documentData.isYouthSentenceOver12Months,
+      "is_youth_charged_with_serious_offence" to documentData.isYouthChargedWithSeriousOffence,
       "has_victims_in_contact_scheme" to documentData.hasVictimsInContactScheme,
       "indeterminate_sentence_type" to documentData.indeterminateSentenceType,
       "is_extended_sentence" to documentData.isExtendedSentence,
@@ -182,6 +196,9 @@ internal class TemplateReplacementService(
       "supervising_practitioner_ppcs_query_emails" to documentData.supervisingPractitioner.ppcsQueryEmails.joinToString(
         "; ",
       ),
+      "practitioner_name" to documentData.probationPractitionerDetails.name,
+      "practitioner_telephone" to documentData.probationPractitionerDetails.telephone,
+      "practitioner_email" to documentData.probationPractitionerDetails.email,
       "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
       "date_of_decision" to documentData.dateOfDecision,
       "time_of_decision" to documentData.timeOfDecision,
@@ -191,6 +208,8 @@ internal class TemplateReplacementService(
       "behaviour_similar_to_index_offence_present" to documentData.behaviourSimilarToIndexOffencePresent,
       "behaviour_leading_to_sexual_or_violent_offence" to documentData.behaviourLeadingToSexualOrViolentOffence,
       "behaviour_leading_to_sexual_or_violent_offence_present" to documentData.behaviourLeadingToSexualOrViolentOffencePresent,
+      "behaviour_likely_to_result_sexual_or_violent_offence" to documentData.behaviourLikelyToResultSexualOrViolentOffence,
+      "behaviour_likely_to_result_sexual_or_violent_offence_present" to documentData.behaviourLikelyToResultSexualOrViolentOffencePresent,
       "out_of_touch" to documentData.outOfTouch,
       "out_of_touch_present" to documentData.outOfTouchPresent,
       "other_possible_addresses" to documentData.otherPossibleAddresses,
@@ -218,14 +237,14 @@ internal class TemplateReplacementService(
       "countersign_spo_time" to (documentData.countersignSpoTime ?: EMPTY_STRING),
 
       "countersign_spo_exposition" to (documentData.countersignSpoExposition ?: EMPTY_STRING),
-      "spo_countersign_complete" to (if (!documentData.countersignSpoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
+      "spo_countersign_complete" to (if (!documentData.countersignSpoExposition.isNullOrEmpty()) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
       "countersign_spo_email" to (documentData.counterSignSpoEmail ?: EMPTY_STRING),
       "countersign_aco_name" to (documentData.countersignAcoName ?: EMPTY_STRING),
       "countersign_aco_telephone" to (documentData.countersignAcoTelephone ?: EMPTY_STRING),
       "countersign_aco_date" to (documentData.countersignAcoDate ?: EMPTY_STRING),
       "countersign_aco_time" to (documentData.countersignAcoTime ?: EMPTY_STRING),
       "countersign_aco_exposition" to (documentData.countersignAcoExposition ?: EMPTY_STRING),
-      "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) TICK_CHARACTER else EMPTY_STRING),
+      "aco_countersign_complete" to (if (!documentData.countersignAcoExposition.isNullOrEmpty()) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
 
       "release_under_ecsl" to if (documentData.releaseUnderECSL == true) YES else NO,
       "date_of_release" to (documentData.dateOfRelease ?: EMPTY_STRING),
@@ -284,15 +303,15 @@ internal class TemplateReplacementService(
   }
 
   private fun convertToSelectedStandardConditionsBreachedMap(selectedConditions: List<String>?): Map<String, String> = mapOf(
-    "other_name_known_by" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NAME_CHANGE.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "contact_details_changed" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.CONTACT_DETAILS.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "good_behaviour_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) TICK_CHARACTER else EMPTY_STRING),
-    "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) TICK_CHARACTER else EMPTY_STRING),
+    "other_name_known_by" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NAME_CHANGE.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "contact_details_changed" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.CONTACT_DETAILS.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "good_behaviour_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.GOOD_BEHAVIOUR.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
   )
 
   private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> = mapOf(
@@ -344,7 +363,8 @@ internal class TemplateReplacementService(
     vulnerability: String?,
     vulnerabilities: VulnerabilitiesRecommendation?,
   ): String {
-    val selectedVulnerabilities = vulnerabilities?.selected?.filter { it.value != NONE.name && it.value != NOT_KNOWN.name }?.map { it.value }
+    val selectedVulnerabilities =
+      vulnerabilities?.selected?.filter { it.value != NONE.name && it.value != NOT_KNOWN.name }?.map { it.value }
     val displayTextMap = vulnerabilities?.allOptions?.associate { it.value to it.text }
     val detailsMap = vulnerabilities?.selected?.associate {
       if (it.value == NOT_KNOWN.name || it.value == NONE.name) {

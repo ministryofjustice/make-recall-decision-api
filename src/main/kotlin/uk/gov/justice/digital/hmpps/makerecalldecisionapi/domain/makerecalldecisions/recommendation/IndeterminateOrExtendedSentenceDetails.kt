@@ -10,5 +10,6 @@ data class IndeterminateOrExtendedSentenceDetails(
 enum class IndeterminateOrExtendedSentenceDetailsOptions {
   BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE,
   BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE,
+  BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE,
   OUT_OF_TOUCH,
 }

@@ -74,6 +74,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsExtendedSentence
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -264,6 +265,7 @@ internal class RecommendationService(
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val requestJson = jacksonObjectMapper().readTree(jsonRequest.toString())
+
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
     val sendConsiderationRationaleToDelius = requestJson.has("sendConsiderationRationaleToDelius") &&
@@ -566,7 +568,7 @@ internal class RecommendationService(
     convictionDetail = buildRecommendationConvictionResponse(
       deliusDetails.activeCustodialConvictions,
       convictionDetail?.hasBeenReviewed,
-      isExtendedSentence,
+      calculateIsExtendedSentence(),
     )
   }
 
@@ -593,6 +595,10 @@ internal class RecommendationService(
       convictionDetail = convictionDetail?.copy(
         hasBeenReviewed = true,
       ) ?: ConvictionDetail(hasBeenReviewed = true)
+    }
+
+    if (updateRecommendationRequest.hasBeenReviewed?.ftr56MappaInformation == true) {
+      personOnProbation = personOnProbation?.copy(ftr56MappaReviewed = true) ?: PersonOnProbation(ftr56MappaReviewed = true)
     }
 
     return recommendationEntity.copy(

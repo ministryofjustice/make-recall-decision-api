@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
@@ -39,6 +41,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.StandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
@@ -92,22 +95,29 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, should map in the part A with the recall value {6} and details {7} with additional licence conditions value {8}")
+  @ParameterizedTest(name = "given recall type {0}, recall details {1}, fixed term additional licence conditions selected {2} with value {3}, indeterminate sentence {4}, extended sentence {5}, sentence group {6} should map in the part A with the recall value {7} and details {8} with additional licence conditions value {9}")
   @CsvSource(
-    "STANDARD,Standard details,false,,false,false,Standard,Standard details,N/A (standard recall)",
-    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,Fixed,Fixed details,Fixed term additional licence conditions",
-    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,Fixed,Fixed details,''",
-    "STANDARD,Standard details,false,,true,true,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,false,,true,false,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
-    "STANDARD,Standard details,false,,false,true,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
+    "STANDARD,Standard details,false,,false,false,,Standard,Standard details,N/A (standard recall)",
+    "STANDARD,Standard details,false,,,,ADULT_SDS,Standard,Standard details,N/A (standard recall)",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,false,false,,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,true,Fixed term additional licence conditions,,,ADULT_SDS,Fixed,Fixed details,Fixed term additional licence conditions",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,false,false,,Fixed,Fixed details,''",
+    "FIXED_TERM,Fixed details,false,Fixed term additional licence conditions,,,ADULT_SDS,Fixed,Fixed details,''",
+    "STANDARD,Standard details,false,,true,true,,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,,,INDETERMINATE,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,true,false,,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,,,INDETERMINATE,N/A (not a determinate recall),N/A (not a determinate recall),N/A (not a determinate recall)",
+    "STANDARD,Standard details,false,,false,true,,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
+    "STANDARD,Standard details,false,,,,EXTENDED,N/A (extended sentence recall),N/A (extended sentence recall),N/A (extended sentence recall)",
   )
   fun `given recall type and whether indeterminate sentence in recommendation data then should map to the part A text`(
     recallValue: RecallTypeValue,
     recallTypeDetails: String?,
     fixedTermAdditionalLicenceConditionsSelected: Boolean,
     fixedTermAdditionalLicenceConditionsValue: String?,
-    isIndeterminateSentence: Boolean,
-    isExtendedSentence: Boolean,
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
     partARecallTypeDisplayValue: String?,
     partARecallTypeDisplayDetails: String?,
     partAFixedTermLicenceConditionsDisplayValue: String?,
@@ -124,6 +134,7 @@ class PartADocumentMapperTest {
         ),
         isIndeterminateSentence = isIndeterminateSentence,
         isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(
           fixedTermAdditionalLicenceConditionsSelected,
           fixedTermAdditionalLicenceConditionsValue,
@@ -159,10 +170,37 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "given is an extended sentence {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("true,Yes", "false,No", "null,''", nullValues = ["null"])
+  @ParameterizedTest
+  @EnumSource(SentenceGroup::class)
+  fun `set isServingYouthSentence appropriately based on sentenceGroup value`(
+    sentenceGroup: SentenceGroup?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isServingYouthSentence).isEqualTo(if (sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else EMPTY_STRING)
+    }
+  }
+
+  @ParameterizedTest(name = "given extended sentence value (isExtendedSentence={0}, sentenceGroup={1}), recommendation data should map to the part A text {2}")
+  @CsvSource(
+    "true, null, Yes",
+    ", EXTENDED, Yes",
+    "false, null, No",
+    ", ADULT_SDS, No",
+    "null, null,''",
+    "null, null,''",
+    nullValues = ["null"],
+  )
   fun `given is extended sentence data then should map to the part A text`(
     isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
     partADisplayText: String?,
   ) {
     runTest {
@@ -172,6 +210,7 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -218,8 +257,9 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given extended sentence used in part A text`() {
+  @ParameterizedTest(name = "extended sentence (isExtendedSentence={0}, sentenceGroup={1}) considered in part A text")
+  @CsvSource("true,", ", EXTENDED")
+  fun `given extended sentence used in part A text`(isExtendedSentence: Boolean?, sentenceGroup: SentenceGroup?) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -227,7 +267,8 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isExtendedSentence = true,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
@@ -238,8 +279,12 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given indeterminate sentence used in part A text`() {
+  @ParameterizedTest(name = "indeterminate sentence (isIndeterminateSentence={0}, sentenceGroup={1}) considered in part A text")
+  @CsvSource("true,", ", INDETERMINATE")
+  fun `given indeterminate sentence used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -247,7 +292,8 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = true,
+        isIndeterminateSentence = isIndeterminateSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
@@ -259,8 +305,13 @@ class PartADocumentMapperTest {
     }
   }
 
-  @Test
-  fun `given not indeterminate and not extended sentence and standard recall used in part A text`() {
+  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and standard recall considered in part A text")
+  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  fun `given not indeterminate and not extended sentence and standard recall used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -268,22 +319,46 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = false,
-        isExtendedSentence = false,
+        isIndeterminateSentence = isIndeterminateSentence,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isMappaLevelAbove1 = false,
         isUnder18 = false,
         isSentence12MonthsOrOver = false,
+        isChargedWithOffence = false,
+        isServingTerroristOrNationalSecurityOffence = false,
+        isAtRiskOfInvolvedInForeignPowerThreat = false,
+        wasReferredToParoleBoard244ZB = false,
+        wasRepatriatedForMurder = false,
+        isServingSOPCSentence = false,
+        isServingDCRSentence = false,
+        isYouthSentenceOver12Months = false,
+        isYouthChargedWithSeriousOffence = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.STANDARD)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("No")
       assertThat(result.isMappaAboveLevel1).isEqualTo("No")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedWithOffence).isEqualTo("No")
+      assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
+      assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
+      assertThat(result.wasReferredToParoleBoard244ZB).isEqualTo("No")
+      assertThat(result.wasRepatriatedForMurder).isEqualTo("No")
+      assertThat(result.isServingSOPCSentence).isEqualTo("No")
+      assertThat(result.isServingDCRSentence).isEqualTo("No")
+      assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
+      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
     }
   }
 
-  @Test
-  fun `given fixed term recall used in part A text`() {
+  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and fixed-term recall considered in part A text")
+  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  fun `given fixed term recall used in part A text`(
+    isIndeterminateSentence: Boolean?,
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+  ) {
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
@@ -291,17 +366,149 @@ class PartADocumentMapperTest {
         id = 1,
         crn = "ABC123",
         dateVloInformed = LocalDate.parse("2022-09-01"),
-        isIndeterminateSentence = false,
-        isExtendedSentence = false,
+        isIndeterminateSentence = isIndeterminateSentence,
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
         isUnder18 = true,
         isMappaLevelAbove1 = true,
         isSentence12MonthsOrOver = false,
+        isChargedWithOffence = false,
+        isServingTerroristOrNationalSecurityOffence = false,
+        isAtRiskOfInvolvedInForeignPowerThreat = false,
+        wasReferredToParoleBoard244ZB = false,
+        wasRepatriatedForMurder = false,
+        isServingSOPCSentence = false,
+        isServingDCRSentence = false,
+        isYouthSentenceOver12Months = false,
+        isYouthChargedWithSeriousOffence = false,
         recallType = RecallType(selected = RecallTypeSelectedValue(RecallTypeValue.FIXED_TERM)),
       )
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
       assertThat(result.isUnder18).isEqualTo("Yes")
       assertThat(result.isMappaAboveLevel1).isEqualTo("Yes")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedWithOffence).isEqualTo("No")
+      assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
+      assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
+      assertThat(result.wasReferredToParoleBoard244ZB).isEqualTo("No")
+      assertThat(result.wasRepatriatedForMurder).isEqualTo("No")
+      assertThat(result.isServingSOPCSentence).isEqualTo("No")
+      assertThat(result.isServingDCRSentence).isEqualTo("No")
+      assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
+      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaLevel2or3AsYouthSdsUnder12Months set to {3} when sentence group is {0} and isMappaLevel2or3 is {1} and isYouthSentenceOver12Months is {2}")
+  @CsvSource(
+    "YOUTH_SDS, true, false, Yes",
+    "YOUTH_SDS, true, true,",
+    "YOUTH_SDS, true, ,",
+    "YOUTH_SDS, false, false, No",
+    "YOUTH_SDS, false, true,",
+    "YOUTH_SDS, false, ,",
+    "ADULT_SDS, true, false,",
+    "ADULT_SDS, true, true,",
+    "ADULT_SDS, true, ,",
+    "ADULT_SDS, false, false,",
+    "ADULT_SDS, false, true,",
+    "ADULT_SDS, false, ,",
+    "INDETERMINATE, true, false,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, true, true,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, true, ,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, false, false,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, false, true,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, false, ,N/A - indeterminate or extended sentence",
+    "EXTENDED, true, false,N/A - indeterminate or extended sentence",
+    "EXTENDED, true, true,N/A - indeterminate or extended sentence",
+    "EXTENDED, true, ,N/A - indeterminate or extended sentence",
+    "EXTENDED, false, false,N/A - indeterminate or extended sentence",
+    "EXTENDED, false, true,N/A - indeterminate or extended sentence",
+    "EXTENDED, false, ,N/A - indeterminate or extended sentence",
+  )
+  fun `isMappaLevel2or3AsYouthSdsUnder12Months set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaLevel2or3: Boolean?,
+    isYouthSentenceOver12Months: Boolean?,
+    expectedIsMappaLevel2or3AsYouthSdsUnder12Months: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaLevel2Or3 = isMappaLevel2or3,
+        sentenceGroup = sentenceGroup,
+        isYouthSentenceOver12Months = isYouthSentenceOver12Months,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaLevel2or3AsYouthSdsUnder12Months).isEqualTo(
+        expectedIsMappaLevel2or3AsYouthSdsUnder12Months,
+      )
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaLevel2or3AsAdultSds set to {2} when sentence group is {0} and isMappaLevel2or3 is {1}")
+  @CsvSource(
+    "ADULT_SDS, true, Yes",
+    "ADULT_SDS, false, No",
+    "YOUTH_SDS, true,",
+    "YOUTH_SDS, false,",
+    "INDETERMINATE, true,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, false,N/A - indeterminate or extended sentence",
+    "EXTENDED, true,N/A - indeterminate or extended sentence",
+    "EXTENDED, false,N/A - indeterminate or extended sentence",
+  )
+  fun `isMappaLevel2or3AsAdultSds set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaLevel2or3: Boolean?,
+    expectedIsMappaLevel2or3AsAdultSds: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaLevel2Or3 = isMappaLevel2or3,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaLevel2or3AsAdultSds).isEqualTo(expectedIsMappaLevel2or3AsAdultSds)
+    }
+  }
+
+  @ParameterizedTest(name = "isMappaCategory4AsAdultSds set to {2} when sentence group is {0} and isMappaCategory4 is {1}")
+  @CsvSource(
+    "ADULT_SDS, true, Yes",
+    "ADULT_SDS, false, No",
+    "YOUTH_SDS, true,",
+    "YOUTH_SDS, false,",
+    "INDETERMINATE, true,N/A - indeterminate or extended sentence",
+    "INDETERMINATE, false,N/A - indeterminate or extended sentence",
+    "EXTENDED, true,N/A - indeterminate or extended sentence",
+    "EXTENDED, false,N/A - indeterminate or extended sentence",
+  )
+  fun `isMappaCategory4AsAdultSds set correctly`(
+    sentenceGroup: SentenceGroup?,
+    isMappaCategory4: Boolean?,
+    expectedIsMappaCategory4AsAdultSds: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        isMappaCategory4 = isMappaCategory4,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaCategory4AsAdultSds).isEqualTo(expectedIsMappaCategory4AsAdultSds)
     }
   }
 
@@ -323,7 +530,7 @@ class PartADocumentMapperTest {
   }
 
   @ParameterizedTest(name = "given is indeterminate sentence type field {0} in recommendation data should map to the part A text {1}")
-  @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "NO,No")
+  @CsvSource("LIFE,Yes - Lifer", "IPP,Yes - IPP", "DPP,Yes - DPP", "DHMP,Yes - DHMP", "NO,No")
   fun `given indeterminate sentence type data then should map to the part A text`(
     indeterminateSentenceType: IndeterminateSentenceTypeOptions,
     partADisplayText: String?,
@@ -1164,6 +1371,10 @@ class PartADocumentMapperTest {
               details = "Behaviour leading to sexual or violent behaviour",
             ),
             ValueWithDetails(
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+              details = "Behaviour likely to result in sexual or violent behaviour",
+            ),
+            ValueWithDetails(
               value = "OUT_OF_TOUCH",
               details = "Out of touch",
             ),
@@ -1178,6 +1389,10 @@ class PartADocumentMapperTest {
               value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
+              text = "Behaviour likely to result in sexual or violent behaviour",
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            ),
+            TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
             ),
@@ -1190,6 +1405,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("Some behaviour similar to index offence")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("Yes")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("Behaviour leading to sexual or violent behaviour")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("Yes")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("Behaviour likely to result in sexual or violent behaviour")
       assertThat(result.outOfTouchPresent).isEqualTo("Yes")
       assertThat(result.outOfTouch).isEqualTo("Out of touch")
     }
@@ -1215,6 +1432,10 @@ class PartADocumentMapperTest {
               value = "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
             ),
             TextValueOption(
+              text = "Behaviour likely to result in sexual or violent behaviour",
+              value = "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            ),
+            TextValueOption(
               text = "Out of touch",
               value = "OUT_OF_TOUCH",
             ),
@@ -1227,6 +1448,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("No")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("No")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("")
       assertThat(result.outOfTouchPresent).isEqualTo("No")
       assertThat(result.outOfTouch).isEqualTo("")
     }
@@ -1248,6 +1471,8 @@ class PartADocumentMapperTest {
       assertThat(result.behaviourSimilarToIndexOffence).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffencePresent).isEqualTo("")
       assertThat(result.behaviourLeadingToSexualOrViolentOffence).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffencePresent).isEqualTo("")
+      assertThat(result.behaviourLikelyToResultSexualOrViolentOffence).isEqualTo("")
       assertThat(result.outOfTouchPresent).isEqualTo("")
       assertThat(result.outOfTouch).isEqualTo("")
     }
@@ -1344,6 +1569,44 @@ class PartADocumentMapperTest {
       assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.localDeliveryUnit).isEqualTo(EMPTY_STRING)
+    }
+  }
+
+  @ParameterizedTest(name = "probation practitioner details are included when practitioner isPersonProbationPractitionerForOffender is {0}")
+  @ValueSource(booleans = [true, false])
+  fun `probation practitioner details are always included`(isPersonProbationPractitionerForOffender: Boolean) {
+    runTest {
+      val featureFlags = FeatureFlags()
+      given(regionService.getRegionName("RegionCode"))
+        .willReturn("Region Name")
+      if (!isPersonProbationPractitionerForOffender) {
+        given(regionService.getRegionName(null))
+          .willReturn("")
+      }
+      val recommendation = RecommendationResponse(
+        whoCompletedPartA = WhoCompletedPartA(
+          name = "Joe Bloggs",
+          telephone = "0123456789",
+          email = "jb@example.com",
+          region = "RegionCode",
+          localDeliveryUnit = "Delivery Unit 1",
+          isPersonProbationPractitionerForOffender = isPersonProbationPractitionerForOffender,
+        ),
+        practitionerForPartA = PractitionerForPartA(
+          name = "Jane Vloggs",
+          telephone = "9876543210",
+          email = "jv@example.com",
+        ),
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
+
+      assertThat(result.probationPractitionerDetails.name)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.name else recommendation.practitionerForPartA?.name)
+      assertThat(result.probationPractitionerDetails.telephone)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.telephone else recommendation.practitionerForPartA?.telephone)
+      assertThat(result.probationPractitionerDetails.email)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.email else recommendation.practitionerForPartA?.email)
     }
   }
 

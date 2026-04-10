@@ -8,16 +8,17 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
@@ -29,6 +30,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NO
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.NOT_APPLICABLE
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.YES
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsExtendedSentence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsIndeterminateSentence
 import java.time.LocalDate
 
 @Component
@@ -54,6 +57,10 @@ internal class PartADocumentMapper(
       recommendation.indeterminateOrExtendedSentenceDetails,
       BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
     )
+    val (behaviourLikelyToResultSexualOrViolentOffencePresent, behaviourLikelyToResultSexualOrViolentOffence) = getIndeterminateOrExtendedSentenceDetails(
+      recommendation.indeterminateOrExtendedSentenceDetails,
+      BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+    )
     val (outOfTouchPresent, outOfTouch) = getIndeterminateOrExtendedSentenceDetails(
       recommendation.indeterminateOrExtendedSentenceDetails,
       OUT_OF_TOUCH.name,
@@ -74,14 +81,13 @@ internal class PartADocumentMapper(
         recommendation.custodyStatus?.selected?.partADisplayValue ?: EMPTY_STRING,
         recommendation.custodyStatus?.details,
       ),
-      recallType = findRecallTypeToDisplay(
-        recommendation.recallType,
-        recommendation.isIndeterminateSentence,
-        recommendation.isExtendedSentence,
-      ),
+      recallType = findRecallTypeToDisplay(recommendation),
       responseToProbation = recommendation.responseToProbation,
       whatLedToRecall = recommendation.whatLedToRecall,
       isThisAnEmergencyRecall = convertBooleanToYesNo(recommendation.isThisAnEmergencyRecall),
+      // we want the youth section to go unanswered for non-youth sentences, rather than explicitly say "No", as it
+      // might otherwise confuse readers over whether it's youth or not
+      isServingYouthSentence = if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else EMPTY_STRING,
 
       isUnder18 = generateExclusionCriteriaAnswer(recommendation.isUnder18, recommendation),
       isSentence12MonthsOrOver = generateExclusionCriteriaAnswer(
@@ -105,6 +111,9 @@ internal class PartADocumentMapper(
         recommendation.isMappaLevel2Or3,
         recommendation,
       ),
+      isMappaLevel2or3AsYouthSdsUnder12Months = calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation),
+      isMappaLevel2or3AsAdultSds = calculateIsMappaLevel2or3AsAdultSds(recommendation),
+      isMappaCategory4AsAdultSds = calculateMappaCategory4AsAdultSds(recommendation),
       isRecalledOnNewChargedOffence = generateExclusionCriteriaAnswer(
         recommendation.isRecalledOnNewChargedOffence,
         recommendation,
@@ -117,7 +126,43 @@ internal class PartADocumentMapper(
         recommendation.hasBeenChargedWithTerroristOrStateThreatOffence,
         recommendation,
       ),
-      isExtendedSentence = convertBooleanToYesNo(recommendation.isExtendedSentence),
+      isChargedWithOffence = generateExclusionCriteriaAnswer(
+        recommendation.isChargedWithOffence,
+        recommendation,
+      ),
+      isServingTerroristOrNationalSecurityOffence = generateExclusionCriteriaAnswer(
+        recommendation.isServingTerroristOrNationalSecurityOffence,
+        recommendation,
+      ),
+      isAtRiskOfInvolvedInForeignPowerThreat = generateExclusionCriteriaAnswer(
+        recommendation.isAtRiskOfInvolvedInForeignPowerThreat,
+        recommendation,
+      ),
+      wasReferredToParoleBoard244ZB = generateExclusionCriteriaAnswer(
+        recommendation.wasReferredToParoleBoard244ZB,
+        recommendation,
+      ),
+      wasRepatriatedForMurder = generateExclusionCriteriaAnswer(
+        recommendation.wasRepatriatedForMurder,
+        recommendation,
+      ),
+      isServingSOPCSentence = generateExclusionCriteriaAnswer(
+        recommendation.isServingSOPCSentence,
+        recommendation,
+      ),
+      isServingDCRSentence = generateExclusionCriteriaAnswer(
+        recommendation.isServingDCRSentence,
+        recommendation,
+      ),
+      isYouthSentenceOver12Months = generateExclusionCriteriaAnswer(
+        recommendation.isYouthSentenceOver12Months,
+        recommendation,
+      ),
+      isYouthChargedWithSeriousOffence = generateExclusionCriteriaAnswer(
+        recommendation.isYouthChargedWithSeriousOffence,
+        recommendation,
+      ),
+      isExtendedSentence = convertBooleanToYesNo(recommendation.calculateIsExtendedSentence()),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
       indeterminateSentenceType = recommendation.indeterminateSentenceType?.selected?.partADisplayValue
@@ -166,7 +211,14 @@ internal class PartADocumentMapper(
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
       completedBy = determineCompletedBy(recommendation, metadata, flags),
+      // we have separate supervisingPractitioner and probationPractitionerDetails fields because Part As pre-FTR56
+      // include the details only if the person completing the Part A isn't the practitioner (the Part A had separate
+      // sections and explicitly ask for the second one only to filled in if relevant), whereas the FTR56 version always
+      // wants the practitioner's details, for which we need the logic in determineProbationPractitionerDetails. We
+      // can't change determineSupervisingPractitioner, as we still need to support downloads of older Part As and we
+      // don't want them to fill in the practitioner section if they are the same as the whoFilledPartA one
       supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
+      probationPractitionerDetails = determineProbationPractitionerDetails(recommendation),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = decisionDate,
       timeOfDecision = decisionTime,
@@ -176,9 +228,12 @@ internal class PartADocumentMapper(
       behaviourSimilarToIndexOffencePresent = behaviourSimilarToIndexOffencePresent,
       behaviourLeadingToSexualOrViolentOffence = behaviourLeadingToSexualOrViolentOffence,
       behaviourLeadingToSexualOrViolentOffencePresent = behaviourLeadingToSexualOrViolentOffencePresent,
+      behaviourLikelyToResultSexualOrViolentOffence = behaviourLikelyToResultSexualOrViolentOffence,
+      behaviourLikelyToResultSexualOrViolentOffencePresent = behaviourLikelyToResultSexualOrViolentOffencePresent,
       outOfTouch = outOfTouch,
       outOfTouchPresent = outOfTouchPresent,
-      otherPossibleAddresses = formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
+      otherPossibleAddresses =
+      formatAddressWherePersonCanBeFound(recommendation.mainAddressWherePersonCanBeFound?.details),
       primaryLanguage = recommendation.personOnProbation?.primaryLanguage,
       lastReleasingPrison = recommendation.previousReleases?.lastReleasingPrisonOrCustodialEstablishment,
       lastReleaseDate = buildFormattedLocalDate(lastRelease),
@@ -248,6 +303,24 @@ internal class PartADocumentMapper(
     PractitionerDetails()
   }
 
+  private suspend fun determineProbationPractitionerDetails(recommendation: RecommendationResponse): PractitionerDetails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
+    with(recommendation.practitionerForPartA) {
+      PractitionerDetails(
+        name = this?.name ?: "",
+        telephone = this?.telephone ?: "",
+        email = this?.email ?: "",
+      )
+    }
+  } else {
+    with(recommendation.whoCompletedPartA) {
+      PractitionerDetails(
+        name = this.name ?: "",
+        telephone = this.telephone ?: "",
+        email = this.email ?: "",
+      )
+    }
+  }
+
   private fun buildPreviousReleasesList(previousReleases: PreviousReleases?): List<LocalDate> = previousReleases?.previousReleaseDates ?: emptyList()
 
   private fun buildPreviousRecallsList(previousRecalls: PreviousRecalls?): List<LocalDate> {
@@ -258,27 +331,29 @@ internal class PartADocumentMapper(
     return dates
   }
 
-  private fun findRecallTypeToDisplay(
-    recallType: RecallType?,
-    isIndeterminateSentence: Boolean?,
-    isExtendedSentence: Boolean?,
-  ): ValueWithDetails = if (isIndeterminateSentence == true || isExtendedSentence == true) {
-    val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
-    ValueWithDetails(textToDisplay, textToDisplay)
-  } else {
-    val partAValue = when (recallType?.selected?.value) {
-      RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
-      RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
-      else -> null
+  private fun findRecallTypeToDisplay(recommendation: RecommendationResponse): ValueWithDetails {
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
+    if (isIndeterminateSentence == true || isExtendedSentence == true) {
+      val textToDisplay = buildNotApplicableMessage(isIndeterminateSentence, isExtendedSentence, null)
+      return ValueWithDetails(textToDisplay, textToDisplay)
+    } else {
+      val partAValue = when (recommendation.recallType?.selected?.value) {
+        RecallTypeValue.STANDARD -> RecallTypeValue.STANDARD.displayValue
+        RecallTypeValue.FIXED_TERM -> RecallTypeValue.FIXED_TERM.displayValue
+        else -> null
+      }
+      return ValueWithDetails(partAValue, recommendation.recallType?.selected?.details)
     }
-    ValueWithDetails(partAValue, recallType?.selected?.details)
   }
 
   private fun additionalLicenceConditionsTextToDisplay(recommendation: RecommendationResponse): String? {
     val isStandardRecall: Boolean = recommendation.recallType?.selected?.value == RecallTypeValue.STANDARD
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
     return buildNotApplicableMessage(
-      recommendation.isIndeterminateSentence,
-      recommendation.isExtendedSentence,
+      isIndeterminateSentence,
+      isExtendedSentence,
       isStandardRecall,
     )
       ?: if (recommendation.fixedTermAdditionalLicenceConditions?.selected == true) recommendation.fixedTermAdditionalLicenceConditions.details else EMPTY_STRING
@@ -310,11 +385,11 @@ internal class PartADocumentMapper(
     value: Boolean?,
     recommendation: RecommendationResponse,
   ): String {
-    val isIndeterminateSentence = recommendation.isIndeterminateSentence == true
-    val isExtendedSentence = recommendation.isExtendedSentence == true
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
 
     return when {
-      isIndeterminateSentence || isExtendedSentence -> "N/A - indeterminate or extended sentence"
+      (isIndeterminateSentence ?: false) || (isExtendedSentence ?: false) -> "N/A - indeterminate or extended sentence"
       else -> if (value == true) {
         YES
       } else if (value == false) {
@@ -454,5 +529,52 @@ internal class PartADocumentMapper(
       return dates.joinToString(", ") { buildFormattedLocalDate(it) }
     }
     return EMPTY_STRING
+  }
+
+  /**
+   * We want to leave the value empty for this field unless the person is serving a youth sentence of 12 months or
+   * under, in which case we want to display the Mappa level 2 or 3 value. We explicitly don't want to return "No" if
+   * either of the first two criteria (youth & sentence length) aren't met, as otherwise the reader of the Part A may
+   * incorrectly infer that the two criteria are met but the offender isn't MAPPA level 2 or 3, when in reality the
+   * criteria just aren't met and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateIsMappaLevel2or3AsYouthSdsUnder12Months(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS &&
+    !(recommendation.isYouthSentenceOver12Months ?: true) // if null, we want to return null
+  ) {
+    convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
+    generateExclusionCriteriaAnswer(false, recommendation)
+  } else {
+    null
+  }
+
+  /**
+   * Similar logic to calculateIsMappaLevel2or3AsYouthSdsUnder12Months - we only want to return a value for this field
+   * if the offender is serving an adult sentence, in which case we want to display the Mappa level 2 or 3 value. If the
+   * offender is serving a different type of sentence, we want to leave the field empty to avoid readers of the Part A
+   * incorrectly inferring that the offender is serving an adult sentence and isn't MAPPA level 2 or 3, when in reality
+   * they're serving a different type of sentence and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateIsMappaLevel2or3AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
+    convertBooleanToYesNo(recommendation.isMappaLevel2Or3)
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
+    generateExclusionCriteriaAnswer(false, recommendation)
+  } else {
+    null
+  }
+
+  /**
+   * Similar logic to calculateIsMappaLevel2or3AsYouthSdsUnder12Months - we only want to return a value for this field
+   * if the offender is serving an adult sentence, in which case we want to display the Mappa category 4 value. If the
+   * offender is serving a different type of sentence, we want to leave the field empty to avoid readers of the Part A
+   * incorrectly inferring that the offender is serving an adult sentence and isn't MAPPA category 4, when in reality
+   * they're serving a different type of sentence and the section of the part A where this value is set is irrelevant.
+   */
+  private fun calculateMappaCategory4AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
+    convertBooleanToYesNo(recommendation.isMappaCategory4)
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
+    generateExclusionCriteriaAnswer(false, recommendation)
+  } else {
+    null
   }
 }
