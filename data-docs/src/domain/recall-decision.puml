@@ -1,0 +1,10 @@
+@startuml
+hide empty members
+
+package "Person Recalls" <<Rectangle>> #Yellow {
+  entity RecallDecision
+}
+entity "Person On Probation" as pop
+
+pop --> RecallDecision : "has a"
+@enduml

@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const path = require('path');
 const fs = require("fs");
 const { Client } = require("pg");
@@ -15,7 +13,8 @@ const requiredEnvVars = [
   'SCHEMA',
   'DB_USERNAME',
   'DB_PASSWORD',
-  'OUTPUT'
+  'OUTPUT',
+  'SSL_CA_FILE',
 ];
 
 for (const key of requiredEnvVars) {
@@ -106,7 +105,7 @@ async function pgToJson(dbConfig) {
   // -----------------------------------------------------
   var ignoreTables = [];
   if (process.env.IGNORETABLES) {
-    ignoreTables = process.env.IGNORETABLES.split(",");
+    ignoreTables = process.env.IGNORETABLES.split("|");
   }
   console.log(ignoreTables);
   const filteredTables = tables.rows.filter(t => ignoreTables.indexOf(t.table_name) == -1);
@@ -271,14 +270,17 @@ function flattenJsonSchema(schema) {
 
 function generateOutputFiles(json, outputDir) {
   const csvRows = [];
-  const mdRows = [];
+  const htmlRows = [];
 
   // Headers
   const headers = ['tablename', 'fieldname', 'description', 'type', 'sar'];
 
   csvRows.push(headers.join(','));
-  mdRows.push(`| ${headers.join(' | ')} |`);
-  mdRows.push(`| ${headers.map(() => '---').join(' | ')} |`);
+  htmlRows.push(`<table>`);
+  htmlRows.push(`<thead>`);
+  htmlRows.push(`<tr> <th scope="col">${headers.join('</th><th scope="col">')} </th></tr>`);
+  htmlRows.push(`</thead>`);
+  htmlRows.push(`<tbody>`);
 
   for (const table of json.tables || []) {
     for (const field of table.fields || []) {
@@ -294,9 +296,11 @@ function generateOutputFiles(json, outputDir) {
       csvRows.push(row.map(escapeCsv).join(','));
 
       // Markdown
-      mdRows.push(`| ${row.join(' | ')} |`);
+      htmlRows.push(`<tr><td>${row.join('</td><td>')} </td></tr>`);
     }
   }
+  htmlRows.push(`</tbody>`);
+  htmlRows.push(`</table>`);
 
   // Write files
   fs.writeFileSync(
@@ -306,8 +310,8 @@ function generateOutputFiles(json, outputDir) {
   );
 
   fs.writeFileSync(
-    path.join(outputDir, 'data-dictionary.md'),
-    mdRows.join('\n'),
+    path.join(outputDir, 'data-dictionary.html'),
+    htmlRows.join('\n'),
     'utf8'
   );
 
@@ -317,7 +321,7 @@ function generateOutputFiles(json, outputDir) {
     'utf8'
   );
 
-  console.log('CSV, Markdown and JSON files generated');
+  console.log('CSV, HTML fragment and JSON files generated');
 }
 
 /**
