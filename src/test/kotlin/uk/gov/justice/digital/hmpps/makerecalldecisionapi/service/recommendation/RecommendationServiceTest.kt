@@ -81,6 +81,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.MrdEventsEmitter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
@@ -1950,6 +1951,67 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(expected.dateOfBirth).isEqualTo(actual?.dateOfBirth)
       assertThat(expected.addresses).isEqualTo(actual?.addresses)
       assertThat(expected.firstName).isEqualTo(actual?.firstName)
+    }
+  }
+
+  @Test
+  fun `keeps MAPPA reviewed property when person details from Delius are refreshed`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(
+            ftr56MappaReviewed = true,
+          )
+        ),
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
+
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("personOnProbation"),
+        null
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      val recommendationEntity = recommendationCaptor.firstValue
+      val actual = recommendationEntity.data.personOnProbation
+
+      assertThat(actual?.ftr56MappaReviewed).isEqualTo(true)
     }
   }
 
