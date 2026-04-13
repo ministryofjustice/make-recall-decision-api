@@ -348,7 +348,11 @@ class PartADocumentMapperTest {
       assertThat(result.isServingSOPCSentence).isEqualTo("No")
       assertThat(result.isServingDCRSentence).isEqualTo("No")
       assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
-      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      if (sentenceGroup === SentenceGroup.YOUTH_SDS) {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      } else {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(null)
+      }
     }
   }
 
@@ -395,7 +399,11 @@ class PartADocumentMapperTest {
       assertThat(result.isServingSOPCSentence).isEqualTo("No")
       assertThat(result.isServingDCRSentence).isEqualTo("No")
       assertThat(result.isYouthSentenceOver12Months).isEqualTo("No")
-      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      if (sentenceGroup === SentenceGroup.YOUTH_SDS) {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo("No")
+      } else {
+        assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(null)
+      }
     }
   }
 
@@ -509,6 +517,42 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
       assertThat(result.isMappaCategory4AsAdultSds).isEqualTo(expectedIsMappaCategory4AsAdultSds)
+    }
+  }
+
+  @ParameterizedTest(name = "isYouthChargedWithSeriousOffence is set to {4} and isMappaLevel2Or3 is set to {5} when sentence group is {0} and isYouthSentenceOver12Months is set to {1} and isMappaLevel2Or3 is set to {3}")
+  @CsvSource(
+    "ADULT_SDS,,,,,",
+    "YOUTH_SDS,true,true,true,,",
+    "YOUTH_SDS,true,false,false,,",
+    "YOUTH_SDS,false,true,true,Yes,Yes",
+    "YOUTH_SDS,false,false,false,No,No",
+    "INDETERMINATE,,,,N/A - indeterminate or extended sentence,N/A - indeterminate or extended sentence",
+    "EXTENDED,,,,N/A - indeterminate or extended sentence,N/A - indeterminate or extended sentence",
+  )
+  fun `isYouthSentenceOver12Months `(
+    sentenceGroup: SentenceGroup?,
+    isYouthSentenceOver12Months: Boolean?,
+    isYouthChargedWithSeriousOffence: Boolean?,
+    isMappaLevel2Or3: Boolean?,
+    expectedIsYouthChargedWithSeriousOffence: String?,
+    expectedIsMappaLevel2or3AsYouthSdsUnder12Months: String?,
+  ) {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        id = 1,
+        sentenceGroup = sentenceGroup,
+        isYouthSentenceOver12Months = isYouthSentenceOver12Months,
+        isYouthChargedWithSeriousOffence = isYouthChargedWithSeriousOffence,
+        isMappaLevel2Or3 = isMappaLevel2Or3,
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.isMappaLevel2or3AsYouthSdsUnder12Months).isEqualTo(expectedIsMappaLevel2or3AsYouthSdsUnder12Months)
+      assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(expectedIsYouthChargedWithSeriousOffence)
     }
   }
 
