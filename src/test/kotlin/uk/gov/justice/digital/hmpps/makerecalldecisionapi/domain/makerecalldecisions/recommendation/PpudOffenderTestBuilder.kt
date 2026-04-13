@@ -70,9 +70,11 @@ fun ppudSentence(
 fun ppudOffence(
   indexOffence: String? = randomString(),
   dateOfIndexOffence: String? = randomLocalDate().toString(),
+  indexOffenceComment: String? = randomString(),
 ) = PpudOffence(
   indexOffence = indexOffence,
   dateOfIndexOffence = dateOfIndexOffence,
+  indexOffenceComment = indexOffenceComment,
 )
 
 fun ppudRelease(
