@@ -158,10 +158,7 @@ internal class PartADocumentMapper(
         recommendation.isYouthSentenceOver12Months,
         recommendation,
       ),
-      isYouthChargedWithSeriousOffence = generateExclusionCriteriaAnswer(
-        recommendation.isYouthChargedWithSeriousOffence,
-        recommendation,
-      ),
+      isYouthChargedWithSeriousOffence = calculateIsYouthChargedWithSeriousOffence(recommendation),
       isExtendedSentence = convertBooleanToYesNo(recommendation.calculateIsExtendedSentence()),
       hasVictimsInContactScheme = recommendation.hasVictimsInContactScheme?.selected?.partADisplayValue
         ?: EMPTY_STRING,
@@ -572,6 +569,20 @@ internal class PartADocumentMapper(
    */
   private fun calculateMappaCategory4AsAdultSds(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.ADULT_SDS) {
     convertBooleanToYesNo(recommendation.isMappaCategory4)
+  } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
+    generateExclusionCriteriaAnswer(false, recommendation)
+  } else {
+    null
+  }
+
+  /**
+   * Similar logic to the other calculate... functions, for this field we don't want to display any value unless the
+   * offender is serving a youth sentence, and that sentence is over 12 months
+   */
+  private fun calculateIsYouthChargedWithSeriousOffence(recommendation: RecommendationResponse): String? = if (recommendation.sentenceGroup == SentenceGroup.YOUTH_SDS &&
+    !(recommendation.isYouthSentenceOver12Months ?: true)
+  ) {
+    convertBooleanToYesNo(recommendation.isYouthChargedWithSeriousOffence)
   } else if (recommendation.sentenceGroup === SentenceGroup.INDETERMINATE || recommendation.sentenceGroup === SentenceGroup.EXTENDED) {
     generateExclusionCriteriaAnswer(false, recommendation)
   } else {
