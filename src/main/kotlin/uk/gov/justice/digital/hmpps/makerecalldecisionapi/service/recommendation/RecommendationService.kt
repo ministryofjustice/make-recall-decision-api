@@ -535,6 +535,7 @@ internal class RecommendationService(
     personOnProbation = deliusDetails.toPersonOnProbation().copy(
       hasBeenReviewed = personOnProbation?.hasBeenReviewed,
       mappa = personOnProbation?.mappa,
+      ftr56MappaReviewed = personOnProbation?.ftr56MappaReviewed,
     )
   }
 
