@@ -1963,7 +1963,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
           crn = crn,
           personOnProbation = PersonOnProbation(
             ftr56MappaReviewed = true,
-          )
+          ),
         ),
       )
 
@@ -2003,7 +2003,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         false,
         false,
         listOf("personOnProbation"),
-        null
+        null,
       )
 
       assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
