@@ -80,6 +80,10 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
 
+  // Temporarily pinned to address CVE-2026-34483, CVE-2026-29129 and CVE-2026-25854, should be removable once
+  // spring-boot releases a 3.x version with the fix, or when we upgrade to spring-boot 4 (if the fix is included there)
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.54")
+
   // The following pinned netty dependencies are to address CVE-2026-33871 and CVE-2026-33870. Spring Boot 3.5.13
   // addresses this, but it is currently only a few days old, so will wait for a bit more before releasing a new HMPPS
   // plug-in version with it and pulling it here
