@@ -65,7 +65,7 @@ internal class RiskServiceTest : ServiceTestBase() {
       recommendationRepository,
       recommendationStatusRepository,
       personDetailsService,
-      PrisonerApiService(prisonApiClient, offenderMovementConverter),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
       templateReplacementService2,
       userAccessValidator,
       null,

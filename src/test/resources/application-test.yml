@@ -48,6 +48,7 @@ gotenberg:
 ppud-automation:
   api:
     endpoint:
+      # the port is aligned with that set in PpudAutomationResponseMocker; if changing here, change there too
       url: http://localhost:8099
 
 prison:
@@ -55,6 +56,7 @@ prison:
     timeout: 2
   api:
     endpoint:
+      # the port is aligned with that set in PrisonApiResponseMocker; if changing here, change there too
       url: http://localhost:8098
 
 oauth:
