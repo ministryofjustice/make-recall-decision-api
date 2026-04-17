@@ -70,14 +70,20 @@ try {
 
   let json = await pgToJson(clientConfig);
 
-  if (process.env['REFERENCE_DATA']) {
-		referenceFilename = process.env['REFERENCE_DATA']
+  if (process.env['METADATA']) {
+		referenceFilename = process.env['METADATA']
 		if (fs.existsSync(referenceFilename)) {
-      console.log("Merging reference data from " + referenceFilename);
+      console.log("Merging metadata from " + referenceFilename);
 			referenceData = JSON.parse(fs.readFileSync(referenceFilename));
 			json = mergeReferenceData(json,referenceData);
 		}
+    else {
+      console.log("Metadata set to " + process.env['METADATA'] + " but file not found");
+    }
 	}
+  else {
+    console.log("Metadata not set");
+  }
 
   generateOutputFiles(json, outputDir);
 
@@ -143,11 +149,15 @@ async function pgToJson(dbConfig) {
         for(i = 0; i < jsonSchema.length; i++) {
           jsonSchema[i].description = '';
           jsonSchema[i].sar = true;
+          jsonSchema[i].entity = tableName;
+          jsonSchema[i].mandatory = true;
+          jsonSchema[i].example = '';
+          jsonSchema[i].comments = '';
           table.fields.push(jsonSchema[i]);
         }
       }
       else {
-        field = {'name': colName, 'type': mapPgTypeToHumanReadable(colType), 'description': '', 'sar': true}
+        field = {'name': colName, 'type': mapPgTypeToHumanReadable(colType), 'description': '', 'sar': true, 'entity': tableName, 'mandatory': true, 'example': '', 'comments': ''}
         table.fields.push(field);
       }
 
@@ -273,7 +283,7 @@ function generateOutputFiles(json, outputDir) {
   const htmlRows = [];
 
   // Headers
-  const headers = ['tablename', 'fieldname', 'description', 'type', 'sar'];
+  const headers = ['entity', 'element', 'description', 'type', 'example value', 'mandatory', 'sar', 'comments'];
 
   csvRows.push(headers.join(','));
   htmlRows.push(`<table>`);
@@ -289,7 +299,10 @@ function generateOutputFiles(json, outputDir) {
         field.name,
         field.description || '',
         field.type,
-        String(field.sar)
+        field.example,
+        String(field.mandatory),
+        field.sar,
+        field.comments
       ];
 
       // CSV
@@ -346,9 +359,11 @@ function mergeReferenceData(targetSchema, sourceSchema) {
   const sourceMap = new Map();
 
   for (const table of sourceSchema.tables || []) {
+    console.log("Processing " + table.name);
     for (const field of table.fields || []) {
       const key = `${table.name}.${field.name}`;
       sourceMap.set(key, field);
+      console.log("Added " + key);
     }
   }
 
@@ -358,10 +373,31 @@ function mergeReferenceData(targetSchema, sourceSchema) {
       const key = `${table.name}.${field.name}`;
       const sourceField = sourceMap.get(key);
 
+      console.log("Looking for " + key);
+
       if (!sourceField) continue;
 
+      console.log("Found it!");
+
       if (sourceField.description !== undefined) {
+        console.log("Found description for ${key} in metadata");
         field.description = sourceField.description;
+      }
+
+      if (sourceField.entity !== undefined) {
+        field.entity = sourceField.entity;
+      }
+
+      if (sourceField.mandatory !== undefined) {
+        field.mandatory = sourceField.mandatory;
+      }
+
+      if (sourceField.example !== undefined) {
+        field.example = sourceField.example;
+      }
+
+      if (sourceField.comments !== undefined) {
+        field.comments = sourceField.comments;
       }
 
       if (sourceField.sar !== undefined) {

@@ -31,7 +31,7 @@ kubectl run "$pod_name" \
 						{ "name": "DB_PASSWORD", "value": "${DB_PASSWORD}" },
 						{ "name": "SSL_CA_FILE", "value": "${SSL_CA_FILE}" },
 						{ "name": "OUTPUT", "value": "${OUTPUT}" },
-						{ "name": "REFERENCE_DATA", "value": "./metadata.json" },
+						{ "name": "METADATA", "value": "/tmp/create-data-dictionary/metadata.json" },
 						{ "name": "IGNORETABLES", "value": "${IGNORETABLES}" }]
         }
       ]
@@ -42,22 +42,14 @@ EOF
 
 kubectl wait --for=condition=ready pod "$pod_name"
 
+# Copy application files
 kubectl cp create-data-dictionary "$pod_name:/tmp/create-data-dictionary" 
+
+# Copy metadata file
 kubectl cp ${METADATA} "$pod_name:/tmp/create-data-dictionary/metadata.json" 
 
-
+# Run report
 kubectl exec "$pod_name" -- node /tmp/create-data-dictionary/create-data-dictionary.js 
-
-# Generate report
-#kubectl exec "$pod_name" -- /usr/local/bin/schemaspy \
-#  -t pgsql \
-#  -host "${HOST}" \
-#  -port "${PORT}" \
-#  -db "${DB}" \
-#  -s "${SCHEMA}" \
-#  -u "${DB_USERNAME}" \
-#  -p "${DB_PASSWORD}" \
-#  -norows -noviews -degree 1
 
 # Download report
 kubectl cp "$pod_name:${OUTPUT}" data-dictionary-output
