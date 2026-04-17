@@ -1,1435 +1,2375 @@
 {
-   "tables" : [
-      {
-         "fields" : [
-            {
-               "description" : "internal id of the recommendation",
-               "name" : "id",
-               "sar" : false,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "recommendation_id",
-               "sar" : false,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "created_by",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "Full name of the user who created the recommendation",
-               "name" : "created_by_user_full_name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "created",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "uploaded_by",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "uploaded_by_user_full_name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "uploaded",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "filename",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "type",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "mimetype",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "document_uuid",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "title",
-               "sar" : true,
-               "type" : "string"
-            }
-         ],
-         "name" : "recommendation_document"
-      },
-      {
-         "fields" : [
-            {
-               "description" : "",
-               "name" : "id",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "recommendation_id",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "created_by",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "created_by_user_full_name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "created",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "modified_by",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "modified_by_user_full_name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "modified",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "active",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "recommendation_history_id",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "email_address",
-               "sar" : true,
-               "type" : "string"
-            }
-         ],
-         "name" : "recommendation_status"
-      },
-      {
-         "fields" : [
-            {
-               "description" : "",
-               "name" : "id",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data",
-               "sar" : false,
-               "type" : "complex"
-            },
-            {
-               "description" : "",
-               "name" : "data.crn",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.region",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.status",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.deleted",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.createdBy",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.sensitive",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.recallType.selected.value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.recallType.selected.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.recallType.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.recallType.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.createdDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.error",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.whoIsAtRisk",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.natureOfRisk",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskImminence",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.lastUpdatedDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.overallRisk",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskIncreaseFactors",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.roshSummary.riskMitigationFactors",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.custodyStatus.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.custodyStatus.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.custodyStatus.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.custodyStatus.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.dateOfRelease[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.offencesMatch",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.spoRecallType",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.lastModifiedBy",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.dateVloInformed",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasArrestIssues.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasArrestIssues.selected",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.nextAppointment.probationPhoneNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.nextAppointment.dateTimeOfAppointment",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.nextAppointment.howWillAppointmentHappen.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.nextAppointment.howWillAppointmentHappen.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.nextAppointment.howWillAppointmentHappen.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.offenceAnalysis",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.ppcsQueryEmails[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousRecalls.lastRecallDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousRecalls.previousRecallDates[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousRecalls.hasBeenRecalledPreviously",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.vulnerabilities.selected[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.vulnerabilities.selected[].details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.vulnerabilities.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.vulnerabilities.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whatLedToRecall",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.extendedTerm",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.custodialTerm",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.dateOfSentence[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.hasBeenReviewed",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.lengthOfSentence",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.licenceExpiryDate[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.sentenceExpiryDate[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.sentenceDescription",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.sentenceSecondLength",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.dateOfOriginalOffence[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.lengthOfSentenceUnits",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.indexOffenceDescription",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.convictionDetail.sentenceSecondLengthUnits",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.lastModifiedDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousReleases.lastReleaseDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousReleases.previousReleaseDates[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousReleases.hasBeenReleasedPreviously",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.previousReleases.lastReleasingPrisonOrCustodialEstablishment",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.releaseUnderECSL",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasContrabandRisk.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasContrabandRisk.selected",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.localDeliveryUnit",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.mappa.level",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.mappa.category",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.mappa.hasBeenReviewed",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.mappa.lastUpdatedDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.gender",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.surname",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.addresses[].town",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.addresses[].line1",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.addresses[].line2",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.addresses[].postcode",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.addresses[].noFixedAbode",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.croNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.ethnicity",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.firstName",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.pncNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.nomsNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.dateOfBirth[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.middleNames",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.hasBeenReviewed",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.primaryLanguage",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.personOnProbation.mostRecentPrisonerNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.ppudRecordPresent",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.email",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.region",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.telephone",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.localDeliveryUnit",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whoCompletedPartA.isPersonProbationPractitionerForOffender",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.explainTheDecision",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isExtendedSentence",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.localPoliceContact.faxNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.localPoliceContact.contactName",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.localPoliceContact.phoneNumber",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.localPoliceContact.emailAddress",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reasonsForNoRecall.popThoughts",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reasonsForNoRecall.licenceBreach",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reasonsForNoRecall.popProgressMade",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reasonsForNoRecall.noRecallRationale",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reasonsForNoRecall.futureExpectations",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.spoRecallRationale",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.currentRoshForPartA.riskToStaff",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.currentRoshForPartA.riskToPublic",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.currentRoshForPartA.riskToChildren",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.currentRoshForPartA.riskToPrisoners",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.currentRoshForPartA.riskToKnownAdult",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indexOffenceDetails",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.responseToProbation",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whyConsideredRecall.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whyConsideredRecall.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.whyConsideredRecall.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.practitionerForPartA.name",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.practitionerForPartA.email",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.practitionerForPartA.region",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.practitionerForPartA.telephone",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.practitionerForPartA.localDeliveryUnit",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.createdByUserFullName",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.managerRecallDecision.selected.value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.managerRecallDecision.selected.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.managerRecallDecision.createdBy",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.managerRecallDecision.createdDate",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.managerRecallDecision.isSentToDelius",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.reviewOffenderProfile",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.conditionalReleaseDate[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.lastModifiedByUserName",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.triggerLeadingToRecall",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.countersignAcoTelephone",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.countersignSpoTelephone",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.isIndeterminateSentence",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isThisAnEmergencyRecall",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.countersignAcoExposition",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.countersignSpoExposition",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.sendSpoRationaleToDelius",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.alternativesToRecallTried.selected[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.alternativesToRecallTried.selected[].details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.alternativesToRecallTried.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.alternativesToRecallTried.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasVictimsInContactScheme.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasVictimsInContactScheme.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasVictimsInContactScheme.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateSentenceType.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateSentenceType.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateSentenceType.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.standardLicenceConditions.selected[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selected[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].note",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].title",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].subCatCode",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].mainCatCode",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].subCatCode",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].mainCatCode",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.revocationOrderRecipients[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.reviewPractitionersConcerns",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.selected",
-               "sar" : true,
-               "type" : "array"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.selected[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].code",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.selected[]",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].code",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.userNameDntrLetterCompletedBy",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.activeCustodialConvictionCount",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.lastDntrLetterADownloadDateTime[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.isMainAddressWherePersonCanBeFound.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.isMainAddressWherePersonCanBeFound.selected",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isUnderIntegratedOffenderManagement.selected",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.isUnderIntegratedOffenderManagement.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.isUnderIntegratedOffenderManagement.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.fixedTermAdditionalLicenceConditions.details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.fixedTermAdditionalLicenceConditions.selected",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.recommendationStartedDomainEventSent",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateOrExtendedSentenceDetails.selected[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateOrExtendedSentenceDetails.selected[].details",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateOrExtendedSentenceDetails.allOptions[].text",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.indeterminateOrExtendedSentenceDetails.allOptions[].value",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.offenceDataFromLatestCompleteAssessment",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.sendSpoDeleteRationaleToDelius",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.spoDeleteRecommendationRationale",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.additionalLicenceConditionsText",
-               "sar" : true,
-               "type" : "string"
-            },
-            {
-               "description" : "",
-               "name" : "data.isOver18",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.decisionDateTime[]",
-               "sar" : true,
-               "type" : "integer"
-            },
-            {
-               "description" : "",
-               "name" : "data.isMappaLevelAbove1",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isSentenceUnder12Months",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.hasBeenConvictedOfSeriousOffence",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isUnder18",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "data.isSentence12MonthsOrOver",
-               "sar" : true,
-               "type" : "boolean"
-            },
-            {
-               "description" : "",
-               "name" : "deleted",
-               "sar" : true,
-               "type" : "boolean"
-            }
-         ],
-         "name" : "recommendations"
-      }
-   ]
+  "tables": [
+    {
+      "name": "recommendation_document",
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_document",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "recommendation_id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_document",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "created_by_user_full_name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "created",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "uploaded_by",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "uploaded_by_user_full_name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "uploaded",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "mimetype",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "document_uuid",
+          "type": "string",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_document",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_document",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        }
+      ]
+    },
+    {
+      "name": "recommendation_status",
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_status",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "recommendation_id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_status",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "created_by_user_full_name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "created",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "modified_by",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "modified_by_user_full_name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "modified",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "recommendation_history_id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "recommendation_status",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "email_address",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "recommendation_status",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        }
+      ]
+    },
+    {
+      "name": "recommendations",
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "description": "Internal ID",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "623896084",
+          "comments": ""
+        },
+        {
+          "name": "data",
+          "type": "complex",
+          "description": "",
+          "sar": false
+        },
+        {
+          "name": "data.crn",
+          "type": "string",
+          "description": "CRN of the person under consideration for recall",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "X977325",
+          "comments": ""
+        },
+        {
+          "name": "data.region",
+          "type": "string",
+          "description": "The region that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Wales",
+          "comments": ""
+        },
+        {
+          "name": "data.status",
+          "type": "string",
+          "description": "Unused, for backward compatibilty",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "DRAFT",
+          "comments": ""
+        },
+        {
+          "name": "data.deleted",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.createdBy",
+          "type": "string",
+          "description": "Username of user creating the recommendation (from NDelius)",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "AUTOMATEDTESTUSER",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.sensitive",
+          "type": "boolean",
+          "description": "Whether SPO/AP thinks rationale should not be shown to PoP",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE/FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.recallType.selected.value",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.recallType.selected.details",
+          "type": "string",
+          "description": "The details of the decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Recall from spo user",
+          "comments": ""
+        },
+        {
+          "name": "data.recallType.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.recallType.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.createdDate",
+          "type": "string",
+          "description": "Date the decision object was initially created",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "2026-01-14T12:04:38.666Z",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.error",
+          "type": "string",
+          "description": "Error retrieving ROSH details from OASys",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "NOT_FOUND",
+          "comments": "Error message"
+        },
+        {
+          "name": "data.roshSummary.whoIsAtRisk",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.natureOfRisk",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskImminence",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.lastUpdatedDate",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.overallRisk",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToStaff",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPublic",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToChildren",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToPrisoners",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCustody.riskToKnownAdult",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToStaff",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPublic",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToChildren",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToPrisoners",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskOfSeriousHarm.riskInCommunity.riskToKnownAdult",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskIncreaseFactors",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.roshSummary.riskMitigationFactors",
+          "type": "string",
+          "description": "ROSH details from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.custodyStatus.details",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.custodyStatus.selected",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.custodyStatus.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.custodyStatus.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.dateOfRelease[]",
+          "type": "integer",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.offencesMatch",
+          "type": "boolean",
+          "description": "Informs the user if the information cannot be found in OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.spoRecallType",
+          "type": "string",
+          "description": "The type of recall recommended",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Fixed term recall,No recall - send a decision not to recall letter",
+          "comments": ""
+        },
+        {
+          "name": "data.lastModifiedBy",
+          "type": "string",
+          "description": "Full name of user who last updated the recommendation (from NDelius)",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "MRD-SPO",
+          "comments": "MOJ Staff data"
+        },
+        {
+          "name": "data.dateVloInformed",
+          "type": "string",
+          "description": "You must tell the victim liaison officer (VLO) about the recall request",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "01/10/2025",
+          "comments": ""
+        },
+        {
+          "name": "data.hasArrestIssues.details",
+          "type": "string",
+          "description": "What the Person on Probation's arrest issues might be",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": "already on API"
+        },
+        {
+          "name": "data.hasArrestIssues.selected",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.nextAppointment.probationPhoneNumber",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.nextAppointment.dateTimeOfAppointment",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.nextAppointment.howWillAppointmentHappen.selected",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.nextAppointment.howWillAppointmentHappen.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.nextAppointment.howWillAppointmentHappen.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.offenceAnalysis",
+          "type": "string",
+          "description": "Write the offence analysis",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "This is the analysis of the offence.",
+          "comments": ""
+        },
+        {
+          "name": "data.ppcsQueryEmails[]",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.previousRecalls.lastRecallDate",
+          "type": "string",
+          "description": "This information is from Delius but can also be added manually",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.previousRecalls.previousRecallDates[]",
+          "type": "string",
+          "description": "This information is from Delius but can also be added manually",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "01/01/2024",
+          "comments": ""
+        },
+        {
+          "name": "data.previousRecalls.hasBeenRecalledPreviously",
+          "type": "boolean",
+          "description": "Whether the PoP has been previously recalled prior to the last release date",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.vulnerabilities.selected[].value",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.vulnerabilities.selected[].details",
+          "type": "string",
+          "description": "The details of the decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Recall from spo user",
+          "comments": ""
+        },
+        {
+          "name": "data.vulnerabilities.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.vulnerabilities.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.whatLedToRecall",
+          "type": "string",
+          "description": "What has led to this recall?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "The answer to what has led to this recall is that the PoP is binge drinking",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.extendedTerm",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Extended term",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.custodialTerm",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Custodial term",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.dateOfSentence[]",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Date of Sentence",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "46035",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.hasBeenReviewed",
+          "type": "boolean",
+          "description": "Whether Offence details have been reviewed in CaR",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.lengthOfSentence",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Sentence Length",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "6",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.licenceExpiryDate[]",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Sentence Length Date",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.sentenceExpiryDate[]",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Sentence Expiry Date",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.sentenceDescription",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Sentence Description",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Adult Custody < 12m",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.sentenceSecondLength",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Sentence Length",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.dateOfOriginalOffence[]",
+          "type": "integer",
+          "description": "Offence details (from NDelius) - Date of Offence",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "46035",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.lengthOfSentenceUnits",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Sentence Length Units",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Months",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.indexOffenceDescription",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Main Offence",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Breach of Criminal Behaviour Order (99907)",
+          "comments": ""
+        },
+        {
+          "name": "data.convictionDetail.sentenceSecondLengthUnits",
+          "type": "string",
+          "description": "Offence details (from NDelius) - Sentence Length Units",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.lastModifiedDate",
+          "type": "string",
+          "description": "Date the decision object was last updated",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "2026-01-15T14:29:39.489Z",
+          "comments": ""
+        },
+        {
+          "name": "data.previousReleases.lastReleaseDate",
+          "type": "string",
+          "description": "Last release date (from NDelius?)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "13/01/2026",
+          "comments": ""
+        },
+        {
+          "name": "data.previousReleases.previousReleaseDates[]",
+          "type": "string",
+          "description": "Manually added previous release dates",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.previousReleases.hasBeenReleasedPreviously",
+          "type": "boolean",
+          "description": "Whether the PoP has been previously released prior to the last release date",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.previousReleases.lastReleasingPrisonOrCustodialEstablishment",
+          "type": "string",
+          "description": "Releasing prison or custodial establishment (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "St Andrew's Healthcare (Mental Health Unit - Birmingham)",
+          "comments": ""
+        },
+        {
+          "name": "data.releaseUnderECSL",
+          "type": "boolean",
+          "description": "Whether the PoP was released under the 2023/2024 ECSL schem",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "TRUE - Has [Name] been released on an End of Custody Supervised Licence (ECSL)?",
+          "comments": ""
+        },
+        {
+          "name": "data.hasContrabandRisk.details",
+          "type": "string",
+          "description": "Give details. Also tell your local police contact about your concerns",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "I think she is using recall to bring contraband back into prison",
+          "comments": ""
+        },
+        {
+          "name": "data.hasContrabandRisk.selected",
+          "type": "boolean",
+          "description": "Do you think the PoP  is using recall to bring contraband into prison?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Yes, No",
+          "comments": ""
+        },
+        {
+          "name": "data.localDeliveryUnit",
+          "type": "string",
+          "description": "The LDU that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Unallocated Level 3(N03)",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.name",
+          "type": "string",
+          "description": "PoP name (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "the PoP",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.mappa.level",
+          "type": "integer",
+          "description": "PoP MAPPA level (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.mappa.category",
+          "type": "integer",
+          "description": "PoP MAPPA level (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.mappa.hasBeenReviewed",
+          "type": "boolean",
+          "description": "PoP MAPPA level (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.mappa.lastUpdatedDate",
+          "type": "string",
+          "description": "PoP MAPPA level (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.gender",
+          "type": "string",
+          "description": "PoP gender (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Female",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.surname",
+          "type": "string",
+          "description": "PoP surname (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Lindgren",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.addresses[].town",
+          "type": "string",
+          "description": "The PoP's addresses (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.addresses[].line1",
+          "type": "string",
+          "description": "The PoP's addresses (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.addresses[].line2",
+          "type": "string",
+          "description": "The PoP's addresses (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.addresses[].postcode",
+          "type": "string",
+          "description": "The PoP's addresses (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.addresses[].noFixedAbode",
+          "type": "boolean",
+          "description": "The PoP's addresses (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.croNumber",
+          "type": "string",
+          "description": "PoP cro number (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.ethnicity",
+          "type": "string",
+          "description": "PoP ethnicity (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.firstName",
+          "type": "string",
+          "description": "PoP first name (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Rhonda",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.pncNumber",
+          "type": "string",
+          "description": "PoP pnc number (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "1982/1522650B",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.nomsNumber",
+          "type": "string",
+          "description": "PoP pnomis number (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.dateOfBirth[]",
+          "type": "integer",
+          "description": "PoP date of birth (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "30268",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.middleNames",
+          "type": "string",
+          "description": "PoP middle names (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.hasBeenReviewed",
+          "type": "boolean",
+          "description": "Whether the PoP details have been reviewed within CaR",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.primaryLanguage",
+          "type": "string",
+          "description": "PoP surname (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.personOnProbation.mostRecentPrisonerNumber",
+          "type": "string",
+          "description": "PoP prison number (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.ppudRecordPresent",
+          "type": "boolean",
+          "description": "Unused, for backward compatibilty",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.whoCompletedPartA.name",
+          "type": "string",
+          "description": "Name of person who completed this Part A?",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Mr Probation Officer",
+          "comments": "MOJ staff data"
+        },
+        {
+          "name": "data.whoCompletedPartA.email",
+          "type": "string",
+          "description": "Email of person who completed this Part A?",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "probation.officer12@justice.gov.uk",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.whoCompletedPartA.region",
+          "type": "string",
+          "description": "The region that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Wales",
+          "comments": ""
+        },
+        {
+          "name": "data.whoCompletedPartA.telephone",
+          "type": "string",
+          "description": "Telephone of person who completed this Part A?",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "0987 654321",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.whoCompletedPartA.localDeliveryUnit",
+          "type": "string",
+          "description": "The LDU that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Unallocated Level 3(N03)",
+          "comments": ""
+        },
+        {
+          "name": "data.whoCompletedPartA.isPersonProbationPractitionerForOffender",
+          "type": "boolean",
+          "description": "Whether the user is the",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "TRUE",
+          "comments": "MOJ staff data"
+        },
+        {
+          "name": "data.explainTheDecision",
+          "type": "boolean",
+          "description": "SPO has explained their decision in the case of a recall or not recall",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.isExtendedSentence",
+          "type": "boolean",
+          "description": "Is the PoP  on an extended sentence?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.localPoliceContact.faxNumber",
+          "type": "string",
+          "description": "Fax number of the contact at the local police office",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "01234 567999",
+          "comments": "Staff data"
+        },
+        {
+          "name": "data.localPoliceContact.contactName",
+          "type": "string",
+          "description": "Name of the contact at the local police office",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "PC Smith",
+          "comments": "Staff data"
+        },
+        {
+          "name": "data.localPoliceContact.phoneNumber",
+          "type": "string",
+          "description": "Phone number of the contact at the local police office",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "01234 567890",
+          "comments": "Staff data"
+        },
+        {
+          "name": "data.localPoliceContact.emailAddress",
+          "type": "string",
+          "description": "Email of the contact at the local police office",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "pcsmith@someforce.police.uk",
+          "comments": "Staff data"
+        },
+        {
+          "name": "data.reasonsForNoRecall.popThoughts",
+          "type": "string",
+          "description": "In the event of a DNTR, the PoP's thoughts",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reasonsForNoRecall.licenceBreach",
+          "type": "string",
+          "description": "In the event of a DNTR, what the licence breach was",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reasonsForNoRecall.popProgressMade",
+          "type": "string",
+          "description": "In the event of a DNTR, what progress the PoP has made on Probation",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reasonsForNoRecall.noRecallRationale",
+          "type": "string",
+          "description": "In the event of a DNTR, what the rationale was for no recall",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reasonsForNoRecall.futureExpectations",
+          "type": "string",
+          "description": "In the event of a DNTR, what the future expectations for the PoP are",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.spoRecallRationale",
+          "type": "string",
+          "description": "The SPO's rationale for the recall type recommended",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Recall from spo user",
+          "comments": ""
+        },
+        {
+          "name": "data.currentRoshForPartA.riskToStaff",
+          "type": "string",
+          "description": "Indicative risk assessment pending OASys review",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE",
+          "comments": ""
+        },
+        {
+          "name": "data.currentRoshForPartA.riskToPublic",
+          "type": "string",
+          "description": "Indicative risk assessment pending OASys review",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE",
+          "comments": ""
+        },
+        {
+          "name": "data.currentRoshForPartA.riskToChildren",
+          "type": "string",
+          "description": "Indicative risk assessment pending OASys review",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE",
+          "comments": ""
+        },
+        {
+          "name": "data.currentRoshForPartA.riskToPrisoners",
+          "type": "string",
+          "description": "Indicative risk assessment pending OASys review",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE",
+          "comments": ""
+        },
+        {
+          "name": "data.currentRoshForPartA.riskToKnownAdult",
+          "type": "string",
+          "description": "Indicative risk assessment pending OASys review",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE",
+          "comments": ""
+        },
+        {
+          "name": "data.indexOffenceDetails",
+          "type": "string",
+          "description": "Index offence details as retrieved from OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.responseToProbation",
+          "type": "string",
+          "description": "How has the PoP  responded to probation so far?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Test Response - Not responded quite well",
+          "comments": ""
+        },
+        {
+          "name": "data.whyConsideredRecall.selected",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.whyConsideredRecall.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.whyConsideredRecall.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.practitionerForPartA.name",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.practitionerForPartA.email",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.practitionerForPartA.region",
+          "type": "string",
+          "description": "The region that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Wales",
+          "comments": ""
+        },
+        {
+          "name": "data.practitionerForPartA.telephone",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.practitionerForPartA.localDeliveryUnit",
+          "type": "string",
+          "description": "The LDU that the PoP is in (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Unallocated Level 3(N03)",
+          "comments": ""
+        },
+        {
+          "name": "data.createdByUserFullName",
+          "type": "string",
+          "description": "Full name of user creating the recommendation (from NDelius)",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "AutomatedTestUser AutomatedTestUser",
+          "comments": "MOJ staff data yes SAR Data"
+        },
+        {
+          "name": "data.managerRecallDecision.selected.value",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.managerRecallDecision.selected.details",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.managerRecallDecision.createdBy",
+          "type": "string",
+          "description": "Username of user creating the recommendation (from NDelius)",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "AUTOMATEDTESTUSER",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.managerRecallDecision.createdDate",
+          "type": "string",
+          "description": "Date the decision object was initially created",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "2026-01-14T12:04:38.666Z",
+          "comments": ""
+        },
+        {
+          "name": "data.managerRecallDecision.isSentToDelius",
+          "type": "boolean",
+          "description": "Whether a management oversight event was sent to NDelius for this recall decision",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reviewOffenderProfile",
+          "type": "boolean",
+          "description": "SPO has reveiwed Offender information as part of countersigning",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.conditionalReleaseDate[]",
+          "type": "integer",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.lastModifiedByUserName",
+          "type": "string",
+          "description": "Username of user who last updated the recommendation (from NDelius)",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "mrd spo",
+          "comments": "MOJ Staff data"
+        },
+        {
+          "name": "data.triggerLeadingToRecall",
+          "type": "string",
+          "description": "What has made you consider recalling the Person on Probation?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Test reason - Binge Drinking is the reason for recalling",
+          "comments": ""
+        },
+        {
+          "name": "data.countersignAcoTelephone",
+          "type": "string",
+          "description": "Telephone number of the SPO who approved the recall",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.countersignSpoTelephone",
+          "type": "string",
+          "description": "Telephone number of the line manager who countersigned the recall",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "0987 555555",
+          "comments": "MOJ staff data not required"
+        },
+        {
+          "name": "data.isIndeterminateSentence",
+          "type": "boolean",
+          "description": "Is the PoP  on an indeterminate sentence?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.isThisAnEmergencyRecall",
+          "type": "boolean",
+          "description": "Is this an emergency recall?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.countersignAcoExposition",
+          "type": "string",
+          "description": "Rationale of the SPO who approved the recall",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": "MOJ staff data"
+        },
+        {
+          "name": "data.countersignSpoExposition",
+          "type": "string",
+          "description": "Rationale of the line manager who countersigned the recall",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "I am the line manager and I agree with the decision",
+          "comments": ""
+        },
+        {
+          "name": "data.sendSpoRationaleToDelius",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.alternativesToRecallTried.selected[].value",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.alternativesToRecallTried.selected[].details",
+          "type": "string",
+          "description": "The details of the decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Recall from spo user",
+          "comments": ""
+        },
+        {
+          "name": "data.alternativesToRecallTried.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.alternativesToRecallTried.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.hasVictimsInContactScheme.selected",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.hasVictimsInContactScheme.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.hasVictimsInContactScheme.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateSentenceType.selected",
+          "type": "string",
+          "description": "What type of sentence is the PoP  on?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Life sentence, Imprisonment for Public Protection (IPP) sentence, Detention for Public Protection (DPP) sentence ",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateSentenceType.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateSentenceType.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.standardLicenceConditions.selected[]",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].text",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.standardLicenceConditions.allOptions[].value",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.selected[]",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].note",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].title",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].details",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].subCatCode",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.allOptions[].mainCatCode",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].subCatCode",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.licenceConditionsBreached.additionalLicenceConditions.selectedOptions[].mainCatCode",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.revocationOrderRecipients[]",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.reviewPractitionersConcerns",
+          "type": "boolean",
+          "description": "SPO has reviewed PPs concerns as part of countersigning",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.selected",
+          "type": "array",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.bespokeLicenceConditions.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.standardLicenceConditions.selected[]",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].code",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.standardLicenceConditions.allOptions[].text",
+          "type": "string",
+          "description": "Which (if any) standard licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: Be of good behaviour and not behave in a way which undermines the purpose of the licence period,Not commit any offence,Keep in touch with the supervising officer in accordance with instructions given by the supervising officer,Receive visits from the supervising officer in accordance with instructions given by the supervising officer,Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address,Not undertake work",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.additionalLicenceConditions.selected[]",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].code",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.cvlLicenceConditionsBreached.additionalLicenceConditions.allOptions[].text",
+          "type": "string",
+          "description": "Which (if any) additional licence conditions did the PoP breach?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "One of: The additional licence conditions retrieved from CVL/NDelius",
+          "comments": ""
+        },
+        {
+          "name": "data.userNameDntrLetterCompletedBy",
+          "type": "string",
+          "description": "The username of the user who completed the DNTR letter",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "FrankSmith",
+          "comments": "MOJ Staff data - autopopulated, no frontend field"
+        },
+        {
+          "name": "data.activeCustodialConvictionCount",
+          "type": "integer",
+          "description": "The number of active custodial convictions the PoP has (from NDelius)",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "1",
+          "comments": ""
+        },
+        {
+          "name": "data.lastDntrLetterADownloadDateTime[]",
+          "type": "integer",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isMainAddressWherePersonCanBeFound.details",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isMainAddressWherePersonCanBeFound.selected",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isUnderIntegratedOffenderManagement.selected",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isUnderIntegratedOffenderManagement.allOptions[].text",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isUnderIntegratedOffenderManagement.allOptions[].value",
+          "type": "string",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.fixedTermAdditionalLicenceConditions.details",
+          "type": "string",
+          "description": "Details of any additional license conditions to adhere to",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "Test additional license condition for fixed term recall",
+          "comments": ""
+        },
+        {
+          "name": "data.fixedTermAdditionalLicenceConditions.selected",
+          "type": "boolean",
+          "description": "Whether there are any additional license conditions to adhere to",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "TRUE",
+          "comments": ""
+        },
+        {
+          "name": "data.recommendationStartedDomainEventSent",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateOrExtendedSentenceDetails.selected[].value",
+          "type": "string",
+          "description": "The decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "RECALL",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateOrExtendedSentenceDetails.selected[].details",
+          "type": "string",
+          "description": "The details of the decision of the line manager",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Recall from spo user",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateOrExtendedSentenceDetails.allOptions[].text",
+          "type": "string",
+          "description": "Details of the indeterminte and extended sentence breach",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.indeterminateOrExtendedSentenceDetails.allOptions[].value",
+          "type": "string",
+          "description": "Which of the criteria the PoP on Indeterminate and extended sentences has breached\n",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "Any of BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE, BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE, OUT_OF_TOUCH",
+          "comments": ""
+        },
+        {
+          "name": "data.offenceDataFromLatestCompleteAssessment",
+          "type": "boolean",
+          "description": "The main offence recorded in OASys",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.sendSpoDeleteRationaleToDelius",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.spoDeleteRecommendationRationale",
+          "type": "string",
+          "description": "The SPOs' rationale if the recommendation is deleted",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.additionalLicenceConditionsText",
+          "type": "string",
+          "description": "Practioner added additional licence conditions that may have been breached",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isOver18",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.decisionDateTime[]",
+          "type": "integer",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isMappaLevelAbove1",
+          "type": "boolean",
+          "description": "Does the Pop have a mappa level above 1 - unused since FTR48",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isSentenceUnder12Months",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.hasBeenConvictedOfSeriousOffence",
+          "type": "boolean",
+          "description": "Select whether the PoP has been charged with a serious offence - unused since FTR48",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "data.isUnder18",
+          "type": "boolean",
+          "description": "Is the PoP  under 18?",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "FALSE",
+          "comments": ""
+        },
+        {
+          "name": "data.isSentence12MonthsOrOver",
+          "type": "boolean",
+          "description": "Does the PoP have a sentence 12 Months or over - unused since FTR48",
+          "sar": false,
+          "entity": "Recommendation",
+          "mandatory": false,
+          "example": "",
+          "comments": ""
+        },
+        {
+          "name": "deleted",
+          "type": "boolean",
+          "description": "",
+          "sar": true,
+          "entity": "Recommendation",
+          "mandatory": true,
+          "example": "",
+          "comments": ""
+        }
+      ]
+    }
+  ]
 }

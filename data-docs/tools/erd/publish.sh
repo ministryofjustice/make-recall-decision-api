@@ -14,7 +14,7 @@ command -v jq >/dev/null || { echo "jq required"; exit 1; }
 
 # ---- fetch page info ----
 PAGE_JSON=$(curl -s -u "${ATLASSIAN_USER}:${ATLASSIAN_API_TOKEN}" \
-  "$BASE_URL/rest/api/content/$DOMAIN_PAGE_ID?expand=version,title")
+  "$BASE_URL/rest/api/content/$ERD_PAGE_ID?expand=version,title")
 
 TITLE=$(jq -r '.title' <<<"$PAGE_JSON")
 VERSION=$(jq -r '.version.number' <<<"$PAGE_JSON")
@@ -32,7 +32,7 @@ for img in "$IMAGE_DIR"/*.png; do
   curl -s -X POST -u "${ATLASSIAN_USER}:${ATLASSIAN_API_TOKEN}" \
     -H "X-Atlassian-Token: no-check" \
     -F "file=@$img" \
-    "$BASE_URL/rest/api/content/$DOMAIN_PAGE_ID/child/attachment" \
+    "$BASE_URL/rest/api/content/$ERD_PAGE_ID/child/attachment" \
     >/dev/null
 
   IMAGE_MACROS+=$'\n'"<ac:image><ri:attachment ri:filename=\"$NAME\"/></ac:image>"
@@ -47,7 +47,7 @@ ENCODED_BODY=$(jq -Rs . <<<"$BODY")
 curl -s -X PUT -u "${ATLASSIAN_USER}:${ATLASSIAN_API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "{
-    \"id\": \"$DOMAIN_PAGE_ID\",
+    \"id\": \"$ERD_PAGE_ID\",
     \"type\": \"page\",
     \"title\": \"$TITLE\",
     \"version\": { \"number\": $NEXT_VERSION },
@@ -58,7 +58,7 @@ curl -s -X PUT -u "${ATLASSIAN_USER}:${ATLASSIAN_API_TOKEN}" \
       }
     }
   }" \
-  "$BASE_URL/rest/api/content/$DOMAIN_PAGE_ID" \
+  "$BASE_URL/rest/api/content/$ERD_PAGE_ID" \
   >/dev/null
 
 echo "Page updated using storage format"

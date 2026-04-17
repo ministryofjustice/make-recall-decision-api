@@ -1,0 +1,33 @@
+@startuml
+!theme reddress-lightblue
+hide attributes
+hide methods
+hide members
+hide circle
+skinparam linetype ortho
+
+entity "Person On Probation" as pop
+entity "HMPPS Staff" as staff
+
+package "Person Recalls" <<Rectangle>> #LightYellow {
+  entity "Recall Decision" as decision
+  entity "Decision to Recall" as recall
+  entity "Decision Not To Recall" as dntr
+}
+
+entity "License Conditions" as license
+entity "Sentence" as sentence
+entity "Risk Assessment" as risk
+
+pop ---o{ decision : "is subject to"
+staff ---o{  decision : "creates and signs-off" 
+decision --o| dntr : "may be"
+decision --o| recall : "may be"
+decision ---o{ license : "informed by"
+decision ---o{ sentence : "informed by"
+decision ---o{ risk : "informed by"
+
+pop ---o{ license : "has"
+pop ---o{ sentence : "has"
+pop ---o{ risk : "has"
+@enduml
