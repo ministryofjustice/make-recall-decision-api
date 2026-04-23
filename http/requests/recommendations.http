@@ -1,0 +1,96 @@
+### Get a recommendation
+GET {{host}}/recommendations/{{recommendation.id}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Create a recommendation
+POST {{host}}/recommendations
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "crn": "{{crn}}",
+  "recallConsideredDetail": ""
+}
+
+### Update a recommendation
+PATCH {{host}}/recommendations/{{recommendation.id}}?refreshProperty={{recommendation.refreshProperty}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{}
+
+### Get a recommendation's statuses
+GET {{host}}/recommendations/{{recommendation.id}}/statuses
+Authorization: Bearer {{$auth.token("token")}}
+
+### Update a recoomendation's status
+PATCH {{host}}/recommendations/{{recommendation.id}}/status
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "activate": [],
+  "deActivate": []
+}
+
+### Get all recommendation documents (Requires PPCS Token)
+GET {{host}}/recommendations/{{recommendation.id}}/documents
+Authorization: Bearer {{$auth.token("token")}}
+
+### Add a recommendation document (Requires PPCS Token)
+POST {{host}}/recommendations/{{recommendation.id}}/documents
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "filename": "",
+  "title": "",
+  "type": "",
+  "mimetype": "",
+  "data": ""
+}
+
+### Get a specific recommendation document (Requires PPCS Token)
+GET {{host}}/recommendations/{{recommendation.id}}/documents/{{documentId}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Update a specific recommendation document (Requires PPCS Token)
+PATCH {{host}}/recommendations/{{recommendation.id}}/documents/{{documentId}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "title": "",
+  "filename": "",
+  "mimetype": "",
+  "data": ""
+}
+
+### Delete a recommendation document (Requires PPCS Token)
+DELETE {{host}}/recommendations/{{recommendation.id}}/documents/{{documentId}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### [DEPRECATED] Update recommendation with manager recall decision
+PATCH {{host}}/recommendations/{{recommendation.id}}/manager-recall-decision
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{}
+
+### Generates a Decision not to Recall document
+POST {{host}}/recommendations/{{recommendation.id}}/no-recall-letter
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "format": ""
+}
+
+### Generates a Part A document
+POST {{host}}/recommendations/{{recommendation.id}}/part-a?preview=false
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "userEmail": ""
+}
