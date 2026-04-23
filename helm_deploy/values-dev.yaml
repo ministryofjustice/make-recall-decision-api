@@ -29,6 +29,8 @@ generic-service:
     DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_2_STARTDATETIME: "2026-03-23T00:00Z" # same time in GMT, brought forward for testing in dev
     DOCUMENTTEMPLATE_PARTATEMPLATESETTINGS_2_TEMPLATENAME: "2026-03-31 - FTR56"
     ENVIRONMENT_NAME: dev
+    SPRINGDOC_APIDOCS_ENABLED: "true"
+    SPRINGDOC_SWAGGERUI_ENABLED: "true"
 
   scheduledDowntime:
     enabled: true

@@ -87,3 +87,9 @@ mrd:
   url: "environment-host"
   api:
     url: "environment-host"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
