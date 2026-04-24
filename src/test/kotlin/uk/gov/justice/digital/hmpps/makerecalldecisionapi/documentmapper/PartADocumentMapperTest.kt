@@ -48,6 +48,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.personOnProbation
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.prisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
@@ -185,6 +187,55 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
       assertThat(result.isServingYouthSentence).isEqualTo(if (sentenceGroup == SentenceGroup.YOUTH_SDS) "Yes" else EMPTY_STRING)
+    }
+  }
+
+  @Test
+  fun `set croNumber from prisonOffender (NOMIS) when croNumber not present in personOnProbation (Delius)`() {
+    val nomisCro = "nomisCro"
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto(),
+        prisonOffender = prisonOffender(cro = nomisCro)
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.croNumber).isEqualTo(nomisCro)
+    }
+  }
+
+
+  @Test
+  fun `set croNumber from personOnProbation (Delius) when croNumber is present `() {
+    val nomisCro = "nomisCro"
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        personOnProbation = personOnProbation(croNumber = nomisCro).toPersonOnProbationDto()
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.croNumber).isEqualTo(nomisCro)
+    }
+  }
+
+  @Test
+  fun `set croNumber to null when croNumber not present in personOnProbation (Delius) and prisonOffender (NOMIS) `() {
+    runTest {
+      given(regionService.getRegionName(null))
+        .willReturn("")
+      val recommendation = RecommendationResponse(
+        personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto()
+      )
+
+      val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
+
+      assertThat(result.croNumber).isNull()
     }
   }
 
