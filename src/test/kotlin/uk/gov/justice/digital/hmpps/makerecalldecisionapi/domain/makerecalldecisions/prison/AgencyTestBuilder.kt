@@ -1,6 +1,7 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison
 
 import org.mockserver.model.JsonBody.json
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Agency
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.toJsonNullableStringField
 

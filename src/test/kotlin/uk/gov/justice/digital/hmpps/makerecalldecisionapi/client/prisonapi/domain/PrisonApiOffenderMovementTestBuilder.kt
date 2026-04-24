@@ -2,7 +2,8 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.doma
 
 import org.assertj.core.api.Assertions.assertThat
 import org.mockserver.model.JsonBody.json
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.OffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.OffenderMovement
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
