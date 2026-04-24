@@ -19,12 +19,16 @@ fun randomDouble(): Double = Random.Default.nextDouble()
 
 fun randomBoolean(): Boolean = Random.Default.nextBoolean()
 
+fun randomPastLocalDate(): LocalDate = randomLocalDate(maxDate = LocalDate.now())
+
+fun randomFutureLocalDate(): LocalDate = randomLocalDate(minDate = LocalDate.now())
+
 /**
- * Produces a random date between 1970-01-01 and 2150-12-31
+ * Produces a random date between 1970-01-01 and 2150-12-31, or within the min and max if provided
  */
-fun randomLocalDate(): LocalDate {
-  val minDay = 0L
-  val maxDay = LocalDate.of(2150, 12, 31).toEpochDay()
+fun randomLocalDate(minDate: LocalDate? = null, maxDate: LocalDate? = null): LocalDate {
+  val minDay = minDate?.toEpochDay() ?: 0L
+  val maxDay = (maxDate ?: LocalDate.of(2150, 12, 31)).toEpochDay()
   val randomDay: Long = Random.Default.nextLong(minDay, maxDay)
   return LocalDate.ofEpochDay(randomDay)
 }
