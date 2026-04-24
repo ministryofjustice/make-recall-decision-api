@@ -1985,7 +1985,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
