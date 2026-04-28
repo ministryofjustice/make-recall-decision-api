@@ -216,7 +216,7 @@ class PartADocumentMapperTest {
         .willReturn("")
       val recommendation = RecommendationResponse(
         personOnProbation = personOnProbation(croNumber = deliusCro).toPersonOnProbationDto(),
-        prisonOffender = prisonOffender(cro = nomisCro)
+        prisonOffender = prisonOffender(cro = nomisCro),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
@@ -232,7 +232,7 @@ class PartADocumentMapperTest {
         .willReturn("")
       val recommendation = RecommendationResponse(
         personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto(),
-        prisonOffender = prisonOffender(cro = null)
+        prisonOffender = prisonOffender(cro = null),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
