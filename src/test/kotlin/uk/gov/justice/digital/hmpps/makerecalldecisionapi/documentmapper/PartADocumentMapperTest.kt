@@ -198,7 +198,7 @@ class PartADocumentMapperTest {
         .willReturn("")
       val recommendation = RecommendationResponse(
         personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto(),
-        prisonOffender = prisonOffender(cro = nomisCro)
+        prisonOffender = prisonOffender(cro = nomisCro),
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
