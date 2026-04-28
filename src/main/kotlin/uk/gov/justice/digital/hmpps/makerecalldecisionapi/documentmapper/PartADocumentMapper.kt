@@ -191,7 +191,7 @@ internal class PartADocumentMapper(
       dateOfBirth = recommendation.personOnProbation?.dateOfBirth,
       name = formatFullName(firstName, middleNames, lastName),
       ethnicity = recommendation.personOnProbation?.ethnicity,
-      croNumber = recommendation.personOnProbation?.croNumber,
+      croNumber = recommendation.personOnProbation?.croNumber ?: recommendation.prisonOffender?.cro,
       pncNumber = recommendation.personOnProbation?.pncNumber,
       crn = recommendation.crn,
       mostRecentPrisonerNumber = recommendation.personOnProbation?.mostRecentPrisonerNumber,
