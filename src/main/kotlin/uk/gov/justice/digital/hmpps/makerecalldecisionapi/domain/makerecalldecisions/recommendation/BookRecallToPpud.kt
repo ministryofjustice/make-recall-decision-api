@@ -20,6 +20,7 @@ data class BookRecallToPpud(
   val policeForce: String? = null,
   val probationArea: String? = null,
   val receivedDateTime: LocalDateTime? = null,
+  val receivedDateTimeUpdatedByPpcs: Boolean? = null,
   val sentenceDate: LocalDate? = null,
   val gender: String? = null,
   val ethnicity: String? = null,
