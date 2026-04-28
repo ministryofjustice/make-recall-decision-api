@@ -207,20 +207,21 @@ class PartADocumentMapperTest {
     }
   }
 
-
   @Test
   fun `set croNumber from personOnProbation (Delius) when croNumber is present `() {
     val nomisCro = "nomisCro"
+    val deliusCro = "deliusCro"
     runTest {
       given(regionService.getRegionName(null))
         .willReturn("")
       val recommendation = RecommendationResponse(
-        personOnProbation = personOnProbation(croNumber = nomisCro).toPersonOnProbationDto()
+        personOnProbation = personOnProbation(croNumber = deliusCro).toPersonOnProbationDto(),
+        prisonOffender = prisonOffender(cro = nomisCro)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.croNumber).isEqualTo(nomisCro)
+      assertThat(result.croNumber).isEqualTo(deliusCro)
     }
   }
 
@@ -230,7 +231,8 @@ class PartADocumentMapperTest {
       given(regionService.getRegionName(null))
         .willReturn("")
       val recommendation = RecommendationResponse(
-        personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto()
+        personOnProbation = personOnProbation(croNumber = null).toPersonOnProbationDto(),
+        prisonOffender = prisonOffender(cro = null)
       )
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
