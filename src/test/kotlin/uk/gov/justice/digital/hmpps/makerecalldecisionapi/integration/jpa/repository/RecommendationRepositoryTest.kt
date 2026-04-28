@@ -4,15 +4,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.personOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.prisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendationstatus.RecommendationStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationEntity
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -35,9 +32,6 @@ class RecommendationRepositoryTest : IntegrationTestBase() {
   fun `saves and retrieves a recommendation`() {
     // given
     val recommendation = recommendationEntity()
-    val customRecommendation = recommendationEntity(data = recommendationModel(personOnProbation = personOnProbation(croNumber = null)))
-    val customRecommendation2 = recommendationEntity(data = recommendationModel(personOnProbation = personOnProbation(croNumber = null),
-      prisonOffender = prisonOffender(cro = "0988")))
 
     // when
     val savedRecommendation = repository.save(recommendation)
