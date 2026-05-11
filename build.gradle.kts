@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.7.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.7.1"
   kotlin("jvm") version "2.3.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   kotlin("plugin.jpa") version "2.3.20"
-  kotlin("plugin.spring") version "2.3.10"
+  kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.serialization") version "2.3.20"
 }
 
@@ -41,7 +41,7 @@ dependencies {
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
     implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
-    implementation("org.apache.poi:poi-ooxml:5.4.1") // Address CVE-2025-31672 present in 5.2.2
+    implementation("org.apache.poi:poi-ooxml:5.5.1") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -51,7 +51,7 @@ dependencies {
 
   implementation("org.flywaydb:flyway-core:11.1.1")
   implementation("org.flywaydb:flyway-database-postgresql:11.1.1")
-  implementation("org.postgresql:postgresql:42.7.7")
+  implementation("org.postgresql:postgresql:42.7.11")
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
   implementation("io.sentry:sentry-logback:7.20.0")
