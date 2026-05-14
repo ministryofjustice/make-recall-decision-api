@@ -11,9 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.contactHistory
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.toJsonString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.PersonNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.RegionNotFoundException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomBoolean
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
+
+private const val TIMEOUT_IN_SECONDS = 2L // timeout defined in application-test.yml is 2 seconds
 
 @ActiveProfiles("test")
 class DeliusClientTest : IntegrationTestBase() {
@@ -49,7 +57,7 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by name`() {
-    findByNameSuccess(crn = "Y654321", firstName = "Joe", surname = "Bloggs")
+    findByNameSuccess(crn = "Y654321", firstName = "Joe", surname = "Bloggs", pageNumber = 0, pageSize = 1)
     val response = deliusClient.findByName("Joe", "Bloggs", 0, 1)
     assertThat(response.content.size).isEqualTo(1)
     assertThat(response.content[0].identifiers.crn).isEqualTo("Y654321")
@@ -57,7 +65,7 @@ class DeliusClientTest : IntegrationTestBase() {
 
   @Test
   fun `find by name returns no results`() {
-    findByNameNoResults(firstName = "Joe", surname = "Bloggs")
+    findByNameNoResults(firstName = "Joe", surname = "Bloggs", pageNumber = 0, pageSize = 1)
     val response = deliusClient.findByName("Joe", "Bloggs", 0, 1)
     assertThat(response.content.size).isEqualTo(0)
   }
@@ -114,4 +122,131 @@ class DeliusClientTest : IntegrationTestBase() {
     }.isInstanceOf(RegionNotFoundException::class.java)
       .hasMessage("No details available for endpoint: /provider/Unrecognised")
   }
+
+  @Test
+  fun `get contact history when no filtering options specified`() {
+    // given
+    val crn = randomString()
+
+    val contactHistoryRequest = request()
+      .withPath("/case-summary/$crn/contact-history")
+      .withQueryStringParameters(
+        mapOf(
+          "query" to emptyList<String>(),
+          "from" to emptyList<String>(),
+          "to" to emptyList<String>(),
+          "type" to emptyList<String>(),
+          "includeSystemGenerated" to listOf("true"),
+        ),
+      )
+
+    val contactHistory = contactHistory()
+    deliusIntegration.`when`(contactHistoryRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(
+          contactHistory.toJsonString(),
+        ),
+    )
+
+    // when
+    val response = deliusClient.getContactHistory(crn)
+
+    // then
+    assertThat(response).isEqualTo(contactHistory)
+  }
+
+  @Test
+  fun `get contact history when filtering options are specified`() {
+    // given
+    val crn = randomString()
+    val query = randomString()
+    val from = randomLocalDate()
+    val to = randomLocalDate()
+    val typeCodes = listOf(randomString(), randomString())
+    val includeSystemGenerated = randomBoolean()
+
+    val contactHistoryRequest = request()
+      .withPath("/case-summary/$crn/contact-history")
+      .withQueryStringParameters(
+        mapOf(
+          "query" to listOf(query),
+          "from" to listOf(from.toString()),
+          "to" to listOf(to.toString()),
+          "type" to typeCodes,
+          "includeSystemGenerated" to listOf(includeSystemGenerated.toString()),
+        ),
+      )
+
+    val contactHistory = contactHistory()
+    deliusIntegration.`when`(contactHistoryRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(
+          contactHistory.toJsonString(),
+        ),
+    )
+
+    // when
+    val response = deliusClient.getContactHistory(crn, query, from, to, typeCodes, includeSystemGenerated)
+
+    // then
+    assertThat(response).isEqualTo(contactHistory)
+  }
+
+  @Test
+  fun `raises a PersonNotFoundException when NOT_FOUND returned by Delius`() {
+    // given
+    val crn = randomString()
+    val contactHistoryRequest = request()
+      .withPath("/case-summary/$crn/contact-history")
+      .withQueryStringParameters(
+        mapOf(
+          "query" to emptyList<String>(),
+          "from" to emptyList<String>(),
+          "to" to emptyList<String>(),
+          "type" to emptyList<String>(),
+          "includeSystemGenerated" to listOf("true"),
+        ),
+      )
+
+    deliusIntegration.`when`(contactHistoryRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withStatusCode(404),
+    )
+
+    // when / then
+    assertThatThrownBy {
+      deliusClient.getContactHistory(crn)
+    }.isInstanceOf(PersonNotFoundException::class.java)
+      .hasMessage("No details available for endpoint: /case-summary/$crn/contact-history")
+  }
+
+  @Test
+  fun `raises a ClientTimeoutException when Delius times out`() {
+    // given
+    val crn = randomString()
+    val contactHistoryRequest = request()
+      .withPath("/case-summary/$crn/contact-history")
+      .withQueryStringParameters(
+        mapOf(
+          "query" to emptyList<String>(),
+          "from" to emptyList<String>(),
+          "to" to emptyList<String>(),
+          "type" to emptyList<String>(),
+          "includeSystemGenerated" to listOf("true"),
+        ),
+      )
+
+    deliusIntegration.`when`(contactHistoryRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withDelay(Delay.seconds(TIMEOUT_IN_SECONDS * 2)),
+    )
+
+    // when / then
+    assertThatThrownBy {
+      deliusClient.getContactHistory(crn)
+    }
+      .isInstanceOf(ClientTimeoutException::class.java)
+      .hasMessage("Delius integration client - /case-summary/$crn/contact-history endpoint: [No response within $TIMEOUT_IN_SECONDS seconds]")
+  }
+
 }

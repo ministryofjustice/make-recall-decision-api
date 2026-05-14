@@ -91,7 +91,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.
 abstract class IntegrationTestBase {
 
   @Autowired
-  private lateinit var objectMapper: ObjectMapper
+  protected lateinit var objectMapper: ObjectMapper
 
   @Autowired
   lateinit var webTestClient: WebTestClient
