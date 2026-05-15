@@ -79,7 +79,8 @@ class DeliusClient(
 
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
-  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> =
+    get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
 
   private inline fun <reified T : Any> getBody(
     endpoint: String,
@@ -95,7 +96,16 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint)
+          .also { uri ->
+            parameters.forEach { param ->
+              uri.queryParam(
+                param.key,
+                param.value as java.util.Collection<*>,
+              )
+            }
+          }
+          .build()
       }
       .retrieve()
       .onStatus(
@@ -117,11 +127,22 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint).also { uri ->
+          parameters.forEach { param ->
+            uri.queryParam(
+              param.key,
+              param.value as java.util.Collection<*>,
+            )
+          }
+        }.build()
       }
       .retrieve()
       .toEntity(T::class.java)
-      .onErrorResume(WebClientResponseException::class.java) { ex -> if (ex.statusCode == HttpStatusCode.valueOf(404)) Mono.empty() else Mono.error(ex) }
+      .onErrorResume(WebClientResponseException::class.java) { ex ->
+        if (ex.statusCode == HttpStatusCode.valueOf(404)) Mono.empty() else Mono.error(
+          ex,
+        )
+      }
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
       .withRetry()
@@ -137,7 +158,14 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.post()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint).also { uri ->
+          parameters.forEach { param ->
+            uri.queryParam(
+              param.key,
+              param.value as java.util.Collection<*>,
+            )
+          }
+        }.build()
       }
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(body)

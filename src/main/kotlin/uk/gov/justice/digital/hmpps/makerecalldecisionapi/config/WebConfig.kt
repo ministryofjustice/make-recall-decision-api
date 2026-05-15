@@ -13,6 +13,6 @@ class WebConfig : WebMvcConfigurer {
 
   override fun configurePathMatch(configurer: PathMatchConfigurer) {
     // Use this until the UI is updated to no longer use trailing slashes
-    configurer.setUseTrailingSlashMatch(true)
+    configurer.setUseTrailingSlashMatch(true) // option removed - has the UI been updated to remove trailing slashes?
   }
 }

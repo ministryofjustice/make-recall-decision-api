@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
-import org.mockserver.model.JsonBody.json
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.ContactHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.ContactHistory.Contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.ContactHistory.Contact.DocumentReference
@@ -10,7 +9,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Co
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Name
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.PersonalDetailsOverview.Identifiers
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.prisonapi.PrisonApiOffenderMovement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomBoolean
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt

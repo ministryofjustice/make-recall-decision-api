@@ -222,7 +222,7 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(java.lang.Exception::class)
-  fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
+  fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse> {
     log.error("Unexpected exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
@@ -236,7 +236,7 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(RecommendationUpdateException::class)
-  fun handleRecommendationUpdateException(e: RecommendationUpdateException): ResponseEntity<ErrorResponse?>? {
+  fun handleRecommendationUpdateException(e: RecommendationUpdateException): ResponseEntity<ErrorResponse> {
     log.error("Recommendation update exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
@@ -251,7 +251,7 @@ class MakeRecallDecisionApiExceptionHandler {
   }
 
   @ExceptionHandler(RecommendationStatusUpdateException::class)
-  fun handleRecommendationStatusUpdateException(e: RecommendationStatusUpdateException): ResponseEntity<ErrorResponse?>? {
+  fun handleRecommendationStatusUpdateException(e: RecommendationStatusUpdateException): ResponseEntity<ErrorResponse> {
     log.error("Recommendation status update exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)

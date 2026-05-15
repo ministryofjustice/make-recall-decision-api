@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.7.1"
-  kotlin("jvm") version "2.3.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.5"
+  kotlin("jvm") version "2.3.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.3.20"
+  kotlin("plugin.jpa") version "2.3.21"
   id("org.sonarqube") version "6.2.0.5505"
-  kotlin("plugin.spring") version "2.3.20"
-  kotlin("plugin.serialization") version "2.3.20"
+  kotlin("plugin.spring") version "2.3.21"
+  kotlin("plugin.serialization") version "2.3.21"
 }
 
 jacoco.toolVersion = "0.8.11"
@@ -26,18 +26,20 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.7")
-  implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.2.0")
+  implementation("org.springframework.boot:spring-boot-starter-webmvc")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+  implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
   implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.51.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.51.0") // can this be removed? I think we might already be pulling it transitively
   implementation("joda-time:joda-time:2.14.0")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
@@ -48,23 +50,22 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.5.1") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("org.springframework.boot:spring-boot-jackson2")
 
-  // Temporary fix to address CVE-2025-68161 until we upgrade to spring-boot 4 or a 3.5.x with the fix is released
-  implementation("org.apache.logging.log4j:log4j-api:2.25.3")
-
-  implementation("org.flywaydb:flyway-core:11.1.1")
-  implementation("org.flywaydb:flyway-database-postgresql:11.1.1")
-  implementation("org.postgresql:postgresql:42.7.11")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
+  implementation("org.flywaydb:flyway-database-postgresql")
+  implementation("org.postgresql:postgresql:42.7.11") // hmpps-kotlin-spring-boot-starter pulls in 42.7.10 - should we remove this line here and leave it up to the starter?
 
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
   implementation("io.sentry:sentry-logback:7.20.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-  // Temporary fix to address CVE-2026-0540, CVE-2025-15599, should be removable once
-  // springdoc-openapi-starter-webmvc-ui above pulls later version of swagger-ui
+  // OpenAPI dependencies
+  // Not sure if we're affected, but release notes on 10.2.1 version of hmpps-gradle-spring-boot
+  // reported some issues encountered and recommended pinning swagger-ui to 5.32.2 and not updating
+  // the springdoc dependency for now
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
-    implementation("org.webjars:swagger-ui:5.32.1")
+    implementation("org.webjars:swagger-ui:5.32.2")
   }
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -72,7 +73,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.10.1")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.6")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.2")

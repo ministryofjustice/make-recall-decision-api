@@ -248,5 +248,4 @@ class DeliusClientTest : IntegrationTestBase() {
       .isInstanceOf(ClientTimeoutException::class.java)
       .hasMessage("Delius integration client - /case-summary/$crn/contact-history endpoint: [No response within $TIMEOUT_IN_SECONDS seconds]")
   }
-
 }

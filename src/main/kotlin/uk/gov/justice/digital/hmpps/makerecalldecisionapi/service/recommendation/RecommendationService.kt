@@ -106,7 +106,7 @@ internal class RecommendationService(
     userId: String?,
     readableNameOfUser: String?,
     featureFlags: FeatureFlags?,
-  ): RecommendationResponse? {
+  ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       return RecommendationResponse(userAccessResponse = userAccessResponse)
@@ -152,7 +152,7 @@ internal class RecommendationService(
           nomisOffender?.toPrisonOffender(),
         ),
         sendRecommendationStartedDomainEvent,
-      )?.toRecommendationResponse()
+      ).toRecommendationResponse()
     }
   }
 
@@ -853,7 +853,7 @@ internal class RecommendationService(
     recallConsideredList: List<RecallConsidered>?,
     recommendationWrapper: StaticRecommendationDataWrapper?,
     recommendationStartedDomainEventSent: Boolean?,
-  ): RecommendationEntity? {
+  ): RecommendationEntity {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
