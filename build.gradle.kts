@@ -15,6 +15,13 @@ jacoco.toolVersion = "0.8.11"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+  testRuntimeClasspath {
+    // MockServer 5.15.0 uses json-unit-core 2.36.0 for JSON body matching.
+    // hmpps-subject-access-request-test-support pulls in json-unit-assertj:5.x which would
+    // upgrade json-unit-core to 5.x, breaking MockServer's JSON matching.
+    // Force json-unit-core back to the version MockServer was built against.
+    resolutionStrategy.force("net.javacrumbs.json-unit:json-unit-core:2.36.0")
+  }
 }
 
 dependencyCheck {
