@@ -26,7 +26,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.7")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.2")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -60,7 +60,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
   implementation("io.sentry:sentry-logback:7.20.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
   // Temporary fix to address CVE-2026-0540, CVE-2025-15599, should be removable once
   // springdoc-openapi-starter-webmvc-ui above pulls later version of swagger-ui
   constraints {
@@ -96,6 +96,10 @@ dependencies {
   testImplementation("io.rest-assured:xml-path")
 
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:1.7.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:1.7.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.1.1")
 }
 
 java {
