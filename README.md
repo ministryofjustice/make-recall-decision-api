@@ -130,6 +130,49 @@ The functional test is a black box test of the MRD API. It runs against the dev 
 * To run the test in the IDE first start `docker-compose-postgres.yml`, `./scripts/start-local-development.sh` (in that
   order) and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
 
+### Subject Access Request (SAR) tests
+
+`SubjectAccessRequestIntegrationTest` contains two tests:
+
+**`SAR API should return expected data`** — calls `GET /subject-access-request?crn=X` against the running Spring
+context and asserts the response matches the committed JSON fixture at `src/test/resources/sar/sar-api-response.json`.
+This catches unintended changes to `RecommendationModel` or `SubjectAccessRequestService`.
+
+**`SAR report should render as expected`** — fetches the same SAR data, retrieves the Mustache template from
+`GET /subject-access-request/template`, renders the template locally, and asserts the resulting HTML matches the
+committed fixture at `src/test/resources/sar/sar-expected-report.html`.
+This catches unintended changes to `sar_template.mustache`.
+
+**Running the SAR tests locally:**
+```
+docker-compose -f docker-compose-postgres.yml up -d postgres
+./gradlew test --tests "*.SubjectAccessRequestIntegrationTest"
+```
+
+If the report test fails and you want to see exactly what changed, the actual rendered HTML is always written to
+`src/test/resources/sar-generated-report.html.log` on every run. Diff it against the fixture:
+```
+diff src/test/resources/sar/sar-expected-report.html src/test/resources/sar-generated-report.html.log
+```
+
+**When to regenerate the fixtures:**
+
+Regenerate after intentionally changing any of the following:
+- A field in `RecommendationModel` or `SubjectAccessRequestService` (affects `sar-api-response.json`)
+- The Mustache template at `src/main/resources/templates/sar/sar_template.mustache` (affects `sar-expected-report.html`)
+
+Run in generate mode to capture the new output:
+```
+docker-compose -f docker-compose-postgres.yml up -d postgres
+SAR_GENERATE_ACTUAL=true ./gradlew test --tests "*.SubjectAccessRequestIntegrationTest"
+```
+Then copy the generated files over the fixtures:
+```
+cp src/test/resources/sar-api-response.json.log src/test/resources/sar/sar-api-response.json
+cp src/test/resources/sar-generated-report.html.log src/test/resources/sar/sar-expected-report.html
+```
+Review the diff before committing - the fixture change is the auditable record that the SAR output changed.
+
 ### Running Tests
 
 Run the following script to run all the integration and unit tests locally:
