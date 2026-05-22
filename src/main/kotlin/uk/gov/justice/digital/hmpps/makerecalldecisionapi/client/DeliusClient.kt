@@ -118,7 +118,7 @@ class DeliusClient(
     return getValueAndHandleWrappedException(result)
   }
 
-private inline fun <reified T : Any> getIfFound(
+  private inline fun <reified T : Any> getIfFound(
     endpoint: String,
     parameters: Map<String, List<Any>> = emptyMap(),
   ): ResponseEntity<T>? {
