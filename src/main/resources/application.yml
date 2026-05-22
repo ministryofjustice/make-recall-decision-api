@@ -82,8 +82,6 @@ spring:
     parser:
       allow-backslash-escaping-any-character: true
     date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
 
   datasource:
     url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:make_recall_decision}
