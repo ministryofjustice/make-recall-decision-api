@@ -97,11 +97,10 @@ class DeliusClient(
       .uri {
         it.path(endpoint)
           .also { uri ->
-            parameters.forEach { param ->
-              uri.queryParam(
-                param.key,
-                param.value as java.util.Collection<*>,
-              )
+            parameters.forEach { (key, values) ->
+              if (values.isNotEmpty()) {
+                uri.queryParam(key, *values.toTypedArray())
+              }
             }
           }
           .build()
@@ -119,7 +118,7 @@ class DeliusClient(
     return getValueAndHandleWrappedException(result)
   }
 
-  private inline fun <reified T : Any> getIfFound(
+private inline fun <reified T : Any> getIfFound(
     endpoint: String,
     parameters: Map<String, List<Any>> = emptyMap(),
   ): ResponseEntity<T>? {
@@ -127,11 +126,10 @@ class DeliusClient(
     val result = webClient.get()
       .uri {
         it.path(endpoint).also { uri ->
-          parameters.forEach { param ->
-            uri.queryParam(
-              param.key,
-              param.value as java.util.Collection<*>,
-            )
+          parameters.forEach { (key, values) ->
+            if (values.isNotEmpty()) {
+              uri.queryParam(key, *values.toTypedArray())
+            }
           }
         }.build()
       }
@@ -141,9 +139,7 @@ class DeliusClient(
         if (ex.statusCode == HttpStatusCode.valueOf(404)) {
           Mono.empty()
         } else {
-          Mono.error(
-            ex,
-          )
+          Mono.error(ex)
         }
       }
       .timeout(Duration.ofSeconds(nDeliusTimeout))
@@ -162,11 +158,10 @@ class DeliusClient(
     val result = webClient.post()
       .uri {
         it.path(endpoint).also { uri ->
-          parameters.forEach { param ->
-            uri.queryParam(
-              param.key,
-              param.value as java.util.Collection<*>,
-            )
+          parameters.forEach { (key, values) ->
+            if (values.isNotEmpty()) {
+              uri.queryParam(key, *values.toTypedArray())
+            }
           }
         }.build()
       }
