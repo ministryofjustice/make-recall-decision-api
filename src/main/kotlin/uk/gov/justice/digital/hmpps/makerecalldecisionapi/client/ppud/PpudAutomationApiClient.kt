@@ -123,7 +123,7 @@ class PpudAutomationApiClient(
     }
   }
 
-  private fun <T: Any> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+  private fun <T : Any> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
     .get()
     .uri { builder -> builder.path(url).build() }
     .retrieve()
@@ -134,7 +134,7 @@ class PpudAutomationApiClient(
     }
     .withRetry()
 
-  private fun <T: Any> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+  private fun <T : Any> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
     .post()
     .uri(url)
     .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)

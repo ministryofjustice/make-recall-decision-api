@@ -73,8 +73,7 @@ internal fun contactHistory(
   summary,
 )
 
-internal fun ContactHistory.toJsonString(): String =
-  ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+internal fun ContactHistory.toJsonString(): String = ResourceLoader.CustomMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
 
 internal fun contact(
   description: String? = randomString(),

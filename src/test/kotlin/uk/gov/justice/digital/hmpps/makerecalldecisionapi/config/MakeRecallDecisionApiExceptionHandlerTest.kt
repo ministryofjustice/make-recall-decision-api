@@ -15,8 +15,8 @@ class MakeRecallDecisionApiExceptionHandlerTest {
       MakeRecallDecisionApiExceptionHandler().handleNotFoundException(NotFoundException("test error"))
 
     assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
-    assertThat(responseEntity.body.status).isEqualTo(404)
-    assertThat(responseEntity.body.userMessage).isEqualTo("No response found: test error")
+    assertThat(responseEntity.body?.status).isEqualTo(404)
+    assertThat(responseEntity.body?.userMessage).isEqualTo("No response found: test error")
   }
 
   @Test
@@ -34,10 +34,10 @@ class MakeRecallDecisionApiExceptionHandlerTest {
       )
 
     assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-    assertThat(responseEntity.body.status).isEqualTo(400)
-    assertThat(responseEntity.body.errorCode).isEqualTo(234)
-    assertThat(responseEntity.body.userMessage).isEqualTo("some error")
-    assertThat(responseEntity.body.developerMessage).isEqualTo("even better error")
+    assertThat(responseEntity.body?.status).isEqualTo(400)
+    assertThat(responseEntity.body?.errorCode).isEqualTo(234)
+    assertThat(responseEntity.body?.userMessage).isEqualTo("some error")
+    assertThat(responseEntity.body?.developerMessage).isEqualTo("even better error")
   }
 
   @Test
@@ -46,9 +46,9 @@ class MakeRecallDecisionApiExceptionHandlerTest {
       MakeRecallDecisionApiExceptionHandler().handleAccessDeniedException(org.springframework.security.access.AccessDeniedException("test error"))
 
     assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
-    assertThat(responseEntity.body.status).isEqualTo(403)
-    assertThat(responseEntity.body.userMessage).isEqualTo("Access denied")
-    assertThat(responseEntity.body.developerMessage).isEqualTo("test error")
+    assertThat(responseEntity.body?.status).isEqualTo(403)
+    assertThat(responseEntity.body?.userMessage).isEqualTo("Access denied")
+    assertThat(responseEntity.body?.developerMessage).isEqualTo("test error")
   }
 
   companion object {

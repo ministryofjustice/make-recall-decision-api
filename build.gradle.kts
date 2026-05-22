@@ -83,6 +83,10 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
 
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring-boot-webtestclient")
+  testImplementation("org.springframework:spring-test")
+
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
   testImplementation("org.mock-server:mockserver-netty:5.15.0")
   testImplementation("io.projectreactor:reactor-test")
@@ -92,6 +96,7 @@ dependencies {
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0")
 
+  testImplementation(platform("io.rest-assured:rest-assured-bom:5.5.1"))
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("io.rest-assured:json-path")
   testImplementation("io.rest-assured:xml-path")

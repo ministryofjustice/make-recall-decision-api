@@ -14,11 +14,12 @@ import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
-import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient
 import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest
+import org.springframework.security.oauth2.client.endpoint.RestClientClientCredentialsTokenResponseClient
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServletBearerExchangeFilterFunction
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
@@ -68,19 +69,17 @@ class WebClientUserEnhancementConfiguration(
   private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
     val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
     val manager = AuthorizedClientServiceOAuth2AuthorizedClientManager(clients, service)
-
-    val defaultClientCredentialsTokenResponseClient = DefaultClientCredentialsTokenResponseClient()
+    val tokenResponseClient = RestClientClientCredentialsTokenResponseClient()
     val authentication = SecurityContextHolder.getContext().authentication
-
-    defaultClientCredentialsTokenResponseClient.setRequestEntityConverter { grantRequest: OAuth2ClientCredentialsGrantRequest ->
-      val converter = CustomOAuth2ClientCredentialsGrantRequestEntityConverter()
-      val username = authentication.name
-      converter.enhanceWithUsername(grantRequest, username)
+    tokenResponseClient.addParametersConverter { _: OAuth2ClientCredentialsGrantRequest ->
+      LinkedMultiValueMap<String, String>().apply {
+        add("username", authentication?.name)
+      }
     }
 
     val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
       .clientCredentials { clientCredentialsGrantBuilder: OAuth2AuthorizedClientProviderBuilder.ClientCredentialsGrantBuilder ->
-        clientCredentialsGrantBuilder.accessTokenResponseClient(defaultClientCredentialsTokenResponseClient)
+        clientCredentialsGrantBuilder.accessTokenResponseClient(tokenResponseClient)
       }
       .build()
 

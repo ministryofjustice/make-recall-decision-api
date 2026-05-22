@@ -10,9 +10,4 @@ class WebConfig : WebMvcConfigurer {
   override fun addInterceptors(registry: InterceptorRegistry) {
     registry.addInterceptor(SentryContextAppender())
   }
-
-  override fun configurePathMatch(configurer: PathMatchConfigurer) {
-    // Use this until the UI is updated to no longer use trailing slashes
-    configurer.setUseTrailingSlashMatch(true) // option removed - has the UI been updated to remove trailing slashes?
-  }
 }

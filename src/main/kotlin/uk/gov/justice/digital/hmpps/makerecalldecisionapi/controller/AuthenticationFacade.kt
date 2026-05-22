@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class AuthenticationFacade {
 
-  val authentication: Authentication
+  val authentication: Authentication?
     get() = SecurityContextHolder.getContext().authentication
 
   val currentUsername: String?
@@ -23,9 +23,11 @@ class AuthenticationFacade {
 
   val isSpoOrAco: Boolean
     get() {
-      val credentials = authentication.credentials as Jwt
+      val credentials = authentication?.credentials as Jwt
       return if (credentials.claims is Map<*, *>) {
-        val authorites = credentials.claims["authorities"] as List<String>
+        val authorites = (credentials.claims["authorities"] as? List<*>)
+          ?.filterIsInstance<String>()
+          ?: emptyList()
         authorites.contains("ROLE_MAKE_RECALL_DECISION_SPO")
       } else {
         false
@@ -34,7 +36,7 @@ class AuthenticationFacade {
 
   val currentNameOfUser: String?
     get() {
-      val credentials = authentication.credentials as Jwt
+      val credentials = authentication?.credentials as Jwt
       return if (credentials.claims is Map<*, *>) {
         credentials.claims["name"] as String?
       } else {
@@ -44,7 +46,7 @@ class AuthenticationFacade {
 
   val currentUserId: String?
     get() {
-      val credentials = authentication.credentials as Jwt
+      val credentials = authentication?.credentials as Jwt
       return if (credentials.claims is Map<*, *>) {
         credentials.claims["user_id"] as String?
       } else {
@@ -55,6 +57,6 @@ class AuthenticationFacade {
   private val userPrincipal: Any?
     get() {
       val auth = authentication
-      return auth.principal
+      return auth?.principal
     }
 }

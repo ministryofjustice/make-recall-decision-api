@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClie
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller.AuthenticationFacade
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -108,6 +109,8 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var offenceConverter: OffenceConverter
 
+  protected lateinit var authenticationFacade: AuthenticationFacade
+
   protected lateinit var personDetailsService: PersonDetailsService
 
   protected lateinit var createAndVaryALicenceService: CreateAndVaryALicenceService
@@ -158,7 +161,8 @@ internal abstract class ServiceTestBase {
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(personDetailsResponse())
     partADocumentMapper = PartADocumentMapper(mockRegionService)
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
-    userAccessValidator = UserAccessValidator(deliusClient)
+    authenticationFacade = AuthenticationFacade()
+    userAccessValidator = UserAccessValidator(deliusClient, authenticationFacade)
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
     templateReplacementService =
       TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper, templateRetrievalService)

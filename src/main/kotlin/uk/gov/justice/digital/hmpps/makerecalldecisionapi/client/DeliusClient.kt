@@ -79,8 +79,7 @@ class DeliusClient(
 
   fun getUserAccess(username: String, crn: String): UserAccess = getBody("/user/$username/access/$crn")
 
-  fun getDocument(crn: String, id: String): ResponseEntity<Resource> =
-    get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
+  fun getDocument(crn: String, id: String): ResponseEntity<Resource> = get("/document/$crn/$id") { Mono.error(PersonNotFoundException(it)) }!!
 
   private inline fun <reified T : Any> getBody(
     endpoint: String,
@@ -139,9 +138,13 @@ class DeliusClient(
       .retrieve()
       .toEntity(T::class.java)
       .onErrorResume(WebClientResponseException::class.java) { ex ->
-        if (ex.statusCode == HttpStatusCode.valueOf(404)) Mono.empty() else Mono.error(
-          ex,
-        )
+        if (ex.statusCode == HttpStatusCode.valueOf(404)) {
+          Mono.empty()
+        } else {
+          Mono.error(
+            ex,
+          )
+        }
       }
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
