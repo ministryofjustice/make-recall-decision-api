@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.time.Duration
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -511,7 +512,10 @@ class LicenceConditionsControllerTest(
       userAccessAllowed(crn)
       licenceConditionsResponse(crn, delaySeconds = nDeliusTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(nDeliusTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/licence-conditions")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -531,7 +535,10 @@ class LicenceConditionsControllerTest(
       personalDetailsResponse(crn)
       cvlLicenceMatchResponse(nomsId, crn, delaySeconds = cvlTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(cvlTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/licence-conditions-cvl")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -552,7 +559,10 @@ class LicenceConditionsControllerTest(
       cvlLicenceMatchResponse(nomsId, crn)
       cvlLicenceByIdResponse(123344, nomsId, crn, delaySeconds = cvlTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(cvlTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/licence-conditions-cvl")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

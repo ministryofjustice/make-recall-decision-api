@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.Serializable
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class BookingMemento(
@@ -12,4 +13,4 @@ data class BookingMemento(
   val failed: Boolean?,
   val failedMessage: String?,
   val uploaded: List<String>?,
-)
+) : Serializable

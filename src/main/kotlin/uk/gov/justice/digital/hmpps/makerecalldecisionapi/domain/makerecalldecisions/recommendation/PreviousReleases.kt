@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import java.io.Serializable
 import java.time.LocalDate
 
 data class PreviousReleases(
@@ -8,4 +9,4 @@ data class PreviousReleases(
   val lastReleasingPrisonOrCustodialEstablishment: String? = null,
   val hasBeenReleasedPreviously: Boolean? = null,
   @JsonFormat(pattern = "yyyy-MM-dd") val previousReleaseDates: List<LocalDate>? = null,
-)
+) : Serializable

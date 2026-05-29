@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Sta
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.StaticOrDynamicPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.ThreeBandPredictor
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import java.io.Serializable
 import java.time.LocalDate
 
 data class RiskResponse(
@@ -28,7 +29,7 @@ data class RiskOfSeriousHarm(
   val overallRisk: String?,
   val riskInCustody: RiskTo?,
   val riskInCommunity: RiskTo?,
-)
+) : Serializable
 
 data class RiskTo(
   val riskToChildren: String?,
@@ -36,7 +37,7 @@ data class RiskTo(
   val riskToKnownAdult: String?,
   val riskToStaff: String?,
   val riskToPrisoners: String?,
-)
+) : Serializable
 
 data class Mappa(
   val level: Int? = null,
@@ -45,7 +46,7 @@ data class Mappa(
   val category: Int? = null,
   val error: String? = null,
   val hasBeenReviewed: Boolean? = false,
-)
+) : Serializable
 
 data class PredictorScores(
   val error: String? = EMPTY_STRING,
@@ -115,4 +116,4 @@ data class RoshSummary(
   val riskOfSeriousHarm: RiskOfSeriousHarm? = null,
   val lastUpdatedDate: String? = null,
   val error: String? = null,
-)
+) : Serializable

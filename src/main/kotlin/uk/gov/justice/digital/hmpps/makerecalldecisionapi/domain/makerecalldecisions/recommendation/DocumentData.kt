@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
+import java.io.Serializable
 import java.time.LocalDate
 
 data class DocumentData(
@@ -125,7 +126,7 @@ data class DocumentData(
 data class ValueWithDetails(
   val value: String? = null,
   val details: String? = null,
-)
+) : Serializable
 
 data class PractitionerDetails(
   val name: String = "",

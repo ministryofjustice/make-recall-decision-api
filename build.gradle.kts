@@ -49,14 +49,13 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
     implementation("org.apache.poi:poi-ooxml:5.5.1") // Address CVE-2025-31672 present in 5.2.2
   }
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("org.springframework.boot:spring-boot-jackson2")
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
   implementation("org.postgresql:postgresql:42.7.11") // hmpps-kotlin-spring-boot-starter pulls in 42.7.10 - should we remove this line here and leave it up to the starter?
 
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.20.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.42.0")
   implementation("io.sentry:sentry-logback:7.20.0")
 
   // OpenAPI dependencies

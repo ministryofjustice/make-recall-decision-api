@@ -13,12 +13,14 @@ internal class UserAccessValidator(
   private val deliusClient: DeliusClient,
   private val authenticationFacade: AuthenticationFacade,
 ) {
+  fun checkUserAccess(crn: String): UserAccess {
+    val username = authenticationFacade.authentication?.name ?: error("No authenticated user when checking access for $crn")
+    return checkUserAccess(crn, username)
+  }
+
   @Cacheable(USER_ACCESS_CACHE_KEY)
-  fun checkUserAccess(
-    crn: String,
-    username: String? = authenticationFacade.authentication?.name,
-  ) = try {
-    deliusClient.getUserAccess(username!!, crn)
+  fun checkUserAccess(crn: String, username: String): UserAccess = try {
+    deliusClient.getUserAccess(username, crn)
   } catch (e: PersonNotFoundException) {
     UserAccess(
       userNotFound = true,

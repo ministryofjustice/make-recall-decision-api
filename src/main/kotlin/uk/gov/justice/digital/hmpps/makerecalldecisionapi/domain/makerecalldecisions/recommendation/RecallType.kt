@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DeliusContactOutcome.DECISION_NOT_TO_RECALL
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DeliusContactOutcome.DECISION_TO_RECALL
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import java.io.Serializable
 
 data class ManagerRecallDecision(
   val selected: ManagerRecallDecisionTypeSelectedValue? = null,
@@ -10,22 +11,22 @@ data class ManagerRecallDecision(
   var isSentToDelius: Boolean? = false,
   val createdBy: String? = null,
   val createdDate: String? = null,
-)
+) : Serializable
 
 data class ManagerRecallDecisionTypeSelectedValue(
   val value: ManagerRecallDecisionTypeValue? = null,
   val details: String? = null,
-)
+) : Serializable
 
 data class RecallType(
   val selected: RecallTypeSelectedValue? = null,
   val allOptions: List<TextValueOption>? = null,
-)
+) : Serializable
 
 data class RecallTypeSelectedValue(
   val value: RecallTypeValue? = null,
   val details: String? = null,
-)
+) : Serializable
 
 enum class ManagerRecallDecisionTypeValue(val displayValue: String) {
   NO_RECALL("Do not recall"),
@@ -50,4 +51,4 @@ data class ConsiderationRationale(
   val createdDate: String? = null,
   val createdTime: String? = null,
   val sensitive: Boolean? = null,
-)
+) : Serializable

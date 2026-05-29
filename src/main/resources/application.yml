@@ -7,6 +7,9 @@ info.app:
     email: feedback@digital.justice.gov.uk
 
 spring:
+  http:
+    converters:
+      preferred-json-mapper: jackson2
   flyway:
   jpa:
     properties:
