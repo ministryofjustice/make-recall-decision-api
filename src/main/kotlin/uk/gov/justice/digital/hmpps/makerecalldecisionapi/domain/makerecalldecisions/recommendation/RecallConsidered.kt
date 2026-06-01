@@ -10,4 +10,4 @@ data class RecallConsidered(
   val createdDate: String?,
   val userName: String?,
   val recallConsideredDetail: String?,
-): Serializable
+) : Serializable
