@@ -152,6 +152,9 @@ hmpps:
     url: http://localhost:9090/auth
   sar:
     additionalAccessRole: MAKE_RECALL_DECISION
+    template:
+      path: /templates/sar/sar_template.mustache
+      enabled: true
 
 offender:
   search:

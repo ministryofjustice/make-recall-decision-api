@@ -15,6 +15,13 @@ jacoco.toolVersion = "0.8.11"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+  testRuntimeClasspath {
+    // MockServer 5.15.0 uses json-unit-core 2.36.0 for JSON body matching.
+    // hmpps-subject-access-request-test-support pulls in json-unit-assertj:5.x which would
+    // upgrade json-unit-core to 5.x, breaking MockServer's JSON matching.
+    // Force json-unit-core back to the version MockServer was built against.
+    resolutionStrategy.force("net.javacrumbs.json-unit:json-unit-core:2.36.0")
+  }
 }
 
 dependencyCheck {
@@ -101,6 +108,10 @@ dependencies {
   testImplementation("io.rest-assured:xml-path")
 
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:1.7.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:1.7.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.1.1")
 }
 
 java {
