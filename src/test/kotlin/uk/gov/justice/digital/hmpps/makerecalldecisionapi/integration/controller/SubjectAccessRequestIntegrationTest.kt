@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
@@ -44,11 +45,13 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     @Bean
     open fun sarIntegrationTestHelper(
       jwtAuthorisationHelper: JwtAuthorisationHelper,
+      objectMapper: ObjectMapper,
       @Value("\${hmpps.sar.tests.expected-api-response.path:}") expectedApiResponsePath: String,
       @Value("\${hmpps.sar.tests.expected-render-result.path:}") expectedRenderResultPath: String,
       @Value("\${hmpps.sar.tests.attachments-expected:false}") attachmentsExpected: Boolean,
     ): SarIntegrationTestHelper = SarIntegrationTestHelper(
       jwtAuthHelper = jwtAuthorisationHelper,
+      objectMapper = objectMapper,
       expectedApiResponsePath = expectedApiResponsePath,
       expectedRenderResultPath = expectedRenderResultPath,
       attachmentsExpected = attachmentsExpected,
@@ -123,7 +126,6 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
       template = templateResponse,
     )
 
-    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, crn)
     sarIntegrationTestHelper.saveGeneratedReport(renderResult)
 
     if (System.getenv("SAR_GENERATE_ACTUAL").toBoolean()) {

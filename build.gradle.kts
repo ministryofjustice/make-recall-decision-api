@@ -108,9 +108,10 @@ dependencies {
   testImplementation("io.rest-assured:xml-path")
 
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:1.7.1")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:1.7.1")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.3.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.5.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.1.1")
 }
 
