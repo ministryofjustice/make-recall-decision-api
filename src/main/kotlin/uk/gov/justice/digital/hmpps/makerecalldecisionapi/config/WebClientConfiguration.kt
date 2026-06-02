@@ -37,24 +37,24 @@ import java.util.concurrent.TimeoutException
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${delius.integration.endpoint.url}") private val deliusIntegrationRootUri: String,
-  @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+  @param:Value("\${delius.integration.endpoint.url}") private val deliusIntegrationRootUri: String,
+  @param:Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
 
-  @Value("\${document-management.api.endpoint.url}") private val documentManagementRootUri: String,
+  @param:Value("\${document-management.api.endpoint.url}") private val documentManagementRootUri: String,
 
-  @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
-  @Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
-  @Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationApiRootUri: String,
-  @Value("\${prison.api.endpoint.url}") private val prisonRootUri: String,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
-  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+  @param:Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
+  @param:Value("\${gotenberg.endpoint.url}") private val gotenbergRootUri: String,
+  @param:Value("\${ppud-automation.api.endpoint.url}") private val ppudAutomationApiRootUri: String,
+  @param:Value("\${prison.api.endpoint.url}") private val prisonRootUri: String,
+  @param:Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @param:Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
+  @param:Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
 
-  @Value("\${document-management.client.timeout}") private val documentManagementTimeout: Long,
+  @param:Value("\${document-management.client.timeout}") private val documentManagementTimeout: Long,
 
-  @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
-  @Value("\${prison.client.timeout}") private val prisonTimeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry,
+  @param:Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
+  @param:Value("\${prison.client.timeout}") private val prisonTimeout: Long,
+  @param:Autowired private val meterRegistry: MeterRegistry,
 ) {
 
   companion object {

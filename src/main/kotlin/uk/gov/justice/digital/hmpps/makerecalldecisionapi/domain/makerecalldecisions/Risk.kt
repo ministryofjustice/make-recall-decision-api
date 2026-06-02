@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class Risk(
   val flags: List<String?>?,
   val riskManagementPlan: RiskManagementPlan?,
-  @JsonProperty("assessments")
+  @param:JsonProperty("assessments")
   val assessmentInfo: AssessmentInfo? = null,
 )
 

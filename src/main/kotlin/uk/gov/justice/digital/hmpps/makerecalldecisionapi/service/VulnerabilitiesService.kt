@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.ExceptionCodeHelp
 
 @Service
 internal class VulnerabilitiesService(
-  @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
+  @param:Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
   private val recommendationService: RecommendationService,
   private val personDetailsService: PersonDetailsService,

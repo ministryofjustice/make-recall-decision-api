@@ -38,7 +38,7 @@ import java.util.concurrent.TimeoutException
 
 class PpudAutomationApiClient(
   private val webClient: WebClient,
-  @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
+  @param:Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
   private val timeoutCounter: Counter,
   private val objectMapper: ObjectMapper,
 ) {

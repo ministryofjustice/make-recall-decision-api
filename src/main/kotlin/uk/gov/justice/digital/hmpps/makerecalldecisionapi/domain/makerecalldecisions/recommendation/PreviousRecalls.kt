@@ -5,7 +5,7 @@ import java.io.Serializable
 import java.time.LocalDate
 
 data class PreviousRecalls(
-  @JsonFormat(pattern = "yyyy-MM-dd") val lastRecallDate: LocalDate? = null,
+  @param:JsonFormat(pattern = "yyyy-MM-dd") val lastRecallDate: LocalDate? = null,
   val hasBeenRecalledPreviously: Boolean? = null,
-  @JsonFormat(pattern = "yyyy-MM-dd") val previousRecallDates: List<LocalDate>? = null,
+  @param:JsonFormat(pattern = "yyyy-MM-dd") val previousRecallDates: List<LocalDate>? = null,
 ) : Serializable

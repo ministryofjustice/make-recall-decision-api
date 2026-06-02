@@ -86,16 +86,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   val recommendationStatusRepository: RecommendationStatusRepository,
-  @Lazy val personDetailsService: PersonDetailsService,
-  @Lazy val prisonerApiService: PrisonerApiService,
+  @param:Lazy val personDetailsService: PersonDetailsService,
+  @param:Lazy val prisonerApiService: PrisonerApiService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val riskService: RiskService?,
+  @param:Lazy private val riskService: RiskService?,
   private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
   private val recommendationConverter: RecommendationConverter,
-  @Value("\${mrd.url}") private val mrdUrl: String? = null,
-  @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
+  @param:Value("\${mrd.url}") private val mrdUrl: String? = null,
+  @param:Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

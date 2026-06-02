@@ -41,7 +41,7 @@ data class RiskTo(
 
 data class Mappa(
   val level: Int? = null,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val lastUpdatedDate: LocalDate? = null,
   val category: Int? = null,
   val error: String? = null,
@@ -61,21 +61,21 @@ data class PredictorScore(
 
 data class Scores(
   // V1 assessment scores
-  @JsonProperty("RSR")
+  @param:JsonProperty("RSR")
   val rsr: LevelWithStaticOrDynamicScore?,
-  @JsonProperty("OSPC")
+  @param:JsonProperty("OSPC")
   val ospc: LevelWithScore?,
-  @JsonProperty("OSPI")
+  @param:JsonProperty("OSPI")
   val ospi: LevelWithScore?,
-  @JsonProperty("OSPDC")
+  @param:JsonProperty("OSPDC")
   val ospdc: LevelWithScore?,
-  @JsonProperty("OSPIIC")
+  @param:JsonProperty("OSPIIC")
   val ospiic: LevelWithScore?,
-  @JsonProperty("OGRS")
+  @param:JsonProperty("OGRS")
   val ogrs: LevelWithTwoYearScores?,
-  @JsonProperty("OGP")
+  @param:JsonProperty("OGP")
   val ogp: LevelWithTwoYearScores?,
-  @JsonProperty("OVP")
+  @param:JsonProperty("OVP")
   val ovp: LevelWithTwoYearScores?,
 
   // V2 assessment scores

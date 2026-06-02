@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException
 
 class DeliusClient(
   private val webClient: WebClient,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @param:Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
   companion object {
@@ -214,7 +214,7 @@ class DeliusClient(
   data class PersonalDetailsOverview(
     val name: Name,
     val identifiers: Identifiers,
-    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     val dateOfBirth: LocalDate,
     val gender: String,
     val ethnicity: String?,
@@ -397,7 +397,7 @@ class DeliusClient(
     )
   }
 
-  data class ContactTypeSummary(val code: String, val description: String, @JsonAlias("hits") val total: Int)
+  data class ContactTypeSummary(val code: String, val description: String, @param:JsonAlias("hits") val total: Int)
 
   data class UserAccess(
     val exclusionMessage: String? = null,

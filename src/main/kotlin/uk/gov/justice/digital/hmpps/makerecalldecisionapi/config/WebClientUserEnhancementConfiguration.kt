@@ -28,12 +28,12 @@ import java.net.URI
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
-  @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
-  @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
-  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry,
+  @param:Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+  @param:Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
+  @param:Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @param:Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
+  @param:Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+  @param:Autowired private val meterRegistry: MeterRegistry,
 ) {
 
   @Bean
