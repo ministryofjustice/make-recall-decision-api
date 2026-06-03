@@ -74,6 +74,7 @@ class WebClientUserEnhancementConfiguration(
     tokenResponseClient.addParametersConverter { _: OAuth2ClientCredentialsGrantRequest ->
       LinkedMultiValueMap<String, String>().apply {
         add("username", authentication?.name)
+        add("auth_source", "delius")
       }
     }
 
