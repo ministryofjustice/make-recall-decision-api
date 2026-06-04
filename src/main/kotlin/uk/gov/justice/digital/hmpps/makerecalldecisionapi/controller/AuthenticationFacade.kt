@@ -23,8 +23,8 @@ class AuthenticationFacade {
 
   val isSpoOrAco: Boolean
     get() {
-      val credentials = authentication?.credentials as Jwt
-      return if (credentials.claims is Map<*, *>) {
+      val credentials = authentication?.credentials as? Jwt
+      return if (credentials?.claims is Map<*, *>) {
         val authorites = (credentials.claims["authorities"] as? List<*>)
           ?.filterIsInstance<String>()
           ?: emptyList()

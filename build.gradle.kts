@@ -63,7 +63,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.11") // hmpps-kotlin-spring-boot-starter pulls in 42.7.10 - should we remove this line here and leave it up to the starter?
 
   implementation("io.sentry:sentry-spring-boot-4:8.42.0")
-  implementation("io.sentry:sentry-logback:7.20.0")
+  implementation("io.sentry:sentry-logback:8.42.0")
 
   // OpenAPI dependencies
   // Not sure if we're affected, but release notes on 10.2.1 version of hmpps-gradle-spring-boot

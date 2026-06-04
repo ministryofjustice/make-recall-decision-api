@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.client
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.micrometer.core.instrument.Counter
 import org.apache.commons.lang3.StringUtils.normalizeSpace
@@ -397,7 +396,7 @@ class DeliusClient(
     )
   }
 
-  data class ContactTypeSummary(val code: String, val description: String, @param:JsonAlias("hits") val total: Int)
+  data class ContactTypeSummary(val code: String, val description: String, val total: Int)
 
   data class UserAccess(
     val exclusionMessage: String? = null,

@@ -25,11 +25,11 @@ internal class PpcsService(
   fun search(crn: String): PpcsSearchResponse {
     log.info("ppcs searching for crn: " + crn)
 
-    val username = authenticationFacade.authentication?.name!!
-
-    val apiResponse = deliusClient.findByCrn(crn)?.takeIf {
-      userAccessValidator.checkUserAccess(crn, username)
-        .run { !userRestricted && !userExcluded }
+    val apiResponse = authenticationFacade.authentication?.name?.let { username ->
+      deliusClient.findByCrn(crn)?.takeIf {
+        userAccessValidator.checkUserAccess(crn, username)
+          .run { !userRestricted && !userExcluded }
+      }
     }
 
     log.info("delius returns ${if (apiResponse != null) 1 else 0} results")
