@@ -4,14 +4,10 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.7.1"
   kotlin("jvm") version "2.3.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
-  id("jacoco")
   kotlin("plugin.jpa") version "2.3.20"
-  id("org.sonarqube") version "6.2.0.5505"
   kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.serialization") version "2.3.20"
 }
-
-jacoco.toolVersion = "0.8.11"
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
@@ -123,16 +119,11 @@ tasks {
   }
 }
 
+// TODO test removing this - it was introduced as part of the upgrade to Spring Boot 3,
+//      but I'm not sure what tool exactly is the one dynamically loading an agent (mockito?).
+//      See https://stackoverflow.com/a/79171147 for more info.
 tasks.test {
   jvmArgs("-XX:+EnableDynamicAgentLoading")
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-  dependsOn(tasks.test)
-  reports {
-    xml.required.set(true)
-  }
 }
 
 val SourceSet.kotlin: SourceDirectorySet

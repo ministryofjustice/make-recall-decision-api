@@ -26,7 +26,7 @@ Contact the [#consider-a-recall](https://moj.enterprise.slack.com/archives/C01D6
 - Springboot application based on [hmpps-template-kotlin](https://github.com/ministryofjustice/hmpps-template-kotlin).
 - PostgreSQL database for recommendation data - configured via [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments).
 - AWS S3 for document storage - again, configured via [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments).
-- [CircleCI](https://circleci.com/) for CI/CD.
+- [GitHub Actions](https://github.com/ministryofjustice/make-recall-decision-api/actions) for CI/CD.
 - [gotenberg](https://gotenberg.dev/) for PDF rendering - included via a helm sub-chart. This is a leftover from earlier
   plans to produce PDFs that is pending removal through [MRD-2708](https://dsdmoj.atlassian.net/browse/MRD-2708).
 
@@ -150,9 +150,9 @@ the application is ready to handle requests as it has checked its connections to
 
 ### Deployment
 
-We use CircleCI to manage deployments (see [.circleci/config.yml](.circleci/config.yml) for the full configuration):
+We use GitHub Actions to manage deployments (see [.github/workflows](.github/workflows) for the full configuration):
 
-- Built docker images are pushed to [quay.io](https://quay.io/repository/hmpps/make-recall-decision-api).
+- Built docker images are pushed to [ghcr.io](https://ghcr.io/ministryofjustice/make-recall-decision-api).
 - Deployment to kubernetes uses helm.
 
 ### Troubleshooting

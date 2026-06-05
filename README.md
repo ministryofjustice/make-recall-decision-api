@@ -2,7 +2,7 @@
 
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/make-recall-decision-api/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/make-recall-decision-api)
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/make-recall-decision-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/make-recall-decision-api)
+[![GitHub Actions](https://github.com/ministryofjustice/make-recall-decision-api/actions/workflows/pipeline.yml/badge.svg)](https://github.com/ministryofjustice/make-recall-decision-api)
 
 This is the backend service to help probation practitioners (PP) and Senior Probation Officers (SPOs) make
 recommendations on recall decisions.

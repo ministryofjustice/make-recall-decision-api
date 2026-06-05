@@ -486,7 +486,7 @@ class RecommendationControllerTest : IntegrationTestBase() {
 
 //  @Test
 //  fun `update with refresh and get recommendation`() {
-//    // FIXME: if getting stack overflow error when running this test in CircleCI, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
+//    // FIXME: if getting stack overflow error when running this test in GitHub Actions, it may be because there are too many json asserts. Try breaking out the 'refresh' feature into separate tests to reduce the number of asserts in this single test.
 //    userAccessAllowed(crn)
 //    personalDetailsResponseOneTimeOnly(crn)
 //    oasysAssessmentsResponse(crn)
