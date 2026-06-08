@@ -130,6 +130,21 @@ The functional test is a black box test of the MRD API. It runs against the dev 
 * To run the test in the IDE first start `docker-compose-postgres.yml`, `./scripts/start-local-development.sh` (in that
   order) and then use the Gradle task `functional-test-light` or run the functional test directly from Intellij
 
+### Running Tests
+
+Run the following script to run all the integration and unit tests locally:
+
+```
+docker-compose -f docker-compose-postgres.yml up
+./gradlew check
+```
+
+or to run all tests with the service starting in Docker:
+
+```
+./build.sh
+```
+
 ### Subject Access Request (SAR) tests
 
 `SubjectAccessRequestIntegrationTest` contains two tests:
@@ -172,21 +187,6 @@ cp src/test/resources/sar-api-response.json.log src/test/resources/sar/sar-api-r
 cp src/test/resources/sar-generated-report.html.log src/test/resources/sar/sar-expected-report.html
 ```
 Review the diff before committing - the fixture change is the auditable record that the SAR output changed.
-
-### Running Tests
-
-Run the following script to run all the integration and unit tests locally:
-
-```
-docker-compose -f docker-compose-postgres.yml up
-./gradlew check
-```
-
-or to run all tests with the service starting in Docker:
-
-```
-./build.sh
-```
 
 ## Other 
 

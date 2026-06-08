@@ -226,6 +226,15 @@ class MrdTestDataBuilder {
           youngOffender = "No",
           ethnicity = "White",
         ),
+        isChargedWithOffence = true,
+        isServingTerroristOrNationalSecurityOffence = false,
+        isAtRiskOfInvolvedInForeignPowerThreat = true,
+        wasReferredToParoleBoard244ZB = false,
+        wasRepatriatedForMurder = true,
+        isServingSOPCSentence = false,
+        isServingDCRSentence = true,
+        isYouthSentenceOver12Months = false,
+        isYouthChargedWithSeriousOffence = true,
       ),
     )
 
