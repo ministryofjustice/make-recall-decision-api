@@ -11,8 +11,6 @@ plugins {
   kotlin("plugin.serialization") version "2.3.21"
 }
 
-jacoco.toolVersion = "0.8.11"
-
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
   testRuntimeClasspath {
@@ -129,16 +127,11 @@ tasks {
   }
 }
 
+// TODO test removing this - it was introduced as part of the upgrade to Spring Boot 3,
+//      but I'm not sure what tool exactly is the one dynamically loading an agent (mockito?).
+//      See https://stackoverflow.com/a/79171147 for more info.
 tasks.test {
   jvmArgs("-XX:+EnableDynamicAgentLoading")
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-  dependsOn(tasks.test)
-  reports {
-    xml.required.set(true)
-  }
 }
 
 val SourceSet.kotlin: SourceDirectorySet
