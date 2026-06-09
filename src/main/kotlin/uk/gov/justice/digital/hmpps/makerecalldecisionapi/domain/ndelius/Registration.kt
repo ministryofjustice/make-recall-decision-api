@@ -8,7 +8,7 @@ data class Registration(
   val active: Boolean?,
   val register: CodeDescriptionItem? = null,
   val type: CodeDescriptionItem?,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val startDate: LocalDate? = null,
   val notes: String? = null,
 )

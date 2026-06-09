@@ -2,16 +2,9 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.health
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.boot.actuate.health.Status
+import org.springframework.boot.health.contributor.Status
 
 class HealthStatusAggregatorTest {
-  @Test
-  fun `given null statuses when called then return UP`() {
-    val aggregator = HealthStatusAggregator()
-    val result = aggregator.getAggregateStatus(null as MutableSet<Status>?)
-    assertEquals(Status.UP, result)
-  }
-
   @Test
   fun `given statuses containing UP when called then return UP`() {
     val aggregator = HealthStatusAggregator()

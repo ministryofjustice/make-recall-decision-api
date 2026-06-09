@@ -23,10 +23,10 @@ class MrdEventsEmitter(
   objectMapper: ObjectMapper,
   customTelemetryClient: TelemetryClient,
 ) {
-  private lateinit var domainEventTopicSnsClient: SnsAsyncClient
-  private lateinit var topicArn: String
-  private lateinit var objectMapper: ObjectMapper
-  private lateinit var telemetryClient: TelemetryClient
+  private var domainEventTopicSnsClient: SnsAsyncClient
+  private var topicArn: String
+  private var objectMapper: ObjectMapper
+  private var telemetryClient: TelemetryClient
 
   init {
     val domainEventTopic: HmppsTopic? = hmppsQueueService.findByTopicId("hmpps-domain-events")

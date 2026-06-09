@@ -83,12 +83,12 @@ fun deliusContactHistoryResponse() = """
       {
         "code": "C204",
         "description": "Police Liaison",
-        "hits": 2
+        "total": 2
       },
       {
         "code": "COAP",
         "description": "Registration Review",
-        "hits": 1
+        "total": 1
       }
     ],
     "hits": 3,

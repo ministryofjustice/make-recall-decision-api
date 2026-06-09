@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException
 
 class DocumentManagementClient(
   private val webClient: WebClient,
-  @Value("\${document-management.client.timeout}") private val documentManagementClientTimeout: Long,
+  @param:Value("\${document-management.client.timeout}") private val documentManagementClientTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
 

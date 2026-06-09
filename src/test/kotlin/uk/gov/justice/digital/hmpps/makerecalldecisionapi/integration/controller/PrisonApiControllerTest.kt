@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.requests.m
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.prison.PrisonApiResponseMocker
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
+import java.time.Duration
 import java.time.LocalDateTime
 
 @ActiveProfiles("test")
@@ -311,7 +312,10 @@ class PrisonApiControllerTest : IntegrationTestBase() {
 
       // when
       val response = convertResponseToJSONObject(
-        webTestClient.get()
+        webTestClient.mutate()
+          .responseTimeout(Duration.ofSeconds(prisonTimeout + 10))
+          .build()
+          .get()
           .uri("/offenders/$nomsId/movements")
           .headers {
             (listOf(it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION_PPCS"))))

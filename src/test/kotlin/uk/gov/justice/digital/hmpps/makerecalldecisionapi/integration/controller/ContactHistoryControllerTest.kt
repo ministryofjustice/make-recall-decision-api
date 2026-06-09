@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.Integratio
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.deliusContactHistoryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.emptyContactSummaryResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
+import java.time.Duration
 
 @ActiveProfiles("test")
 @ExperimentalCoroutinesApi
@@ -147,7 +148,10 @@ class ContactHistoryControllerTest(
       userAccessAllowed(crn)
       deliusContactHistoryResponse(crn, body = deliusContactHistoryResponse(), delaySeconds = nDeliusTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(nDeliusTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/contact-history")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

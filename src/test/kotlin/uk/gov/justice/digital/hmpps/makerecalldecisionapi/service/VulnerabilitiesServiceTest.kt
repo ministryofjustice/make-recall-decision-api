@@ -134,7 +134,7 @@ internal class VulnerabilitiesServiceTest : ServiceTestBase() {
       given(arnApiClient.getRisksWithFullText(crn)).willThrow(
         WebClientResponseException(
           code,
-          null,
+          "",
           null,
           null,
           null,

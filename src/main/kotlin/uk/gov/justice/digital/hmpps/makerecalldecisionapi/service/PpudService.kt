@@ -36,7 +36,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 
 @Service
 internal class PpudService(
-  @Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
+  @param:Qualifier("ppudAutomationApiClient") private val ppudAutomationApiClient: PpudAutomationApiClient,
   private val ppudUserMappingRepository: PpudUserMappingRepository,
   private val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
 ) {

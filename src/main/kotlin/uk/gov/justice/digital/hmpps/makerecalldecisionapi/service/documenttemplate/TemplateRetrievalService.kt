@@ -13,7 +13,7 @@ import java.time.ZonedDateTime
 
 @Service
 class TemplateRetrievalService(
-  @Autowired private var documentTemplateConfig: DocumentTemplateConfiguration,
+  @param:Autowired private var documentTemplateConfig: DocumentTemplateConfiguration,
 ) {
 
   companion object {

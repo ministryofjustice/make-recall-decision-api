@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.OffenderSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import java.time.Duration
 import kotlin.random.Random
 
 @ActiveProfiles("test")
@@ -139,7 +140,10 @@ class OffenderSearchControllerTest(
       val crn = "X123456"
       findByCrnSuccess(crn, delaySeconds = nDeliusTimeout + 2)
       val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(nDeliusTimeout + 10))
+        .build()
+        .post()
         .uri("/paged-search?page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .body(fromValue(requestBody))
@@ -160,7 +164,10 @@ class OffenderSearchControllerTest(
       findByCrnSuccess(crn)
       userAccessAllowed(crn, delaySeconds = nDeliusTimeout + 2)
       val requestBody = OffenderSearchRequest(crn = crn)
-      webTestClient.post()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(nDeliusTimeout + 10))
+        .build()
+        .post()
         .uri("/paged-search?page=0&pageSize=1")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .body(fromValue(requestBody))

@@ -1,11 +1,12 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import java.io.Serializable
 
 data class StandardLicenceConditions(
   val selected: List<String>? = null,
   val allOptions: List<TextValueOption>? = null,
-)
+) : Serializable
 
 enum class SelectedStandardLicenceConditions(val cvlCode: String) {
   GOOD_BEHAVIOUR("9ce9d594-e346-4785-9642-c87e764bee37"),

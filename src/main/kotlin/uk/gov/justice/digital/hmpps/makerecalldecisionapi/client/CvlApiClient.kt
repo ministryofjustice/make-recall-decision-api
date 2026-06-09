@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException
 
 class CvlApiClient(
   private val webClient: WebClient,
-  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+  @param:Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
   companion object {

@@ -21,11 +21,11 @@ import java.util.concurrent.TimeUnit
 
 @Service
 internal class RecommendationsCleanupTask(
-  @Lazy private val recommendationRepository: RecommendationRepository,
-  @Lazy private val recommendationStatusRepository: RecommendationStatusRepository,
+  @param:Lazy private val recommendationRepository: RecommendationRepository,
+  @param:Lazy private val recommendationStatusRepository: RecommendationStatusRepository,
   private val cleanUpConfiguration: CleanUpConfiguration,
   private val recommendationService: RecommendationService,
-  @Value("\${housekeeping.sendDomainEvents}") private val sendDomainEvents: Boolean = false,
+  @param:Value("\${housekeeping.sendDomainEvents}") private val sendDomainEvents: Boolean = false,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

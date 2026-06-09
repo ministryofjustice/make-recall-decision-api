@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException
 
 class ArnApiClient(
   private val webClient: WebClient,
-  @Value("\${oasys.arn.client.timeout}") private val arnClientTimeout: Long,
+  @param:Value("\${oasys.arn.client.timeout}") private val arnClientTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
   companion object {

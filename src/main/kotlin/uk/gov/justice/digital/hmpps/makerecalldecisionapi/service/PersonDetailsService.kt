@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation
 internal class PersonDetailsService(
   private val deliusClient: DeliusClient,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val recommendationService: RecommendationService?,
+  @param:Lazy private val recommendationService: RecommendationService?,
 ) {
   fun getPersonDetails(crn: String): PersonDetailsResponse {
     val userAccessResponse = userAccessValidator.checkUserAccess(crn)

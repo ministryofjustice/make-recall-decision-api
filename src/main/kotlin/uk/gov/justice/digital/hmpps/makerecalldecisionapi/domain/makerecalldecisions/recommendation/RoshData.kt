@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import java.io.Serializable
+
 data class RoshData(
   val riskToChildren: RoshDataScore? = null,
   val riskToPublic: RoshDataScore? = null,
   val riskToKnownAdult: RoshDataScore? = null,
   val riskToStaff: RoshDataScore? = null,
   val riskToPrisoners: RoshDataScore? = null,
-)
+) : Serializable
 
 enum class RoshDataScore(val partADisplayValue: String) {
   VERY_HIGH("Very High"),

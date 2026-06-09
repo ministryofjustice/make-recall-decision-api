@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreType
+import java.io.Serializable
 
 data class PpudOffender(
   val id: String,
@@ -20,7 +21,7 @@ data class PpudOffender(
   val sentences: List<PpudSentence>,
   val status: String,
   val youngOffender: String,
-)
+) : Serializable
 
 data class PpudSentence(
   val id: String?,
@@ -39,13 +40,13 @@ data class PpudSentence(
   val releases: List<PpudRelease>?,
   val sentenceLength: PpudSentenceLength?,
   val sentencingCourt: String?,
-)
+) : Serializable
 
 data class PpudOffence(
   val indexOffence: String?,
   val dateOfIndexOffence: String?,
   val indexOffenceComment: String?,
-)
+) : Serializable
 
 // deprecated
 @JsonIgnoreType
@@ -55,10 +56,10 @@ data class PpudRelease(
   val releasedFrom: String?,
   val releasedUnder: String?,
   val releaseType: String?,
-)
+) : Serializable
 
 data class PpudSentenceLength(
   val partYears: Int?,
   val partMonths: Int?,
   val partDays: Int?,
-)
+) : Serializable

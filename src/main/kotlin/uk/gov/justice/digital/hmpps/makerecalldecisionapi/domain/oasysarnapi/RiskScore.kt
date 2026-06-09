@@ -3,12 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class RiskScore(
-  @JsonProperty("VERY_HIGH")
+  @param:JsonProperty("VERY_HIGH")
   val veryHigh: List<String?>?,
-  @JsonProperty("HIGH")
+  @param:JsonProperty("HIGH")
   val high: List<String?>?,
-  @JsonProperty("MEDIUM")
+  @param:JsonProperty("MEDIUM")
   val medium: List<String?>?,
-  @JsonProperty("LOW")
+  @param:JsonProperty("LOW")
   val low: List<String?>?,
 )

@@ -6,16 +6,16 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class LicenceCondition(
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val startDate: LocalDate,
   val terminationDate: LocalDate? = null,
   val createdDateTime: LocalDateTime? = null,
   val active: Boolean? = null,
-  @JsonProperty("notes")
+  @param:JsonProperty("notes")
   val licenceConditionNotes: String?,
-  @JsonProperty("mainCategory")
+  @param:JsonProperty("mainCategory")
   val licenceConditionTypeMainCat: LicenceConditionTypeMainCat?,
-  @JsonProperty("subCategory")
+  @param:JsonProperty("subCategory")
   val licenceConditionTypeSubCat: LicenceConditionTypeSubCat?,
 )
 

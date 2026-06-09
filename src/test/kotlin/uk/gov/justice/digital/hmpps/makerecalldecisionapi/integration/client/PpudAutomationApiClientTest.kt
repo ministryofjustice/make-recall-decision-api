@@ -458,6 +458,6 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
     val actual = ppudAutomationApiClient.searchActiveUsers(searchReq).block()
 
     // then
-    assertThat(actual?.results, equalTo(listOf(PpudUser(searchReq.fullName!!, teamName))))
+    assertThat(actual?.results, equalTo(listOf(PpudUser(searchReq.fullName, teamName))))
   }
 }

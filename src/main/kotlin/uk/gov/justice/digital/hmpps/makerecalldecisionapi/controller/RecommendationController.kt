@@ -52,7 +52,7 @@ internal class RecommendationController(
     @RequestBody recommendationRequest: CreateRecommendationRequest,
     @RequestHeader("X-Feature-Flags") featureFlags: String?,
     userLogin: Principal,
-  ): ResponseEntity<RecommendationResponse?> {
+  ): ResponseEntity<RecommendationResponse> {
     log.info(normalizeSpace("Create recommendation details endpoint hit for CRN: ${recommendationRequest.crn}"))
     val flags: FeatureFlags = setFeatureFlags(featureFlags)
     val username = userLogin.name
@@ -127,7 +127,7 @@ internal class RecommendationController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PatchMapping("/recommendations/{recommendationId}")
+  @PatchMapping(path = ["/recommendations/{recommendationId}", "/recommendations/{recommendationId}/"])
   @Operation(summary = "Updates a recommendation")
   suspend fun updateRecommendation(
     @PathVariable("recommendationId") recommendationId: Long,

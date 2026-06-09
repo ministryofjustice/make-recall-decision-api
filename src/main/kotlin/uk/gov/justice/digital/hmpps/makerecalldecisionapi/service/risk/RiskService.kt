@@ -41,9 +41,9 @@ import java.time.LocalDateTime
 @Service
 internal class RiskService(
   private val deliusClient: DeliusClient,
-  @Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
+  @param:Qualifier("assessRisksNeedsApiClientUserEnhanced") private val arnApiClient: ArnApiClient,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val recommendationService: RecommendationService?,
+  @param:Lazy private val recommendationService: RecommendationService?,
   private val riskScoreConverter: RiskScoreConverter,
 ) {
 

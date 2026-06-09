@@ -27,7 +27,7 @@ data class RecurrentCleanUpConfiguration(
  *             is set in Europe/London time).
  */
 data class FTR56CleanUpConfiguration(
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mmZ")
+  @param:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mmZ")
   val thresholdDateTime: ZonedDateTime,
   val cron: String,
 )

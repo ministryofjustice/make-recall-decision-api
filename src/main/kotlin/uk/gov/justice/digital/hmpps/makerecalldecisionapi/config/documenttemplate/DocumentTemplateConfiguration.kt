@@ -17,7 +17,7 @@ data class DocumentTemplateConfiguration(
 )
 
 data class DocumentTemplateSetting(
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mmZ")
+  @param:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mmZ")
   val startDateTime: ZonedDateTime,
   val templateName: String,
 )

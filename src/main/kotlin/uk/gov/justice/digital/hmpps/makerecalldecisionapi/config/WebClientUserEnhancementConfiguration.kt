@@ -14,11 +14,12 @@ import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
-import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient
 import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest
+import org.springframework.security.oauth2.client.endpoint.RestClientClientCredentialsTokenResponseClient
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServletBearerExchangeFilterFunction
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
@@ -27,12 +28,12 @@ import java.net.URI
 
 @Configuration
 class WebClientUserEnhancementConfiguration(
-  @Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
-  @Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
-  @Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
-  @Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry,
+  @param:Value("\${arn.api.endpoint.url}") private val arnApiRootUri: String,
+  @param:Value("\${cvl.api.endpoint.url}") private val cvlApiRootUri: String,
+  @param:Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @param:Value("\${oasys.arn.client.timeout}") private val arnTimeout: Long,
+  @param:Value("\${cvl.client.timeout}") private val cvlTimeout: Long,
+  @param:Autowired private val meterRegistry: MeterRegistry,
 ) {
 
   @Bean
@@ -68,19 +69,18 @@ class WebClientUserEnhancementConfiguration(
   private fun authorizedClientManagerUserEnhanced(clients: ClientRegistrationRepository?): OAuth2AuthorizedClientManager {
     val service: OAuth2AuthorizedClientService = InMemoryOAuth2AuthorizedClientService(clients)
     val manager = AuthorizedClientServiceOAuth2AuthorizedClientManager(clients, service)
-
-    val defaultClientCredentialsTokenResponseClient = DefaultClientCredentialsTokenResponseClient()
+    val tokenResponseClient = RestClientClientCredentialsTokenResponseClient()
     val authentication = SecurityContextHolder.getContext().authentication
-
-    defaultClientCredentialsTokenResponseClient.setRequestEntityConverter { grantRequest: OAuth2ClientCredentialsGrantRequest ->
-      val converter = CustomOAuth2ClientCredentialsGrantRequestEntityConverter()
-      val username = authentication.name
-      converter.enhanceWithUsername(grantRequest, username)
+    tokenResponseClient.addParametersConverter { _: OAuth2ClientCredentialsGrantRequest ->
+      LinkedMultiValueMap<String, String>().apply {
+        add("username", authentication?.name)
+        add("auth_source", "delius")
+      }
     }
 
     val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
       .clientCredentials { clientCredentialsGrantBuilder: OAuth2AuthorizedClientProviderBuilder.ClientCredentialsGrantBuilder ->
-        clientCredentialsGrantBuilder.accessTokenResponseClient(defaultClientCredentialsTokenResponseClient)
+        clientCredentialsGrantBuilder.accessTokenResponseClient(tokenResponseClient)
       }
       .build()
 

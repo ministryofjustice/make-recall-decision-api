@@ -226,9 +226,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -389,9 +389,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -540,9 +540,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -650,9 +650,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.createRecommendation(CreateRecommendationRequest(crn, null), "UserBill", "Bill", null)
 
       // then
-      assertThat(response?.id).isEqualTo(1)
-      assertThat(response?.status).isEqualTo(Status.RECALL_CONSIDERED)
-      assertThat(response?.personOnProbation).isEqualTo(existingRecommendation.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isEqualTo(1)
+      assertThat(response.status).isEqualTo(Status.RECALL_CONSIDERED)
+      assertThat(response.personOnProbation).isEqualTo(existingRecommendation.data.personOnProbation?.toPersonOnProbationDto())
 
       // and
       then(recommendationRepository).should()
@@ -2168,7 +2168,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
       val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
       // then
-      assertThat(response?.userAccessResponse).isEqualTo(
+      assertThat(response.userAccessResponse).isEqualTo(
         UserAccess(
           userRestricted = false,
           userExcluded = true,

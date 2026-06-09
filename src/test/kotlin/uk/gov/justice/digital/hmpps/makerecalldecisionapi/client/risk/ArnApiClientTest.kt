@@ -71,7 +71,7 @@ class ArnApiClientTest {
     handlesTimeoutExceptionWhenRetrievingValues<AssessmentScores>(uri, "risk scores", riskScoreCall)
   }
 
-  private fun <RiskValueType> retrievesRiskValues(
+  private fun <RiskValueType : Any> retrievesRiskValues(
     riskValueName: String,
     responseList: RiskValueType,
     responseTypeObject: ParameterizedTypeReference<RiskValueType>,

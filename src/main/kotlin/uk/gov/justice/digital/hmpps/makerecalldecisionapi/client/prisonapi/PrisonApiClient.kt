@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException
 
 class PrisonApiClient(
   private val webClient: WebClient,
-  @Value("\${prison.client.timeout}") private val prisonTimeout: Long,
+  @param:Value("\${prison.client.timeout}") private val prisonTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
 

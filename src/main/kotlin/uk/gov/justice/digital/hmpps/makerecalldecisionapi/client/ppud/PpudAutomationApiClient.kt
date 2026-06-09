@@ -38,7 +38,7 @@ import java.util.concurrent.TimeoutException
 
 class PpudAutomationApiClient(
   private val webClient: WebClient,
-  @Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
+  @param:Value("\${ppud-automation.client.timeout}") private val ppudAutomationTimeout: Long,
   private val timeoutCounter: Counter,
   private val objectMapper: ObjectMapper,
 ) {
@@ -123,7 +123,7 @@ class PpudAutomationApiClient(
     }
   }
 
-  private fun <T> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+  private fun <T : Any> get(url: String, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
     .get()
     .uri { builder -> builder.path(url).build() }
     .retrieve()
@@ -134,7 +134,7 @@ class PpudAutomationApiClient(
     }
     .withRetry()
 
-  private fun <T> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
+  private fun <T : Any> post(url: String, request: Any, responseType: ParameterizedTypeReference<T>): Mono<T> = webClient
     .post()
     .uri(url)
     .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)

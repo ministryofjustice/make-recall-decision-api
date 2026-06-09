@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationSupportingDocumentEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
+import java.time.Duration
 import java.util.*
 
 @ActiveProfiles("test")
@@ -240,7 +241,10 @@ class SupportingDocumentControllerTest(
       documentManagementApiDownloadResponse()
       documentManagementApiDeleteResponse(delaySeconds = documentManagamentClientTimeout + 2)
       val id = uploadDocument(recommendationId = recommendationId, data = "hello there!").get("id").toString()
-      webTestClient.delete()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(documentManagamentClientTimeout + 10))
+        .build()
+        .delete()
         .uri("/recommendations/$recommendationId/documents/$id")
         .headers {
           (
@@ -275,7 +279,10 @@ class SupportingDocumentControllerTest(
       documentManagementApiUploadResponse(documentUuid = documentUuid)
       documentManagementApiDownloadResponse(delaySeconds = documentManagamentClientTimeout + 2)
       val id = uploadDocument(recommendationId = recommendationId, data = "hello there!").get("id").toString()
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(documentManagamentClientTimeout + 10))
+        .build()
+        .get()
         .uri("/recommendations/$recommendationId/documents/$id")
         .headers {
           (
@@ -308,7 +315,10 @@ class SupportingDocumentControllerTest(
       val data = "Document data"
       val recommendationId = "123"
       documentManagementApiUploadResponse(documentUuid = UUID.randomUUID().toString(), delaySeconds = documentManagamentClientTimeout + 2)
-      webTestClient.post()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(documentManagamentClientTimeout + 10))
+        .build()
+        .post()
         .uri("/recommendations/$recommendationId/documents")
         .contentType(MediaType.APPLICATION_JSON)
         .body(

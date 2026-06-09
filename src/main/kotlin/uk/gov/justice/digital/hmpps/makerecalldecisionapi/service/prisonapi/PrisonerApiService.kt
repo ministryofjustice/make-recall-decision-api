@@ -80,7 +80,7 @@ internal class PrisonerApiService(
         val lastDateOutOfPrison =
           prisonPeriod.movementDates.map { it.dateOutOfPrison }.filter { it != null }
             .maxWithOrNull(Comparator.naturalOrder())
-        val movement = prisonPeriod.movementDates.find { it.dateOutOfPrison === lastDateOutOfPrison }
+        val movement = prisonPeriod.movementDates.find { it.dateOutOfPrison == lastDateOutOfPrison }
         val prisonDescription = movement?.releaseFromPrisonId?.let {
           try {
             prisonApiClient.retrieveAgency(movement.releaseFromPrisonId).block()?.longDescription
