@@ -1,10 +1,9 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.slf4j.LoggerFactory
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.RecommendationDataToDocumentMapper.Companion.joinToString
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller.AuthenticationFacade
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpcsSearchResult
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
@@ -17,6 +16,7 @@ internal class PpcsService(
   private val recommendationStatusRepository: RecommendationStatusRepository,
   private val deliusClient: DeliusClient,
   private val userAccessValidator: UserAccessValidator,
+  private val authenticationFacade: AuthenticationFacade,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -25,9 +25,11 @@ internal class PpcsService(
   fun search(crn: String): PpcsSearchResponse {
     log.info("ppcs searching for crn: " + crn)
 
-    val apiResponse = deliusClient.findByCrn(crn)?.takeIf {
-      userAccessValidator.checkUserAccess(crn, SecurityContextHolder.getContext().authentication.name)
-        .run { !userRestricted && !userExcluded }
+    val apiResponse = authenticationFacade.authentication?.name?.let { username ->
+      deliusClient.findByCrn(crn)?.takeIf {
+        userAccessValidator.checkUserAccess(crn, username)
+          .run { !userRestricted && !userExcluded }
+      }
     }
 
     log.info("delius returns ${if (apiResponse != null) 1 else 0} results")

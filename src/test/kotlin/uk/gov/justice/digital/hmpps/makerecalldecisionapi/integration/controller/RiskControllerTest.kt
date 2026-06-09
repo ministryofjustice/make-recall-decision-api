@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.Thr
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
+import java.time.Duration
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -502,7 +503,10 @@ class RiskControllerTest(
       mappaAndRoshHistoryResponse(crn)
       roSHSummaryResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(oasysArnClientTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/risk")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()
@@ -522,7 +526,10 @@ class RiskControllerTest(
       roSHSummaryResponse(crn)
       allRiskScoresResponse(crn, delaySeconds = oasysArnClientTimeout + 2)
 
-      webTestClient.get()
+      webTestClient.mutate()
+        .responseTimeout(Duration.ofSeconds(oasysArnClientTimeout + 10))
+        .build()
+        .get()
         .uri("/cases/$crn/risk")
         .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
         .exchange()

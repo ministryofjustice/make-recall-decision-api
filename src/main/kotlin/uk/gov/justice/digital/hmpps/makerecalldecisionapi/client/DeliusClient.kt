@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException
 
 class DeliusClient(
   private val webClient: WebClient,
-  @Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
+  @param:Value("\${ndelius.client.timeout}") private val nDeliusTimeout: Long,
   private val timeoutCounter: Counter,
 ) {
   companion object {
@@ -95,7 +95,15 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint)
+          .also { uri ->
+            parameters.forEach { (key, values) ->
+              if (values.isNotEmpty()) {
+                uri.queryParam(key, *values.toTypedArray())
+              }
+            }
+          }
+          .build()
       }
       .retrieve()
       .onStatus(
@@ -117,11 +125,23 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.get()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint).also { uri ->
+          parameters.forEach { (key, values) ->
+            if (values.isNotEmpty()) {
+              uri.queryParam(key, *values.toTypedArray())
+            }
+          }
+        }.build()
       }
       .retrieve()
       .toEntity(T::class.java)
-      .onErrorResume(WebClientResponseException::class.java) { ex -> if (ex.statusCode == HttpStatusCode.valueOf(404)) Mono.empty() else Mono.error(ex) }
+      .onErrorResume(WebClientResponseException::class.java) { ex ->
+        if (ex.statusCode == HttpStatusCode.valueOf(404)) {
+          Mono.empty()
+        } else {
+          Mono.error(ex)
+        }
+      }
       .timeout(Duration.ofSeconds(nDeliusTimeout))
       .doOnError { handleTimeoutException(it, endpoint) }
       .withRetry()
@@ -137,7 +157,13 @@ class DeliusClient(
     log.info(normalizeSpace("About to call $endpoint"))
     val result = webClient.post()
       .uri {
-        it.path(endpoint).also { uri -> parameters.forEach { param -> uri.queryParam(param.key, param.value) } }.build()
+        it.path(endpoint).also { uri ->
+          parameters.forEach { (key, values) ->
+            if (values.isNotEmpty()) {
+              uri.queryParam(key, *values.toTypedArray())
+            }
+          }
+        }.build()
       }
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(body)
@@ -187,7 +213,7 @@ class DeliusClient(
   data class PersonalDetailsOverview(
     val name: Name,
     val identifiers: Identifiers,
-    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     val dateOfBirth: LocalDate,
     val gender: String,
     val ethnicity: String?,

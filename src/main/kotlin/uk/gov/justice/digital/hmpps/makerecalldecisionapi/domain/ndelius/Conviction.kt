@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING
 import java.time.LocalDate
 
 data class Conviction(
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = STRING)
   val convictionDate: LocalDate?,
   val sentence: Sentence?,
   val active: Boolean?,

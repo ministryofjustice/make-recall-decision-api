@@ -268,7 +268,7 @@ internal class CaseSummaryOverviewServiceTest : ServiceTestBase() {
       val dateOfBirth = LocalDate.parse("1982-10-24")
       val age = dateOfBirth.until(LocalDate.now()).years
       val riskFlags = response.risk!!.flags
-      val assessments = response.risk?.assessmentInfo
+      val assessments = response.risk.assessmentInfo
 
       assertThat(personalDetails.crn).isEqualTo(crn)
       assertThat(personalDetails.age).isEqualTo(age)

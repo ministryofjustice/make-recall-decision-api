@@ -80,7 +80,7 @@ data class RecommendationModel(
   var recallType: RecallType? = null,
 //  @JsonIgnore
   val sendSpoRationaleToDelius: Boolean? = false,
-  @JsonMerge
+  @param:JsonMerge
   var managerRecallDecision: ManagerRecallDecision? = null,
   var considerationRationale: ConsiderationRationale? = null,
   var custodyStatus: CustodyStatus? = null,
@@ -91,15 +91,15 @@ data class RecommendationModel(
   var triggerLeadingToRecall: String? = null,
   var whatLedToRecall: String? = null,
   var sentenceGroup: SentenceGroup? = null,
-  @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
+  @param:JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
   // deprecated - subsumed by sentenceGroup
-  @JsonProperty("isIndeterminateSentence") var isIndeterminateSentence: Boolean? = null,
+  @param:JsonProperty("isIndeterminateSentence") var isIndeterminateSentence: Boolean? = null,
   // deprecated - subsumed by sentenceGroup
-  @JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
+  @param:JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
   var activeCustodialConvictionCount: Number? = null,
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   var indeterminateSentenceType: IndeterminateSentenceType? = null,
-  @JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
+  @param:JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
   var hasArrestIssues: SelectedWithDetails? = null,
   var hasContrabandRisk: SelectedWithDetails? = null,
   var status: Status? = null,
@@ -130,21 +130,21 @@ data class RecommendationModel(
   var cvlLicenceConditionsBreached: CvlLicenceConditionsBreached? = null,
   val additionalLicenceConditionsText: String? = null,
   var vulnerabilities: VulnerabilitiesRecommendation? = null,
-  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
+  @param:JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
   var offenceDataFromLatestCompleteAssessment: Boolean? = null,
   var offencesMatch: Boolean? = null,
   var offenceAnalysis: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
-  @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
+  @param:JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
   var whyConsideredRecall: WhyConsideredRecall? = null,
   var reasonsForNoRecall: ReasonsForNoRecall? = null,
   var nextAppointment: NextAppointment? = null,
   var hasBeenReviewed: HasBeenReviewed? = null,
-  @JsonMerge
+  @param:JsonMerge
   var previousReleases: PreviousReleases? = null,
-  @JsonMerge
+  @param:JsonMerge
   var previousRecalls: PreviousRecalls? = null,
   var recommendationStartedDomainEventSent: Boolean? = null,
   var currentRoshForPartA: RoshData? = null,
@@ -223,4 +223,4 @@ enum class Status {
 data class TextValueOption(
   val value: String? = null,
   val text: String? = null,
-)
+) : Serializable

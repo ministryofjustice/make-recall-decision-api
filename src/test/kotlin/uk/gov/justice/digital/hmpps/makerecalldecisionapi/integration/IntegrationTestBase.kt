@@ -20,9 +20,9 @@ import org.mockserver.model.JsonBody.json
 import org.mockserver.model.MediaType.APPLICATION_JSON
 import org.mockserver.model.MediaType.JPEG
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -83,15 +83,15 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ndelius.userResponse as userResponseJson
 
-@AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @FlywayTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureWebTestClient
 abstract class IntegrationTestBase {
 
   @Autowired
-  private lateinit var objectMapper: ObjectMapper
+  protected lateinit var objectMapper: ObjectMapper
 
   @Autowired
   lateinit var webTestClient: WebTestClient

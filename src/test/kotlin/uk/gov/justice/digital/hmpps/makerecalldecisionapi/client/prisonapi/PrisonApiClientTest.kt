@@ -130,7 +130,7 @@ class PrisonApiClientTest {
 
   private fun offenderMovementsEndpoint(nomsId: String) = "/api/movements/offender/$nomsId"
 
-  fun <T> testSuccessCase(endpoint: String, responseJson: String, endpointCall: () -> Mono<T>, expectedResponse: T) {
+  fun <T : Any> testSuccessCase(endpoint: String, responseJson: String, endpointCall: () -> Mono<T>, expectedResponse: T) {
     // given
     mockGetEndpointWithSuccess(
       endpoint,
@@ -144,7 +144,7 @@ class PrisonApiClientTest {
     assertThat(actualResponse.block()).isEqualTo(expectedResponse)
   }
 
-  fun <T> testTimeoutCase(endpoint: String, endpointCall: () -> Mono<T>) {
+  fun <T : Any> testTimeoutCase(endpoint: String, endpointCall: () -> Mono<T>) {
     // given
     mockGetEndpointWithSuccess(
       endpoint,
@@ -163,7 +163,7 @@ class PrisonApiClientTest {
     verify(timeoutCounter, times(3)).increment()
   }
 
-  fun <T> testNotFoundCase(endpoint: String, endpointCall: () -> Mono<T>, expectedErrorMessage: String) {
+  fun <T : Any> testNotFoundCase(endpoint: String, endpointCall: () -> Mono<T>, expectedErrorMessage: String) {
     // given
     mockGetEndpointWithFailure(endpoint, NOT_FOUND)
 

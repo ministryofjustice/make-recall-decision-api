@@ -118,7 +118,7 @@ class PpudAutomationApiClientTest {
     assertThat(actualResponse.block()).isEqualTo(expectedResponse)
   }
 
-  private fun <ResponseType> mockSuccessfulWebClientPostCall(
+  private fun <ResponseType : Any> mockSuccessfulWebClientPostCall(
     uri: String,
     responseTypeReferenceObject: ParameterizedTypeReference<ResponseType>,
     response: ResponseType,
@@ -145,7 +145,7 @@ class PpudAutomationApiClientTest {
       .verify()
   }
 
-  private fun <ResponseType> mockTimeoutWebClientPostCall(
+  private fun <ResponseType : Any> mockTimeoutWebClientPostCall(
     uri: String,
     responseTypeReferenceObject: ParameterizedTypeReference<ResponseType>,
   ) {

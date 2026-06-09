@@ -15,7 +15,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 internal class DeleteRecommendationService(
   val recommendationRepository: RecommendationRepository,
   val recommendationStatusRepository: RecommendationStatusRepository,
-  @Value("\${mrd.url}") private val mrdUrl: String? = null,
+  @param:Value("\${mrd.url}") private val mrdUrl: String? = null,
 ) {
   suspend fun getDeleteRecommendationResponse(
     crn: String,

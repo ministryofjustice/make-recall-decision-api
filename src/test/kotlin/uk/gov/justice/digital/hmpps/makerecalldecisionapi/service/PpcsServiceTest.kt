@@ -45,7 +45,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
     )
     given(deliusClient.getUserAccess(username, "X90902")).willReturn(excludedAccess())
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -56,7 +56,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
   fun `no case record`() {
     given(deliusClient.findByCrn("X90902")).willReturn(null)
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -102,7 +102,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     assertThat(result.results).isNotEmpty
@@ -149,7 +149,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -203,7 +203,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     then(recommendationStatusRepository).should(times(1)).findByRecommendationId(1234L)
@@ -249,7 +249,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     assertThat(result.results).isEmpty()
@@ -289,7 +289,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
       ),
     )
 
-    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator)
+    val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
     then(recommendationStatusRepository).should(times(0)).findByRecommendationId(1234L)

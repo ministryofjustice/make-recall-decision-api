@@ -10,7 +10,7 @@ data class PpcsSearchResponse(
 data class PpcsSearchResult(
   val name: String,
   val crn: String,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val dateOfBirth: LocalDate?,
   val recommendationId: Long,
 )

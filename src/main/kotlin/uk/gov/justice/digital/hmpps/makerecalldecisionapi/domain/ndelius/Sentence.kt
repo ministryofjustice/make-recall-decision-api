@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class Sentence @JsonCreator constructor(
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val startDate: LocalDate?,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val terminationDate: LocalDate?,
-  @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+  @param:JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
   val expectedSentenceEndDate: LocalDate?,
   val description: String?,
   val originalLength: Int?,
