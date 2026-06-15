@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   security:
     oauth2:
       resourceserver:
@@ -48,6 +50,7 @@ gotenberg:
 ppud-automation:
   api:
     endpoint:
+      # the port is aligned with that set in PpudAutomationResponseMocker; if changing here, change there too
       url: http://localhost:8099
 
 prison:
@@ -55,6 +58,7 @@ prison:
     timeout: 2
   api:
     endpoint:
+      # the port is aligned with that set in PrisonApiResponseMocker; if changing here, change there too
       url: http://localhost:8098
 
 oauth:
@@ -87,3 +91,23 @@ mrd:
   url: "environment-host"
   api:
     url: "environment-host"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+hmpps:
+  # Disable JwtAuthorisationHelper auto-configuration globally so it does not register a @Primary
+  # ReactiveJwtDecoder that overrides the project's JwtAuthHelper decoder in all test contexts.
+  # The SAR integration test provides JwtAuthorisationHelper explicitly in its own SarTestConfig.
+  test:
+    jwt-helper-enabled: false
+  sar:
+    tests:
+      expected-api-response:
+        path: /sar/sar-api-response.json
+      expected-render-result:
+        path: /sar/sar-expected-report.html
+      attachments-expected: false

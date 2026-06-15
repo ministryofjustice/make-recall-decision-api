@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -39,6 +40,7 @@ data class RecommendationResponse(
   val spoRecallRationale: String? = null,
   val spoDeleteRecommendationRationale: String? = null,
   val whatLedToRecall: String? = null,
+  val sentenceGroup: SentenceGroup? = null,
   val isThisAnEmergencyRecall: Boolean? = null,
   val isIndeterminateSentence: Boolean? = null,
   val isExtendedSentence: Boolean? = null,
@@ -53,7 +55,7 @@ data class RecommendationResponse(
   val licenceConditionsBreached: LicenceConditionsBreached? = null,
   val cvlLicenceConditionsBreached: CvlLicenceConditionsBreached? = null,
   val additionalLicenceConditionsText: String? = null,
-  @JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
+  @param:JsonProperty("isUnderIntegratedOffenderManagement") val underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   val vulnerabilities: VulnerabilitiesRecommendation? = null,
   val convictionDetail: ConvictionDetail? = null,
   val region: String? = null,
@@ -66,7 +68,7 @@ data class RecommendationResponse(
   val offenceAnalysis: String? = null,
   val fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   val indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
-  @JsonProperty("isMainAddressWherePersonCanBeFound") val mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
+  @param:JsonProperty("isMainAddressWherePersonCanBeFound") val mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
   val whyConsideredRecall: WhyConsideredRecall? = null,
   val reasonsForNoRecall: ReasonsForNoRecall? = null,
   val nextAppointment: NextAppointment? = null,
@@ -102,12 +104,21 @@ data class RecommendationResponse(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isChargedWithOffence: Boolean? = null,
+  var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
+  var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
+  var wasReferredToParoleBoard244ZB: Boolean? = null,
+  var wasRepatriatedForMurder: Boolean? = null,
+  var isServingSOPCSentence: Boolean? = null,
+  var isServingDCRSentence: Boolean? = null,
+  var isYouthSentenceOver12Months: Boolean? = null,
+  var isYouthChargedWithSeriousOffence: Boolean? = null,
 )
 
 data class UnderIntegratedOffenderManagement(
   val selected: String? = null,
   val allOptions: List<TextValueOption>? = null,
-)
+) : Serializable
 
 data class PersonOnProbation(
   val name: String? = null,
@@ -125,7 +136,8 @@ data class PersonOnProbation(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
-)
+  val ftr56MappaReviewed: Boolean? = null,
+) : Serializable
 
 data class WhoCompletedPartA(
   val name: String? = null,
@@ -135,7 +147,7 @@ data class WhoCompletedPartA(
   val region: String? = null,
   val localDeliveryUnit: String? = null,
   val isPersonProbationPractitionerForOffender: Boolean? = null,
-)
+) : Serializable
 
 data class PractitionerForPartA(
   val name: String? = null,
@@ -144,7 +156,7 @@ data class PractitionerForPartA(
 // This is the region code
   val region: String? = null,
   val localDeliveryUnit: String? = null,
-)
+) : Serializable
 
 data class PrisonOffender(
   var locationDescription: String? = null,
@@ -163,7 +175,7 @@ data class PrisonOffender(
   var pnc: String? = null,
   var image: String? = null,
   var releaseDate: LocalDate? = null,
-)
+) : Serializable
 
 fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
   val firstName = this.firstName
@@ -186,6 +198,7 @@ fun PersonOnProbation.toPersonOnProbationDto(): PersonOnProbationDto {
     addresses = this.addresses,
     primaryLanguage = this.primaryLanguage,
     hasBeenReviewed = this.hasBeenReviewed,
+    ftr56MappaReviewed = this.ftr56MappaReviewed,
   )
 }
 
@@ -206,6 +219,7 @@ data class PersonOnProbationDto(
   val addresses: List<Address>? = null,
   val primaryLanguage: String? = null,
   val hasBeenReviewed: Boolean? = false,
+  val ftr56MappaReviewed: Boolean? = null,
 )
 
 data class ConvictionDetail(
@@ -222,4 +236,4 @@ data class ConvictionDetail(
   val custodialTerm: String? = null,
   val extendedTerm: String? = null,
   val hasBeenReviewed: Boolean? = false,
-)
+) : Serializable

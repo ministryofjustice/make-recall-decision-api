@@ -1,7 +1,10 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import java.io.Serializable
+
 data class HasBeenReviewed(
   val personOnProbation: Boolean = false,
   val convictionDetail: Boolean = false,
   val mappa: Boolean = false,
-)
+  val ftr56MappaInformation: Boolean = false,
+) : Serializable

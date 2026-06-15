@@ -42,6 +42,7 @@ class PersonOnProbationConverterTest {
       ),
       primaryLanguage = "English",
       hasBeenReviewed = randomBoolean(),
+      ftr56MappaReviewed = randomBoolean(),
     )
 
     val expectedPersonOnProbationDto = PersonOnProbationDto(
@@ -61,6 +62,7 @@ class PersonOnProbationConverterTest {
       addresses = personOnProbation.addresses,
       primaryLanguage = personOnProbation.primaryLanguage,
       hasBeenReviewed = personOnProbation.hasBeenReviewed,
+      ftr56MappaReviewed = personOnProbation.ftr56MappaReviewed,
     )
 
     val actualPersonOnProbationDto = converter.convert(personOnProbation)

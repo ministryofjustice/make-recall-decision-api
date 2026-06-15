@@ -52,8 +52,7 @@ fun updateRecommendationRequest(
   "responseToProbation": "$responseToProbation",
   "whatLedToRecall": "Increasingly violent behaviour",
   "isThisAnEmergencyRecall": true,
-  "isIndeterminateSentence": true,
-  "isExtendedSentence": true,
+  "sentenceGroup": "INDETERMINATE",
   "activeCustodialConvictionCount": 1,
   "hasVictimsInContactScheme": {
     "selected": "YES",
@@ -81,11 +80,15 @@ fun updateRecommendationRequest(
       },
       {
         "value": "IPP",
-        "text": "Imprisonment for Public Protection (IPP) sentence"
+        "text": "Imprisonment for public protection (IPP)"
       },
       {
         "value": "DPP",
-        "text": "Detention for Public Protection (DPP) sentence"
+        "text": "Detention for public protection (DPP)"
+      },
+      {
+        "value": "DHMP",
+        "text": "Detention at His Majesty’s pleasure (DHMP)"
       },
       {
         "value": "NO",
@@ -228,6 +231,10 @@ fun updateRecommendationRequest(
         "details": "Behaviour leading to sexual or violent behaviour"
       },
       {
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+        "details": "Behaviour likely to result in sexual or violent behaviour"
+      },
+      {
         "value": "OUT_OF_TOUCH",
         "details": "Out of touch"
       }
@@ -240,6 +247,10 @@ fun updateRecommendationRequest(
       {
         "text": "Behaviour leading to sexual or violent behaviour",
         "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "Behaviour likely to result in sexual or violent behaviour",
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE"
       },
       {
         "text": "Out of touch",

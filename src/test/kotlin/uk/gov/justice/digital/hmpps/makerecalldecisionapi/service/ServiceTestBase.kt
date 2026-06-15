@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClie
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DocumentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateConfiguration
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.documentTemplateSettings
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.controller.AuthenticationFacade
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.cvl.LicenceConditionCvlDetail
@@ -61,6 +62,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateRetrievalService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenceConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenderMovementConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.converter.RecommendationConverter
@@ -103,6 +105,11 @@ internal abstract class ServiceTestBase {
 
   @Mock
   protected lateinit var offenderMovementConverter: OffenderMovementConverter
+
+  @Mock
+  protected lateinit var offenceConverter: OffenceConverter
+
+  protected lateinit var authenticationFacade: AuthenticationFacade
 
   protected lateinit var personDetailsService: PersonDetailsService
 
@@ -154,7 +161,8 @@ internal abstract class ServiceTestBase {
     lenient().`when`(mockPersonDetailService.getPersonDetails(anyString())).doReturn(personDetailsResponse())
     partADocumentMapper = PartADocumentMapper(mockRegionService)
     decisionNotToRecallLetterDocumentMapper = DecisionNotToRecallLetterDocumentMapper()
-    userAccessValidator = UserAccessValidator(deliusClient)
+    authenticationFacade = AuthenticationFacade()
+    userAccessValidator = UserAccessValidator(deliusClient, authenticationFacade)
     templateRetrievalService = TemplateRetrievalService(documentTemplateConfiguration)
     templateReplacementService =
       TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper, templateRetrievalService)
@@ -164,7 +172,7 @@ internal abstract class ServiceTestBase {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
-      PrisonerApiService(prisonApiClient, offenderMovementConverter),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
       templateReplacementService,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -713,6 +721,7 @@ internal abstract class ServiceTestBase {
     surname: String = "Bloggs",
     ethnicity: String? = "White",
     primaryLanguage: String? = "English",
+    activeCustodialConvictionDescription: String? = null,
   ) = RecommendationModel(
     personalDetails = DeliusClient.PersonalDetailsOverview(
       name = Name(forename, middleName, surname),
@@ -746,7 +755,7 @@ internal abstract class ServiceTestBase {
               secondLength = 2,
               secondLengthUnits = "Years",
               startDate = LocalDate.parse("2021-01-01"),
-              description = sentence.description,
+              description = activeCustodialConvictionDescription ?: sentence.description,
               length = sentence.length,
               lengthUnits = sentence.lengthUnits,
               isCustodial = sentence.isCustodial,

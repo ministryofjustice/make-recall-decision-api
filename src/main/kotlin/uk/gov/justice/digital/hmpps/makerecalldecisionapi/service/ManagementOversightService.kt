@@ -15,7 +15,7 @@ import java.util.Collections
 @Service
 internal class ManagementOversightService(
   val recommendationRepository: RecommendationRepository,
-  @Value("\${mrd.url}") private val mrdUrl: String? = null,
+  @param:Value("\${mrd.url}") private val mrdUrl: String? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

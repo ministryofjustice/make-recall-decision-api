@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
+import java.io.Serializable
 import java.security.SecureRandom
 import kotlin.math.abs
 
@@ -9,4 +10,4 @@ data class RecallConsidered(
   val createdDate: String?,
   val userName: String?,
   val recallConsideredDetail: String?,
-)
+) : Serializable

@@ -19,7 +19,7 @@ import kotlin.jvm.optionals.getOrNull
 internal class SupportingDocumentService(
   val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
   val documentManagementClient: DocumentManagementClient,
-  @Lazy val recommendationRepository: RecommendationRepository,
+  @param:Lazy val recommendationRepository: RecommendationRepository,
 ) {
   fun fetchSupportingDocuments(recommendationId: Long): List<SupportingDocumentMetaDataResponse> = recommendationDocumentRepository.findByRecommendationId(recommendationId)
     .map { it.toSupportingDocumentResponse() }

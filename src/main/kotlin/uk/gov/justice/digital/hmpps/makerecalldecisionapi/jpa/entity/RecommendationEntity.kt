@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RoshData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.UnderIntegratedOffenderManagement
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
@@ -79,7 +80,7 @@ data class RecommendationModel(
   var recallType: RecallType? = null,
 //  @JsonIgnore
   val sendSpoRationaleToDelius: Boolean? = false,
-  @JsonMerge
+  @param:JsonMerge
   var managerRecallDecision: ManagerRecallDecision? = null,
   var considerationRationale: ConsiderationRationale? = null,
   var custodyStatus: CustodyStatus? = null,
@@ -89,13 +90,16 @@ data class RecommendationModel(
   var thoughtsLeadingToRecall: String? = null,
   var triggerLeadingToRecall: String? = null,
   var whatLedToRecall: String? = null,
-  @JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
-  @JsonProperty("isIndeterminateSentence") var isIndeterminateSentence: Boolean? = null,
-  @JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
+  var sentenceGroup: SentenceGroup? = null,
+  @param:JsonProperty("isThisAnEmergencyRecall") var isThisAnEmergencyRecall: Boolean? = null,
+  // deprecated - subsumed by sentenceGroup
+  @param:JsonProperty("isIndeterminateSentence") var isIndeterminateSentence: Boolean? = null,
+  // deprecated - subsumed by sentenceGroup
+  @param:JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
   var activeCustodialConvictionCount: Number? = null,
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   var indeterminateSentenceType: IndeterminateSentenceType? = null,
-  @JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
+  @param:JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
   var hasArrestIssues: SelectedWithDetails? = null,
   var hasContrabandRisk: SelectedWithDetails? = null,
   var status: Status? = null,
@@ -126,21 +130,21 @@ data class RecommendationModel(
   var cvlLicenceConditionsBreached: CvlLicenceConditionsBreached? = null,
   val additionalLicenceConditionsText: String? = null,
   var vulnerabilities: VulnerabilitiesRecommendation? = null,
-  @JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
+  @param:JsonProperty("isUnderIntegratedOffenderManagement") var underIntegratedOffenderManagement: UnderIntegratedOffenderManagement? = null,
   var indexOffenceDetails: String? = null,
   var offenceDataFromLatestCompleteAssessment: Boolean? = null,
   var offencesMatch: Boolean? = null,
   var offenceAnalysis: String? = null,
   var fixedTermAdditionalLicenceConditions: SelectedWithDetails? = null,
   var indeterminateOrExtendedSentenceDetails: IndeterminateOrExtendedSentenceDetails? = null,
-  @JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
+  @param:JsonProperty("isMainAddressWherePersonCanBeFound") var mainAddressWherePersonCanBeFound: SelectedWithDetails? = null,
   var whyConsideredRecall: WhyConsideredRecall? = null,
   var reasonsForNoRecall: ReasonsForNoRecall? = null,
   var nextAppointment: NextAppointment? = null,
   var hasBeenReviewed: HasBeenReviewed? = null,
-  @JsonMerge
+  @param:JsonMerge
   var previousReleases: PreviousReleases? = null,
-  @JsonMerge
+  @param:JsonMerge
   var previousRecalls: PreviousRecalls? = null,
   var recommendationStartedDomainEventSent: Boolean? = null,
   var currentRoshForPartA: RoshData? = null,
@@ -177,6 +181,15 @@ data class RecommendationModel(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isChargedWithOffence: Boolean? = null,
+  var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
+  var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
+  var wasReferredToParoleBoard244ZB: Boolean? = null,
+  var wasRepatriatedForMurder: Boolean? = null,
+  var isServingSOPCSentence: Boolean? = null,
+  var isServingDCRSentence: Boolean? = null,
+  var isYouthSentenceOver12Months: Boolean? = null,
+  var isYouthChargedWithSeriousOffence: Boolean? = null,
   // deprecated
   var userNamePartACompletedBy: String? = null,
   // deprecated
@@ -210,4 +223,4 @@ enum class Status {
 data class TextValueOption(
   val value: String? = null,
   val text: String? = null,
-)
+) : Serializable

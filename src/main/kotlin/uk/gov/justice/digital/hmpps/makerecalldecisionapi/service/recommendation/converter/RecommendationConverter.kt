@@ -38,6 +38,7 @@ class RecommendationConverter(
     responseToProbation = recommendationEntity.data.responseToProbation,
     triggerLeadingToRecall = recommendationEntity.data.triggerLeadingToRecall,
     whatLedToRecall = recommendationEntity.data.whatLedToRecall,
+    sentenceGroup = recommendationEntity.data.sentenceGroup,
     isThisAnEmergencyRecall = recommendationEntity.data.isThisAnEmergencyRecall,
     isIndeterminateSentence = recommendationEntity.data.isIndeterminateSentence,
     isExtendedSentence = recommendationEntity.data.isExtendedSentence,
@@ -102,5 +103,14 @@ class RecommendationConverter(
     isRecalledOnNewChargedOffence = recommendationEntity.data.isRecalledOnNewChargedOffence,
     isServingFTSentenceForTerroristOffence = recommendationEntity.data.isServingFTSentenceForTerroristOffence,
     hasBeenChargedWithTerroristOrStateThreatOffence = recommendationEntity.data.hasBeenChargedWithTerroristOrStateThreatOffence,
+    isChargedWithOffence = recommendationEntity.data.isChargedWithOffence,
+    isServingTerroristOrNationalSecurityOffence = recommendationEntity.data.isServingTerroristOrNationalSecurityOffence,
+    isAtRiskOfInvolvedInForeignPowerThreat = recommendationEntity.data.isAtRiskOfInvolvedInForeignPowerThreat,
+    wasReferredToParoleBoard244ZB = recommendationEntity.data.wasReferredToParoleBoard244ZB,
+    wasRepatriatedForMurder = recommendationEntity.data.wasRepatriatedForMurder,
+    isServingSOPCSentence = recommendationEntity.data.isServingSOPCSentence,
+    isServingDCRSentence = recommendationEntity.data.isServingDCRSentence,
+    isYouthSentenceOver12Months = recommendationEntity.data.isYouthSentenceOver12Months,
+    isYouthChargedWithSeriousOffence = recommendationEntity.data.isYouthChargedWithSeriousOffence,
   )
 }

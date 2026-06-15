@@ -7,6 +7,9 @@ info.app:
     email: feedback@digital.justice.gov.uk
 
 spring:
+  http:
+    converters:
+      preferred-json-mapper: jackson2
   flyway:
   jpa:
     properties:
@@ -82,8 +85,6 @@ spring:
     parser:
       allow-backslash-escaping-any-character: true
     date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
 
   datasource:
     url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:make_recall_decision}
@@ -95,6 +96,16 @@ spring:
     group:
       test:
         - "stdout"
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+    # Temporarily set when org.webjars:swagger-ui was set to 5.32.2 in build.gradle, as otherwise swagger-ui doesn't work.
+    # Seems to be used in some places to build the path from which to retrieve resources, although it isn't officially
+    # documented :/. Remove whenever no longer needed
+    version: 5.32.2
 
 server:
   port: 8080
@@ -141,6 +152,9 @@ hmpps:
     url: http://localhost:9090/auth
   sar:
     additionalAccessRole: MAKE_RECALL_DECISION
+    template:
+      path: /templates/sar/sar_template.mustache
+      enabled: true
 
 offender:
   search:
@@ -234,7 +248,13 @@ document-template:
   part-a-template-settings[0].template-name: "2025-09-02 - FTR48 Phase 1"
   part-a-template-settings[1].start-date-time: "2026-02-02T08:00Z" # Same time in GMT
   part-a-template-settings[1].template-name: "2026-02-02 - Risk to self"
+  part-a-template-settings[2].start-date-time: "2026-03-30T23:00Z" # 2026-03-31T00:00Z in BST
+  part-a-template-settings[2].template-name: "2026-03-31 - FTR56"
 
 clean-up:
   recurrent:
     look-back-in-days: 21
+
+  ftr56:
+    threshold-date-time: "2026-03-30T23:00Z" # 2026-03-31 00:00 in BST
+    cron: "0 0 * 31 3 ?"  # every hour on 31st March each year (this is expressed and interpreted in Europe/London time)

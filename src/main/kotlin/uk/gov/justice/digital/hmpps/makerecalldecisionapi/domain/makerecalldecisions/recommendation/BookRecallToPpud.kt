@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -11,6 +12,7 @@ data class BookRecallToPpud(
   val custodyType: String? = null,
   val currentEstablishment: String? = null,
   val releasingPrison: String? = null,
+  val changeOffenceOrAddComment: Boolean? = null,
   val indexOffence: String? = null,
   val indexOffenceComment: String? = null,
   val ppudSentenceId: String? = null,
@@ -30,7 +32,7 @@ data class BookRecallToPpud(
   val legislationReleasedUnder: String? = null,
   val legislationSentencedUnder: String? = null,
   val minute: String? = null,
-)
+) : Serializable
 
 data class IndeterminateSentenceData(
   val offenceDescription: String?,
@@ -38,4 +40,4 @@ data class IndeterminateSentenceData(
   val releaseDate: LocalDate?,
   val sentencingCourt: String?,
   val dateOfSentence: LocalDate,
-)
+) : Serializable

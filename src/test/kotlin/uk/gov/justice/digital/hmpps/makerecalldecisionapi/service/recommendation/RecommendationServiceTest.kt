@@ -27,6 +27,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
@@ -41,12 +42,14 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PersonalDetailsOverview
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ProbationTeam
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.HasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecision
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ManagerRecallDecisionTypeSelectedValue
@@ -60,7 +63,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeSelectedValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallTypeValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecommendationResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.personOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.oasysarnapi.AssessmentsResponse
@@ -76,6 +81,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Recommendat
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationStatusEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.recommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader.CustomMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.MrdEventsEmitter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
@@ -190,7 +196,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -220,9 +226,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -353,7 +359,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -383,9 +389,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -504,7 +510,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -534,9 +540,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // then
-      assertThat(response?.id).isNotNull
-      assertThat(response?.status).isEqualTo(Status.DRAFT)
-      assertThat(response?.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isNotNull
+      assertThat(response.status).isEqualTo(Status.DRAFT)
+      assertThat(response.personOnProbation).isEqualTo(recommendationToSave.data.personOnProbation?.toPersonOnProbationDto())
 
       val captor = argumentCaptor<RecommendationEntity>()
       then(recommendationRepository).should().save(captor.capture())
@@ -644,9 +650,9 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationService.createRecommendation(CreateRecommendationRequest(crn, null), "UserBill", "Bill", null)
 
       // then
-      assertThat(response?.id).isEqualTo(1)
-      assertThat(response?.status).isEqualTo(Status.RECALL_CONSIDERED)
-      assertThat(response?.personOnProbation).isEqualTo(existingRecommendation.data.personOnProbation?.toPersonOnProbationDto())
+      assertThat(response.id).isEqualTo(1)
+      assertThat(response.status).isEqualTo(Status.RECALL_CONSIDERED)
+      assertThat(response.personOnProbation).isEqualTo(existingRecommendation.data.personOnProbation?.toPersonOnProbationDto())
 
       // and
       then(recommendationRepository).should()
@@ -702,6 +708,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isThisAnEmergencyRecall = updateRecommendationRequest.isThisAnEmergencyRecall,
             isIndeterminateSentence = updateRecommendationRequest.isIndeterminateSentence,
             isExtendedSentence = updateRecommendationRequest.isExtendedSentence,
+            sentenceGroup = updateRecommendationRequest.sentenceGroup,
             activeCustodialConvictionCount = updateRecommendationRequest.activeCustodialConvictionCount,
             hasVictimsInContactScheme = updateRecommendationRequest.hasVictimsInContactScheme,
             indeterminateSentenceType = updateRecommendationRequest.indeterminateSentenceType,
@@ -743,6 +750,15 @@ internal class RecommendationServiceTest : ServiceTestBase() {
             isRecalledOnNewChargedOffence = updateRecommendationRequest.isRecalledOnNewChargedOffence,
             isServingFTSentenceForTerroristOffence = updateRecommendationRequest.isServingFTSentenceForTerroristOffence,
             hasBeenChargedWithTerroristOrStateThreatOffence = updateRecommendationRequest.hasBeenChargedWithTerroristOrStateThreatOffence,
+            isChargedWithOffence = updateRecommendationRequest.isChargedWithOffence,
+            isServingTerroristOrNationalSecurityOffence = updateRecommendationRequest.isServingTerroristOrNationalSecurityOffence,
+            isAtRiskOfInvolvedInForeignPowerThreat = updateRecommendationRequest.isAtRiskOfInvolvedInForeignPowerThreat,
+            wasReferredToParoleBoard244ZB = updateRecommendationRequest.wasReferredToParoleBoard244ZB,
+            wasRepatriatedForMurder = updateRecommendationRequest.wasRepatriatedForMurder,
+            isServingSOPCSentence = updateRecommendationRequest.isServingSOPCSentence,
+            isServingDCRSentence = updateRecommendationRequest.isServingDCRSentence,
+            isYouthSentenceOver12Months = updateRecommendationRequest.isYouthSentenceOver12Months,
+            isYouthChargedWithSeriousOffence = updateRecommendationRequest.isYouthChargedWithSeriousOffence,
           ),
         )
 
@@ -766,7 +782,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -839,9 +855,10 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       )
 
       // and
-      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
-      updateRecommendationRequest =
-        updateRecommendationRequest.copy(personOnProbation = PersonOnProbation(name = "Joe Bloggs", mappa = null))
+      val updateRecommendationRequest = RecommendationModel(
+        crn = existingRecommendation.data.crn,
+        hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+      )
 
       // and
       val recommendationToSave =
@@ -877,7 +894,177 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      // when
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        emptyList(),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
+  fun `updates a recommendation to the database when ftr56MappaInformation is set to true`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+        ),
+      )
+
+      // and
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest =
+        updateRecommendationRequest.copy(
+          personOnProbation = PersonOnProbation(name = "Joe Bloggs"),
+          hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+        )
+
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(
+              name = "Joe Bloggs",
+              ftr56MappaReviewed = true,
+            ),
+          ),
+        )
+
+      given(
+        recommendationRepository.save(
+          argThat { saved ->
+            saved.data.personOnProbation?.ftr56MappaReviewed == true
+          },
+        ),
+      )
+        .willReturn(recommendationToSave)
+
+      // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      // when
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        emptyList(),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(recommendationRepository).should().findById(1)
+    }
+  }
+
+  @Test
+  fun `updates a recommendation to the database when ftr56MappaInformation is set to true when no existing PersonOnProbation object`() {
+    runTest {
+      // given
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+        ),
+      )
+
+      // and
+      var updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+      updateRecommendationRequest =
+        updateRecommendationRequest.copy(
+          hasBeenReviewed = HasBeenReviewed(ftr56MappaInformation = true),
+        )
+
+      // and
+      val recommendationToSave =
+        existingRecommendation.copy(
+          id = existingRecommendation.id,
+          data = RecommendationModel(
+            crn = existingRecommendation.data.crn,
+            personOnProbation = PersonOnProbation(
+              ftr56MappaReviewed = true,
+            ),
+          ),
+        )
+
+      given(
+        recommendationRepository.save(
+          argThat { saved ->
+            saved.data.personOnProbation?.ftr56MappaReviewed == true
+          },
+        ),
+      )
+        .willReturn(recommendationToSave)
+
+      // and
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(recommendationToSave))
+        .willReturn(expectedRecommendationResponse)
+
+      // and
+      given(recommendationRepository.findById(any()))
+        .willReturn(Optional.of(existingRecommendation))
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      // and
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -978,7 +1165,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1071,7 +1258,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1197,7 +1384,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1286,7 +1473,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1348,7 +1535,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1410,7 +1597,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1474,7 +1661,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1558,7 +1745,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1590,6 +1777,111 @@ internal class RecommendationServiceTest : ServiceTestBase() {
     }
   }
 
+  @ParameterizedTest(name = "update recommendation with conviction details from Delius when conviction details refresh received, isExtendedSentence={0}, sentenceGroup={1}, deliusConvictionSentenceType={2}, expectExtendedSentenceDetails={3}")
+  @CsvSource(
+    "false,, Non-extended sentence, false",
+    ", ADULT_SDS, Non-extended sentence, false",
+    "false,, Extended Determinate Sentence, true",
+    ", ADULT_SDS, Extended Determinate Sentence, true",
+    "false,, CJA - Extended Sentence, true",
+    ", ADULT_SDS, CJA - Extended Sentence, true",
+    "true,, Non-extended sentence, true",
+    ", EXTENDED, Non-extended sentence, true",
+    "true,, Extended Determinate Sentence, true",
+    ", EXTENDED, Extended Determinate Sentence, true",
+    "true,, CJA - Extended Sentence, true",
+    ", EXTENDED, CJA - Extended Sentence, true",
+  )
+  fun `update recommendation with conviction details from Delius when conviction details refresh received`(
+    isExtendedSentence: Boolean?,
+    sentenceGroup: SentenceGroup?,
+    deliusConvictionSentenceType: String,
+    expectExtendedSentenceDetails: Boolean,
+  ) {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(firstName = "Joe", surname = "Bloggs"),
+        ),
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+      val deliusRecommendationModelResponse =
+        deliusRecommendationModelResponse(activeCustodialConvictionDescription = deliusConvictionSentenceType)
+      given(deliusClient.getRecommendationModel(anyString()))
+        .willReturn(deliusRecommendationModelResponse)
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation).copy(
+        isExtendedSentence = isExtendedSentence,
+        sentenceGroup = sentenceGroup,
+      )
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("convictionDetail"),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      then(deliusClient).should().getRecommendationModel(anyString())
+
+      val recommendationEntity = recommendationCaptor.firstValue
+
+      assertThat(recommendationEntity.data.convictionDetail)
+        .usingRecursiveComparison()
+        .isEqualTo(
+          with(deliusRecommendationModelResponse.activeCustodialConvictions[0]) {
+            ConvictionDetail(
+              mainOffence.description,
+              mainOffence.date,
+              sentence.startDate,
+              sentence.length,
+              sentence.lengthUnits,
+              sentence.description,
+              sentence.licenceExpiryDate,
+              sentence.sentenceExpiryDate,
+              sentence.secondLength,
+              sentence.secondLengthUnits,
+              if (expectExtendedSentenceDetails) "${sentence.length} ${sentence.lengthUnits}" else null,
+              if (expectExtendedSentenceDetails) "${sentence.secondLength} ${sentence.secondLengthUnits}" else null,
+              true,
+            )
+          },
+        )
+    }
+  }
+
   @Test
   fun `update recommendation with person details from Delius when person details page refresh received`() {
     runTest {
@@ -1618,7 +1910,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
@@ -1659,6 +1951,67 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       assertThat(expected.dateOfBirth).isEqualTo(actual?.dateOfBirth)
       assertThat(expected.addresses).isEqualTo(actual?.addresses)
       assertThat(expected.firstName).isEqualTo(actual?.firstName)
+    }
+  }
+
+  @Test
+  fun `keeps MAPPA reviewed property when person details from Delius are refreshed`() {
+    runTest {
+      val existingRecommendation = RecommendationEntity(
+        id = 1,
+        data = RecommendationModel(
+          crn = crn,
+          personOnProbation = PersonOnProbation(
+            ftr56MappaReviewed = true,
+          ),
+        ),
+      )
+
+      given(recommendationRepository.findById(1L)).willReturn(Optional.of(existingRecommendation))
+
+      val updateRecommendationRequest = MrdTestDataBuilder.updateRecommendationRequestData(existingRecommendation)
+
+      val json = CustomMapper.writeValueAsString(updateRecommendationRequest)
+      val recommendationJsonNode: JsonNode = CustomMapper.readTree(json)
+
+      given(recommendationRepository.save(recommendationCaptor.capture())).willReturn(existingRecommendation)
+      given(deliusClient.getRecommendationModel(anyString())).willReturn(deliusRecommendationModelResponse())
+
+      val expectedRecommendationResponse = RecommendationResponse()
+      given(recommendationConverter.convert(existingRecommendation))
+        .willReturn(expectedRecommendationResponse)
+
+      recommendationService = RecommendationService(
+        recommendationRepository,
+        recommendationStatusRepository,
+        mockPersonDetailService,
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
+        templateReplacementService,
+        userAccessValidator,
+        RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),
+        deliusClient,
+        mrdEmitterMocked,
+        recommendationConverter,
+      )
+
+      val actualRecommendationResponse = recommendationService.updateRecommendation(
+        recommendationJsonNode,
+        1L,
+        "bill",
+        "Bill",
+        null,
+        false,
+        false,
+        listOf("personOnProbation"),
+        null,
+      )
+
+      assertThat(actualRecommendationResponse).isEqualTo(expectedRecommendationResponse)
+
+      val recommendationEntity = recommendationCaptor.firstValue
+      val actual = recommendationEntity.data.personOnProbation
+
+      assertThat(actual?.ftr56MappaReviewed).isEqualTo(true)
     }
   }
 
@@ -1720,7 +2073,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
-      PrisonerApiService(prisonApiClient, offenderMovementConverter),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
       templateReplacementService,
       userAccessValidator,
       riskServiceMocked,
@@ -1768,7 +2121,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -1815,7 +2168,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       given(deliusClient.getUserAccess(anyString(), anyString())).willReturn(excludedAccess())
       val response = recommendationService.createRecommendation(CreateRecommendationRequest(crn), "Bill", null, null)
       // then
-      assertThat(response?.userAccessResponse).isEqualTo(
+      assertThat(response.userAccessResponse).isEqualTo(
         UserAccess(
           userRestricted = false,
           userExcluded = true,
@@ -1914,7 +2267,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -1963,7 +2316,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -2320,7 +2673,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementServiceMocked,
         userAccessValidator,
         riskServiceMocked,
@@ -2525,7 +2878,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
         recommendationRepository,
         recommendationStatusRepository,
         mockPersonDetailService,
-        PrisonerApiService(prisonApiClient, offenderMovementConverter),
+        PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
         templateReplacementService,
         userAccessValidator,
         riskServiceMocked,
@@ -2727,7 +3080,7 @@ internal class RecommendationServiceTest : ServiceTestBase() {
       recommendationRepository,
       recommendationStatusRepository,
       mockPersonDetailService,
-      PrisonerApiService(prisonApiClient, offenderMovementConverter),
+      PrisonerApiService(prisonApiClient, offenderMovementConverter, offenceConverter),
       templateReplacementServiceMocked,
       userAccessValidator,
       RiskService(deliusClient, arnApiClient, userAccessValidator, null, riskScoreConverter),

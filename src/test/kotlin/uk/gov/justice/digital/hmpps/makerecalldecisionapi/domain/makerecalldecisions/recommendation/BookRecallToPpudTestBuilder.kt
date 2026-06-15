@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 
 import org.mockserver.model.JsonBody.json
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomBoolean
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
@@ -14,6 +15,7 @@ internal fun bookRecallToPpud(
   custodyType: String? = randomString(),
   currentEstablishment: String? = randomString(),
   releasingPrison: String? = randomString(),
+  changeOffenceOrAddComment: Boolean? = randomBoolean(),
   indexOffence: String? = randomString(),
   indexOffenceComment: String? = randomString(),
   ppudSentenceId: String? = randomString(),
@@ -45,6 +47,7 @@ internal fun bookRecallToPpud(
   custodyType,
   currentEstablishment,
   releasingPrison,
+  changeOffenceOrAddComment,
   indexOffence,
   indexOffenceComment,
   ppudSentenceId,

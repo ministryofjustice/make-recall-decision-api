@@ -20,8 +20,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.DocumentRequestType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.MrdEvent
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Offender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RecommendationStatusResponse
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.Offender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.prison.toPrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ActiveRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConsiderationRationale
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
@@ -43,7 +44,6 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toDntrDownloadedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toManagerRecallDecisionMadeEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPersonOnProbation
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toPrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toRecommendationStartedEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.toSystemDeleteRecommendationEventPayload
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.InvalidRequestException
@@ -74,6 +74,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.He
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.splitDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.utcNowDateTimeString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.calculateIsExtendedSentence
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -85,16 +86,16 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient.Re
 internal class RecommendationService(
   val recommendationRepository: RecommendationRepository,
   val recommendationStatusRepository: RecommendationStatusRepository,
-  @Lazy val personDetailsService: PersonDetailsService,
-  @Lazy val prisonerApiService: PrisonerApiService,
+  @param:Lazy val personDetailsService: PersonDetailsService,
+  @param:Lazy val prisonerApiService: PrisonerApiService,
   val templateReplacementService: TemplateReplacementService,
   private val userAccessValidator: UserAccessValidator,
-  @Lazy private val riskService: RiskService?,
+  @param:Lazy private val riskService: RiskService?,
   private val deliusClient: DeliusClient,
   private val mrdEventsEmitter: MrdEventsEmitter?,
   private val recommendationConverter: RecommendationConverter,
-  @Value("\${mrd.url}") private val mrdUrl: String? = null,
-  @Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
+  @param:Value("\${mrd.url}") private val mrdUrl: String? = null,
+  @param:Value("\${mrd.api.url}") private val mrdApiUrl: String? = null,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -105,7 +106,7 @@ internal class RecommendationService(
     userId: String?,
     readableNameOfUser: String?,
     featureFlags: FeatureFlags?,
-  ): RecommendationResponse? {
+  ): RecommendationResponse {
     val userAccessResponse = recommendationRequest.crn?.let { userAccessValidator.checkUserAccess(it) }
     if (userAccessValidator.isUserExcludedRestrictedOrNotFound(userAccessResponse)) {
       return RecommendationResponse(userAccessResponse = userAccessResponse)
@@ -151,7 +152,7 @@ internal class RecommendationService(
           nomisOffender?.toPrisonOffender(),
         ),
         sendRecommendationStartedDomainEvent,
-      )?.toRecommendationResponse()
+      ).toRecommendationResponse()
     }
   }
 
@@ -264,6 +265,7 @@ internal class RecommendationService(
   ): RecommendationResponse {
     validateRecallType(jsonRequest)
     val requestJson = jacksonObjectMapper().readTree(jsonRequest.toString())
+
     val existingRecommendationEntity = getRecommendationEntityById(recommendationId)
 
     val sendConsiderationRationaleToDelius = requestJson.has("sendConsiderationRationaleToDelius") &&
@@ -533,6 +535,7 @@ internal class RecommendationService(
     personOnProbation = deliusDetails.toPersonOnProbation().copy(
       hasBeenReviewed = personOnProbation?.hasBeenReviewed,
       mappa = personOnProbation?.mappa,
+      ftr56MappaReviewed = personOnProbation?.ftr56MappaReviewed,
     )
   }
 
@@ -566,7 +569,7 @@ internal class RecommendationService(
     convictionDetail = buildRecommendationConvictionResponse(
       deliusDetails.activeCustodialConvictions,
       convictionDetail?.hasBeenReviewed,
-      isExtendedSentence,
+      calculateIsExtendedSentence(),
     )
   }
 
@@ -593,6 +596,10 @@ internal class RecommendationService(
       convictionDetail = convictionDetail?.copy(
         hasBeenReviewed = true,
       ) ?: ConvictionDetail(hasBeenReviewed = true)
+    }
+
+    if (updateRecommendationRequest.hasBeenReviewed?.ftr56MappaInformation == true) {
+      personOnProbation = personOnProbation?.copy(ftr56MappaReviewed = true) ?: PersonOnProbation(ftr56MappaReviewed = true)
     }
 
     return recommendationEntity.copy(
@@ -846,7 +853,7 @@ internal class RecommendationService(
     recallConsideredList: List<RecallConsidered>?,
     recommendationWrapper: StaticRecommendationDataWrapper?,
     recommendationStartedDomainEventSent: Boolean?,
-  ): RecommendationEntity? {
+  ): RecommendationEntity {
     val now = utcNowDateTimeString()
     val recommendationEntity = RecommendationEntity(
       data = RecommendationModel(
