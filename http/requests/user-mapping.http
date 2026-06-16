@@ -1,8 +1,8 @@
 ### User Mapping Search
-POST http://localhost:8080/user-mapping/search
+POST {{host}}/user-mapping/search
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "userName": ""
+  "userName": "{{userMappingUsername}}"
 }

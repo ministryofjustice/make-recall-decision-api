@@ -1,4 +1,4 @@
-### PPCS Search for an offender
+### PPCS Search for a case which is ready for PPCS
 POST {{host}}/ppcs-search
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json

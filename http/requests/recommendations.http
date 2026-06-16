@@ -23,7 +23,7 @@ Content-Type: application/json
 GET {{host}}/recommendations/{{recommendation.id}}/statuses
 Authorization: Bearer {{$auth.token("token")}}
 
-### Update a recoomendation's status
+### Upserts a recommendation's status
 PATCH {{host}}/recommendations/{{recommendation.id}}/status
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json

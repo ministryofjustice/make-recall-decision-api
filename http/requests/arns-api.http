@@ -1,0 +1,13 @@
+### Full API docs here: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html
+
+### Get current risk scores (old)
+GET {{arnsHost}}/risks/crn/{{crn}}/predictors/all
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get current risk scores (V2)
+GET {{arnsHost}}/risks/predictors/all/crn/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get risk summary
+GET {{arnsHost}}/risks/crn/{{crn}}/summary
+Authorization: Bearer {{$auth.token("token")}}

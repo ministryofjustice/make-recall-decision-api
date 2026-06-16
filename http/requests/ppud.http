@@ -1,5 +1,5 @@
 ### Calls PPUD Automation service for a search
-POST {{host}}/ppud/details/{{ppudOffenderId}}
+POST {{host}}/ppud/details/{{ppud.offenderId}}
 Authorization: Bearer {{$auth.token("token")}}
 
 ### Calls PPUD Automation service to create an offender
@@ -8,161 +8,168 @@ Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-    "address": {},
-    "additionalAddresses": [],
-    "croNumber": "",
-    "custodyType": "",
-    "establishment": "",
-    "dateOfBirth": "",
-    "dateOfSentence": "",
-    "ethnicity": "",
-    "firstNames": "",
-    "familyName": "",
-    "gender": "",
-    "indexOffence": "",
-    "isInCustody": false,
-    "mappaLevel": "",
-    "nomsId": "",
-    "prisonNumber": ""
+    "address": {{ppud.offender.address}},
+    "additionalAddresses": {{ppud.offender.additionalAddresses}},
+    "croNumber": "{{ppud.offender.croNumber}}",
+    "custodyType": "{{ppud.offender.custodyType}}",
+    "establishment": "{{ppud.offender.establishment}}",
+    "dateOfBirth": "{{ppud.offender.dateOfBirth}}",
+    "dateOfSentence": "{{ppud.offender.dateOfSentence}}",
+    "ethnicity": "{{ppud.offender.ethnicity}}",
+    "firstNames": "{{ppud.offender.firstNames}}",
+    "familyName": "{{ppud.offender.familyName}}",
+    "gender": "{{ppud.offender.gender}}",
+    "indexOffence": "{{ppud.offender.indexOffence}}",
+    "isInCustody": {{ppud.offender.isInCustody}},
+    "mappaLevel": "{{ppud.offender.mappaLevel}}",
+    "nomsId": "{{ppud.offender.nomsId}}",
+    "prisonNumber": "{{ppud.offender.prisonNumber}}"
 }
 
 ### Calls PPUD Automation service to update an offender.
-PUT {{host}}/ppud/offender/{{offenderId}}
+PUT {{host}}/ppud/offender/{{ppud.offenderId}}
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "address": {},
-  "additionalAddresses": [],
-  "dateOfBirth": "",
-  "ethnicity": "",
-  "familyName": "",
-  "firstNames": "",
-  "gender": "",
-  "isInCustody": false,
-  "prisonNumber": "",
-  "establishment": "",
-  "croNumber": "",
-  "nomsId": ""
+  "address": {{ppud.offender.address}},
+  "additionalAddresses": {{ppud.offender.additionalAddresses}},
+  "dateOfBirth": "{{ppud.offender.dateOfBirth}}",
+  "ethnicity": "{{ppud.offender.ethnicity}}",
+  "firstNames": "{{ppud.offender.firstNames}}",
+  "familyName": "{{ppud.offender.familyName}}",
+  "gender": "{{ppud.offender.gender}}",
+  "isInCustody": {{ppud.offender.isInCustody}},
+  "prisonNumber": "{{ppud.offender.prisonNumber}}",
+  "establishment": "{{ppud.offender.establishment}}",
+  "croNumber": "{{ppud.offender.croNumber}}",
+  "nomsId": "{{ppud.offender.nomsId}}"
+}
+
+### Calls PPUD Automation service to create a sentence.
+POST {{host}}/ppud/offender/{{ppud.offenderId}}/sentence
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "custodyType": "{{ppud.offender.custodyType}}",
+  "dateOfSentence": "{{ppud.offender.dateOfSentence}}",
+  "licenceExpiryDate": "{{ppud.offender.licenceExpiryDate}}",
+  "mappaLevel": "{{ppud.offender.mappaLevel}}",
+  "releaseDate": "{{ppud.offender.releaseDate}}",
+  "sentenceLength": {
+    "partDays": {{ppud.offender.sentenceLength.partDays}},
+    "partMonths": {{ppud.offender.sentenceLength.partMonths}},
+    "partYears": {{ppud.offender.sentenceLength.partYears}}
+  },
+  "espCustodialPeriod": {
+    "years": {{ppud.offender.espCustodialPeriod.years}},
+    "months": {{ppud.offender.espCustodialPeriod.months}}
+  },
+  "espExtendedPeriod": {
+    "years": {{ppud.offender.espExtendedPeriod.years}},
+    "months": {{ppud.offender.espExtendedPeriod.months}}
+  },
+  "sentenceExpiryDate": "{{ppud.offender.sentenceExpiryDate}}",
+  "sentencingCourt": "{{ppud.offender.sentencingCourt}}",
+  "sentencedUnder": "{{ppud.offender.sentencedUnder}}"
+}
+
+### Calls PPUD Automation service to update a sentence.
+PUT {{host}}/ppud/offender/{{ppud.offenderId}}/sentence/{{ppud.sentenceId}}
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "custodyType": "{{ppud.offender.custodyType}}",
+  "dateOfSentence": "{{ppud.offender.dateOfSentence}}",
+  "licenceExpiryDate": "{{ppud.offender.licenceExpiryDate}}",
+  "mappaLevel": "{{ppud.offender.mappaLevel}}",
+  "releaseDate": "{{ppud.offender.releaseDate}}",
+  "sentenceLength": {
+    "partDays": {{ppud.offender.sentenceLength.partDays}},
+    "partMonths": {{ppud.offender.sentenceLength.partMonths}},
+    "partYears": {{ppud.offender.sentenceLength.partYears}}
+  },
+  "espCustodialPeriod": {
+    "years": {{ppud.offender.espCustodialPeriod.years}},
+    "months": {{ppud.offender.espCustodialPeriod.months}}
+  },
+  "espExtendedPeriod": {
+    "years": {{ppud.offender.espExtendedPeriod.years}},
+    "months": {{ppud.offender.espExtendedPeriod.months}}
+  },
+  "sentenceExpiryDate": "{{ppud.offender.sentenceExpiryDate}}",
+  "sentencingCourt": "{{ppud.offender.sentencingCourt}}",
+  "sentencedUnder": "{{ppud.offender.sentencedUnder}}"
+}
+
+### Calls PPUD Automation service to update an offence.
+PUT {{host}}/ppud/offender/{{ppud.offenderId}}/sentence/{{ppud.sentenceId}}/offence
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "indexOffence": "{{ppud.offender.indexOffence}}",
+  "indexOffenceComment": "{{ppud.offender.indexOffenceComment}}",
+  "dateOfIndexOffence": "{{ppud.offender.dateOfIndexOffence}}"
+}
+
+### Calls PPUD Automation service to upsert a release
+POST {{host}}/ppud/offender/{{ppud.offenderId}}/sentence/{{ppud.sentenceId}}/release
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "dateOfRelease": "{{ppud.offender.dateOfRelease}}",
+  "postRelease": {
+    "assistantChiefOfficer": {
+      "name": "{{ppud.offender.postRelease.assistantChiefOfficer.name}}",
+      "faxEmail": "{{ppud.offender.postRelease.assistantChiefOfficer.faxEmail}}"
+    },
+    "offenderManager": {
+      "name": "{{ppud.offender.postRelease.offenderManager.name}}",
+      "faxEmail": "{{ppud.offender.postRelease.offenderManager.faxEmail}}",
+      "telephone": "{{ppud.offender.postRelease.offenderManager.telephone}}"
+    },
+    "probationService": "{{ppud.offender.postRelease.probationService}}",
+    "spoc": {
+      "name": "{{ppud.offender.postRelease.spoc.name}}",
+      "faxEmail": "{{ppud.offender.postRelease.spoc.faxEmail}}"
+    }
+  },
+  "releasedFrom": "{{ppud.offender.releasedFrom}}",
+  "releasedUnder": "{{ppud.offender.releasedUnder}}"
 }
 
 ### Calls PPUD Automation service to create a recall
-POST {{host}}/ppud/offender/{{offenderId}}/release/{{releaseId}}/recall
+POST {{host}}/ppud/offender/{{ppud.offenderId}}/release/{{ppud.releaseId}}/recall
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "decisionDateTime": "",
-  "isExtendedSentence": false,
-  "isInCustody": false,
-  "mappaLevel": "",
-  "policeForce": "",
-  "probationArea": "",
-  "receivedDateTime": "",
-  "riskOfContrabandDetails": ""
-}
-
-### Calls PPUD Automation service to update a sentence.
-POST {{host}}/ppud/offender/{{offenderId}}/sentence
-Authorization: Bearer {{$auth.token("token")}}
-Content-Type: application/json
-
-{
-  "custodyType": "",
-  "dateOfSentence": "",
-  "licenceExpiryDate": "",
-  "mappaLevel": "",
-  "releaseDate": "",
-  "sentenceLength": {},
-  "espCustodialPeriod": {
-    "years": 0,
-    "months": 0
-  },
-  "espExtendedPeriod": {
-    "years": 0,
-    "months": 0
-  },
-  "sentenceExpiryDate": "",
-  "sentencingCourt": "",
-  "sentencedUnder": ""
-}
-
-### Calls PPUD Automation service to update a sentence.
-PUT {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}
-Authorization: Bearer {{$auth.token("token")}}
-Content-Type: application/json
-
-{
-  "custodyType": "",
-  "dateOfSentence": "",
-  "licenceExpiryDate": "",
-  "mappaLevel": "",
-  "releaseDate": "",
-  "sentenceLength": {},
-  "espCustodialPeriod": {
-    "years": 0,
-    "months": 0
-  },
-  "espExtendedPeriod": {
-    "years": 0,
-    "months": 0
-  },
-  "sentenceExpiryDate": "",
-  "sentencingCourt": "",
-  "sentencedUnder": ""
-}
-
-
-### Calls PPUD Automation service to update an offence.
-PUT {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}/offence
-Authorization: Bearer {{$auth.token("token")}}
-Content-Type: application/json
-
-{
-  "indexOffence": "",
-  "indexOffenceComment": "",
-  "dateOfIndexOffence": ""
-}
-
-### Calls PPUD Automation service to update a release
-POST {{host}}/ppud/offender/{{offenderId}}/sentence/{{sentenceId}}/release
-Authorization: Bearer {{$auth.token("token")}}
-Content-Type: application/json
-
-{
-  "dateOfRelease": "",
-  "postRelease": {
-    "assistantChiefOfficer": {
-      "name": "",
-      "faxEmail": ""
-    },
-    "offenderManager": {
-      "name": "",
-      "faxEmail": "",
-      "telephone": ""
-    },
-    "probationService": "",
-    "spoc": {
-      "name": "",
-      "faxEmail": ""
-    }
-  },
-  "releasedFrom": "",
-  "releasedUnder": ""
+  "decisionDateTime": "{{ppud.offender.decisionDateTime}}",
+  "isExtendedSentence": {{ppud.offender.isExtendedSentence}},
+  "isInCustody": {{ppud.offender.isInCustody}},
+  "mappaLevel": "{{ppud.offender.mappaLevel}}",
+  "policeForce": "{{ppud.offender.policeForce}}",
+  "probationArea": "{{ppud.offender.probationArea}}",
+  "receivedDateTime": "{{ppud.offender.receivedDateTime}}",
+  "riskOfContrabandDetails": "{{ppud.offender.riskOfContrabandDetails}}"
 }
 
 ### Calls PPUD Automation service to create a minute
-PUT {{host}}/ppud/recall/{{recallId}}/minutes
+PUT {{host}}/ppud/recall/{{ppud.recallId}}/minutes
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "subject": "",
-  "text": ""
+  "subject": "{{ppud.offender.minutes.subject}}",
+  "text": "{{ppud.offender.minutes.text}}"
 }
 
 ### Calls PPUD Automation service to upload a additional file to ppud
-PUT {{host}}/ppud/recall/{{recallId}}/upload-additional-document
+PUT {{host}}/ppud/recall/{{ppud.recallId}}/upload-additional-document
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
@@ -171,7 +178,7 @@ Content-Type: application/json
 }
 
 ### Calls PPUD Automation service to upload a mandatory file to ppud
-PUT {{host}}/ppud/recall/{{recallId}}/upload-mandatory-document
+PUT {{host}}/ppud/recall/{{ppud.recallId}}/upload-mandatory-document
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
@@ -181,12 +188,11 @@ Content-Type: application/json
 }
 
 ### Calls PPUD Automation service to retrieve reference list
-POST {{host}}/ppud/reference/{{ppudReferenceName}}
+POST {{host}}/ppud/reference/{{ppud.referenceName}}
 Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {}
-
 
 ### Calls PPUD Automation service for a search
 POST {{host}}/ppud/search
@@ -194,10 +200,10 @@ Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "croNumber": "",
-  "nomsId": "",
-  "familyName": "Smith",
-  "dateOfBirth": ""
+  "croNumber": "{{ppud.offenderSearch.croNumber}}",
+  "nomsId": "{{ppud.offenderSearch.nomisId}}",
+  "familyName": "{{ppud.offenderSearch.familyName}}",
+  "dateOfBirth": "{{ppud.offenderSearch.dateOfBirth}}"
 }
 
 ### Calls PPUD Automation service to search for active users
@@ -206,6 +212,6 @@ Authorization: Bearer {{$auth.token("token")}}
 Content-Type: application/json
 
 {
-  "fullName": "",
-  "userName": ""
+  "fullName": "{{ppud.userSearch.fullname}}",
+  "userName": "{{ppud.userSearch.username}}"
 }
