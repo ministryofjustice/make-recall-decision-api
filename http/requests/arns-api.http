@@ -11,3 +11,19 @@ Authorization: Bearer {{$auth.token("token")}}
 ### Get risk summary
 GET {{arnsHost}}/risks/crn/{{crn}}/summary
 Authorization: Bearer {{$auth.token("token")}}
+
+### Get assessments
+GET {{arnsHost}}/assessments/crn/{{crn}}/offence
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get assessments timeline
+GET {{arnsHost}}/assessments/timeline/crn/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get risk management plan
+GET {{arnsHost}}/risks/crn/{{crn}}/risk-management-plan
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get the full risks text
+GET {{arnsHost}}/risks/crn/{{crn}}/fulltext
+Authorization: Bearer {{$auth.token("token")}}
