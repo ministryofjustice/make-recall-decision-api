@@ -10,6 +10,8 @@ spring:
   http:
     converters:
       preferred-json-mapper: jackson2
+    codecs:
+      max-in-memory-size: 30MB
   flyway:
   jpa:
     properties:
@@ -17,8 +19,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: make-recall-decision-api
-  codec:
-    max-in-memory-size: 30MB
   security:
     oauth2:
       client:
