@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.DeliusClient
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.contact
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.contactHistory
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.toJsonString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
@@ -141,6 +142,43 @@ class DeliusClientTest : IntegrationTestBase() {
       )
 
     val contactHistory = contactHistory()
+    deliusIntegration.`when`(contactHistoryRequest).respond(
+      response().withContentType(APPLICATION_JSON)
+        .withBody(
+          contactHistory.toJsonString(),
+        ),
+    )
+
+    // when
+    val response = deliusClient.getContactHistory(crn)
+
+    // then
+    assertThat(response).isEqualTo(contactHistory)
+  }
+
+  @Test
+  fun `get contact history when no filtering options specified - large response`() {
+    // this test checks we're able to handle large responses, including not overloading the buffer (we have had
+    // config issues around this)
+
+    // given
+    val crn = randomString()
+
+    val contactHistoryRequest = request()
+      .withPath("/case-summary/$crn/contact-history")
+      .withQueryStringParameters(
+        mapOf(
+          "query" to emptyList<String>(),
+          "from" to emptyList<String>(),
+          "to" to emptyList<String>(),
+          "type" to emptyList<String>(),
+          "includeSystemGenerated" to listOf("true"),
+        ),
+      )
+
+    val contactHistory = contactHistory(
+      contacts = List(10000) { contact() },
+    )
     deliusIntegration.`when`(contactHistoryRequest).respond(
       response().withContentType(APPLICATION_JSON)
         .withBody(
