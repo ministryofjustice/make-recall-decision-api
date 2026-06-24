@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       redis:
-        image: 'redis:7.4.2'
+        image: 'redis:7.4.9'
         env:
           allow_empty_password: "yes"
         ports:
