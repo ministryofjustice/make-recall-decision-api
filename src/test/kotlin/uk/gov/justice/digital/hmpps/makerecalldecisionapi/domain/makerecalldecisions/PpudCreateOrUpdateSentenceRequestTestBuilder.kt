@@ -24,6 +24,7 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentenceExpiryDate: LocalDate? = randomLocalDate(),
   sentencingCourt: String = randomString(),
   sentencedUnder: String = randomString(),
+  sentencedAsYouth: String? = randomString(),
 ) = PpudCreateOrUpdateSentenceRequest(
   custodyType,
   dateOfSentence,
@@ -36,6 +37,7 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentenceExpiryDate,
   sentencingCourt,
   sentencedUnder,
+  sentencedAsYouth,
 )
 
 internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
@@ -51,7 +53,8 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
         "espExtendedPeriod": ${espExtendedPeriod?.toJson()},
         "sentenceExpiryDate": ${toJsonNullableStringField(sentenceExpiryDate)},
         "sentencingCourt": "$sentencingCourt",
-        "sentencedUnder": "$sentencedUnder"
+        "sentencedUnder": "$sentencedUnder",
+        "sentencedAsYouth": ${toJsonNullableStringField(sentencedAsYouth)}
       }
   """.trimIndent(),
 )
