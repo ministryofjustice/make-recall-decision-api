@@ -10,6 +10,9 @@ import uk.gov.justice.hmpps.kotlin.sar.HmppsProbationSubjectAccessRequestService
 import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
 import java.time.LocalDate
 
+// This service uses the HMPPS SubjectAccesssRequest library
+// which creates the endpoint `/subject-access-request`
+// For more info see here: https://github.com/ministryofjustice/hmpps-kotlin-lib/blob/main/readme-contents/SubjectAccessRequestEndpoint.md
 @Transactional
 @Service
 class SubjectAccessRequestService(

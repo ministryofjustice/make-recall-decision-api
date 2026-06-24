@@ -1,0 +1,21 @@
+### Get offender movements from NOMIS (PPCS)
+GET {{host}}/offenders/{{nomisId}}/movements
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get a list of prison offenders
+POST {{host}}/prison-offender-search
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "nomsId": "{{nomisId}}"
+}
+
+### Get a list of prison sentences
+POST {{host}}/prison-sentences
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "nomsId": "{{nomisId}}"
+}

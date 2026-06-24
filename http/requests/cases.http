@@ -1,0 +1,57 @@
+### Get case risk vulnerabilities
+GET {{host}}/cases/{{crn}}/vulnerabilities
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get a specific document
+GET {{host}}/cases/{{crn}}/documents/{{documentId}}
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get an overview of the case details
+GET {{host}}/cases/{{crn}}/overview
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get case summary risk information
+GET {{host}}/cases/{{crn}}/risk
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get an overview of the person details
+GET {{host}}/cases/{{crn}}/personal-details
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case
+GET {{host}}/cases/{{crn}}/licence-conditions
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case from CVL
+GET {{host}}/cases/{{crn}}/licence-conditions-cvl
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get details of the licence conditions on a case
+GET {{host}}/cases/{{crn}}/licence-conditions/v2
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get all details of a case contact history [Kitchen Sink]
+# query - Search for contacts that contain the provided text. This currently performs a simple substring match against the notes.
+# from - Return only contacts that start after this date
+# to - Return only contacts that start before this date. Defaults to the current date. If provided, this value must be on or before the current date.
+# type - Filter on contact type codes $placeholder should be replaced with a valid code (full list of codes here: https://dsdmoj.atlassian.net/wiki/spaces/CARC1/pages/6186501182/Delius+contact+history+type+codes))
+# includeSystemGenerated - Include (true) or exclude (false) any contact types that are system-generated
+#
+GET {{host}}/cases/{{crn}}/contact-history?query={{$random.alphanumeric(8)}}&from=2026-06-01&to=2026-06-10&type={{$placeholder}}&includeSystemGenerated=false
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get all details of a case contact history [Minimum required]
+GET {{host}}/cases/{{crn}}/contact-history
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get latest active recommendation for case
+GET {{host}}/cases/{{crn}}/active
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get latest complete recommendation overview for case
+GET {{host}}/cases/{{crn}}/last-completed
+Authorization: Bearer {{$auth.token("token")}}
+
+### Get all recommendations for case
+GET {{host}}/cases/{{crn}}/recommendations
+Authorization: Bearer {{$auth.token("token")}}

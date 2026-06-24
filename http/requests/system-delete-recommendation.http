@@ -1,0 +1,3 @@
+### Provides notes on deleting expired recommendation for Delius
+GET {{host}}/system-delete-recommendation/{{crn}}
+Authorization: Bearer {{$auth.token("token")}}
