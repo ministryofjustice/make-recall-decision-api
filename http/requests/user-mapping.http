@@ -1,0 +1,8 @@
+### User Mapping Search
+POST {{host}}/user-mapping/search
+Authorization: Bearer {{$auth.token("token")}}
+Content-Type: application/json
+
+{
+  "userName": "{{userMappingUsername}}"
+}
