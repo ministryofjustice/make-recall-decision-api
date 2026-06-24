@@ -149,6 +149,7 @@ class PpudControllerTest : IntegrationTestBase() {
         postcode = "",
         phoneNumber = "",
       ),
+      sentencedAsYouth = "No",
     )
     ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
@@ -226,6 +227,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = "Yes",
     )
     ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(
       offenderId,
@@ -253,6 +255,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = "Yes",
     )
     ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(
       offenderId,

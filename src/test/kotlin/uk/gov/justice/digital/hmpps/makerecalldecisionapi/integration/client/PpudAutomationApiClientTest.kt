@@ -130,6 +130,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       dateOfSentence = LocalDate.of(2004, 1, 2),
       additionalAddresses = listOf(),
       address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
+      sentencedAsYouth = "No",
     )
 
     ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse(id, ppudCreateOffenderRequest)
@@ -187,6 +188,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = "Yes",
     )
 
     ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
@@ -213,6 +215,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = "Yes",
     )
 
     ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(

@@ -26,6 +26,7 @@ internal fun ppudCreateOffenderRequest(
   mappaLevel: String? = randomString(),
   nomsId: String? = randomString(),
   prisonNumber: String? = randomString(),
+  sentencedAsYouth: String? = randomString(),
 ) = PpudCreateOffenderRequest(
   address,
   additionalAddresses,
@@ -43,6 +44,7 @@ internal fun ppudCreateOffenderRequest(
   mappaLevel,
   nomsId,
   prisonNumber,
+  sentencedAsYouth,
 )
 
 internal fun PpudCreateOffenderRequest.toJsonBody() = json(toJsonString())
@@ -65,6 +67,7 @@ internal fun PpudCreateOffenderRequest.toJsonString() =
           "isInCustody" : $isInCustody,
           "mappaLevel" : ${toJsonNullableStringField(mappaLevel)},
           "nomsId" : ${toJsonNullableStringField(nomsId)},
-          "prisonNumber" : ${toJsonNullableStringField(prisonNumber)}
+          "prisonNumber" : ${toJsonNullableStringField(prisonNumber)},
+          "sentencedAsYouth" : ${toJsonNullableStringField(sentencedAsYouth)}
         }
   """.trimIndent()
