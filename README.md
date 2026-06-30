@@ -52,11 +52,10 @@ class MyService(private val featureFlagsService: FeatureFlagService) {
 }
 ```
 
-There are two configuration values for Flipt:
-* FLIPT_URL - the URL of the Flipt server
-* FLIPT_API_KEY - the API key to access Flipt
+There is one configuration value for Flipt:
+* FLIPT_SERVER_URL - the URL of the Flipt server
 
-They are stored as secrets in each environment, and are accessed from the Helm chart.
+It is set within each values_xxx.yaml file (the server address isn't sensitive information, so no need for a secret).
 
 If you're looking to add a boolean flag, see [the PPUD Automation API repo](https://github.com/ministryofjustice/hmpps-ppud-automation-api) for an example.
 

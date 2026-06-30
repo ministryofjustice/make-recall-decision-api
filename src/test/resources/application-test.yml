@@ -114,5 +114,4 @@ hmpps:
 
 # these properties are mandatory, but for integration tests we don't care about their values, as FliptClient is mocked
 flipt:
-  url: any
-  token: any
+  server-url: any

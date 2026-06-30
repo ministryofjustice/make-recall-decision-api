@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
 
 import io.flipt.client.FliptClient
-import io.flipt.client.models.ClientTokenAuthentication
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -16,16 +15,15 @@ const val DEFAULT_POLLING_INTERVAL_IN_SECONDS = 60L
 @ConfigurationProperties(prefix = "flipt")
 class FliptConfig {
 
-  lateinit var url: String
-  lateinit var token: String
+  lateinit var serverUrl: String
   var pollingIntervalInSeconds: Long =
     DEFAULT_POLLING_INTERVAL_IN_SECONDS // can't use lateinit with primitives, so defaulting
 
   @Bean
   fun fliptApiClient(): FliptClient = FliptClient
     .builder()
-    .namespace("consider-a-recall").url(url)
-    .authentication(ClientTokenAuthentication(token))
+    .namespace("consider-a-recall")
+    .url(serverUrl)
     .updateInterval(Duration.of(pollingIntervalInSeconds, ChronoUnit.SECONDS))
     .build()
 
