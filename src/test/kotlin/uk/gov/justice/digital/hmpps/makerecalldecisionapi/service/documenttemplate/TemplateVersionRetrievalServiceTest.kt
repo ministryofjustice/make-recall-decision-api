@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomFutureZ
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomPastZonedDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomZonedDateTime
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
 
@@ -173,7 +173,10 @@ class TemplateVersionRetrievalServiceTest {
   }
 
   // We can't get the exact time at which the method will get the date-time, so we check it's close enough
-  private fun hasRecentCurrentDateTime() = ArgumentMatcher<TemporalAccessor> { actualDateTime ->
-    LocalDateTime.now().isBefore(LocalDateTime.from(actualDateTime).plusSeconds(1))
+  private fun hasRecentCurrentDateTime() = ArgumentMatcher<TemporalAccessor> { actualDateTimeAccessor ->
+    val currentDateTime = ZonedDateTime.now()
+    val actualDateTime = ZonedDateTime.from(actualDateTimeAccessor)
+    return@ArgumentMatcher actualDateTime.isBefore(currentDateTime) &&
+      actualDateTime.plusSeconds(1).isAfter(currentDateTime)
   }
 }
