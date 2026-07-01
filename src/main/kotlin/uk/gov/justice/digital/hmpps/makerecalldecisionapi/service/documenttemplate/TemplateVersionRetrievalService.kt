@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DntrTemplateVersion
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.PartATemplateVersion
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentTemplateNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlag
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlagService
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -34,7 +35,7 @@ class TemplateVersionRetrievalService(
         dateTimeOfFirstDownload
       }
     val variantKey = featureFlagService.variant(
-      "part-a-template-version",
+      FeatureFlag.PART_A_TEMPLATE_VERSION,
       mapOf("dateTimeOfFirstDownload" to templateTargetDate.format(dateTimeFormatter)),
     )
     if (variantKey != null) {

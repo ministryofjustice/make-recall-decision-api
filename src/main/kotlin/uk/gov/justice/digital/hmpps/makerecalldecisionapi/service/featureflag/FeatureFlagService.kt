@@ -13,18 +13,18 @@ class FeatureFlagService(
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun variant(key: String, context: Map<String, String>): String? = try {
+  fun variant(featureFlag: FeatureFlag, context: Map<String, String>): String? = try {
     if (client == null) {
       log.error("Flipt client not configured, returning null")
       null
     } else {
       // we don't use the entity ID in our namespace on the Flipt server, but it cannot be null
       client
-        .evaluateVariant(key, "entityId", context)
+        .evaluateVariant(featureFlag.flagId, "entityId", context)
         .variantKey
     }
   } catch (e: Exception) {
-    throw FeatureFlagException(key, e)
+    throw FeatureFlagException(featureFlag.flagId, e)
   }
 
   class FeatureFlagException(key: String, e: Exception) : RuntimeException("Unable to retrieve '$key' flag", e)

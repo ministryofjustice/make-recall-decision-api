@@ -12,7 +12,7 @@ enum class PartATemplateVersion(val flagVariantKey: String, override val path: S
   ;
 
   companion object {
-    fun forVariantKey(flagVariantKey: String): PartATemplateVersion = PartATemplateVersion.entries.first { it.flagVariantKey == flagVariantKey }
+    fun forVariantKey(flagVariantKey: String): PartATemplateVersion = PartATemplateVersion.values().first { it.flagVariantKey == flagVariantKey }
   }
 }
 

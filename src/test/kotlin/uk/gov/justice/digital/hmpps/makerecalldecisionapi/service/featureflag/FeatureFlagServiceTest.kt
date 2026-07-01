@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlagService.FeatureFlagException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import java.time.LocalTime
 
@@ -30,7 +31,7 @@ class FeatureFlagServiceTest {
 
   @Test
   fun `returns expected variant key if variant feature flag is set up`() {
-    val flag = randomString()
+    val flag = randomEnum<FeatureFlag>()
     val context = mapOf("key" to "value")
     val variantKey = randomString()
     withVariantFlag(flag, variantKey, context)
@@ -39,9 +40,9 @@ class FeatureFlagServiceTest {
 
   @Test
   fun `throws error if variant feature flag is not defined`() {
-    val flag = randomString()
+    val flag = randomEnum<FeatureFlag>()
     val context = mapOf("key" to "value")
-    whenever(fliptClient.evaluateVariant(flag, "entityId", context)).thenThrow(
+    whenever(fliptClient.evaluateVariant(flag.flagId, "entityId", context)).thenThrow(
       FliptException.EvaluationException("Not Found"),
     )
     assertThrows<FeatureFlagException> { featureFlagService.variant(flag, context) }
@@ -52,14 +53,19 @@ class FeatureFlagServiceTest {
     // Simulate null Flipt client
     val featureFlagServiceWithNullClient = FeatureFlagService(null)
 
-    val variantKey = featureFlagServiceWithNullClient.variant("any-flag", emptyMap())
+    val variantKey = featureFlagServiceWithNullClient.variant(randomEnum<FeatureFlag>(), emptyMap())
 
     assertThat(variantKey).isNull()
     assertWarningMessageWasLogged()
   }
 
-  private fun withVariantFlag(key: String, variantKey: String, context: Map<String, String>) {
-    whenever(fliptClient.evaluateVariant(key, "entityId", context)).thenReturn(variantFlagResponse(key, variantKey))
+  private fun withVariantFlag(featureFlag: FeatureFlag, variantKey: String, context: Map<String, String>) {
+    whenever(fliptClient.evaluateVariant(featureFlag.flagId, "entityId", context)).thenReturn(
+      variantFlagResponse(
+        featureFlag.flagId,
+        variantKey,
+      ),
+    )
   }
 
   private fun variantFlagResponse(key: String, variantKey: String) = VariantEvaluationResponse

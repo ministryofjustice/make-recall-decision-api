@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.featureflag
 
 import io.flipt.client.FliptClient
 import org.springframework.beans.factory.annotation.Qualifier

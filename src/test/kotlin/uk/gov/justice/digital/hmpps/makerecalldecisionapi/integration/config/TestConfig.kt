@@ -24,7 +24,7 @@ class TestConfig {
     fun mockPartATemplateVersionFlag(fliptApiClient: FliptClient, flagVariantKey: String? = null) {
       val variantResponse = mock(VariantEvaluationResponse::class.java)
       whenever(variantResponse.variantKey).thenReturn(
-        flagVariantKey ?: PartATemplateVersion.entries.last().flagVariantKey,
+        flagVariantKey ?: PartATemplateVersion.values().last().flagVariantKey,
       )
       whenever(
         fliptApiClient.evaluateVariant(

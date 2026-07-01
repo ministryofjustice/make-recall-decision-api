@@ -16,6 +16,7 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.DntrTemplateVersion
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.documenttemplate.PartATemplateVersion
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.DocumentTemplateNotFoundException
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlag.PART_A_TEMPLATE_VERSION
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlagService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.findLogAppender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomFutureZonedDateTime
@@ -51,7 +52,7 @@ class TemplateVersionRetrievalServiceTest {
     whenever(dateTimeFormatter.format(dateTimeOfFirstDownload)).thenReturn(formattedDateTime)
     whenever(
       featureFlagService.variant(
-        "part-a-template-version",
+        PART_A_TEMPLATE_VERSION,
         mapOf("dateTimeOfFirstDownload" to formattedDateTime),
       ),
     ).thenReturn(expectedPartATemplateVersion.flagVariantKey)
@@ -72,7 +73,7 @@ class TemplateVersionRetrievalServiceTest {
     whenever(dateTimeFormatter.format(argThat(hasRecentCurrentDateTime()))).thenReturn(formattedDateTime)
     whenever(
       featureFlagService.variant(
-        "part-a-template-version",
+        PART_A_TEMPLATE_VERSION,
         mapOf("dateTimeOfFirstDownload" to formattedDateTime),
       ),
     ).thenReturn(partATemplateVersion.flagVariantKey)
@@ -95,7 +96,7 @@ class TemplateVersionRetrievalServiceTest {
     whenever(dateTimeFormatter.format(argThat(hasRecentCurrentDateTime()))).thenReturn(formattedDateTime)
     whenever(
       featureFlagService.variant(
-        "part-a-template-version",
+        PART_A_TEMPLATE_VERSION,
         mapOf("dateTimeOfFirstDownload" to formattedDateTime),
       ),
     ).thenReturn(partATemplateVersion.flagVariantKey)
@@ -123,7 +124,7 @@ class TemplateVersionRetrievalServiceTest {
     val variantKey = randomString()
     whenever(
       featureFlagService.variant(
-        "part-a-template-version",
+        PART_A_TEMPLATE_VERSION,
         mapOf("dateTimeOfFirstDownload" to formattedDateTime),
       ),
     ).thenReturn(variantKey)
@@ -145,7 +146,7 @@ class TemplateVersionRetrievalServiceTest {
     whenever(dateTimeFormatter.format(dateTimeOfFirstDownload)).thenReturn(formattedDateTime)
     whenever(
       featureFlagService.variant(
-        "part-a-template-version",
+        PART_A_TEMPLATE_VERSION,
         mapOf("dateTimeOfFirstDownload" to formattedDateTime),
       ),
     ).thenReturn(null)
