@@ -31,9 +31,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.5.0") {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") // Address CVE-2026-54515 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this
-  }
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.5.0")
   implementation("org.springframework.boot:spring-boot-starter-webmvc")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
@@ -79,10 +77,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.2")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") { // upgrading to latest 7.x probably OK, but best done separately
-    implementation("org.springframework.retry:spring-retry:2.0.13") // Address CVE-2026-41710 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") // Address CVE-2026-54515 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7
-  }
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1")
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.2")
@@ -91,6 +86,15 @@ dependencies {
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
+
+  constraints {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") {
+      because("Address CVE-2026-54515 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
+    }
+    implementation("org.springframework.retry:spring-retry:2.0.13") {
+      because("Address CVE-2026-41710 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7")
+    }
+  }
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
