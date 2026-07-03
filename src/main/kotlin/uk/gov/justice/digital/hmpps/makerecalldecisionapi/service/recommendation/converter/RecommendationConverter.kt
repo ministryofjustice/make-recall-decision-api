@@ -103,6 +103,7 @@ class RecommendationConverter(
     isRecalledOnNewChargedOffence = recommendationEntity.data.isRecalledOnNewChargedOffence,
     isServingFTSentenceForTerroristOffence = recommendationEntity.data.isServingFTSentenceForTerroristOffence,
     hasBeenChargedWithTerroristOrStateThreatOffence = recommendationEntity.data.hasBeenChargedWithTerroristOrStateThreatOffence,
+    isRecalledOnNewChargedOrConvictedOffence = recommendationEntity.data.isRecalledOnNewChargedOrConvictedOffence,
     isChargedWithOffence = recommendationEntity.data.isChargedWithOffence,
     isServingTerroristOrNationalSecurityOffence = recommendationEntity.data.isServingTerroristOrNationalSecurityOffence,
     isAtRiskOfInvolvedInForeignPowerThreat = recommendationEntity.data.isAtRiskOfInvolvedInForeignPowerThreat,

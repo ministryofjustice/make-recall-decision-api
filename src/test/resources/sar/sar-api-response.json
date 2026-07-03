@@ -489,6 +489,23 @@
       "isRecalledOnNewChargedOffence": null,
       "isServingFTSentenceForTerroristOffence": null,
       "hasBeenChargedWithTerroristOrStateThreatOffence": null,
+      "isRecalledOnNewChargedOrConvictedOffence": {
+        "selected": "ONLY_CHARGED",
+        "allOptions": [
+          {
+            "value": "CHARGED_AND_CONVICTED",
+            "text": "Charged and convicted"
+          },
+          {
+            "value": "ONLY_CHARGED",
+            "text": "Only charged"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          }
+        ]
+      },
       "isChargedWithOffence": true,
       "isServingTerroristOrNationalSecurityOffence": false,
       "isAtRiskOfInvolvedInForeignPowerThreat": true,
