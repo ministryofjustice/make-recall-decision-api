@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.4"
   kotlin("jvm") version "2.3.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -77,7 +77,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.2")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately in MRD-3268
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.2")
