@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import org.mockserver.model.JsonBody.json
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.toJsonNullableStringField
@@ -24,6 +25,7 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentenceExpiryDate: LocalDate? = randomLocalDate(),
   sentencingCourt: String = randomString(),
   sentencedUnder: String = randomString(),
+  sentencedAsYouth: SentencedAsYouth? = randomEnum<SentencedAsYouth>(),
 ) = PpudCreateOrUpdateSentenceRequest(
   custodyType,
   dateOfSentence,
@@ -36,6 +38,7 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentenceExpiryDate,
   sentencingCourt,
   sentencedUnder,
+  sentencedAsYouth,
 )
 
 internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
@@ -51,7 +54,8 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
         "espExtendedPeriod": ${espExtendedPeriod?.toJson()},
         "sentenceExpiryDate": ${toJsonNullableStringField(sentenceExpiryDate)},
         "sentencingCourt": "$sentencingCourt",
-        "sentencedUnder": "$sentencedUnder"
+        "sentencedUnder": "$sentencedUnder",
+        "sentencedAsYouth": ${toJsonNullableStringField(sentencedAsYouth)}
       }
   """.trimIndent(),
 )
