@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudCreateOffenderRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentencedAsYouth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomBoolean
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.toJsonNullableStringField
@@ -27,7 +28,7 @@ internal fun ppudCreateOffenderRequest(
   mappaLevel: String? = randomString(),
   nomsId: String? = randomString(),
   prisonNumber: String? = randomString(),
-  sentencedAsYouth: SentencedAsYouth? = SentencedAsYouth.No,
+  sentencedAsYouth: SentencedAsYouth? = randomEnum<SentencedAsYouth>(),
 ) = PpudCreateOffenderRequest(
   address,
   additionalAddresses,
@@ -69,6 +70,6 @@ internal fun PpudCreateOffenderRequest.toJsonString() =
           "mappaLevel" : ${toJsonNullableStringField(mappaLevel)},
           "nomsId" : ${toJsonNullableStringField(nomsId)},
           "prisonNumber" : ${toJsonNullableStringField(prisonNumber)},
-          "sentencedAsYouth" : ${toJsonNullableStringField(sentencedAsYouth?.value)}
+          "sentencedAsYouth" : ${toJsonNullableStringField(sentencedAsYouth)}
         }
   """.trimIndent()

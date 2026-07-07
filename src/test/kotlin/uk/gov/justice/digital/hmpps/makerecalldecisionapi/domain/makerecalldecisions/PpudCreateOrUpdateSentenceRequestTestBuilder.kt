@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
 
 import org.mockserver.model.JsonBody.json
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomEnum
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.toJsonNullableStringField
@@ -24,7 +25,7 @@ fun ppudCreateOrUpdateSentenceRequest(
   sentenceExpiryDate: LocalDate? = randomLocalDate(),
   sentencingCourt: String = randomString(),
   sentencedUnder: String = randomString(),
-  sentencedAsYouth: SentencedAsYouth? = SentencedAsYouth.No,
+  sentencedAsYouth: SentencedAsYouth? = randomEnum<SentencedAsYouth>(),
 ) = PpudCreateOrUpdateSentenceRequest(
   custodyType,
   dateOfSentence,
