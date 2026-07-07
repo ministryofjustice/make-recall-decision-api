@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUser
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentencedAsYouth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppudDetailsResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.responses.ppudautomation.PpudAutomationResponseMocker
@@ -130,7 +131,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       dateOfSentence = LocalDate.of(2004, 1, 2),
       additionalAddresses = listOf(),
       address = PpudAddress(premises = "", line1 = "No Fixed Abode", line2 = "", postcode = "", phoneNumber = ""),
-      sentencedAsYouth = "No",
+      sentencedAsYouth = SentencedAsYouth.No,
     )
 
     ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse(id, ppudCreateOffenderRequest)
@@ -188,7 +189,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       sentencedUnder = "Legislation 123",
-      sentencedAsYouth = "Yes",
+      sentencedAsYouth = SentencedAsYouth.Yes,
     )
 
     ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(offenderId, createSentenceRequest, id)
@@ -215,7 +216,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
       sentenceExpiryDate = LocalDate.of(2004, 1, 5),
       sentencingCourt = "sentencing court",
       sentencedUnder = "Legislation 123",
-      sentencedAsYouth = "Yes",
+      sentencedAsYouth = SentencedAsYouth.Yes,
     )
 
     ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(

@@ -14,5 +14,5 @@ data class PpudCreateOrUpdateSentenceRequest(
   val sentenceExpiryDate: LocalDate?,
   val sentencingCourt: String = "",
   val sentencedUnder: String?,
-  val sentencedAsYouth: String? = null,
+  val sentencedAsYouth: SentencedAsYouth? = null,
 )

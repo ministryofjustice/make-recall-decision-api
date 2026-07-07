@@ -19,7 +19,7 @@ data class PpudCreateOffenderRequest(
   val mappaLevel: String?,
   val nomsId: String?,
   val prisonNumber: String?,
-  val sentencedAsYouth: String? = null,
+  val sentencedAsYouth: SentencedAsYouth? = null,
 )
 
 data class PpudAddress(
