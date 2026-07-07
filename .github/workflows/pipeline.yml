@@ -51,6 +51,7 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
     needs:
       - kotlin_validate
+      - e2e_local_tests
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
