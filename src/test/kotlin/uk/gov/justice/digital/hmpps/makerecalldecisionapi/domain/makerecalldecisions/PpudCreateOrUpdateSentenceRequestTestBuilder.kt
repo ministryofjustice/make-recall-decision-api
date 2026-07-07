@@ -54,7 +54,7 @@ internal fun PpudCreateOrUpdateSentenceRequest.toJson() = json(
         "sentenceExpiryDate": ${toJsonNullableStringField(sentenceExpiryDate)},
         "sentencingCourt": "$sentencingCourt",
         "sentencedUnder": "$sentencedUnder",
-        "sentencedAsYouth": ${toJsonNullableStringField(sentencedAsYouth?.value)}
+        "sentencedAsYouth": ${toJsonNullableStringField(sentencedAsYouth)}
       }
   """.trimIndent(),
 )
