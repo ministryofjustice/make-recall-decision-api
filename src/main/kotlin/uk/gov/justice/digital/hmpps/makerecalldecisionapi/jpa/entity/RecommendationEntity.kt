@@ -9,6 +9,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.DataDictionaryMetadata
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookRecallToPpud
@@ -97,6 +98,10 @@ data class RecommendationModel(
   // deprecated - subsumed by sentenceGroup
   @param:JsonProperty("isExtendedSentence") var isExtendedSentence: Boolean? = null,
   var activeCustodialConvictionCount: Number? = null,
+  @DataDictionaryMetadata(
+    description = "Is one or more of the offender's victims in a victims contact scheme?",
+    sar = false,
+  )
   var hasVictimsInContactScheme: VictimsInContactScheme? = null,
   var indeterminateSentenceType: IndeterminateSentenceType? = null,
   @param:JsonFormat(pattern = "yyyy-MM-dd") var dateVloInformed: LocalDate? = null,
