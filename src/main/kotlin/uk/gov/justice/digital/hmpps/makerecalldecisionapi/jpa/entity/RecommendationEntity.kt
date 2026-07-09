@@ -43,6 +43,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilitiesRecommendation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import java.io.Serializable
 import java.security.SecureRandom
@@ -181,6 +182,7 @@ data class RecommendationModel(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isRecalledOnNewChargedOrConvictedOffence: EnumSelectionWithAllOptions<ChargedOrConvictedForNewOffence>? = null,
   var isChargedWithOffence: Boolean? = null,
   var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
   var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,
@@ -223,4 +225,14 @@ enum class Status {
 data class TextValueOption(
   val value: String? = null,
   val text: String? = null,
+) : Serializable
+
+data class EnumValueOption<E : Enum<E>>(
+  val value: E? = null,
+  val text: String? = null,
+) : Serializable
+
+data class EnumSelectionWithAllOptions<E : Enum<E>>(
+  val selected: E? = null,
+  val allOptions: List<EnumValueOption<E>>? = null,
 ) : Serializable
