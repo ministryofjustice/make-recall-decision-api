@@ -5,8 +5,16 @@
     <br>
     {{#recommendations}}
         <table class="data-table">
-            <tr><td class="data-column-30">Sensitive</td></tr>
-            <tr><td>{{ convertBoolean sensitive }}</td></tr>
+            <tr>
+                <td class="data-column-35">Created by surname</td>
+                <td class="data-column-30">Created date</td>
+                <td class="data-column-35">Sensitive</td>
+            </tr>
+            <tr>
+                <td>{{ getUserLastName createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+                <td>{{ convertBoolean sensitive }}</td>
+            </tr>
         </table>
         <br>
         <h5>Recall considered list</h5>
@@ -46,11 +54,15 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Manager recall decision</td>
-                <td class="data-column-75">Details</td>
+                <td class="data-column-25">Details</td>
+                <td class="data-column-25">Created by surname</td>
+                <td class="data-column-25">Created date</td>
             </tr>
             <tr>
                 <td>{{ optionalValue managerRecallDecision.selected.value }}</td>
                 <td>{{ optionalValue managerRecallDecision.selected.details }}</td>
+                <td>{{ getUserLastName managerRecallDecision.createdBy }}</td>
+                <td>{{ optionalValue (formatDate managerRecallDecision.createdDate) }}</td>
             </tr>
         </table>
         <br>
@@ -58,13 +70,15 @@
         {{#considerationRationale}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Date created</td>
-                    <td class="data-column-30">Time created</td>
-                    <td class="data-column-35">Sensitive</td>
+                    <td class="data-column-25">Date created</td>
+                    <td class="data-column-25">Time created</td>
+                    <td class="data-column-25">Created by surname</td>
+                    <td class="data-column-25">Sensitive</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue (formatDate createdDate) }}</td>
                     <td>{{ optionalValue (formatDate createdTime) }}</td>
+                    <td>{{ getUserLastName createdBy }}</td>
                     <td>{{ convertBoolean sensitive }}</td>
                 </tr>
             </table>
@@ -94,16 +108,10 @@
         {{#localPoliceContact}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Contact name</td>
-                    <td class="data-column-25">Phone number</td>
-                    <td class="data-column-25">Fax number</td>
-                    <td class="data-column-25">Email address</td>
+                    <td class="data-column-100">Contact surname</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue contactName }}</td>
-                    <td>{{ optionalValue phoneNumber }}</td>
-                    <td>{{ optionalValue faxNumber }}</td>
-                    <td>{{ optionalValue emailAddress }}</td>
+                    <td>{{ getUserLastName contactName }}</td>
                 </tr>
             </table>
         {{/localPoliceContact}}
@@ -152,8 +160,14 @@
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-20">Has victims in contact scheme</td></tr>
-            <tr><td>{{ optionalValue hasVictimsInContactScheme.selected }}</td></tr>
+            <tr>
+                <td class="data-column-50">Has victims in contact scheme</td>
+                <td class="data-column-50">Date VLO informed</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue hasVictimsInContactScheme.selected }}</td>
+                <td>{{ optionalValue (formatDate dateVloInformed) }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
@@ -199,12 +213,12 @@
             <tr>
                 <td class="data-column-35">Last Decision not to recall letter A downloaded</td>
                 <td class="data-column-30">Review practitioners concerns</td>
-                <td class="data-column-35">ODM name</td>
+                <td class="data-column-35">ODM surname</td>
             </tr>
             <tr>
                 <td>{{ optionalValue (formatDate lastDntrLetterADownloadDateTime) }}</td>
                 <td>{{ convertBoolean reviewPractitionersConcerns }}</td>
-                <td>{{ optionalValue odmName }}</td>
+                <td>{{ getUserLastName odmName }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -220,12 +234,12 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Explain the decision</td>
-                <td class="data-column-30">Created</td>
-                <td class="data-column-35">Last modified</td>
+                <td class="data-column-35">Last modified by surname</td>
+                <td class="data-column-30">Last modified</td>
             </tr>
             <tr>
                 <td>{{ convertBoolean explainTheDecision }}</td>
-                <td>{{ optionalValue (formatDate createdDate) }}</td>
+                <td>{{ getUserLastName lastModifiedBy }}</td>
                 <td>{{ optionalValue (formatDate lastModifiedDate) }}</td>
             </tr>
         </table>
@@ -271,10 +285,25 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Has been reviewed</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements level</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements start date</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements category</td>
+                    <td class="data-column-25">CRO number</td>
+                    <td class="data-column-25">Most recent prisoner number</td>
+                    <td class="data-column-25">NOMS number</td>
+                    <td class="data-column-25">PNC number</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue croNumber }}</td>
+                    <td>{{ optionalValue mostRecentPrisonerNumber }}</td>
+                    <td>{{ optionalValue nomsNumber }}</td>
+                    <td>{{ optionalValue pncNumber }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">Has been reviewed</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements level</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements start date</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements category</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements reviewed</td>
                 </tr>
                 <tr>
                     <td>{{ convertBoolean hasBeenReviewed }}</td>
@@ -282,6 +311,7 @@
                         <td>{{ optionalValue level }}</td>
                         <td>{{ optionalValue startDate }}</td>
                         <td>{{ optionalValue category }}</td>
+                        <td>{{ convertBoolean hasBeenReviewed }}</td>
                     {{/mappa}}
                 </tr>
             </table>
@@ -810,13 +840,10 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-50">Last updates</td>
-                    <td class="data-column-50">Error</td>
+                    <td class="data-column-100">Last updated</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue (formatDate lastUpdatedDate) }}</td>
-                    <td>{{ optionalValue error }}</td>
-                    <td></td>
                 </tr>
             </table>
             <table class="data-table">
@@ -903,16 +930,6 @@
             <p>No Data Held</p>
         {{/roshSummary}}
         <br>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-50">Countersign Senior Probation Officer telephone</td>
-                <td class="data-column-50">Countersign Assistant Chief Officer telephone</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue countersignSpoTelephone }}</td>
-                <td>{{ optionalValue countersignAcoTelephone }}</td>
-            </tr>
-        </table>
         <table class="summary-list">
             <tr><td>Countersign Senior Probation Officer exposition</td><td>{{ optionalValue countersignSpoExposition }}</td></tr>
             <tr><td>Countersign Assistant Chief Officer exposition</td><td>{{ optionalValue countersignAcoExposition }}</td></tr>
@@ -922,24 +939,12 @@
         {{#whoCompletedPartA}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Name</td>
-                    <td class="data-column-30">Email</td>
-                    <td class="data-column-35">Telephone</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue name }}</td>
-                    <td>{{ optionalValue email }}</td>
-                    <td>{{ optionalValue telephone }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Region</td>
+                    <td class="data-column-35">Surname</td>
                     <td class="data-column-30">Local delivery unit</td>
                     <td class="data-column-35">Probation practitioner for offender</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue region }}</td>
+                    <td>{{ getUserLastName name }}</td>
                     <td>{{ optionalValue localDeliveryUnit }}</td>
                     <td>{{ convertBoolean isPersonProbationPractitionerForOffender }}</td>
                 </tr>
@@ -953,26 +958,12 @@
         {{#practitionerForPartA}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Name</td>
-                    <td class="data-column-30">Email</td>
-                    <td class="data-column-35">Telephone</td>
+                    <td class="data-column-50">Surname</td>
+                    <td class="data-column-50">Local delivery unit</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue name }}</td>
-                    <td>{{ optionalValue email }}</td>
-                    <td>{{ optionalValue telephone }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Region</td>
-                    <td class="data-column-30">Local delivery unit</td>
-                    <td class="data-column-35"></td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue region }}</td>
+                    <td>{{ getUserLastName name }}</td>
                     <td>{{ optionalValue localDeliveryUnit }}</td>
-                    <td></td>
                 </tr>
             </table>
         {{/practitionerForPartA}}
@@ -980,14 +971,6 @@
             <p>No Data Held</p>
         {{/practitionerForPartA}}
         <br>
-        <table class="data-table">
-            <tr><td class="data-column-20">Revocation order recipients</td></tr>
-            <tr><td>{{#revocationOrderRecipients}}<li>{{ optionalValue . }}</li>{{/revocationOrderRecipients}}{{^revocationOrderRecipients}}No Data Held{{/revocationOrderRecipients}}</td></tr>
-        </table>
-        <table class="data-table">
-            <tr><td class="data-column-20">Public Protection Casework Section query emails</td></tr>
-            <tr><td>{{#ppcsQueryEmails}}<li>{{ optionalValue . }}</li>{{/ppcsQueryEmails}}{{^ppcsQueryEmails}}No Data Held{{/ppcsQueryEmails}}</td></tr>
-        </table>
         <table class="summary-list">
             <tr><td>Decision date</td><td>{{ optionalValue (formatDate decisionDateTime) }}</td></tr>
             <tr><td>Date of release</td><td>{{ optionalValue (formatDate dateOfRelease) }}</td></tr>
