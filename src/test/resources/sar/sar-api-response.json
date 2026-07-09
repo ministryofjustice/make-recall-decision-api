@@ -1,1 +1,530 @@
-{"crn":"A12345","recommendations":[{"crn":"A12345","sensitive":null,"ppudRecordPresent":false,"recallConsideredList":[{"id":1,"userId":"bill","createdDate":"2022-07-26T09:48:27.443Z","userName":"Bill","recallConsideredDetail":"I have concerns about their behaviour"}],"recallType":{"selected":{"value":"FIXED_TERM","details":"My details"},"allOptions":[{"value":"NO_RECALL","text":"No recall"},{"value":"FIXED_TERM","text":"Fixed term"},{"value":"STANDARD","text":"Standard"}]},"sendSpoRationaleToDelius":false,"managerRecallDecision":null,"considerationRationale":null,"custodyStatus":{"selected":"YES_PRISON","details":"Bromsgrove Police Station\r\nLondon","allOptions":[{"value":"YES_PRISON","text":"Yes, prison custody"},{"value":"YES_POLICE","text":"Yes, police custody"},{"value":"NO","text":"No"}]},"localPoliceContact":{"contactName":"John Doe","phoneNumber":"01234567890","faxNumber":"09876543210","emailAddress":"john.doe@gmail.com"},"responseToProbation":"They have not responded well","thoughtsLeadingToRecall":null,"triggerLeadingToRecall":"Just a bad morning, I guess","whatLedToRecall":"Increasingly violent behaviour","sentenceGroup":"INDETERMINATE","isThisAnEmergencyRecall":true,"isIndeterminateSentence":true,"isExtendedSentence":true,"activeCustodialConvictionCount":1,"hasVictimsInContactScheme":{"selected":"YES","allOptions":[{"value":"YES","text":"Yes"},{"value":"NO","text":"No"},{"value":"NOT_APPLICABLE","text":"N/A"}]},"indeterminateSentenceType":{"selected":"LIFE","allOptions":[{"value":"LIFE","text":"Life sentence"},{"value":"IPP","text":"Imprisonment for public protection (IPP)"},{"value":"DPP","text":"Detention for public protection (DPP)"},{"value":"DHMP","text":"Detention at His Majesty’s pleasure (DHMP)"},{"value":"NO","text":"No"}]},"dateVloInformed":"2024-01-01","hasArrestIssues":{"selected":true,"details":"Arrest issue details"},"hasContrabandRisk":{"selected":true,"details":"Contraband risk details"},"status":"DRAFT","region":"London","localDeliveryUnit":"LDU London","userNameDntrLetterCompletedBy":null,"lastDntrLetterADownloadDateTime":null,"reviewPractitionersConcerns":null,"odmName":null,"spoRecallType":null,"spoRecallRationale":null,"spoDeleteRecommendationRationale":null,"sendSpoDeleteRationaleToDelius":false,"spoCancelRecommendationRationale":null,"reviewOffenderProfile":null,"explainTheDecision":null,"lastModifiedBy":"Jack","lastModifiedByUserName":"jack","lastModifiedDate":"2022-07-01T15:22:24.567Z","createdBy":"Jack","createdByUserFullName":null,"createdDate":"2022-07-01T15:22:24.567Z","personOnProbation":{"name":null,"firstName":"Joe","surname":"Bloggs","middleNames":null,"gender":null,"ethnicity":null,"dateOfBirth":"1982-10-24","croNumber":null,"mostRecentPrisonerNumber":null,"nomsNumber":null,"pncNumber":null,"mappa":{"level":1,"lastUpdatedDate":null,"category":1,"error":null,"hasBeenReviewed":false},"addresses":[{"line1":"Line 1 address","line2":"Line 2 address","town":"Town address","postcode":"TS1 1ST","noFixedAbode":false}],"primaryLanguage":"English","hasBeenReviewed":false,"ftr56MappaReviewed":null},"convictionDetail":{"indexOffenceDescription":"This is the index offence","dateOfOriginalOffence":"2022-09-01","dateOfSentence":"2022-09-02","lengthOfSentence":6,"lengthOfSentenceUnits":"days","sentenceDescription":"CJA - Extended Sentence","licenceExpiryDate":"2022-09-03","sentenceExpiryDate":"2022-09-04","sentenceSecondLength":12,"sentenceSecondLengthUnits":"months","custodialTerm":null,"extendedTerm":null,"hasBeenReviewed":false},"alternativesToRecallTried":{"selected":[{"value":"WARNINGS_LETTER","details":"We sent a warning letter on 27th July 2022"}],"allOptions":[{"value":"WARNINGS_LETTER","text":"Warnings/licence breach letters"}]},"licenceConditionsBreached":{"standardLicenceConditions":{"selected":["GOOD_BEHAVIOUR"],"allOptions":[{"value":"GOOD_BEHAVIOUR","text":"They had good behaviour"}]},"additionalLicenceConditions":{"selected":["NST14"],"selectedOptions":null,"allOptions":[{"subCatCode":"NST14","mainCatCode":"NLC5","title":"Additional title","details":"Additional details","note":"Additional note"}]}},"cvlLicenceConditionsBreached":null,"additionalLicenceConditionsText":null,"vulnerabilities":null,"isUnderIntegratedOffenderManagement":{"selected":"YES","allOptions":[{"value":"YES","text":"Yes"},{"value":"NO","text":"No"},{"value":"NOT_APPLICABLE","text":"N/A"}]},"indexOffenceDetails":"Offence details","offenceDataFromLatestCompleteAssessment":null,"offencesMatch":null,"offenceAnalysis":null,"fixedTermAdditionalLicenceConditions":{"selected":true,"details":"This is an additional licence condition"},"indeterminateOrExtendedSentenceDetails":null,"isMainAddressWherePersonCanBeFound":{"selected":false,"details":"123 Oak Avenue, Birmingham, B23 1AV"},"whyConsideredRecall":{"selected":"RISK_INCREASED","allOptions":[{"value":"RISK_INCREASED","text":"Your risk is assessed as increased"},{"value":"CONTACT_STOPPED","text":"Contact with your probation practitioner has broken down"},{"value":"RISK_INCREASED_AND_CONTACT_STOPPED","text":"Your risk is assessed as increased and contact with your probation practitioner has broken down"}]},"reasonsForNoRecall":{"licenceBreach":"Reason for breaching licence","noRecallRationale":"Rationale for no recall","popProgressMade":"Progress made so far detail","popThoughts":null,"futureExpectations":"Future expectations detail"},"nextAppointment":{"howWillAppointmentHappen":{"selected":"TELEPHONE","allOptions":[{"value":"TELEPHONE","text":"Telephone"},{"value":"VIDEO_CALL","text":"Video call"},{"value":"OFFICE_VISIT","text":"Office visit"},{"value":"HOME_VISIT","text":"Home visit"}]},"dateTimeOfAppointment":"2022-04-24T20:39:00.000Z","probationPhoneNumber":"01238282838"},"hasBeenReviewed":null,"previousReleases":{"lastReleaseDate":"2022-09-02","lastReleasingPrisonOrCustodialEstablishment":"HMP Holloway","hasBeenReleasedPreviously":true,"previousReleaseDates":["2020-02-01"]},"previousRecalls":null,"recommendationStartedDomainEventSent":null,"currentRoshForPartA":null,"roshSummary":{"natureOfRisk":null,"whoIsAtRisk":null,"riskIncreaseFactors":null,"riskMitigationFactors":null,"riskImminence":null,"riskOfSeriousHarm":{"overallRisk":"HIGH","riskInCustody":{"riskToChildren":"LOW","riskToPublic":"MEDIUM","riskToKnownAdult":"MEDIUM","riskToStaff":"LOW","riskToPrisoners":"VERY_HIGH"},"riskInCommunity":{"riskToChildren":"HIGH","riskToPublic":"MEDIUM","riskToKnownAdult":"MEDIUM","riskToStaff":"LOW","riskToPrisoners":""}},"lastUpdatedDate":"2023-01-12T20:39:00.000Z","error":null},"countersignSpoTelephone":null,"countersignSpoExposition":null,"countersignAcoExposition":null,"countersignAcoTelephone":null,"whoCompletedPartA":{"name":"Mr Jenkins","email":"jenkins@email.com","telephone":"1234567","region":"London","localDeliveryUnit":"A123","isPersonProbationPractitionerForOffender":false},"practitionerForPartA":{"name":"Mr Jenkins 1","email":"jenkins1@email.com","telephone":"12345678","region":"London2","localDeliveryUnit":"A1234"},"revocationOrderRecipients":null,"decisionDateTime":"2024-01-01T12:00:00","ppcsQueryEmails":null,"prisonOffender":null,"prisonApiLocationDescription":null,"releaseUnderECSL":null,"dateOfRelease":null,"conditionalReleaseDate":null,"nomisIndexOffence":{"selected":123,"allOptions":[{"consecutiveCount":null,"offenderChargeId":123,"offenceCode":"A123X","offenceStatute":"A123","offenceDescription":"","offenceDate":null,"sentenceDate":"2024-01-01","courtDescription":null,"sentenceStartDate":"2024-01-01","sentenceEndDate":"2024-01-01","sentenceSequenceExpiryDate":"2024-01-01","bookingId":123,"terms":[{"years":4,"months":4,"weeks":4,"days":4,"code":null}],"sentenceTypeDescription":null,"releaseDate":null,"releasingPrison":null,"licenceExpiryDate":null}]},"bookRecallToPpud":{"decisionDateTime":"2024-01-01T12:00:00","custodyGroup":null,"custodyType":null,"currentEstablishment":null,"releasingPrison":null,"changeOffenceOrAddComment":null,"indexOffence":null,"indexOffenceComment":null,"ppudSentenceId":null,"ppudIndeterminateSentenceData":null,"mappaLevel":"Level 1","policeForce":"Kent Police","probationArea":"Kent","receivedDateTime":"2024-01-01T12:00:00","sentenceDate":"2024-01-01","gender":null,"ethnicity":null,"firstNames":null,"lastName":null,"dateOfBirth":null,"cro":null,"prisonNumber":null,"legislationReleasedUnder":null,"legislationSentencedUnder":null,"minute":"some text"},"ppudOffender":{"id":"12345678","croOtherNumber":"1234","dateOfBirth":"1990-09-14","ethnicity":"White","familyName":"","firstNames":"","gender":"Male","immigrationStatus":"Naturalized","establishment":"HMP Brixton","nomsId":"","prisonerCategory":"Incarcerated","prisonNumber":"1234","sentences":[{"id":"1234123412341234","offenceDescription":"some description","sentenceExpiryDate":"2006-08-13","dateOfSentence":"2006-01-01","custodyType":"Extended","mappaLevel":"Level 1","licenceExpiryDate":"2006-08-14","tariffExpiryDate":"2006-08-14","offence":{"indexOffence":"123","dateOfIndexOffence":"2007-08-14","indexOffenceComment":"Some offence comment"},"releaseDate":"2027-08-14","sentenceLength":{"partYears":1,"partMonths":1,"partDays":1},"sentencingCourt":"Richmond"}],"status":"Active","youngOffender":"No"},"bookingMemento":null,"isOver18":null,"isUnder18":null,"isMappaLevelAbove1":null,"isSentenceUnder12Months":null,"isSentence12MonthsOrOver":null,"hasBeenConvictedOfSeriousOffence":null,"isSentence48MonthsOrOver":null,"isMappaCategory4":null,"isMappaLevel2Or3":null,"isRecalledOnNewChargedOffence":null,"isServingFTSentenceForTerroristOffence":null,"hasBeenChargedWithTerroristOrStateThreatOffence":null,"isChargedWithOffence":true,"isServingTerroristOrNationalSecurityOffence":false,"isAtRiskOfInvolvedInForeignPowerThreat":true,"wasReferredToParoleBoard244ZB":false,"wasRepatriatedForMurder":true,"isServingSOPCSentence":false,"isServingDCRSentence":true,"isYouthSentenceOver12Months":false,"isYouthChargedWithSeriousOffence":true,"userNamePartACompletedBy":"John Doe","userEmailPartACompletedBy":"John.Doe@test.com","lastPartADownloadDateTime":null,"countersignSpoDateTime":null,"countersignSpoName":null,"acoCounterSignEmail":null,"spoCounterSignEmail":null,"countersignAcoName":null,"countersignAcoDateTime":null,"deleted":false}]}
+{
+  "crn": "A12345",
+  "recommendations": [
+    {
+      "crn": "A12345",
+      "sensitive": null,
+      "ppudRecordPresent": false,
+      "recallConsideredList": [
+        {
+          "id": 1,
+          "userId": "bill",
+          "createdDate": "2022-07-26T09:48:27.443Z",
+          "userName": "Bill",
+          "recallConsideredDetail": "I have concerns about their behaviour"
+        }
+      ],
+      "recallType": {
+        "selected": {
+          "value": "FIXED_TERM",
+          "details": "My details"
+        },
+        "allOptions": [
+          {
+            "value": "NO_RECALL",
+            "text": "No recall"
+          },
+          {
+            "value": "FIXED_TERM",
+            "text": "Fixed term"
+          },
+          {
+            "value": "STANDARD",
+            "text": "Standard"
+          }
+        ]
+      },
+      "sendSpoRationaleToDelius": false,
+      "managerRecallDecision": null,
+      "considerationRationale": null,
+      "custodyStatus": {
+        "selected": "YES_PRISON",
+        "details": "Bromsgrove Police Station\r\nLondon",
+        "allOptions": [
+          {
+            "value": "YES_PRISON",
+            "text": "Yes, prison custody"
+          },
+          {
+            "value": "YES_POLICE",
+            "text": "Yes, police custody"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          }
+        ]
+      },
+      "localPoliceContact": {
+        "contactName": "John Doe",
+        "phoneNumber": "01234567890",
+        "faxNumber": "09876543210",
+        "emailAddress": "john.doe@gmail.com"
+      },
+      "responseToProbation": "They have not responded well",
+      "thoughtsLeadingToRecall": null,
+      "triggerLeadingToRecall": "Just a bad morning, I guess",
+      "whatLedToRecall": "Increasingly violent behaviour",
+      "sentenceGroup": "INDETERMINATE",
+      "isThisAnEmergencyRecall": true,
+      "isIndeterminateSentence": true,
+      "isExtendedSentence": true,
+      "activeCustodialConvictionCount": 1,
+      "hasVictimsInContactScheme": {
+        "selected": "YES",
+        "allOptions": [
+          {
+            "value": "YES",
+            "text": "Yes"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          },
+          {
+            "value": "NOT_APPLICABLE",
+            "text": "N/A"
+          }
+        ]
+      },
+      "indeterminateSentenceType": {
+        "selected": "LIFE",
+        "allOptions": [
+          {
+            "value": "LIFE",
+            "text": "Life sentence"
+          },
+          {
+            "value": "IPP",
+            "text": "Imprisonment for public protection (IPP)"
+          },
+          {
+            "value": "DPP",
+            "text": "Detention for public protection (DPP)"
+          },
+          {
+            "value": "DHMP",
+            "text": "Detention at His Majesty’s pleasure (DHMP)"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          }
+        ]
+      },
+      "dateVloInformed": "2024-01-01",
+      "hasArrestIssues": {
+        "selected": true,
+        "details": "Arrest issue details"
+      },
+      "hasContrabandRisk": {
+        "selected": true,
+        "details": "Contraband risk details"
+      },
+      "status": "DRAFT",
+      "region": "London",
+      "localDeliveryUnit": "LDU London",
+      "userNameDntrLetterCompletedBy": null,
+      "lastDntrLetterADownloadDateTime": null,
+      "reviewPractitionersConcerns": null,
+      "odmName": null,
+      "spoRecallType": null,
+      "spoRecallRationale": null,
+      "spoDeleteRecommendationRationale": null,
+      "sendSpoDeleteRationaleToDelius": false,
+      "spoCancelRecommendationRationale": null,
+      "reviewOffenderProfile": null,
+      "explainTheDecision": null,
+      "lastModifiedBy": "Jack",
+      "lastModifiedByUserName": "jack",
+      "lastModifiedDate": "2022-07-01T15:22:24.567Z",
+      "createdBy": "Jack",
+      "createdByUserFullName": null,
+      "createdDate": "2022-07-01T15:22:24.567Z",
+      "personOnProbation": {
+        "name": null,
+        "firstName": "Joe",
+        "surname": "Bloggs",
+        "middleNames": null,
+        "gender": null,
+        "ethnicity": null,
+        "dateOfBirth": "1982-10-24",
+        "croNumber": null,
+        "mostRecentPrisonerNumber": null,
+        "nomsNumber": null,
+        "pncNumber": null,
+        "mappa": {
+          "level": 1,
+          "lastUpdatedDate": null,
+          "category": 1,
+          "error": null,
+          "hasBeenReviewed": false
+        },
+        "addresses": [
+          {
+            "line1": "Line 1 address",
+            "line2": "Line 2 address",
+            "town": "Town address",
+            "postcode": "TS1 1ST",
+            "noFixedAbode": false
+          }
+        ],
+        "primaryLanguage": "English",
+        "hasBeenReviewed": false,
+        "ftr56MappaReviewed": null
+      },
+      "convictionDetail": {
+        "indexOffenceDescription": "This is the index offence",
+        "dateOfOriginalOffence": "2022-09-01",
+        "dateOfSentence": "2022-09-02",
+        "lengthOfSentence": 6,
+        "lengthOfSentenceUnits": "days",
+        "sentenceDescription": "CJA - Extended Sentence",
+        "licenceExpiryDate": "2022-09-03",
+        "sentenceExpiryDate": "2022-09-04",
+        "sentenceSecondLength": 12,
+        "sentenceSecondLengthUnits": "months",
+        "custodialTerm": null,
+        "extendedTerm": null,
+        "hasBeenReviewed": false
+      },
+      "alternativesToRecallTried": {
+        "selected": [
+          {
+            "value": "WARNINGS_LETTER",
+            "details": "We sent a warning letter on 27th July 2022"
+          }
+        ],
+        "allOptions": [
+          {
+            "value": "WARNINGS_LETTER",
+            "text": "Warnings/licence breach letters"
+          }
+        ]
+      },
+      "licenceConditionsBreached": {
+        "standardLicenceConditions": {
+          "selected": [
+            "GOOD_BEHAVIOUR"
+          ],
+          "allOptions": [
+            {
+              "value": "GOOD_BEHAVIOUR",
+              "text": "They had good behaviour"
+            }
+          ]
+        },
+        "additionalLicenceConditions": {
+          "selected": [
+            "NST14"
+          ],
+          "selectedOptions": null,
+          "allOptions": [
+            {
+              "subCatCode": "NST14",
+              "mainCatCode": "NLC5",
+              "title": "Additional title",
+              "details": "Additional details",
+              "note": "Additional note"
+            }
+          ]
+        }
+      },
+      "cvlLicenceConditionsBreached": null,
+      "additionalLicenceConditionsText": null,
+      "vulnerabilities": null,
+      "isUnderIntegratedOffenderManagement": {
+        "selected": "YES",
+        "allOptions": [
+          {
+            "value": "YES",
+            "text": "Yes"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          },
+          {
+            "value": "NOT_APPLICABLE",
+            "text": "N/A"
+          }
+        ]
+      },
+      "indexOffenceDetails": "Offence details",
+      "offenceDataFromLatestCompleteAssessment": null,
+      "offencesMatch": null,
+      "offenceAnalysis": null,
+      "fixedTermAdditionalLicenceConditions": {
+        "selected": true,
+        "details": "This is an additional licence condition"
+      },
+      "indeterminateOrExtendedSentenceDetails": null,
+      "isMainAddressWherePersonCanBeFound": {
+        "selected": false,
+        "details": "123 Oak Avenue, Birmingham, B23 1AV"
+      },
+      "whyConsideredRecall": {
+        "selected": "RISK_INCREASED",
+        "allOptions": [
+          {
+            "value": "RISK_INCREASED",
+            "text": "Your risk is assessed as increased"
+          },
+          {
+            "value": "CONTACT_STOPPED",
+            "text": "Contact with your probation practitioner has broken down"
+          },
+          {
+            "value": "RISK_INCREASED_AND_CONTACT_STOPPED",
+            "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down"
+          }
+        ]
+      },
+      "reasonsForNoRecall": {
+        "licenceBreach": "Reason for breaching licence",
+        "noRecallRationale": "Rationale for no recall",
+        "popProgressMade": "Progress made so far detail",
+        "popThoughts": null,
+        "futureExpectations": "Future expectations detail"
+      },
+      "nextAppointment": {
+        "howWillAppointmentHappen": {
+          "selected": "TELEPHONE",
+          "allOptions": [
+            {
+              "value": "TELEPHONE",
+              "text": "Telephone"
+            },
+            {
+              "value": "VIDEO_CALL",
+              "text": "Video call"
+            },
+            {
+              "value": "OFFICE_VISIT",
+              "text": "Office visit"
+            },
+            {
+              "value": "HOME_VISIT",
+              "text": "Home visit"
+            }
+          ]
+        },
+        "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
+        "probationPhoneNumber": "01238282838"
+      },
+      "hasBeenReviewed": null,
+      "previousReleases": {
+        "lastReleaseDate": "2022-09-02",
+        "lastReleasingPrisonOrCustodialEstablishment": "HMP Holloway",
+        "hasBeenReleasedPreviously": true,
+        "previousReleaseDates": [
+          "2020-02-01"
+        ]
+      },
+      "previousRecalls": null,
+      "recommendationStartedDomainEventSent": null,
+      "currentRoshForPartA": null,
+      "roshSummary": {
+        "natureOfRisk": null,
+        "whoIsAtRisk": null,
+        "riskIncreaseFactors": null,
+        "riskMitigationFactors": null,
+        "riskImminence": null,
+        "riskOfSeriousHarm": {
+          "overallRisk": "HIGH",
+          "riskInCustody": {
+            "riskToChildren": "LOW",
+            "riskToPublic": "MEDIUM",
+            "riskToKnownAdult": "MEDIUM",
+            "riskToStaff": "LOW",
+            "riskToPrisoners": "VERY_HIGH"
+          },
+          "riskInCommunity": {
+            "riskToChildren": "HIGH",
+            "riskToPublic": "MEDIUM",
+            "riskToKnownAdult": "MEDIUM",
+            "riskToStaff": "LOW",
+            "riskToPrisoners": ""
+          }
+        },
+        "lastUpdatedDate": "2023-01-12T20:39:00.000Z",
+        "error": null
+      },
+      "countersignSpoTelephone": null,
+      "countersignSpoExposition": null,
+      "countersignAcoExposition": null,
+      "countersignAcoTelephone": null,
+      "whoCompletedPartA": {
+        "name": "Mr Jenkins",
+        "email": "jenkins@email.com",
+        "telephone": "1234567",
+        "region": "London",
+        "localDeliveryUnit": "A123",
+        "isPersonProbationPractitionerForOffender": false
+      },
+      "practitionerForPartA": {
+        "name": "Mr Jenkins 1",
+        "email": "jenkins1@email.com",
+        "telephone": "12345678",
+        "region": "London2",
+        "localDeliveryUnit": "A1234"
+      },
+      "revocationOrderRecipients": null,
+      "decisionDateTime": "2024-01-01T12:00:00",
+      "ppcsQueryEmails": null,
+      "prisonOffender": null,
+      "prisonApiLocationDescription": null,
+      "releaseUnderECSL": null,
+      "dateOfRelease": null,
+      "conditionalReleaseDate": null,
+      "nomisIndexOffence": {
+        "selected": 123,
+        "allOptions": [
+          {
+            "consecutiveCount": null,
+            "offenderChargeId": 123,
+            "offenceCode": "A123X",
+            "offenceStatute": "A123",
+            "offenceDescription": "",
+            "offenceDate": null,
+            "sentenceDate": "2024-01-01",
+            "courtDescription": null,
+            "sentenceStartDate": "2024-01-01",
+            "sentenceEndDate": "2024-01-01",
+            "sentenceSequenceExpiryDate": "2024-01-01",
+            "bookingId": 123,
+            "terms": [
+              {
+                "years": 4,
+                "months": 4,
+                "weeks": 4,
+                "days": 4,
+                "code": null
+              }
+            ],
+            "sentenceTypeDescription": null,
+            "releaseDate": null,
+            "releasingPrison": null,
+            "licenceExpiryDate": null
+          }
+        ]
+      },
+      "bookRecallToPpud": {
+        "decisionDateTime": "2024-01-01T12:00:00",
+        "custodyGroup": null,
+        "custodyType": null,
+        "currentEstablishment": null,
+        "releasingPrison": null,
+        "changeOffenceOrAddComment": null,
+        "indexOffence": null,
+        "indexOffenceComment": null,
+        "ppudSentenceId": null,
+        "ppudIndeterminateSentenceData": null,
+        "mappaLevel": "Level 1",
+        "policeForce": "Kent Police",
+        "probationArea": "Kent",
+        "receivedDateTime": "2024-01-01T12:00:00",
+        "sentenceDate": "2024-01-01",
+        "gender": null,
+        "ethnicity": null,
+        "firstNames": null,
+        "lastName": null,
+        "dateOfBirth": null,
+        "cro": null,
+        "prisonNumber": null,
+        "legislationReleasedUnder": null,
+        "legislationSentencedUnder": null,
+        "minute": "some text"
+      },
+      "ppudOffender": {
+        "id": "12345678",
+        "croOtherNumber": "1234",
+        "dateOfBirth": "1990-09-14",
+        "ethnicity": "White",
+        "familyName": "",
+        "firstNames": "",
+        "gender": "Male",
+        "immigrationStatus": "Naturalized",
+        "establishment": "HMP Brixton",
+        "nomsId": "",
+        "prisonerCategory": "Incarcerated",
+        "prisonNumber": "1234",
+        "sentences": [
+          {
+            "id": "1234123412341234",
+            "offenceDescription": "some description",
+            "sentenceExpiryDate": "2006-08-13",
+            "dateOfSentence": "2006-01-01",
+            "custodyType": "Extended",
+            "mappaLevel": "Level 1",
+            "licenceExpiryDate": "2006-08-14",
+            "tariffExpiryDate": "2006-08-14",
+            "offence": {
+              "indexOffence": "123",
+              "dateOfIndexOffence": "2007-08-14",
+              "indexOffenceComment": "Some offence comment"
+            },
+            "releaseDate": "2027-08-14",
+            "sentenceLength": {
+              "partYears": 1,
+              "partMonths": 1,
+              "partDays": 1
+            },
+            "sentencingCourt": "Richmond"
+          }
+        ],
+        "status": "Active",
+        "youngOffender": "No"
+      },
+      "bookingMemento": null,
+      "isOver18": null,
+      "isUnder18": null,
+      "isMappaLevelAbove1": null,
+      "isSentenceUnder12Months": null,
+      "isSentence12MonthsOrOver": null,
+      "hasBeenConvictedOfSeriousOffence": null,
+      "isSentence48MonthsOrOver": null,
+      "isMappaCategory4": null,
+      "isMappaLevel2Or3": null,
+      "isRecalledOnNewChargedOffence": null,
+      "isServingFTSentenceForTerroristOffence": null,
+      "hasBeenChargedWithTerroristOrStateThreatOffence": null,
+      "isRecalledOnNewChargedOrConvictedOffence": {
+        "selected": "ONLY_CHARGED",
+        "allOptions": [
+          {
+            "value": "CHARGED_AND_CONVICTED",
+            "text": "Charged and convicted"
+          },
+          {
+            "value": "ONLY_CHARGED",
+            "text": "Only charged"
+          },
+          {
+            "value": "NO",
+            "text": "No"
+          }
+        ]
+      },
+      "isChargedWithOffence": true,
+      "isServingTerroristOrNationalSecurityOffence": false,
+      "isAtRiskOfInvolvedInForeignPowerThreat": true,
+      "wasReferredToParoleBoard244ZB": false,
+      "wasRepatriatedForMurder": true,
+      "isServingSOPCSentence": false,
+      "isServingDCRSentence": true,
+      "isYouthSentenceOver12Months": false,
+      "isYouthChargedWithSeriousOffence": true,
+      "userNamePartACompletedBy": "John Doe",
+      "userEmailPartACompletedBy": "John.Doe@test.com",
+      "lastPartADownloadDateTime": null,
+      "countersignSpoDateTime": null,
+      "countersignSpoName": null,
+      "acoCounterSignEmail": null,
+      "spoCounterSignEmail": null,
+      "countersignAcoName": null,
+      "countersignAcoDateTime": null,
+      "deleted": false
+    }
+  ]
+}

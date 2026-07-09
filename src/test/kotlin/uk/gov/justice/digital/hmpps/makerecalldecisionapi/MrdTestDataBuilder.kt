@@ -60,6 +60,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhyConsideredRecallValue
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.EnumSelectionWithAllOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.EnumValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
@@ -226,6 +229,7 @@ class MrdTestDataBuilder {
           youngOffender = "No",
           ethnicity = "White",
         ),
+        isRecalledOnNewChargedOrConvictedOffence = isRecalledOnNewChargedOrConvictedOffence(),
         isChargedWithOffence = true,
         isServingTerroristOrNationalSecurityOffence = false,
         isAtRiskOfInvolvedInForeignPowerThreat = true,
@@ -331,6 +335,7 @@ class MrdTestDataBuilder {
       isRecalledOnNewChargedOffence = false,
       isServingFTSentenceForTerroristOffence = false,
       hasBeenChargedWithTerroristOrStateThreatOffence = false,
+      isRecalledOnNewChargedOrConvictedOffence = isRecalledOnNewChargedOrConvictedOffence(),
       isChargedWithOffence = false,
       isServingTerroristOrNationalSecurityOffence = false,
       isAtRiskOfInvolvedInForeignPowerThreat = false,
@@ -668,6 +673,24 @@ class MrdTestDataBuilder {
         ),
       ),
       lastUpdatedDate = "2023-01-12T20:39:00.000Z",
+    )
+
+    private fun isRecalledOnNewChargedOrConvictedOffence(): EnumSelectionWithAllOptions<ChargedOrConvictedForNewOffence> = EnumSelectionWithAllOptions(
+      selected = ChargedOrConvictedForNewOffence.ONLY_CHARGED,
+      allOptions = listOf(
+        EnumValueOption(
+          value = ChargedOrConvictedForNewOffence.CHARGED_AND_CONVICTED,
+          text = "Charged and convicted",
+        ),
+        EnumValueOption(
+          value = ChargedOrConvictedForNewOffence.ONLY_CHARGED,
+          text = "Only charged",
+        ),
+        EnumValueOption(
+          value = ChargedOrConvictedForNewOffence.NO,
+          text = "No",
+        ),
+      ),
     )
   }
 }

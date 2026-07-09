@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.convictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.custodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.cvlLicenceConditionsBreached
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.hasBeenReviewed
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.indeterminateOrExtendedSentenceDetails
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.indeterminateSentenceType
@@ -187,6 +188,7 @@ fun recommendationModel(
   isRecalledOnNewChargedOffence: Boolean? = randomBoolean(),
   isServingFTSentenceForTerroristOffence: Boolean? = randomBoolean(),
   hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = randomBoolean(),
+  isRecalledOnNewChargedOrConvictedOffence: EnumSelectionWithAllOptions<ChargedOrConvictedForNewOffence>? = enumSelectionWithAllOptions<ChargedOrConvictedForNewOffence>(),
   isChargedWithOffence: Boolean? = randomBoolean(),
   isServingTerroristOrNationalSecurityOffence: Boolean? = randomBoolean(),
   isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = randomBoolean(),
@@ -315,6 +317,7 @@ fun recommendationModel(
   isRecalledOnNewChargedOffence = isRecalledOnNewChargedOffence,
   isServingFTSentenceForTerroristOffence = isServingFTSentenceForTerroristOffence,
   hasBeenChargedWithTerroristOrStateThreatOffence = hasBeenChargedWithTerroristOrStateThreatOffence,
+  isRecalledOnNewChargedOrConvictedOffence = isRecalledOnNewChargedOrConvictedOffence,
   isChargedWithOffence = isChargedWithOffence,
   isServingTerroristOrNationalSecurityOffence = isServingTerroristOrNationalSecurityOffence,
   isAtRiskOfInvolvedInForeignPowerThreat = isAtRiskOfInvolvedInForeignPowerThreat,
@@ -342,4 +345,20 @@ fun textValueOption(
 ) = TextValueOption(
   value = value,
   text = text,
+)
+
+inline fun <reified E : Enum<E>> enumValueOption(
+  value: E? = randomEnum<E>(),
+  text: String? = randomString(),
+) = EnumValueOption(
+  value = value,
+  text = text,
+)
+
+inline fun <reified E : Enum<E>> enumSelectionWithAllOptions(
+  selected: E? = randomEnum<E>(),
+  allOptions: List<EnumValueOption<E>>? = listOf(enumValueOption<E>()),
+) = EnumSelectionWithAllOptions(
+  selected = selected,
+  allOptions = allOptions,
 )
