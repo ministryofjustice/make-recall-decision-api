@@ -5,8 +5,16 @@
     <br>
     {{#recommendations}}
         <table class="data-table">
-            <tr><td class="data-column-30">Sensitive</td></tr>
-            <tr><td>{{ convertBoolean sensitive }}</td></tr>
+            <tr>
+                <td class="data-column-35">Created by surname</td>
+                <td class="data-column-30">Created date</td>
+                <td class="data-column-35">Sensitive</td>
+            </tr>
+            <tr>
+                <td>{{ getUserLastName createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+                <td>{{ convertBoolean sensitive }}</td>
+            </tr>
         </table>
         <br>
         <h5>Recall considered list</h5>
@@ -46,11 +54,15 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Manager recall decision</td>
-                <td class="data-column-75">Details</td>
+                <td class="data-column-25">Details</td>
+                <td class="data-column-25">Created by surname</td>
+                <td class="data-column-25">Created date</td>
             </tr>
             <tr>
                 <td>{{ optionalValue managerRecallDecision.selected.value }}</td>
                 <td>{{ optionalValue managerRecallDecision.selected.details }}</td>
+                <td>{{ getUserLastName managerRecallDecision.createdBy }}</td>
+                <td>{{ optionalValue (formatDate managerRecallDecision.createdDate) }}</td>
             </tr>
         </table>
         <br>
@@ -58,13 +70,15 @@
         {{#considerationRationale}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Date created</td>
-                    <td class="data-column-30">Time created</td>
-                    <td class="data-column-35">Sensitive</td>
+                    <td class="data-column-25">Date created</td>
+                    <td class="data-column-25">Time created</td>
+                    <td class="data-column-25">Created by surname</td>
+                    <td class="data-column-25">Sensitive</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue (formatDate createdDate) }}</td>
                     <td>{{ optionalValue (formatDate createdTime) }}</td>
+                    <td>{{ getUserLastName createdBy }}</td>
                     <td>{{ convertBoolean sensitive }}</td>
                 </tr>
             </table>
@@ -94,16 +108,10 @@
         {{#localPoliceContact}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Contact name</td>
-                    <td class="data-column-25">Phone number</td>
-                    <td class="data-column-25">Fax number</td>
-                    <td class="data-column-25">Email address</td>
+                    <td class="data-column-100">Contact surname</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue contactName }}</td>
-                    <td>{{ optionalValue phoneNumber }}</td>
-                    <td>{{ optionalValue faxNumber }}</td>
-                    <td>{{ optionalValue emailAddress }}</td>
+                    <td>{{ getUserLastName contactName }}</td>
                 </tr>
             </table>
         {{/localPoliceContact}}
@@ -112,10 +120,12 @@
         {{/localPoliceContact}}
         <br>
         <br>
+        {{#sentenceGroup}}
         <table class="data-table">
             <tr><td class="data-column-20">Sentence group</td></tr>
             <tr><td>{{ optionalValue sentenceGroup }}</td></tr>
         </table>
+        {{/sentenceGroup}}
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Emergency recall</td>
@@ -152,8 +162,14 @@
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-20">Has victims in contact scheme</td></tr>
-            <tr><td>{{ optionalValue hasVictimsInContactScheme.selected }}</td></tr>
+            <tr>
+                <td class="data-column-50">Has victims in contact scheme</td>
+                <td class="data-column-50">Date VLO informed</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue hasVictimsInContactScheme.selected }}</td>
+                <td>{{ optionalValue (formatDate dateVloInformed) }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
@@ -199,12 +215,12 @@
             <tr>
                 <td class="data-column-35">Last Decision not to recall letter A downloaded</td>
                 <td class="data-column-30">Review practitioners concerns</td>
-                <td class="data-column-35">ODM name</td>
+                <td class="data-column-35">ODM surname</td>
             </tr>
             <tr>
                 <td>{{ optionalValue (formatDate lastDntrLetterADownloadDateTime) }}</td>
                 <td>{{ convertBoolean reviewPractitionersConcerns }}</td>
-                <td>{{ optionalValue odmName }}</td>
+                <td>{{ getUserLastName odmName }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -220,12 +236,12 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Explain the decision</td>
-                <td class="data-column-30">Created</td>
-                <td class="data-column-35">Last modified</td>
+                <td class="data-column-35">Last modified by surname</td>
+                <td class="data-column-30">Last modified</td>
             </tr>
             <tr>
                 <td>{{ convertBoolean explainTheDecision }}</td>
-                <td>{{ optionalValue (formatDate createdDate) }}</td>
+                <td>{{ getUserLastName lastModifiedBy }}</td>
                 <td>{{ optionalValue (formatDate lastModifiedDate) }}</td>
             </tr>
         </table>
@@ -271,10 +287,25 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Has been reviewed</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements level</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements start date</td>
-                    <td class="data-column-25">Multi-agency Public Protection Arrangements category</td>
+                    <td class="data-column-25">CRO number</td>
+                    <td class="data-column-25">Most recent prisoner number</td>
+                    <td class="data-column-25">NOMS number</td>
+                    <td class="data-column-25">PNC number</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue croNumber }}</td>
+                    <td>{{ optionalValue mostRecentPrisonerNumber }}</td>
+                    <td>{{ optionalValue nomsNumber }}</td>
+                    <td>{{ optionalValue pncNumber }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">Has been reviewed</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements level</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements start date</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements category</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements reviewed</td>
                 </tr>
                 <tr>
                     <td>{{ convertBoolean hasBeenReviewed }}</td>
@@ -282,6 +313,7 @@
                         <td>{{ optionalValue level }}</td>
                         <td>{{ optionalValue startDate }}</td>
                         <td>{{ optionalValue category }}</td>
+                        <td>{{ convertBoolean hasBeenReviewed }}</td>
                     {{/mappa}}
                 </tr>
             </table>
@@ -636,7 +668,7 @@
         <br>
         {{#whyConsideredRecall}}
             <table class="data-table">
-                <tr><td class="data-column-20">Why considered recall</td></tr>
+                <tr><td class="data-column-20">Thoughts leading to recall</td></tr>
                 {{#selected}}
                     <tr><td>{{ optionalValue selected }}</td></tr>
                 {{/selected}}
@@ -810,13 +842,10 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-50">Last updates</td>
-                    <td class="data-column-50">Error</td>
+                    <td class="data-column-100">Last updated</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue (formatDate lastUpdatedDate) }}</td>
-                    <td>{{ optionalValue error }}</td>
-                    <td></td>
                 </tr>
             </table>
             <table class="data-table">
@@ -903,16 +932,6 @@
             <p>No Data Held</p>
         {{/roshSummary}}
         <br>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-50">Countersign Senior Probation Officer telephone</td>
-                <td class="data-column-50">Countersign Assistant Chief Officer telephone</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue countersignSpoTelephone }}</td>
-                <td>{{ optionalValue countersignAcoTelephone }}</td>
-            </tr>
-        </table>
         <table class="summary-list">
             <tr><td>Countersign Senior Probation Officer exposition</td><td>{{ optionalValue countersignSpoExposition }}</td></tr>
             <tr><td>Countersign Assistant Chief Officer exposition</td><td>{{ optionalValue countersignAcoExposition }}</td></tr>
@@ -922,24 +941,12 @@
         {{#whoCompletedPartA}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Name</td>
-                    <td class="data-column-30">Email</td>
-                    <td class="data-column-35">Telephone</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue name }}</td>
-                    <td>{{ optionalValue email }}</td>
-                    <td>{{ optionalValue telephone }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Region</td>
+                    <td class="data-column-35">Surname</td>
                     <td class="data-column-30">Local delivery unit</td>
                     <td class="data-column-35">Probation practitioner for offender</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue region }}</td>
+                    <td>{{ getUserLastName name }}</td>
                     <td>{{ optionalValue localDeliveryUnit }}</td>
                     <td>{{ convertBoolean isPersonProbationPractitionerForOffender }}</td>
                 </tr>
@@ -953,26 +960,12 @@
         {{#practitionerForPartA}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Name</td>
-                    <td class="data-column-30">Email</td>
-                    <td class="data-column-35">Telephone</td>
+                    <td class="data-column-50">Surname</td>
+                    <td class="data-column-50">Local delivery unit</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue name }}</td>
-                    <td>{{ optionalValue email }}</td>
-                    <td>{{ optionalValue telephone }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Region</td>
-                    <td class="data-column-30">Local delivery unit</td>
-                    <td class="data-column-35"></td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue region }}</td>
+                    <td>{{ getUserLastName name }}</td>
                     <td>{{ optionalValue localDeliveryUnit }}</td>
-                    <td></td>
                 </tr>
             </table>
         {{/practitionerForPartA}}
@@ -980,18 +973,13 @@
             <p>No Data Held</p>
         {{/practitionerForPartA}}
         <br>
-        <table class="data-table">
-            <tr><td class="data-column-20">Revocation order recipients</td></tr>
-            <tr><td>{{#revocationOrderRecipients}}<li>{{ optionalValue . }}</li>{{/revocationOrderRecipients}}{{^revocationOrderRecipients}}No Data Held{{/revocationOrderRecipients}}</td></tr>
-        </table>
-        <table class="data-table">
-            <tr><td class="data-column-20">Public Protection Casework Section query emails</td></tr>
-            <tr><td>{{#ppcsQueryEmails}}<li>{{ optionalValue . }}</li>{{/ppcsQueryEmails}}{{^ppcsQueryEmails}}No Data Held{{/ppcsQueryEmails}}</td></tr>
-        </table>
         <table class="summary-list">
             <tr><td>Decision date</td><td>{{ optionalValue (formatDate decisionDateTime) }}</td></tr>
+            {{#releaseUnderECSL}}
+            <tr><td>Released under ECSL</td><td>{{ convertBoolean releaseUnderECSL }}</td></tr>
             <tr><td>Date of release</td><td>{{ optionalValue (formatDate dateOfRelease) }}</td></tr>
             <tr><td>Conditional release date</td><td>{{ optionalValue (formatDate conditionalReleaseDate) }}</td></tr>
+            {{/releaseUnderECSL}}
             <tr><td>Location description</td><td>{{ optionalValue prisonApiLocationDescription }}</td></tr>
         </table>
         <br>
@@ -1408,66 +1396,101 @@
         {{^bookingMomento}}
             <p>No Data Held</p>
         {{/bookingMomento}}
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Over 18</td>
-                <td class="data-column-30">Under 18</td>
-                <td class="data-column-35">Multi-agency Public Protection Arrangements level above 1</td>
-            </tr>
-            <tr>
-                <td>{{ convertBoolean isOver18 }}</td>
-                <td>{{ convertBoolean isUnder18 }}</td>
-                <td>{{ convertBoolean isMappaLevelAbove1 }}</td>
-            </tr>
+        {{#isUnder18}}
+        <table class="summary-list">
+            <tr><td>Under 18</td><td>{{ convertBoolean isUnder18 }}</td></tr>
         </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Sentence under 12 months</td>
-                <td class="data-column-30">Sentence 12 months or over</td>
-                <td class="data-column-35">Convicted of serious offence</td>
-            </tr>
-            <tr>
-                <td>{{ convertBoolean isSentenceUnder12Months }}</td>
-                <td>{{ convertBoolean isSentence12MonthsOrOver }}</td>
-                <td>{{ convertBoolean hasBeenConvictedOfSeriousOffence }}</td>
-            </tr>
+        {{/isUnder18}}
+        {{#isSentence12MonthsOrOver}}
+        <table class="summary-list">
+            <tr><td>Sentence 12 months or over</td><td>{{ convertBoolean isSentence12MonthsOrOver }}</td></tr>
         </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Charged with offence</td>
-                <td class="data-column-30">Serving terrorist or national security offence</td>
-                <td class="data-column-35">At risk of involved in foreign power threat</td>
-            </tr>
-            <tr>
-                <td>{{ convertBoolean isChargedWithOffence }}</td>
-                <td>{{ convertBoolean isServingTerroristOrNationalSecurityOffence }}</td>
-                <td>{{ convertBoolean isAtRiskOfInvolvedInForeignPowerThreat }}</td>
-            </tr>
+        {{/isSentence12MonthsOrOver}}
+        {{#isMappaLevelAbove1}}
+        <table class="summary-list">
+            <tr><td>Multi-agency Public Protection Arrangements level above 1</td><td>{{ convertBoolean isMappaLevelAbove1 }}</td></tr>
         </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Referred to Parole Board 244ZB</td>
-                <td class="data-column-30">Repatriated for murder</td>
-                <td class="data-column-35">Serving SOPC sentence</td>
-            </tr>
-            <tr>
-                <td>{{ convertBoolean wasReferredToParoleBoard244ZB }}</td>
-                <td>{{ convertBoolean wasRepatriatedForMurder }}</td>
-                <td>{{ convertBoolean isServingSOPCSentence }}</td>
-            </tr>
+        {{/isMappaLevelAbove1}}
+        {{#hasBeenConvictedOfSeriousOffence}}
+        <table class="summary-list">
+            <tr><td>Convicted of serious offence</td><td>{{ convertBoolean hasBeenConvictedOfSeriousOffence }}</td></tr>
         </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Serving DCR sentence</td>
-                <td class="data-column-30">Youth sentence over 12 months</td>
-                <td class="data-column-35">Youth charged with serious offence</td>
-            </tr>
-            <tr>
-                <td>{{ convertBoolean isServingDCRSentence }}</td>
-                <td>{{ convertBoolean isYouthSentenceOver12Months }}</td>
-                <td>{{ convertBoolean isYouthChargedWithSeriousOffence }}</td>
-            </tr>
+        {{/hasBeenConvictedOfSeriousOffence}}
+        {{#isSentence48MonthsOrOver}}
+        <table class="summary-list">
+            <tr><td>Sentence 48 months or over</td><td>{{ convertBoolean isSentence48MonthsOrOver }}</td></tr>
         </table>
+        {{/isSentence48MonthsOrOver}}
+        {{#isMappaCategory4}}
+        <table class="summary-list">
+            <tr><td>MAPPA category 4</td><td>{{ convertBoolean isMappaCategory4 }}</td></tr>
+        </table>
+        {{/isMappaCategory4}}
+        {{#isMappaLevel2Or3}}
+        <table class="summary-list">
+            <tr><td>MAPPA level 2 or 3</td><td>{{ convertBoolean isMappaLevel2Or3 }}</td></tr>
+        </table>
+        {{/isMappaLevel2Or3}}
+        {{#isRecalledOnNewChargedOffence}}
+        <table class="summary-list">
+            <tr><td>Recalled on new charged offence</td><td>{{ convertBoolean isRecalledOnNewChargedOffence }}</td></tr>
+        </table>
+        {{/isRecalledOnNewChargedOffence}}
+        {{#isServingFTSentenceForTerroristOffence}}
+        <table class="summary-list">
+            <tr><td>Serving fixed term sentence for terrorist offence</td><td>{{ convertBoolean isServingFTSentenceForTerroristOffence }}</td></tr>
+        </table>
+        {{/isServingFTSentenceForTerroristOffence}}
+        {{#hasBeenChargedWithTerroristOrStateThreatOffence}}
+        <table class="summary-list">
+            <tr><td>Charged with terrorist or state threat offence</td><td>{{ convertBoolean hasBeenChargedWithTerroristOrStateThreatOffence }}</td></tr>
+        </table>
+        {{/hasBeenChargedWithTerroristOrStateThreatOffence}}
+        {{#isChargedWithOffence}}
+        <table class="summary-list">
+            <tr><td>Charged with offence</td><td>{{ convertBoolean isChargedWithOffence }}</td></tr>
+        </table>
+        {{/isChargedWithOffence}}
+        {{#isServingTerroristOrNationalSecurityOffence}}
+        <table class="summary-list">
+            <tr><td>Serving terrorist or national security offence</td><td>{{ convertBoolean isServingTerroristOrNationalSecurityOffence }}</td></tr>
+        </table>
+        {{/isServingTerroristOrNationalSecurityOffence}}
+        {{#isAtRiskOfInvolvedInForeignPowerThreat}}
+        <table class="summary-list">
+            <tr><td>At risk of involved in foreign power threat</td><td>{{ convertBoolean isAtRiskOfInvolvedInForeignPowerThreat }}</td></tr>
+        </table>
+        {{/isAtRiskOfInvolvedInForeignPowerThreat}}
+        {{#wasReferredToParoleBoard244ZB}}
+        <table class="summary-list">
+            <tr><td>Referred to Parole Board 244ZB</td><td>{{ convertBoolean wasReferredToParoleBoard244ZB }}</td></tr>
+        </table>
+        {{/wasReferredToParoleBoard244ZB}}
+        {{#wasRepatriatedForMurder}}
+        <table class="summary-list">
+            <tr><td>Repatriated for murder</td><td>{{ convertBoolean wasRepatriatedForMurder }}</td></tr>
+        </table>
+        {{/wasRepatriatedForMurder}}
+        {{#isServingSOPCSentence}}
+        <table class="summary-list">
+            <tr><td>Serving SOPC sentence</td><td>{{ convertBoolean isServingSOPCSentence }}</td></tr>
+        </table>
+        {{/isServingSOPCSentence}}
+        {{#isServingDCRSentence}}
+        <table class="summary-list">
+            <tr><td>Serving DCR sentence</td><td>{{ convertBoolean isServingDCRSentence }}</td></tr>
+        </table>
+        {{/isServingDCRSentence}}
+        {{#isYouthSentenceOver12Months}}
+        <table class="summary-list">
+            <tr><td>Youth sentence over 12 months</td><td>{{ convertBoolean isYouthSentenceOver12Months }}</td></tr>
+        </table>
+        {{/isYouthSentenceOver12Months}}
+        {{#isYouthChargedWithSeriousOffence}}
+        <table class="summary-list">
+            <tr><td>Youth charged with serious offence</td><td>{{ convertBoolean isYouthChargedWithSeriousOffence }}</td></tr>
+        </table>
+        {{/isYouthChargedWithSeriousOffence}}
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Last part A download time</td>
