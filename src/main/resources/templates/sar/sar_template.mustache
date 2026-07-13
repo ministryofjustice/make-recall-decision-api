@@ -255,6 +255,11 @@
             <tr><td>{{ optionalValue spoCancelRecommendationRationale }}</td></tr>
         </table>
 
+        <table class="data-table">
+            <tr><td class="data-column-100">Senior Probation Officer delete recommendation rationale</td></tr>
+            <tr><td>{{ optionalValue spoDeleteRecommendationRationale }}</td></tr>
+        </table>
+
         <h5>Person on probation</h5>
         {{#personOnProbation}}
             <table class="data-table">
@@ -303,7 +308,7 @@
                 <tr>
                     <td class="data-column-20">Has been reviewed</td>
                     <td class="data-column-20">Multi-agency Public Protection Arrangements level</td>
-                    <td class="data-column-20">Multi-agency Public Protection Arrangements start date</td>
+                    <td class="data-column-20">Multi-agency Public Protection Arrangements last updated date</td>
                     <td class="data-column-20">Multi-agency Public Protection Arrangements category</td>
                     <td class="data-column-20">Multi-agency Public Protection Arrangements reviewed</td>
                 </tr>
@@ -311,7 +316,7 @@
                     <td>{{ convertBoolean hasBeenReviewed }}</td>
                     {{#mappa}}
                         <td>{{ optionalValue level }}</td>
-                        <td>{{ optionalValue startDate }}</td>
+                        <td>{{ optionalValue (formatDate lastUpdatedDate) }}</td>
                         <td>{{ optionalValue category }}</td>
                         <td>{{ convertBoolean hasBeenReviewed }}</td>
                     {{/mappa}}
@@ -668,7 +673,7 @@
         <br>
         {{#whyConsideredRecall}}
             <table class="data-table">
-                <tr><td class="data-column-20">Thoughts leading to recall</td></tr>
+                <tr><td class="data-column-20">Why considered recall</td></tr>
                 {{#selected}}
                     <tr><td>{{ optionalValue selected }}</td></tr>
                 {{/selected}}
