@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.7"
   kotlin("jvm") version "2.3.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -58,7 +58,7 @@ dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
-  implementation("org.postgresql:postgresql:42.7.11") // hmpps-kotlin-spring-boot-starter pulls in 42.7.10 - should we remove this line here and leave it up to the starter?
+  implementation("org.postgresql:postgresql:42.7.12")
 
   implementation("io.sentry:sentry-spring-boot-4:8.42.0")
   implementation("io.sentry:sentry-logback:8.42.0")
