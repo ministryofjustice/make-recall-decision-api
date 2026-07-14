@@ -3,7 +3,7 @@
   "recommendations": [
     {
       "crn": "A12345",
-      "sensitive": null,
+      "sensitive": false,
       "ppudRecordPresent": false,
       "recallConsideredList": [
         {
@@ -35,8 +35,22 @@
         ]
       },
       "sendSpoRationaleToDelius": false,
-      "managerRecallDecision": null,
-      "considerationRationale": null,
+      "managerRecallDecision": {
+        "selected": {
+          "value": "RECALL",
+          "details": "Recall is appropriate given the increased risk"
+        },
+        "allOptions": null,
+        "isSentToDelius": true,
+        "createdBy": "Bill",
+        "createdDate": "2022-07-26T09:48:27.443Z"
+      },
+      "considerationRationale": {
+        "createdBy": "Jack",
+        "createdDate": "2022-07-25T10:30:00.000Z",
+        "createdTime": "10:30:00",
+        "sensitive": false
+      },
       "custodyStatus": {
         "selected": "YES_PRISON",
         "details": "Bromsgrove Police Station\r\nLondon",
@@ -62,7 +76,7 @@
         "emailAddress": "john.doe@gmail.com"
       },
       "responseToProbation": "They have not responded well",
-      "thoughtsLeadingToRecall": null,
+      "thoughtsLeadingToRecall": "Ongoing concerns about escalating risk and non-compliance with licence conditions",
       "triggerLeadingToRecall": "Just a bad morning, I guess",
       "whatLedToRecall": "Increasingly violent behaviour",
       "sentenceGroup": "INDETERMINATE",
@@ -125,37 +139,37 @@
       "region": "London",
       "localDeliveryUnit": "LDU London",
       "userNameDntrLetterCompletedBy": null,
-      "lastDntrLetterADownloadDateTime": null,
-      "reviewPractitionersConcerns": null,
-      "odmName": null,
-      "spoRecallType": null,
-      "spoRecallRationale": null,
-      "spoDeleteRecommendationRationale": null,
+      "lastDntrLetterADownloadDateTime": "2022-06-20T09:15:00",
+      "reviewPractitionersConcerns": true,
+      "odmName": "Senior Manager Williams",
+      "spoRecallType": "RECALL",
+      "spoRecallRationale": "Recall is justified based on the increased risk to public safety",
+      "spoDeleteRecommendationRationale": "N/A - recommendation not deleted",
       "sendSpoDeleteRationaleToDelius": false,
-      "spoCancelRecommendationRationale": null,
-      "reviewOffenderProfile": null,
-      "explainTheDecision": null,
+      "spoCancelRecommendationRationale": "N/A - recommendation not cancelled",
+      "reviewOffenderProfile": true,
+      "explainTheDecision": true,
       "lastModifiedBy": "Jack",
       "lastModifiedByUserName": "jack",
       "lastModifiedDate": "2022-07-01T15:22:24.567Z",
       "createdBy": "Jack",
-      "createdByUserFullName": null,
+      "createdByUserFullName": "Jack Smith",
       "createdDate": "2022-07-01T15:22:24.567Z",
       "personOnProbation": {
-        "name": null,
+        "name": "Joe Bloggs",
         "firstName": "Joe",
         "surname": "Bloggs",
-        "middleNames": null,
-        "gender": null,
-        "ethnicity": null,
+        "middleNames": "Michael",
+        "gender": "Male",
+        "ethnicity": "White British",
         "dateOfBirth": "1982-10-24",
-        "croNumber": null,
-        "mostRecentPrisonerNumber": null,
-        "nomsNumber": null,
-        "pncNumber": null,
+        "croNumber": "CRO123456",
+        "mostRecentPrisonerNumber": "G1234AB",
+        "nomsNumber": "A1234CR",
+        "pncNumber": "2022/0123456A",
         "mappa": {
           "level": 1,
-          "lastUpdatedDate": null,
+          "lastUpdatedDate": "2023-06-15",
           "category": 1,
           "error": null,
           "hasBeenReviewed": false
@@ -170,7 +184,7 @@
           }
         ],
         "primaryLanguage": "English",
-        "hasBeenReviewed": false,
+        "hasBeenReviewed": true,
         "ftr56MappaReviewed": null
       },
       "convictionDetail": {
@@ -231,8 +245,25 @@
         }
       },
       "cvlLicenceConditionsBreached": null,
-      "additionalLicenceConditionsText": null,
-      "vulnerabilities": null,
+      "additionalLicenceConditionsText": "Must not enter the area of Birmingham city centre",
+      "vulnerabilities": {
+        "selected": [
+          {
+            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
+            "details": "Risk of suicide"
+          }
+        ],
+        "allOptions": [
+          {
+            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
+            "text": "Risk of suicide or self harm"
+          },
+          {
+            "value": "RELATIONSHIP_BREAKDOWN",
+            "text": "Relationship breakdown"
+          }
+        ]
+      },
       "isUnderIntegratedOffenderManagement": {
         "selected": "YES",
         "allOptions": [
@@ -253,12 +284,49 @@
       "indexOffenceDetails": "Offence details",
       "offenceDataFromLatestCompleteAssessment": null,
       "offencesMatch": null,
-      "offenceAnalysis": null,
+      "offenceAnalysis": "This is the offence analysis",
       "fixedTermAdditionalLicenceConditions": {
         "selected": true,
         "details": "This is an additional licence condition"
       },
-      "indeterminateOrExtendedSentenceDetails": null,
+      "indeterminateOrExtendedSentenceDetails": {
+        "selected": [
+          {
+            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
+            "details": "Offender has exhibited threatening behaviour towards former partner, mirroring the pattern of the index offence"
+          },
+          {
+            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
+            "details": "Increasing aggression and verbal threats noted during recent appointments"
+          },
+          {
+            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            "details": "Substance misuse relapse combined with association with known offenders raises significant concern"
+          },
+          {
+            "value": "OUT_OF_TOUCH",
+            "details": "Failed to attend last three scheduled appointments and has not responded to contact attempts"
+          }
+        ],
+        "allOptions": [
+          {
+            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
+            "text": "behaviour similar to index offence"
+          },
+          {
+            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
+            "text": "behaviour leading to sexual or violent behaviour"
+          },
+          {
+            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+            "text": "behaviour likely to result in sexual or violent behaviour"
+          },
+          {
+            "value": "OUT_OF_TOUCH",
+            "text": "out of touch"
+          }
+        ]
+      },
       "isMainAddressWherePersonCanBeFound": {
         "selected": false,
         "details": "123 Oak Avenue, Birmingham, B23 1AV"
@@ -312,7 +380,12 @@
         "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
         "probationPhoneNumber": "01238282838"
       },
-      "hasBeenReviewed": null,
+      "hasBeenReviewed": {
+        "personOnProbation": true,
+        "convictionDetail": true,
+        "mappa": true,
+        "ftr56MappaInformation": false
+      },
       "previousReleases": {
         "lastReleaseDate": "2022-09-02",
         "lastReleasingPrisonOrCustodialEstablishment": "HMP Holloway",
@@ -321,15 +394,27 @@
           "2020-02-01"
         ]
       },
-      "previousRecalls": null,
-      "recommendationStartedDomainEventSent": null,
-      "currentRoshForPartA": null,
+      "previousRecalls": {
+        "lastRecallDate": "2022-08-02",
+        "hasBeenRecalledPreviously": true,
+        "previousRecallDates": [
+          "2021-06-01"
+        ]
+      },
+      "recommendationStartedDomainEventSent": true,
+      "currentRoshForPartA": {
+        "riskToChildren": "VERY_HIGH",
+        "riskToPublic": "HIGH",
+        "riskToKnownAdult": "MEDIUM",
+        "riskToStaff": "LOW",
+        "riskToPrisoners": "NOT_APPLICABLE"
+      },
       "roshSummary": {
-        "natureOfRisk": null,
-        "whoIsAtRisk": null,
-        "riskIncreaseFactors": null,
-        "riskMitigationFactors": null,
-        "riskImminence": null,
+        "natureOfRisk": "The offender has a history of violent behaviour, particularly when under the influence of alcohol",
+        "whoIsAtRisk": "General public, known adults, children, and staff",
+        "riskIncreaseFactors": "Alcohol misuse, relationship breakdown, non-compliance with licence conditions",
+        "riskMitigationFactors": "Engagement with probation, stable accommodation, medication compliance",
+        "riskImminence": "Risk is considered imminent due to recent escalation in threatening behaviour",
         "riskOfSeriousHarm": {
           "overallRisk": "HIGH",
           "riskInCustody": {
@@ -351,8 +436,8 @@
         "error": null
       },
       "countersignSpoTelephone": null,
-      "countersignSpoExposition": null,
-      "countersignAcoExposition": null,
+      "countersignSpoExposition": "I agree with the recommendation to recall based on the evidence presented",
+      "countersignAcoExposition": "Countersigned and approved for recall",
       "countersignAcoTelephone": null,
       "whoCompletedPartA": {
         "name": "Mr Jenkins",
@@ -372,11 +457,28 @@
       "revocationOrderRecipients": null,
       "decisionDateTime": "2024-01-01T12:00:00",
       "ppcsQueryEmails": null,
-      "prisonOffender": null,
-      "prisonApiLocationDescription": null,
-      "releaseUnderECSL": null,
-      "dateOfRelease": null,
-      "conditionalReleaseDate": null,
+      "prisonOffender": {
+        "locationDescription": "HMP Brixton - Wing A",
+        "bookingNo": "BK1234",
+        "facialImageId": null,
+        "firstName": "Joe",
+        "middleName": "Michael",
+        "lastName": "Bloggs",
+        "dateOfBirth": "1982-10-24",
+        "agencyId": "BXI",
+        "agencyDescription": "HMP Brixton",
+        "status": "ACTIVE IN",
+        "gender": "Male",
+        "ethnicity": "White British",
+        "cro": "CRO123456",
+        "pnc": "2022/0123456A",
+        "image": null,
+        "releaseDate": null
+      },
+      "prisonApiLocationDescription": "HMP Brixton",
+      "releaseUnderECSL": false,
+      "dateOfRelease": "2022-09-15",
+      "conditionalReleaseDate": "2022-09-15",
       "nomisIndexOffence": {
         "selected": 123,
         "allOptions": [
@@ -385,10 +487,10 @@
             "offenderChargeId": 123,
             "offenceCode": "A123X",
             "offenceStatute": "A123",
-            "offenceDescription": "",
-            "offenceDate": null,
+            "offenceDescription": "Assault occasioning actual bodily harm",
+            "offenceDate": "2021-06-15",
             "sentenceDate": "2024-01-01",
-            "courtDescription": null,
+            "courtDescription": "Crown Court at Birmingham",
             "sentenceStartDate": "2024-01-01",
             "sentenceEndDate": "2024-01-01",
             "sentenceSequenceExpiryDate": "2024-01-01",
@@ -399,40 +501,40 @@
                 "months": 4,
                 "weeks": 4,
                 "days": 4,
-                "code": null
+                "code": "IMP"
               }
             ],
-            "sentenceTypeDescription": null,
-            "releaseDate": null,
-            "releasingPrison": null,
-            "licenceExpiryDate": null
+            "sentenceTypeDescription": "CJA03 Extended Determinate Sentence",
+            "releaseDate": "2022-09-15T09:00:00",
+            "releasingPrison": "HMP Holloway",
+            "licenceExpiryDate": "2026-09-15"
           }
         ]
       },
       "bookRecallToPpud": {
         "decisionDateTime": "2024-01-01T12:00:00",
         "custodyGroup": null,
-        "custodyType": null,
+        "custodyType": "Determinate",
         "currentEstablishment": null,
-        "releasingPrison": null,
+        "releasingPrison": "HMP Holloway",
         "changeOffenceOrAddComment": null,
-        "indexOffence": null,
+        "indexOffence": "Assault occasioning actual bodily harm",
         "indexOffenceComment": null,
-        "ppudSentenceId": null,
+        "ppudSentenceId": "SEN-12345",
         "ppudIndeterminateSentenceData": null,
         "mappaLevel": "Level 1",
         "policeForce": "Kent Police",
         "probationArea": "Kent",
         "receivedDateTime": "2024-01-01T12:00:00",
         "sentenceDate": "2024-01-01",
-        "gender": null,
-        "ethnicity": null,
-        "firstNames": null,
-        "lastName": null,
-        "dateOfBirth": null,
+        "gender": "Male",
+        "ethnicity": "White British",
+        "firstNames": "Joe",
+        "lastName": "Bloggs",
+        "dateOfBirth": "1982-10-24",
         "cro": null,
         "prisonNumber": null,
-        "legislationReleasedUnder": null,
+        "legislationReleasedUnder": "CJA 2003",
         "legislationSentencedUnder": null,
         "minute": "some text"
       },
@@ -441,12 +543,12 @@
         "croOtherNumber": "1234",
         "dateOfBirth": "1990-09-14",
         "ethnicity": "White",
-        "familyName": "",
-        "firstNames": "",
+        "familyName": "Bloggs",
+        "firstNames": "Joe Michael",
         "gender": "Male",
         "immigrationStatus": "Naturalized",
         "establishment": "HMP Brixton",
-        "nomsId": "",
+        "nomsId": "A1234CR",
         "prisonerCategory": "Incarcerated",
         "prisonNumber": "1234",
         "sentences": [
@@ -476,7 +578,19 @@
         "status": "Active",
         "youngOffender": "No"
       },
-      "bookingMemento": null,
+      "bookingMemento": {
+        "stage": "BOOKED_ON",
+        "offenderId": "12345678",
+        "sentenceId": "SEN-12345",
+        "releaseId": "REL-67890",
+        "recallId": "REC-11111",
+        "failed": false,
+        "failedMessage": null,
+        "uploaded": [
+          "Part A",
+          "Licence"
+        ]
+      },
       "isOver18": null,
       "isUnder18": null,
       "isMappaLevelAbove1": null,
@@ -517,13 +631,13 @@
       "isYouthChargedWithSeriousOffence": true,
       "userNamePartACompletedBy": "John Doe",
       "userEmailPartACompletedBy": "John.Doe@test.com",
-      "lastPartADownloadDateTime": null,
-      "countersignSpoDateTime": null,
+      "lastPartADownloadDateTime": "2022-07-15T14:30:00",
+      "countersignSpoDateTime": "2022-07-28T11:00:00",
       "countersignSpoName": null,
       "acoCounterSignEmail": null,
       "spoCounterSignEmail": null,
       "countersignAcoName": null,
-      "countersignAcoDateTime": null,
+      "countersignAcoDateTime": "2022-07-29T14:00:00",
       "deleted": false
     }
   ]

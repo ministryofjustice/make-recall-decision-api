@@ -16,9 +16,6 @@ import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.rendering.RenderRequestInfo
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.InlineAttachment
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.TemplateDataFetcherFacade
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -57,13 +54,6 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
       attachmentsExpected = attachmentsExpected,
       expectedFlywaySchemaVersion = "0",
       expectedJpaEntitySchemaPath = "",
-      templateDataFetcherFacade = object : TemplateDataFetcherFacade {
-        override fun findPrisonNameByPrisonId(prisonId: String): String = prisonId
-        override fun findUserLastNameByUsername(username: String): String = username
-        override fun findLocationNameByNomisId(nomisId: Int): String = nomisId.toString()
-        override fun findLocationNameByDpsId(dpsId: String): String = dpsId
-        override fun getRenderableAttachment(attachment: InlineAttachment, renderRequestInfo: RenderRequestInfo): ByteArray = ByteArray(0)
-      },
     )
   }
 
@@ -127,6 +117,7 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     )
 
     sarIntegrationTestHelper.saveGeneratedReport(renderResult)
+    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, crn)
 
     if (System.getenv("SAR_GENERATE_ACTUAL").toBoolean()) {
       // fixture already saved above — nothing more to do

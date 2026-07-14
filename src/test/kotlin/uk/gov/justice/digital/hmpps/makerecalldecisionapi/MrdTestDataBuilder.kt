@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AlternativesToRecallTried
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookRecallToPpud
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.BookingMemento
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConsiderationRationale
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ConvictionDetail
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatus
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CustodyStatusValue
@@ -33,11 +35,13 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PersonOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudOffender
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudRelease
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PpudSentenceLength
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PractitionerForPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousRecalls
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PreviousReleases
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.PrisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ReasonsForNoRecall
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallConsidered
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.RecallType
@@ -85,12 +89,14 @@ class MrdTestDataBuilder {
       data = RecommendationModel(
         crn = crn,
         status = status,
+        sensitive = false,
         recallConsideredList = recallConsideredData(),
         recallType = recallTypeData(recallTypeValue),
         custodyStatus = custodyStatusData(),
         responseToProbation = "They have not responded well",
         triggerLeadingToRecall = "Just a bad morning, I guess",
         whatLedToRecall = "Increasingly violent behaviour",
+        thoughtsLeadingToRecall = "Ongoing concerns about escalating risk and non-compliance with licence conditions",
         isThisAnEmergencyRecall = true,
         isIndeterminateSentence = true,
         isExtendedSentence = true,
@@ -106,11 +112,20 @@ class MrdTestDataBuilder {
         lastModifiedByUserName = "jack",
         lastModifiedDate = lastModifiedDate,
         createdBy = "Jack",
+        createdByUserFullName = "Jack Smith",
         createdDate = "2022-07-01T15:22:24.567Z",
         personOnProbation = PersonOnProbation(
+          name = "$firstName $surname",
           firstName = firstName,
           surname = surname,
-          mappa = Mappa(level = 1, category = 1, lastUpdatedDate = null),
+          middleNames = "Michael",
+          gender = "Male",
+          ethnicity = "White British",
+          croNumber = "CRO123456",
+          mostRecentPrisonerNumber = "G1234AB",
+          nomsNumber = "A1234CR",
+          pncNumber = "2022/0123456A",
+          mappa = Mappa(level = 1, category = 1, lastUpdatedDate = LocalDate.parse("2023-06-15")),
           primaryLanguage = "English",
           dateOfBirth = LocalDate.parse("1982-10-24"),
           addresses = listOf(
@@ -122,9 +137,27 @@ class MrdTestDataBuilder {
               noFixedAbode = false,
             ),
           ),
+          hasBeenReviewed = true,
+        ),
+        managerRecallDecision = ManagerRecallDecision(
+          isSentToDelius = true,
+          selected = ManagerRecallDecisionTypeSelectedValue(
+            value = ManagerRecallDecisionTypeValue.RECALL,
+            details = "Recall is appropriate given the increased risk",
+          ),
+          allOptions = null,
+          createdBy = "Bill",
+          createdDate = "2022-07-26T09:48:27.443Z",
+        ),
+        considerationRationale = ConsiderationRationale(
+          createdBy = "Jack",
+          createdDate = "2022-07-25T10:30:00.000Z",
+          createdTime = "10:30:00",
+          sensitive = false,
         ),
         alternativesToRecallTried = alternativesToRecallTried(),
         licenceConditionsBreached = licenceConditionsBreached(),
+        additionalLicenceConditionsText = "Must not enter the area of Birmingham city centre",
         underIntegratedOffenderManagement = UnderIntegratedOffenderManagement(
           selected = "YES",
           allOptions = listOf(
@@ -135,11 +168,14 @@ class MrdTestDataBuilder {
         ),
         localPoliceContact = localPoliceContact(),
         convictionDetail = convictionDetail(),
+        vulnerabilities = vulnerabilities(),
+        indeterminateOrExtendedSentenceDetails = indeterminateOrExtendedSentenceDetails(),
         region = "London",
         localDeliveryUnit = "LDU London",
         userNamePartACompletedBy = "John Doe",
         userEmailPartACompletedBy = "John.Doe@test.com",
-        lastPartADownloadDateTime = null,
+        lastPartADownloadDateTime = LocalDateTime.parse("2022-07-15T14:30:00"),
+        lastDntrLetterADownloadDateTime = LocalDateTime.parse("2022-06-20T09:15:00"),
         fixedTermAdditionalLicenceConditions = SelectedWithDetails(
           selected = true,
           "This is an additional licence condition",
@@ -149,8 +185,29 @@ class MrdTestDataBuilder {
         reasonsForNoRecall = reasonForNoRecall(),
         nextAppointment = nextAppointment(),
         indexOffenceDetails = "Offence details",
+        offenceAnalysis = "This is the offence analysis",
+        hasBeenReviewed = reviewedPages(
+          personOnProbationReviewed = true,
+          convictionDetailReviewed = true,
+          mappa = true,
+        ),
         previousReleases = previousReleases(),
+        previousRecalls = previousRecalls(),
+        currentRoshForPartA = roshDataForPartA(),
         roshSummary = roshSummary(),
+        odmName = "Senior Manager Williams",
+        spoRecallType = "RECALL",
+        spoRecallRationale = "Recall is justified based on the increased risk to public safety",
+        spoCancelRecommendationRationale = "N/A - recommendation not cancelled",
+        spoDeleteRecommendationRationale = "N/A - recommendation not deleted",
+        reviewPractitionersConcerns = true,
+        reviewOffenderProfile = true,
+        explainTheDecision = true,
+        recommendationStartedDomainEventSent = true,
+        countersignSpoExposition = "I agree with the recommendation to recall based on the evidence presented",
+        countersignAcoExposition = "Countersigned and approved for recall",
+        countersignSpoDateTime = LocalDateTime.parse("2022-07-28T11:00:00"),
+        countersignAcoDateTime = LocalDateTime.parse("2022-07-29T14:00:00"),
         whoCompletedPartA = WhoCompletedPartA(
           name = "Mr Jenkins",
           email = "jenkins@email.com",
@@ -166,6 +223,25 @@ class MrdTestDataBuilder {
           region = "London2",
           localDeliveryUnit = "A1234",
         ),
+        prisonOffender = PrisonOffender(
+          locationDescription = "HMP Brixton - Wing A",
+          bookingNo = "BK1234",
+          firstName = firstName,
+          middleName = "Michael",
+          lastName = surname,
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          agencyId = "BXI",
+          agencyDescription = "HMP Brixton",
+          status = "ACTIVE IN",
+          gender = "Male",
+          ethnicity = "White British",
+          cro = "CRO123456",
+          pnc = "2022/0123456A",
+        ),
+        prisonApiLocationDescription = "HMP Brixton",
+        releaseUnderECSL = false,
+        dateOfRelease = LocalDate.parse("2022-09-15"),
+        conditionalReleaseDate = LocalDate.parse("2022-09-15"),
         nomisIndexOffence = NomisIndexOffence(
           selected = 123,
           allOptions = listOf(
@@ -173,35 +249,51 @@ class MrdTestDataBuilder {
               offenderChargeId = 123,
               offenceCode = "A123X",
               offenceStatute = "A123",
-              offenceDescription = "",
+              offenceDescription = "Assault occasioning actual bodily harm",
+              offenceDate = LocalDate.parse("2021-06-15"),
               sentenceDate = LocalDate.now(),
+              courtDescription = "Crown Court at Birmingham",
               sentenceStartDate = LocalDate.now(),
               sentenceEndDate = LocalDate.now(),
               sentenceSequenceExpiryDate = LocalDate.now(),
               bookingId = 123,
-              terms = listOf(Term(4, 4, 4, 4)),
+              terms = listOf(Term(4, 4, 4, 4, "IMP")),
+              sentenceTypeDescription = "CJA03 Extended Determinate Sentence",
+              releaseDate = LocalDateTime.parse("2022-09-15T09:00:00"),
+              releasingPrison = "HMP Holloway",
+              licenceExpiryDate = LocalDate.parse("2026-09-15"),
             ),
           ),
         ),
         bookRecallToPpud = BookRecallToPpud(
           decisionDateTime = LocalDateTime.now(),
+          custodyType = "Determinate",
+          releasingPrison = "HMP Holloway",
+          indexOffence = "Assault occasioning actual bodily harm",
+          ppudSentenceId = "SEN-12345",
           mappaLevel = "Level 1",
           policeForce = "Kent Police",
           probationArea = "Kent",
           receivedDateTime = LocalDateTime.now(),
           sentenceDate = LocalDate.now(),
+          gender = "Male",
+          ethnicity = "White British",
+          firstNames = firstName,
+          lastName = surname,
+          dateOfBirth = LocalDate.parse("1982-10-24"),
+          legislationReleasedUnder = "CJA 2003",
           minute = "some text",
         ),
         ppudOffender = PpudOffender(
           id = "12345678",
           croOtherNumber = "1234",
           dateOfBirth = "1990-09-14",
-          familyName = "",
-          firstNames = "",
+          familyName = "Bloggs",
+          firstNames = "Joe Michael",
           gender = "Male",
           immigrationStatus = "Naturalized",
           establishment = "HMP Brixton",
-          nomsId = "",
+          nomsId = "A1234CR",
           prisonerCategory = "Incarcerated",
           prisonNumber = "1234",
           sentences = listOf(
@@ -220,7 +312,15 @@ class MrdTestDataBuilder {
                 indexOffenceComment = "Some offence comment",
               ),
               releaseDate = "2027-08-14",
-              releases = emptyList(),
+              releases = listOf(
+                PpudRelease(
+                  category = "Standard",
+                  dateOfRelease = "2022-09-15",
+                  releasedFrom = "HMP Holloway",
+                  releasedUnder = "CJA 2003",
+                  releaseType = "On Licence",
+                ),
+              ),
               sentenceLength = PpudSentenceLength(1, 1, 1),
               sentencingCourt = "Richmond",
             ),
@@ -228,6 +328,16 @@ class MrdTestDataBuilder {
           status = "Active",
           youngOffender = "No",
           ethnicity = "White",
+        ),
+        bookingMemento = BookingMemento(
+          stage = "BOOKED_ON",
+          offenderId = "12345678",
+          sentenceId = "SEN-12345",
+          releaseId = "REL-67890",
+          recallId = "REC-11111",
+          failed = false,
+          failedMessage = null,
+          uploaded = listOf("Part A", "Licence"),
         ),
         isRecalledOnNewChargedOrConvictedOffence = isRecalledOnNewChargedOrConvictedOffence(),
         isChargedWithOffence = true,
@@ -388,7 +498,19 @@ class MrdTestDataBuilder {
       selected = listOf(
         ValueWithDetails(
           value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE.name,
-          details = "behaviour similar to index offence",
+          details = "Offender has exhibited threatening behaviour towards former partner, mirroring the pattern of the index offence",
+        ),
+        ValueWithDetails(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          details = "Increasing aggression and verbal threats noted during recent appointments",
+        ),
+        ValueWithDetails(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE.name,
+          details = "Substance misuse relapse combined with association with known offenders raises significant concern",
+        ),
+        ValueWithDetails(
+          value = IndeterminateOrExtendedSentenceDetailsOptions.OUT_OF_TOUCH.name,
+          details = "Failed to attend last three scheduled appointments and has not responded to contact attempts",
         ),
       ),
       allOptions = listOf(
@@ -655,6 +777,11 @@ class MrdTestDataBuilder {
     )
 
     private fun roshSummary(): RoshSummary = RoshSummary(
+      natureOfRisk = "The offender has a history of violent behaviour, particularly when under the influence of alcohol",
+      whoIsAtRisk = "General public, known adults, children, and staff",
+      riskImminence = "Risk is considered imminent due to recent escalation in threatening behaviour",
+      riskIncreaseFactors = "Alcohol misuse, relationship breakdown, non-compliance with licence conditions",
+      riskMitigationFactors = "Engagement with probation, stable accommodation, medication compliance",
       riskOfSeriousHarm = RiskOfSeriousHarm(
         overallRisk = "HIGH",
         riskInCustody = RiskTo(
