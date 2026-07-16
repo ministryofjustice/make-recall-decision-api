@@ -101,7 +101,7 @@ dependencies {
   testImplementation("org.springframework:spring-test")
 
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
-  testImplementation("org.mock-server:mockserver-netty:5.15.0")
+  testImplementation("org.mock-server:mockserver-netty:7.3.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("org.junit.jupiter:junit-jupiter-params")
