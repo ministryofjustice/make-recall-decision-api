@@ -9,4 +9,3 @@ internal fun cleanUpConfiguration(
 internal fun recurrentCleanUpConfiguration(
   lookBackInDays: Long = randomLong(),
 ) = RecurrentCleanUpConfiguration(lookBackInDays)
-

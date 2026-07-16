@@ -123,5 +123,4 @@ class RecommendationsCleanupTaskTest {
     verify(recommendationRepository).softDeleteByIds(openRecommendationIds)
     verify(recommendationService, never()).sendSystemDeleteRecommendationEvent(any(), any())
   }
-
 }
