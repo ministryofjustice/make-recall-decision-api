@@ -117,8 +117,8 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.4.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.5.0")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.5.0")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.1.1")
 }
 
