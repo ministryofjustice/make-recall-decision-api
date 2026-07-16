@@ -77,7 +77,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.2")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately in MRD-3268
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0") // upgrading to latest 7.x probably OK, but best done separately in MRD-3268
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.2")
