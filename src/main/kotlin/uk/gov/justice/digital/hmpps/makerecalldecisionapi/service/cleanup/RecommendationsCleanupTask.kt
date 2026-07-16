@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.cleanup
 
-import net.javacrumbs.shedlock.core.LockAssert
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -29,8 +27,6 @@ internal class RecommendationsCleanupTask(
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-
-    private val RECOMMENDATION_ID_LOGGING_CHUNK_SIZE = 20
   }
 
   @Scheduled(
@@ -55,49 +51,6 @@ internal class RecommendationsCleanupTask(
         )
       }
     }
-  }
-
-  /**
-   * Deletes ongoing recommendations, i.e. those created but not downloaded before the configured date and time.
-   *
-   * <p>Originally written for the FTR48 roll-out, where policy required recalls issued after midnight on 2nd September BST
-   * to ask different recall suitability questions, the function has not been removed, as it is likely to be re-used in
-   * similar policy changes in the future.
-   */
-  @Scheduled(cron = "\${clean-up.ftr56.cron}", zone = "Europe/London")
-  @SchedulerLock(name = "ftr56CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
-  @Transactional(isolation = SERIALIZABLE)
-  fun softDeleteActiveRecommendationsNotYetDownloaded() {
-    log.info("FTR56 clean-up task started")
-    LockAssert.assertLocked()
-
-    if (LocalDate.now().year != 2026) {
-      log.warn("FTR56 clean-up task is still configured, but it is no longer 2026!")
-    }
-
-    // We have a startDate and set it to endDate.minusDays(lookBackInDays - 1) for two reasons:
-    //  1. To avoid deleting older recommendations that would be selected by the query but shouldn't be deleted, as they
-    //     were created when the workflows worked differently.
-    //  2. To avoid any overlap with the recurrent clean-up task. Otherwise, the tasks might try to update the same
-    //      recommendation and clash (or succeed and both end up sending out the same domain event, which could be a
-    //      problem).
-    // TODO update the threshold values below based on config for your roll-out
-    val thresholdStartDate = cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
-    val thresholdEndDate = cleanUpConfiguration.ftr56.thresholdDateTime
-    val idsOfActiveRecommendationsNotYetDownloaded =
-      recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate)
-    recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
-    idsOfActiveRecommendationsNotYetDownloaded.chunked(RECOMMENDATION_ID_LOGGING_CHUNK_SIZE).forEach { subListOfIds ->
-      log.info("The recommendations with the following IDs were soft deleted, as they were active but not yet downloaded: $subListOfIds")
-    }
-
-    if (sendDomainEvents) {
-      val activeRecommendationsNotYetDownloaded =
-        recommendationRepository.findAllById(idsOfActiveRecommendationsNotYetDownloaded)
-      activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
-    }
-
-    log.info("FTR56 clean-up task ended")
   }
 
   private fun sendDeletionEvents(recommendation: RecommendationEntity) {
