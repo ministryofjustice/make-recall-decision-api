@@ -150,8 +150,8 @@ class RecommendationsCleanupTaskTest {
       // TODO update the threshold values below based on config for your roll-out
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
-          cleanUpConfiguration.ftr56.thresholdDateTime,
+          cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
+          cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime,
         ),
       ).willReturn(
         idsOfActiveRecommendationsNotYetDownloaded,
@@ -183,7 +183,7 @@ class RecommendationsCleanupTaskTest {
           .sendSystemDeleteRecommendationEvent(it.data.crn, it.data.createdBy!!)
       }
 
-      val startUpMessage = listOf("FTR56 clean-up task started")
+      val startUpMessage = listOf("FTR56 Offence Conviction clean-up task started")
       val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
@@ -195,7 +195,7 @@ class RecommendationsCleanupTaskTest {
       val deletionDomainEventMessages = activeRecommendationsNotYetDownloaded.map {
         "System delete domain event sent for crn::'${it.data.crn}' username::'${it.data.createdBy}"
       }
-      val endMessage = listOf("FTR56 clean-up task ended")
+      val endMessage = listOf("FTR56 Offence Conviction clean-up task ended")
       val expectedInfoMessages =
         startUpMessage + deletedRecommendationIdMessages + deletionDomainEventMessages + endMessage
       with(logAppender.list) {
@@ -227,8 +227,8 @@ class RecommendationsCleanupTaskTest {
       // TODO update the threshold values below based on config for your roll-out
       given(
         recommendationRepository.findActiveRecommendationsNotYetDownloaded(
-          cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
-          cleanUpConfiguration.ftr56.thresholdDateTime,
+          cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1),
+          cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime,
         ),
       ).willReturn(
         idsOfActiveRecommendationsNotYetDownloaded,
@@ -242,7 +242,7 @@ class RecommendationsCleanupTaskTest {
       inOrder.verify(it, LockAssert::assertLocked)
       then(recommendationRepository).should(inOrder).softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
 
-      val startUpMessage = listOf("FTR56 clean-up task started")
+      val startUpMessage = listOf("FTR56 Offence Conviction clean-up task started")
       val deletedRecommendationIdMessages = listOf(
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(0, 20)}",
@@ -251,7 +251,7 @@ class RecommendationsCleanupTaskTest {
         "The recommendations with the following IDs were soft deleted, as they were" +
           " active but not yet downloaded: ${idsOfActiveRecommendationsNotYetDownloaded.subList(40, 43)}",
       )
-      val endMessage = listOf("FTR56 clean-up task ended")
+      val endMessage = listOf("FTR56 Offence Conviction clean-up task ended")
       val expectedInfoMessages = startUpMessage + deletedRecommendationIdMessages + endMessage
       with(logAppender.list) {
         this.forEach { assertThat(it.level).isEqualTo(Level.INFO) }
