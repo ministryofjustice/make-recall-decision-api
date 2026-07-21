@@ -44,7 +44,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
   implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
-  implementation("io.opentelemetry:opentelemetry-api:1.51.0") // can this be removed? I think we might already be pulling it transitively
+  implementation("io.opentelemetry:opentelemetry-api:1.62.0") // can this be removed? I think we might already be pulling it transitively
   implementation("joda-time:joda-time:2.14.0")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
