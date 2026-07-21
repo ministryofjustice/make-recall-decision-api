@@ -133,6 +133,19 @@ services:
     volumes:
       - ./fake-prison-api:/home/wiremock
 
+  fake-flipt-api:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-flipt-api
+    ports:
+      - "9470:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-flipt-api:/home/wiremock
+
 networks:
   hmpps:
     name: hmpps
