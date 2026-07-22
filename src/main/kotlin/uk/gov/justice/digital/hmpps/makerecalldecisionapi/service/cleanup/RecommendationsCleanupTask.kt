@@ -64,15 +64,15 @@ internal class RecommendationsCleanupTask(
    * to ask different recall suitability questions, the function has not been removed, as it is likely to be re-used in
    * similar policy changes in the future.
    */
-  @Scheduled(cron = "\${clean-up.ftr56.cron}", zone = "Europe/London")
-  @SchedulerLock(name = "ftr56CleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
+  @Scheduled(cron = "\${clean-up.ftr56-offence-conviction.cron}", zone = "Europe/London")
+  @SchedulerLock(name = "ftr56OffenceConvictionCleanUp", lockAtLeastFor = "1m", lockAtMostFor = "15m")
   @Transactional(isolation = SERIALIZABLE)
   fun softDeleteActiveRecommendationsNotYetDownloaded() {
-    log.info("FTR56 clean-up task started")
+    log.info("FTR56 Offence Conviction clean-up task started")
     LockAssert.assertLocked()
 
     if (LocalDate.now().year != 2026) {
-      log.warn("FTR56 clean-up task is still configured, but it is no longer 2026!")
+      log.warn("FTR56 Offence Conviction clean-up task is still configured, but it is no longer 2026!")
     }
 
     // We have a startDate and set it to endDate.minusDays(lookBackInDays - 1) for two reasons:
@@ -82,8 +82,8 @@ internal class RecommendationsCleanupTask(
     //      recommendation and clash (or succeed and both end up sending out the same domain event, which could be a
     //      problem).
     // TODO update the threshold values below based on config for your roll-out
-    val thresholdStartDate = cleanUpConfiguration.ftr56.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
-    val thresholdEndDate = cleanUpConfiguration.ftr56.thresholdDateTime
+    val thresholdStartDate = cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime.minusDays(cleanUpConfiguration.recurrent.lookBackInDays - 1)
+    val thresholdEndDate = cleanUpConfiguration.ftr56OffenceConviction.thresholdDateTime
     val idsOfActiveRecommendationsNotYetDownloaded =
       recommendationRepository.findActiveRecommendationsNotYetDownloaded(thresholdStartDate, thresholdEndDate)
     recommendationRepository.softDeleteByIds(idsOfActiveRecommendationsNotYetDownloaded)
@@ -97,7 +97,7 @@ internal class RecommendationsCleanupTask(
       activeRecommendationsNotYetDownloaded.forEach(this::sendDeletionEvents)
     }
 
-    log.info("FTR56 clean-up task ended")
+    log.info("FTR56 Offence Conviction clean-up task ended")
   }
 
   private fun sendDeletionEvents(recommendation: RecommendationEntity) {

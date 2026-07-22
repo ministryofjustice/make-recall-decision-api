@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
 
 internal fun cleanUpConfiguration(
   recurrent: RecurrentCleanUpConfiguration = recurrentCleanUpConfiguration(),
-  ftr56: FTR56CleanUpConfiguration = ftr56CleanUpConfiguration(),
+  ftr56: FTR56OffenceConvictionCleanUpConfiguration = ftr56CleanUpConfiguration(),
 ) = CleanUpConfiguration(recurrent, ftr56)
 
 internal fun recurrentCleanUpConfiguration(
@@ -17,4 +17,4 @@ internal fun recurrentCleanUpConfiguration(
 internal fun ftr56CleanUpConfiguration(
   thresholdDateTime: ZonedDateTime = randomZonedDateTime(),
   cron: String = randomString(),
-) = FTR56CleanUpConfiguration(thresholdDateTime, cron)
+) = FTR56OffenceConvictionCleanUpConfiguration(thresholdDateTime, cron)
