@@ -88,7 +88,7 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
 
   constraints {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0") {
       because("Address CVE-2026-54515 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
     }
     implementation("org.springframework.retry:spring-retry:2.0.13") {
