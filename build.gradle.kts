@@ -51,7 +51,7 @@ dependencies {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
+    implementation("org.apache.commons:commons-compress:1.28.0") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
     implementation("org.apache.poi:poi-ooxml:5.5.1") // Address CVE-2025-31672 present in 5.2.2
   }
   implementation("org.springframework.boot:spring-boot-jackson2")
