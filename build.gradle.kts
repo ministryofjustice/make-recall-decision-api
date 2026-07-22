@@ -80,7 +80,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately in MRD-3268
   implementation("org.json:json:20250517")
 
-  implementation("com.google.code.gson:gson:2.13.2")
+  implementation("com.google.code.gson:gson:2.14.0")
 
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
