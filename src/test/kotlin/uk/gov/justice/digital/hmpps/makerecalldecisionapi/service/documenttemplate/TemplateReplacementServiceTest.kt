@@ -235,7 +235,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(164)
+      assertThat(result.size).isEqualTo(165)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -257,6 +257,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["is_recalled_on_new_charged_offence"]).isEqualTo("No")
       assertThat(result["is_serving_ft_sentence_for_terrorist_offence"]).isEqualTo("No")
       assertThat(result["has_been_charged_with_terrorist_or_state_threat_offence"]).isEqualTo("No")
+      assertThat(result["is_charged_and_convicted_with_offence"]).isEqualTo("No")
       assertThat(result["is_charged_with_offence"]).isEqualTo("No")
       assertThat(result["is_serving_terrorist_or_national_security_offence"]).isEqualTo("No")
       assertThat(result["is_at_risk_of_involved_in_foreign_power_threat"]).isEqualTo("No")
@@ -947,6 +948,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       isRecalledOnNewChargedOffence = "No",
       isServingFTSentenceForTerroristOffence = "No",
       hasBeenChargedWithTerroristOrStateThreatOffence = "No",
+      isChargedAndConvictedWithOffence = "No",
       isChargedWithOffence = "No",
       isServingTerroristOrNationalSecurityOffence = "No",
       isAtRiskOfInvolvedInForeignPowerThreat = "No",

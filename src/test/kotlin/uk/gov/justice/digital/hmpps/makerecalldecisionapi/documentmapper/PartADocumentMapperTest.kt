@@ -48,10 +48,12 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VictimsInContactScheme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.WhoCompletedPartA
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.personOnProbation
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.prisonOffender
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.toPersonOnProbationDto
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.enumSelectionWithAllOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
@@ -329,6 +331,8 @@ class PartADocumentMapperTest {
       assertThat(result.isUnder18).isEqualTo("N/A - indeterminate or extended sentence")
       assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - indeterminate or extended sentence")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - indeterminate or extended sentence")
+      assertThat(result.isChargedWithOffence).isEqualTo("N/A - indeterminate or extended sentence")
+      assertThat(result.isChargedAndConvictedWithOffence).isEqualTo("N/A - indeterminate or extended sentence")
     }
   }
 
@@ -355,15 +359,28 @@ class PartADocumentMapperTest {
       assertThat(result.isMappaAboveLevel1).isEqualTo("N/A - indeterminate or extended sentence")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("N/A - indeterminate or extended sentence")
       assertThat(result.isChargedWithSeriousOffence).isEqualTo("N/A - indeterminate or extended sentence")
+      assertThat(result.isChargedWithOffence).isEqualTo("N/A - indeterminate or extended sentence")
+      assertThat(result.isChargedAndConvictedWithOffence).isEqualTo("N/A - indeterminate or extended sentence")
     }
   }
 
   @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and standard recall considered in part A text")
-  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  @CsvSource(
+    "false,false,,NO",
+    "false,false,,CHARGED_AND_CONVICTED",
+    "false,false,,ONLY_CHARGED",
+    ",, ADULT_SDS,NO",
+    ",, ADULT_SDS,CHARGED_AND_CONVICTED",
+    ",, ADULT_SDS,ONLY_CHARGED",
+    ",, YOUTH_SDS,NO",
+    ",, YOUTH_SDS,CHARGED_AND_CONVICTED",
+    ",, YOUTH_SDS,ONLY_CHARGED",
+  )
   fun `given not indeterminate and not extended sentence and standard recall used in part A text`(
     isIndeterminateSentence: Boolean?,
     isExtendedSentence: Boolean?,
     sentenceGroup: SentenceGroup?,
+    isRecalledOnNewChargedOrConvictedOffence: ChargedOrConvictedForNewOffence,
   ) {
     runTest {
       given(regionService.getRegionName(null))
@@ -378,6 +395,7 @@ class PartADocumentMapperTest {
         isMappaLevelAbove1 = false,
         isUnder18 = false,
         isSentence12MonthsOrOver = false,
+        isRecalledOnNewChargedOrConvictedOffence = enumSelectionWithAllOptions(selected = isRecalledOnNewChargedOrConvictedOffence),
         isChargedWithOffence = false,
         isServingTerroristOrNationalSecurityOffence = false,
         isAtRiskOfInvolvedInForeignPowerThreat = false,
@@ -393,6 +411,7 @@ class PartADocumentMapperTest {
       assertThat(result.isUnder18).isEqualTo("No")
       assertThat(result.isMappaAboveLevel1).isEqualTo("No")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedAndConvictedWithOffence).isEqualTo(isRecalledOnNewChargedOrConvictedOffence.description)
       assertThat(result.isChargedWithOffence).isEqualTo("No")
       assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
       assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
@@ -409,12 +428,20 @@ class PartADocumentMapperTest {
     }
   }
 
-  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) and fixed-term recall considered in part A text")
-  @CsvSource("false,false,", ",, ADULT_SDS", ",, YOUTH_SDS")
+  @ParameterizedTest(name = "non-indeterminate, non-extended sentence (isIndeterminateSentence={0}, isExtendedSentence={1}, sentenceGroup={2}) with isRecalledOnNewChargedOrConvictedOffence={3} and fixed-term recall considered in part A text")
+  @CsvSource(
+    "false,false,,NO", // only NO & CHARGED_AND_CONVICTED lead to FTR
+    "false,false,,CHARGED_AND_CONVICTED",
+    ",, ADULT_SDS,NO",
+    ",, ADULT_SDS,CHARGED_AND_CONVICTED",
+    ",, YOUTH_SDS,NO",
+    ",, YOUTH_SDS,CHARGED_AND_CONVICTED",
+  )
   fun `given fixed term recall used in part A text`(
     isIndeterminateSentence: Boolean?,
     isExtendedSentence: Boolean?,
     sentenceGroup: SentenceGroup?,
+    isRecalledOnNewChargedOrConvictedOffence: ChargedOrConvictedForNewOffence,
   ) {
     runTest {
       given(regionService.getRegionName(null))
@@ -429,6 +456,7 @@ class PartADocumentMapperTest {
         isUnder18 = true,
         isMappaLevelAbove1 = true,
         isSentence12MonthsOrOver = false,
+        isRecalledOnNewChargedOrConvictedOffence = enumSelectionWithAllOptions(selected = isRecalledOnNewChargedOrConvictedOffence),
         isChargedWithOffence = false,
         isServingTerroristOrNationalSecurityOffence = false,
         isAtRiskOfInvolvedInForeignPowerThreat = false,
@@ -444,6 +472,7 @@ class PartADocumentMapperTest {
       assertThat(result.isUnder18).isEqualTo("Yes")
       assertThat(result.isMappaAboveLevel1).isEqualTo("Yes")
       assertThat(result.isSentence12MonthsOrOver).isEqualTo("No")
+      assertThat(result.isChargedAndConvictedWithOffence).isEqualTo(isRecalledOnNewChargedOrConvictedOffence.description)
       assertThat(result.isChargedWithOffence).isEqualTo("No")
       assertThat(result.isServingTerroristOrNationalSecurityOffence).isEqualTo("No")
       assertThat(result.isAtRiskOfInvolvedInForeignPowerThreat).isEqualTo("No")
@@ -604,7 +633,9 @@ class PartADocumentMapperTest {
 
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata)
 
-      assertThat(result.isMappaLevel2or3AsYouthSdsUnder12Months).isEqualTo(expectedIsMappaLevel2or3AsYouthSdsUnder12Months)
+      assertThat(result.isMappaLevel2or3AsYouthSdsUnder12Months).isEqualTo(
+        expectedIsMappaLevel2or3AsYouthSdsUnder12Months,
+      )
       assertThat(result.isYouthChargedWithSeriousOffence).isEqualTo(expectedIsYouthChargedWithSeriousOffence)
     }
   }
