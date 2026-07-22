@@ -49,3 +49,5 @@ document-template:
   part-a-template-settings[1].template-name: "2026-02-02 - Risk to self"
   part-a-template-settings[2].start-date-time: "2026-03-30T23:00Z" #2026-03-31T00:00Z in BST - change locally if needed
   part-a-template-settings[2].template-name: "2026-03-31 - FTR56"
+  part-a-template-settings[3].start-date-time: "2026-07-28T23:00Z" # 2026-07-29T00:00Z in BST
+  part-a-template-settings[3].template-name: "2026-07-29 - FTR56 Offence conviction"
