@@ -1,644 +1,609 @@
 {
-  "crn": "A12345",
-  "recommendations": [
-    {
-      "crn": "A12345",
-      "sensitive": false,
-      "ppudRecordPresent": false,
-      "recallConsideredList": [
-        {
-          "id": 1,
-          "userId": "bill",
-          "createdDate": "2022-07-26T09:48:27.443Z",
-          "userName": "Bill",
-          "recallConsideredDetail": "I have concerns about their behaviour"
-        }
-      ],
-      "recallType": {
-        "selected": {
-          "value": "FIXED_TERM",
-          "details": "My details"
-        },
-        "allOptions": [
-          {
-            "value": "NO_RECALL",
-            "text": "No recall"
-          },
-          {
-            "value": "FIXED_TERM",
-            "text": "Fixed term"
-          },
-          {
-            "value": "STANDARD",
-            "text": "Standard"
-          }
-        ]
+  "crn": "M012729",
+  "region": "North West Region",
+  "status": "DRAFT",
+  "deleted": false,
+  "odmName": "Senior Manager Thompson",
+  "isOver18": true,
+  "createdBy": "GIBBONS",
+  "isUnder18": false,
+  "sensitive": true,
+  "recallType": {
+    "selected": {
+      "value": "FIXED_TERM",
+      "details": "Samantha Bristow must get an automatic fixed term recall as they do not meet the exemption criteria."
+    },
+    "allOptions": [
+      {
+        "text": "Fixed term recall",
+        "value": "FIXED_TERM"
       },
-      "sendSpoRationaleToDelius": false,
-      "managerRecallDecision": {
-        "selected": {
-          "value": "RECALL",
-          "details": "Recall is appropriate given the increased risk"
-        },
-        "allOptions": null,
-        "isSentToDelius": true,
-        "createdBy": "Bill",
-        "createdDate": "2022-07-26T09:48:27.443Z"
-      },
-      "considerationRationale": {
-        "createdBy": "Jack",
-        "createdDate": "2022-07-25T10:30:00.000Z",
-        "createdTime": "10:30:00",
-        "sensitive": false
-      },
-      "custodyStatus": {
-        "selected": "YES_PRISON",
-        "details": "Bromsgrove Police Station\r\nLondon",
-        "allOptions": [
-          {
-            "value": "YES_PRISON",
-            "text": "Yes, prison custody"
-          },
-          {
-            "value": "YES_POLICE",
-            "text": "Yes, police custody"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "localPoliceContact": {
-        "contactName": "John Doe",
-        "phoneNumber": "01234567890",
-        "faxNumber": "09876543210",
-        "emailAddress": "john.doe@gmail.com"
-      },
-      "responseToProbation": "They have not responded well",
-      "thoughtsLeadingToRecall": "Ongoing concerns about escalating risk and non-compliance with licence conditions",
-      "triggerLeadingToRecall": "Just a bad morning, I guess",
-      "whatLedToRecall": "Increasingly violent behaviour",
-      "sentenceGroup": "INDETERMINATE",
-      "isThisAnEmergencyRecall": true,
-      "isIndeterminateSentence": true,
-      "isExtendedSentence": true,
-      "activeCustodialConvictionCount": 1,
-      "hasVictimsInContactScheme": {
-        "selected": "YES",
-        "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
-        ]
-      },
-      "indeterminateSentenceType": {
-        "selected": "LIFE",
-        "allOptions": [
-          {
-            "value": "LIFE",
-            "text": "Life sentence"
-          },
-          {
-            "value": "IPP",
-            "text": "Imprisonment for public protection (IPP)"
-          },
-          {
-            "value": "DPP",
-            "text": "Detention for public protection (DPP)"
-          },
-          {
-            "value": "DHMP",
-            "text": "Detention at His Majesty’s pleasure (DHMP)"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "dateVloInformed": "2024-01-01",
-      "hasArrestIssues": {
-        "selected": true,
-        "details": "Arrest issue details"
-      },
-      "hasContrabandRisk": {
-        "selected": true,
-        "details": "Contraband risk details"
-      },
-      "status": "DRAFT",
-      "region": "London",
-      "localDeliveryUnit": "LDU London",
-      "userNameDntrLetterCompletedBy": null,
-      "lastDntrLetterADownloadDateTime": "2022-06-20T09:15:00",
-      "reviewPractitionersConcerns": true,
-      "odmName": "Senior Manager Williams",
-      "spoRecallType": "RECALL",
-      "spoRecallRationale": "Recall is justified based on the increased risk to public safety",
-      "spoDeleteRecommendationRationale": "N/A - recommendation not deleted",
-      "sendSpoDeleteRationaleToDelius": false,
-      "spoCancelRecommendationRationale": "N/A - recommendation not cancelled",
-      "reviewOffenderProfile": true,
-      "explainTheDecision": true,
-      "lastModifiedBy": "Jack",
-      "lastModifiedByUserName": "jack",
-      "lastModifiedDate": "2022-07-01T15:22:24.567Z",
-      "createdBy": "Jack",
-      "createdByUserFullName": "Jack Smith",
-      "createdDate": "2022-07-01T15:22:24.567Z",
-      "personOnProbation": {
-        "name": "Joe Bloggs",
-        "firstName": "Joe",
-        "surname": "Bloggs",
-        "middleNames": "Michael",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "dateOfBirth": "1982-10-24",
-        "croNumber": "CRO123456",
-        "mostRecentPrisonerNumber": "G1234AB",
-        "nomsNumber": "A1234CR",
-        "pncNumber": "2022/0123456A",
-        "mappa": {
-          "level": 1,
-          "lastUpdatedDate": "2023-06-15",
-          "category": 1,
-          "error": null,
-          "hasBeenReviewed": false
-        },
-        "addresses": [
-          {
-            "line1": "Line 1 address",
-            "line2": "Line 2 address",
-            "town": "Town address",
-            "postcode": "TS1 1ST",
-            "noFixedAbode": false
-          }
-        ],
-        "primaryLanguage": "English",
-        "hasBeenReviewed": true,
-        "ftr56MappaReviewed": null
-      },
-      "convictionDetail": {
-        "indexOffenceDescription": "This is the index offence",
-        "dateOfOriginalOffence": "2022-09-01",
-        "dateOfSentence": "2022-09-02",
-        "lengthOfSentence": 6,
-        "lengthOfSentenceUnits": "days",
-        "sentenceDescription": "CJA - Extended Sentence",
-        "licenceExpiryDate": "2022-09-03",
-        "sentenceExpiryDate": "2022-09-04",
-        "sentenceSecondLength": 12,
-        "sentenceSecondLengthUnits": "months",
-        "custodialTerm": null,
-        "extendedTerm": null,
-        "hasBeenReviewed": false
-      },
-      "alternativesToRecallTried": {
-        "selected": [
-          {
-            "value": "WARNINGS_LETTER",
-            "details": "We sent a warning letter on 27th July 2022"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "WARNINGS_LETTER",
-            "text": "Warnings/licence breach letters"
-          }
-        ]
-      },
-      "licenceConditionsBreached": {
-        "standardLicenceConditions": {
-          "selected": [
-            "GOOD_BEHAVIOUR"
-          ],
-          "allOptions": [
-            {
-              "value": "GOOD_BEHAVIOUR",
-              "text": "They had good behaviour"
-            }
-          ]
-        },
-        "additionalLicenceConditions": {
-          "selected": [
-            "NST14"
-          ],
-          "selectedOptions": null,
-          "allOptions": [
-            {
-              "subCatCode": "NST14",
-              "mainCatCode": "NLC5",
-              "title": "Additional title",
-              "details": "Additional details",
-              "note": "Additional note"
-            }
-          ]
-        }
-      },
-      "cvlLicenceConditionsBreached": null,
-      "additionalLicenceConditionsText": "Must not enter the area of Birmingham city centre",
-      "vulnerabilities": {
-        "selected": [
-          {
-            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
-            "details": "Risk of suicide"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
-            "text": "Risk of suicide or self harm"
-          },
-          {
-            "value": "RELATIONSHIP_BREAKDOWN",
-            "text": "Relationship breakdown"
-          }
-        ]
-      },
-      "isUnderIntegratedOffenderManagement": {
-        "selected": "YES",
-        "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
-        ]
-      },
-      "indexOffenceDetails": "Offence details",
-      "offenceDataFromLatestCompleteAssessment": null,
-      "offencesMatch": null,
-      "offenceAnalysis": "This is the offence analysis",
-      "fixedTermAdditionalLicenceConditions": {
-        "selected": true,
-        "details": "This is an additional licence condition"
-      },
-      "indeterminateOrExtendedSentenceDetails": {
-        "selected": [
-          {
-            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
-            "details": "Offender has exhibited threatening behaviour towards former partner, mirroring the pattern of the index offence"
-          },
-          {
-            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
-            "details": "Increasing aggression and verbal threats noted during recent appointments"
-          },
-          {
-            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
-            "details": "Substance misuse relapse combined with association with known offenders raises significant concern"
-          },
-          {
-            "value": "OUT_OF_TOUCH",
-            "details": "Failed to attend last three scheduled appointments and has not responded to contact attempts"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
-            "text": "behaviour similar to index offence"
-          },
-          {
-            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
-            "text": "behaviour leading to sexual or violent behaviour"
-          },
-          {
-            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
-            "text": "behaviour likely to result in sexual or violent behaviour"
-          },
-          {
-            "value": "OUT_OF_TOUCH",
-            "text": "out of touch"
-          }
-        ]
-      },
-      "isMainAddressWherePersonCanBeFound": {
-        "selected": false,
-        "details": "123 Oak Avenue, Birmingham, B23 1AV"
-      },
-      "whyConsideredRecall": {
-        "selected": "RISK_INCREASED",
-        "allOptions": [
-          {
-            "value": "RISK_INCREASED",
-            "text": "Your risk is assessed as increased"
-          },
-          {
-            "value": "CONTACT_STOPPED",
-            "text": "Contact with your probation practitioner has broken down"
-          },
-          {
-            "value": "RISK_INCREASED_AND_CONTACT_STOPPED",
-            "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down"
-          }
-        ]
-      },
-      "reasonsForNoRecall": {
-        "licenceBreach": "Reason for breaching licence",
-        "noRecallRationale": "Rationale for no recall",
-        "popProgressMade": "Progress made so far detail",
-        "popThoughts": null,
-        "futureExpectations": "Future expectations detail"
-      },
-      "nextAppointment": {
-        "howWillAppointmentHappen": {
-          "selected": "TELEPHONE",
-          "allOptions": [
-            {
-              "value": "TELEPHONE",
-              "text": "Telephone"
-            },
-            {
-              "value": "VIDEO_CALL",
-              "text": "Video call"
-            },
-            {
-              "value": "OFFICE_VISIT",
-              "text": "Office visit"
-            },
-            {
-              "value": "HOME_VISIT",
-              "text": "Home visit"
-            }
-          ]
-        },
-        "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
-        "probationPhoneNumber": "01238282838"
-      },
-      "hasBeenReviewed": {
-        "personOnProbation": true,
-        "convictionDetail": true,
-        "mappa": true,
-        "ftr56MappaInformation": false
-      },
-      "previousReleases": {
-        "lastReleaseDate": "2022-09-02",
-        "lastReleasingPrisonOrCustodialEstablishment": "HMP Holloway",
-        "hasBeenReleasedPreviously": true,
-        "previousReleaseDates": [
-          "2020-02-01"
-        ]
-      },
-      "previousRecalls": {
-        "lastRecallDate": "2022-08-02",
-        "hasBeenRecalledPreviously": true,
-        "previousRecallDates": [
-          "2021-06-01"
-        ]
-      },
-      "recommendationStartedDomainEventSent": true,
-      "currentRoshForPartA": {
-        "riskToChildren": "VERY_HIGH",
-        "riskToPublic": "HIGH",
-        "riskToKnownAdult": "MEDIUM",
+      {
+        "text": "No recall - send a decision not to recall letter",
+        "value": "NO_RECALL"
+      }
+    ]
+  },
+  "createdDate": "2026-03-26T16:04:36.722Z",
+  "roshSummary": {
+    "error": null,
+    "whoIsAtRisk": "1) Public: Known females (This is in relation to past offences against named females in 2016)- and whilst no details are known on this. Vulnerable adults, indiscriminate members of the public witnessing harmful behaviours, given it is also noted that a member of the public witnessed Ms Bristow with the ceremonial swords within her previous offence. Future partners are also at risk to Ms Bristow given the previous domestic abuse within intimate relationships.\r\n\r\n2) Staff: Arresting Police Officers who have been subject to abuse and violence from Ms Bristow. Also shop workers / staff when / if she is committing acquisitive offending.\r\n\r\n3) Known Adult: Previous partner Mark Richards. Previous domestic violence between her and Mr Richards and she had a restraining order in place previously not to contact him which expired in 2018.\r\n\r\n4) Children: Both children were on a Special Guardianship Order due to indirect risk of Ms Bristow's lifestyle, substance misuse and potentially abusive relationships. Both now over 18 - she has a granddaughter Kendal Bailey dob 02/09/2025 who she has not met yet. \r\n\r\n5) Prisoners: There is no evidence to suggest that she poses a risk to prisoners- to this end LROSH. \r\n\r\n6) Self: Due to drug use, unaddressed trauma, being a victim of domestic and sexual abuse and previous self harming behaviours. \r\n",
+    "natureOfRisk": "1) Public: The threshold for causing ROSH has been passed. The nature of the risk appears to be violence; actual physical assault and also witnessing bladed articles in a public place.  The nature of the risk is also emotional and psychological harm to anyone of whom witnesses Ms Bristow's offending behaviour, or attempts to intervene / has conflict with. The threshold of serious harm has been crossed previously as although previous weapons were not used, it would have caused emotional harm and distress for those witnessing this. The nature of the risk is exploitation to vulnerable adults / other drug users due to her lifestyle. Risk to future partners is also the potential for emotional and physical harm and the threshold has been passed to future partners due to this. The impact would be significant and difficult to recover from.\r\n\r\n2) Staff: The threshold for causing ROSH has been passed due to the actual physical and emotional harm she has caused members  Police staff from acting aggressively and violently upon apprehension/arrest. Ms Bristow has also been verbally abusive, aggressive and violent towards members of shop staff of whom have attempted to apprehend her after shop theft, which is evident within the current offence of Robbery. The impact would be significant and difficult to recover from. \r\n\r\n3) Known Adult: The threshold for causing ROSH has been passed due to the context of domestic abuse, and the additional concerns ref impact of such abuse for emotional and physical harm. The impact would be significant and difficult to recover from. \r\n\r\n4) Children: The threshold for causing ROSH has been passed. The nature of risk is indirect harm through reckless behaviour. There is an indirect risk of witnessing domestic abuse and potential involvement is significant. Coupled with this, the exposure to a lifestyle that contextualised by substance misuse, pro criminal/offending peers, transient accommodation and unhealthy relationships is of concern. The impact would be significant and difficult to recover from. \r\n\r\n6) Self: The threshold for causing ROSH has been passed due to the actual psychological and physical harm she has ensured as a victim of DA and SA. She has unaddressed trauma, significant mental health issues and substance misuse issues. The impact could be significant and difficult to recover from. ",
+    "riskImminence": null,
+    "lastUpdatedDate": "2025-12-22T00:12:21.000Z",
+    "riskOfSeriousHarm": {
+      "overallRisk": "HIGH",
+      "riskInCustody": {
         "riskToStaff": "LOW",
-        "riskToPrisoners": "NOT_APPLICABLE"
+        "riskToPublic": "LOW",
+        "riskToChildren": "LOW",
+        "riskToPrisoners": "LOW",
+        "riskToKnownAdult": "LOW"
       },
-      "roshSummary": {
-        "natureOfRisk": "The offender has a history of violent behaviour, particularly when under the influence of alcohol",
-        "whoIsAtRisk": "General public, known adults, children, and staff",
-        "riskIncreaseFactors": "Alcohol misuse, relationship breakdown, non-compliance with licence conditions",
-        "riskMitigationFactors": "Engagement with probation, stable accommodation, medication compliance",
-        "riskImminence": "Risk is considered imminent due to recent escalation in threatening behaviour",
-        "riskOfSeriousHarm": {
-          "overallRisk": "HIGH",
-          "riskInCustody": {
-            "riskToChildren": "LOW",
-            "riskToPublic": "MEDIUM",
-            "riskToKnownAdult": "MEDIUM",
-            "riskToStaff": "LOW",
-            "riskToPrisoners": "VERY_HIGH"
-          },
-          "riskInCommunity": {
-            "riskToChildren": "HIGH",
-            "riskToPublic": "MEDIUM",
-            "riskToKnownAdult": "MEDIUM",
-            "riskToStaff": "LOW",
-            "riskToPrisoners": ""
-          }
+      "riskInCommunity": {
+        "riskToStaff": "MEDIUM",
+        "riskToPublic": "HIGH",
+        "riskToChildren": "MEDIUM",
+        "riskToPrisoners": "",
+        "riskToKnownAdult": "MEDIUM"
+      }
+    },
+    "riskIncreaseFactors": "1) Public: should Ms Bristow come into contact with members of the public, whilst under the influence and with weapons on her person. Risk is also likely to be greatest should she have conflict with females / individuals known to her. Also if she were to be under emotional distress, which can increase the risk of conflict and harm being caused to the public. Risk is also likely to be greatest should she be-friend vulnerable individuals and exploit them financially to fund her drug use (see INTBDTO). Also should Ms Bristow enter into a new relationship where DA is present, which could increase the potential for emotional and physical harm to be caused. Given escalation in seriousness of offending, that Ms Bristow has continued to offend with harm escalating and violence used with the view of meeting her own needs, I assess her as posing HROSH to public. \r\n\r\n2) Staff: should Ms Bristow act violently / aggressively upon apprehension or arrest, there would be potential for her to use violence towards police officers. Risk would also likely to be greatest should she be challenged or apprehended, or prevented from shoplifting as she is likely to use violence to get away.  I assess her as MROSH to staff.\r\n\r\n3) Known Adult: should Ms Bristow resume previous relationships where domestic violence is present. I assess her as posing MROSH to known adults. \r\n\r\n4) Children: should Ms Bristow resume a chaotic lifestyle using drugs, fall pregnant or enter into a new relationship where children are present. Coupled with this, should Ms Bristow also continue to consume drugs, and expose any child, including her grandchild to her lifestyle, including substance misuse, pro criminal/offending peers, transient accommodation and unhealthy relationships. Given no current evidence of any contact with any children, I assess as MROSH- this is subject to change if she were to have contact with any child. \r\n\r\n6) Self: Risk is likely to be greatest should Ms Bristow fail to address past trauma and fails to address her present substance use and her usage increases risk will be greatest. Also if she is non-compliant with her MH medication. Risk is also likely to be greatest should she enter a relationship where DA is present. I assess Ms Bristow as MROSH towards herself.",
+    "riskMitigationFactors": "External factors -  \r\n- Ms Bristow is currently subject to ORA Adult Custody (inc PSS) (20 Months) .This may act as a deterrent if she wishes to avoid the potential of custody in recall- however I note to date this has not deterred her non-compliance previously.\r\n- Compliance with Probation and licence to address deficits in her finances, thinking skills, decision making, problem solving and substance misuse which can aid her in better managing situations in the future and behave in a responsible manner.\r\n- Criminal Behaviour Order made for 3 Years from 15/09/2025. \r\nProvisions: Requirements: \r\nNot to 1. Enter the area outlined in red on the attached map A. (namely Birkenhead Town Centre) \r\n2. Enter any Farmfoods, TK Maxx, Asda, Primark or Wyndsors Store within the Borough of Wirral. \r\n3. Deliberately spit onto any other person's property or any surface in any public place. \r\n4. Remain in any shop or commercial premises when asked to leave by staff within the Metropolitan Borough of Wirral. \r\n\r\nInternal factors - \r\n- Has expressed motivation to desist from drug use\r\n- PP aims to support Ms Bristow in making positive changes to prevent further offending behaviour\r\n- PP will aim to develop her thinking and behaviour\r\n\r\nSupport -  \r\n- Support from POM / DARS / Inclusion \r\n- Support from COM \r\n- Support from CRS\r\n- Support from WWTR to tackle substance misuse \r\n- Support from GP for mental health \r\n- Support from Resettlement \r\n- Support to obtain more suitable accommodation  "
+  },
+  "ppudOffender": null,
+  "custodyStatus": {
+    "details": "Not in Custody at present",
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes, prison custody",
+        "value": "YES_PRISON"
+      },
+      {
+        "text": "Yes, police custody",
+        "value": "YES_POLICE"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      }
+    ]
+  },
+  "dateOfRelease": null,
+  "offencesMatch": true,
+  "sentenceGroup": null,
+  "spoRecallType": "RECALL",
+  "bookingMemento": null,
+  "lastModifiedBy": "PAULBRYANNPS",
+  "prisonOffender": {
+    "cro": "132894/08B",
+    "pnc": "08/271453D",
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEsAPADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDq/XoaTaDzgk+5oBAOAB9KXI/GuI6AByc+nFOI4pucjINO7UAMY47fSkGMkkH86cQB1H/1qikcAf1zQBHPOEXC4ZjxWXJGJgZGmIj9c8sPb0H8/wCdPWdcgsYzHJjeedueo9M9q4nVfFl7cp5aybIcY2x5GfxPNCuwOrv9TtbfIh3yOO2SOnpXM3/iZ0JEil88hiwJB/z61xtxePIxJOcnJzVYzE9ya1jS7kOZu3PiS6ecS7+FPAPNY8l88krNkncxb8aqu+44NJvUdq1UEiG2y99tkZVG5gV7560kt+77snBJzxVEyA0zdT5UFy4sp65p7Nnp35qmrHHWplb5B6g0NBckDk1IJMc5qFmB5HBpB81KwXNOz1a4tGG18pnOw9K7/R9bW5ijktrkBzw9vI2SD7E815cFOetaOkXf2W+jZxujJAYGplBPYalY9ss9SWRVEymNjx83Qn61oKe4PBNchp7eZb5jl3xSLny2O4ev5/4Vs2Fy4wHBWP0Jzs/+t/KsLGhtDpwcUgYd+KRV4HOKUAAdc0ALkYo7Gjn8KD0oGQx/61qSY/MKI/8AWNSTHDCnETHp0p38qap46UucnANAibr1HNICM4x1pR9MGjJz1qSgz1Jz7ZFOzhabnnmjcNuKAEbpwevrWF4g1ePTLUkH94flQep9f0rafB6Dbxyc153rlylzrMzTEtBajj0JznA9Oo/KkBlXUaKpvNRk3u/zKufu/wD1/wBB1rlbq4M0jsScsc9fWrWsalJcyhC3HUjGMew9hWO7/Mea3hHqRKQ127VEzYHFK5yc1E3StkZhupOopKcAaYhuaM0/yzR5ZoARWwalU8Go9uDT14OTQMcSQM+tLvxyKa7ZHFMB7UgJhKakWXmq2acD0p2A7fw1rJjVIribYifc3jK9f89a9C06SSddx2Y28EZ+bPcV5V4VnK3qxFVZXPAfkZx+h56/SvU7PSliRLiwk8kkbhGwyhB5+o/D8jXPUVmXFmzAzIoQjI7GrAIPQYqjbymbckimOVfvIx/UHuD6/wAjkC2oYjnisyx/HvQOh9aTOO1GcgkYpARR/wCtakuOopY/9Y1JP1H1pxEx6YIGRTj196ZGOKf3pgSD3o7jnvSbh07mkcqqEtwPU1JQ/A7/AM6QhtuVAzScgZ3Ail5x1oAq303lWsjYIIUk/gK8t1eSRIrtnLbmlG046jGc/ka9O1TP2JlTPJC9fU4/rXDa5pTXNrdSxAArjPP+yMj2oA8yuGIuJBnO1iM561E5xU13GYrhwykHPSoCdw9661sYsa2M1GacaTFUIQU7PvQqOWwFYn6UMMUAKGxTt5x/Wos0nJoAeWz0pN1NqWGJZThpkj93z/QGgQwmkBqd7SQH5WSQZ6o39OtMjtp5c+VDI+Ou1ScUXGNpyAlgBzVqLStQmGY7K4ceqxkitKw8O6nNKqrZyozEfM64wPpSbQWLXh+ykN3Fj5H3jr2yAQcenBr2TTlKafBlssEA6dq5bw14Vay2yXRyw4APPfk/jXbYB4H6VzzldmkVYrXSK0Xnnh4ssG9u4/H/AD0qyCe5prr8pXqPf0pUzjB7VAx/PXFHY0ho5x0pMZFH/rWon6j60R/600k/UfWnETJEPFKc9qYh4p3Q8GmBKM+ppwbFJyR1o6en5VJQhxxnilA496CfSkPTigClqWTa4U4+YHI46c1RgtxL56uA4Z84x25XB/I1fvRuhcDjj+KqlnkEs3Vg3TvhiR/M0gOJ1DwdaT3Ztmdopc5Uqch1P17jB4+lYupeA5bRHlt5y6rg4ZegPqa9O1G2M5Mi4JUEdOce3vwD+FQwAPCsj/MAACWwM9OtUptCaTPHl8M3TtGSVCtndjJK/Wtd/DVtpKjezT3TkCEZwCfp/XpWzrWpw6KXhtZBJv5VQT8n49CP/rc1ysniG6jleXdidgQXI3MAfQHgfWtFKUiWkjWOmW2nW7XupPGJC3yRM3y8ewGSf0rntW8QS6lEtsERLdG3BVUDn8Kz728mvJTJNI7sf4nbJqoTmtYx6shvsB60maKULmrJEyTT43MbBhjI9RmgJxTWGDQB0NlrVpHCBcRM0mQQVjTAPPrn27V1Nh4rsRAsZjXdjBZtox7dq81BqeIoHBkQsvcA4NRKCZSkey2mt2LxgxyxbjxgyLkflwa07fUIJ3R49kmB82OcE/8A6q8r0ddFd1YzyRyD/llcAFW+jjofwr0zR4rOM5h2EFQDu68e47fhWEo2LTub8RBAY4HtiphgDJ4zTECLjYQvsKep54b8agYrDg+tNXpx1NKewOMUA88dKBhgj3P1xRjjOTmgnAycgUmeCTQBHHzK1E/UUkZ/etRP1H1pxEx6fdp2ccUxc4GCPxp3cZNMCfjtTc+xpfxoqShOf/rUdB/9alx7UeWXU7ePekBWuADGwGTng96oWs6MqjgFs8Dtkk/41oNEFRifT7xrPtYVTO3ciZPzYH4fpQBJNdRRxEPKqjHAPcVx2r34lDizimyufM3TbRu9fr+INdNO8YVyw44AfJzj/Ofyrkdf1aPTY5IxCreYcmN+gOP1GcH9OM8NbiOM1aO4iVXnlRC/zLEhz+JrEJ5qa6uHnmaR2JZjmoM8iuqKsjJu4hBNJtqQIxHQ1NFaSSnABJqritcq7RThiteHQ5XGW4qUeHrg/dVmHstR7SPcv2Uuxh0FM9q6BfD82AxQ+/FNPh+bzCB0xR7WI/ZS7HP7CKd05rYudCuYOoBrNktZo87lIx7VSmnsS4tbkYNbuh+JbvSZkG4yQgj5WP6VhFHXqCKaGwcGm0mSe+aHr1nrFos1tIQ+PmiJ5WtYSAvtxhjx9a8B0fVp9Lu1lhkZfoa9d0XWV1i1ilUhGX7wz39fXv8ArXPOHKWnc6QMNxA5NO7iqYvraKIFpo1z6sBU0Mvmkt1XHBqCifNBPFJkHuCKOMcUhoii/wBa1Fx1H1oi/wBaaJ+q/WnETHJkjHQUvQDP4UidKkVVZxnApgJvlzzD/wCP0m6XoYT/AN9//Wqz5vspPoKXzjnG1agorB5unlfrSi4uIxsNsCD33VY89j0C0nnueoUfhQBUkdzGT5bBuwAHX86qXJlitnWO3IOML8wz0/StQuzAEheO1QySEHOF6EA+9AHIz3Dz6KlzkMwXDMBgbhwQR6Ag15drV/JcXTI3Cocbd2efrXYeNb57G4MthN5QusmaJSeGB+9jsf6ivOnYsTnrW1KPUiT6Dc5NORMn3pgrRsLN7iQAVs3ZXISbdkLa27SkDtXUaXo7EK2wge/NWtJ0QRqrSAD6100MKoAFUVw1azeiO+lRtqzPj08YBZR+VSmw+XA3f8BOK1UQHPFSAKoztP5VhudHKjHWx65HPuaQ2IHCrz61sZjIyFI+ooBVhgCmTyowJrTI+Zc9uaw9RseSRHxXcPCCM7fxqnPaRyRkFfxpxbTFKKZ5feRkHkcfTFZbxDmu21jSiNzoMqa5K6haFyDyK7aU7o4asGmVACPpW/4bvxa3yeaWeI8Mu44x9M81g5weKmt5jDMsi9Qa2aujA9u0+0ikgSRI4k9AFA78Zx1rXhiusf6xSOw21y3hO+iurF0+yQ7ww+dIwODz179f0rqoAEfdliQMA5rmehqiTyrrHJXP+7R5dzjlh/3zUwmfHBo81+5/KpYyrAHEjbzn8KW5DMAE65pVYtKc0TEqQR1pxExqR3RHDAf8BpWtrsg/vPyWpUlfb97H4U7zn6buaYDxz2ANGfXGKT8OPTNKSQc1BQde4/Ok57kf40ucDkYHqOtN9Dkn3J/pQA4n2rP1CfZCxbopz1wAetXXP1x61wHjPXHZZtNtD1H75z2HUgfXAoA4XxDe/a9QkcHI456A+/0rCJrWvbQ29mlw+czZ2L3CjHJ+p/lWSQTXVDRGUtySCMvIAB3rvfDunpHD5jgbvU9q5TSrUSSAt0BrubMqka5GBjgVz4menKjooR6mqm3jac+9TA+rfhVDzmP3R8tIs5Jxkj6VxpHamagmCjg5o+1HoBkVnq5JBP8AOl3kdBVIdzQ+0gZznNKJ+OOlUBI3c1L5nqadhXLTXA6VXeXd0NQyuR071CZPl5FNIQXCiQYI61yms6ZhWZBXTs/41VnUSowYZzWkXbVGU1dWPNpozG5BGKjU4NdBq1hsckDg1htCVbkV2wldHBKNmdr4GvpIpiGz5ZAQHtnqK9ViORya8Z8H3wsNSLnGCvf6ivWre+tpI1CyKeM4Ugj9KxqbjiaI6Y70duAKapDDg8e1PCHHA+prJlohT/WNROen1oUbZDxRKNxHWqiKQqYI5zj8qeBTVBA5pc+vFMCXIA5/nSA8Yzml5GemPakCkeuPeoKDBznpRggcEUvSop2YIdvBHcj+lAjH13WGs4/s9sqy3Ug+Udl9zXGRaW93O6OGlUEtcSE5ySMnnHf+R7ZrZ1CYS3LZcZZtqseSAO59uScD1rPn1aKG3WwtE3KoyyoOPXLHtnqTzx2oQHMeLbjzJAGjwztuUsclV54z39awIog8akZyDz9K0NfupLqYSSujsDyU6A+nTmqWnPiYLnqa6Y3UTPdnSaNbjAIHb0roYxt98VSs4ViQbRitG3QYLMcKO9cNR3Z301ZDx8wwKkEPfp74ppvLOIfM+P60DU7VzhZAce9QkXcsJEvQ9ae8S9fSqrXKjow56YNM+0sB1p2KuWSFHpinoA3JAxVVZtxwRUhmUDrTETMATjtUEoAHA4pi3BJ5xmnK4Jw1VYGyHZkZx70x1wMnrV8CMr94VFNEpBwR+FNGbMO+gWSI7lrlrq3VZGYkhR0rtJwAMMMisHVo0jtyQvFbwdjnqRuYumSbLwPkDB79K7uLVnhjQzG2lVQCqsCrH6Z/pXF6FMkd2QyBkY8naW4/wrttPWxvLdYylu8nlglVTY+O/PX9R1q6m5hE2LHWmTaxBWNudsh3Y+jdx+WOnGK6OLVoGthKvzDocc4/KuBk0FrYfaNJn8pwd32eXlenY9j9c/XFVtP8QXmnXnlvB9nuB96Irjd0yy9j7jv1FZNX2LTPS0mZ2ZlgJB9TilkkdRuaAKB3zmsHSdQGsh3JCsD0H8Q9RVu7V7RBLH85BHBoigbNJbhJ0ygIHTkYpQxHbHrVC2nuLpg8ihFHQAVd4HXt0psRPnHY0n1GKOncU3jPrUFjsc9h6Vl6lOSCiY2gfM3PX0q9KxCepP3Qehrl/FmoLpumBASZG+XOQMk9T6cd88cikBzd7diIOgYqX3EyBBggDkD2HqeO/SufmvZ5YB5beVaEksXIDTEnk46sMg84OOhqhdXz3bDOSo/hJPznsfpwP/1YAmt7OacqxPmuE6c4UYOAT2PBwO9bxikrszbuZ17PHI+IY2Vc5+ZsnP4ADH0AplmxW4TnvS3cLw3LxupDA9DSWy/6QmfWtdLCtqeg2mWjT3AqzcXAhiEYGeKigQJaKfas2+uCMnOPSvP3Z3oiu5lcklRz61jSrtkLJIVptzdszEbgq+vc/SqZlhBwxkJ966YQdjKc0Xoby9jcYl3D3NbtpqbOBvBBrl4pADmNty9x6VoW8+GAPQ0pxCEjqY7gtnBpk15sP1ptnDujDDk1FfwFYy/QVikm7G7dkVbnWDEfkH41nPrt7KcJhB61Vubjkkd+gqoSo5kl2n610KCsc0ptmtDeXMj5knbHsa2LOYLnEz5PcmuWSUAgRTq3s1aFrdEkg8MOCKHEcZHTsxeMHIJFYWun/RDj1q/byErmqGvHba8d2FJKzCWxzMRdHDKxRh0YEjFaseoXcKqGnEqL2bn8uf8AA1BpKl76LakbnPKP91h6Gukl0mK4t8JarkksPJALAAZ79fp37ZwRWspJaM5rE2m+Jbj7KPNRLuHP3+jR467hgk+uf1rSvIdP1y3AyyXGAyo5w6nrlT/EMY6ZxXLrbTWErSWipKyjcybcrKgP3hnkHoCO36Vp2N9Cyh3TzLKU7u+6Bu546c/z9euTS3RSLuhX02m6i9leMVmc745R91yOp+vqPx9K7ozCeJW4z3FcJfWSyyNBPI4VvnjkH8Ldm+o7+3PHONTQdWlkBtbobbmBvLf0Ydm/p/ngjrqJnWxggdD+FS8+tRREMoPapMGkMlzx0owBz1o7e3qaazZHXjHNZlkMr5BLE88ivIfF+qPqWvPbxOTHExjXZ39cfU5/SvS/Emof2dod1OGKyBSFyOQ3QfXmvGrRmjM110dRhDn+Jv8A62a0prW5En0Ldjp5uL0W1uN7KMswYEKR1bp0A4Hvz3Arq/7GWCGG3RXmlYnYucqCByWzx9eD2Hfm9oGgx6fpSmXKO22a7Y8Y/uoPTA6+/fpWnbGWKJ5GVPtEuduMEIuTtX8ufx64HBOWoRR5z4i0iPT7yLy2V2kXL46A+w9PT6Viw8XcYHZhXYeMBBbiNImEl3KSzkHJGcc/oetcfChWcZ6g1pB3Q2j0a2Ae1UZ7VkahYySOQmSK1NObfAg7EVqpAuM4FcLdpaHco3Rwv9ktEwmChmHY1j3VhP5rssZ2sxIzxXplzp4dMrtBPtWJc2MsWflj69Sa2hWaIlQTOShtSke0xnzM5z6e1X47Y7RkfN7VojTpZm4H5dK0rbSlhTLnJpzqijRtoWtIj/dKDUutwD7BJt4JU1LaKEPAo1B/Mtzwc96xi/eN2lY89nt2DcKSO5qlPav5jMiHaRnnqK66bTDKu+M8+gqt9inRuEDc11KrY5XRuYdnZSGN0aLczdM9vetS30icFcHccVrW9pM5GYQp9Sa2ba22Lk7QfpUzrDjRsZdpYyRR/PjPp6Vk+I+LbH+0K62YYXtxXJ+IxuCqO/NKDu7sdSNomRoRU36qwBLZVQ2QGJ7HH+c4rroLa4jZZ7fdlMAqeCwyf5HjP19a5jQdPN7Lc25PKqHwOp57e/IrrbC5dLfZcLieA7XTafnUc/j0J/759a1qPU5ER6lbCcC9tf3cwYM0bcYYjnp69Mj/APVjWlytrqhV1Atbg/vYz/Cx4II4x6Guthg8y1nDOflG47sdCOSffI3fRunSub1a1DqqKCJ2c57gtwD9MhlP4VCYzYgiZopLUAyGD5oiP4l7fj2yKoXBls7iC6j3Bo03Aj+OP0PuP5jOean0O8NxBFI7kyxEI5xklT6/59a0NVtSI2AXhG3jJ6q2VYfnz7ZFEdGDOmsLlZYElQ5DjnHrV5WyM/dz6jrXK+F5wY5bUjlOcH2OP8K6sEEA7Rj09KGCJsjoCKRiQpPU+tKT3NNJGODisyzgviPfN9ngsYyQZH3MQewHT9Qc/WuR0KxGoanZWrqwi3mWQ4yMcnB/4Cv61reMJjceIZ1VlZYYiAG6gkYx+oNWfBFsPtFy7H51jHyjnaCF2/8Aswx9a2jpEh6s7K+UrYLGFAaVyDgZ7/yxWDdXUot47azYmW4YxK55IQcMfr0AH+NdFdHdFvGR0GcZ4P8AkVlWtso1WOMoNqRCNCPU5OcfQGsSjJm8OpDpE9xJue4dd4ZhkgD8OOMfyriDBmTdjoccV7CySS2DMDidQVx2B6dK841Gx/sy9e2+8v3lPseapSsaQV9DV0Z/9HT0FbSzADFc9pnywuBn1rYhGeWPFc8lqdVN2Lazb+CKebeGTBZQTUCsFHy9Kk+0Kg9vrSN2K0CRruAA9qqblMmAe9Nu9QAQ84FV7Fd3+lSscP8AcX29aVibGvFB8vHBpJ7b5DnFSRXkaqRkCo5rlSPvU4jaRmrH5TlT096tLCj87QfaqV3ukyY2+YDIpllqQdQDjcOCD61bXUzRqqirwEA9Ka7EdqYtyDzmlaVccUkWVZ5eDXN6uTJcLjstdHckFeK5y7WSe+8qNSzMQoA7n0reKOWqamgaGZIhfrJLDMJNqsvAZe4OQeD06HpV/VdPe1mt9RRpJHGUmLgBcYyDgADqPx4rf0yzFtptvCf4EAPoT3/U0msIqaS4G3hkIDHjAYZ/Sm5anK9SloS7bhkT0Yr82cAkYP5AVh61aCK9eLLiTd+7VBwPlJHPc8L+tb2gqsc8ygYIVAD0wMVB4hyuq2DF8RJlguOMhlBPHT5WP5Urgc/ZRNBqD+U/EjDA9d3zj+orqci6gtZCAC42OD2yoP8AMfrXOxIyX4DEBfLRi3YFSB/Imt4OV0pZwc4cHjuA3+FUmJlbTybbUfugBZMf8BJCj/2U/jXXIDjlge9ctgx6qwAyr7HHPYbef0rqIx8g5oYkWvqajmYKjMfuqCTSGY9RDIfyqnqVwVsnxHJkjH4VkaHmeoRifWSzF9088Y6cEMQzZ+nFdD4G+ZbxyoBConA64L4z/ntWOQ1xqRZIGykjYG7AyFxz+Q5+vrW74RkWKfU4vLcbJNm1e3Lf41pfQnqdE0AKMv8AFgEfhVS8iVfKuVDGSMglV/L+v5VpNIDJxDJnHGcVUkYeWwaOUEHaAAPp/WsyieMb/wB6mRvUEjPXisnWtC/tZAysI5kzt3jAx+vFals3lgjy36k4xwKWe6IYKLZs+z//AFqATtqcculXOmn98UIII4P06ev5U7ztorX1OR5Lb51AIPpXNyydcdqzludNOTerLZuV7HpVa4vgq9c/jVCSTk81QmkJ4Bqoxuaudh1zdSXEm0E4qxcatLDAqIucADbnFVreMbge9TTxBucVbSuSpO1yWHUpGQMGPuM9KdNqzIvJxWYYihJU4pu1mPPNUoIl1JGlb6yHJGG/EVSM7pdvIDgFiadBHhxxTrqHY2fWqaRPM9zRttQO3k/nVpb0MvBrnUfYcE1cjk6YNRyq5oqmhsCbea1tKhsEk80xLvfjzt+4A+n+yef6Vz0DngmpUmGl3BlUl7WU/vUbnYT3Hpz+FUc9WVzvV8tcMAOe4FVdaXzNLaJDyxAB9Oaq2t4ghDIZWUdFAGPwq7JNFcWjKhYbgCMr1qTIWxh8rdgdWxyfYVma6ok1CFccIhVgD2fOf/Rf61owXOIVVo5Fb0ZeTWTezJc6jM2yQbBsJI6jb7f7xoAyyVjv4xJuVDDliOOeK3oYs6IyMQSoY598k1kRqH1ckAsEtiQCPU8fyrYRxHpwUkgtgdOpPtVQEysyt/aMYJOAigj6NxXUIBjrnmuajMb3rSbzt85EHynoMZ/XP5V0InhUnLjHXoabEjQNwB/yzWqGozZhb5FwB0qclgM547ZqjeAvA5P3cenNZFnKaWvn3ED7AMeZ3GD8xP8AQ1c8LGO38R6qkhH7xY5OBntz/Om6PEm5SqgBcrgD1Z/8aLR2tPE+chEcBXB4HIIGPxC07iOzaS3TDbCewx3qF3iLMREchgf5Um30xz3pjKAwJ6detIZMsq7mxCOoHJ7U4GIHPkqCaiVMdvy70AZ6Nk0XAp6uiTafMqworAZB7+tcBNw/J4r0hojztwcmuE1qyNneSR4Ozqh9QaiRtSfQwrgcnaapMGXnBJq+4+bmodpZsVUWXJFWC6CP84ZffFXBfW54ySfpSraB+BUhslVfuKRV3iOKkiu88LZ6gVGZYQeufpUktvGB938KiWOLIOwE1orCaZLHeRIeF596iubqSfhIj9TVyFIz/wAswB9KfLGMZUU7ohpmMqS5+Y9etXIUKqM0si5PA5FSqMACoe4loWbf7w9B61Jp14izmw1W3j3D5VdlGG7dcdPektLqKynilnBMW/axAzj3x3q/q9lC8Ud1HFvjHHByGU4xg/57UIzmLp1y2iamIDGzWX8G452g579xx9RXbQzxOmViODywz3ri1jeeFCmWEbKoY8EEEHIPXHIPPrW5aTPYMsTSYUn7o4x/9b6fSkyEdA88Aj3+WcYyWOMAe5rFjWP7L5xiYGdjIQTyu47sfrj8KmvZCY1iBG2Yhc7vXj+ufwNPuMtE5wQNp/Dg1LGZVqA+qXx2jakSxrx35P8AUUqzKsXmH5iqjGOef8aWzOb29JP8eGb/AICo/oajjBEkEWOhLN7dxTgKRq2iRxpEpiBCDc2D3J/xz+VbCrbuAzgIMdT0rNt1BjZztJbAyO4H/wBfNW8kqF7dCKpiJWJ+6M5PU9PxxVa++W2GfzxVhehJPWqepktb7Mcn0PSsyzG0aP5bhTkEFGGR9QP5UX8GNWMygBXjXY2ON+eDj2xVyzTbcMc5+RAT2PJOf1pb6BmdcY4O0Z/PH6UAa1tL5sKMM8juKey8kYyKz9NkzEFLM2D6YxnpWiCGzjOfSgAwMD/GjnHQn056UgGB8wwB/epNwxuJGPXpSbAXnOM/hWF4ot0exSTb8ytjPsar6l4hmlma20zA2NiSdhwD3AHeseWSWX5pp5JpMY3O3T6DtWbnfY2jBrUypI8NjFMEXzDirkqjqM0yPhwSKSZuhVt9gz60yVGC8Vo8MmO/alWFWUZHWnzFHPyls81FzngV05sYWHKj8qb9ghB4QAVopkONzBhSRjWikBZMGrbQRpyBTS4CHHFVzXJcbGTLGI2IxSwwNK4VQSSasOAXOfzqrdtLEqCFyp5ORTuZM0pY3htGtmtlcHiRS2DjjB//AFelU9I1KS1eSzmJeyc4GecZ7/8A1v8A6+cxtWv4pF86RmA455yPTPWtPQrmwmuWFw3lscFOpUnPei9lqZtN7G9BC9oZdnMTKJMAYyMcYPfjitRLeO7tk5yNmY+mQMdP5UzTlRN9mygqg3LySdpPT8Dn8MUJF9lkx/BvwMHOAen9KCCqZ5Yr5LSZsFcmJscsQD3rZfEkIIHyuMD3GKzp9L+0yq6M4eM70fPQ/j+FWLG6+02zggq8TMjgnkHNJjRRtD/p96ueN5JPtirEcP7wuRwxB59MCoLKMve3ZGPnYDj0AFaTj5i/QAjinDcUi1aZWIYzznBz71YHy9O3pVa1z5KgAEgY4qfnOCPfiq6iJz1J4qndkOFj/E1aYnoMn1qtKBsdj34xWRZVVAl1GAeCTg/l/n8anu4/lV8hgjccDvkD9ePxpGUKYm9GBP5VLPIrRFCM1M6kIL3mNJvYqWoMdyVA4c7hzxzWkSqDLFQe4I5/SsL7Qyuh6FSQRU0s7CMsTk9q46mNSVoGkafcuyagofZGu4+/QVmazqTwWMjKcu2FX6nii3U7ck8nk1k60xku7aAdBmQ/yH8zXNGpOtNRk9DVQS2Kq/u4VRRwBQRtX3qbZxUbjHFegUV5BUG7b1qzIOKqSDNUtQZIs7RnIOanjvAvXpWdnBpCSRzT5Q5jWN+AOoqF9RJ4GKyyeaMHrmtFETmaRvN/IqIyll+9j3qoKcWJq7GcpXJs7j1pWQSDFJH0qVetBKKz2QYdMjvWZd6c9v8AvYcrjnFdIgpJ4VaFgR1qXKwcps6XI08FrPlVYxg8jOcjp/L8qvTv+/CkEhh+H+elZ2lp/wASuADsgH5VcE+yVAwJOCAR15xXHTxKUnGREomnEBhmznP61mlRZ6q7IcQ3S/Nk/wDLRfT6jOf90VoRsrY2noOB6VQ1ohLXzCeYmR9wHAwwz+ma61JNXRBHpo/eXLHu2Qa0XTEXUcnFUNO+Yy4/jY4rQm4jUerACrgKRJbACIFl59c1P/FnA9OO1QQELlR+VTYxjj8aoRIxOOw9MVVYE5GenP45NXGABBqD/lm49WzXz1TE1Jvc7YwSK0uT17YNPcgAGknHykjrimPzg9BWbk3uVYzpELXBHbBGfw/+vUjgyhQOnepWiBkz/ntTyvzfzpXELHHtUcViXsDf2yzt0MYC+3JroQu5eaoanDgxTD+E4J9j/kVrQly1EUZpTFV5V68c1dfI46VVlWvUEU5OhqpIM1dlQ8kVWZSKuIyrgA01sVK3XGKjYetaIhkR9KVQKXbzR0+taIhjsUUvanKvAPemTYkjGBzUkYyajXJ4qeIY4pATxg0k+QDUkagCkdGmdIk6scCsZuyNEamjc6TCf97+ZqZ0/eK3vUsEa28SQKCAoxSSfum3NgJ3PpXiyleTYmAkKtnpVbVLvOmXCMMlkZQcexqZ3WNWJPfjNZ0/72REHJY4/DPNbUpyi9GQ0a+nIYrdCxy2MZq44JK57Hiq8QxGB6DgVOgIxXTTxtn7yJdO+xMhw549M1KOvH5VCjEueR+VSg445r0ITjNXizNq25YboeeahZQQPenM5PAxVN7khjDAm5x1JHSvnKdNzdkdrkluSTLmMgdxVVpMts3DPpnmnm1lmH72Q/SoRp8cUiuMlgeCa1cKcVrK78iU5PoSKvIA796kx81ORMH9MU7GW4rC5YqDAqKeITQshHUYzVgj5aYwxii9gMEggFTjcpwRUEi8e9ad9AA/nKOvDf41RYfLXr0ainFMTKUgyKqSq2/Ixtx+OavuMH1qCVQRwK2TAzHBzUTe1WZU74qDYc1rFksjAIFNHXNTY9KNlXcmw0dakA4pqrzwalVCcUCaCNTVuJKYkZGMVajXZSkwSAqVWrWkwGS5aZhkJwM+v+f51XOXIUDJPAHrW1aRC3hWMde/vXBiqlo8vcvZFnbmkZcil79qceRXmEma9uAyxq5VRzsHSpUto43U9Seck8/55qUj94Gx/sinPgOrE4A4q029EJkka4H4VOn3ee1RR/d5qVD8opMpAF/xqRWI60gGPxpSMitKdWVN3iKUUydetKI1BLAAE8mkX6U/tXNc0E2VE0YqxjikYVNxlZV45pQvNSMMU3vTuAHgCo5eBUh5NMlH50AVHI6Hmsy4hMJ45jJ49q03GPoahOGBVuVNbUqrpu6AyZFFV2XrV65tzDl0BaPuO61Vfa/TrXqU5qaugKEqfjVdlPpV2XI7VWKljzW8WFisRzilGDx3p5U7ulAX5ulVcmwKgz0qwiAcmmqmDxVqNRijmFYRRgdBUg5HQ5zwBShd5CgEsewq9DCsHzNzJ7dq56tZRQbC2tv5Q8x/vnoPSryA96gUEnJqyleZOTk7snceBSnPSlUU7FZjsQOPkJx05pxTeoyO+ae65GPWnKKabWqCxB5boSUP1FPinIb50I/CpgozT9gIwRmt/bqStUV/zFyW+EcGV03KQRTscZpFRYlCKMAU0sRWLtf3dh621LCCn55FMHTNOU81iWSD8KDQtKaQyMjNNxzUmKQ8ZpARY5zQ4yKeaRuVpgU3TNVnTqDV4ioXA5poCixaM8cj0NVJreGb5lPlN7dPyq7MBk1VYbjz19a1hNx1QjOmtJ0527x6rzVPGCcg5FaRkdXIDHihbh5CQ4Vh7rmuyGJklqguZeMg0Kua2MRnrDF/3wKUbVOVjjU+oUVf1pdguZcMbyHCozfQVdjtG4MrBB6dTUjTOSRnikiHmfeJPtUSxMmtNCWyWMAHZAmPU/8A16tpBsGTyx71LDEiKNqgU4jLc1yOTbEyNVJNTqp9KFUY6VKAKlhYaBTwKUKKd2pXGNxntQBjtTwKMUAIBUgFNHQVIBzUlDG61E9SH7xqJ/vVZB//2Q==",
+    "gender": "Female",
+    "status": "INACTIVE OUT",
+    "agencyId": "OUT",
+    "lastName": "BRISTOW",
+    "bookingNo": "03624H",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+    "firstName": "SAMANTHA",
+    "middleName": "ELIZABETH",
+    "dateOfBirth": [
+      1985,
+      6,
+      13
+    ],
+    "releaseDate": [
+      2026,
+      3,
+      26
+    ],
+    "facialImageId": 3752014,
+    "agencyDescription": "Outside",
+    "locationDescription": "Outside - released from Styal (HMP & YOI)"
+  },
+  "dateVloInformed": "2025-11-20",
+  "hasArrestIssues": {
+    "details": "No issues found",
+    "selected": false
+  },
+  "hasBeenReviewed": null,
+  "nextAppointment": null,
+  "offenceAnalysis": "Ms Bristow has two active sentences. \r\n\r\n1) 09/06/2025- Ms Bristow was sentenced at Liverpool Magistrates Court for the offence of Stealing from shops and stalls. She was sentenced to a 12 month Community Order with 20 Rehabilitation Activity Requirements. \r\n\r\nOn 18/04/2025 at 13:40hrs, a female entered the shop, that Liz Roberts became suspicious of. Ms Roberts offered her help, which was declined so she just observed her. On this occasion, albeit staff has thought she had taken items, there was no supporting evidence, and the female left. It is now known that this female was Samantha Bristow. Around 5 minutes later, she returned and said something like \"IF YOU WANT ME TO TAKE STUFF, I WILL\", and then when Ms Bristow has approached an aisle containing Stitch Disney products, she has said something like \"I AM TAKING THIS, AND I AM TAKING THIS\". At the same time, she has placed items in her bag namely boxes of socks and water bottles. Ms Bristow has then made her way to the automatic sliding doors to exit the shop, making no attempt to pay for items selected. When met by Ms Roberts at the door, both women have raised their arms, and Ms Bristow has shrugged Ms Roberts arms away, and been able to leave the shop with the stolen items. \r\n\r\n2) 15/09/2025- Ms Bristow was sentenced at Liverpool Crown Court for the offences of Stealing from shops and stalls, Robbery, Assaulting a designated or accredited person and Theft. She was sentenced to ORA Adult Custody (inc PSS) (20 Months). She also has a CBO made for 3 years from 15/09/2025.\r\n\r\nOn 28/03/2025 at 05:58 hours at ASDA, she was observed on CCTV stealing a bundle of magazines from a delivery safe which had been left open. At 06.04hrs on the same day, the same female is seen on footage returning to the safe store where she stole another two carrier bags full of magazines. The total theft amounted to £150.00. CCTV stills were disseminated, and Ms Bristow was identified. On 11/04/25, Ms Bristow was arrested. Ms Bristow made a significant statement of \"It was outside, how is that theft?”. Ms Bristow was conveyed to police custody and while on route, she stated \"I thought they were being thrown out, I’ll admit I took them”. Ms Bristow was interviewed and admitted the Theft.\r\n\r\nOn 15/06/2025 at around 11am a Ms Bristow entered TK Maxx, Birkenhead and stole 5 handbags. She took them from the shelves and threw them over the barriers to prevent alarms going off. She was challenged by a staff member at the bottom of the escalators near the exit. She shouted, \"Don’t fucking touch me” and barged into the staff member, pushing her aside to make good her escape. There were no injuries. CCTV was obtained and suspect was identified as Ms Bristow. \r\n\r\nOn 15/06/2025 Ms Bristow entered The Fragrance Shop, Birkenhead and stole 2 x bottles of perfume valued at £240.00. CCTV was reviewed and it was noted that she was same suspect as seen earlier in the robbery at TK Maxx.\r\n\r\nOn 23/04/2025, Ms Bristow entered Farmfoods wearing a large, long black coat and has a beige/pink satchel style bag and a large \r\nblue suitcase. She leaves the suitcase at the entrance and goes straight to TILL 2. She begins to grab aftershave from behind the till placing the aftershave into the satchel. Another female stands at the shop entrance with the suitcase. Helen Dixon, the store manager, witnesses this and goes to challenge. Ms Bristow quickly tries to leave the store. Ms Dixon takes hold of Ms Bristow outside and asks for the items back. Ms Bristow becomes irate and a scuffle occurs. Ms Dixon grabs Ms Bristow' phone which has been in the satchel and tells Ms Bristow that once they have the items she can have her phone back.  Ms Bristow becomes irater and punches Ms Dixon to the face. Ms Bristow then spits at Ms Dixon's face, landing on her left cheek. Ms Bristow laughs and states to Ms Dixon \"HA I HAVE AIDS AND I HOPE YOU DO TOO NOW\" and left the area. \r\n\r\n",
+  "ppcsQueryEmails": [
+    "Laura.gibbons@justice.gov.uk"
+  ],
+  "previousRecalls": {
+    "lastRecallDate": null,
+    "previousRecallDates": [
+      "2026-02-26"
+    ],
+    "hasBeenRecalledPreviously": true
+  },
+  "vulnerabilities": {
+    "selected": [
+      {
+        "value": "DRUG_OR_ALCOHOL_USE",
+        "details": "Ms Bristow has a significant history of class A drug use "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "None",
+        "value": "NONE"
+      },
+      {
+        "text": "Not known",
+        "value": "NOT_KNOWN"
+      },
+      {
+        "text": "Risk of suicide or self-harm",
+        "value": "RISK_OF_SUICIDE_OR_SELF_HARM"
+      },
+      {
+        "text": "Relationship breakdown",
+        "value": "RELATIONSHIP_BREAKDOWN"
+      },
+      {
+        "text": "Domestic abuse",
+        "value": "DOMESTIC_ABUSE"
+      },
+      {
+        "text": "Drug or alcohol abuse",
+        "value": "DRUG_OR_ALCOHOL_USE"
+      },
+      {
+        "text": "Bullying others",
+        "value": "BULLYING_OTHERS"
+      },
+      {
+        "text": "Being bullied by others",
+        "value": "BEING_BULLIED_BY_OTHERS"
+      },
+      {
+        "text": "Being at risk of serious harm from others",
+        "value": "BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS"
+      },
+      {
+        "text": "Adult or child safeguarding concerns",
+        "value": "ADULT_OR_CHILD_SAFEGUARDING_CONCERNS"
+      },
+      {
+        "text": "Mental health concerns",
+        "value": "MENTAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Physical health concerns",
+        "value": "PHYSICAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Medication taken, including compliance with medication",
+        "value": "MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION"
+      },
+      {
+        "text": "Bereavement issues",
+        "value": "BEREAVEMENT_ISSUES"
+      },
+      {
+        "text": "Learning difficulties",
+        "value": "LEARNING_DIFFICULTIES"
+      },
+      {
+        "text": "Physical disabilities",
+        "value": "PHYSICAL_DISABILITIES"
+      },
+      {
+        "text": "Cultural or language differences",
+        "value": "CULTURAL_OR_LANGUAGE_DIFFERENCES"
+      }
+    ]
+  },
+  "whatLedToRecall": "Ms Bristow was released from custody following recall on the 26th March 2026.  She was directed to attend Edith Rigby Approved Premises and has failed to do so.  \r\n\r\nI conducted a videolink with Ms Bristow on the 17th March 2026 where release plans were discussed.  She stated she would not be attending following release.  She reiterated this to Approved Premise staff on the 24th March 2026.  \r\n\r\nMs Bristow's whereabouts are unknown and she has made no attempt to contact her Probation Practitioner.  ",
+  "bookRecallToPpud": null,
+  "convictionDetail": {
+    "extendedTerm": "2 years",
+    "custodialTerm": "4 years",
+    "dateOfSentence": [
+      2025,
+      9,
+      15
+    ],
+    "hasBeenReviewed": true,
+    "lengthOfSentence": 20,
+    "licenceExpiryDate": [
+      2027,
+      3,
+      2
+    ],
+    "sentenceExpiryDate": [
+      2027,
+      3,
+      2
+    ],
+    "sentenceDescription": "ORA Adult Custody (inc PSS)",
+    "sentenceSecondLength": null,
+    "dateOfOriginalOffence": [
+      2025,
+      6,
+      15
+    ],
+    "lengthOfSentenceUnits": "Months",
+    "indexOffenceDescription": "Stealing from shops and stalls (shoplifting) - 04600",
+    "sentenceSecondLengthUnits": null
+  },
+  "decisionDateTime": [
+    2026,
+    3,
+    26,
+    19,
+    0
+  ],
+  "isMappaCategory4": false,
+  "isMappaLevel2Or3": false,
+  "lastModifiedDate": "2026-04-24T19:46:00.575Z",
+  "previousReleases": {
+    "lastReleaseDate": "2026-03-26",
+    "previousReleaseDates": [
+      "2026-02-26"
+    ],
+    "hasBeenReleasedPreviously": true,
+    "lastReleasingPrisonOrCustodialEstablishment": "Styal HMP & YOI"
+  },
+  "releaseUnderECSL": false,
+  "hasContrabandRisk": {
+    "details": "No Risk",
+    "selected": false
+  },
+  "localDeliveryUnit": "Wirral",
+  "nomisIndexOffence": null,
+  "personOnProbation": {
+    "name": "Samantha Bristow",
+    "mappa": {
+      "error": null,
+      "level": 1,
+      "category": 1,
+      "hasBeenReviewed": true,
+      "lastUpdatedDate": "2025-10-15"
+    },
+    "gender": "Female",
+    "surname": "Bristow",
+    "addresses": [
+      {
+        "town": "Manchester",
+        "line1": "42 Victoria Street",
+        "line2": "Salford",
+        "postcode": "NF1 1NF",
+        "noFixedAbode": true
+      }
+    ],
+    "croNumber": "132894/08B",
+    "ethnicity": "White: British/English/Welsh/Scottish/Northern Irish",
+    "firstName": "Samantha",
+    "pncNumber": "2008/0271453D",
+    "nomsNumber": "A5422DW",
+    "dateOfBirth": [
+      1985,
+      6,
+      13
+    ],
+    "middleNames": "",
+    "hasBeenReviewed": true,
+    "primaryLanguage": "English",
+    "ftr56MappaReviewed": null,
+    "mostRecentPrisonerNumber": "03624H"
+  },
+  "ppudRecordPresent": false,
+  "whoCompletedPartA": {
+    "name": "Laura Gibbons ",
+    "email": "Laura.gibbons@justice.gov.uk",
+    "region": "N51",
+    "telephone": "07976446222",
+    "localDeliveryUnit": "Wirral",
+    "isPersonProbationPractitionerForOffender": true
+  },
+  "countersignAcoName": null,
+  "countersignSpoName": null,
+  "explainTheDecision": true,
+  "isExtendedSentence": false,
+  "isMappaLevelAbove1": false,
+  "localPoliceContact": {
+    "faxNumber": "",
+    "contactName": "Merseyside Police Fugitive team",
+    "phoneNumber": "",
+    "emailAddress": "force.fugitive.team@merseyside.pnn.police.uk"
+  },
+  "reasonsForNoRecall": null,
+  "spoRecallRationale": "Ms Bristow's compliance is poor",
+  "acoCounterSignEmail": null,
+  "currentRoshForPartA": {
+    "riskToStaff": "MEDIUM",
+    "riskToPublic": "HIGH",
+    "riskToChildren": "MEDIUM",
+    "riskToPrisoners": "LOW",
+    "riskToKnownAdult": "MEDIUM"
+  },
+  "indexOffenceDetails": "Ms Bristow has two active sentences. \r\n\r\n1) 09/06/2025- Ms Bristow was sentenced at Liverpool Magistrates Court for the offence of Stealing from shops and stalls. She was sentenced to a 12 month Community Order with 20 Rehabilitation Activity Requirements. \r\n\r\nOn 18/04/2025 at 13:40hrs, a female entered the shop, that Liz Roberts became suspicious of. Ms Roberts offered her help, which was declined so she just observed her. On this occasion, albeit staff has thought she had taken items, there was no supporting evidence, and the female left. It is now known that this female was Samantha Bristow. Around 5 minutes later, she returned and said something like \"IF YOU WANT ME TO TAKE STUFF, I WILL\", and then when Ms Bristow has approached an aisle containing Stitch Disney products, she has said something like \"I AM TAKING THIS, AND I AM TAKING THIS\". At the same time, she has placed items in her bag namely boxes of socks and water bottles. Ms Bristow has then made her way to the automatic sliding doors to exit the shop, making no attempt to pay for items selected. When met by Ms Roberts at the door, both women have raised their arms, and Ms Bristow has shrugged Ms Roberts arms away, and been able to leave the shop with the stolen items. \r\n\r\n2) 15/09/2025- Ms Bristow was sentenced at Liverpool Crown Court for the offences of Stealing from shops and stalls, Robbery, Assaulting a designated or accredited person and Theft. She was sentenced to ORA Adult Custody (inc PSS) (20 Months). She also has a CBO made for 3 years from 15/09/2025.\r\n\r\nOn 28/03/2025 at 05:58 hours at ASDA, she was observed on CCTV stealing a bundle of magazines from a delivery safe which had been left open. At 06.04hrs on the same day, the same female is seen on footage returning to the safe store where she stole another two carrier bags full of magazines. The total theft amounted to £150.00. CCTV stills were disseminated, and Ms Bristow was identified. On 11/04/25, Ms Bristow was arrested. Ms Bristow made a significant statement of \"It was outside, how is that theft?”. Ms Bristow was conveyed to police custody and while on route, she stated \"I thought they were being thrown out, I’ll admit I took them”. Ms Bristow was interviewed and admitted the Theft.\r\n\r\nOn 15/06/2025 at around 11am a Ms Bristow entered TK Maxx, Birkenhead and stole 5 handbags. She took them from the shelves and threw them over the barriers to prevent alarms going off. She was challenged by a staff member at the bottom of the escalators near the exit. She shouted, \"Don’t fucking touch me” and barged into the staff member, pushing her aside to make good her escape. There were no injuries. CCTV was obtained and suspect was identified as Ms Bristow. \r\n\r\nOn 15/06/2025 Ms Bristow entered The Fragrance Shop, Birkenhead and stole 2 x bottles of perfume valued at £240.00. CCTV was reviewed and it was noted that she was same suspect as seen earlier in the robbery at TK Maxx.\r\n\r\nOn 23/04/2025, Ms Bristow entered Farmfoods wearing a large, long black coat and has a beige/pink satchel style bag and a large \r\nblue suitcase. She leaves the suitcase at the entrance and goes straight to TILL 2. She begins to grab aftershave from behind the till placing the aftershave into the satchel. Another female stands at the shop entrance with the suitcase. Helen Dixon, the store manager, witnesses this and goes to challenge. Ms Bristow quickly tries to leave the store. Ms Dixon takes hold of Ms Bristow outside and asks for the items back. Ms Bristow becomes irate and a scuffle occurs. Ms Dixon grabs Ms Bristow' phone which has been in the satchel and tells Ms Bristow that once they have the items she can have her phone back.  Ms Bristow becomes irater and punches Ms Dixon to the face. Ms Bristow then spits at Ms Dixon's face, landing on her left cheek. Ms Bristow laughs and states to Ms Dixon \"HA I HAVE AIDS AND I HOPE YOU DO TOO NOW\" and left the area. \r\n\r\n",
+  "responseToProbation": "Ms Bristow's compliance is poor.  This is the second release following her recall on the 26th February 2026.  ",
+  "spoCounterSignEmail": null,
+  "whyConsideredRecall": null,
+  "isChargedWithOffence": null,
+  "isServingDCRSentence": null,
+  "practitionerForPartA": null,
+  "recallConsideredList": null,
+  "createdByUserFullName": "Laura Gibbons",
+  "isServingSOPCSentence": null,
+  "managerRecallDecision": {
+    "selected": {
+      "value": "RECALL",
+      "details": "Recall endorsed. Ms Bristow has failed to engage in the resettlement plan to support her transition into the community. This informs a pattern of poor compliance with conditions imposed to manage risk. "
+    },
+    "createdBy": "Stephanie Cowell",
+    "allOptions": null,
+    "createdDate": "2026-03-27T07:25:56.284Z",
+    "isSentToDelius": true
+  },
+  "reviewOffenderProfile": true,
+  "conditionalReleaseDate": null,
+  "considerationRationale": {
+    "createdBy": "Laura Gibbons",
+    "sensitive": false,
+    "createdDate": "27/03/2026",
+    "createdTime": "06:49"
+  },
+  "countersignAcoDateTime": "2025-11-23T10:30:00.000Z",
+  "countersignSpoDateTime": "2025-11-22T14:00:00.000Z",
+  "lastModifiedByUserName": "Paul Bryan",
+  "triggerLeadingToRecall": "Ms Bristow was released from custody following recall on the 26th March 2026.  She was directed to attend Edith Rigby Approved Premises and has failed to do so.  \r\n\r\nI conducted a videolink with Ms Bristow on the 17th March 2026 where release plans were discussed.  She stated she would not be attending following release.  She reiterated this to Approved Premise staff on the 24th March 2026.  \r\n\r\nMs Bristow's whereabouts are unknown and she has made no attempt to contact her Probation Practitioner.  ",
+  "countersignAcoTelephone": "07526990913",
+  "countersignSpoTelephone": "01518322800",
+  "isIndeterminateSentence": false,
+  "isSentenceUnder12Months": null,
+  "isThisAnEmergencyRecall": false,
+  "thoughtsLeadingToRecall": null,
+  "wasRepatriatedForMurder": null,
+  "countersignAcoExposition": "Recall endorsed retrospectively following an out of hours recall for failure to comply with approved premises licence condition.",
+  "countersignSpoExposition": "Recall endorsed Ms Bristow has failed to comply with Approved Premises placement. This is the second recall where she has not attended the Approved Premises placement upon release, on this occasion she evidenced a unwillingness to comply in pre-release prison communications. At present her whereabouts remain unknown. ",
+  "isSentence12MonthsOrOver": false,
+  "isSentence48MonthsOrOver": false,
+  "sendSpoRationaleToDelius": true,
+  "userNamePartACompletedBy": null,
+  "alternativesToRecallTried": {
+    "selected": [
+      {
+        "value": "NONE",
+        "details": null
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "None",
+        "value": "NONE"
+      },
+      {
+        "text": "Warnings / licence breach letters",
+        "value": "WARNINGS_LETTER"
+      },
+      {
+        "text": "Increased frequency of reporting",
+        "value": "INCREASED_FREQUENCY"
+      },
+      {
+        "text": "Additional licence conditions",
+        "value": "EXTRA_LICENCE_CONDITIONS"
+      },
+      {
+        "text": "Referral to other teams (e.g. IOM, MAPPA, Gangs Unit)",
+        "value": "REFERRAL_TO_OTHER_TEAMS"
+      },
+      {
+        "text": "Referral to partnership agencies",
+        "value": "REFERRAL_TO_PARTNERSHIP_AGENCIES"
+      },
+      {
+        "text": "Referral to approved premises",
+        "value": "REFERRAL_TO_APPROVED_PREMISES"
+      },
+      {
+        "text": "Drug testing",
+        "value": "DRUG_TESTING"
+      },
+      {
+        "text": "Other",
+        "value": "ALTERNATIVE_TO_RECALL_OTHER"
+      }
+    ]
+  },
+  "hasVictimsInContactScheme": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes",
+        "value": "YES"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      },
+      {
+        "text": "Not applicable",
+        "value": "NOT_APPLICABLE"
+      }
+    ]
+  },
+  "indeterminateSentenceType": {
+    "selected": "NO",
+    "allOptions": null
+  },
+  "lastPartADownloadDateTime": null,
+  "licenceConditionsBreached": null,
+  "revocationOrderRecipients": [
+    "Laura.gibbons@justice.gov.uk",
+    "IOMWirral@justice.gov.uk"
+  ],
+  "userEmailPartACompletedBy": null,
+  "isYouthSentenceOver12Months": null,
+  "reviewPractitionersConcerns": true,
+  "cvlLicenceConditionsBreached": {
+    "bespokeLicenceConditions": {
+      "selected": [
+        "bespoke-001"
+      ],
+      "allOptions": [
+        {
+          "code": "bespoke-001",
+          "text": "You must not enter the area of Manchester city centre between 9pm and 6am without prior approval of your supervising officer."
+        }
+      ]
+    },
+    "standardLicenceConditions": {
+      "selected": [
+        "3361683a-504a-4357-ae22-6aa01b370b4a"
+      ],
+      "allOptions": [
+        {
+          "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+          "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
         },
-        "lastUpdatedDate": "2023-01-12T20:39:00.000Z",
-        "error": null
-      },
-      "countersignSpoTelephone": null,
-      "countersignSpoExposition": "I agree with the recommendation to recall based on the evidence presented",
-      "countersignAcoExposition": "Countersigned and approved for recall",
-      "countersignAcoTelephone": null,
-      "whoCompletedPartA": {
-        "name": "Mr Jenkins",
-        "email": "jenkins@email.com",
-        "telephone": "1234567",
-        "region": "London",
-        "localDeliveryUnit": "A123",
-        "isPersonProbationPractitionerForOffender": false
-      },
-      "practitionerForPartA": {
-        "name": "Mr Jenkins 1",
-        "email": "jenkins1@email.com",
-        "telephone": "12345678",
-        "region": "London2",
-        "localDeliveryUnit": "A1234"
-      },
-      "revocationOrderRecipients": null,
-      "decisionDateTime": "2024-01-01T12:00:00",
-      "ppcsQueryEmails": null,
-      "prisonOffender": {
-        "locationDescription": "HMP Brixton - Wing A",
-        "bookingNo": "BK1234",
-        "facialImageId": null,
-        "firstName": "Joe",
-        "middleName": "Michael",
-        "lastName": "Bloggs",
-        "dateOfBirth": "1982-10-24",
-        "agencyId": "BXI",
-        "agencyDescription": "HMP Brixton",
-        "status": "ACTIVE IN",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "cro": "CRO123456",
-        "pnc": "2022/0123456A",
-        "image": null,
-        "releaseDate": null
-      },
-      "prisonApiLocationDescription": "HMP Brixton",
-      "releaseUnderECSL": false,
-      "dateOfRelease": "2022-09-15",
-      "conditionalReleaseDate": "2022-09-15",
-      "nomisIndexOffence": {
-        "selected": 123,
-        "allOptions": [
-          {
-            "consecutiveCount": null,
-            "offenderChargeId": 123,
-            "offenceCode": "A123X",
-            "offenceStatute": "A123",
-            "offenceDescription": "Assault occasioning actual bodily harm",
-            "offenceDate": "2021-06-15",
-            "sentenceDate": "2024-01-01",
-            "courtDescription": "Crown Court at Birmingham",
-            "sentenceStartDate": "2024-01-01",
-            "sentenceEndDate": "2024-01-01",
-            "sentenceSequenceExpiryDate": "2024-01-01",
-            "bookingId": 123,
-            "terms": [
-              {
-                "years": 4,
-                "months": 4,
-                "weeks": 4,
-                "days": 4,
-                "code": "IMP"
-              }
-            ],
-            "sentenceTypeDescription": "CJA03 Extended Determinate Sentence",
-            "releaseDate": "2022-09-15T09:00:00",
-            "releasingPrison": "HMP Holloway",
-            "licenceExpiryDate": "2026-09-15"
-          }
-        ]
-      },
-      "bookRecallToPpud": {
-        "decisionDateTime": "2024-01-01T12:00:00",
-        "custodyGroup": null,
-        "custodyType": "Determinate",
-        "currentEstablishment": null,
-        "releasingPrison": "HMP Holloway",
-        "changeOffenceOrAddComment": null,
-        "indexOffence": "Assault occasioning actual bodily harm",
-        "indexOffenceComment": null,
-        "ppudSentenceId": "SEN-12345",
-        "ppudIndeterminateSentenceData": null,
-        "mappaLevel": "Level 1",
-        "policeForce": "Kent Police",
-        "probationArea": "Kent",
-        "receivedDateTime": "2024-01-01T12:00:00",
-        "sentenceDate": "2024-01-01",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "firstNames": "Joe",
-        "lastName": "Bloggs",
-        "dateOfBirth": "1982-10-24",
-        "cro": null,
-        "prisonNumber": null,
-        "legislationReleasedUnder": "CJA 2003",
-        "legislationSentencedUnder": null,
-        "minute": "some text"
-      },
-      "ppudOffender": {
-        "id": "12345678",
-        "croOtherNumber": "1234",
-        "dateOfBirth": "1990-09-14",
-        "ethnicity": "White",
-        "familyName": "Bloggs",
-        "firstNames": "Joe Michael",
-        "gender": "Male",
-        "immigrationStatus": "Naturalized",
-        "establishment": "HMP Brixton",
-        "nomsId": "A1234CR",
-        "prisonerCategory": "Incarcerated",
-        "prisonNumber": "1234",
-        "sentences": [
-          {
-            "id": "1234123412341234",
-            "offenceDescription": "some description",
-            "sentenceExpiryDate": "2006-08-13",
-            "dateOfSentence": "2006-01-01",
-            "custodyType": "Extended",
-            "mappaLevel": "Level 1",
-            "licenceExpiryDate": "2006-08-14",
-            "tariffExpiryDate": "2006-08-14",
-            "offence": {
-              "indexOffence": "123",
-              "dateOfIndexOffence": "2007-08-14",
-              "indexOffenceComment": "Some offence comment"
-            },
-            "releaseDate": "2027-08-14",
-            "sentenceLength": {
-              "partYears": 1,
-              "partMonths": 1,
-              "partDays": 1
-            },
-            "sentencingCourt": "Richmond"
-          }
-        ],
-        "status": "Active",
-        "youngOffender": "No"
-      },
-      "bookingMemento": {
-        "stage": "BOOKED_ON",
-        "offenderId": "12345678",
-        "sentenceId": "SEN-12345",
-        "releaseId": "REL-67890",
-        "recallId": "REC-11111",
-        "failed": false,
-        "failedMessage": null,
-        "uploaded": [
-          "Part A",
-          "Licence"
-        ]
-      },
-      "isOver18": null,
-      "isUnder18": null,
-      "isMappaLevelAbove1": null,
-      "isSentenceUnder12Months": null,
-      "isSentence12MonthsOrOver": null,
-      "hasBeenConvictedOfSeriousOffence": null,
-      "isSentence48MonthsOrOver": null,
-      "isMappaCategory4": null,
-      "isMappaLevel2Or3": null,
-      "isRecalledOnNewChargedOffence": null,
-      "isServingFTSentenceForTerroristOffence": null,
-      "hasBeenChargedWithTerroristOrStateThreatOffence": null,
-      "isRecalledOnNewChargedOrConvictedOffence": {
-        "selected": "ONLY_CHARGED",
-        "allOptions": [
-          {
-            "value": "CHARGED_AND_CONVICTED",
-            "text": "Charged and convicted"
-          },
-          {
-            "value": "ONLY_CHARGED",
-            "text": "Only charged"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "isChargedWithOffence": true,
-      "isServingTerroristOrNationalSecurityOffence": false,
-      "isAtRiskOfInvolvedInForeignPowerThreat": true,
-      "wasReferredToParoleBoard244ZB": false,
-      "wasRepatriatedForMurder": true,
-      "isServingSOPCSentence": false,
-      "isServingDCRSentence": true,
-      "isYouthSentenceOver12Months": false,
-      "isYouthChargedWithSeriousOffence": true,
-      "userNamePartACompletedBy": "John Doe",
-      "userEmailPartACompletedBy": "John.Doe@test.com",
-      "lastPartADownloadDateTime": "2022-07-15T14:30:00",
-      "countersignSpoDateTime": "2022-07-28T11:00:00",
-      "countersignSpoName": null,
-      "acoCounterSignEmail": null,
-      "spoCounterSignEmail": null,
-      "countersignAcoName": null,
-      "countersignAcoDateTime": "2022-07-29T14:00:00",
-      "deleted": false
+        {
+          "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+          "text": "Not commit any offence."
+        },
+        {
+          "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+          "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+        },
+        {
+          "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+          "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+        },
+        {
+          "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+          "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+        },
+        {
+          "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+          "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+        },
+        {
+          "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+          "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+        },
+        {
+          "code": "88069445-08cb-4f16-915f-5a162d085c26",
+          "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+        },
+        {
+          "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+          "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+        }
+      ]
+    },
+    "additionalLicenceConditions": {
+      "selected": [
+        "d5998ca1-62a2-4409-88cd-3137d893c2a0"
+      ],
+      "allOptions": [
+        {
+          "code": "d5998ca1-62a2-4409-88cd-3137d893c2a0",
+          "text": "Not to approach or communicate with any victims of your offences without the prior approval of your supervising officer."
+        },
+        {
+          "code": "df3f08a8-4ae0-41fe-b3bc-d0be1fd2d8aa",
+          "text": "To comply with any requirements specified by your supervising officer for the purpose of ensuring that you address your [SEXUAL OFFENDING / VIOLENT OFFENDING / GAMBLING / PROLIFIC OFFENDING / OFFENDING BEHAVIOUR]."
+        },
+        {
+          "code": "0EDB6D01-46B6-408F-971C-0EBFF5FA93F0",
+          "text": "To engage with the Integrated Offender Management Team, and follow their instructions."
+        },
+        {
+          "code": "b149bc47-b279-427b-9ddc-c472fdc74ba5",
+          "text": "To attend and engage with any appointments with staff at Job Centre Plus, unless otherwise approved by your supervising officer."
+        },
+        {
+          "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+          "text": "Confine yourself to an address approved by your supervising officer between the hours of [TIME] and [TIME] daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately."
+        },
+        {
+          "code": "0f9a20f4-35c7-4c77-8af8-f200f153fa11",
+          "text": "Not to enter the area as defined by the attached map without the prior approval of your supervising officer."
+        },
+        {
+          "code": "42f71b40-84cd-446d-8647-f00bbb6c079c",
+          "text": "Not to enter [NAME / TYPE OF PREMISES / ADDRESS / ROAD] without the prior approval of your supervising officer."
+        },
+        {
+          "code": "42f71b40-84cd-446d-8647-f00bbb6c079c",
+          "text": "Not to enter [NAME / TYPE OF PREMISES / ADDRESS / ROAD] without the prior approval of your supervising officer."
+        },
+        {
+          "code": "42f71b40-84cd-446d-8647-f00bbb6c079c",
+          "text": "Not to enter [NAME / TYPE OF PREMISES / ADDRESS / ROAD] without the prior approval of your supervising officer."
+        },
+        {
+          "code": "42f71b40-84cd-446d-8647-f00bbb6c079c",
+          "text": "Not to enter [NAME / TYPE OF PREMISES / ADDRESS / ROAD] without the prior approval of your supervising officer."
+        },
+        {
+          "code": "42f71b40-84cd-446d-8647-f00bbb6c079c",
+          "text": "Not to enter [NAME / TYPE OF PREMISES / ADDRESS / ROAD] without the prior approval of your supervising officer."
+        },
+        {
+          "code": "4673ebe4-9fc0-4e48-87c9-eb17d5280867",
+          "text": "Report to staff at [THE APPROVED PREMISES WHERE YOU RESIDE / NAME OF APPROVED PREMISES] at [TIME / DAILY / OTHER], unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately."
+        },
+        {
+          "code": "322bb3f7-2ee1-46aa-ae1c-3f743efd4327",
+          "text": "Attend a location, as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process."
+        },
+        {
+          "code": "f1d2888b-be86-4732-8874-44cb867865c2",
+          "text": "Attend a location, as directed by your supervising officer, to address your dependency on, or propensity to misuse, [A CONTROLLED DRUG / ALCOHOL / SOLVENTS]."
+        }
+      ]
     }
-  ]
+  },
+  "prisonApiLocationDescription": null,
+  "isRecalledOnNewChargedOffence": false,
+  "userNameDntrLetterCompletedBy": null,
+  "wasReferredToParoleBoard244ZB": null,
+  "activeCustodialConvictionCount": null,
+  "sendSpoDeleteRationaleToDelius": false,
+  "additionalLicenceConditionsText": "",
+  "lastDntrLetterADownloadDateTime": null,
+  "hasBeenConvictedOfSeriousOffence": false,
+  "isYouthChargedWithSeriousOffence": null,
+  "spoCancelRecommendationRationale": "N/A - recommendation not cancelled",
+  "spoDeleteRecommendationRationale": "N/A - recommendation not deleted",
+  "isMainAddressWherePersonCanBeFound": {
+    "details": "Yes, the person can be found at the address provided in the licence.",
+    "selected": true
+  },
+  "isUnderIntegratedOffenderManagement": {
+    "selected": "YES",
+    "allOptions": [
+      {
+        "text": "Yes",
+        "value": "YES"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      },
+      {
+        "text": "Not applicable",
+        "value": "NOT_APPLICABLE"
+      }
+    ]
+  },
+  "fixedTermAdditionalLicenceConditions": {
+    "details": null,
+    "selected": false
+  },
+  "recommendationStartedDomainEventSent": false,
+  "indeterminateOrExtendedSentenceDetails": null,
+  "isAtRiskOfInvolvedInForeignPowerThreat": null,
+  "isServingFTSentenceForTerroristOffence": false,
+  "offenceDataFromLatestCompleteAssessment": true,
+  "isServingTerroristOrNationalSecurityOffence": null,
+  "hasBeenChargedWithTerroristOrStateThreatOffence": false
 }
