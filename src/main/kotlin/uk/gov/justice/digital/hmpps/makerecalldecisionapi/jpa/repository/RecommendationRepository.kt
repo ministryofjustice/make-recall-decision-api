@@ -29,10 +29,10 @@ interface RecommendationRepository : JpaRepository<RecommendationEntity, Long> {
   )
   fun findByCrn(@Param("crn") crn: String): List<RecommendationEntity>
 
+  // Include soft-deleted ones too for SAR report
   @Query(
     value = "SELECT t.* FROM make_recall_decision.public.recommendations t " +
       "WHERE t.data ->> 'crn' = :crn " +
-      "AND t.deleted = false " +
       "AND (data ->> 'createdDate')::timestamp >= COALESCE(:fromDate, (data ->> 'createdDate')::timestamp) " +
       "AND (data ->> 'createdDate')::timestamp <= COALESCE(:toDate, (data ->> 'createdDate')::timestamp) ",
     nativeQuery = true, // JPQL doesn't support accessing JSON fields, so we need to write a native query
