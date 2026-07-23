@@ -32,7 +32,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     val fromDate = LocalDate.of(2000, 1, 1)
     val toDate = LocalDate.of(2000, 6, 30)
 
-    given(recommendationRepository.findByCrnAndCreatedDate(crn, fromDate, toDate)).willReturn(recList)
+    given(recommendationRepository.findRecommendationsForSar(crn, fromDate, toDate)).willReturn(recList)
 
     val probationContent = subjectAccessRequestService.getProbationContentFor(crn, fromDate, toDate)
 
@@ -58,7 +58,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
 
     val responseWithTransformedLicenceConditions = recList.map { rec -> rec.data.copy(cvlLicenceConditionsBreached = buildCvlLicenceConditionsBreached(true)) }
 
-    given(recommendationRepository.findByCrnAndCreatedDate(crn, fromDate, toDate)).willReturn(recList)
+    given(recommendationRepository.findRecommendationsForSar(crn, fromDate, toDate)).willReturn(recList)
 
     val probationContent = subjectAccessRequestService.getProbationContentFor(crn, fromDate, toDate)
 
@@ -71,7 +71,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
 
   @Test
   fun `get a recommendation by CRN with null date parameters from the database`() {
-    given(recommendationRepository.findByCrnAndCreatedDate(crn, null, null)).willReturn(recList)
+    given(recommendationRepository.findRecommendationsForSar(crn, null, null)).willReturn(recList)
 
     val probationContent = subjectAccessRequestService.getProbationContentFor(crn, null, null)
 
@@ -84,7 +84,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
 
   @Test
   fun `returns null (204) when no subject access content available`() {
-    given(recommendationRepository.findByCrnAndCreatedDate(any(), any(), any())).willReturn(emptyList())
+    given(recommendationRepository.findRecommendationsForSar(any(), any(), any())).willReturn(emptyList())
 
     val result = subjectAccessRequestService.getProbationContentFor("crn", LocalDate.now(), LocalDate.now())
 
