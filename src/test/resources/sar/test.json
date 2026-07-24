@@ -1,0 +1,499 @@
+{
+  "crn": "T016716",
+  "region": "South West",
+  "status": "DRAFT",
+  "deleted": false,
+  "odmName": null,
+  "isOver18": null,
+  "createdBy": "LOUISADUDDELLNPS",
+  "isUnder18": null,
+  "sensitive": true,
+  "recallType": {
+    "selected": {
+      "value": "NO_RECALL",
+      "details": null
+    },
+    "allOptions": [
+      {
+        "text": "Standard recall",
+        "value": "STANDARD"
+      },
+      {
+        "text": "No recall - send a decision not to recall letter",
+        "value": "NO_RECALL"
+      }
+    ]
+  },
+  "createdDate": "2026-05-27T10:04:40.439Z",
+  "roshSummary": null,
+  "ppudOffender": null,
+  "custodyStatus": null,
+  "dateOfRelease": null,
+  "offencesMatch": null,
+  "sentenceGroup": "EXTENDED",
+  "spoRecallType": "NO_RECALL",
+  "bookingMemento": null,
+  "lastModifiedBy": "RACHELWEDMORE1NPS",
+  "prisonOffender": {
+    "cro": "385018/00X",
+    "pnc": "00/390645N",
+    "image": "data:image/jpeg;base64,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",
+    "gender": "Male",
+    "status": "INACTIVE OUT",
+    "agencyId": "OUT",
+    "lastName": "HUSSAIN",
+    "bookingNo": "02272C",
+    "ethnicity": "Asian/Asian British: Pakistani",
+    "firstName": "AFTAB",
+    "middleName": "",
+    "dateOfBirth": [
+      1983,
+      9,
+      18
+    ],
+    "releaseDate": [
+      2025,
+      12,
+      18
+    ],
+    "facialImageId": 3713476,
+    "agencyDescription": "Outside",
+    "locationDescription": "Outside - released from Erlestoke (HMP)"
+  },
+  "dateVloInformed": null,
+  "hasArrestIssues": null,
+  "hasBeenReviewed": null,
+  "nextAppointment": {
+    "probationPhoneNumber": "07581025936",
+    "dateTimeOfAppointment": "2026-06-02T12:00:00.000Z",
+    "howWillAppointmentHappen": {
+      "selected": "OFFICE_VISIT",
+      "allOptions": [
+        {
+          "text": "Telephone",
+          "value": "TELEPHONE"
+        },
+        {
+          "text": "Video call",
+          "value": "VIDEO_CALL"
+        },
+        {
+          "text": "Office visit",
+          "value": "OFFICE_VISIT"
+        },
+        {
+          "text": "Home visit",
+          "value": "HOME_VISIT"
+        }
+      ]
+    }
+  },
+  "offenceAnalysis": null,
+  "ppcsQueryEmails": null,
+  "previousRecalls": null,
+  "vulnerabilities": null,
+  "whatLedToRecall": null,
+  "bookRecallToPpud": null,
+  "convictionDetail": null,
+  "decisionDateTime": [
+    2026,
+    5,
+    27,
+    10,
+    0
+  ],
+  "isMappaCategory4": null,
+  "isMappaLevel2Or3": null,
+  "lastModifiedDate": "2026-05-27T16:23:53.913Z",
+  "previousReleases": null,
+  "releaseUnderECSL": null,
+  "hasContrabandRisk": null,
+  "localDeliveryUnit": "Bristol and South Gloucestershire",
+  "nomisIndexOffence": null,
+  "personOnProbation": {
+    "name": "Aftab HUSSAIN",
+    "mappa": null,
+    "gender": "Male",
+    "surname": "HUSSAIN",
+    "addresses": [
+      {
+        "town": "BRISTOL",
+        "line1": "10 LEONARD ROAD",
+        "line2": "BRISTOL CITY",
+        "postcode": "BS5 9NS",
+        "noFixedAbode": false
+      }
+    ],
+    "croNumber": "",
+    "ethnicity": "Black or Black British: Other",
+    "firstName": "Aftab",
+    "pncNumber": "2000/0390645N",
+    "nomsNumber": "A0849CA",
+    "dateOfBirth": [
+      1983,
+      9,
+      18
+    ],
+    "middleNames": "",
+    "hasBeenReviewed": false,
+    "primaryLanguage": "",
+    "ftr56MappaReviewed": null,
+    "mostRecentPrisonerNumber": "02272C"
+  },
+  "ppudRecordPresent": false,
+  "whoCompletedPartA": null,
+  "countersignAcoName": null,
+  "countersignSpoName": null,
+  "explainTheDecision": true,
+  "isExtendedSentence": null,
+  "isMappaLevelAbove1": null,
+  "localPoliceContact": null,
+  "reasonsForNoRecall": {
+    "popThoughts": "We discussed these breaches via phone on 27th May at approximately 11:45am and you said you were disappointed with the issues you've been having and agreed with me that you had been doing better at the start of licence and wanted to get back to that place.",
+    "licenceBreach": "You have had multiple tag breaches for your DAPOL tag, despite verbal warnings and a licence compliance letter previously being issued. Since your receipt of the licence compliance letter on 14th May 2026, there have been a further two tag breaches. These have both been battery breaches that have lasted approximately 24 hours, meaning you have not been monitored during this time. Given the serious of your domestic abuse offending history, monitoring your whereabouts and daily movements is considered essential for risk management. It is disappointing that you have not taken heed of our previous warnings and discussions and continued to breach, and for substantial amounts of time - details below.\r\n\r\n- Battery breach from 20/05/2026 at 10:56:46 until 21/05/2026 at 11:10:48. \r\nSo just before 11am last Wednesday until just after 11am the following day (Thursday last week).\r\n- Battery breach from 23/05/2026 at 06:56:01 until  24/05/2026  at 10:06:27.\r\nSo between just before 7am on Saturday (23rd May) until just after 10am on Sunday (24th May).",
+    "popProgressMade": "You started off this licence period really positively, with great motivation and full compliance while you were at Glogan House Approved Premises. We have discussed with you how we have had concerns that complacency may be creeping in and you are being too relaxed with your licence conditions related to your tag and exclusion zone. This needs to change if you want to remain out of prison, which we want for you. Please take note of this final warning and make positive changes to improve your compliance because you can do very well. ",
+    "noRecallRationale": "You are not being recalled at this time, however you run the risk of recall happening if you continue to have breaches like this. We want to work with you and have seen how well you can do, so we are giving you another chance to comply and show you can improve with your tag adherence. ",
+    "futureExpectations": "Going forwards, you need to ensure there are no further licence breaches. Please ensure that you keep your tag charged at all times, and continuously refresh yourself of your licence conditions and requirements as we have previously discussed."
+  },
+  "spoRecallRationale": "Mr Hussain has received multiple battery breaches  and despite being advised to ensure his tag is charged he has continued to accrue breaches therefore  a decision has been made to issue him with a further chance to comply with this requirement via a decision not to recall letter as he is complying other wise with his licence and there are no reported concerns at this stage in relation to his risks.",
+  "acoCounterSignEmail": null,
+  "currentRoshForPartA": null,
+  "indexOffenceDetails": null,
+  "responseToProbation": null,
+  "spoCounterSignEmail": null,
+  "whyConsideredRecall": {
+    "selected": "RISK_INCREASED",
+    "allOptions": [
+      {
+        "text": "Your risk is assessed as increased",
+        "value": "RISK_INCREASED"
+      },
+      {
+        "text": "Contact with your probation practitioner has broken down",
+        "value": "CONTACT_STOPPED"
+      },
+      {
+        "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down",
+        "value": "RISK_INCREASED_AND_CONTACT_STOPPED"
+      }
+    ]
+  },
+  "isChargedWithOffence": null,
+  "isServingDCRSentence": null,
+  "practitionerForPartA": null,
+  "recallConsideredList": null,
+  "createdByUserFullName": "Louisa Duddell",
+  "isServingSOPCSentence": null,
+  "managerRecallDecision": {
+    "selected": {
+      "value": "NO_RECALL",
+      "details": "Mr Hussain has received multiple battery breaches  and despite being advised to ensure his tag is charged he has continued to accrue breaches therefore  a decision has been made to issue him with a further chance to comply with this requirement via a decision not to recall letter as he is complying other wise with his licence and there are no reported concerns at this stage in relation to his risks."
+    },
+    "createdBy": "Rachel Wedmore",
+    "allOptions": null,
+    "createdDate": "2026-05-27T16:23:53.912Z",
+    "isSentToDelius": true
+  },
+  "reviewOffenderProfile": true,
+  "conditionalReleaseDate": null,
+  "considerationRationale": {
+    "createdBy": "Louisa Duddell",
+    "sensitive": false,
+    "createdDate": "27/05/2026",
+    "createdTime": "10:13"
+  },
+  "countersignAcoDateTime": null,
+  "countersignSpoDateTime": null,
+  "lastModifiedByUserName": "Rachel Wedmore",
+  "triggerLeadingToRecall": "Mr Hussain has had multiple tag breaches for his DAPOL tag, despite verbal warnings and a licence compliance letter previously being issued. Since his receipt of the licence compliance letter on 14th May 2026, there have been a further two tag breaches. These have both been battery breaches that have lasted approximately 24 hours, meaning he has not been monitored during this time. Given his serious domestic abuse offending history, monitoring his whereabouts and daily movements is considered essential for risk management. It is disappointing that he has not taken heed of our previous warnings and discussions and continued to breach, and for substantial amounts of time - details below.\r\n\r\n- Battery breach from 20/05/2026 at 10:56:46 until 21/05/2026 at 11:10:48. \r\nSo just before 11am last Wednesday until just after 11am the following day (Thursday last week).\r\n- Battery breach from 23/05/2026 at 06:56:01 until  24/05/2026  at 10:06:27.\r\nSo between just before 7am on Saturday (23rd May) until just after 10am on Sunday (24th May).\r\n ",
+  "countersignAcoTelephone": null,
+  "countersignSpoTelephone": null,
+  "isIndeterminateSentence": null,
+  "isSentenceUnder12Months": null,
+  "isThisAnEmergencyRecall": null,
+  "thoughtsLeadingToRecall": null,
+  "wasRepatriatedForMurder": null,
+  "countersignAcoExposition": null,
+  "countersignSpoExposition": null,
+  "isSentence12MonthsOrOver": null,
+  "isSentence48MonthsOrOver": null,
+  "sendSpoRationaleToDelius": true,
+  "userNamePartACompletedBy": null,
+  "alternativesToRecallTried": {
+    "selected": [
+      {
+        "value": "WARNINGS_LETTER",
+        "details": "Licence compliance letter issued during face to face appointment on 14th May 2026 for entering his exclusion zone.\r\n\r\nMultiple verbal discussions about the importance of ensuring his compliance with both tags (alcohol and DAPOL), adhering to exclusion zone and ensuring tags are charged at all times."
+      },
+      {
+        "value": "INCREASED_FREQUENCY",
+        "details": "Remained on weekly reporting."
+      },
+      {
+        "value": "REFERRAL_TO_OTHER_TEAMS",
+        "details": "Already managed within IOM DA cohort.\r\nWas in Mappa L2 but removed. "
+      },
+      {
+        "value": "REFERRAL_TO_PARTNERSHIP_AGENCIES",
+        "details": "Referred to Horizons for drug and alcohol support.\r\nReferred to Enhanced Reconnect for resettlement support."
+      },
+      {
+        "value": "REFERRAL_TO_APPROVED_PREMISES",
+        "details": "Placement completed at Glogan House previously."
+      },
+      {
+        "value": "DRUG_TESTING",
+        "details": "Already in place."
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "None",
+        "value": "NONE"
+      },
+      {
+        "text": "Warnings / licence breach letters",
+        "value": "WARNINGS_LETTER"
+      },
+      {
+        "text": "Increased frequency of reporting",
+        "value": "INCREASED_FREQUENCY"
+      },
+      {
+        "text": "Additional licence conditions",
+        "value": "EXTRA_LICENCE_CONDITIONS"
+      },
+      {
+        "text": "Referral to other teams (e.g. IOM, MAPPA, Gangs Unit)",
+        "value": "REFERRAL_TO_OTHER_TEAMS"
+      },
+      {
+        "text": "Referral to partnership agencies",
+        "value": "REFERRAL_TO_PARTNERSHIP_AGENCIES"
+      },
+      {
+        "text": "Referral to approved premises",
+        "value": "REFERRAL_TO_APPROVED_PREMISES"
+      },
+      {
+        "text": "Drug testing",
+        "value": "DRUG_TESTING"
+      },
+      {
+        "text": "Other",
+        "value": "ALTERNATIVE_TO_RECALL_OTHER"
+      }
+    ]
+  },
+  "hasVictimsInContactScheme": null,
+  "indeterminateSentenceType": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Life sentence",
+        "value": "LIFE"
+      },
+      {
+        "text": "Imprisonment for public protection (IPP)",
+        "value": "IPP"
+      },
+      {
+        "text": "Detention for public protection (DPP)",
+        "value": "DPP"
+      },
+      {
+        "text": "Detention at His Majesty’s pleasure (DHMP)",
+        "value": "DHMP"
+      }
+    ]
+  },
+  "lastPartADownloadDateTime": null,
+  "licenceConditionsBreached": null,
+  "revocationOrderRecipients": null,
+  "userEmailPartACompletedBy": null,
+  "isYouthSentenceOver12Months": null,
+  "reviewPractitionersConcerns": true,
+  "cvlLicenceConditionsBreached": {
+    "bespokeLicenceConditions": {
+      "selected": [],
+      "allOptions": []
+    },
+    "standardLicenceConditions": {
+      "selected": [
+        "9ce9d594-e346-4785-9642-c87e764bee37"
+      ],
+      "allOptions": [
+        {
+          "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+          "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+        },
+        {
+          "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+          "text": "Not commit any offence."
+        },
+        {
+          "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+          "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+        },
+        {
+          "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+          "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+        },
+        {
+          "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+          "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+        },
+        {
+          "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+          "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+        },
+        {
+          "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+          "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+        },
+        {
+          "code": "88069445-08cb-4f16-915f-5a162d085c26",
+          "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+        },
+        {
+          "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+          "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+        }
+      ]
+    },
+    "additionalLicenceConditions": {
+      "selected": [
+        "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+        "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4"
+      ],
+      "allOptions": [
+        {
+          "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+          "text": "You must reside overnight within [REGION] probation region while of no fixed abode, unless otherwise approved by your supervising officer."
+        },
+        {
+          "code": "b72fdbf2-0dc9-4e7f-81e4-c2ccb5d1bc90",
+          "text": "Attend all appointments arranged for you with a [PSYCHIATRIST / PSYCHOLOGIST / MEDICAL PRACTITIONER] unless otherwise approved by your supervising officer."
+        },
+        {
+          "code": "9ae2a336-3491-4667-aaed-dd852b09b4b9",
+          "text": "Receive home visits from a Mental Health Worker."
+        },
+        {
+          "code": "4858cd8b-bca6-4f11-b6ee-439e27216d7d",
+          "text": "Not to seek to approach or communicate with [INSERT NAME OF VICTIM AND / OR FAMILY MEMBERS] without the prior approval of your supervising officer and / or [INSERT NAME OF APPROPRIATE SOCIAL SERVICES DEPARTMENT]."
+        },
+        {
+          "code": "cc80d02b-0b62-4940-bac6-0bcd374c725e",
+          "text": "Not to contact directly or indirectly any person who is a serving or remand prisoner or detained in State custody, without the prior approval of your supervising officer."
+        },
+        {
+          "code": "d5998ca1-62a2-4409-88cd-3137d893c2a0",
+          "text": "Not to approach or communicate with any victims of your offences without the prior approval of your supervising officer."
+        },
+        {
+          "code": "df3f08a8-4ae0-41fe-b3bc-d0be1fd2d8aa",
+          "text": "To comply with any requirements specified by your supervising officer for the purpose of ensuring that you address your [SEXUAL OFFENDING / VIOLENT OFFENDING / GAMBLING / PROLIFIC OFFENDING / OFFENDING BEHAVIOUR]."
+        },
+        {
+          "code": "0EDB6D01-46B6-408F-971C-0EBFF5FA93F0",
+          "text": "To engage with the Integrated Offender Management Team, and follow their instructions."
+        },
+        {
+          "code": "625feb82-a5ab-4490-82e9-241218f775c5",
+          "text": "To comply with any requirements specified by your supervising officer to register and engage with [HOUSING / BENEFITS / EARLY HELP / CHILDREN'S SERVICES / YOUR SUPPORT NETWORKS / AN EDUCATION PROVIDER]."
+        },
+        {
+          "code": "b149bc47-b279-427b-9ddc-c472fdc74ba5",
+          "text": "To attend and engage with any appointments with staff at Job Centre Plus, unless otherwise approved by your supervising officer."
+        },
+        {
+          "code": "8e52e16e-1abf-4251-baca-2fabfcb243d0",
+          "text": "Not to own or possess more than one mobile phone or SIM card without the prior approval of your supervising officer and to provide your supervising officer with details of that mobile telephone or one you have regular use of, including the IMEI number and the SIM card that you possess."
+        },
+        {
+          "code": "2d67f68a-8adf-47a9-a68d-a6fc9f2c4556",
+          "text": "Not to delete the usage history on any [INTERNET ENABLED DEVICE / COMPUTER / MOBILE PHONE / DIGITAL CAMERA] used and to allow such items to be inspected as requested. Such inspection may include removal of the device for inspection and the installation of monitoring software."
+        },
+        {
+          "code": "2a93b784-b8cb-49ed-95e2-a0df60723cda",
+          "text": "Provide your supervising officer with details (such as make, model, colour, registration) of any vehicle you own, hire for more than a short journey or have regular use of, prior to any journey taking place."
+        },
+        {
+          "code": "db2d7e24-b130-4c7e-a1bf-6bb5f3036c02",
+          "text": "Notify your supervising officer of any developing relationships, including status changes such as engagement, marriage, pregnancies or the ending of any relationships, and disclose the details of the person you are in a relationship with."
+        },
+        {
+          "code": "c5e91330-748d-46f3-93f6-bbe5ea8324ce",
+          "text": "Notify your supervising officer of any developing personal relationships, whether intimate or not, with any person you know or believe to be resident in a household containing children under the age of 18. This includes persons known to you prior to your time in custody with whom you are renewing or developing a personal relationship with."
+        },
+        {
+          "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+          "text": "Confine yourself to an address approved by your supervising officer between the hours of [TIME] and [TIME] daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately."
+        },
+        {
+          "code": "0f9a20f4-35c7-4c77-8af8-f200f153fa11",
+          "text": "Not to enter the area as defined by the attached map without the prior approval of your supervising officer."
+        },
+        {
+          "code": "1e9a66c6-f083-4c29-b209-b625252afbe5",
+          "text": "Notify your supervising officer of any travel outside of your home county, including on public transport, prior to any such journey taking place unless otherwise specified by your supervising officer."
+        },
+        {
+          "code": "322bb3f7-2ee1-46aa-ae1c-3f743efd4327",
+          "text": "Attend a location, as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process."
+        },
+        {
+          "code": "f1d2888b-be86-4732-8874-44cb867865c2",
+          "text": "Attend a location, as directed by your supervising officer, to address your dependency on, or propensity to misuse, [A CONTROLLED DRUG / ALCOHOL / SOLVENTS]."
+        },
+        {
+          "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+          "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your [INSERT TYPES OF CONDITIONS TO BE ELECTRONICALLY MONITORED HERE] licence condition(s) unless otherwise authorised by your supervising officer."
+        },
+        {
+          "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+          "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on [INSERT END DATE], and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+        },
+        {
+          "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+          "text": "You must stay at [APPROVED ADDRESS] between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer."
+        },
+        {
+          "code": "d36a3b77-30ba-40ce-8953-83e761d3b487",
+          "text": "You must not drink any alcohol until [END DATE]. You will need to wear an electronic tag all the time so we can check this."
+        }
+      ]
+    }
+  },
+  "prisonApiLocationDescription": null,
+  "isRecalledOnNewChargedOffence": null,
+  "userNameDntrLetterCompletedBy": "Louisa Duddell",
+  "wasReferredToParoleBoard244ZB": null,
+  "activeCustodialConvictionCount": null,
+  "sendSpoDeleteRationaleToDelius": false,
+  "additionalLicenceConditionsText": "",
+  "lastDntrLetterADownloadDateTime": [
+    2026,
+    5,
+    27,
+    11,
+    6,
+    14,
+    847050149
+  ],
+  "hasBeenConvictedOfSeriousOffence": null,
+  "isYouthChargedWithSeriousOffence": null,
+  "spoCancelRecommendationRationale": null,
+  "spoDeleteRecommendationRationale": null,
+  "isMainAddressWherePersonCanBeFound": null,
+  "isUnderIntegratedOffenderManagement": null,
+  "fixedTermAdditionalLicenceConditions": null,
+  "recommendationStartedDomainEventSent": false,
+  "indeterminateOrExtendedSentenceDetails": null,
+  "isAtRiskOfInvolvedInForeignPowerThreat": null,
+  "isServingFTSentenceForTerroristOffence": null,
+  "offenceDataFromLatestCompleteAssessment": null,
+  "isServingTerroristOrNationalSecurityOffence": null,
+  "hasBeenChargedWithTerroristOrStateThreatOffence": null
+}
