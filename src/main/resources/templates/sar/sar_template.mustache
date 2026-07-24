@@ -450,15 +450,18 @@
             </table>
             <br>
             {{#additionalLicenceConditions}}
+                {{! selectedOptions are transformed by SubjectAccessRequestService.transformAdditionalLicenceConditions:
+                     mainCatCode contains the resolved title }}
                 <table class="data-table">
-                    <tr>
-                        <td class="data-column-65">Details</td>
-                        <td class="data-column-35">Note</td>
-                    </tr>
+                    <tr><td class="data-column-20">Additional licence conditions</td></tr>
+                    <tr><td>{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{#selectedOptions}}<li>{{ optionalValue mainCatCode }}</li>{{/selectedOptions}}{{^selected}}{{^selectedOptions}}No Data Held{{/selectedOptions}}{{/selected}}</td></tr>
+                </table>
+                <table class="data-table">
+                    <tr><td class="data-column-100">All options</td></tr>
                     {{#allOptions}}
                         <tr>
+                            <td>{{ optionalValue title }}</td>
                             <td>{{ optionalValue details }}</td>
-                            <td>{{ optionalValue note }}</td>
                         </tr>
                     {{/allOptions}}
                     {{^allOptions}}

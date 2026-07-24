@@ -2,8 +2,11 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.AdditionalLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.CvlLicenceConditionsBreached
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionSection
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LicenceConditionsBreached
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.sar.SubjectAccessRequestResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.RecommendationRepository
 import uk.gov.justice.hmpps.kotlin.sar.HmppsProbationSubjectAccessRequestService
@@ -37,11 +40,39 @@ class SubjectAccessRequestService(
                 cvlLicenceConditionsBreached = rec.data.cvlLicenceConditionsBreached?.let {
                   transformLicenceConditions(it)
                 },
+                licenceConditionsBreached = rec.data.licenceConditionsBreached?.let {
+                  transformAdditionalLicenceConditions(it)
+                },
               )
             },
         ),
       )
     }
+  }
+
+  // Transforms selectedOptions by resolving internal codes to human-readable title from allOptions.
+  // SelectedOption.mainCatCode is replaced with the matching title.
+  // This reuses the SelectedOption model fields to avoid changing the response type for SAR rendering.
+  fun transformAdditionalLicenceConditions(input: LicenceConditionsBreached): LicenceConditionsBreached {
+    val additional = input.additionalLicenceConditions ?: return input
+    val subCatToOption = additional.allOptions
+      ?.associateBy { it.subCatCode }
+      ?: emptyMap()
+
+    val transformedSelectedOptions = additional.selectedOptions
+      ?.map { option ->
+        val matched = subCatToOption[option.subCatCode]
+        SelectedOption(
+          mainCatCode = matched?.title ?: option.mainCatCode, // title in place of mainCatCode
+          subCatCode = option.subCatCode,
+        )
+      }
+
+    return input.copy(
+      additionalLicenceConditions = additional.copy(
+        selectedOptions = transformedSelectedOptions,
+      ),
+    )
   }
 
   fun transformLicenceConditions(input: CvlLicenceConditionsBreached): CvlLicenceConditionsBreached = input.copy(
