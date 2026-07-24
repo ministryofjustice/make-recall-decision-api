@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.time.LocalDate
@@ -124,5 +126,47 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     } else {
       sarIntegrationTestHelper.assertHtmlEquals(renderResult, sarIntegrationTestHelper.getExpectedRenderResult())
     }
+  }
+
+  @Test
+  fun `SAR report from JSON file`() {
+    val json = this::class.java.getResource("/sar/sar-api-response.json")!!.readText()
+    val recommendationModel = objectMapper.readValue(json, RecommendationModel::class.java)
+
+    repository.deleteAll()
+    repository.save(RecommendationEntity(id = 1, data = recommendationModel))
+
+    val dataResponse = sarIntegrationTestHelper.requestSarData(null, recommendationModel.crn, null, null, webTestClient)
+    val templateResponse = sarIntegrationTestHelper.requestSarTemplate(webTestClient)
+
+    val renderResult = sarIntegrationTestHelper.renderServiceReport(
+      data = dataResponse.content,
+      templateVersion = "1.0",
+      template = templateResponse,
+    )
+
+    // saves the report pdf at: build/test-generated/sar-generated-report.pdf
+    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, recommendationModel.crn)
+  }
+
+  @Test
+  fun `SAR post-FTR56 report from JSON file`() {
+    val json = this::class.java.getResource("/sar/sar-post-ftr56-api-response.json")!!.readText()
+    val recommendationModel = objectMapper.readValue(json, RecommendationModel::class.java)
+
+    repository.deleteAll()
+    repository.save(RecommendationEntity(id = 1, data = recommendationModel))
+
+    val dataResponse = sarIntegrationTestHelper.requestSarData(null, recommendationModel.crn, null, null, webTestClient)
+    val templateResponse = sarIntegrationTestHelper.requestSarTemplate(webTestClient)
+
+    val renderResult = sarIntegrationTestHelper.renderServiceReport(
+      data = dataResponse.content,
+      templateVersion = "1.0",
+      template = templateResponse,
+    )
+
+    // saves the report pdf at: build/test-generated/sar-generated-report.pdf
+    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, "post-ftr56")
   }
 }

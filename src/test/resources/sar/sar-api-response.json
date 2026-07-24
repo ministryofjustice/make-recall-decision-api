@@ -1,644 +1,672 @@
 {
-  "crn": "A12345",
-  "recommendations": [
-    {
-      "crn": "A12345",
-      "sensitive": false,
-      "ppudRecordPresent": false,
-      "recallConsideredList": [
+  "crn": "M594063",
+  "region": "South Central",
+  "status": "DRAFT",
+  "deleted": false,
+  "odmName": null,
+  "isOver18": null,
+  "createdBy": "LKJ84J",
+  "isUnder18": null,
+  "sensitive": false,
+  "recallType": {
+    "selected": {
+      "value": "STANDARD",
+      "details": null
+    },
+    "allOptions": [
+      {
+        "text": "Standard recall",
+        "value": "STANDARD"
+      },
+      {
+        "text": "No recall - send a decision not to recall letter",
+        "value": "NO_RECALL"
+      }
+    ]
+  },
+  "createdDate": "2026-05-14T14:58:23.504Z",
+  "roshSummary": {
+    "error": null,
+    "whoIsAtRisk": "1. Children - his children, including Ria Almond (current victim), children of partners, any child with whom he may have contact and possibly be within a trusted position. Victims are likely to be female children aged approximately 12.\r\nLayton Almond, Leo Page, Logan Almond\r\n\r\n2. Public - Future partners, males who Mr Almond feels have aggrieved him  or of whom he has the desire for power and control over.  Home owners.\r\n\r\n3. Known Adults - ex partners Kerry Howell,  and Georgina Masters (aka Page), and alleged further victim Emma Lucas. Potentially also his brother due to previous Police call out.  \r\n\r\n4. Staff - Police Officers who attempt to apprehend Mr Frost. Prison officers who address his behaviour with him. \r\n\r\n5. Prisoners - previous logs of Mr Frost threatening or bullying other prisoners.\r\n\r\n6. Self - previous concerns around poor mental health.\r\n",
+    "natureOfRisk": "Mr Frost is considered to present a high risk of serious harm to children and known adults, medium risk of serious harm to the public and low risk of serious harm to staff. \r\n \r\n1.\tChildren:\r\nThe nature of the risk to children is sexual harm though forced sexual intercourse and the physical harm resulting from this to the child due to lack of development. The lasting emotional and psychological harm is likely to be significant and almost impossible for the victim to recover from, particularly due to the abuse of trust of the parental figure. The victim is likely to experience distorted sexual thinking, a distrust in adult males, poor self-esteem and issues with behaviour that are potentially going to follow through to adulthood. The risk to children Is also the lasting emotional and psychological harm experienced through witnessing domestic violence between Mr Frost and the children's mother. There is the potential for physical harm should the children become caught in the crossfire of physical violence. This harm is likely to be due to his reckless behaviour, that has also been linked to substance/alcohol misuse.\r\n \r\n2.\tKnown Adult:\r\nKnown adults are at risk of physical harm through assault and aggressive behaviour, as well as criminal damage, which is inevitably going to cause emotional and psychological harm as a result of the fear and abuse of trust from a partner/family member/close friend.\r\n \r\n3.\tPublic:\r\nFuture partners are at risk of physical harm through domestic violence that involves attempted strangulation. There is also the risk of sexual harm though forced sexual intercourse. The emotional and psychological harm as a result of ongoing and repeated domestic violence victimisation will be long-lasting for the victim. Victims may suffer a distrust in intimate partners, as well as fear of future reprisals from Mr Frost - as evidenced by his previous victimisation against Ms Howell.\r\n \r\nMale members of the public are at risk of physical harm through assault and aggressive behaviour that is inevitably going to cause emotional and psychological harm, as well as physical harm. They may also be at risk of night time burglaries, evidenced by Mr Frost's history of offending.\r\n \r\n4.\tStaff:\r\nHe has previous convictions for obstructing and assaulting Police Officers. Although he has been aggressive towards staff, I am not aware of him assaulting a Probation Officer.\r\n \r\n5.\tPrisoners:\r\nThe nature of the risk is the potential physical harm and emotional harm though bullying. In custody there are records where Mr Frost threatened other prisoners with violence. The nature of the harm is both physical and emotional.\r\n \r\n5.\tSelf:\r\nHe has previously suffered depression; however, he is currently medicated for this. Moreover, his behaviour of misusing alcohol and drugs has previously affected his physical and mental health and has been a trigger to his offending behaviour. \r\n",
+    "riskImminence": null,
+    "lastUpdatedDate": "2025-09-08T14:53:29.000Z",
+    "riskOfSeriousHarm": {
+      "overallRisk": "HIGH",
+      "riskInCustody": {
+        "riskToStaff": "MEDIUM",
+        "riskToPublic": "LOW",
+        "riskToChildren": "LOW",
+        "riskToPrisoners": "LOW",
+        "riskToKnownAdult": "LOW"
+      },
+      "riskInCommunity": {
+        "riskToStaff": "LOW",
+        "riskToPublic": "HIGH",
+        "riskToChildren": "HIGH",
+        "riskToPrisoners": "",
+        "riskToKnownAdult": "MEDIUM"
+      }
+    },
+    "riskIncreaseFactors": "1. Children:\r\nThe risk to children is currently imminent on release and may happen at any point due to the unpredictability and erratic nature of Mr Frost's offending behaviour. The harm caused to his victim is inevitably going to be impossible to recover from due to the abuse of trust, serious sexual harm caused and the extent of the emotional abuse used to coerce his victim into the sexualised offending behaviour. \r\nThe risk is also likely to be greatest when he forms a further relationship where the victim, his children or other's children are present.  Children could be exposed to drugs misuse and police intervention. The police raided the address he was staying at due to drugs and his brother's activities the morning after he raped his daughter.  \r\n\r\nHe states he is motivated never to reoffend but accepts he has previously resorted to offending behaviour on release.\r\n\r\n2. Known adults:\r\nI would consider that the risk to known adults when in the community would be Medium. \r\nHe has previously demonstrated that he can cause significant harm to others when feeling aggrieved and unable to manage his emotions and temper. He has demonstrated that he will not abide by external controls put in place in order to protect these individuals and will not abide by Court Orders in place in order to address this previous behaviour, suggesting that he places little value on such interventions and will behave how he chooses in order to meet his own needs.\r\n\r\n3. Public:\r\nThe risk to partners / females could be Medium on release and may happen at any time if he seeks contact with his ex-partners, the mothers of his children or enters another relationship. \r\nMr Frost has previously demonstrated that he does not have any internal controls to prevent him from causing significant harm to another, and there is no limit to the seriousness of the offending behaviour that he is willing to use. \r\n\r\nThere is a pattern of serious domestic violence within his history, against multiple partners, that had become increasingly concerning. \r\nHe has also demonstrated that external controls were not effective in reducing the risk posed by him, and his offending escalated  when in the community. \r\n\r\nHe is not currently in a relationship.\r\n\r\nThere is no imminent risk to male members of the public as there is no recent information of serious harm against this group. The risk is likely to be greatest when under the influence of substances and when he is feeling aggrieved by another. \r\n\r\n4. Staff:\r\nMr Frost has not offended against Police Officers for some time, however as detailed above Mr Frost's behaviour had become increasingly unpredictable and volatile so I would consider that the risk would be greatest when he feels he is being challenged in a way that he feels is unacceptable. \r\nThere are also Police call out details which did not result in conviction where CS Gas had to be deployed in order to detain him in the community.  He has displayed verbally aggressive behaviour towards uniformed officers in custody on more than one occasion.\r\n\r\n5. Prisoners:\r\nAlthough Mr Frost has shown a lot of positive behaviour in recent years, it is worth noting that he has threatened and bullied other prisoners. \r\nHis  behaviour may become increasingly unpredictable and volatile so I would consider that the risk would be greatest when he feels he is being challenged in a way that he feels is unacceptable.\r\n\r\n6. Self:\r\nThe risk would be greatest to him himself if he were to continue to use substances and alcohol as a copying mechanism.\r\n",
+    "riskMitigationFactors": "In relation to all categories of those at Risk, IF Mr Frost were to maintain being free from drugs, no lapses and IF he applied himself to the skills and  learning from Kaizen he can thereby reduce/prevent further offending.\r\n\r\n1.\tChildren\r\nThe risk to children is likely to decrease if he addresses his behaviour within healthy relationships and understands appropriate behaviour with intimate partners, therefore decreasing the risk of children witnessing domestic violence. This should be addressed through work with the PP/PO to consolidate his learning from the Kaizen Programme and learning logs. \r\n\r\nThe risk is also likely to decrease with exploration of his sexual offending and identifying offence-related factors that can then seek to be addressed. Due to the denial of sexual motivations, this is likely to present as a barrier to such intervention, and therefore 'keep safe' work may be completed to managing life and relationship difficulties. It would be beneficial for Mr Frost to be referred to The Circles of Support.\r\n\r\nA reduction in alcohol and substance misuse abstention is also likely to decrease the risk. He should consider attending Alcohol and Drug support groups to ensure he maintains abstinence within the community.\r\n\r\n2.\tKnown Adults\r\nThe risk to future partners is likely to decrease should he develop an understanding of healthy relationships and use learned skills to managing conflict within his relationships without resorting to the use of violence. Mr Frost should be honest of any developing relationships. Moreover, The Community Offender Manager shall liaison with his MAPPA officer and provide any support to potential future partners.\r\n\r\nThe risk is also likely to decrease should he comply with external controls and use internal controls for self-management of his own behaviour. This was initially monitored through his Approved Premise placement, and then now the additional licence conditions, especially for the victim’s safety, such as the licence conditions of the exclusion zone of the whole of Aldershot, Farnborough, and Cove, with a condition of ‘no contact’ for the victim, her mother, stepfather, brothers, and a half-sister. \r\n\r\nThe risk to known adults is likely to decrease should Mr Frost engage with support services to address his alcohol and substance misuse, as well as developing effective temper and emotional skills when managing conflict. This should include community support around alcohol and drugs, as well as any relevant referrals made by his Community Offender Manager is there is a need for further support.\r\n\r\n3.\tPublic\r\nThe risk to public is likely to decrease should Mr Frost he engage with support services to address his alcohol and substance misuse, as well as applying/developing effective temper and emotional skills when managing conflict. This should include community support around alcohol and drugs, as well as any referrals made by his Community Offender Manger is there is a need for further support. \r\n\r\nThere is also a Sexual Offences Prevention Order. \r\n\r\n4.\tStaff\r\nThe risk to staff is likely to reduce if he addresses his temper control and aggressive tendencies. This should be addressed through work completed with the Community Offender Manager with approved toolkits. Mr Frost should continue to consolidate his learning from the Kaizen programme through learning logs.\r\n \r\n5.\tPrisoners\r\nThe risk to prisoners is likely to reduce if he addresses his temper control and aggressive tendencies, disassociating himself from any drug related/past associates. Mr Frost should continue to consolidate his learning from the Kaizen programme through learning logs.\r\n\r\n6.\tSelf\r\nThe risk will reduce if he avoids past associates and according to Mr Frost family members too. Moreover, he would have to continue to seek support around his mental health and addressing his substance/alcohol misuse. \r\n"
+  },
+  "ppudOffender": null,
+  "custodyStatus": {
+    "details": null,
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes, prison custody",
+        "value": "YES_PRISON"
+      },
+      {
+        "text": "Yes, police custody",
+        "value": "YES_POLICE"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      }
+    ]
+  },
+  "dateOfRelease": [
+    2025,
+    5,
+    8
+  ],
+  "offencesMatch": true,
+  "sentenceGroup": "EXTENDED",
+  "spoRecallType": "RECALL",
+  "bookingMemento": null,
+  "lastModifiedBy": "EPY60Y",
+  "prisonOffender": {
+    "cro": "28679/96Y",
+    "pnc": "96/12104R",
+    "image": "data:image/jpeg;base64,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",
+    "gender": "Male",
+    "status": "INACTIVE OUT",
+    "agencyId": "OUT",
+    "lastName": "ALMOND",
+    "bookingNo": "35051B",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+    "firstName": "BRETT",
+    "middleName": "ERIC",
+    "dateOfBirth": [
+      1984,
+      2,
+      26
+    ],
+    "releaseDate": [
+      2025,
+      5,
+      8
+    ],
+    "facialImageId": 3605356,
+    "agencyDescription": "Outside",
+    "locationDescription": "Outside - released from Isle Of Wight (HMP)"
+  },
+  "dateVloInformed": null,
+  "hasArrestIssues": {
+    "details": "He works from 2pm-12am at a factory so during these hours he wont be home. ",
+    "selected": true
+  },
+  "hasBeenReviewed": null,
+  "nextAppointment": null,
+  "offenceAnalysis": "It should be noted that Mr Leo Frost was previously known as Mr Brett Almond but this was subsequently changed following release and previous assessments and records might make reference to Brett Almond.  \r\n\r\nMr Frost entered a guilty plea to the offences of Rape of a female child under 13 on 10/01/2018 and Intimidation of a Witness that took place on 06/02/2018. \r\nHe received a 10 year extended sentence on 09/11/18. The victim of both offences is Mr Frost's daughter, Ria Almond, who was 12 years old at the time. \r\n\r\nWith regards to the Rape offence, the CPS identifies that a Section 8 warrant was executed at Mr Frost's brother's address where he was staying at the time. At this time, Mr Frost was wanted for Failing to Appear. He disclosed that he went on a \"bender\" before deciding to turn himself in. The victim disclosed the Rape to her friend and mother, and DNA evidence produced shows a full profile of Mr Frost in the victim's vagina. The victim freely recalls Mr Frost helped her remove her clothing, placed her legs around his waist and squeezed her bottom. He sat on the bed and stated that they were both going to die. Mr Frost put his penis inside the victim's vagina whilst saying that he had to do it otherwise he would get shot and 'they' would kidnap the victim. Mr Frost had the victim round his hips whilst he was in a standing position and would not let go of his victim. He said 'I'm about to come', went off to the toilet and told the victim not to tell anyone about what happened. The emotional and psychological impact on the victim is highly significant within this offence, and she will also have suffered physical harm from forced penetration that her body may not have been ready for. At the start of his sentence, Mr Frost states that he accepts that the offence took place as does not believe that his daughter would have any reason to lie. However he maintains that he has no recollection of the assault against his daughter on that night, any particular conversations, or the lead up to the offence taking place. He states that this is due to his intoxicated state.\r\n\r\nWith regards to the Intimidation offence, the CPS papers detail that Mr Frost was clearly informed not to contact the aggrieved within the investigation, and any such contact would be considered as witness intimidation. Following this Ms Almond advised Police of persistent contact from her Father which subsequent phone examination supported. The victim details these calls as including comments from Mr Frost that if he ended up on the sex offender register, he would get someone to shoot him. She also reported that Mr Frost told the victim that he loved her, offered to buy her clothes and asked her if she wanted him to go to prison. Clearly the nature of these calls are inappropriate given the circumstances of the investigation that was ongoing at that time, as well as being a clear breach of conditions placed upon him. At the start of the sentence Mr Frost maintains that this was not the nature of the calls and that the conversations they had were no different to their contact prior to, as he calls it, the 'incident'. He maintains that he was not told not to contact her and the one time she phoned him in tears thinking about it, he told her not to talk about it and to put it behind her and forget that it happened. I assess that this thought process evidences significant thinking deficits with regards to the well being of his daughter.\r\n",
+  "ppcsQueryEmails": [
+    "SCPS.piow.pdu@justice.gov.uk",
+    "Rosey.church@justice.gov.uk.cjsm.net"
+  ],
+  "previousRecalls": null,
+  "vulnerabilities": {
+    "selected": [
+      {
+        "value": "DRUG_OR_ALCOHOL_USE",
+        "details": " Mr Frost has not been reported under the influence of drugs in recent months but He was under the influence of drugs and alcohol at the time of the index offence of Rape.  There had been numerous breaches of his alcohol tag during his order , and although now complete , he received warnings for this. Mr Frost states that when he consumes alcohol he will consume roughly 5 drinks  but i cannot confirm or deny if this is accurate. The information from Police detail that at the majority of call outs, he had been under the influence of alcohol. "
+      },
+      {
+        "value": "MENTAL_HEALTH_CONCERNS",
+        "details": "He  has not previously raised significant concerns with regards to his mental health. He states that he is currently on medication for depression.He has described his behaviour as 'self-destructive' by going on a binge prior to the rape of his daughter that further suggests his difficulties coping with his life at the time. Within the CPS Papers, it is detailed that he told his daughter during the phone contacts that he would rather die then be on the sex offender register. He also stated that he would try to get someone to shoot him. I assess that this recall will install some negative mental health concerns surrounding his return back to prison which will require close monitoring."
+      },
+      {
+        "value": "DOMESTIC_ABUSE",
+        "details": "Police information details several call outs to his mother's address for which he was not convicted. These behaviours include throwing beer in her face, punching her and refusing to leave her address. He attempted to force entry into her neighbour’s address when she was able to get away from him. CS gas was deployed on Police arrival due to his non-compliance.\r\n\r\nHe was previously in a relationship with Kerry Howell for approximately 14 years. Records show that this was a very volatile relationship and Mr Frost has several offences against Ms Howell including 5 x battery offences, 2 x harassment and 2 x breach of a Restraining Order. Police call out information also evidences that there were additional allegations which did not result in conviction. The range of behaviours detailed include pulling her hair, dragging her across the floor, and refusing to leave her address. There is also information stating that he was heavily in drink whilst caring for his three-year-old daughter (at the time, the current victim) and refused to return her to her mother. In 2010 it was alleged that he made unwanted sexual advances towards Ms Howell and attempted to force her into these until she was able to fight him off and contact Police. In 2011-2013 he persistently breached a Restraining Order which was in place by attending at Ms Howell’s address and being verbally abusive. \r\n\r\nHe has three children with Ms Howell; Ria Almond (31/01/2005), Logan Almond (19/12/2008) and Layton Almond (20/04/2011). Children's Services were previously involved and the children were subject to a CP plan in 2013 under the category of emotional abuse as a result of witnessing domestic violence between him and their mother. He was having contact with his children every other weekend and this was arranged with Kerry. CSD are aware of this further offence and will require contacting IF there is any hint of any contact happening.\r\n\r\nHe had a further relationship following this with Ms Georgina Masters (aka Page) who he was in a relationship with at the time of the index offence. They had a child together, He advises that this relationship lasted for two years. His assault conviction dated 21/04/17 was against this partner which further evidences a pattern of domestic violence. On the night of the offence, he states that he had been in drink and received a call from Ms Masters who was with another man. He states that he felt it \"took the piss\" and that the male was also making threats against his child. The victim sustained numerous physical injuries from being kicked, punched and dragged over a period of 35 minutes.\r\n\r\nHe has  described a previously close relationship with his eldest daughter, the victim of his sexual offending, describing her as his 'best friend'.\r\n\r\nHe states he has no contact with Ms Howell or Ms Masters, or any of his children. He is aware any child contact with require to go through the Family court. "
+      },
+      {
+        "value": "ADULT_OR_CHILD_SAFEGUARDING_CONCERNS",
+        "details": "INDEX OFFENCE AGAINST DAUGHTER - Rape of a female child under 13 by a male\r\nRisk to children \r\nhis children, including Ria Almond (current victim), children of partners, any child with whom he may have contact and possibly be within a trusted position. Victims are likely to be female children aged approximately 12. Layton Almond, Leo Page, Logan Almond\r\n\r\nThe nature of the risk to children is sexual harm though forced sexual intercourse and the physical harm resulting from this to the child due to lack of development. The lasting emotional and psychological harm is likely to be significant and almost impossible for the victim to recover from, particularly due to the abuse of trust of the parental figure. The victim is likely to experience distorted sexual thinking, a distrust in adult males, poor self-esteem and issues with behaviour that are potentially going to follow through to adulthood. The risk to children Is also the lasting emotional and psychological harm experienced through witnessing domestic violence between Mr Frost and the children's mother. There is the potential for physical harm should the children become caught in the crossfire of physical violence. This harm is likely to be due to his reckless behaviour, that has also been linked to substance/alcohol misuse"
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "At risk of suicide or self-harm",
+        "value": "RISK_OF_SUICIDE_OR_SELF_HARM"
+      },
+      {
+        "text": "Drug or alcohol abuse",
+        "value": "DRUG_OR_ALCOHOL_USE"
+      },
+      {
+        "text": "Mental health concerns",
+        "value": "MENTAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Medication taken, including compliance with medication",
+        "value": "MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION"
+      },
+      {
+        "text": "Physical health concerns",
+        "value": "PHYSICAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Learning difficulties",
+        "value": "LEARNING_DIFFICULTIES"
+      },
+      {
+        "text": "Physical disabilities",
+        "value": "PHYSICAL_DISABILITIES"
+      },
+      {
+        "text": "Domestic abuse",
+        "value": "DOMESTIC_ABUSE"
+      },
+      {
+        "text": "Adult or child safeguarding concerns",
+        "value": "ADULT_OR_CHILD_SAFEGUARDING_CONCERNS"
+      },
+      {
+        "text": "Being at risk of serious harm from others",
+        "value": "BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS"
+      },
+      {
+        "text": "Being bullied by others",
+        "value": "BEING_BULLIED_BY_OTHERS"
+      },
+      {
+        "text": "Bullying others",
+        "value": "BULLYING_OTHERS"
+      },
+      {
+        "text": "Relationship breakdown",
+        "value": "RELATIONSHIP_BREAKDOWN"
+      },
+      {
+        "text": "Bereavement issues",
+        "value": "BEREAVEMENT_ISSUES"
+      },
+      {
+        "text": "Cultural or language differences",
+        "value": "CULTURAL_OR_LANGUAGE_DIFFERENCES"
+      },
+      {
+        "text": "No concerns or do not know",
+        "value": "NONE_OR_NOT_KNOWN"
+      }
+    ]
+  },
+  "whatLedToRecall": "On 13.05.26 Mr Frost was arrested as a suspect in relation to a high risk domestic abuse investigation involving allegations of non-fatal strangulation, against a vulnerable women in supported accommodation. The allegations also included an assault, controlling behaviour and serious threats of harm and follow a report to the Police on 08.08.26.   It has been confirmed that following his arrest the matters have been discontinued but he is due to be issued a DVPN on 15.05.26. Mr Frost has a condition to disclose any developing intimate relationships and as such has failed to comply with this condition and it of concern that this has only come to light as a result of his arrest.  In exploring this with Mr Frost on 14.05.26 he has reported that he has known the individual for a short time and following one sexual encounter made the decision not to pursue a relationship, although he has reported that he has maintained contact with the individual. Mr Frost reports that the sexual encounter occurred when both he and the individual were under the influence of alcohol. By his own admission the individual in question is vulnerable as a result of substance use issues, mental health and potential sexual exploitation.  Mr Frost expressed the view that as he was only intimate with the individual on one occasion he did not think he needed to make Probation aware of this.       \r\n\r\nMr  Frost’s recent behaviour raises significant concern regarding the risk of sexual and violent offending. He engaged in sexual contact with a highly vulnerable, intoxicated woman without disclosure to probation, demonstrating poor judgement around consent, safeguarding, and boundaries. The current allegations describe coercive and violent behaviour, including non‑fatal strangulation, physical assault, and threats of serious harm, occurring within a short association.\r\n\r\nThis pattern is concerning when viewed alongside previous domestic abuse callouts linked to Mr Frost’s earlier offending, which similarly involved conflict within intimate or close relationships and the use or threat of violence. The recurrence of allegations involving vulnerable women, combined with minimisation, non‑disclosure, alcohol‑related poor judgement, and difficulty managing intimate relationships, indicates a continuing risk dynamic.\r\n\r\nTaken together, Mr Frost’s behaviour demonstrates a pattern of escalating risk in interpersonal contexts that is likely to give rise to further sexual or violent offending if not effectively contained and managed or risks may become present to known women where safeguarding measures cannot be implemented, these measures include areas such as unknown children as highlighted in the fact that Mr Frost is an RSO. Failing to disclose a relationship to probation prevents the service from being able to implement effective safeguarding measures to prevent domestic violence/abuse from taking place towards unknown females. It is clear that Mr Frost has disregarded his Licence in the act of non disclosure , leading to risk increase. It is assessed that any immediate changes to his risk management would not adequately safeguard the alleged victim and the wider public.    \r\n",
+  "bookRecallToPpud": null,
+  "convictionDetail": {
+    "extendedTerm": "2 Years",
+    "custodialTerm": "10 Years",
+    "dateOfSentence": [
+      2018,
+      11,
+      5
+    ],
+    "hasBeenReviewed": true,
+    "lengthOfSentence": 10,
+    "licenceExpiryDate": [
+      2030,
+      2,
+      25
+    ],
+    "sentenceExpiryDate": [
+      2030,
+      2,
+      25
+    ],
+    "sentenceDescription": "Extended Determinate Sentence",
+    "sentenceSecondLength": 2,
+    "dateOfOriginalOffence": [
+      2018,
+      1,
+      10
+    ],
+    "lengthOfSentenceUnits": "Years",
+    "indexOffenceDescription": "Rape of a female child under 13 by a male (Sexual Offences Act 2003) - 01916",
+    "sentenceSecondLengthUnits": "Years"
+  },
+  "decisionDateTime": [
+    2026,
+    5,
+    14,
+    14,
+    40
+  ],
+  "isMappaCategory4": false,
+  "isMappaLevel2Or3": false,
+  "lastModifiedDate": "2026-05-15T12:01:33.932Z",
+  "previousReleases": {
+    "lastReleaseDate": "2025-05-08",
+    "previousReleaseDates": null,
+    "hasBeenReleasedPreviously": false,
+    "lastReleasingPrisonOrCustodialEstablishment": "Isle of Wight (HMP)"
+  },
+  "releaseUnderECSL": null,
+  "hasContrabandRisk": {
+    "details": null,
+    "selected": false
+  },
+  "localDeliveryUnit": "Portsmouth and IoW",
+  "nomisIndexOffence": null,
+  "personOnProbation": {
+    "name": "Leo Frost",
+    "mappa": {
+      "error": null,
+      "level": 1,
+      "category": 1,
+      "hasBeenReviewed": true,
+      "lastUpdatedDate": "2024-03-04"
+    },
+    "gender": "Male",
+    "surname": "Frost",
+    "addresses": [
+      {
+        "town": "Southsea",
+        "line1": "Flat 1 22 Beach Road",
+        "line2": "",
+        "postcode": "PO5 2JH",
+        "noFixedAbode": false
+      }
+    ],
+    "croNumber": null,
+    "ethnicity": "White: British/English/Welsh/Scottish/Northern Irish",
+    "firstName": "Leo",
+    "pncNumber": "1996/0012104R",
+    "nomsNumber": "A6145CR",
+    "dateOfBirth": [
+      1984,
+      2,
+      26
+    ],
+    "middleNames": "J",
+    "hasBeenReviewed": true,
+    "primaryLanguage": "English",
+    "ftr56MappaReviewed": null,
+    "mostRecentPrisonerNumber": "35051B"
+  },
+  "ppudRecordPresent": false,
+  "whoCompletedPartA": {
+    "name": "Rosey church",
+    "email": "rosey.church@justice.gov.uk",
+    "region": "N59",
+    "telephone": "07754449322",
+    "localDeliveryUnit": "Portsmouth ",
+    "isPersonProbationPractitionerForOffender": true
+  },
+  "countersignAcoName": null,
+  "countersignSpoName": null,
+  "explainTheDecision": true,
+  "isExtendedSentence": null,
+  "isMappaLevelAbove1": null,
+  "localPoliceContact": {
+    "faxNumber": null,
+    "contactName": "Hampshire police ",
+    "phoneNumber": null,
+    "emailAddress": "force.control@hampshire.pnn.police.uk"
+  },
+  "reasonsForNoRecall": null,
+  "spoRecallRationale": "It has been confirmed that Mr Frost has breached his Licence condition by failing to disclose a relationship and this only came to Probation attention as a result of his arrest for a number of serious domestic abuse allegations including strangulation, assault and serious threats. Mr Frosts account of the circumstances of the relationship and his justification for failing to make Probation aware are both concerning and unsatisfactory.  While these matters have been discontinued it is important to note that Mr Frost has a history of domestic abuse, which involves strangulation, sexual entitlement and significant violence. The alleged victim of these discontinued matters has been identified as vulnerable which to some extent mirrors the power differentials in the index offence.  It is viewed that immediate amendments to his risk management would not be sufficient to fully manage risk to the individual and the wider public.        ",
+  "acoCounterSignEmail": null,
+  "currentRoshForPartA": {
+    "riskToStaff": "LOW",
+    "riskToPublic": "HIGH",
+    "riskToChildren": "HIGH",
+    "riskToPrisoners": "LOW",
+    "riskToKnownAdult": "MEDIUM"
+  },
+  "indexOffenceDetails": "Mr Almond entered a guilty plea to the offences of Rape of a female child under 13 on 10/01/2018 and Intimidation of a Witness that took place on 06/02/2018. \r\nHe received a 10 year extended sentence on 09/11/18. The victim of both offences is Mr Almond's daughter, Ria Almond, who was 12 years old at the time. \r\n\r\nWith regards to the Rape offence, the CPS identifies that a Section 8 warrant was executed at Mr Almond's brother's address where he was staying at the time. At this time, Mr Almond was wanted for Failing to Appear. He disclosed that he went on a \"bender\" before deciding to turn himself in. The victim disclosed the Rape to her friend and mother, and DNA evidence produced shows a full profile of Mr Almond in the victim's vagina. The victim freely recalls Mr Almond helped her remove her clothing, placed her legs around his waist and squeezed her bottom. He sat on the bed and stated that they were both going to die. Mr Almond put his penis inside the victim's vagina whilst saying that he had to do it otherwise he would get shot and 'they' would kidnap the victim. Mr Almond had the victim round his hips whilst he was in a standing position and would not let go of his victim. He said 'I'm about to come', went off to the toilet and told the victim not to tell anyone about what happened. The emotional and psychological impact on the victim is highly significant within this offence, and she will also have suffered physical harm from forced penetration that her body may not have been ready for. At the start of his sentence, Mr Almond states that he accepts that the offence took place as does not believe that his daughter would have any reason to lie. However he maintains that he has no recollection of the relationship with his daughter on that night, any particular conversations, or the lead up to the offence taking place. He states that this is due to his intoxicated state.\r\n\r\nWith regards to the Intimidation offence, the CPS papers detail that Mr Almond was clearly informed not to contact the aggrieved within the investigation, and any such contact would be considered as witness intimidation. Following this Ms Almond advised Police of persistent contact from her Father which subsequent phone examination supported. The victim details these calls as including comments from Mr Almond that if he ended up on the sex offender register, he would get someone to shoot him. She also reported that Mr Almond told the victim that he loved her, offered to buy her clothes and asked her if she wanted him to go to prison. Clearly the nature of these calls are inappropriate given the circumstances of the investigation that was ongoing at that time, as well as being a clear breach of conditions placed upon him. At the start of the sentence Mr Almond maintains that this was not the nature of the calls and that the conversations they had were no different to their contact prior to, as he calls it, the 'incident'. He maintains that he was not told not to contact her and the one time she phoned him in tears thinking about it, he told her not to talk about it and to put it behind her and forget that it happened. I assess that this thought process evidences significant thinking deficits with regards to the well being of his daughter.\r\n",
+  "responseToProbation": null,
+  "spoCounterSignEmail": null,
+  "whyConsideredRecall": null,
+  "isChargedWithOffence": null,
+  "isServingDCRSentence": null,
+  "practitionerForPartA": null,
+  "recallConsideredList": null,
+  "createdByUserFullName": "Rosey Church",
+  "isServingSOPCSentence": null,
+  "managerRecallDecision": {
+    "selected": {
+      "value": "RECALL",
+      "details": "It has been confirmed that Mr Frost has breached his Licence condition by failing to disclose a relationship and this only came to Probation attention as a result of his arrest for a number of serious domestic abuse allegations including strangulation, assault and serious threats. Mr Frosts account of the circumstances of the relationship and his justification for failing to make Probation aware are both concerning and unsatisfactory.  While these matters have been discontinued it is important to note that Mr Frost has a history of domestic abuse, which involves strangulation, sexual entitlement and significant violence. The alleged victim of these discontinued matters has been identified as vulnerable which to some extent mirrors the power differentials in the index offence.  It is viewed that immediate amendments to his risk management would not be sufficient to fully manage risk to the individual and the wider public.        "
+    },
+    "createdBy": "Dennis Barnard",
+    "allOptions": null,
+    "createdDate": "2026-05-15T09:44:41.431Z",
+    "isSentToDelius": true
+  },
+  "reviewOffenderProfile": true,
+  "conditionalReleaseDate": null,
+  "considerationRationale": {
+    "createdBy": "Rosey Church",
+    "sensitive": true,
+    "createdDate": "14/05/2026",
+    "createdTime": "15:10"
+  },
+  "countersignAcoDateTime": null,
+  "countersignSpoDateTime": null,
+  "lastModifiedByUserName": "Hayley Berington",
+  "triggerLeadingToRecall": "Recall has been considered following police notification on 08 May 2026 that Leo Frost was a suspect in a high-risk domestic abuse investigation involving allegations of non-fatal strangulation against a vulnerable female in supported accommodation. The allegations include a pattern of controlling and violent behaviour, alongside threats to kill and cause serious harm.\r\nThere are significant safeguarding concerns due to the victim’s vulnerability, intoxication, and suspected exploitation. Leo failed to disclose any contact or sexual relationship with this individual, contrary to licence expectations, limiting probation’s ability to assess and manage risk.\r\nAlthough the police have taken no further action, a Domestic Violence Protection Notice has been issued, reflecting ongoing risk concerns. Leo’s account minimises his involvement and is inconsistent with information from the victim and third parties.\r\nHis engagement in sexual contact with a vulnerable individual whilst intoxicated, combined with poor judgement and non-disclosure which has lead to a breach of Licence condition, raises serious concerns about his ability to manage risk in the community. Taken together, the seriousness of the allegations, safeguarding issues, and non-compliance with licence expectations indicate that he may no longer be safely managed in the community, leading to consideration of recall.",
+  "countersignAcoTelephone": "",
+  "countersignSpoTelephone": "07526987782",
+  "isIndeterminateSentence": null,
+  "isSentenceUnder12Months": null,
+  "isThisAnEmergencyRecall": true,
+  "thoughtsLeadingToRecall": null,
+  "wasRepatriatedForMurder": null,
+  "countersignAcoExposition": "As stated throughout the report, Mr Frost has breached his Licence condition by failing to disclose a relationship.  This condition is in place to manage the risks associated with not only child safeguarding but those with whom Mr Frost may enter a relationship.  This condition has been made clear to Mr Frost and yet he has not been open and transparent in regards to this.   Recall is endorsed. ",
+  "countersignSpoExposition": "It has been confirmed that Mr Frost has breached his Licence condition by failing to disclose a relationship and this only came to Probation attention as a result of his arrest for a number of serious domestic abuse allegations including strangulation, assault and serious threats. Mr Frosts account of the circumstances of the relationship and his justification for failing to make Probation aware are both concerning and unsatisfactory.  While these matters have been discontinued it is important to note that Mr Frost has a history of domestic abuse, which involves strangulation, sexual entitlement and significant violence. The alleged victim of these discontinued matters has been identified as vulnerable which to some extent mirrors the power differentials in the index offence.  It is viewed that immediate amendments to his risk management would not be sufficient to fully manage risk to the individual and the wider public.  ",
+  "isSentence12MonthsOrOver": null,
+  "isSentence48MonthsOrOver": null,
+  "sendSpoRationaleToDelius": true,
+  "userNamePartACompletedBy": null,
+  "alternativesToRecallTried": {
+    "selected": [
+      {
+        "value": "ALTERNATIVE_TO_RECALL_OTHER",
+        "details": "Mr Frost has had numerous licence compliance warnings/ letters throughout his order. This has been discussed with him on ability to be able to manage his licence and follow conditions / regulations put in place but there is evidence of continued disregard for these conditions that are in place. Mr Frosts risk was also raised from MED to HIGH some time ago due to issues with compliance of alcohol tag.  "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "None",
+        "value": "NONE"
+      },
+      {
+        "text": "Warnings / licence breach letters",
+        "value": "WARNINGS_LETTER"
+      },
+      {
+        "text": "Increased frequency of reporting",
+        "value": "INCREASED_FREQUENCY"
+      },
+      {
+        "text": "Additional licence conditions",
+        "value": "EXTRA_LICENCE_CONDITIONS"
+      },
+      {
+        "text": "Referral to other teams (e.g. IOM, MAPPA, Gangs Unit)",
+        "value": "REFERRAL_TO_OTHER_TEAMS"
+      },
+      {
+        "text": "Referral to partnership agencies",
+        "value": "REFERRAL_TO_PARTNERSHIP_AGENCIES"
+      },
+      {
+        "text": "Referral to approved premises",
+        "value": "REFERRAL_TO_APPROVED_PREMISES"
+      },
+      {
+        "text": "Drug testing",
+        "value": "DRUG_TESTING"
+      },
+      {
+        "text": "Other",
+        "value": "ALTERNATIVE_TO_RECALL_OTHER"
+      }
+    ]
+  },
+  "hasVictimsInContactScheme": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes",
+        "value": "YES"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      },
+      {
+        "text": "Not applicable",
+        "value": "NOT_APPLICABLE"
+      }
+    ]
+  },
+  "indeterminateSentenceType": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Life sentence",
+        "value": "LIFE"
+      },
+      {
+        "text": "Imprisonment for public protection (IPP)",
+        "value": "IPP"
+      },
+      {
+        "text": "Detention for public protection (DPP)",
+        "value": "DPP"
+      },
+      {
+        "text": "Detention at His Majesty’s pleasure (DHMP)",
+        "value": "DHMP"
+      }
+    ]
+  },
+  "lastPartADownloadDateTime": null,
+  "licenceConditionsBreached": {
+    "standardLicenceConditions": {
+      "selected": [
+        "GOOD_BEHAVIOUR"
+      ],
+      "allOptions": [
         {
-          "id": 1,
-          "userId": "bill",
-          "createdDate": "2022-07-26T09:48:27.443Z",
-          "userName": "Bill",
-          "recallConsideredDetail": "I have concerns about their behaviour"
+          "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period",
+          "value": "GOOD_BEHAVIOUR"
+        },
+        {
+          "text": "Not commit any offence",
+          "value": "NO_OFFENCE"
+        },
+        {
+          "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer",
+          "value": "KEEP_IN_TOUCH"
+        },
+        {
+          "text": "Receive visits from the supervising officer in accordance with instructions given by the supervising officer",
+          "value": "SUPERVISING_OFFICER_VISIT"
+        },
+        {
+          "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address",
+          "value": "ADDRESS_APPROVED"
+        },
+        {
+          "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work",
+          "value": "NO_WORK_UNDERTAKEN"
+        },
+        {
+          "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of your supervising officer or for the purposes of immigration deportation or removal",
+          "value": "NO_TRAVEL_OUTSIDE_UK"
+        },
+        {
+          "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence",
+          "value": "NAME_CHANGE"
+        },
+        {
+          "text": "Tell your supervising officer if you change or add any contact details, including phone number or email",
+          "value": "CONTACT_DETAILS"
+        }
+      ]
+    },
+    "additionalLicenceConditions": {
+      "selected": null,
+      "allOptions": [
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nConfine yourself to Grange Approved Premises, 145 Stakes Road, Purbrook, Hampshire, \nPO7 5PL between the hours of 20.00 and 07.00 daily unless otherwise authorised by the\nsupervising officer. This condition will be reviewed by the supervising officer on a weekly \nbasis and may be amended or removed if it is felt that the level of risk that you present has \nreduced appropriately",
+          "title": "Curfew Arrangement",
+          "details": "Confine yourself to an address approved by your  supervising officer between the hours of [TIME] and [TIME]  daily unless otherwise authorised by your supervising officer.  This condition will be reviewed by your supervising officer on a  [WEEKLY / MONTHLY / ETC] basis and may be amended or  removed if it is felt that the level of risk that you present has  reduced appropriately.",
+          "subCatCode": "NST25",
+          "mainCatCode": "NLC7"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNotify the supervising officer of any developing relationships, including status changes such \nas engagement, marriage, pregnancies or the ending of any relationships, and disclose the \ndetails of the person you are in a relationship with",
+          "title": "Disclosure of information",
+          "details": "Notify your supervising officer of any developing personal relationships, whether intimate or not, with any person you know or believe to be resident in a household containing children under the age of 18. This includes persons known to you prior to your time in custody with whom you are renewing or developing a personal relationship with.",
+          "subCatCode": "NST23",
+          "mainCatCode": "NLC6"
+        },
+        {
+          "note": null,
+          "title": "Disclosure of information",
+          "details": "Notify your supervising officer of any developing relationships, including status changes such as engagement, marriage, pregnancies or the ending of any relationships, and disclose the details of the person you are in a relationship with.",
+          "subCatCode": "NST56",
+          "mainCatCode": "NLC6"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nAttend a location as required by the supervising officer, to give a sample of oral fluid / urine \nin order to test whether you have any specified Class A and specified Class B drugs in your \nbody, for the purpose of ensuring that you are complying with the condition of your licence \nrequiring you to be of good behaviour. Do not take any action that could hamper or frustrate \nthe drug testing process",
+          "title": "Drug, Alcohol and Solvent Abuse",
+          "details": "Attend a location as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process.",
+          "subCatCode": "NST42",
+          "mainCatCode": "NLC16"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNot enter the area of Aldershot, Farnborough or Cove, as defined by the attached map, \nwithout prior approval of the supervising officer;",
+          "title": "Freedom of movement ",
+          "details": "Not to enter [NAME/TYPE OF PREMISES / ADDRESS /ROAD] without the prior approval of your supervising officer.",
+          "subCatCode": "X02",
+          "mainCatCode": "NLC8"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNot have unsupervised contact with ANY FEMALE children under the age of 18 without the \nprior approval of the supervising officer except where that contact is inadvertent and not \nreasonably avoidable in the course of lawful daily life;",
+          "title": "Making or maintaining contact with a person",
+          "details": "Not to have unsupervised contact with  [ANY / ANY FEMALE / ANY MALE] children under the age of [INSERT AGE] without the prior approval of your supervising officer and / or [INSERT NAME OF APPROPRIATE SOCIAL SERVICES DEPARTMENT] except where that contact is inadvertent and not reasonably avoidable in the course of lawful daily life.",
+          "subCatCode": "NST7",
+          "mainCatCode": "NLC3"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNot contact or associate with a known sex offender, other than when compelled by \nattendance at a Treatment Programme or when residing at Approved Premises, without the \nprior approval of the supervising officer;",
+          "title": "Making or maintaining contact with a person",
+          "details": "Not to contact or associate with a known sex offender /person subject to a serious Crime Prevention Order, other than when compelled by attendance at a Programme or when residing at Approved Premises without the prior approval of your supervising officer.",
+          "subCatCode": "NST9",
+          "mainCatCode": "NLC3"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNot approach or communicate with Ria Almond or family without the prior approval of the\nsupervising officer",
+          "title": "Making or maintaining contact with a person",
+          "details": "Not to approach or communicate with any victims of your offences without the prior approval of your supervising officer.",
+          "subCatCode": "NST64",
+          "mainCatCode": "NLC3"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nComply with any requirements specified by the supervising officer for the purpose of \nensuring that you address your alcohol, drug and sexual offending behaviour problems;",
+          "title": "Participate or co-op with Programme or Activities",
+          "details": "To comply with any requirements specified by your supervising officer for the purpose of ensuring that you address your [SEXUAL OFFENDING / VIOLENT OFFENDING / GAMBLING / PROLIFIC OFFENDING / OFFENDING BEHAVIOUR]. EMOTIONAL WELLBEING / OFFENDING BEHAVIOUR]",
+          "subCatCode": "NSTT11",
+          "mainCatCode": "NLC4"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nComply with any instruction given by the supervising officer requiring you to attend \npolygraph testing. To participate in polygraph sessions and examinations as instructed by \nor under the authority of the supervising officer and to comply with any instruction given to \nyou during a polygraph session by the person conducting the polygraph;",
+          "title": "Polygraph Condition",
+          "details": "To comply with any instruction given by your supervising officer requiring you to attend polygraph testing. To participate in polygraph sessions and examinations as instructed by or under the authority of your supervising officer and to comply with any instruction given to you during a polygraph session by the person conducting the polygraph.",
+          "subCatCode": "NST32",
+          "mainCatCode": "NLC11"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nStay at Grange Approved Premises, 145 Stakes Road, Purbrook, Hampshire, PO7 5PL\nbetween 5pm and midnight every day until your electronic tag is installed unless otherwise \nauthorised by the supervising officer",
+          "title": "Residence at a specific place",
+          "details": "Bespoke Condition (See Notes)",
+          "subCatCode": "NSTT9",
+          "mainCatCode": "NLC1"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nNot reside (not even to stay for one night) in the same household as ANY FEMALE child \nunder the age of 18 without the prior approval of the supervising officer",
+          "title": "Restriction of residency.",
+          "details": "Not to reside (not even to stay for one night) in the same household as ANY/ANY FEMALE/ ANY MALE child under the age of  [AGE] without the prior approval of your supervising officer",
+          "subCatCode": "NST1",
+          "mainCatCode": "NLC2"
+        },
+        {
+          "note": null,
+          "title": "Supervision in the community",
+          "details": "Bespoke Condition (See Notes)",
+          "subCatCode": "NSTT9",
+          "mainCatCode": "NLC9"
+        },
+        {
+          "note": "Comment added by Nazia Shamim on 08/05/2025 at 12:35\nRefrain from the consumption of alcohol for a period of nine months from date of release. At \nthe end of the period the supervising officer may consider it appropriate to make an \napplication to extend the period;",
+          "title": "Supervision in the community",
+          "details": "Bespoke Condition (See Notes)",
+          "subCatCode": "NSTT9",
+          "mainCatCode": "NLC9"
         }
       ],
-      "recallType": {
-        "selected": {
-          "value": "FIXED_TERM",
-          "details": "My details"
-        },
-        "allOptions": [
-          {
-            "value": "NO_RECALL",
-            "text": "No recall"
-          },
-          {
-            "value": "FIXED_TERM",
-            "text": "Fixed term"
-          },
-          {
-            "value": "STANDARD",
-            "text": "Standard"
-          }
-        ]
-      },
-      "sendSpoRationaleToDelius": false,
-      "managerRecallDecision": {
-        "selected": {
-          "value": "RECALL",
-          "details": "Recall is appropriate given the increased risk"
-        },
-        "allOptions": null,
-        "isSentToDelius": true,
-        "createdBy": "Bill",
-        "createdDate": "2022-07-26T09:48:27.443Z"
-      },
-      "considerationRationale": {
-        "createdBy": "Jack",
-        "createdDate": "2022-07-25T10:30:00.000Z",
-        "createdTime": "10:30:00",
-        "sensitive": false
-      },
-      "custodyStatus": {
-        "selected": "YES_PRISON",
-        "details": "Bromsgrove Police Station\r\nLondon",
-        "allOptions": [
-          {
-            "value": "YES_PRISON",
-            "text": "Yes, prison custody"
-          },
-          {
-            "value": "YES_POLICE",
-            "text": "Yes, police custody"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "localPoliceContact": {
-        "contactName": "John Doe",
-        "phoneNumber": "01234567890",
-        "faxNumber": "09876543210",
-        "emailAddress": "john.doe@gmail.com"
-      },
-      "responseToProbation": "They have not responded well",
-      "thoughtsLeadingToRecall": "Ongoing concerns about escalating risk and non-compliance with licence conditions",
-      "triggerLeadingToRecall": "Just a bad morning, I guess",
-      "whatLedToRecall": "Increasingly violent behaviour",
-      "sentenceGroup": "INDETERMINATE",
-      "isThisAnEmergencyRecall": true,
-      "isIndeterminateSentence": true,
-      "isExtendedSentence": true,
-      "activeCustodialConvictionCount": 1,
-      "hasVictimsInContactScheme": {
-        "selected": "YES",
-        "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
-        ]
-      },
-      "indeterminateSentenceType": {
-        "selected": "LIFE",
-        "allOptions": [
-          {
-            "value": "LIFE",
-            "text": "Life sentence"
-          },
-          {
-            "value": "IPP",
-            "text": "Imprisonment for public protection (IPP)"
-          },
-          {
-            "value": "DPP",
-            "text": "Detention for public protection (DPP)"
-          },
-          {
-            "value": "DHMP",
-            "text": "Detention at His Majesty’s pleasure (DHMP)"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "dateVloInformed": "2024-01-01",
-      "hasArrestIssues": {
-        "selected": true,
-        "details": "Arrest issue details"
-      },
-      "hasContrabandRisk": {
-        "selected": true,
-        "details": "Contraband risk details"
-      },
-      "status": "DRAFT",
-      "region": "London",
-      "localDeliveryUnit": "LDU London",
-      "userNameDntrLetterCompletedBy": null,
-      "lastDntrLetterADownloadDateTime": "2022-06-20T09:15:00",
-      "reviewPractitionersConcerns": true,
-      "odmName": "Senior Manager Williams",
-      "spoRecallType": "RECALL",
-      "spoRecallRationale": "Recall is justified based on the increased risk to public safety",
-      "spoDeleteRecommendationRationale": "N/A - recommendation not deleted",
-      "sendSpoDeleteRationaleToDelius": false,
-      "spoCancelRecommendationRationale": "N/A - recommendation not cancelled",
-      "reviewOffenderProfile": true,
-      "explainTheDecision": true,
-      "lastModifiedBy": "Jack",
-      "lastModifiedByUserName": "jack",
-      "lastModifiedDate": "2022-07-01T15:22:24.567Z",
-      "createdBy": "Jack",
-      "createdByUserFullName": "Jack Smith",
-      "createdDate": "2022-07-01T15:22:24.567Z",
-      "personOnProbation": {
-        "name": "Joe Bloggs",
-        "firstName": "Joe",
-        "surname": "Bloggs",
-        "middleNames": "Michael",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "dateOfBirth": "1982-10-24",
-        "croNumber": "CRO123456",
-        "mostRecentPrisonerNumber": "G1234AB",
-        "nomsNumber": "A1234CR",
-        "pncNumber": "2022/0123456A",
-        "mappa": {
-          "level": 1,
-          "lastUpdatedDate": "2023-06-15",
-          "category": 1,
-          "error": null,
-          "hasBeenReviewed": false
-        },
-        "addresses": [
-          {
-            "line1": "Line 1 address",
-            "line2": "Line 2 address",
-            "town": "Town address",
-            "postcode": "TS1 1ST",
-            "noFixedAbode": false
-          }
-        ],
-        "primaryLanguage": "English",
-        "hasBeenReviewed": true,
-        "ftr56MappaReviewed": null
-      },
-      "convictionDetail": {
-        "indexOffenceDescription": "This is the index offence",
-        "dateOfOriginalOffence": "2022-09-01",
-        "dateOfSentence": "2022-09-02",
-        "lengthOfSentence": 6,
-        "lengthOfSentenceUnits": "days",
-        "sentenceDescription": "CJA - Extended Sentence",
-        "licenceExpiryDate": "2022-09-03",
-        "sentenceExpiryDate": "2022-09-04",
-        "sentenceSecondLength": 12,
-        "sentenceSecondLengthUnits": "months",
-        "custodialTerm": null,
-        "extendedTerm": null,
-        "hasBeenReviewed": false
-      },
-      "alternativesToRecallTried": {
-        "selected": [
-          {
-            "value": "WARNINGS_LETTER",
-            "details": "We sent a warning letter on 27th July 2022"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "WARNINGS_LETTER",
-            "text": "Warnings/licence breach letters"
-          }
-        ]
-      },
-      "licenceConditionsBreached": {
-        "standardLicenceConditions": {
-          "selected": [
-            "GOOD_BEHAVIOUR"
-          ],
-          "allOptions": [
-            {
-              "value": "GOOD_BEHAVIOUR",
-              "text": "They had good behaviour"
-            }
-          ]
-        },
-        "additionalLicenceConditions": {
-          "selected": [
-            "NST14"
-          ],
-          "selectedOptions": null,
-          "allOptions": [
-            {
-              "subCatCode": "NST14",
-              "mainCatCode": "NLC5",
-              "title": "Additional title",
-              "details": "Additional details",
-              "note": "Additional note"
-            }
-          ]
+      "selectedOptions": [
+        {
+          "subCatCode": "NST56",
+          "mainCatCode": "NLC6"
         }
-      },
-      "cvlLicenceConditionsBreached": null,
-      "additionalLicenceConditionsText": "Must not enter the area of Birmingham city centre",
-      "vulnerabilities": {
-        "selected": [
-          {
-            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
-            "details": "Risk of suicide"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "RISK_OF_SUICIDE_OR_SELF_HARM",
-            "text": "Risk of suicide or self harm"
-          },
-          {
-            "value": "RELATIONSHIP_BREAKDOWN",
-            "text": "Relationship breakdown"
-          }
-        ]
-      },
-      "isUnderIntegratedOffenderManagement": {
-        "selected": "YES",
-        "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
-        ]
-      },
-      "indexOffenceDetails": "Offence details",
-      "offenceDataFromLatestCompleteAssessment": null,
-      "offencesMatch": null,
-      "offenceAnalysis": "This is the offence analysis",
-      "fixedTermAdditionalLicenceConditions": {
-        "selected": true,
-        "details": "This is an additional licence condition"
-      },
-      "indeterminateOrExtendedSentenceDetails": {
-        "selected": [
-          {
-            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
-            "details": "Offender has exhibited threatening behaviour towards former partner, mirroring the pattern of the index offence"
-          },
-          {
-            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
-            "details": "Increasing aggression and verbal threats noted during recent appointments"
-          },
-          {
-            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
-            "details": "Substance misuse relapse combined with association with known offenders raises significant concern"
-          },
-          {
-            "value": "OUT_OF_TOUCH",
-            "details": "Failed to attend last three scheduled appointments and has not responded to contact attempts"
-          }
-        ],
-        "allOptions": [
-          {
-            "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
-            "text": "behaviour similar to index offence"
-          },
-          {
-            "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE",
-            "text": "behaviour leading to sexual or violent behaviour"
-          },
-          {
-            "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
-            "text": "behaviour likely to result in sexual or violent behaviour"
-          },
-          {
-            "value": "OUT_OF_TOUCH",
-            "text": "out of touch"
-          }
-        ]
-      },
-      "isMainAddressWherePersonCanBeFound": {
-        "selected": false,
-        "details": "123 Oak Avenue, Birmingham, B23 1AV"
-      },
-      "whyConsideredRecall": {
-        "selected": "RISK_INCREASED",
-        "allOptions": [
-          {
-            "value": "RISK_INCREASED",
-            "text": "Your risk is assessed as increased"
-          },
-          {
-            "value": "CONTACT_STOPPED",
-            "text": "Contact with your probation practitioner has broken down"
-          },
-          {
-            "value": "RISK_INCREASED_AND_CONTACT_STOPPED",
-            "text": "Your risk is assessed as increased and contact with your probation practitioner has broken down"
-          }
-        ]
-      },
-      "reasonsForNoRecall": {
-        "licenceBreach": "Reason for breaching licence",
-        "noRecallRationale": "Rationale for no recall",
-        "popProgressMade": "Progress made so far detail",
-        "popThoughts": null,
-        "futureExpectations": "Future expectations detail"
-      },
-      "nextAppointment": {
-        "howWillAppointmentHappen": {
-          "selected": "TELEPHONE",
-          "allOptions": [
-            {
-              "value": "TELEPHONE",
-              "text": "Telephone"
-            },
-            {
-              "value": "VIDEO_CALL",
-              "text": "Video call"
-            },
-            {
-              "value": "OFFICE_VISIT",
-              "text": "Office visit"
-            },
-            {
-              "value": "HOME_VISIT",
-              "text": "Home visit"
-            }
-          ]
-        },
-        "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
-        "probationPhoneNumber": "01238282838"
-      },
-      "hasBeenReviewed": {
-        "personOnProbation": true,
-        "convictionDetail": true,
-        "mappa": true,
-        "ftr56MappaInformation": false
-      },
-      "previousReleases": {
-        "lastReleaseDate": "2022-09-02",
-        "lastReleasingPrisonOrCustodialEstablishment": "HMP Holloway",
-        "hasBeenReleasedPreviously": true,
-        "previousReleaseDates": [
-          "2020-02-01"
-        ]
-      },
-      "previousRecalls": {
-        "lastRecallDate": "2022-08-02",
-        "hasBeenRecalledPreviously": true,
-        "previousRecallDates": [
-          "2021-06-01"
-        ]
-      },
-      "recommendationStartedDomainEventSent": true,
-      "currentRoshForPartA": {
-        "riskToChildren": "VERY_HIGH",
-        "riskToPublic": "HIGH",
-        "riskToKnownAdult": "MEDIUM",
-        "riskToStaff": "LOW",
-        "riskToPrisoners": "NOT_APPLICABLE"
-      },
-      "roshSummary": {
-        "natureOfRisk": "The offender has a history of violent behaviour, particularly when under the influence of alcohol",
-        "whoIsAtRisk": "General public, known adults, children, and staff",
-        "riskIncreaseFactors": "Alcohol misuse, relationship breakdown, non-compliance with licence conditions",
-        "riskMitigationFactors": "Engagement with probation, stable accommodation, medication compliance",
-        "riskImminence": "Risk is considered imminent due to recent escalation in threatening behaviour",
-        "riskOfSeriousHarm": {
-          "overallRisk": "HIGH",
-          "riskInCustody": {
-            "riskToChildren": "LOW",
-            "riskToPublic": "MEDIUM",
-            "riskToKnownAdult": "MEDIUM",
-            "riskToStaff": "LOW",
-            "riskToPrisoners": "VERY_HIGH"
-          },
-          "riskInCommunity": {
-            "riskToChildren": "HIGH",
-            "riskToPublic": "MEDIUM",
-            "riskToKnownAdult": "MEDIUM",
-            "riskToStaff": "LOW",
-            "riskToPrisoners": ""
-          }
-        },
-        "lastUpdatedDate": "2023-01-12T20:39:00.000Z",
-        "error": null
-      },
-      "countersignSpoTelephone": null,
-      "countersignSpoExposition": "I agree with the recommendation to recall based on the evidence presented",
-      "countersignAcoExposition": "Countersigned and approved for recall",
-      "countersignAcoTelephone": null,
-      "whoCompletedPartA": {
-        "name": "Mr Jenkins",
-        "email": "jenkins@email.com",
-        "telephone": "1234567",
-        "region": "London",
-        "localDeliveryUnit": "A123",
-        "isPersonProbationPractitionerForOffender": false
-      },
-      "practitionerForPartA": {
-        "name": "Mr Jenkins 1",
-        "email": "jenkins1@email.com",
-        "telephone": "12345678",
-        "region": "London2",
-        "localDeliveryUnit": "A1234"
-      },
-      "revocationOrderRecipients": null,
-      "decisionDateTime": "2024-01-01T12:00:00",
-      "ppcsQueryEmails": null,
-      "prisonOffender": {
-        "locationDescription": "HMP Brixton - Wing A",
-        "bookingNo": "BK1234",
-        "facialImageId": null,
-        "firstName": "Joe",
-        "middleName": "Michael",
-        "lastName": "Bloggs",
-        "dateOfBirth": "1982-10-24",
-        "agencyId": "BXI",
-        "agencyDescription": "HMP Brixton",
-        "status": "ACTIVE IN",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "cro": "CRO123456",
-        "pnc": "2022/0123456A",
-        "image": null,
-        "releaseDate": null
-      },
-      "prisonApiLocationDescription": "HMP Brixton",
-      "releaseUnderECSL": false,
-      "dateOfRelease": "2022-09-15",
-      "conditionalReleaseDate": "2022-09-15",
-      "nomisIndexOffence": {
-        "selected": 123,
-        "allOptions": [
-          {
-            "consecutiveCount": null,
-            "offenderChargeId": 123,
-            "offenceCode": "A123X",
-            "offenceStatute": "A123",
-            "offenceDescription": "Assault occasioning actual bodily harm",
-            "offenceDate": "2021-06-15",
-            "sentenceDate": "2024-01-01",
-            "courtDescription": "Crown Court at Birmingham",
-            "sentenceStartDate": "2024-01-01",
-            "sentenceEndDate": "2024-01-01",
-            "sentenceSequenceExpiryDate": "2024-01-01",
-            "bookingId": 123,
-            "terms": [
-              {
-                "years": 4,
-                "months": 4,
-                "weeks": 4,
-                "days": 4,
-                "code": "IMP"
-              }
-            ],
-            "sentenceTypeDescription": "CJA03 Extended Determinate Sentence",
-            "releaseDate": "2022-09-15T09:00:00",
-            "releasingPrison": "HMP Holloway",
-            "licenceExpiryDate": "2026-09-15"
-          }
-        ]
-      },
-      "bookRecallToPpud": {
-        "decisionDateTime": "2024-01-01T12:00:00",
-        "custodyGroup": null,
-        "custodyType": "Determinate",
-        "currentEstablishment": null,
-        "releasingPrison": "HMP Holloway",
-        "changeOffenceOrAddComment": null,
-        "indexOffence": "Assault occasioning actual bodily harm",
-        "indexOffenceComment": null,
-        "ppudSentenceId": "SEN-12345",
-        "ppudIndeterminateSentenceData": null,
-        "mappaLevel": "Level 1",
-        "policeForce": "Kent Police",
-        "probationArea": "Kent",
-        "receivedDateTime": "2024-01-01T12:00:00",
-        "sentenceDate": "2024-01-01",
-        "gender": "Male",
-        "ethnicity": "White British",
-        "firstNames": "Joe",
-        "lastName": "Bloggs",
-        "dateOfBirth": "1982-10-24",
-        "cro": null,
-        "prisonNumber": null,
-        "legislationReleasedUnder": "CJA 2003",
-        "legislationSentencedUnder": null,
-        "minute": "some text"
-      },
-      "ppudOffender": {
-        "id": "12345678",
-        "croOtherNumber": "1234",
-        "dateOfBirth": "1990-09-14",
-        "ethnicity": "White",
-        "familyName": "Bloggs",
-        "firstNames": "Joe Michael",
-        "gender": "Male",
-        "immigrationStatus": "Naturalized",
-        "establishment": "HMP Brixton",
-        "nomsId": "A1234CR",
-        "prisonerCategory": "Incarcerated",
-        "prisonNumber": "1234",
-        "sentences": [
-          {
-            "id": "1234123412341234",
-            "offenceDescription": "some description",
-            "sentenceExpiryDate": "2006-08-13",
-            "dateOfSentence": "2006-01-01",
-            "custodyType": "Extended",
-            "mappaLevel": "Level 1",
-            "licenceExpiryDate": "2006-08-14",
-            "tariffExpiryDate": "2006-08-14",
-            "offence": {
-              "indexOffence": "123",
-              "dateOfIndexOffence": "2007-08-14",
-              "indexOffenceComment": "Some offence comment"
-            },
-            "releaseDate": "2027-08-14",
-            "sentenceLength": {
-              "partYears": 1,
-              "partMonths": 1,
-              "partDays": 1
-            },
-            "sentencingCourt": "Richmond"
-          }
-        ],
-        "status": "Active",
-        "youngOffender": "No"
-      },
-      "bookingMemento": {
-        "stage": "BOOKED_ON",
-        "offenderId": "12345678",
-        "sentenceId": "SEN-12345",
-        "releaseId": "REL-67890",
-        "recallId": "REC-11111",
-        "failed": false,
-        "failedMessage": null,
-        "uploaded": [
-          "Part A",
-          "Licence"
-        ]
-      },
-      "isOver18": null,
-      "isUnder18": null,
-      "isMappaLevelAbove1": null,
-      "isSentenceUnder12Months": null,
-      "isSentence12MonthsOrOver": null,
-      "hasBeenConvictedOfSeriousOffence": null,
-      "isSentence48MonthsOrOver": null,
-      "isMappaCategory4": null,
-      "isMappaLevel2Or3": null,
-      "isRecalledOnNewChargedOffence": null,
-      "isServingFTSentenceForTerroristOffence": null,
-      "hasBeenChargedWithTerroristOrStateThreatOffence": null,
-      "isRecalledOnNewChargedOrConvictedOffence": {
-        "selected": "ONLY_CHARGED",
-        "allOptions": [
-          {
-            "value": "CHARGED_AND_CONVICTED",
-            "text": "Charged and convicted"
-          },
-          {
-            "value": "ONLY_CHARGED",
-            "text": "Only charged"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
-        ]
-      },
-      "isChargedWithOffence": true,
-      "isServingTerroristOrNationalSecurityOffence": false,
-      "isAtRiskOfInvolvedInForeignPowerThreat": true,
-      "wasReferredToParoleBoard244ZB": false,
-      "wasRepatriatedForMurder": true,
-      "isServingSOPCSentence": false,
-      "isServingDCRSentence": true,
-      "isYouthSentenceOver12Months": false,
-      "isYouthChargedWithSeriousOffence": true,
-      "userNamePartACompletedBy": "John Doe",
-      "userEmailPartACompletedBy": "John.Doe@test.com",
-      "lastPartADownloadDateTime": "2022-07-15T14:30:00",
-      "countersignSpoDateTime": "2022-07-28T11:00:00",
-      "countersignSpoName": null,
-      "acoCounterSignEmail": null,
-      "spoCounterSignEmail": null,
-      "countersignAcoName": null,
-      "countersignAcoDateTime": "2022-07-29T14:00:00",
-      "deleted": false
+      ]
     }
-  ]
+  },
+  "revocationOrderRecipients": [
+    "SCPS.piow.pdu@justice.gov.uk",
+    "rosey.church@justice.gov.uk"
+  ],
+  "userEmailPartACompletedBy": null,
+  "isYouthSentenceOver12Months": null,
+  "reviewPractitionersConcerns": true,
+  "cvlLicenceConditionsBreached": null,
+  "prisonApiLocationDescription": null,
+  "isRecalledOnNewChargedOffence": null,
+  "userNameDntrLetterCompletedBy": null,
+  "wasReferredToParoleBoard244ZB": null,
+  "activeCustodialConvictionCount": 1,
+  "sendSpoDeleteRationaleToDelius": false,
+  "additionalLicenceConditionsText": "",
+  "lastDntrLetterADownloadDateTime": null,
+  "hasBeenConvictedOfSeriousOffence": null,
+  "isYouthChargedWithSeriousOffence": null,
+  "spoCancelRecommendationRationale": null,
+  "spoDeleteRecommendationRationale": null,
+  "isMainAddressWherePersonCanBeFound": {
+    "details": null,
+    "selected": true
+  },
+  "isUnderIntegratedOffenderManagement": null,
+  "fixedTermAdditionalLicenceConditions": null,
+  "recommendationStartedDomainEventSent": false,
+  "indeterminateOrExtendedSentenceDetails": {
+    "selected": [
+      {
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
+        "details": "Mr Frost’s recent behaviour raises significant concern regarding the risk of sexual and violent offending. By his own disclosure he engaged in sexual contact with a vulnerable, intoxicated woman without disclosure to Probation. This information only came to light when Mr Frost was arrested on suspicion of a number of alleged offences, including intentional strangulation within the sexual context, assault, coercive behaviour and threats of serious harm, which occurred within a short period of association.  \r\n\r\nThis pattern is concerning when viewed alongside previous domestic abuse callouts linked to Mr Frost’s earlier offending, which similarly involved conflict within intimate or quasi‑intimate relationships and the use or threat of violence. It is noted that there is a recorded incident in 2013 where he attempted to coerce his partner to have sex and following refusal he assaulted his partner. There is also a recorded incident in 2017  where he assaulted his partner which included him grabbing the victim around the throat which meant that she struggled to breath.  The recurrence of allegations involving vulnerable women, combined with minimisation, non‑disclosure, alcohol‑related poor judgement, and difficulty managing intimate relationships, indicates a continuing risk dynamic.\r\n\r\nTaken together, Mr Frosts ’s behaviour demonstrates a pattern of escalating risk in interpersonal relationships that is likely to give rise to further sexual or violent offending if not effectively contained and managed. There are concerns that we cannot as probation manage these risks to unknown females in the community and raises concerns of potential other women Mr Frost may not be disclosing to probation. It also raises concerns around the possibility of undisclosed relationships with women who may have or have contact with children.    "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "{{ fullName }} has shown behaviour similar to the circumstances surrounding the <strong>index offence</strong>",
+        "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} has shown behaviour that <strong>has caused, or will cause, a sexual or violent offence</strong>",
+        "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} has shown behaviour <strong>likely to result in a sexual or violent offence</strong>, or that could be associated with committing one",
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} is either <strong>out of touch</strong> with probation, or their current location is not known",
+        "value": "OUT_OF_TOUCH"
+      }
+    ]
+  },
+  "isAtRiskOfInvolvedInForeignPowerThreat": null,
+  "isServingFTSentenceForTerroristOffence": null,
+  "offenceDataFromLatestCompleteAssessment": true,
+  "isServingTerroristOrNationalSecurityOffence": null,
+  "hasBeenChargedWithTerroristOrStateThreatOffence": null
 }
