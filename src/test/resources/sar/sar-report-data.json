@@ -1,0 +1,631 @@
+{
+  "crn": "P800277",
+  "region": "North West Region",
+  "status": "DRAFT",
+  "deleted": false,
+  "odmName": null,
+  "isOver18": null,
+  "createdBy": "PHILLIPS",
+  "isUnder18": null,
+  "sensitive": true,
+  "recallType": {
+    "selected": {
+      "value": "STANDARD",
+      "details": null
+    },
+    "allOptions": [
+      {
+        "text": "Standard recall",
+        "value": "STANDARD"
+      },
+      {
+        "text": "No recall - send a decision not to recall letter",
+        "value": "NO_RECALL"
+      }
+    ]
+  },
+  "createdDate": "2026-05-29T07:21:19.129Z",
+  "roshSummary": {
+    "error": null,
+    "whoIsAtRisk": "Public - \r\n1. Male members of the public are at risk of physical harm. More specifically, males Mr Lee may be in dispute with, or when he feels aggrieved in any way, specifically when he is under the influence of drugs/alcohol/medication. \r\n\r\n2. I have considered risk to unknown females with regard to the indecent assault in 2001, however it is my professional assessment that due to the offence being 16 years ago, and no further similar offences since that time, Mr Lee is not considered a risk of sexual harm to adult females. In addition, Mr Lee has been in a stable relationship with the same partner for a number of years and therefore viewed as a protective factor.  Taken from OASys by SPO LK. \r\n\r\n3. Road Users / Pedestrians - Risk to the general public should Mr Lee be driving under the influence and loses control of vehicle.  \r\n\r\nKnown Adult -\r\n\r\n4. Mr Thompson - the victim of the index offence of Sct 18 Wounding. in relation to EDS but relevant to risk. \r\n\r\nChildren - \r\n\r\n5. Potential risk to child should Shea Lee witness any behaviours of substance misuse.  Risk to child if in car with Mr Lee and he is in car. ",
+    "natureOfRisk": "1 & 4. Extreme violence, with the use of weapons/machete towards members of the public, specifically males whom he perceives are a threat/ to himself or others  - and particularly when under the influence of drugs/alcohol and in the company of peers/negative influences. Members of the public are considered to be at risk of physical harm, threats of violence and intimidation when Mr Lee is under the fluence of alcohol and/or drugs (cocaine). This is coupled with his subsequent feelings of  paranoia which increases the risk of Mr Lee becoming violent. In addition, witnesses of such violence would be harmed emotionally and psychologically.\r\n\r\n2. I have considered risk to unknown females with regard to the indecent assault in 2001, however it is my professional assessment that due to the offence being 16 years ago, and no further similar offences since that time, Mr Lee is not considered a risk of sexual harm to adult females. In addition, Mr Lee has been in a stable relationship with the same partner for a number of years and therefore viewed as a protective factor.\r\n\r\n3 & 5.  Should Mr Lee be under the influence and drive, he poses a risk to the wider public in terms of road users and pedestrians should he lose control of the car or if his reactions are impaired.  If his son was in the car, then he is also potentially at risk of physical, emotional and psychological harm.  ",
+    "riskImminence": null,
+    "lastUpdatedDate": "2026-03-26T09:37:35.000Z",
+    "riskOfSeriousHarm": {
+      "overallRisk": "MEDIUM",
+      "riskInCustody": {
+        "riskToStaff": "LOW",
+        "riskToPublic": "LOW",
+        "riskToChildren": "LOW",
+        "riskToPrisoners": "LOW",
+        "riskToKnownAdult": "LOW"
+      },
+      "riskInCommunity": {
+        "riskToStaff": "LOW",
+        "riskToPublic": "MEDIUM",
+        "riskToChildren": "MEDIUM",
+        "riskToPrisoners": "",
+        "riskToKnownAdult": "MEDIUM"
+      }
+    },
+    "riskIncreaseFactors": "In accordance with the OGRS 3 scores, Mr Lee is assessed as a high risk of re-offending and his OVP scores place him at medium risk of violent offending. Clinical assessment places him as posing a medium risk of serious harm in light of his offending history, and the index offence of extreme violence.  There is also concern in relation to index offence should he continue to drive whilst under the influence of substances.  \r\n\r\nThe risk is likely to be at its greatest when Mr Lee is under the influence of alcohol and/or drugs and whilst taking medication. When Mr Lee feels aggrieved or becomes involved in an altercation that involves either himself or others. When he feels threatened, confronted, and intimidated. Any impairment to his reactions when driving could result in erratic driving or crash which may or may not injure himself and also members of the public or family.  \r\n\r\nThe likelihood of Mr Lee committing further harm is not considered to be immediate as more drug testing is required. When in the community his risk is assessed as medium given his violent  actions, the impact of any future offending could be very serious. Whilst there has been some improvement noted since release, due to recall and further offences, more work and assessment is needed around Mr Lee's thinking and attitude.\r\n\r\n\r\n",
+    "riskMitigationFactors": "Employment, reduction in use of alcohol use, abstinence from drugs, engagement/compliance with Probation, improved thinking and behaviourial skills, increased understanding of the impact drugs/alcohol can have on behaviour and maturation.\r\n\r\nFactors that will help to reduce risk also include the following:\r\n\r\nIf Mr Lee remains offence free during his licence period. If he continues to remain drug and alcohol free and access appropriate support via 'We Are With You' re recent cocaine use. If Mr Lee can evidence a change in attitudes in respect of violence. Maintains emotional stability, can accesss support via his GP regarding his ADHD, and access mental health services if needed. Continues to undertake work that will consolidate learning gained in custody via PIPE and programmes completed during his sentence. This will include controlling his aggression and violence and victim empathy. Continuing to achieve a positive work / home balance. Ongoing constructive contact with supportive friends and family.\r\n\r\n- Increased reporting to be considered at times of crisis, to enable increased monitoring but also increased support to be offered\r\n- His partner is fully aware of his history of offending.\r\n- Maintained abstinence as by his own admission this impairs his  decision making and consequential thinking\r\n- Drug testing to enable robust monitoring of lifestyle / alcohol use\r\n- Mr Lee continuing to access the support of his GP in respect of emotional well-being, to ensure he has appropriate ongoing treatment and a robust support network should mood dip\r\n- Mr Lee will be subject to recall if a suggestion that risk is becoming unmanageable\r\n\r\nCurrent protective factors:\r\n\r\nAccommodation with his partner and son.\r\nPartner and child/supportive, positive influence\r\nReports to have support family - particularly his mother.\r\n\r\nManagement and Control:\r\nLicence\r\nDrug Testing.\r\n\r\nAcute risk facotrs:\r\nlifestyle\r\nDrugs/alchol\r\nEmotional well-being\r\nUsing violence as a solution to a problem / inability to deal with conflict appropriately.\r\n. "
+  },
+  "ppudOffender": null,
+  "custodyStatus": {
+    "details": null,
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes, prison custody",
+        "value": "YES_PRISON"
+      },
+      {
+        "text": "Yes, police custody",
+        "value": "YES_POLICE"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      }
+    ]
+  },
+  "dateOfRelease": [
+    2021,
+    4,
+    14
+  ],
+  "offencesMatch": true,
+  "sentenceGroup": "ADULT_SDS",
+  "spoRecallType": "RECALL",
+  "bookingMemento": null,
+  "lastModifiedBy": "PHILLIPS",
+  "prisonOffender": {
+    "cro": "44626/98V",
+    "pnc": "98/79974U",
+    "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEsAPADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD1cHBPFKeuaaPbrS5rlNxxxnHelyMim59fSlH1oAXoe1OAHqc03Jzz1pc+/FMBf5UD3NJ7UvWkAtKOnamigUhjs04EHoc4pn1NLxmmBJnj1ozxTc+/60UEi5/yaXNJk0ds0wHDj60e9Jk465o4oAXvRk80gozmgBQcjnH4UvIpM4Oe1FAC5BzS9aTPJ5NJnvQAvHt+VGecGkBpecUALRSc/hQTQAClpM+9H1oAo5GSKMikH6/Sl6GpGKB/nFLzn/69NJz/APrpcdMCgB3alz703PGKXNMBf8aXJx60hOKB9RQA7I5o9vakoFAC84wDxS+1J25x1o6+2KAF6c9qUGk5FAP50APHH1oFNyKXPQYxQA7gHigfd9qT1FHIFAhaU85zzTaUcUALmjNJntRTAXjNApCeaUdM0AKaM03+VFIB2aM89sU3+Ypc85oAWjNJnvRTAojHel602jJNSMcevWlzTfrS5IFK4DufWl9PWm5pQTnihMBwIo+ppB6UvfgVQCj6CjtyKTP4ilzzknP1pAKGGMDr9KMmm/WnZ+uPagBc0HvTaxtX8SW2mM0KgzXIXdsXhQMkZZjwBx9fagLm5n/9VIZEXJZwtcIda1PUQx80iIk4SAhFIzkZY4Y/hj+lTWdgZsTTAGTq0nnSsSfY9ugqrAdoJUY5Vww9QacG/GuZm8HR38QltpmWQYBy5cDrkgHBB6c5rBuJdd8MzlPOdocAxiQF4mHoD1X8gffvQ4sR6LmlB5rjNK8dwXJWK6tvKl4XKtkNzgbSeD155/CustrqG7iEsMgdfUGpuBYzk4xQOnvTR70uaYC59vypeOlNOemaB60XAdRTaU0ALmjJ/Gk9qM8UgF+lHSkGaWmBR60YNL9aXvxSGIBgUtHPTNL/ADoAQDH4U4Dmgdc+1L296LAJ707n1NIB/kUo5470XAMAHg0YpcfTFHagQAflUF1dQWNs9xcyrHEvViaS9voNPt2uLh9qjt1LH0HvXkfiXxDfeINRa2MUkdujYSHpgc8kepp2Gk3sbeo+OrvVLl4dNVrayUnfMVy79enYdvX69qzIYxcspl/eru3AHnPQkn1J9T6VHp2i3LRDcoCcEc1tx2flqOoVOM9Ki5qqZJbqzKAGKY464wP61o29uu5WVixPfIX8sVizh0Y4UHB6nqMdKiE0yAqScd+BirUgcGdnZK1g4k3yRqABuSRuh6cEYP8APmt5poru3KzBLu3YYLD0PqOnTBwfXvXnMXiCe0dNysCB85VuGGc4xx3z09cV02mXyXEcc0EiwXKgLllwj4z8pH4//rxWikjGUGmZmu+CYgHutKYKjZLwuDtb1A/un/PFYWnavqek3hjfcHUgvFKcNjI79G9a9Dt9VhvRIm1re5iO2SF8Blx/EPbv/k45/VXtTIYZoSSqkQlVBBOMfKeoIHGMZ9M4xSaBPudBpmpR6jBu+5Kv34yQSv8A9ar/APKvL4b6fTbgtCzgH7oIz1znBzn8P5122i69FqQEUjBZ+3o2OuKztYDaH+TR2o6ZpeMdaAAcetLzj0pOvP8AKj05oAM57Cl96UUnXr1pgAo60fnS4oApD0wKUk7vx700HpSg4GKlMBcgilFNHHFKOuPWmAuOe2KXjtTQcdqXPfmgY7I96M+opAe9KD2pCFzgdeay9Z1u20e28yY75iP3cKMAzn19h1yT0rL8TeJ30pJI7VQZI1yztyATwFAzya4OFrrWNSknmneWRuHlboMY6fkO36YpjSuzb+36jrF0XaVxI4GTGPkhGPujPfnr7/loWXhy1twrbfn7knOTUlnbx2iCOLBUHlieSa0VmHQ9uOtS5HVCCSHRWkacYyB609rRSxJA/Knxtxz3681ZYLsLqeg6UrGl7FT+zIJRnbkjtTZvD8TKWBwe1Wd+0jGMewzViKdfusPzqlYzlc4y/wBKMchLZOOeBWTHfXmkSbrdwyBstFIMqw4/LOBXo1xZJcqSuK5fUtFYPkr24NDdhWUlqUIdY/tO2DQSSR3EA3KoP7yH1Kf314HH046Ynk1ePVEKuoF/x5luv+ruQAMMh7NgZ7/iMZyG02a3lWWL926nIdeoNRS2vmSK4CwyKwC7eBnPG305/hPHpg9aU9DGVPsS3z+ZGPJLFPvc8MDznI/vDH0P5VR0/V5LC+VowQkbb+Tkf7w/z/WrRuJHuCJo4zcDIYbtizH16cHodp+oxnnPu7cyIkyr5cxzhHYDd1zz0HQg5x0xTM7Hsmm6pb6nbLLC43FQzL6Z7j2q8SfevKfCd3PZXkaeW0sMYLkjDbVYcocH6HHqPz9OtrmO7iWSNgwIByD3qQLAPNGfrSZoJ56D86BDgc9aUGmjgUvQ0xik+9BpCfy96KAKXajmkBGc/wBaWoAXJzSggjvmm8UfjQA7t1pabngUvTvmmAvSszWtQWxsH+fbIwIXnGO2f1rSHXrzXnvj7UPLuViTC7QBlupOST+X86FqwZzGp38mo38ixkeS7lgQOrY+9n/OK6PRoRb2wCqBnviuTsYw8oA++pDF/bH/AOquthYCPaDxRN3NqSsXzdqxby23BcjjpT47gkEk4I9ay2k8vIU4HoRinLKz4Gf61mjpNlbg/wB41ajunHQZHuaxUccfOxNWRMvXc5P4ZpjNNrhWONp/OpUnGcZb+dZhdcgtI2cdxmjdK2Qrqee+eaBNG0kqK24OM+5qYuZBztPbFYo84gboyfpg1ZSYqQG+XHUHg07kuJNLZRuMBCBUX9hWtxgHcuRzxVhJuR0xT/tWzgA4zRoKzKkvg3S5k2ymQnpkNjj0/TNYWp+DpYEY2UxlXcCRIoY8fz7dfSupN4APQ05bgEde/UUOVthcnc89ubS/0y1BJcKw+eQE5Ht14HWus8F6ulxYmxkkBljJKA9dtX5YkujJDMoZHUjpXDyQSaHrUcsMnllJNy/TPIOB0I7e9ClcipTSV0er5xS/rVSyu0vrOK4iIZHGfoe4/nVkH3q7nOOyD60ueab16iloEAPcE/nS96QcCimBSDc+lA55zzTM5JBpSfQn0qbjH5Hb19aQHjmmZ6UuR3pAPz+nelz+tMLemaC2M8j2p3AfnP8A9evKPF+278TyQB2AXoD0B716rzg4rx7UmM3iK9lO7zPNYcHGBux07/T60RF1G2yKCzBuCevcmtKG4ygHAHcAVjPN5Mjw9NrflVq3lJxtJwfxpSZ0QdjRaXce9PiZ/wCHpVMMSwP4H1q1AxDAgEnPYVGhujRhidiMkAepP9avR2pwAqjgdAarQEYBCn8q0I5wFOOmOwqkXccbR0HMbD0BGc/lUQiaNsMdp7jpVkXIPCgEdOp4pkskm3dj6DPWgTI2MuPkYhvY1bhaWRAJn3t1Jbk1RS8IO0xpu9lFWEu0Zh8g6YPJ9f8A9VAtTRjEbcOFHsOKke3VgSN2P6VUiuIi3K7e+cmra3UZBxkj3oBJlKWJ0Xg7h7GokcrkHFXJmV2yp/PiqUqlCC2efQVDL6FoOdy4yDwT/hWVrVvHOGYocjncDyKuq+Mc9utZep3QUbc7SRzj0ojqzKexc8Hah5ck2myMSf8AWx8HGMAHv7dMevrXYhjjpXm3hSd28QIoBJwwPrgc/wCfpXo+e3atUcT3H96XI7UwHvmlpgOFKDTAadmgRmZFKef/ANdN4PPejp1H41LZQ8/j1pNx5NJ160Z7nP5UgHhu46UBh1zwaYOf8/59KXPr1oAfnr3ryXWontfE16owWaRpD2GOTn9RXq4PavN/G0Kp4gLAjEsIkPPQg4/kP0qoie5y6TGe5yQRJnDepNbUQURr6kZ57Vi6bGWu3lbORxz+Vb9uvmkliAo61MtzeCViaGHdz1HqKsmEIN3YdBmq8up29tGVQr64HXPrWY2qyyFmUuzD5jjk+/ShItzsbYnZHxnHtU63ZCnDN7Vyo1hVfDMykYJHRsH+dStr9tziRiOq7hjP0xn+dVyi9odVDqT4w5JHvVuPUFcFW5z3Jrik1mJyGVutXIdQVwNrfrSNFK500jpvzuJB6Yp8csX8TnPtiuZe7ZSOe/SnC9fklqNB3OoN5EAAGJPXk4qL7U275QwGfU1zn25S4LHvVqLVIw4GQRnGM81Ng50jo4nLDktz78GrBQvwOmKxk1SEYKsQM9K1bTUYCo+XI6EipaEqgzOAQRzWNrI2skgPQd/SulnjEkPmJx3I9a5zX8mzL8rjrSjoxTs1ck8ERCbWJZjn91Ec545yB/jXoI+tcV8PoybG6nPV3C9PTPP612YJznitTjY7PFKG9D+tNzS9R1ppgKO5/Klzg/4U3IzSg4+tMDN7/wCNJ3+goz2/rR15xUMofnjjkGk7DpRnjHNJ04oEL/k0vfpx6jmmqeAcj8KXn0FAxScnGO9ed+PXRdXUbjn7Nz9CTXbapdiy02e5IJ2Ln/PrXleu30l9fNO8hkRoNobrxn/69VHcOVtXINKGbdn4yxpdR1BrXCI3IHAFJphIsxk96z7795Pz26EmlfU06FMXU7uzhsMx69xTUtnc7nYE9etI8wBCqMnHJ7CoHmkMbOoZlHfoK1iuxOi3JJLWJeQSM989KiwxwN/TvULTs0kcbhdzAckdM+tOKERrIEKZyAQeDTafUSknsWoy47jvWrYzHcOeexrFhkJ4PX3rXslDOMA+vWs5I1izbG59pqK7do16mtmzst1uCRz6dM1S1K3Ea/MOnH1qDRrQ52Sdww6/gKga6n3bULAH0NPu5ti/KACegqkXbIMjEnPQVokZSNGHUb1BtQcEc571fi1m4L/MHQ4yAqjGcjPPB6c1iwXChj9/aOrcHH1q6r5XcBvT1xgihpolWZ12m+KJUIjkkJGcjng+/wDn0rQ1mZLjS5ZEOVZc9eOtcRHGDtkQHqOgrolfOhyr+P8AKs2lctN2sdh4EjaPQcknYznj39uPeuoBrB8JoE0NAFUfNxgdeBW9kduaOpg0O4x/9al9qaKXPbvTuIcCcc0DrnpTQccYpf0poRmg5FHvx04pOR0pe/8AWpKFGc//AFqM9ePzpp69cUpI3YpgKOoPb1oPGaTdgUhI3d6QzM8SZ/4R2+6HKAHPcZGf0ryKSIizR2bGSwBz0GP/AK1eva/E0uh3iKATsJ2/Tn+leV3cTDTQuMtjPPvS6m0NabRNpSg2Gf1zWfeRyFjWxpdts09Q/U/Nj61FPbL6kDtTW9witDmfsu5sMBTwhRDDjcuMVoTWuPm71UaGQeuPerUg5UUPspBGXA28AlOR+NWGCm1WBV+UdTipTDIc/LgfrTDbtxyfar5ri5EthkcG1RuOTW7o9sWlUkYFU7SyLHLdM9xXT6babVDcZrOTuzSnA6CwgUoACN3ow4NUPEdlttzIgHr7Vv6cR5SgjbtGAQOlLqcK3Nu0RGeO/epasbcp5Pd227BUge9VmjDRKqY3xsCAD1rb1GweJ2wCcday/IYY2g49O1XB6GEo3KtrYsd0YVkVyNxZuK1Z4f36vZptIHzZHBpIYwg+aME/pWlbY6KnUdqcqlyI00ipZRsrFACBnIX0rpFjK6KxK+36ioLWw8xg5Ue9at/GItDkGeeD2NYt6luOhteEblp7eZcjEaoFx+Of6flXTVyXguCWK1uXbPzlQP8APtxXVg00zGqrSsPHXij6U3Jz3petBmOyTzSjPamg+/HpSjg+lMDMB4xijcGH+NIeM8/40gOBj0oGP/8A1UdR24pufTBBFGRTAcDjNGTtJ647U3tR360hkV0nm2kyE4DxkH8RXmF1EPtcSNjHcV6mT0B9Oa87nWIhw4ClSSGIpGtPqR/djx+lQNgnnBJqQthMZz0xVcSZPU0FojmiB6Cq/k+Zkc1eBDDBBo8sD1povlKK2vAPcUG3RH5UZz1xV1vlXgZNU55SOM8+lO47Fi0iDyqgwB/SunsY4gV3EcHr0rD0y32QeZIeW6DHatOKRVcEMP50GtNWO2traLygUCsDwRVS7VS5KkDFU7DU42IRpeg655p1yzvIWRiwznPXNDasaKOpianagTHK8HoaxJdNDnfH+Irp9TXNoZAPmj68dBWVDKHAPvUoxlG7MpLVohhgR6ZFaNtbjIyoye4q+EDrnAIpUjCA4Ax0IFDJ5S7BEEAxzin3cSz2exgCCy/zFVo5duF5xjpVxFMkR9FOT+dTYGjb0iEQabGoByckk/lV8HIzmo4lCRqmTgACpPXn3p2OOTu2xc4NOzxnvTASDnrQCMY6fhTJJc8e1BPvTenX6UcdaLiM38sUZ7U3dxjqaM9B/KmMfxwR1pCcf/WpuQKUnP4UDHcEex9KQ8dODSbuefrikzjqaBC7htA61wmpJG0sivgBCRt69zXdZ46D6msbVdBg1JjIJGhlP3mXkH6ihouErHGn/V5ByMVXGMnjnPatC+szpsz2vmGTy8fMVxnIFZkjLjI60jRMlEgJxgVJ5megwAKpgkBSelKZuB0HP6U9DVMfNKuDhs8dKzJZN8obqualuGaWTy1OR3NBiCxbR1pou+g661Youd2F6DFRxaz5h3Rvn1HOR+FZlys2SoXI96iWByo4AbrgCrS0Ic3c6a31N0bKscmt2214hBk9eTxXER70UBwS/T2qaRJmU5aRh2wcVDRaqM7ddYjmJjbkMMY7VlRXPlStEzcBsD3rO0LTycu5ZQP4euavX9s0JEijGOtTaxd7o2beVTyB/wDWq6rAtkdOvT+lYNnNvAGa00kIwM9etBLLbnkHvWlpkTSsCDwvJGOo/wAisaMswx156Vv6O7MhjEZ2A5L9PwpMzkzbB+XHP40ufbFJ29aAR6tj6UHIO6EClBHf9KTJIzzQMjmgBw47U4e2fxpme9KGzwehoEZmeM/1o4PJxmm55PTd6ijOAOnFaWAfnHelz1zUecdOKOwI60rAOyAOSfxoJyOnNNJ5OKQsAM0JAOLcU0tjj+VJkkYznHWmMcAmmM5bxMAt6GGPmjB/Uj/CuXmIAIBxkeldf4pAxbuRgDK5I47f/XrkZVDOd1LqXEh8w5A4ppbsOvtTpBjjrmlji+b5sfXNJmqYsEfcjnNSEDJHtwaGdUQAEfWojcLnJIGKaHchmjzz+dEMHp/KllvYwcLz7VGl+oP3OPr0qxpCvGfPUgdO9aUNr5keSBnHeqSzwOd2Tn2rRg1OGP5THge9S0xqBp2UYjUAip7iITRlOoI4qG3vbeZTtcZxyDVgXC8AED9KllXa0MGItb3Hln14NbcTK8YIYEdQRVDVIAXWZBz3PpUth8qA4HQ0nuTzGrGP3e4cKK62yUJZRDGDt/8Ar1ydvl2Cjo3GDXYoAFVc4AAHNIwm7kinPrThj1Jpgyo5/nTyeOvegzHA9M4oI74powM8c9etLkCmA7twOtL04HApvJH69aUHBwe1AjK60ZOD0xSZB/i5pARjn8OaoQ7nOScUZ496TJA5Pekz6YGaAFznIz+FISAAKTJxzTSep7nvTYxcj86QkgdP0pu4cnI600sepJxn1pAZXiIZ07dj7kgI/l/WuJmIy3c12uu/8gmVsnIxx+P/ANeuHZ/mGeeTQmOImd/JbP45qN5Cpx/LtSFsDKt68GqzOWbrnA607GqYTvKU+UfMPU1lSy34BAReetbCKCp3Hk9qeUUgccGhPyKtc5/F4cE498VLF5yAiQOCT+VbDRrjjg9vekwvCkA8VfMWoX6mfDM24biQPpzS3ErAHy2ZsgcD1rRCQnOQDn1q9bxxcYRSR7UtL3KlC/UwLbULiJ1LI+B/EARW5BqrzMOGXjoeK00toZAA6J9KhktFVsHgY44qZNdBWsTx3JmhKMo596t22Acj6cVjZMcgGeOgrVt2+QMD19Kkhs29GiMuoIxJAB3E+w/yK6wdOnIrC8PxssEkr43E7V9gP8j8q2gV56eoqTGT1JcnNLzjHemA5PT6U7r1z1oJH5xx/TpTgccVF9OlKSOP60XAkBHSnDk1Hk5we/rTs/WgDJyD3yKCcjBPr3pmSTwetAJx/StCR+cnv+NIePwNMzg0hbvigB+f55pC39etMzye+PakJz1NABkAnp9aQnJ5pmTn+We9QXV5a2UDz3M8cUa92I54zx60bgQayu/S7jjPyj+Yrz+VjG5x3Jrcm8VT6r5kWnWiGz5WS5nJG71CKO/uTXPXWTLjnPrRbUuN7XDJxj1OTim7ByxyR+tRLLtbBxjsRUofdx/OmUmOIwvpmm7iQSO3tTkBdgCTjNS+SrAgDOaDVMreZ3z/AIVGz5GQ2Pxq79l7H6D/AOtSHT0OCcgnk8d6C9Cisj8fMTV2GVgAT61KmmRs4XA6Z4q9Hopx8pzSY7jIpXPfB6YPFWAPMXk4980iWTxYyc84NTKgVzgcdOKgGyo0GHznn1z7VehXp29hgU07B2xmpbRSzhun40eZg9Wdlo8fl2Kc9TWgD+FUbH5bKFfaritnmgze5Jn/ACaUNnkdDTMjr6U7PHrSEPzyR+dL0yBTS3HTvR+XWgCQHk8igHIpuOAcGlBxznkUAZO76cH1ppbp0pmTngE884o3c56VoSPLZIHTikJGepFRmQKMscAdfSuc1TxrpVgTHGxupc8CLhQcDGW6flmnFOWwm0tzps+vFZ1/rmnaYD9ruo0fugOWHHoOa821TxrquoZQTi3jPVYRtJ+p61zMk5bLZ/GtY0X1ZLn2O18Q+PWnjEGl+ZEnJaY8MfYY6D36/TFcQ00ssuWkZ3c/MzEkk1BIxZSRnr3pqPtkRs9Dn8q2UFFaEp3ep6SFW3so4YwFVVAA/Cs+fJOc1aEvmwoynIwMGq0hwff2rz1udr2M+XJ74pkcvz/MTUsoz0A61WePbngg+1bIzasX43yx29uoq7HKCBuxWGk5Xr09KtLPyGyPbPrRYpSNiR8plCSKgE7KCGxgDk1ViuAWBPB+lTmZChBAx3pFc2gsF6RL1XH/ANet63uxJHz1rlwiq+V6H1q/Bc+XGVzg0mOMjeeTcuRyPaq0kirH7iqi3o8sZcAeoPeq0k7TttxwOgFIHMtRu00uMcDk4rWtlzJ/sis6yi2j39xWtbDYc8D1qGEUcjLqN/pWsXRt7p45EmbODw/XqOldro/jSzuoYxfEQTY+8Adh56+34155rMudYuWByWkzzVSGYbWG7o2cV3KEZxVzjk3GTse7wzxzxCSKRJEI4ZTkH8amBGPbFeKWGrXVjJvtp3jPcK3B+o6Gut0rx1KoCajGHXGPNiGD9SOn5VjKhJbajVRdT0Ddnv8AhRuOM96o2Op2moxb7W4WQdwDyPqOoq6Dx6n3rBqxadx4OfXHtShv84pg55/nSgHJNIDG3f8A66yNa8R2WjwkSOJJz9yFDyfQn0H+ea5nWvHYAaDTBtGRmdxzx/dHb6n8q4eed5pnllcs7klmY5JPvXXCi3rIzlLsa2t+KL7V2KyP5cGflhQkD2z6msF2JyCeaa8y45OT7VC0xP3QBW6SSsjO9yQnjrz61FK6YxnJ9PSoyxPUnHemjHJ7daAHowZSuB6jNMJ2t1NNORgjtTnwyblPBoA6jQNQLwC3diWj6Z9K13+6cHntXA21y1tcq47Gu3tLhLu0SWM8EevQ1yVYWdzrpzurDWGG+XjtVaUc9OtW2Hzdj+Heo5F49/Uis0U0UnQZ46+1RAlRkE8dquMOOvSoHjyCcda0uRYasrBlOSPrxxUhnkKkLnt0PSotp46/jSAEEcfrTYEy72XAz+XerEe/H3+T1+lQRh2bHQGrkcfqeR14qGxko3Mdpy2ffFX7WDL5IB+tRQJk8Yz/ACrTgTIwBj8KzcikizApVQuP1x/n/wCtU9xKtrZtLkKqjPNOgjIAz931rC8ZagltZR2+4B5Wy3sv/wBc/wAqIx5pWKbUY3OOubl7i8kk/vMWP40BiEwDnJqrFnrn5ieanLDflenbPpXoxVjgbvqWFmUH5xt96shs4ZXrPDA8dfSngFPuttz1HarEa1vdzW8qyxSNHIhyrKcYrtNF8bkbIdUXd2E6DkfUf4flXnKTyIMNhlz24qys8bcZI9QRUyhGa1RSk0e5W1zDdwrPBKksbZwynIqcHJB6j2Ga8Y03WL3SpRLaylP7y9VP1Fd/o/jKzvisNzi2nI/iPyN9D2/H8646lBx2NFNM8QaZz0IH0qFix6nn3pc4GKZ+fNdtzIaORil3A9RSng0zqfQUhATnA700jFO79etNJHt7Uhgc49ajztbocHqKf78U1hn6UDuDjHTp2xV/SdUaxl2vzCxww9Pes3JVvUHtQw43DketJpNWY02ndHfxzxXCeZE4ZW9KNo4B6Vw9nqM9k2Y3+U9QehrpbPxBbTlRN+6Y9c/drmnTa2OiFRPc1HhXYeM59aheP0FWYpUkXKOjdsg54qUxAjPU1ltuaNGX5fOOQKURAnoPyq6bfBHFJ5XII/Q0cwrECRc9Bx6CrUSY5GM560gQDqOasQqc9efWkx2LEKYGAOO+K1LeMZ5Oc+1Z4nhgXdO6xqOfmIFZl94wtrYFLMGaXpu/hB/rRGLlsO6itTotU1e20ezMszAyHhIx1Y/4V5re30+pXr3E7ZLHp2A9PpVa8v7jULkyXEpdyO/b6UikRpluvYetddKmoK/U5alTmJj8o5HJ/lT1OO/5VCCSxLGnjOetbrYyJ1bB/wAaduJzzmoCefWpFIPrTETAj8fegEMOQKjBz/8ArpwYjnnnrQBKjMowHOB2bkVYjuipG9CQP4gaqBuoyacjAjqemOlMDDz3wc/WkJPXihefyoPBz3rMA69evvSHn/61HrxSNwR70xgcDjFIe1L3/CkI7UAIecf0pDyc+tHcClx6cUgGMMimEMM471K3emNQAzhj1xScjA5HvTjyaaSQ36Uhksc80ZzHIy4OcqcVoRa9qER/124DswzWWQCCelLnBHvScU9x8zWxur4pvAAGjjYdsAinjxPNjBiH4NXPdaQc/lUezj2Hzy7m6/iK5YEBUFQSa9qEmQJyi+icVm4+UcmnKoqlCK6Bzy7kks8sz7pZGc+rNk0BWbG3OPWmfdOABSlmYjJ61ViSYMEGFO5qkTc2GY5Pb2qKJRjNTDpVJCJAR+FOz25pmODzRnGMU7gSAn8fapFNRZP607HbtTESAgZxzTt5qMDBFKvOKGwJd3Xn3pdxHIqNR1HpQCQPxoA//9k=",
+    "gender": "Male",
+    "status": "INACTIVE OUT",
+    "agencyId": "OUT",
+    "lastName": "LEE",
+    "bookingNo": "N71263",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+    "firstName": "STEPHEN",
+    "middleName": "BARRY",
+    "dateOfBirth": [
+      1983,
+      6,
+      20
+    ],
+    "releaseDate": [
+      2021,
+      4,
+      14
+    ],
+    "facialImageId": 2652772,
+    "agencyDescription": "Outside",
+    "locationDescription": "Outside - released from Kirkham (HMP)"
+  },
+  "dateVloInformed": null,
+  "hasArrestIssues": {
+    "details": "Schizophrenia and ADHD\r\nMr Lee has previous for use of weapons\r\nSubstance misuse\r\n\r\nHas 8 year old son at ex partners - 10 Notre Dame Close, L5",
+    "selected": true
+  },
+  "hasBeenReviewed": null,
+  "nextAppointment": null,
+  "offenceAnalysis": "On 12.10.2014 at the Clifton Arms Public House, Clifton Road L6, Mr Lee unlawfully and maliciously wounded Liam Thompson with intent to do him grievous bodily harm, section 18 offence against a person.\r\nMr Lee used a machete type blade to strike Liam Thompson on the shoulder and the hand. Injuries sustained by the victim resulted in his right ring finger being severed. The finger was only attached to his hand by a small piece of skin. Further injuries included a deep laceration across the right palm, and a deep laceration to his right shoulder approximately 2-3 inches long.\r\nSince the revocation request on 22.10.2014 I have visited Mr Lee on one occasion on Wednesday 4th November 2014 at HMP Liverpool and have had sight of the Crown Prosecution Service documentation.\r\nDuring interview with Mr Lee, he explained that since his release from prison on 10/06/2014 he had been abstinent from alcohol and cocaine up until two days prior to the offence. \r\nMr Lee reported that on Friday 10/10/14 he had been invited to the Clifton Arms Pub for a leaving party for the son of the owner, stating he arrived with his girlfriend at approximately 7pm where he stayed drinking Jack Daniels and using cocaine until approximately 11am the following morning. He explained the pub had remained open to the guests throughout the night which encouraged him to stay there as he was ‘getting on’ with everyone and he liked the feelings he got from drinking and taking cocaine. \r\nMr Lee explained how on Saturday 11/10/2014 he went home to get some rest, leaving friends at the pub. He claims he was invited out again, Saturday night to Liverpool city centre and stated he began drinking and taking cocaine once more from approximately 9pm right through into the afternoon of Sunday 12/10/2014 when the offence took place.\r\n\r\n\r\nIt is clear that Mr Lee’s behaviour on the days running up to the offence were fuelled by excessive alcohol and drug abuse, combined with his own mental health state of paranoia, which he was taking medication for. He accepts that his triggers for violent behaviour are a combination of these with situations whereby he feels threatened and confronted therefore placed Mr Lee at an imminent risk of causing serious harm.\r\n\r\n",
+  "ppcsQueryEmails": [
+    "adele.lucin@justice.gov.uk",
+    "Christopher.Marmion@justice.gov.uk"
+  ],
+  "previousRecalls": null,
+  "vulnerabilities": {
+    "selected": [
+      {
+        "value": "DRUG_OR_ALCOHOL_USE",
+        "details": "Mr Lee has increased use of alcohol and cocaine which are risk triggers to concerning behaviours.  "
+      },
+      {
+        "value": "MENTAL_HEALTH_CONCERNS",
+        "details": "Has a diagnosis of schizophrenia taking quetiapine.  \r\nADHD "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "At risk of suicide or self-harm",
+        "value": "RISK_OF_SUICIDE_OR_SELF_HARM"
+      },
+      {
+        "text": "Drug or alcohol abuse",
+        "value": "DRUG_OR_ALCOHOL_USE"
+      },
+      {
+        "text": "Mental health concerns",
+        "value": "MENTAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Medication taken, including compliance with medication",
+        "value": "MEDICATION_TAKEN_INCLUDING_COMPLIANCE_WITH_MEDICATION"
+      },
+      {
+        "text": "Physical health concerns",
+        "value": "PHYSICAL_HEALTH_CONCERNS"
+      },
+      {
+        "text": "Learning difficulties",
+        "value": "LEARNING_DIFFICULTIES"
+      },
+      {
+        "text": "Physical disabilities",
+        "value": "PHYSICAL_DISABILITIES"
+      },
+      {
+        "text": "Domestic abuse",
+        "value": "DOMESTIC_ABUSE"
+      },
+      {
+        "text": "Adult or child safeguarding concerns",
+        "value": "ADULT_OR_CHILD_SAFEGUARDING_CONCERNS"
+      },
+      {
+        "text": "Being at risk of serious harm from others",
+        "value": "BEING_AT_RISK_OF_SERIOUS_HARM_FROM_OTHERS"
+      },
+      {
+        "text": "Being bullied by others",
+        "value": "BEING_BULLIED_BY_OTHERS"
+      },
+      {
+        "text": "Bullying others",
+        "value": "BULLYING_OTHERS"
+      },
+      {
+        "text": "Relationship breakdown",
+        "value": "RELATIONSHIP_BREAKDOWN"
+      },
+      {
+        "text": "Bereavement issues",
+        "value": "BEREAVEMENT_ISSUES"
+      },
+      {
+        "text": "Cultural or language differences",
+        "value": "CULTURAL_OR_LANGUAGE_DIFFERENCES"
+      },
+      {
+        "text": "No concerns or do not know",
+        "value": "NONE_OR_NOT_KNOWN"
+      }
+    ]
+  },
+  "whatLedToRecall": "Mr Lee has failed to notify the supervising officer as to where he is permanently residing.  There have been concerns around his behaviour and display of superficial compliance.  Information was received from Police following a callout out to the address on 14th April when Mr Lee was spotted climbing into the property via a back window.  When Police arrived he was found in the kitchen, he stated he did not have keys.  Officers noted he appeared under the influence of substances and believed he was not residing there.  A social services MARF was submitted and closed, with conflicting information as to his poermanent residence.  Due to concerns of where Mr Lee was residing due to conflicting information provided, a different address appeared on his GP fit notes, an unannounced home visit was conducted on 27th May 2026,  Upon arrival Mr Lee was not present as confirmed during the visit whilst his partner was present. The PP then visited the address on the fit note to find this was under construction and no residents present.  \r\n\r\nMr Lee failed to attend his office appointment at 16:30 hours and advised that he had been at home all day with vomiting bug, however he was not present as confirmed by the Home visit.   Prior to the recall application, there have been concerns around Mr Lee’s overall compliance, whilst subject to licence he has been subject to a suspended sentence order and community order for driving under the influence of drugs.  Probation have submitted a variation of EDS licence to PPCS for addition of alcohol abstinence tag  as a prevention to recall and he is due to appear before the Magistrates on Friday 29th May for breach of unpaid work.  There have been positive tests for both cocaine and cannabis and by his own admission he has relapsed also to alcohol use.  These factors are a direct risk escalation triggers and were present in the commission of the EDS index offence.  \r\n\r\nMr Lee has been afforded a great deal of flexibility and chances to improve,  due to the seriousness of his EDS licence, however, given new information and clear deterioration, plus superficial compliance, it is deemed that he is no longer manageable and poses a risk in the community.  Thus recall action has been taken. \r\n",
+  "bookRecallToPpud": null,
+  "convictionDetail": {
+    "extendedTerm": "36 Months",
+    "custodialTerm": "108 Months",
+    "dateOfSentence": [
+      2015,
+      3,
+      13
+    ],
+    "hasBeenReviewed": true,
+    "lengthOfSentence": 108,
+    "licenceExpiryDate": [
+      2027,
+      1,
+      22
+    ],
+    "sentenceExpiryDate": [
+      2027,
+      1,
+      22
+    ],
+    "sentenceDescription": "Extended Determinate Sentence",
+    "sentenceSecondLength": 36,
+    "dateOfOriginalOffence": [
+      2014,
+      10,
+      12
+    ],
+    "lengthOfSentenceUnits": "Months",
+    "indexOffenceDescription": "Shooting, wounding, etc, with intent to do grievous bodily harm etc, or to resist apprehension (S18) - 00501",
+    "sentenceSecondLengthUnits": "Months"
+  },
+  "decisionDateTime": [
+    2026,
+    5,
+    28,
+    16,
+    30
+  ],
+  "isMappaCategory4": false,
+  "isMappaLevel2Or3": false,
+  "lastModifiedDate": "2026-05-29T12:33:05.758Z",
+  "previousReleases": {
+    "lastReleaseDate": "2021-04-14",
+    "previousReleaseDates": null,
+    "hasBeenReleasedPreviously": false,
+    "lastReleasingPrisonOrCustodialEstablishment": "Kirkham HMP"
+  },
+  "releaseUnderECSL": null,
+  "hasContrabandRisk": {
+    "details": null,
+    "selected": false
+  },
+  "localDeliveryUnit": "Liverpool South",
+  "nomisIndexOffence": null,
+  "personOnProbation": {
+    "name": "Stephen Lee",
+    "mappa": {
+      "error": null,
+      "level": 1,
+      "category": 2,
+      "hasBeenReviewed": true,
+      "lastUpdatedDate": "2021-05-18"
+    },
+    "gender": "Male",
+    "surname": "Lee",
+    "addresses": [
+      {
+        "town": "Liverpool",
+        "line1": "10 Notre Dame Close",
+        "line2": "",
+        "postcode": "L5 0RU",
+        "noFixedAbode": false
+      }
+    ],
+    "croNumber": null,
+    "ethnicity": "White: British/English/Welsh/Scottish/Northern Irish",
+    "firstName": "Stephen",
+    "pncNumber": "1998/0079974U",
+    "nomsNumber": "A5824AZ",
+    "dateOfBirth": [
+      1983,
+      6,
+      20
+    ],
+    "middleNames": "Barry",
+    "hasBeenReviewed": true,
+    "primaryLanguage": "English",
+    "ftr56MappaReviewed": null,
+    "mostRecentPrisonerNumber": "N71263"
+  },
+  "ppudRecordPresent": false,
+  "whoCompletedPartA": {
+    "name": "adele lucin",
+    "email": "adele.lucin@justice.gov.uk",
+    "region": "N51",
+    "telephone": "07971491580",
+    "localDeliveryUnit": "Old Swan",
+    "isPersonProbationPractitionerForOffender": true
+  },
+  "countersignAcoName": null,
+  "countersignSpoName": null,
+  "explainTheDecision": true,
+  "isExtendedSentence": null,
+  "isMappaLevelAbove1": null,
+  "localPoliceContact": {
+    "faxNumber": null,
+    "contactName": "FIB",
+    "phoneNumber": null,
+    "emailAddress": "MSOC.forceintelligencedesk@merseyside.pnn.police.uk"
+  },
+  "reasonsForNoRecall": null,
+  "spoRecallRationale": "OOH recal endorsed by ACO/JP\r\n\r\nSuperficial compliance - evidence not residing as directed -FTA 28/05/2026 stating ill at home ? confirmed not via a HV that same day\r\n\r\nIncreased alcohol and concaince use - Recalled out of hours 28/05/2026 @18:30.",
+  "acoCounterSignEmail": null,
+  "currentRoshForPartA": {
+    "riskToStaff": "LOW",
+    "riskToPublic": "HIGH",
+    "riskToChildren": "MEDIUM",
+    "riskToPrisoners": "LOW",
+    "riskToKnownAdult": "LOW"
+  },
+  "indexOffenceDetails": "CPS information indicates that on 5th January 2026 at approximately 1945 hours, a patrol officer has spotted a white van which appeared to be driving in an erratic manner, driving towards other vehicles in order to overtake other vehicles.  The officer has followed the vehicle which pulled into Notre Dame Close and parked outside a residence.  \r\n\r\nWhen questioned it was ascertained the male driving was Stephen Barry Lee and due to his presentation, acting nervously and dilated pupils,  the officer suspected drug use.  The officer has conducted a road side saliva test which came back as positive for cocaine.  At this point Mr Lee has told the officer he had been at the dentist the day before.  \r\n\r\nMe Lee was taken to St Anne Street Police station for the routine blood test, the sample sent for analysis has since returned OVER the limit for Benzoylecgonine, cocaine and Delta-9-tetrahydrocannabinol (THC)\r\n\r\n\r\n",
+  "responseToProbation": null,
+  "spoCounterSignEmail": null,
+  "whyConsideredRecall": null,
+  "isChargedWithOffence": null,
+  "isServingDCRSentence": null,
+  "practitionerForPartA": null,
+  "recallConsideredList": null,
+  "createdByUserFullName": "Adele Lucin",
+  "isServingSOPCSentence": null,
+  "managerRecallDecision": {
+    "selected": {
+      "value": "RECALL",
+      "details": "OOH recal endorsed by ACO/JP\r\n\r\nSuperficial compliance - evidence not residing as directed -FTA 28/05/2026 stating ill at home ? confirmed not via a HV that same day\r\n\r\nIncreased alcohol and concaince use - Recalled out of hours 28/05/2026 @18:30."
+    },
+    "createdBy": "Christopher Marmion",
+    "allOptions": null,
+    "createdDate": "2026-05-29T12:04:12.634Z",
+    "isSentToDelius": true
+  },
+  "reviewOffenderProfile": true,
+  "conditionalReleaseDate": null,
+  "considerationRationale": {
+    "createdBy": "Adele Lucin",
+    "sensitive": false,
+    "createdDate": "29/05/2026",
+    "createdTime": "07:27"
+  },
+  "countersignAcoDateTime": null,
+  "countersignSpoDateTime": null,
+  "lastModifiedByUserName": "JAYNE PHILLIPS",
+  "triggerLeadingToRecall": "Mr Lee has failed to notify the supervising officer as to where he is permanently residing.  Following a Police callout on 14th April 2026 the supervising officer challenged Mr Lee about this and raised to high risk, increasing frequency of reporting and applied to PPCS for .  He indicated that the Police were trying to set him up with their assertion he was not living there.  The circumstances of this callout is that Mr Lee gained entry to his ex partners flat via a window at the back of the property.  She has informed Police that they are not together, but he keeps returning.  When the supervising officer spoke to Ms Finnegan she gave a different account.  However, following submission of MARF and social services assessment, this provided updated information confirming Mr Lee is not residing there and is no longer in a relationship with Ms Finnegan, although she allows him access to their son and supervises this.  She has informed Social Services that if there are any further occurrences, she will call Police.  \r\nPrior to the recall application, there have been concerns around Mr Lee’s overall compliance, whilst subject to licence he has been subject to a suspended sentence order and community order for driving under the influence of drugs.  Probation have submitted a variation of EDS licence to PPCS for addition of alcohol tag and he is due to appear before the Magistrates on Friday 29th May for breach of unpaid work. \r\nMr Lee has been afforded a great deal of flexibility due to the seriousness of his EDS licence, however, given new information and clear deterioration, plus superficial compliance, it is deemed that he is no longer manageable and poses a risk in the community.  Thus recall action has been taken. \r\n",
+  "countersignAcoTelephone": "",
+  "countersignSpoTelephone": "",
+  "isIndeterminateSentence": null,
+  "isSentenceUnder12Months": null,
+  "isThisAnEmergencyRecall": false,
+  "thoughtsLeadingToRecall": null,
+  "wasRepatriatedForMurder": null,
+  "countersignAcoExposition": "This recall is endorsed due to an accumulation of factors following the notification from the Police in April following a call to the address. He has continued to misuse substances and there is a lack of transparency in regards of his address. ",
+  "countersignSpoExposition": "Out of Hours recall undertaken due to increasing concerns regarding Mr Lee's deterioration in behaviour, namely alcohol and substance misuse, and superficial compliance and transparency over where he was residing. Given the associated risks assessed to posed to others, Mr Lee is deemed as unmanageable in the community at this juncture.",
+  "isSentence12MonthsOrOver": null,
+  "isSentence48MonthsOrOver": null,
+  "sendSpoRationaleToDelius": true,
+  "userNamePartACompletedBy": null,
+  "alternativesToRecallTried": {
+    "selected": [
+      {
+        "value": "WARNINGS_LETTER",
+        "details": "Mr Lee has received a compliance letter and action plan letter regarding drug misuse from PDU Head. "
+      },
+      {
+        "value": "INCREASED_FREQUENCY",
+        "details": "Mr Lee was recently increased to high risk and weekly reporting. "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "None",
+        "value": "NONE"
+      },
+      {
+        "text": "Warnings / licence breach letters",
+        "value": "WARNINGS_LETTER"
+      },
+      {
+        "text": "Increased frequency of reporting",
+        "value": "INCREASED_FREQUENCY"
+      },
+      {
+        "text": "Additional licence conditions",
+        "value": "EXTRA_LICENCE_CONDITIONS"
+      },
+      {
+        "text": "Referral to other teams (e.g. IOM, MAPPA, Gangs Unit)",
+        "value": "REFERRAL_TO_OTHER_TEAMS"
+      },
+      {
+        "text": "Referral to partnership agencies",
+        "value": "REFERRAL_TO_PARTNERSHIP_AGENCIES"
+      },
+      {
+        "text": "Referral to approved premises",
+        "value": "REFERRAL_TO_APPROVED_PREMISES"
+      },
+      {
+        "text": "Drug testing",
+        "value": "DRUG_TESTING"
+      },
+      {
+        "text": "Other",
+        "value": "ALTERNATIVE_TO_RECALL_OTHER"
+      }
+    ]
+  },
+  "hasVictimsInContactScheme": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Yes",
+        "value": "YES"
+      },
+      {
+        "text": "No",
+        "value": "NO"
+      },
+      {
+        "text": "Not applicable",
+        "value": "NOT_APPLICABLE"
+      }
+    ]
+  },
+  "indeterminateSentenceType": {
+    "selected": "NO",
+    "allOptions": [
+      {
+        "text": "Life sentence",
+        "value": "LIFE"
+      },
+      {
+        "text": "Imprisonment for public protection (IPP)",
+        "value": "IPP"
+      },
+      {
+        "text": "Detention for public protection (DPP)",
+        "value": "DPP"
+      },
+      {
+        "text": "Detention at His Majesty’s pleasure (DHMP)",
+        "value": "DHMP"
+      }
+    ]
+  },
+  "lastPartADownloadDateTime": null,
+  "licenceConditionsBreached": {
+    "standardLicenceConditions": {
+      "selected": [
+        "GOOD_BEHAVIOUR",
+        "ADDRESS_APPROVED"
+      ],
+      "allOptions": [
+        {
+          "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period",
+          "value": "GOOD_BEHAVIOUR"
+        },
+        {
+          "text": "Not commit any offence",
+          "value": "NO_OFFENCE"
+        },
+        {
+          "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer",
+          "value": "KEEP_IN_TOUCH"
+        },
+        {
+          "text": "Receive visits from the supervising officer in accordance with instructions given by the supervising officer",
+          "value": "SUPERVISING_OFFICER_VISIT"
+        },
+        {
+          "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address",
+          "value": "ADDRESS_APPROVED"
+        },
+        {
+          "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work",
+          "value": "NO_WORK_UNDERTAKEN"
+        },
+        {
+          "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of your supervising officer or for the purposes of immigration deportation or removal",
+          "value": "NO_TRAVEL_OUTSIDE_UK"
+        },
+        {
+          "text": "Tell your supervising officer if you use a name which is different to the name or names which appear on your licence",
+          "value": "NAME_CHANGE"
+        },
+        {
+          "text": "Tell your supervising officer if you change or add any contact details, including phone number or email",
+          "value": "CONTACT_DETAILS"
+        }
+      ]
+    },
+    "additionalLicenceConditions": {
+      "selected": null,
+      "allOptions": [
+        {
+          "note": "Confine yourself to Merseybank Probation Approved Premises, 26 Great Howard Street, Liverpool, L3 7HS between the hours of 7p.m. and 7a.m. daily unless otherwise authorised by the supervising officer. This condition will be reviewed by the supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+          "title": "Curfew Arrangement",
+          "details": "Confine yourself to an address approved by your  supervising officer between the hours of [TIME] and [TIME]  daily unless otherwise authorised by your supervising officer.  This condition will be reviewed by your supervising officer on a  [WEEKLY / MONTHLY / ETC] basis and may be amended or  removed if it is felt that the level of risk that you present has  reduced appropriately.",
+          "subCatCode": "NST25",
+          "mainCatCode": "NLC7"
+        },
+        {
+          "note": "Attend Liverpool Probation Office as reasonably required by the supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour",
+          "title": "Drug Testing Condition",
+          "details": "Attend [INSERT NAME AND ADDRESS], as reasonably required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour.",
+          "subCatCode": "NST33",
+          "mainCatCode": "NLC12"
+        },
+        {
+          "note": "Not enter The Clifton Arms Public house, Clifton Road, L6 without the prior approval of the supervising officer;",
+          "title": "Freedom of movement ",
+          "details": "Not to enter [NAMED PLACE] without the prior approval of your supervising officer.",
+          "subCatCode": "NST28",
+          "mainCatCode": "NLC8"
+        },
+        {
+          "note": null,
+          "title": "Making or maintaining contact with a person",
+          "details": "Not to seek to approach or communicate with VICTIM AND / OR FAMILY MEMBERS without the prior approval of your supervising officer and / or [INSERT  NAME OF APPROPRIATE SOCIAL SERVICES   DEPARTMENT]",
+          "subCatCode": "NST6",
+          "mainCatCode": "NLC3"
+        },
+        {
+          "note": "Comply with any requirements specified by the supervising officer for the purpose of ensuring that you address your alcohol / drug / violent offending behaviour problems at the Liverpool Probation Office",
+          "title": "Participate or co-op with Programme or Activities",
+          "details": "To comply with any requirements specified by your supervising officer for the purpose of ensuring that you address your alcohol / drug / sexual / violent / gambling / solvent abuse / anger / debt / prolific / offending behaviour problems at the [NAME OF COURSE / CENTRE].",
+          "subCatCode": "NST12",
+          "mainCatCode": "NLC4"
+        },
+        {
+          "note": "Report to staff at Merseybank Probation Approved Premises, 26 Great Howard Street, Liverpool, L3 7HS at 1pm daily, unless otherwise authorised by the supervising officer. This condition will be reviewed by the supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately;",
+          "title": "Supervision in the community",
+          "details": "Report to staff at [NAMED PLACE] at [TIME / DAILY], unless otherwise authorised by your supervising officer.  This condition will be reviewed by your supervising officer on a [SPECIFIED] basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+          "subCatCode": "NST31",
+          "mainCatCode": "NLC9"
+        }
+      ],
+      "selectedOptions": [
+        {
+          "subCatCode": "NST6",
+          "mainCatCode": "NLC3"
+        },
+        {
+          "subCatCode": "NST28",
+          "mainCatCode": "NLC8"
+        },
+        {
+          "subCatCode": "NST33",
+          "mainCatCode": "NLC12"
+        },
+        {
+          "subCatCode": "NST12",
+          "mainCatCode": "NLC4"
+        }
+      ]
+    }
+  },
+  "revocationOrderRecipients": [
+    "adele.lucin@justice.gov.uk",
+    "Christopher.Marmion@justice.gov.uk",
+    "WellingtonCarlos.Moreira@justice.gov.uk",
+    "Jayne.Phillips@justice.gov.uk"
+  ],
+  "userEmailPartACompletedBy": null,
+  "isYouthSentenceOver12Months": null,
+  "reviewPractitionersConcerns": true,
+  "cvlLicenceConditionsBreached": null,
+  "prisonApiLocationDescription": null,
+  "isRecalledOnNewChargedOffence": null,
+  "userNameDntrLetterCompletedBy": null,
+  "wasReferredToParoleBoard244ZB": null,
+  "activeCustodialConvictionCount": 1,
+  "sendSpoDeleteRationaleToDelius": false,
+  "additionalLicenceConditionsText": "Failed to reside permanently as directed\r\nFailed to be of good behaviour\r\nFailed to attend appointment as directed",
+  "lastDntrLetterADownloadDateTime": null,
+  "hasBeenConvictedOfSeriousOffence": null,
+  "isYouthChargedWithSeriousOffence": null,
+  "spoCancelRecommendationRationale": null,
+  "spoDeleteRecommendationRationale": null,
+  "isMainAddressWherePersonCanBeFound": {
+    "details": "This is one of Mr Lee's addresses, it has been confirmed that he is not always there.  This is his partners and may have returned there (recent VPRF). \r\n\r\nAddress 53 Belmont Drive - this is an old / false address - under construction.\r\n\r\nEvidence that Mr Lee is staying with other associates \"Cono\"?  ",
+    "selected": false
+  },
+  "isUnderIntegratedOffenderManagement": null,
+  "fixedTermAdditionalLicenceConditions": null,
+  "recommendationStartedDomainEventSent": false,
+  "indeterminateOrExtendedSentenceDetails": {
+    "selected": [
+      {
+        "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE",
+        "details": "Mr Lee has had a deterioration in risk factors of alcohol and drug misuse.  These are direct triggers to concerning behaviours.  The index offence was committed whilst under the influence. "
+      },
+      {
+        "value": "OUT_OF_TOUCH",
+        "details": "Multi agency working has confirmed that Mr Lee has not been residing as directed by his supervising officer.  This is highly concerning given his previous offending. "
+      }
+    ],
+    "allOptions": [
+      {
+        "text": "{{ fullName }} has shown behaviour similar to the circumstances surrounding the <strong>index offence</strong>",
+        "value": "BEHAVIOUR_SIMILAR_TO_INDEX_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} has shown behaviour that <strong>has caused, or will cause, a sexual or violent offence</strong>",
+        "value": "BEHAVIOUR_LEADING_TO_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} has shown behaviour <strong>likely to result in a sexual or violent offence</strong>, or that could be associated with committing one",
+        "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE"
+      },
+      {
+        "text": "{{ fullName }} is either <strong>out of touch</strong> with probation, or their current location is not known",
+        "value": "OUT_OF_TOUCH"
+      }
+    ]
+  },
+  "isAtRiskOfInvolvedInForeignPowerThreat": null,
+  "isServingFTSentenceForTerroristOffence": null,
+  "offenceDataFromLatestCompleteAssessment": true,
+  "isServingTerroristOrNationalSecurityOffence": null,
+  "hasBeenChargedWithTerroristOrStateThreatOffence": null
+}
