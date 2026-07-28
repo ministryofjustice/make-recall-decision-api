@@ -20,6 +20,29 @@ configurations {
     // Force json-unit-core back to the version MockServer was built against.
     resolutionStrategy.force("net.javacrumbs.json-unit:json-unit-core:2.36.0")
   }
+  // CVE version overrides - the hmpps-gradle-spring-boot plugin uses resolution rules that
+  // override BOM constraints, so we must use eachDependency to force specific versions.
+  // These can be removed once the plugin is upgraded to 11.0.x
+  all {
+    resolutionStrategy.eachDependency {
+      if (requested.group == "io.netty" && requested.name.startsWith("netty-") && !requested.name.startsWith("netty-tcnative")) {
+        useVersion("4.2.16.Final")
+        because("Address CVE-2026-44891, CVE-2026-55831, CVE-2026-55833 and other Netty CVEs")
+      }
+      if (requested.group == "org.apache.logging.log4j") {
+        useVersion("2.26.1")
+        because("Address CVE-2026-49844")
+      }
+      if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-databind") {
+        useVersion("2.22.1")
+        because("Address CVE-2026-54515 and CVE-2026-59889")
+      }
+      if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
+        useVersion("3.1.5")
+        because("Address CVE-2026-59889")
+      }
+    }
+  }
 }
 
 dependencyCheck {
@@ -64,12 +87,11 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.42.0")
 
   // OpenAPI dependencies
-  // Not sure if we're affected, but release notes on 10.2.1 version of hmpps-gradle-spring-boot
-  // reported some issues encountered and recommended pinning swagger-ui to 5.32.2 and not updating
-  // the springdoc dependency for now
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
-    implementation("org.webjars:swagger-ui:5.32.2")
+    implementation("org.webjars:swagger-ui:5.32.7") {
+      because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.11")
+    }
   }
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -88,8 +110,8 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
 
   constraints {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") {
-      because("Address CVE-2026-54515 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1") {
+      because("Address CVE-2026-54515 and CVE-2026-59889 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
     }
     implementation("org.springframework.retry:spring-retry:2.0.13") {
       because("Address CVE-2026-41710 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7")
