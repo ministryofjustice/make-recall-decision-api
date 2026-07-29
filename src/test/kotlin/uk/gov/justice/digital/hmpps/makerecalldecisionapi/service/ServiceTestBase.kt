@@ -109,9 +109,10 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var offenceConverter: OffenceConverter
 
-  protected lateinit var authenticationFacade: AuthenticationFacade
-
+  @Mock
   protected lateinit var fliptClient: FliptClient
+
+  protected lateinit var authenticationFacade: AuthenticationFacade
 
   protected lateinit var personDetailsService: PersonDetailsService
 
