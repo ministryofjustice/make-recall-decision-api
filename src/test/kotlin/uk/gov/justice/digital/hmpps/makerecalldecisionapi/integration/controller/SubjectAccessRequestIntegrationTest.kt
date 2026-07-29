@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -15,10 +16,9 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.MrdTestDataBuilder
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationEntity
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.RecommendationModel
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.rendering.RenderRequestInfo
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.InlineAttachment
-import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.TemplateDataFetcherFacade
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -57,13 +57,6 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
       attachmentsExpected = attachmentsExpected,
       expectedFlywaySchemaVersion = "0",
       expectedJpaEntitySchemaPath = "",
-      templateDataFetcherFacade = object : TemplateDataFetcherFacade {
-        override fun findPrisonNameByPrisonId(prisonId: String): String = prisonId
-        override fun findUserLastNameByUsername(username: String): String = username
-        override fun findLocationNameByNomisId(nomisId: Int): String = nomisId.toString()
-        override fun findLocationNameByDpsId(dpsId: String): String = dpsId
-        override fun getRenderableAttachment(attachment: InlineAttachment, renderRequestInfo: RenderRequestInfo): ByteArray = ByteArray(0)
-      },
     )
   }
 
@@ -127,11 +120,34 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     )
 
     sarIntegrationTestHelper.saveGeneratedReport(renderResult)
+    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, crn)
 
     if (System.getenv("SAR_GENERATE_ACTUAL").toBoolean()) {
       // fixture already saved above — nothing more to do
     } else {
       sarIntegrationTestHelper.assertHtmlEquals(renderResult, sarIntegrationTestHelper.getExpectedRenderResult())
     }
+  }
+
+  @Disabled("Utility test for generating SAR PDF reports on demand - run manually when needed")
+  @Test
+  fun `SAR report from JSON file`() {
+    val json = this::class.java.getResource("/sar/sar-report-data.json")!!.readText()
+    val recommendationModel = objectMapper.readValue(json, RecommendationModel::class.java)
+
+    repository.deleteAll()
+    repository.save(RecommendationEntity(id = 1, data = recommendationModel))
+
+    val dataResponse = sarIntegrationTestHelper.requestSarData(null, recommendationModel.crn, null, null, webTestClient)
+    val templateResponse = sarIntegrationTestHelper.requestSarTemplate(webTestClient)
+
+    val renderResult = sarIntegrationTestHelper.renderServiceReport(
+      data = dataResponse.content,
+      templateVersion = "1.0",
+      template = templateResponse,
+    )
+
+    // saves the report pdf at: build/test-generated/sar-generated-report.pdf
+    sarIntegrationTestHelper.renderAndSaveReportAsPdf(renderResult, null, recommendationModel.crn)
   }
 }

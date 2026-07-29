@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserSearchRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudYearMonth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentenceLength
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.SentencedAsYouth
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadAdditionalDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.UploadMandatoryDocumentRequest
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.ppud.ppudCreateOffenderRequest
@@ -149,6 +150,7 @@ class PpudControllerTest : IntegrationTestBase() {
         postcode = "",
         phoneNumber = "",
       ),
+      sentencedAsYouth = SentencedAsYouth.No,
     )
     ppudAutomationResponseMocker.ppudAutomationCreateOffenderApiMatchResponse("12345678", ppudCreateOffenderRequest)
     runTest {
@@ -226,6 +228,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = SentencedAsYouth.Yes,
     )
     ppudAutomationResponseMocker.ppudAutomationCreateSentenceApiMatchResponse(
       offenderId,
@@ -253,6 +256,7 @@ class PpudControllerTest : IntegrationTestBase() {
       sentencingCourt = "sentencing court",
       espExtendedPeriod = PpudYearMonth(1, 1),
       sentencedUnder = "Legislation 123",
+      sentencedAsYouth = SentencedAsYouth.Yes,
     )
     ppudAutomationResponseMocker.ppudAutomationUpdateSentenceApiMatchResponse(
       offenderId,

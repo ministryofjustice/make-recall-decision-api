@@ -6,6 +6,8 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Address
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.RoshSummary
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.EnumSelectionWithAllOptions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import java.io.Serializable
@@ -104,6 +106,7 @@ data class RecommendationResponse(
   var isRecalledOnNewChargedOffence: Boolean? = null,
   var isServingFTSentenceForTerroristOffence: Boolean? = null,
   var hasBeenChargedWithTerroristOrStateThreatOffence: Boolean? = null,
+  var isRecalledOnNewChargedOrConvictedOffence: EnumSelectionWithAllOptions<ChargedOrConvictedForNewOffence>? = null,
   var isChargedWithOffence: Boolean? = null,
   var isServingTerroristOrNationalSecurityOffence: Boolean? = null,
   var isAtRiskOfInvolvedInForeignPowerThreat: Boolean? = null,

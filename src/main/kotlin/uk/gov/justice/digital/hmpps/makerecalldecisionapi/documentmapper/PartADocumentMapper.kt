@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SelectedStandardLicenceConditions
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.SentenceGroup
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ValueWithDetails
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.ftrSuitabilityCriteria.ChargedOrConvictedForNewOffence
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.RegionService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper.Helper.convertLocalDateToDateWithSlashes
@@ -124,6 +125,10 @@ internal class PartADocumentMapper(
       ),
       hasBeenChargedWithTerroristOrStateThreatOffence = generateExclusionCriteriaAnswer(
         recommendation.hasBeenChargedWithTerroristOrStateThreatOffence,
+        recommendation,
+      ),
+      isChargedAndConvictedWithOffence = generateExclusionCriteriaAnswer(
+        recommendation.isRecalledOnNewChargedOrConvictedOffence?.selected,
         recommendation,
       ),
       isChargedWithOffence = generateExclusionCriteriaAnswer(
@@ -395,6 +400,19 @@ internal class PartADocumentMapper(
         EMPTY_STRING
       }
     }
+  }
+
+  private fun generateExclusionCriteriaAnswer(
+    value: ChargedOrConvictedForNewOffence?,
+    recommendation: RecommendationResponse,
+  ): String {
+    val isIndeterminateSentence = recommendation.calculateIsIndeterminateSentence()
+    val isExtendedSentence = recommendation.calculateIsExtendedSentence()
+
+    if ((isIndeterminateSentence ?: false) || (isExtendedSentence ?: false)) {
+      return "N/A - indeterminate or extended sentence"
+    }
+    return value?.description ?: EMPTY_STRING
   }
 
   private fun buildStandardLicenceCodes(standardCodes: List<String>?, cvlStandardCodes: List<String>?): List<String>? {

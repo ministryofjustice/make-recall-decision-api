@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.7"
   kotlin("jvm") version "2.3.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
@@ -19,6 +19,29 @@ configurations {
     // upgrade json-unit-core to 5.x, breaking MockServer's JSON matching.
     // Force json-unit-core back to the version MockServer was built against.
     resolutionStrategy.force("net.javacrumbs.json-unit:json-unit-core:2.36.0")
+  }
+  // CVE version overrides - the hmpps-gradle-spring-boot plugin uses resolution rules that
+  // override BOM constraints, so we must use eachDependency to force specific versions.
+  // These can be removed once the plugin is upgraded to 11.0.x
+  all {
+    resolutionStrategy.eachDependency {
+      if (requested.group == "io.netty" && requested.name.startsWith("netty-") && !requested.name.startsWith("netty-tcnative")) {
+        useVersion("4.2.16.Final")
+        because("Address CVE-2026-44891, CVE-2026-55831, CVE-2026-55833 and other Netty CVEs")
+      }
+      if (requested.group == "org.apache.logging.log4j") {
+        useVersion("2.26.1")
+        because("Address CVE-2026-49844")
+      }
+      if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-databind") {
+        useVersion("2.22.1")
+        because("Address CVE-2026-54515 and CVE-2026-59889")
+      }
+      if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
+        useVersion("3.1.5")
+        because("Address CVE-2026-59889")
+      }
+    }
   }
 }
 
@@ -58,18 +81,17 @@ dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
-  implementation("org.postgresql:postgresql:42.7.11") // hmpps-kotlin-spring-boot-starter pulls in 42.7.10 - should we remove this line here and leave it up to the starter?
+  implementation("org.postgresql:postgresql:42.7.12")
 
   implementation("io.sentry:sentry-spring-boot-4:8.42.0")
   implementation("io.sentry:sentry-logback:8.42.0")
 
   // OpenAPI dependencies
-  // Not sure if we're affected, but release notes on 10.2.1 version of hmpps-gradle-spring-boot
-  // reported some issues encountered and recommended pinning swagger-ui to 5.32.2 and not updating
-  // the springdoc dependency for now
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
-    implementation("org.webjars:swagger-ui:5.32.2")
+    implementation("org.webjars:swagger-ui:5.32.7") {
+      because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.11")
+    }
   }
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -77,7 +99,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.2")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:6.0.1") // upgrading to latest 7.x probably OK, but best done separately in MRD-3268
   implementation("org.json:json:20250517")
 
   implementation("com.google.code.gson:gson:2.13.2")
@@ -88,6 +110,30 @@ dependencies {
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
+
+  constraints {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1") {
+      because("Address CVE-2026-54515 and CVE-2026-59889 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
+    }
+    implementation("org.springframework.retry:spring-retry:2.0.13") {
+      because("Address CVE-2026-41710 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7")
+    }
+  }
+
+  // hmpps-spring-boot plugin explicitly forcing the tomcat-embed-core version, so we can't override using constraints
+  implementation("org.apache.tomcat.embed:tomcat-embed-websocket") {
+    version {
+      strictly("11.0.24")
+    }
+    because("Address CVE-2026-59084 - can be removed once uk.gov.justice.hmpps.gradle-spring-boot to 11.0.x ")
+  }
+  // hmpps-spring-boot plugin explicitly forcing the tomcat-embed-core version, so we can't override using constraints
+  implementation("org.apache.tomcat.embed:tomcat-embed-core") {
+    version {
+      strictly("11.0.24")
+    }
+    because("Address CVE-2026-59084 - can be removed once uk.gov.justice.hmpps.gradle-spring-boot to 11.0.x ")
+  }
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
@@ -108,7 +154,7 @@ dependencies {
   testImplementation("io.rest-assured:xml-path")
 
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.3.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.4.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.5.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")

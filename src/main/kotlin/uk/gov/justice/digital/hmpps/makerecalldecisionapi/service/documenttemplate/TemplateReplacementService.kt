@@ -131,6 +131,7 @@ internal class TemplateReplacementService(
       "is_recalled_on_new_charged_offence" to documentData.isRecalledOnNewChargedOffence,
       "is_serving_ft_sentence_for_terrorist_offence" to documentData.isServingFTSentenceForTerroristOffence,
       "has_been_charged_with_terrorist_or_state_threat_offence" to documentData.hasBeenChargedWithTerroristOrStateThreatOffence,
+      "is_charged_and_convicted_with_offence" to documentData.isChargedAndConvictedWithOffence,
       "is_charged_with_offence" to documentData.isChargedWithOffence,
       "is_serving_terrorist_or_national_security_offence" to documentData.isServingTerroristOrNationalSecurityOffence,
       "is_at_risk_of_involved_in_foreign_power_threat" to documentData.isAtRiskOfInvolvedInForeignPowerThreat,

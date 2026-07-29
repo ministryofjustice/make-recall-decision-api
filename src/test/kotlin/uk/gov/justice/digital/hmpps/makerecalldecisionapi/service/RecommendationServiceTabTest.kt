@@ -123,6 +123,7 @@ internal class RecommendationServiceTabTest : ServiceTestBase() {
       ),
     ),
     status = status,
+    managerRecallDecision = recommendation.data.managerRecallDecision,
   )
 
   companion object {

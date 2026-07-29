@@ -35,6 +35,7 @@ data class DocumentData(
   val isRecalledOnNewChargedOffence: String? = null,
   val isServingFTSentenceForTerroristOffence: String? = null,
   val hasBeenChargedWithTerroristOrStateThreatOffence: String? = null,
+  var isChargedAndConvictedWithOffence: String? = null,
   var isChargedWithOffence: String? = null,
   var isServingTerroristOrNationalSecurityOffence: String? = null,
   var isAtRiskOfInvolvedInForeignPowerThreat: String? = null,
