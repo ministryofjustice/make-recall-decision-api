@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import org.flywaydb.test.annotation.FlywayTest
 import org.json.JSONArray
 import org.json.JSONObject
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
