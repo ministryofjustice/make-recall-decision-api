@@ -10,5 +10,6 @@ data class CreateRecallRequest(
   val policeForce: String,
   val probationArea: String,
   val receivedDateTime: LocalDateTime,
+  val recallTypeForPpud: String,
   val riskOfContrabandDetails: String = "",
 )

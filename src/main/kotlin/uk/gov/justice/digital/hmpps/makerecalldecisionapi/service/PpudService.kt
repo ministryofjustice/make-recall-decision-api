@@ -121,6 +121,7 @@ internal class PpudService(
           probationArea = createRecallRequest.probationArea,
           receivedDateTime = convertToLondonTimezone(createRecallRequest.receivedDateTime),
           recommendedTo = ppudUser,
+          recallTypeForPpud = createRecallRequest.recallTypeForPpud,
           riskOfContrabandDetails = createRecallRequest.riskOfContrabandDetails,
         ),
       ),
