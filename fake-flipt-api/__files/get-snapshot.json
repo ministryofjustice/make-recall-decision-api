@@ -1,0 +1,54 @@
+{
+  "namespace": {
+    "key": "consider-a-recall"
+  },
+  "flags": [
+    {
+      "key": "api-part-a-template-version",
+      "name": "",
+      "description": "",
+      "enabled": true,
+      "type": "VARIANT_FLAG_TYPE",
+      "createdAt": "2026-07-31T11:07:31.577989Z",
+      "updatedAt": "2026-07-31T11:07:31.577989Z",
+      "rules": [
+        {
+          "id": "7fb0c294-bfc7-49a7-a96b-edf909d7033b",
+          "segments": [
+            {
+              "key": "ftr56-offence-conviction-template",
+              "name": "",
+              "description": "",
+              "matchType": "ALL_SEGMENT_MATCH_TYPE",
+              "constraints": [
+                {
+                  "type": "DATETIME_CONSTRAINT_COMPARISON_TYPE",
+                  "property": "dateTimeOfFirstDownload",
+                  "operator": "gte",
+                  "value": "2026-07-29T00:00:00+01:00"
+                }
+              ]
+            }
+          ],
+          "rank": 1,
+          "segmentOperator": "OR_SEGMENT_OPERATOR",
+          "distributions": [
+            {
+              "ruleId": "7fb0c294-bfc7-49a7-a96b-edf909d7033b",
+              "variantKey": "ftr56OffenceConviction",
+              "variantAttachment": "{}",
+              "rollout": 100
+            }
+          ]
+        }
+      ],
+      "rollouts": [],
+      "defaultVariant": {
+        "id": "api-part-a-template-version/default",
+        "key": "default",
+        "attachment": "{}"
+      }
+    }
+  ],
+  "digest": "a8c97f0fc18214d196248ec93d6c52323e59ce04"
+}
