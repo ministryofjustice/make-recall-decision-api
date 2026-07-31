@@ -1,0 +1,33 @@
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.config.featureflag
+
+import io.flipt.client.FliptClient
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import java.time.Duration
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
+const val DEFAULT_POLLING_INTERVAL_IN_SECONDS = 60L
+
+@Configuration
+@ConfigurationProperties(prefix = "flipt")
+class FliptConfig {
+
+  lateinit var serverUrl: String
+  var pollingIntervalInSeconds: Long =
+    DEFAULT_POLLING_INTERVAL_IN_SECONDS // can't use lateinit with primitives, so defaulting
+
+  @Bean
+  fun fliptApiClient(): FliptClient = FliptClient
+    .builder()
+    .namespace("consider-a-recall")
+    .url(serverUrl)
+    .updateInterval(Duration.of(pollingIntervalInSeconds, ChronoUnit.SECONDS))
+    .build()
+
+  @Bean
+  @Qualifier("fliptDateTimeFormatter")
+  fun fliptDateTimeFormatter(): DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+}
