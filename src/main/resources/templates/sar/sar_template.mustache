@@ -30,8 +30,12 @@
                 </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">Details</td></tr>
-                <tr><td>{{ optionalValue recallConsideredDetail }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Details</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue recallConsideredDetail }}</td>
+                </tr>
             </table>
         {{/recallConsideredList}}
         {{^recallConsideredList}}
@@ -119,10 +123,14 @@
         <br>
         <br>
         {{#sentenceGroup}}
-        <table class="data-table">
-            <tr><td class="data-column-20">Sentence group</td></tr>
-            <tr><td>{{ optionalValue sentenceGroup }}</td></tr>
-        </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">Sentence group</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue sentenceGroup }}</td>
+                </tr>
+            </table>
         {{/sentenceGroup}}
         <table class="data-table">
             <tr>
@@ -140,23 +148,39 @@
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">Response to probation</td></tr>
-            <tr><td>{{ optionalValue responseToProbation }}</td></tr>
+            <tr>
+                <td class="data-column-100">Response to probation</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue responseToProbation }}</td>
+            </tr>
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">Thoughts leading to recall</td></tr>
-            <tr><td>{{ optionalValue thoughtsLeadingToRecall }}</td></tr>
+            <tr>
+                <td class="data-column-100">Thoughts leading to recall</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue thoughtsLeadingToRecall }}</td>
+            </tr>
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">Trigger leading to recall</td></tr>
-            <tr><td>{{ optionalValue triggerLeadingToRecall }}</td></tr>
+            <tr>
+                <td class="data-column-100">Trigger leading to recall</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue triggerLeadingToRecall }}</td>
+            </tr>
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">What led to recall</td></tr>
-            <tr><td>{{ optionalValue whatLedToRecall }}</td></tr>
+            <tr>
+                <td class="data-column-100">What led to recall</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue whatLedToRecall }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
@@ -171,8 +195,12 @@
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-20">Indeterminate sentence type</td></tr>
-            <tr><td>{{ optionalValue indeterminateSentenceType.selected }}</td></tr>
+            <tr>
+                <td class="data-column-20">Indeterminate sentence type</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue indeterminateSentenceType.selected }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
@@ -242,18 +270,30 @@
             </tr>
         </table>
         <table class="data-table">
-            <tr><td class="data-column-100">Senior Probation Officer recall rationale</td></tr>
-            <tr><td>{{ optionalValue spoRecallRationale }}</td></tr>
+            <tr>
+                <td class="data-column-100">Senior Probation Officer recall rationale</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue spoRecallRationale }}</td>
+            </tr>
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">Senior Probation Officer cancel recommendation rationale</td></tr>
-            <tr><td>{{ optionalValue spoCancelRecommendationRationale }}</td></tr>
+            <tr>
+                <td class="data-column-100">Senior Probation Officer cancel recommendation rationale</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue spoCancelRecommendationRationale }}</td>
+            </tr>
         </table>
 
         <table class="data-table">
-            <tr><td class="data-column-100">Senior Probation Officer delete recommendation rationale</td></tr>
-            <tr><td>{{ optionalValue spoDeleteRecommendationRationale }}</td></tr>
+            <tr>
+                <td class="data-column-100">Senior Probation Officer delete recommendation rationale</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue spoDeleteRecommendationRationale }}</td>
+            </tr>
         </table>
 
         <h5>Person on probation</h5>
@@ -354,16 +394,28 @@
         <h5>Conviction detail</h5>
         {{#convictionDetail}}
             <table class="data-table">
-                <tr><td class="data-column-100">Index offence description</td></tr>
-                <tr><td>{{ optionalValue indexOffenceDescription }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Index offence description</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue indexOffenceDescription }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-25">Date of original offence</td></tr>
-                <tr><td>{{ optionalValue (formatDate dateOfOriginalOffence) }}</td></tr>
+                <tr>
+                    <td class="data-column-25">Date of original offence</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate dateOfOriginalOffence) }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">Sentence description</td></tr>
-                <tr><td>{{ optionalValue sentenceDescription }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Sentence description</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue sentenceDescription }}</td>
+                </tr>
             </table>
             <table class="data-table">
                 <tr>
@@ -410,8 +462,8 @@
         <br>
         <table class="data-table">
             <tr>
-                <td class="data-column-20">Alternatives to recall tried</td>
-                <td class="data-column-80">Details</td>
+                <td class="data-column-40">Alternatives to recall tried</td>
+                <td class="data-column-60">Details</td>
             </tr>
             {{#alternativesToRecallTried.selected}}
                 <tr>
@@ -429,33 +481,79 @@
 
         <h5>Licence conditions breached</h5>
         <table class="data-table">
-            <tr><td class="data-column-20">Standard licence conditions</td></tr>
-            <tr><td>{{#licenceConditionsBreached}}{{#standardLicenceConditions.selected}}<li>{{ optionalValue . }}</li>{{/standardLicenceConditions.selected}}{{^standardLicenceConditions.selected}}No Data Held{{/standardLicenceConditions.selected}}{{/licenceConditionsBreached}}{{^licenceConditionsBreached}}No Data Held{{/licenceConditionsBreached}}</td></tr>
+            <tr>
+                <td class="data-column-20">Standard licence conditions</td>
+            </tr>
+            <tr>
+                <td>{{#licenceConditionsBreached}}{{#standardLicenceConditions.selected}}<li>{{ optionalValue . }}</li>{{/standardLicenceConditions.selected}}{{^standardLicenceConditions.selected}}No Data Held{{/standardLicenceConditions.selected}}{{/licenceConditionsBreached}}{{^licenceConditionsBreached}}No Data Held{{/licenceConditionsBreached}}</td>
+            </tr>
         </table>
         {{! selectedOptions are transformed by SubjectAccessRequestService.transformAdditionalLicenceConditions:
              mainCatCode contains the resolved title }}
         <table class="data-table">
-            <tr><td class="data-column-20">Additional licence conditions</td></tr>
-            <tr><td>{{#licenceConditionsBreached}}{{#additionalLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{#selectedOptions}}<li>{{ optionalValue mainCatCode }}</li>{{/selectedOptions}}{{^selected}}{{^selectedOptions}}No Data Held{{/selectedOptions}}{{/selected}}{{/additionalLicenceConditions}}{{^additionalLicenceConditions}}No Data Held{{/additionalLicenceConditions}}{{/licenceConditionsBreached}}{{^licenceConditionsBreached}}No Data Held{{/licenceConditionsBreached}}</td></tr>
+            <tr>
+                <td class="data-column-20">Additional licence conditions</td>
+            </tr>
+            <tr>
+                <td>{{#licenceConditionsBreached}}{{#additionalLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{#selectedOptions}}<li>{{ optionalValue mainCatCode }}</li>{{/selectedOptions}}{{^selected}}{{^selectedOptions}}No Data Held{{/selectedOptions}}{{/selected}}{{/additionalLicenceConditions}}{{^additionalLicenceConditions}}No Data Held{{/additionalLicenceConditions}}{{/licenceConditionsBreached}}{{^licenceConditionsBreached}}No Data Held{{/licenceConditionsBreached}}</td>
+            </tr>
+            <tr>
+                <td><b>Notes</b></td>
+            </tr>
+            {{#licenceConditionsBreached}}
+                {{#additionalLicenceConditions}}
+                    {{#allOptions}}
+                        <tr>
+                            <td>{{ optionalValue note }}</td>
+                        </tr>
+                    {{/allOptions}}
+                    {{^allOptions}}
+                        <tr>
+                            <td>No Data Held</td>
+                        </tr>
+                    {{/allOptions}}
+                {{/additionalLicenceConditions}}
+            {{/licenceConditionsBreached}}
+            {{^licenceConditionsBreached}}
+                <tr>
+                    <td>No Data Held</td>
+                </tr>
+            {{/licenceConditionsBreached}}
         </table>
 
         <h5>Create and Vary a Licence conditions breached</h5>
         <table class="data-table">
-            <tr><td class="data-column-20">Standard licence conditions</td></tr>
-            <tr><td>{{#cvlLicenceConditionsBreached}}{{#standardLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/standardLicenceConditions}}{{^standardLicenceConditions}}No Data Held{{/standardLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td></tr>
+            <tr>
+                <td class="data-column-20">Standard licence conditions</td>
+            </tr>
+            <tr>
+                <td>{{#cvlLicenceConditionsBreached}}{{#standardLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/standardLicenceConditions}}{{^standardLicenceConditions}}No Data Held{{/standardLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td>
+            </tr>
         </table>
         <table class="data-table">
-            <tr><td class="data-column-20">Additional licence conditions</td></tr>
-            <tr><td>{{#cvlLicenceConditionsBreached}}{{#additionalLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/additionalLicenceConditions}}{{^additionalLicenceConditions}}No Data Held{{/additionalLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td></tr>
+            <tr>
+                <td class="data-column-20">Additional licence conditions</td>
+            </tr>
+            <tr>
+                <td>{{#cvlLicenceConditionsBreached}}{{#additionalLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/additionalLicenceConditions}}{{^additionalLicenceConditions}}No Data Held{{/additionalLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td>
+            </tr>
         </table>
         <table class="data-table">
-            <tr><td class="data-column-20">Bespoke licence conditions</td></tr>
-            <tr><td>{{#cvlLicenceConditionsBreached}}{{#bespokeLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/bespokeLicenceConditions}}{{^bespokeLicenceConditions}}No Data Held{{/bespokeLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td></tr>
+            <tr>
+                <td class="data-column-20">Bespoke licence conditions</td>
+            </tr>
+            <tr>
+                <td>{{#cvlLicenceConditionsBreached}}{{#bespokeLicenceConditions}}{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}{{/bespokeLicenceConditions}}{{^bespokeLicenceConditions}}No Data Held{{/bespokeLicenceConditions}}{{/cvlLicenceConditionsBreached}}{{^cvlLicenceConditionsBreached}}No Data Held{{/cvlLicenceConditionsBreached}}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-100">Additional licence conditions text</td></tr>
-            <tr><td>{{ optionalValue additionalLicenceConditionsText }}</td></tr>
+            <tr>
+                <td class="data-column-100">Additional licence conditions text</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue additionalLicenceConditionsText }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
@@ -478,17 +576,29 @@
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-20">Under integrated offender management</td></tr>
-            <tr><td>{{ optionalValue isUnderIntegratedOffenderManagement.selected }}</td></tr>
+            <tr>
+                <td class="data-column-20">Under integrated offender management</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue isUnderIntegratedOffenderManagement.selected }}</td>
+            </tr>
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-100">Index offence details</td></tr>
-            <tr><td>{{ optionalValue indexOffenceDetails }}</td></tr>
+            <tr>
+                <td class="data-column-100">Index offence details</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue indexOffenceDetails }}</td>
+            </tr>
         </table>
         <table class="data-table">
-            <tr><td class="data-column-100">Offence analysis</td></tr>
-            <tr><td>{{ optionalValue offenceAnalysis }}</td></tr>
+            <tr>
+                <td class="data-column-100">Offence analysis</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue offenceAnalysis }}</td>
+            </tr>
         </table>
         <table class="data-table">
             <tr>
@@ -545,31 +655,55 @@
         </table>
         <br>
         <table class="data-table">
-            <tr><td class="data-column-20">Why considered recall</td></tr>
-            <tr><td>{{#whyConsideredRecall}}{{ optionalValue selected }}{{/whyConsideredRecall}}{{^whyConsideredRecall}}No Data Held{{/whyConsideredRecall}}</td></tr>
+            <tr>
+                <td class="data-column-20">Why considered recall</td>
+            </tr>
+            <tr>
+                <td>{{#whyConsideredRecall}}{{ optionalValue selected }}{{/whyConsideredRecall}}{{^whyConsideredRecall}}No Data Held{{/whyConsideredRecall}}</td>
+            </tr>
         </table>
         <br>
         <h5>Reasons for no recall</h5>
         {{#reasonsForNoRecall}}
             <table class="data-table">
-                <tr><td class="data-column-100">Licence breach</td></tr>
-                <tr><td>{{ optionalValue licenceBreach }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Licence breach</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue licenceBreach }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">No recall rationale</td></tr>
-                <tr><td>{{ optionalValue noRecallRationale }}</td></tr>
+                <tr>
+                    <td class="data-column-100">No recall rationale</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue noRecallRationale }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">POP progress made</td></tr>
-                <tr><td>{{ optionalValue popProgressMade }}</td></tr>
+                <tr>
+                    <td class="data-column-100">POP progress made</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue popProgressMade }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">POP thoughts</td></tr>
-                <tr><td>{{ optionalValue popThoughts }}</td></tr>
+                <tr>
+                    <td class="data-column-100">POP thoughts</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue popThoughts }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">Future expectations</td></tr>
-                <tr><td>{{ optionalValue futureExpectations }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Future expectations</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue futureExpectations }}</td>
+                </tr>
             </table>
         {{/reasonsForNoRecall}}
         {{^reasonsForNoRecall}}
@@ -580,12 +714,18 @@
         {{#nextAppointment}}
             {{#howWillAppointmentHappen}}
                 <table class="data-table">
-                    <tr><td class="data-column-20">How will appointment happen</td></tr>
+                    <tr>
+                        <td class="data-column-20">How will appointment happen</td>
+                    </tr>
                     {{#selected}}
-                        <tr><td>{{ optionalValue selected }}</td></tr>
+                        <tr>
+                            <td>{{ optionalValue selected }}</td>
+                        </tr>
                     {{/selected}}
                     {{^selected}}
-                        <tr><td>No Data Held</td></tr>
+                        <tr>
+                            <td>No Data Held</td>
+                        </tr>
                     {{/selected}}
                 </table>
             {{/howWillAppointmentHappen}}
@@ -617,8 +757,12 @@
                 </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-20">Previous release dates</td></tr>
-                <tr><td>{{#previousReleaseDates}}<li>{{ optionalValue . }}</li>{{/previousReleaseDates}}{{^previousReleaseDates}}No Data Held{{/previousReleaseDates}}</td></tr>
+                <tr>
+                    <td class="data-column-20">Previous release dates</td>
+                </tr>
+                <tr>
+                    <td>{{#previousReleaseDates}}<li>{{ optionalValue . }}</li>{{/previousReleaseDates}}{{^previousReleaseDates}}No Data Held{{/previousReleaseDates}}</td>
+                </tr>
             </table>
         {{/previousReleases}}
         {{^previousReleases}}
@@ -627,9 +771,18 @@
         <br>
         <h5>ECSL release details</h5>
         <table class="summary-list">
-            <tr><td>Released under ECSL</td><td>{{ optionalValue (convertBoolean releaseUnderECSL) }}</td></tr>
-            <tr><td>Date of release</td><td>{{ optionalValue (formatDate dateOfRelease) }}</td></tr>
-            <tr><td>Conditional release date</td><td>{{ optionalValue (formatDate conditionalReleaseDate) }}</td></tr>
+            <tr>
+                <td>Released under ECSL</td>
+                <td>{{ optionalValue (convertBoolean releaseUnderECSL) }}</td>
+            </tr>
+            <tr>
+                <td>Date of release</td>
+                <td>{{ optionalValue (formatDate dateOfRelease) }}</td>
+            </tr>
+            <tr>
+                <td>Conditional release date</td>
+                <td>{{ optionalValue (formatDate conditionalReleaseDate) }}</td>
+            </tr>
         </table>
         <br>
         <h5>Previous recalls</h5>
@@ -647,8 +800,12 @@
                 </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-20">Previous recall dates</td></tr>
-                <tr><td>{{#previousRecallDates}}<li>{{ optionalValue . }}</li>{{/previousRecallDates}}{{^previousRecallDates}}No Data Held{{/previousRecallDates}}</td></tr>
+                <tr>
+                    <td class="data-column-20">Previous recall dates</td>
+                </tr>
+                <tr>
+                    <td>{{#previousRecallDates}}<li>{{ optionalValue . }}</li>{{/previousRecallDates}}{{^previousRecallDates}}No Data Held{{/previousRecallDates}}</td>
+                </tr>
             </table>
         {{/previousRecalls}}
         {{^previousRecalls}}
@@ -689,9 +846,18 @@
         <h5>Risk of Serious Harm summary</h5>
         {{#roshSummary}}
             <table class="summary-list">
-                <tr><td>Nature of risk</td><td>{{ optionalValue natureOfRisk }}</td></tr>
-                <tr><td>Who is at risk</td><td>{{ optionalValue whoIsAtRisk }}</td></tr>
-                <tr><td>Risk imminence</td><td>{{ optionalValue riskImminence }}</td></tr>
+                <tr>
+                    <td>Nature of risk</td>
+                    <td>{{ optionalValue natureOfRisk }}</td>
+                </tr>
+                <tr>
+                    <td>Who is at risk</td>
+                    <td>{{ optionalValue whoIsAtRisk }}</td>
+                </tr>
+                <tr>
+                    <td>Risk imminence</td>
+                    <td>{{ optionalValue riskImminence }}</td>
+                </tr>
             </table>
             <table class="data-table">
                 <tr>
@@ -702,18 +868,29 @@
                 </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">Risk increase factors</td></tr>
-                <tr><td>{{ optionalValue riskIncreaseFactors }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Risk increase factors</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskIncreaseFactors }}</td>
+                </tr>
             </table>
             <table class="data-table">
-                <tr><td class="data-column-100">Risk mitigation factors</td></tr>
-                <tr><td>{{ optionalValue riskMitigationFactors }}</td></tr>
+                <tr>
+                    <td class="data-column-100">Risk mitigation factors</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskMitigationFactors }}</td>
+                </tr>
             </table>
             <br>
             <h5>Risk of serious harm</h5>
             {{#riskOfSeriousHarm}}
                 <table class="summary-list">
-                    <tr><td>Overall risk</td><td>{{ optionalValue overallRisk }}</td></tr>
+                    <tr>
+                        <td>Overall risk</td>
+                        <td>{{ optionalValue overallRisk }}</td>
+                    </tr>
                 </table>
                 <br>
                 <p><b>Risk in custody</b></p>
@@ -820,25 +997,82 @@
         <br>
         <br>
         <table class="summary-list">
-            <tr><td>Under 18</td><td>{{ optionalValue (convertBoolean isUnder18) }}</td></tr>
-            <tr><td>Sentence 12 months or over</td><td>{{ optionalValue (convertBoolean isSentence12MonthsOrOver) }}</td></tr>
-            <tr><td>Multi-agency Public Protection Arrangements level above 1</td><td>{{ optionalValue (convertBoolean isMappaLevelAbove1) }}</td></tr>
-            <tr><td>Convicted of serious offence</td><td>{{ optionalValue (convertBoolean hasBeenConvictedOfSeriousOffence) }}</td></tr>
-            <tr><td>Sentence 48 months or over</td><td>{{ optionalValue (convertBoolean isSentence48MonthsOrOver) }}</td></tr>
-            <tr><td>MAPPA category 4</td><td>{{ optionalValue (convertBoolean isMappaCategory4) }}</td></tr>
-            <tr><td>MAPPA level 2 or 3</td><td>{{ optionalValue (convertBoolean isMappaLevel2Or3) }}</td></tr>
-            <tr><td>Recalled on new charged offence</td><td>{{ optionalValue (convertBoolean isRecalledOnNewChargedOffence) }}</td></tr>
-            <tr><td>Serving fixed term sentence for terrorist offence</td><td>{{ optionalValue (convertBoolean isServingFTSentenceForTerroristOffence) }}</td></tr>
-            <tr><td>Charged with terrorist or state threat offence</td><td>{{ optionalValue (convertBoolean hasBeenChargedWithTerroristOrStateThreatOffence) }}</td></tr>
-            <tr><td>Charged with offence</td><td>{{ optionalValue (convertBoolean isChargedWithOffence) }}</td></tr>
-            <tr><td>Serving terrorist or national security offence</td><td>{{ optionalValue (convertBoolean isServingTerroristOrNationalSecurityOffence) }}</td></tr>
-            <tr><td>At risk of involved in foreign power threat</td><td>{{ optionalValue (convertBoolean isAtRiskOfInvolvedInForeignPowerThreat) }}</td></tr>
-            <tr><td>Referred to Parole Board 244ZB</td><td>{{ optionalValue (convertBoolean wasReferredToParoleBoard244ZB) }}</td></tr>
-            <tr><td>Repatriated for murder</td><td>{{ optionalValue (convertBoolean wasRepatriatedForMurder) }}</td></tr>
-            <tr><td>Serving SOPC sentence</td><td>{{ optionalValue (convertBoolean isServingSOPCSentence) }}</td></tr>
-            <tr><td>Serving DCR sentence</td><td>{{ optionalValue (convertBoolean isServingDCRSentence) }}</td></tr>
-            <tr><td>Youth sentence over 12 months</td><td>{{ optionalValue (convertBoolean isYouthSentenceOver12Months) }}</td></tr>
-            <tr><td>Youth charged with serious offence</td><td>{{ optionalValue (convertBoolean isYouthChargedWithSeriousOffence) }}</td></tr>
+            <tr>
+                <td>Under 18</td>
+                <td>{{ optionalValue (convertBoolean isUnder18) }}</td>
+            </tr>
+            <tr>
+                <td>Sentence 12 months or over</td>
+                <td>{{ optionalValue (convertBoolean isSentence12MonthsOrOver) }}</td>
+            </tr>
+            <tr>
+                <td>Multi-agency Public Protection Arrangements level above 1</td>
+                <td>{{ optionalValue (convertBoolean isMappaLevelAbove1) }}</td>
+            </tr>
+            <tr>
+                <td>Convicted of serious offence</td>
+                <td>{{ optionalValue (convertBoolean hasBeenConvictedOfSeriousOffence) }}</td>
+            </tr>
+            <tr>
+                <td>Sentence 48 months or over</td>
+                <td>{{ optionalValue (convertBoolean isSentence48MonthsOrOver) }}</td>
+            </tr>
+            <tr>
+                <td>MAPPA category 4</td>
+                <td>{{ optionalValue (convertBoolean isMappaCategory4) }}</td>
+            </tr>
+            <tr>
+                <td>MAPPA level 2 or 3</td>
+                <td>{{ optionalValue (convertBoolean isMappaLevel2Or3) }}</td>
+            </tr>
+            <tr>
+                <td>Recalled on new charged offence</td>
+                <td>{{ optionalValue (convertBoolean isRecalledOnNewChargedOffence) }}</td>
+            </tr>
+            <tr>
+                <td>Serving fixed term sentence for terrorist offence</td>
+                <td>{{ optionalValue (convertBoolean isServingFTSentenceForTerroristOffence) }}</td>
+            </tr>
+            <tr>
+                <td>Charged with terrorist or state threat offence</td>
+                <td>{{ optionalValue (convertBoolean hasBeenChargedWithTerroristOrStateThreatOffence) }}</td>
+            </tr>
+            <tr>
+                <td>Charged with offence</td>
+                <td>{{ optionalValue (convertBoolean isChargedWithOffence) }}</td>
+            </tr>
+            <tr>
+                <td>Serving terrorist or national security offence</td>
+                <td>{{ optionalValue (convertBoolean isServingTerroristOrNationalSecurityOffence) }}</td>
+            </tr>
+            <tr>
+                <td>At risk of involved in foreign power threat</td>
+                <td>{{ optionalValue (convertBoolean isAtRiskOfInvolvedInForeignPowerThreat) }}</td>
+            </tr>
+            <tr>
+                <td>Referred to Parole Board 244ZB</td>
+                <td>{{ optionalValue (convertBoolean wasReferredToParoleBoard244ZB) }}</td>
+            </tr>
+            <tr>
+                <td>Repatriated for murder</td>
+                <td>{{ optionalValue (convertBoolean wasRepatriatedForMurder) }}</td>
+            </tr>
+            <tr>
+                <td>Serving SOPC sentence</td>
+                <td>{{ optionalValue (convertBoolean isServingSOPCSentence) }}</td>
+            </tr>
+            <tr>
+                <td>Serving DCR sentence</td>
+                <td>{{ optionalValue (convertBoolean isServingDCRSentence) }}</td>
+            </tr>
+            <tr>
+                <td>Youth sentence over 12 months</td>
+                <td>{{ optionalValue (convertBoolean isYouthSentenceOver12Months) }}</td>
+            </tr>
+            <tr>
+                <td>Youth charged with serious offence</td>
+                <td>{{ optionalValue (convertBoolean isYouthChargedWithSeriousOffence) }}</td>
+            </tr>
         </table>
         <table class="data-table">
             <tr>
@@ -851,11 +1085,20 @@
             </tr>
         </table>
         <table class="summary-list">
-            <tr><td>Countersign Senior Probation Officer exposition</td><td>{{ optionalValue countersignSpoExposition }}</td></tr>
-            <tr><td>Countersign Assistant Chief Officer exposition</td><td>{{ optionalValue countersignAcoExposition }}</td></tr>
+            <tr>
+                <td>Countersign Senior Probation Officer exposition</td>
+                <td>{{ optionalValue countersignSpoExposition }}</td>
+            </tr>
+            <tr>
+                <td>Countersign Assistant Chief Officer exposition</td>
+                <td>{{ optionalValue countersignAcoExposition }}</td>
+            </tr>
         </table>
         <table class="summary-list">
-            <tr><td>Decision date</td><td>{{ optionalValue (formatDate decisionDateTime) }}</td></tr>
+            <tr>
+                <td>Decision date</td>
+                <td>{{ optionalValue (formatDate decisionDateTime) }}</td>
+            </tr>
         </table>
         <!-- CounterSign names and emails have been removed from this section so as not to over-reveal staff information -->
     {{/recommendations}}
