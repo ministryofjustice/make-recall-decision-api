@@ -89,7 +89,7 @@ dependencies {
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
-    implementation("org.webjars:swagger-ui:5.32.7") {
+    implementation("org.webjars:swagger-ui:5.32.8") {
       because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.11")
     }
   }
