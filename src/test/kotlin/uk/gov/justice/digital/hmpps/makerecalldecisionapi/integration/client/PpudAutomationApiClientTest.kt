@@ -352,6 +352,7 @@ class PpudAutomationApiClientTest : IntegrationTestBase() {
         probationArea = "probation area",
         receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
         recommendedTo = PpudUser("", ""),
+        recallTypeForPpud = "To be determined",
         riskOfContrabandDetails = "some details",
       ),
     ).block()

@@ -348,6 +348,7 @@ class PpudControllerTest : IntegrationTestBase() {
           policeForce = "police force",
           probationArea = "probation area",
           receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+          recallTypeForPpud = "To be determined",
           riskOfContrabandDetails = "some details",
         ),
       )

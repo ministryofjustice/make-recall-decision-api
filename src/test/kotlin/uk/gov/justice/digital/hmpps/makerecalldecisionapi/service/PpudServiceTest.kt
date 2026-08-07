@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.mock
@@ -192,8 +193,9 @@ internal class PpudServiceTest : ServiceTestBase() {
     assertThat(result).isEqualTo(response)
   }
 
-  @Test
-  fun `call create recall`() {
+  @ParameterizedTest
+  @ValueSource(strings = ["To be determined", "Emergency to be determined"])
+  fun `call create recall passes recallTypeForPpud through`(recallTypeForPpud: String) {
     val request = CreateRecallRequest(
       decisionDateTime = LocalDateTime.of(2024, 6, 1, 12, 0),
       isExtendedSentence = false,
@@ -202,6 +204,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       policeForce = "police force",
       probationArea = "probation area",
       receivedDateTime = LocalDateTime.of(2024, 6, 1, 14, 0),
+      recallTypeForPpud = recallTypeForPpud,
       riskOfContrabandDetails = "some details",
     )
 
@@ -231,6 +234,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     assertThat(ppudCreateRecallRequest.policeForce).isEqualTo("police force")
     assertThat(ppudCreateRecallRequest.probationArea).isEqualTo("probation area")
     assertThat(ppudCreateRecallRequest.receivedDateTime).isEqualTo(LocalDateTime.of(2024, 6, 1, 15, 0))
+    assertThat(ppudCreateRecallRequest.recallTypeForPpud).isEqualTo(recallTypeForPpud)
     assertThat(ppudCreateRecallRequest.riskOfContrabandDetails).isEqualTo("some details")
   }
 
@@ -244,6 +248,7 @@ internal class PpudServiceTest : ServiceTestBase() {
       policeForce = "police force",
       probationArea = "probation area",
       receivedDateTime = LocalDateTime.of(2024, 1, 1, 14, 0),
+      recallTypeForPpud = "To be determined",
       riskOfContrabandDetails = "some details",
     )
 
