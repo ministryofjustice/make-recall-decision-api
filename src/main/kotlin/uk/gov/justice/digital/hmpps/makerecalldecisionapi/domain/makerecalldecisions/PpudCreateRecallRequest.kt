@@ -11,5 +11,6 @@ data class PpudCreateRecallRequest(
   val probationArea: String,
   val receivedDateTime: LocalDateTime,
   val recommendedTo: PpudUser = PpudUser("", ""),
+  val recallTypeForPpud: String,
   val riskOfContrabandDetails: String = "",
 )
