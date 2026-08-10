@@ -108,14 +108,6 @@ abstract class IntegrationTestBase {
   @Autowired
   protected lateinit var recommendationSupportingDocumentRepository: RecommendationSupportingDocumentRepository
 
-  var gotenbergMock: ClientAndServer = startClientAndServer(8094)
-  var oasysARNApi: ClientAndServer = startClientAndServer(8095)
-  var cvlApi: ClientAndServer = startClientAndServer(8096)
-  var documentManagementApi: ClientAndServer = startClientAndServer(9072)
-  var deliusIntegration: ClientAndServer = startClientAndServer(8097)
-  var oauthMock: ClientAndServer = startClientAndServer(9090)
-  var prisonApi: ClientAndServer = startClientAndServer(8098)
-
   private val gson: Gson = Gson()
 
   val crn = "A12345"
@@ -141,6 +133,20 @@ abstract class IntegrationTestBase {
   companion object {
     @JvmStatic
     var postgresStarted = false
+
+    @JvmStatic val gotenbergMock: ClientAndServer = startClientAndServer(8094)
+
+    @JvmStatic val oasysARNApi: ClientAndServer = startClientAndServer(8095)
+
+    @JvmStatic val cvlApi: ClientAndServer = startClientAndServer(8096)
+
+    @JvmStatic val documentManagementApi: ClientAndServer = startClientAndServer(9072)
+
+    @JvmStatic val deliusIntegration: ClientAndServer = startClientAndServer(8097)
+
+    @JvmStatic val oauthMock: ClientAndServer = startClientAndServer(9090)
+
+    @JvmStatic val prisonApi: ClientAndServer = startClientAndServer(8098)
 
     @JvmStatic
     @BeforeAll
@@ -211,13 +217,6 @@ abstract class IntegrationTestBase {
 
   @AfterAll
   fun tearDownServer() {
-    documentManagementApi.stop()
-    cvlApi.stop()
-    deliusIntegration.stop()
-    gotenbergMock.stop()
-    oasysARNApi.stop()
-    oauthMock.stop()
-    prisonApi.stop()
   }
 
   fun deleteAndCreateRecommendation(featureFlagString: String? = null) {
