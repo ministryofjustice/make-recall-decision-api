@@ -88,8 +88,8 @@ dependencies {
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
-    implementation("org.webjars:swagger-ui:5.32.7") {
-      because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.11")
+    implementation("org.webjars:swagger-ui:5.32.11") {
+      because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.12")
     }
   }
 
@@ -132,6 +132,25 @@ dependencies {
       strictly("11.0.24")
     }
     because("Address CVE-2026-59084 - can be removed once uk.gov.justice.hmpps.gradle-spring-boot to 11.0.x ")
+  }
+
+  implementation("org.apache.httpcomponents.client5:httpclient5") {
+    version {
+      strictly("5.6.2")
+    }
+    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
+  }
+  implementation("org.apache.httpcomponents.core5:httpcore5") {
+    version {
+      strictly("5.4.3")
+    }
+    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
+  }
+  implementation("org.apache.httpcomponents.core5:httpcore5-h2") {
+    version {
+      strictly("5.4.3")
+    }
+    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
   }
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
