@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.7"
-  kotlin("jvm") version "2.3.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.4"
+  kotlin("jvm") version "2.4.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   id("jacoco")
-  kotlin("plugin.jpa") version "2.3.21"
+  kotlin("plugin.jpa") version "2.4.10"
   id("org.sonarqube") version "6.2.0.5505"
-  kotlin("plugin.spring") version "2.3.21"
-  kotlin("plugin.serialization") version "2.3.21"
+  kotlin("plugin.spring") version "2.4.10"
+  kotlin("plugin.serialization") version "2.4.10"
 }
 
 configurations {
@@ -20,28 +20,13 @@ configurations {
     // Force json-unit-core back to the version MockServer was built against.
     resolutionStrategy.force("net.javacrumbs.json-unit:json-unit-core:2.36.0")
   }
-  // CVE version overrides - the hmpps-gradle-spring-boot plugin uses resolution rules that
-  // override BOM constraints, so we must use eachDependency to force specific versions.
-  // These can be removed once the plugin is upgraded to 11.0.x
   all {
-    resolutionStrategy.eachDependency {
-      if (requested.group == "io.netty" && requested.name.startsWith("netty-") && !requested.name.startsWith("netty-tcnative")) {
-        useVersion("4.2.16.Final")
-        because("Address CVE-2026-44891, CVE-2026-55831, CVE-2026-55833 and other Netty CVEs")
-      }
-      if (requested.group == "org.apache.logging.log4j") {
-        useVersion("2.26.1")
-        because("Address CVE-2026-49844")
-      }
-      if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-databind") {
-        useVersion("2.22.1")
-        because("Address CVE-2026-54515 and CVE-2026-59889")
-      }
-      if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
-        useVersion("3.1.5")
-        because("Address CVE-2026-59889")
-      }
-    }
+    resolutionStrategy.force(
+      // Force test starter to 2.2.0 across all configs as hmpps-subject-access-request-test-support:2.4.0
+      // calls setAuthorisationHeader with the old 4-param signature (AuthSource param added in 2.5.0)
+      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0",
+      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0",
+    )
   }
 }
 
@@ -54,7 +39,7 @@ testSets {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.5.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.0")
   implementation("org.springframework.boot:spring-boot-starter-webmvc")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
@@ -66,27 +51,27 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-cache")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-  implementation("io.micrometer:micrometer-registry-prometheus:1.15.1")
-  implementation("joda-time:joda-time:2.14.0")
+  implementation("io.micrometer:micrometer-registry-prometheus")
+  implementation("joda-time:joda-time:2.14.3")
   // At the time of writing, there are no versions of poi-tl beyond 1.12.2, hence the overridden implementations below
   implementation("com.deepoove:poi-tl:1.12.2") {
     // exclude apache.xmlgraphics batik due to vulnerabilities when imported with poi-tl
     exclude("org.apache.xmlgraphics", "batik-codec")
     exclude("org.apache.xmlgraphics", "batik-transcoder")
-    implementation("org.apache.commons:commons-compress:1.27.1") // Address CVE-2024-25710 and CVE-2024-26308 present in v1.21
-    implementation("org.apache.poi:poi-ooxml:5.5.1") // Address CVE-2025-31672 present in 5.2.2
+    implementation("org.apache.commons:commons-compress:1.28.0")
+    implementation("org.apache.poi:poi-ooxml:5.5.1")
   }
   implementation("org.springframework.boot:spring-boot-jackson2")
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
-  implementation("org.postgresql:postgresql:42.7.12")
+  implementation("org.postgresql:postgresql:42.7.13")
 
-  implementation("io.sentry:sentry-spring-boot-4:8.42.0")
-  implementation("io.sentry:sentry-logback:8.42.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.52.0")
+  implementation("io.sentry:sentry-logback:8.52.0")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.11") {
       because("Address DOMPurify CVEs (CVE-2026-65898 through CVE-2026-66010) - bundles DOMPurify 3.4.12")
@@ -97,61 +82,18 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.2")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.4")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
-  implementation("org.json:json:20250517")
+  implementation("org.json:json:20260719")
 
-  implementation("com.google.code.gson:gson:2.13.2")
+  implementation("com.google.code.gson:gson:2.14.0")
 
-  implementation("io.flipt:flipt-client-java:1.2.1")
+  implementation("io.flipt:flipt-client-java:1.3.3")
 
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
-
-  constraints {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1") {
-      because("Address CVE-2026-54515 and CVE-2026-59889 - can be removed once hmpps-kotlin-spring-boot-starter has a new version addressing this and hmpps-sqs-spring-boot-starter upgraded to v7")
-    }
-    implementation("org.springframework.retry:spring-retry:2.0.13") {
-      because("Address CVE-2026-41710 - can be removed once hmpps-sqs-spring-boot-starter upgraded to v7")
-    }
-  }
-
-  // hmpps-spring-boot plugin explicitly forcing the tomcat-embed-core version, so we can't override using constraints
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket") {
-    version {
-      strictly("11.0.24")
-    }
-    because("Address CVE-2026-59084 - can be removed once uk.gov.justice.hmpps.gradle-spring-boot to 11.0.x ")
-  }
-  // hmpps-spring-boot plugin explicitly forcing the tomcat-embed-core version, so we can't override using constraints
-  implementation("org.apache.tomcat.embed:tomcat-embed-core") {
-    version {
-      strictly("11.0.24")
-    }
-    because("Address CVE-2026-59084 - can be removed once uk.gov.justice.hmpps.gradle-spring-boot to 11.0.x ")
-  }
-
-  implementation("org.apache.httpcomponents.client5:httpclient5") {
-    version {
-      strictly("5.6.2")
-    }
-    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
-  }
-  implementation("org.apache.httpcomponents.core5:httpcore5") {
-    version {
-      strictly("5.4.3")
-    }
-    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
-  }
-  implementation("org.apache.httpcomponents.core5:httpcore5-h2") {
-    version {
-      strictly("5.4.3")
-    }
-    because("Address CVEs CVE-2026-54428 & CVE-2026-54399 - override removable on upgrading HMPPS plug-in to 11.x")
-  }
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
@@ -174,6 +116,8 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.4.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.5.0")
+  // Pinned to 2.2.0 as hmpps-subject-access-request-test-support:2.4.0 calls setAuthorisationHeader
+  // with old 4-param signature (AuthSource param added in 2.5.0, breaking binary compatibility)
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.1.1")

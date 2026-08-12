@@ -24,6 +24,7 @@ import org.springframework.web.context.annotation.RequestScope
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.CvlApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
+import uk.gov.justice.hmpps.kotlin.auth.ServletRequestResponseNonNullFilterFunction
 import java.net.URI
 
 @Configuration
@@ -97,6 +98,7 @@ class WebClientUserEnhancementConfiguration(
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(registrationId)
     return builder.baseUrl(rootUri)
+      .filter(ServletRequestResponseNonNullFilterFunction())
       .apply(oauth2Client.oauth2Configuration())
       .build()
   }

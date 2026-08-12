@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.prisonapi.Priso
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.client.risk.ArnApiClient
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.exception.ClientTimeoutRuntimeException
+import uk.gov.justice.hmpps.kotlin.auth.ServletRequestResponseNonNullFilterFunction
 import java.net.URI
 import java.time.Duration
 import java.util.concurrent.TimeoutException
@@ -176,6 +177,7 @@ class WebClientConfiguration(
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(registrationId)
     return builder.baseUrl(rootUri)
+      .filter(ServletRequestResponseNonNullFilterFunction())
       .apply(oauth2Client.oauth2Configuration())
       .build()
   }
