@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.DecisionNotToRecallLetterDocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.documentmapper.PartADocumentMapper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.featureflags.FeatureFlags
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.Mappa
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.DocumentType
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.LetterContent
@@ -32,9 +31,9 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RELATIONSHIP_BREAKDOWN
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.VulnerabilityOptions.RISK_OF_SUICIDE_OR_SELF_HARM
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.recommendation.YesNoNotApplicableOptions
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.converter.mappa.MappaConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.CHECKED_CHECKBOX
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_CHECKBOX
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_STRING
@@ -52,6 +51,7 @@ internal class TemplateReplacementService(
   val partADocumentMapper: PartADocumentMapper,
   val decisionNotToRecallLetterDocumentMapper: DecisionNotToRecallLetterDocumentMapper,
   val templateRetrievalService: TemplateRetrievalService,
+  val mappaConverter: MappaConverter,
 ) {
 
   suspend fun generateDocFromRecommendation(
@@ -172,7 +172,6 @@ internal class TemplateReplacementService(
       "crn" to documentData.crn,
       "most_recent_prisoner_number" to documentData.mostRecentPrisonerNumber,
       "noms_number" to documentData.nomsNumber,
-      "gender" to documentData.gender,
       "index_offence_description" to documentData.indexOffenceDescription,
       "date_of_original_offence" to documentData.dateOfOriginalOffence,
       "date_of_sentence" to documentData.dateOfSentence,
@@ -181,8 +180,8 @@ internal class TemplateReplacementService(
       "sentence_expiry_date" to documentData.sentenceExpiryDate,
       "custodial_term" to documentData.custodialTerm,
       "extended_term" to documentData.extendedTerm,
-      "mappa_level" to formatMappaLevel(documentData.mappa),
-      "mappa_category" to formatMappaCategory(documentData.mappa),
+      "mappa_level" to mappaConverter.formatMappaLevel(documentData.mappa),
+      "mappa_category" to mappaConverter.formatMappaCategory(documentData.mappa),
       "completed_by_name" to documentData.completedBy.name,
       "completed_by_telephone" to documentData.completedBy.telephone,
       "completed_by_email" to documentData.completedBy.email,
@@ -380,21 +379,5 @@ internal class TemplateReplacementService(
     } else {
       EMPTY_STRING
     }
-  }
-
-  private fun formatMappaCategory(mappa: Mappa?): String = if (mappa == null) {
-    EMPTY_STRING
-  } else if (mappa.category == null) {
-    MrdTextConstants.NOT_APPLICABLE
-  } else {
-    "Category${MrdTextConstants.WHITE_SPACE}${(mappa.category)}"
-  }
-
-  private fun formatMappaLevel(mappa: Mappa?): String = if (mappa == null) {
-    EMPTY_STRING
-  } else if (mappa.level == null) {
-    MrdTextConstants.NOT_APPLICABLE
-  } else {
-    "Level${MrdTextConstants.WHITE_SPACE}${(mappa.level)}"
   }
 }
