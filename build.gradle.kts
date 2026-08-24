@@ -71,6 +71,9 @@ dependencies {
   implementation("ch.qos.logback:logback-classic:1.6.3") {
     because("Address CVE-2026-19880")
   }
+  implementation("ch.qos.logback:logback-core:1.6.3") {
+    because("Address CVE-2026-19880")
+  }
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
