@@ -60,6 +60,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.repository.Recomme
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateReplacementService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateRetrievalService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.TemplateVersionRetrievalService
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.documenttemplate.converter.mappa.MappaConverter
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.featureflag.FeatureFlagService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.PrisonerApiService
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.prisonapi.converter.OffenceConverter
@@ -112,6 +113,9 @@ internal abstract class ServiceTestBase {
   @Mock
   protected lateinit var fliptClient: FliptClient
 
+  @Mock
+  protected lateinit var mappaConverter: MappaConverter
+
   protected lateinit var authenticationFacade: AuthenticationFacade
 
   protected lateinit var personDetailsService: PersonDetailsService
@@ -162,7 +166,12 @@ internal abstract class ServiceTestBase {
     templateVersionRetrievalService = TemplateVersionRetrievalService(featureFlagService, dateTimeFormatter)
     templateRetrievalService = TemplateRetrievalService(templateVersionRetrievalService)
     templateReplacementService =
-      TemplateReplacementService(partADocumentMapper, decisionNotToRecallLetterDocumentMapper, templateRetrievalService)
+      TemplateReplacementService(
+        partADocumentMapper,
+        decisionNotToRecallLetterDocumentMapper,
+        templateRetrievalService,
+        mappaConverter,
+      )
     documentService = DocumentService(deliusClient, userAccessValidator)
     personDetailsService = PersonDetailsService(deliusClient, userAccessValidator, null)
     recommendationService = RecommendationService(

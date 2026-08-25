@@ -212,14 +212,14 @@ internal class PartADocumentMapper(
       mappa = recommendation.personOnProbation?.mappa,
       lastRecordedAddress = lastRecordedAddress,
       noFixedAbode = noFixedAbode,
-      completedBy = determineCompletedBy(recommendation, metadata, flags),
+      completedBy = determineCompletedBy(recommendation),
       // we have separate supervisingPractitioner and probationPractitionerDetails fields because Part As pre-FTR56
       // include the details only if the person completing the Part A isn't the practitioner (the Part A had separate
       // sections and explicitly ask for the second one only to filled in if relevant), whereas the FTR56 version always
       // wants the practitioner's details, for which we need the logic in determineProbationPractitionerDetails. We
       // can't change determineSupervisingPractitioner, as we still need to support downloads of older Part As and we
       // don't want them to fill in the practitioner section if they are the same as the whoFilledPartA one
-      supervisingPractitioner = determineSupervisingPractitioner(recommendation, flags),
+      supervisingPractitioner = determineSupervisingPractitioner(recommendation),
       probationPractitionerDetails = determineProbationPractitionerDetails(recommendation),
       revocationOrderRecipients = recommendation.revocationOrderRecipients ?: emptyList(),
       dateOfDecision = decisionDate,
@@ -268,8 +268,6 @@ internal class PartADocumentMapper(
 
   private suspend fun determineCompletedBy(
     recommendation: RecommendationResponse,
-    metadata: RecommendationMetaData,
-    flags: FeatureFlags,
   ): PractitionerDetails {
     with(recommendation.whoCompletedPartA) {
       return PractitionerDetails(
@@ -289,7 +287,6 @@ internal class PartADocumentMapper(
 
   private suspend fun determineSupervisingPractitioner(
     recommendation: RecommendationResponse,
-    flags: FeatureFlags,
   ): PractitionerDetails = if (recommendation.whoCompletedPartA?.isPersonProbationPractitionerForOffender != true) {
     with(recommendation.practitionerForPartA) {
       PractitionerDetails(

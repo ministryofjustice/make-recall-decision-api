@@ -82,6 +82,7 @@ import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecis
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.TextValueOption
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.ServiceTestBase
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.recommendation.RecommendationMetaData
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.DateTimeHelper
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.CHECKED_CHECKBOX
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.util.MrdTextConstants.Constants.EMPTY_CHECKBOX
@@ -120,6 +121,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           partADocumentMapper,
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
+          mappaConverter,
         )
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
@@ -131,6 +133,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           templateName,
         ),
       )
+      given(mappaConverter.formatMappaLevel(recommendation.personOnProbation?.mappa)).willReturn(randomString())
+      given(mappaConverter.formatMappaCategory(recommendation.personOnProbation?.mappa)).willReturn(randomString())
+
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata)
 
       verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
@@ -145,6 +150,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           partADocumentMapper,
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
+          mappaConverter,
         )
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
@@ -152,6 +158,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       given(templateRetrievalService.loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)).willReturn(
         ClassPathResource("DNTR Template.docx"),
       )
+
       templateReplacementService.generateDocFromRecommendation(recommendation, DocumentType.DNTR_DOCUMENT, metadata)
 
       verify(templateRetrievalService).loadDocumentTemplate(DocumentType.DNTR_DOCUMENT, metadata)
@@ -170,6 +177,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           partADocumentMapper,
           decisionNotToRecallLetterDocumentMapper,
           templateRetrievalService,
+          mappaConverter,
         )
       val featureFlags = FeatureFlags()
       val recommendation = createRecommendationResponse(featureFlags)
@@ -183,6 +191,9 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           templateName,
         ),
       )
+      given(mappaConverter.formatMappaLevel(recommendation.personOnProbation?.mappa)).willReturn(randomString())
+      given(mappaConverter.formatMappaCategory(recommendation.personOnProbation?.mappa)).willReturn(randomString())
+
       templateReplacementService.generateDocFromRecommendation(recommendation, documentType, metadata, featureFlags)
 
       verify(templateRetrievalService).loadDocumentTemplate(documentType, metadata)
@@ -211,6 +222,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         partADocumentMapperMocked,
         decisionNotToRecallLetterDocumentMapperMocked,
         templateRetrievalService,
+        mappaConverter,
       ).generateLetterContentForPreviewFromRecommendation(recommendation)
 
       assertThat(letterContent.letterAddress).isEqualTo("My address")
@@ -230,6 +242,10 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
     runTest {
       // given
       val document = documentData()
+      val expectedMappaLevel = randomString()
+      given(mappaConverter.formatMappaLevel(document.mappa)).willReturn(expectedMappaLevel)
+      val expectedMappaCategory = randomString()
+      given(mappaConverter.formatMappaCategory(document.mappa)).willReturn(expectedMappaCategory)
 
       // when
       val result = templateReplacementService.mappingsForTemplate(document)
@@ -304,8 +320,8 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["sentence_expiry_date"]).isEqualTo("07/09/2022")
       assertThat(result["custodial_term"]).isEqualTo("6 days")
       assertThat(result["extended_term"]).isEqualTo("20 days")
-      assertThat(result["mappa_level"]).isEqualTo("Level 1")
-      assertThat(result["mappa_category"]).isEqualTo("Category 1")
+      assertThat(result["mappa_level"]).isEqualTo(expectedMappaLevel)
+      assertThat(result["mappa_category"]).isEqualTo(expectedMappaCategory)
       assertThat(result["completed_by_name"]).isEqualTo("Henry Bloggs")
       assertThat(result["completed_by_telephone"]).isEqualTo(EMPTY_STRING)
       assertThat(result["completed_by_email"]).isEqualTo("Henry.Bloggs@test.com")
