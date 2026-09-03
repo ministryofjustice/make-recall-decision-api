@@ -22,8 +22,8 @@ configurations {
     resolutionStrategy.force(
       // Force test starter to 2.2.0 across all configs as hmpps-subject-access-request-test-support:2.4.0
       // calls setAuthorisationHeader with the old 4-param signature (AuthSource param added in 2.5.0)
-      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0",
-      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0",
+      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.0",
+      "uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:3.0.0",
     )
   }
 }
@@ -123,8 +123,8 @@ dependencies {
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.7.0")
   // Pinned to 2.2.0 as hmpps-subject-access-request-test-support:2.4.0 calls setAuthorisationHeader
   // with old 4-param signature (AuthSource param added in 2.5.0, breaking binary compatibility)
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:3.0.0")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:6.2.0")
 }
 
