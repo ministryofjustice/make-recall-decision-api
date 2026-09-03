@@ -4,9 +4,7 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
   kotlin("jvm") version "2.4.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
-  id("jacoco")
   kotlin("plugin.jpa") version "2.4.10"
-  id("org.sonarqube") version "6.2.0.5505"
   kotlin("plugin.spring") version "2.4.10"
   kotlin("plugin.serialization") version "2.4.10"
 }
@@ -82,7 +80,7 @@ dependencies {
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
   implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.4")
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
   implementation("org.json:json:20260719")
 
   implementation("com.google.code.gson:gson:2.14.0")
@@ -117,7 +115,7 @@ dependencies {
   testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.7.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.1")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:3.0.1")
-  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:6.0.1")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:6.2.0")
 }
 
 java {
