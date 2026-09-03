@@ -125,7 +125,7 @@ dependencies {
   // with old 4-param signature (AuthSource param added in 2.5.0, breaking binary compatibility)
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-test-autoconfigure:2.2.0")
-  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:6.0.1")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:6.2.0")
 }
 
 java {
