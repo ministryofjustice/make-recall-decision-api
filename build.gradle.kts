@@ -65,7 +65,7 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind:2.21.6") {
     because("Address CVE-2026-19032 & CVE-2026-68497")
   }
-  implementation("tools.jackson.core:jackson-databind:3.1.6") {
+  implementation("tools.jackson.core:jackson-databind:3.2.2") {
     because("Address CVE-2026-19032 & CVE-2026-68497")
   }
   implementation("ch.qos.logback:logback-classic:1.6.3") {
