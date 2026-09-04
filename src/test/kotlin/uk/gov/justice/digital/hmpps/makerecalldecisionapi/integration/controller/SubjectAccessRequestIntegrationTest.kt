@@ -95,7 +95,7 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
   fun `SAR API should return expected data`() {
     setupTestData()
 
-    val response = sarIntegrationTestHelper.requestSarData(null, crn, null, null, webTestClient)
+    val response = sarIntegrationTestHelper.requestSarData(null, crn, null, null, webTestClient, Any::class.java)
     if (System.getenv("SAR_GENERATE_ACTUAL").toBoolean()) {
       sarIntegrationTestHelper.saveSarApiResponse(response)
     } else {
@@ -110,7 +110,7 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
   fun `SAR report should render as expected`() {
     setupTestData()
 
-    val dataResponse = sarIntegrationTestHelper.requestSarData(null, crn, null, null, webTestClient)
+    val dataResponse = sarIntegrationTestHelper.requestSarData(null, crn, null, null, webTestClient, Any::class.java)
     val templateResponse = sarIntegrationTestHelper.requestSarTemplate(webTestClient)
 
     val renderResult = sarIntegrationTestHelper.renderServiceReport(
@@ -138,7 +138,8 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     repository.deleteAll()
     repository.save(RecommendationEntity(id = 1, data = recommendationModel))
 
-    val dataResponse = sarIntegrationTestHelper.requestSarData(null, recommendationModel.crn, null, null, webTestClient)
+    val dataResponse =
+      sarIntegrationTestHelper.requestSarData(null, recommendationModel.crn, null, null, webTestClient, Any::class.java)
     val templateResponse = sarIntegrationTestHelper.requestSarTemplate(webTestClient)
 
     val renderResult = sarIntegrationTestHelper.renderServiceReport(
