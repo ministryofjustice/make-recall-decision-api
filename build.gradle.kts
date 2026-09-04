@@ -52,7 +52,7 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.5.1")
   }
   implementation("org.springframework.boot:spring-boot-jackson2")
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.21.6") {
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2") {
     because("Address CVE-2026-19032 & CVE-2026-68497")
   }
   implementation("tools.jackson.core:jackson-databind:3.1.6") {
