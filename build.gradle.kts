@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.7"
   kotlin("jvm") version "2.4.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   kotlin("plugin.jpa") version "2.4.10"
