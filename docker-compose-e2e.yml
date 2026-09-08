@@ -29,7 +29,7 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
 
   gotenberg:
-    image: gotenberg/gotenberg:8.0.3
+    image: gotenberg/gotenberg:8.34.0
     networks:
       - hmpps
     container_name: gotenberg
@@ -41,7 +41,7 @@ services:
       - LOG_LEVEL=DEBUG
 
   postgres:
-    image: postgres:14-alpine
+    image: postgres:18-alpine
     networks:
       - hmpps
     container_name: postgres
@@ -55,7 +55,7 @@ services:
       - POSTGRES_DB=make_recall_decision
 
   redis:
-    image: redis:7.4.6-alpine3.21
+    image: redis:8.0.6-alpine3.21
     ports:
       - 6379:6379
     expose:
