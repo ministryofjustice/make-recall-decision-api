@@ -314,30 +314,14 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Gender</td>
-                    <td class="data-column-25">Ethnicity</td>
-                    <td class="data-column-25">Date of birth</td>
-                    <td class="data-column-25">Primary language</td>
+                    <td class="data-column-30">Gender</td>
+                    <td class="data-column-30">Ethnicity</td>
+                    <td class="data-column-30">Primary language</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue gender }}</td>
                     <td>{{ optionalValue ethnicity }}</td>
-                    <td>{{ optionalValue (formatDate dateOfBirth) }}</td>
                     <td>{{ optionalValue primaryLanguage }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-25">CRO number</td>
-                    <td class="data-column-25">Most recent prisoner number</td>
-                    <td class="data-column-25">NOMS number</td>
-                    <td class="data-column-25">PNC number</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue croNumber }}</td>
-                    <td>{{ optionalValue mostRecentPrisonerNumber }}</td>
-                    <td>{{ optionalValue nomsNumber }}</td>
-                    <td>{{ optionalValue pncNumber }}</td>
                 </tr>
             </table>
             <table class="data-table">
@@ -358,34 +342,6 @@
                     {{/mappa}}
                 </tr>
             </table>
-            <p><b>Addresses</b></p>
-            {{#addresses}}
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-50">Line 1</td>
-                        <td class="data-column-50">Line 2</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue line1 }}</td>
-                        <td>{{ optionalValue line2 }}</td>
-                    </tr>
-                </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-50">Town</td>
-                        <td class="data-column-25">Postcode</td>
-                        <td class="data-column-25">No fixed abode</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue town }}</td>
-                        <td>{{ optionalValue postcode }}</td>
-                        <td>{{ optionalValue noFixedAbode }}</td>
-                    </tr>
-                </table>
-            {{/addresses}}
-            {{^addresses}}
-                <p>No Data Held</p>
-            {{/addresses}}
         {{/personOnProbation}}
         {{^personOnProbation}}
             <p>No Data Held</p>
