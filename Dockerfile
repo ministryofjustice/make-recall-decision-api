@@ -1,38 +1,34 @@
+ARG BASE_IMAGE=ghcr.io/ministryofjustice/hmpps-eclipse-temurin:21-jre-jammy
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
+# BUILD_NUMBER is provided as a build argument by the build pipeline
 ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
+ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
 
 WORKDIR /app
 ADD . .
 RUN ./gradlew assemble -Dorg.gradle.daemon=false
 
-FROM eclipse-temurin:21-jre-jammy
-LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
+FROM ${BASE_IMAGE}
 
+# BUILD_NUMBER is provided as a build argument by the build pipeline
 ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
+ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
+
+# the base image changes the user as its last command, but we need
+# root access for the commands below. we switch it back at the end
+USER root
 
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/*
 
-ENV TZ=Europe/London
-RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
-
-RUN addgroup --gid 2000 --system appgroup && \
-    adduser --uid 2000 --system appuser --gid 2000
-
 WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/make-recall-decision-api*.jar /app/app.jar
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/applicationinsights-agent*.jar /app/agent.jar
 COPY --from=builder --chown=appuser:appgroup /app/applicationinsights.json /app
 COPY --from=builder --chown=appuser:appgroup /app/applicationinsights.dev.json /app
-
-# Install AWS RDS Root cert into Java truststore
-RUN mkdir /home/appuser/.postgresql
-ADD --chown=appuser:appgroup https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /home/appuser/.postgresql/root.crt
 
 USER 2000
 EXPOSE 8080
