@@ -149,7 +149,7 @@ jobs:
       - name: Prepare Slack failure message
         run: echo "Validation checks failed in workflow ${{ github.repository }} - ${{ github.workflow }}." > results_slack_message.txt
       - name: Notify Slack of failure
-        uses: ministryofjustice/hmpps-github-shared-actions/.github/actions/slack_failure_results@1061afed0f02c82850314e2fc29711523139e574 # v1
+        uses: ministryofjustice/hmpps-github-shared-actions/.github/actions/slack_failure_results@accf37e936517ed39e7a888cf74f0277dab3310e # v1
         with:
           channel_id: ${{ vars.PROD_RELEASES_SLACK_CHANNEL }}
           SLACK_BOT_TOKEN: ${{ secrets.HMPPS_SRE_SLACK_BOT_TOKEN }}
