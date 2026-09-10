@@ -130,7 +130,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     assertThat(transformedRec.practitionerForPartA?.name).isEqualTo("Person")
   }
 
-   // Builds the expected transformed recommendation data by applying the same
+  // Builds the expected transformed recommendation data by applying the same
   // name-transformation logic used in the service, so tests stay in sync
   // regardless of what name-like values the test data builder produces.
   private fun expectedTransformedData(rec: RecommendationEntity) = rec.data.copy(
