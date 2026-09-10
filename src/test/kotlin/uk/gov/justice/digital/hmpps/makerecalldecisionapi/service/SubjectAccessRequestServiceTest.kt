@@ -40,7 +40,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     assertThat(probationContent?.content).isInstanceOf(SubjectAccessRequestResponse::class.java)
     val subjectAccessRequestResponse = probationContent?.content as SubjectAccessRequestResponse
     assertThat(subjectAccessRequestResponse.crn).isEqualTo(crn)
-    assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> rec.data })
+    assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> expectedTransformedData(rec) })
   }
 
   @Test
@@ -56,7 +56,9 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
       ),
     )
 
-    val responseWithTransformedLicenceConditions = recList.map { rec -> rec.data.copy(cvlLicenceConditionsBreached = buildCvlLicenceConditionsBreached(true)) }
+    val responseWithTransformedLicenceConditions = recList.map { rec ->
+      expectedTransformedData(rec).copy(cvlLicenceConditionsBreached = buildCvlLicenceConditionsBreached(true))
+    }
 
     given(recommendationRepository.findRecommendationsForSar(crn, fromDate, toDate)).willReturn(recList)
 
@@ -79,7 +81,7 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
     assertThat(probationContent?.content).isInstanceOf(SubjectAccessRequestResponse::class.java)
     val subjectAccessRequestResponse = probationContent?.content as SubjectAccessRequestResponse
     assertThat(subjectAccessRequestResponse.crn).isEqualTo(crn)
-    assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> rec.data })
+    assertThat(subjectAccessRequestResponse.recommendations).isEqualTo(recList.map { rec -> expectedTransformedData(rec) })
   }
 
   @Test
@@ -90,4 +92,65 @@ internal class SubjectAccessRequestServiceTest : ServiceTestBase() {
 
     assertThat(result?.content).isNull()
   }
+
+  @Test
+  fun `get a recommendation by CRN transforms all user name fields to surnames`() {
+    val fromDate = LocalDate.of(2000, 1, 1)
+    val toDate = LocalDate.of(2000, 6, 30)
+
+    val recWithNames = recommendation.copy(
+      data = recommendation.data.copy(
+        createdByUserFullName = "Jane Doe",
+        odmName = "Off Manager123",
+        lastModifiedByUserName = "Last Editor",
+        considerationRationale = recommendation.data.considerationRationale?.copy(createdBy = "Rationale Author"),
+        managerRecallDecision = recommendation.data.managerRecallDecision?.copy(createdBy = "Manager Person"),
+        localPoliceContact = recommendation.data.localPoliceContact?.copy(contactName = "Police Contact"),
+        whoCompletedPartA = recommendation.data.whoCompletedPartA?.copy(name = "Part A Completer"),
+        practitionerForPartA = recommendation.data.practitionerForPartA?.copy(name = "Practitioner Person"),
+      ),
+    )
+
+    val recList = listOf(recWithNames)
+
+    given(recommendationRepository.findRecommendationsForSar(crn, fromDate, toDate)).willReturn(recList)
+
+    val probationContent = subjectAccessRequestService.getProbationContentFor(crn, fromDate, toDate)
+
+    val subjectAccessRequestResponse = probationContent?.content as SubjectAccessRequestResponse
+    val transformedRec = subjectAccessRequestResponse.recommendations.first()
+
+    assertThat(transformedRec.createdBy).isEqualTo("Doe")
+    assertThat(transformedRec.odmName).isEqualTo("NO DATA")
+    assertThat(transformedRec.lastModifiedByUserName).isEqualTo("Editor")
+    assertThat(transformedRec.considerationRationale?.createdBy).isEqualTo("Author")
+    assertThat(transformedRec.managerRecallDecision?.createdBy).isEqualTo("Person")
+    assertThat(transformedRec.localPoliceContact?.contactName).isEqualTo("Contact")
+    assertThat(transformedRec.whoCompletedPartA?.name).isEqualTo("Completer")
+    assertThat(transformedRec.practitionerForPartA?.name).isEqualTo("Person")
+  }
+
+   // Builds the expected transformed recommendation data by applying the same
+  // name-transformation logic used in the service, so tests stay in sync
+  // regardless of what name-like values the test data builder produces.
+  private fun expectedTransformedData(rec: RecommendationEntity) = rec.data.copy(
+    createdBy = subjectAccessRequestService.transformNameToSurname(rec.data.createdByUserFullName),
+    considerationRationale = rec.data.considerationRationale?.let {
+      it.copy(createdBy = subjectAccessRequestService.transformNameToSurname(it.createdBy))
+    },
+    managerRecallDecision = rec.data.managerRecallDecision?.let {
+      it.copy(createdBy = subjectAccessRequestService.transformNameToSurname(it.createdBy))
+    },
+    localPoliceContact = rec.data.localPoliceContact?.let {
+      it.copy(contactName = subjectAccessRequestService.transformNameToSurname(it.contactName))
+    },
+    odmName = subjectAccessRequestService.transformNameToSurname(rec.data.odmName),
+    lastModifiedByUserName = subjectAccessRequestService.transformNameToSurname(rec.data.lastModifiedByUserName),
+    whoCompletedPartA = rec.data.whoCompletedPartA?.let {
+      it.copy(name = subjectAccessRequestService.transformNameToSurname(it.name))
+    },
+    practitionerForPartA = rec.data.practitionerForPartA?.let {
+      it.copy(name = subjectAccessRequestService.transformNameToSurname(it.name))
+    },
+  )
 }
