@@ -36,6 +36,24 @@ class SubjectAccessRequestService(
           recommendations = recommendations
             .map { rec ->
               rec.data.copy(
+                createdBy = transformNameToSurname(rec.data.createdByUserFullName),
+                considerationRationale = rec.data.considerationRationale?.let {
+                  it.copy(createdBy = transformNameToSurname(it.createdBy))
+                },
+                managerRecallDecision = rec.data.managerRecallDecision?.let {
+                  it.copy(createdBy = transformNameToSurname(it.createdBy))
+                },
+                localPoliceContact = rec.data.localPoliceContact?.let {
+                  it.copy(contactName = transformNameToSurname(it.contactName))
+                },
+                odmName = transformNameToSurname(rec.data.odmName),
+                lastModifiedByUserName = transformNameToSurname(rec.data.lastModifiedByUserName),
+                whoCompletedPartA = rec.data.whoCompletedPartA?.let {
+                  it.copy(name = transformNameToSurname(it.name))
+                },
+                practitionerForPartA = rec.data.practitionerForPartA?.let {
+                  it.copy(name = transformNameToSurname(it.name))
+                },
                 cvlLicenceConditionsBreached = rec.data.cvlLicenceConditionsBreached?.let {
                   transformLicenceConditions(it)
                 },
@@ -92,5 +110,14 @@ class SubjectAccessRequestService(
       ?: emptyList()
 
     return section.copy(selected = transformedSelected)
+  }
+
+  // Returns just the last name from a full name, or "NO DATA" if the value contains digits
+  // (which likely indicates an ID rather than a real name).
+  fun transformNameToSurname(fullName: String?): String? {
+    if (fullName == null) return null
+    if (fullName.any { it.isDigit() }) return "NO DATA"
+
+    return fullName.trim().split(Regex("\\s+")).lastOrNull() ?: fullName
   }
 }
