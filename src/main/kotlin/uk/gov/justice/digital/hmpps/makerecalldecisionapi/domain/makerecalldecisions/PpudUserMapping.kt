@@ -3,10 +3,12 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 
 data class PpudUserMapping(
-  val fullName: String,
-  val teamName: String,
+  val id: String?, // optional, as requests to create new mappings will have no ID yet
   val userName: String,
+  val ppudUserFullName: String,
+  val ppudTeamName: String,
+  val ppudUserName: String,
 ) {
   constructor(ppudUserMappingEntity: PpudUserMappingEntity) :
-    this(ppudUserMappingEntity.ppudUserFullName, ppudUserMappingEntity.ppudTeamName, ppudUserMappingEntity.ppudUserName)
+    this(ppudUserMappingEntity.id.toString(), ppudUserMappingEntity.userName, ppudUserMappingEntity.ppudUserFullName, ppudUserMappingEntity.ppudTeamName, ppudUserMappingEntity.ppudUserName)
 }

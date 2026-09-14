@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMapping
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMappingResponse
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions.PpudUserMappingSearchRequest
-import uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity.PpudUserMappingEntity
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.service.PpudUserMappingService
 
 @RestController
@@ -43,17 +42,17 @@ internal class PpudUserMappingController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/user-mapping")
+  @GetMapping("/ppud-user-mappings")
   @Operation(summary = "Gets all PPUD user mappings.")
-  suspend fun getAllUserMappings(): ResponseEntity<List<PpudUserMappingEntity>> {
+  suspend fun getAllUserMappings(): ResponseEntity<List<PpudUserMapping>> {
     log.info(normalizeSpace("Get all PPUD user mappings endpoint hit"))
     return ResponseEntity(ppudUserMappingService.getAllUserMappings(), HttpStatus.OK)
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @GetMapping("/user-mapping/{id}")
+  @GetMapping("/ppud-user-mappings/{id}")
   @Operation(summary = "Gets a PPUD user mapping by ID.")
-  suspend fun getUserMappingById(@PathVariable(required = true) id: Long): ResponseEntity<PpudUserMappingEntity> {
+  suspend fun getUserMappingById(@PathVariable(required = true) id: Long): ResponseEntity<PpudUserMapping> {
     log.info(normalizeSpace("Get PPUD user mapping endpoint hit for id: $id"))
     val response = ppudUserMappingService.findById(id)
     return if (response != null) {
@@ -64,24 +63,24 @@ internal class PpudUserMappingController(
   }
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PostMapping("/user-mapping")
+  @PostMapping("/ppud-user-mappings")
   @Operation(summary = "Creates a PPUD user mapping.")
   suspend fun createUserMapping(
-    @RequestBody(required = true) ppudUserMappingEntity: PpudUserMappingEntity,
-  ): ResponseEntity<PpudUserMappingEntity> =
-    ResponseEntity(ppudUserMappingService.saveUserMapping(ppudUserMappingEntity), HttpStatus.CREATED)
+    @RequestBody(required = true) ppudUserMapping: PpudUserMapping,
+  ): ResponseEntity<PpudUserMapping> =
+    ResponseEntity(ppudUserMappingService.saveUserMapping(ppudUserMapping), HttpStatus.CREATED)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @PutMapping("/user-mapping/{id}")
+  @PutMapping("/ppud-user-mappings/{id}")
   @Operation(summary = "Updates a PPUD user mapping.")
   suspend fun updateUserMapping(
     @PathVariable(required = true) id: String,
-    @RequestBody(required = true) ppudUserMappingEntity: PpudUserMappingEntity,
-  ): ResponseEntity<PpudUserMappingEntity> =
-    ResponseEntity(ppudUserMappingService.updateUserMapping(id.toLong(), ppudUserMappingEntity), HttpStatus.OK)
+    @RequestBody(required = true) ppudUserMapping: PpudUserMapping,
+  ): ResponseEntity<PpudUserMapping> =
+    ResponseEntity(ppudUserMappingService.updateUserMapping(id.toLong(), ppudUserMapping), HttpStatus.OK)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
-  @DeleteMapping("/user-mapping/{id}")
+  @DeleteMapping("/ppud-user-mappings/{id}")
   @Operation(summary = "Deletes a PPUD user mapping.")
   suspend fun deleteUserMapping(
     @PathVariable(required = true) id: String,
