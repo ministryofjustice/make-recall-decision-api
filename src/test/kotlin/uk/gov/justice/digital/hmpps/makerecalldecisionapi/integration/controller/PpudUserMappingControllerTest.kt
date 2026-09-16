@@ -214,7 +214,6 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isNotFound
 
-
     val response = convertResponseToJSONArray(
       webTestClient.get()
         .uri("/ppud-user-mappings")
@@ -231,11 +230,10 @@ class PpudUserMappingControllerTest : IntegrationTestBase() {
       .isEqualTo(existingUserMappings.filter { it.userName != existingUserMapping.userName })
   }
 
-  private fun postToSearchMappedUsers(requestBody: PpudUserMappingSearchRequest): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri("/user-mapping/search")
-      .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
-      .contentType(MediaType.APPLICATION_JSON)
-      .body(BodyInserters.fromValue(requestBody))
-      .exchange()
+  private fun postToSearchMappedUsers(requestBody: PpudUserMappingSearchRequest): WebTestClient.ResponseSpec = webTestClient.post()
+    .uri("/user-mapping/search")
+    .headers { it.authToken(roles = listOf("ROLE_MAKE_RECALL_DECISION")) }
+    .contentType(MediaType.APPLICATION_JSON)
+    .body(BodyInserters.fromValue(requestBody))
+    .exchange()
 }

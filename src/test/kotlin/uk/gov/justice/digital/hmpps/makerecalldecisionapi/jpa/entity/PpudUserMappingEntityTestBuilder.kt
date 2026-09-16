@@ -1,18 +1,18 @@
-package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldecisions
+package uk.gov.justice.digital.hmpps.makerecalldecisionapi.jpa.entity
 
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLong
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
 
-fun ppudUserMapping(
-  id: String = randomLong().toString(),
+fun ppudUserMappingEntity(
+  id: Long = randomLong(),
   userName: String = randomString(),
   ppudUserFullName: String = randomString(),
   ppudTeamName: String = randomString(),
   ppudUserName: String = randomString(),
-) = PpudUserMapping(
+) = PpudUserMappingEntity(
   id = id,
   userName = userName,
-  ppudUserFullName = ppudUserFullName,
   ppudTeamName = ppudTeamName,
+  ppudUserFullName = ppudUserFullName,
   ppudUserName = ppudUserName,
 )

@@ -67,8 +67,7 @@ internal class PpudUserMappingController(
   @Operation(summary = "Creates a PPUD user mapping.")
   suspend fun createUserMapping(
     @RequestBody(required = true) ppudUserMapping: PpudUserMapping,
-  ): ResponseEntity<PpudUserMapping> =
-    ResponseEntity(ppudUserMappingService.saveUserMapping(ppudUserMapping), HttpStatus.CREATED)
+  ): ResponseEntity<PpudUserMapping> = ResponseEntity(ppudUserMappingService.saveUserMapping(ppudUserMapping), HttpStatus.CREATED)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @PutMapping("/ppud-user-mappings/{id}")
@@ -76,8 +75,7 @@ internal class PpudUserMappingController(
   suspend fun updateUserMapping(
     @PathVariable(required = true) id: String,
     @RequestBody(required = true) ppudUserMapping: PpudUserMapping,
-  ): ResponseEntity<PpudUserMapping> =
-    ResponseEntity(ppudUserMappingService.updateUserMapping(id.toLong(), ppudUserMapping), HttpStatus.OK)
+  ): ResponseEntity<PpudUserMapping> = ResponseEntity(ppudUserMappingService.updateUserMapping(id.toLong(), ppudUserMapping), HttpStatus.OK)
 
   @PreAuthorize("hasRole('ROLE_MAKE_RECALL_DECISION')")
   @DeleteMapping("/ppud-user-mappings/{id}")
