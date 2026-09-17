@@ -144,6 +144,7 @@ data class PersonOnProbation(
 
 data class WhoCompletedPartA(
   val name: String? = null,
+  val jobTitle: String? = null,
   val email: String? = null,
   val telephone: String? = null,
   // This is the region code
@@ -154,6 +155,7 @@ data class WhoCompletedPartA(
 
 data class PractitionerForPartA(
   val name: String? = null,
+  val jobTitle: String? = null,
   val email: String? = null,
   val telephone: String? = null,
 // This is the region code
