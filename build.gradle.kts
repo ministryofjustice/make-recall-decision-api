@@ -79,7 +79,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.4")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-71:3.15.5")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
   implementation("org.json:json:20260719")
 
