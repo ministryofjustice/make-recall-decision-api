@@ -249,6 +249,6 @@ clean-up:
   recurrent:
     look-back-in-days: 21
 
-  ftr56-offence-conviction:
-    threshold-date-time: "2026-07-28T23:00Z" # 2026-07-29 00:00 in BST
-    cron: "0 0 * 29 7 ?"  # every hour on 29th July each year (this is expressed and interpreted in Europe/London time)
+  new-standard-licence-conditions:
+    threshold-date-time: "2026-09-30T23:00Z" # 2026-10-01 00:00 in BST
+    cron: "0 0 * 1 10 ?"  # every hour on 1st October each year (this is expressed and interpreted in Europe/London time)
