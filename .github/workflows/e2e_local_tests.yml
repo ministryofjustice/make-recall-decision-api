@@ -38,20 +38,20 @@ jobs:
       timings-8: ${{ steps.timings.outputs.t8 }}
     steps:
       - name: Check out make-recall-decision-api repo
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'ministryofjustice/make-recall-decision-api'
           ref: ${{ inputs.api-branch-name }}
           path: 'make-recall-decision-api'
           persist-credentials: false
       - name: Check out make-recall-decision-ui repo
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'ministryofjustice/make-recall-decision-ui'
           path: 'make-recall-decision-ui'
           persist-credentials: false
       - name: Check out make-recall-decision-e2e-tests repo
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'ministryofjustice/make-recall-decision-e2e-tests'
           path: 'make-recall-decision-e2e-tests'
