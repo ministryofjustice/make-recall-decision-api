@@ -3,7 +3,7 @@ version: '3.5'
 services:
   postgres:
     container_name: postgres_container
-    image: postgres
+    image: postgres:17.11-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-mrd_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
