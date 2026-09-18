@@ -58,6 +58,7 @@ fun personOnProbation(
 
 fun whoCompletedPartA(
   name: String? = randomString(),
+  jobTitle: String? = randomString(),
   email: String? = randomString(),
   telephone: String? = randomString(),
   region: String? = randomString(),
@@ -65,6 +66,7 @@ fun whoCompletedPartA(
   isPersonProbationPractitionerForOffender: Boolean? = randomBoolean(),
 ) = WhoCompletedPartA(
   name = name,
+  jobTitle = jobTitle,
   email = email,
   telephone = telephone,
   region = region,
@@ -74,12 +76,14 @@ fun whoCompletedPartA(
 
 fun practitionerForPartA(
   name: String? = randomString(),
+  jobTitle: String? = randomString(),
   email: String? = randomString(),
   telephone: String? = randomString(),
   region: String? = randomString(),
   localDeliveryUnit: String? = randomString(),
 ) = PractitionerForPartA(
   name = name,
+  jobTitle = jobTitle,
   email = email,
   telephone = telephone,
   region = region,
