@@ -7,14 +7,14 @@ import java.time.ZonedDateTime
 
 internal fun cleanUpConfiguration(
   recurrent: RecurrentCleanUpConfiguration = recurrentCleanUpConfiguration(),
-  ftr56: FTR56OffenceConvictionCleanUpConfiguration = ftr56CleanUpConfiguration(),
-) = CleanUpConfiguration(recurrent, ftr56)
+  newStandardLicenceConditions: NewStandardLicenceConditionsCleanUpConfiguration = newStandardLicenceConditions(),
+) = CleanUpConfiguration(recurrent, newStandardLicenceConditions)
 
 internal fun recurrentCleanUpConfiguration(
   lookBackInDays: Long = randomLong(),
 ) = RecurrentCleanUpConfiguration(lookBackInDays)
 
-internal fun ftr56CleanUpConfiguration(
+internal fun newStandardLicenceConditions(
   thresholdDateTime: ZonedDateTime = randomZonedDateTime(),
   cron: String = randomString(),
-) = FTR56OffenceConvictionCleanUpConfiguration(thresholdDateTime, cron)
+) = NewStandardLicenceConditionsCleanUpConfiguration(thresholdDateTime, cron)
