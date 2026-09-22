@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.7"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
   kotlin("jvm") version "2.4.10"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   kotlin("plugin.jpa") version "2.4.10"
@@ -52,12 +52,6 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.5.1")
   }
   implementation("org.springframework.boot:spring-boot-jackson2")
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.21.6") {
-    because("Address CVE-2026-19032 & CVE-2026-68497")
-  }
-  implementation("tools.jackson.core:jackson-databind:3.1.6") {
-    because("Address CVE-2026-19032 & CVE-2026-68497")
-  }
   implementation("ch.qos.logback:logback-classic:1.6.3") {
     because("Address CVE-2026-19880")
   }
