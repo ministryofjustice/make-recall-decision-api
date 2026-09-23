@@ -79,7 +79,7 @@ dependencies {
 
   implementation("com.google.code.gson:gson:2.14.0")
 
-  implementation("io.flipt:flipt-client-java:1.3.3")
+  implementation("io.flipt:flipt-client-java:1.3.4")
 
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
